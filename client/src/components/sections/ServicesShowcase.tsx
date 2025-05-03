@@ -478,13 +478,13 @@ const ServicesShowcase = () => {
                     );
                   })}
                   
-                  {/* Vertical timeline indicator */}
-                  <div className="absolute left-[3.5rem] top-20 bottom-20 w-[2px] z-0">
+                  {/* Vertical timeline indicator - positioned behind the numbers */}
+                  <div className="absolute left-[1.625rem] top-8 bottom-8 w-[2px] -z-10">
                     <div className={`h-full ${
-                      activeServiceData.color.includes('purple') ? 'bg-purple-100' : 
-                      activeServiceData.color.includes('blue') ? 'bg-blue-100' : 
-                      activeServiceData.color.includes('green') ? 'bg-green-100' : 
-                      'bg-amber-100'
+                      activeServiceData.color.includes('purple') ? 'bg-purple-200' : 
+                      activeServiceData.color.includes('blue') ? 'bg-blue-200' : 
+                      activeServiceData.color.includes('green') ? 'bg-green-200' : 
+                      'bg-amber-200'
                     }`}>
                       {/* Animated progress indicator */}
                       <motion.div 
