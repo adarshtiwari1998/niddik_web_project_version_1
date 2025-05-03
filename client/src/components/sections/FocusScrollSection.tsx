@@ -106,10 +106,9 @@ const FocusScrollSection: React.FC = () => {
         setIsLastBlockVisible(true);
         
         // Always ensure the current image is visible when in release mode
-        // If we're at block 5, show block 5's image
-        if (!activeBlockId || activeBlockId < LAST_BLOCK_ID) {
-          setActiveBlockId(LAST_BLOCK_ID);
-        }
+        // Always set to the LAST block to ensure image 5 is showing
+        setActiveBlockId(LAST_BLOCK_ID);
+        console.log(`Fifth block is visible - setting active block to ${LAST_BLOCK_ID}`);
       } else if (!isTopInView) {
         // We're at the top of the section, don't enable fixed positioning yet
         setIsFirstBlockAtTop(false);
@@ -118,11 +117,17 @@ const FocusScrollSection: React.FC = () => {
         // This ensures blocks 1-4 all maintain the fixed position
         setIsLastBlockVisible(false);
         
-        // Update active block ID only if we're not already showing the last block
-        // This ensures proper sequential transition of images
-        if (currentPosition && currentPosition !== activeBlockId && 
-            (currentPosition > activeBlockId || currentPosition === 1)) {
-          setActiveBlockId(currentPosition);
+        // Update active block ID only if we have blocks in view
+        if (blocksInView.length > 0) {
+          // Get the top-most visible block that's furthest in the sequence
+          // This ensures we only go forward, never backward in the sequence
+          const nextBlock = blocksInView[0];  // First block in view (sorted by position)
+          
+          // Only update if moving forward or at the beginning
+          if (nextBlock !== activeBlockId && (nextBlock > activeBlockId || nextBlock === 1)) {
+            console.log(`Updating active block from ${activeBlockId} to ${nextBlock}`);
+            setActiveBlockId(nextBlock);
+          }
         }
       }
     };
@@ -184,6 +189,18 @@ const FocusScrollSection: React.FC = () => {
               console.log(`Last block ${LAST_BLOCK_ID} visible near top - releasing fixed position`);
               setIsLastBlockVisible(true);
               setActiveBlockId(LAST_BLOCK_ID); // Show last block image
+              
+              // Force each block to update its active state
+              blockRefs.current.forEach(block => {
+                if (block) {
+                  const blockId = Number(block.getAttribute("data-block-id"));
+                  if (blockId === LAST_BLOCK_ID) {
+                    block.setAttribute("data-active", "true");
+                  } else {
+                    block.setAttribute("data-active", "false");
+                  }
+                }
+              });
             }
           }
         } else {
@@ -198,6 +215,9 @@ const FocusScrollSection: React.FC = () => {
           } else {
             console.log(`Skipping non-sequential block ${topVisibleBlock} (current: ${activeBlockId})`);
           }
+          
+          // Always ensure the correct block is highlighted, not just the first one
+          // This fixes the issue where block 1 remains highlighted when it shouldn't
         }
       },
       {
@@ -334,6 +354,7 @@ const FocusScrollSection: React.FC = () => {
                 className={`scrollable-block mb-12 ${
                   block.id === activeBlockId ? "active" : ""
                 }`}
+                data-active={block.id === activeBlockId ? "true" : "false"}
               >
                 <h3 className="text-2xl font-bold text-andela-dark mb-4">
                   {block.title}
