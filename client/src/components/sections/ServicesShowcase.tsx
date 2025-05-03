@@ -377,59 +377,71 @@ const ServicesShowcase = () => {
                 <h4 className="text-lg font-semibold text-andela-dark mb-4">Our Process</h4>
                 
                 {/* Visual process flow with animated stages */}
-                <div className={`relative p-6 pt-12 pb-16 rounded-lg bg-white/60 backdrop-blur-sm border shadow-md ${
-                  activeServiceData.color.includes('purple') ? 'border-purple-200' : 
-                  activeServiceData.color.includes('blue') ? 'border-blue-200' : 
-                  activeServiceData.color.includes('green') ? 'border-green-200' : 
-                  'border-amber-200'
-                }`}>
+                <div className={`relative p-6 pt-2 pb-4 rounded-lg bg-white/90 backdrop-blur-sm shadow-lg`}>
                   
-                  {/* Process flow arrow (positioned below the steps) */}
-                  <div className="absolute left-8 right-8 h-2 bottom-8 z-0">
-                    <div className={`h-full bg-gradient-to-r ${activeServiceData.color} rounded-full opacity-50`}>
-                      {/* Sequential step highlighter */}
+                  {/* Process flow connection line (positioned above the steps) */}
+                  <div className="relative mx-auto h-3 my-3 z-10 flex items-center justify-center">
+                    {/* Connection line */}
+                    <div className={`h-[3px] absolute left-[12%] right-[12%] ${
+                      activeServiceData.color.includes('purple') ? 'bg-purple-200' : 
+                      activeServiceData.color.includes('blue') ? 'bg-blue-200' : 
+                      activeServiceData.color.includes('green') ? 'bg-green-200' : 
+                      'bg-amber-200'
+                    }`}>
+                      {/* Progress highlight that moves through the steps */}
                       <motion.div 
-                        key={`sequential-highlight-${activeService}`}
-                        className={`absolute top-1/2 transform -translate-y-1/2 w-16 h-16 rounded-full bg-white/10 ring-4 ring-white/50 mix-blend-overlay shadow-lg backdrop-blur-md`}
+                        key={`progress-line-${activeService}`}
+                        className={`absolute top-0 bottom-0 w-[25%] ${
+                          activeServiceData.color.includes('purple') ? 'bg-purple-500' : 
+                          activeServiceData.color.includes('blue') ? 'bg-blue-500' : 
+                          activeServiceData.color.includes('green') ? 'bg-green-500' : 
+                          'bg-amber-500'
+                        }`}
+                        // Move from step 1 to 4, pausing at each step
                         animate={{ 
-                          left: ["12.5%", "37.5%", "62.5%", "87.5%", "87.5%", "87.5%", "62.5%", "37.5%", "12.5%", "12.5%"],
-                          scale: [1, 1.5, 1, 1.5, 1, 1, 1.5, 1, 1.5, 1],
-                          opacity: [0.7, 1, 0.7, 1, 0.7, 0.7, 1, 0.7, 1, 0.7]
+                          left: ["0%", "0%", "25%", "25%", "50%", "50%", "75%", "75%", "0%", "0%"]
                         }}
                         transition={{ 
                           duration: 10,
-                          times: [0, 0.15, 0.3, 0.45, 0.5, 0.6, 0.75, 0.85, 0.95, 1],
+                          times: [0, 0.1, 0.2, 0.3, 0.4, 0.5, 0.6, 0.7, 0.8, 1],
                           repeat: Infinity,
                           ease: "easeInOut"
                         }}
                       />
                     </div>
-                  </div>
-                  
-                  {/* Connection vertical lines (behind the process steps) */}
-                  <div className="absolute left-0 right-0 top-[5.25rem] h-px z-0">
-                    {[0, 1, 2].map((i) => (
-                      <motion.div 
-                        key={`conn-${i}`}
-                        className={`absolute h-16 w-px ${
+                    
+                    {/* Step markers on the line */}
+                    {[0, 1, 2, 3].map((i) => (
+                      <motion.div
+                        key={`step-marker-${i}`}
+                        className={`absolute h-3 w-3 rounded-full ${
                           activeServiceData.color.includes('purple') ? 'bg-purple-400' : 
                           activeServiceData.color.includes('blue') ? 'bg-blue-400' : 
                           activeServiceData.color.includes('green') ? 'bg-green-400' : 
                           'bg-amber-400'
-                        }`}
-                        style={{ left: `${25 + i * 16.67}%` }}
-                        initial={{ height: 0 }}
-                        animate={{ height: 64 }}
+                        } z-20`}
+                        style={{ left: `${12 + i * 25}%` }}
+                        // Highlight each marker in sequence 
+                        animate={{ 
+                          scale: [1, 1.5, 1],
+                          boxShadow: [
+                            '0 0 0 0px rgba(255,255,255,0)', 
+                            '0 0 0 3px rgba(255,255,255,0.7)', 
+                            '0 0 0 0px rgba(255,255,255,0)'
+                          ]
+                        }}
                         transition={{ 
-                          duration: 0.5, 
-                          delay: 0.8 + i * 0.2
+                          duration: 1.5,
+                          delay: i * 2.5,
+                          repeat: Infinity,
+                          repeatDelay: 8.5
                         }}
                       />
                     ))}
                   </div>
                   
                   {/* Process steps with sequential highlight animation */}
-                  <div className="flex justify-between relative z-10 mb-12">
+                  <div className="flex justify-between relative z-20 mt-8 mb-2">
                     {activeServiceData.processSteps.map((step, index) => {
                       // Determine icon based on service type and step index
                       let StepIcon;
@@ -464,11 +476,11 @@ const ServicesShowcase = () => {
                         >
                           {/* Step box with custom icon */}
                           <motion.div 
-                            className={`w-16 h-16 rounded-lg flex items-center justify-center bg-white shadow-lg 
+                            className={`w-16 h-16 rounded-lg flex items-center justify-center bg-white shadow-md
                               ${index === 0 ? 'rounded-tl-3xl' : 
                                 index === 1 ? 'rounded-tr-3xl' : 
                                 index === 2 ? 'rounded-bl-3xl' : 'rounded-br-3xl'} 
-                              border-2 mb-5 z-20 relative overflow-hidden
+                              border-2 mb-3 z-20 relative overflow-hidden
                               ${
                                 activeServiceData.color.includes('purple') ? 'border-purple-400' : 
                                 activeServiceData.color.includes('blue') ? 'border-blue-400' : 
@@ -479,10 +491,10 @@ const ServicesShowcase = () => {
                             animate={{ 
                               boxShadow: [
                                 '0 4px 6px rgba(0, 0, 0, 0.1)',
-                                '0 10px 25px rgba(0, 0, 0, 0.2)',
+                                '0 8px 15px rgba(0, 0, 0, 0.15)',
                                 '0 4px 6px rgba(0, 0, 0, 0.1)'
                               ],
-                              scale: [1, 1.1, 1],
+                              scale: [1, 1.08, 1],
                               borderWidth: ['2px', '3px', '2px']
                             }}
                             transition={{ 
@@ -525,36 +537,11 @@ const ServicesShowcase = () => {
                           </motion.div>
                           
                           {/* Step title and description */}
-                          <h5 className="font-medium text-andela-dark text-center mb-1">{step.title}</h5>
+                          <h5 className="font-medium text-andela-dark text-center mb-1 mt-1">{step.title}</h5>
                           <p className="text-xs text-andela-gray text-center leading-tight max-w-[110px] mx-auto">{step.description}</p>
                         </motion.div>
                       )
                     })}
-                  </div>
-                  
-                  {/* Process arrow markers (beneath the main steps) */}
-                  <div className="absolute inset-x-8 bottom-6 flex justify-between">
-                    {[0, 1, 2, 3].map((i) => (
-                      <motion.div 
-                        key={`marker-${i}`}
-                        className={`w-3 h-3 rounded-full shadow-sm relative ${
-                          activeServiceData.color.includes('purple') ? 'bg-purple-400' : 
-                          activeServiceData.color.includes('blue') ? 'bg-blue-400' : 
-                          activeServiceData.color.includes('green') ? 'bg-green-400' : 
-                          'bg-amber-400'
-                        }`}
-                        animate={{
-                          scale: [1, 1.5, 1],
-                          boxShadow: ['0 0 0 0 rgba(0,0,0,0)', '0 0 0 4px rgba(255,255,255,0.5)', '0 0 0 0 rgba(0,0,0,0)'],
-                        }}
-                        transition={{
-                          duration: 1.5,
-                          delay: i * 2.5,
-                          repeat: Infinity,
-                          repeatDelay: 8.5
-                        }}
-                      />
-                    ))}
                   </div>
                 </div>
               </div>
