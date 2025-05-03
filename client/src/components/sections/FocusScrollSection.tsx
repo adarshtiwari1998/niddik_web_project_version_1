@@ -15,31 +15,31 @@ const focusBlocks: FocusBlock[] = [
     id: 1,
     title: "Discover Top Tech Talent",
     description: "Access a global network of pre-vetted software engineers, data scientists, and product managers ready to join your team.",
-    image: "https://images.unsplash.com/photo-1522071820081-009f0129c71c?auto=format&fit=crop&w=1200&q=80"
+    image: "https://images.unsplash.com/photo-1600880292203-757bb62b4baf?auto=format&fit=crop&w=1200&q=80"
   },
   {
     id: 2,
     title: "Streamlined Matching Process",
     description: "Our AI-powered platform matches your requirements with the perfect candidates, saving weeks of recruitment time.",
-    image: "https://images.unsplash.com/photo-1531482615713-2afd69097998?auto=format&fit=crop&w=1200&q=80"
+    image: "https://images.unsplash.com/photo-1531538606174-0f90ff5dce83?auto=format&fit=crop&w=1200&q=80"
   },
   {
     id: 3,
     title: "Flexible Team Scaling",
     description: "Scale your engineering team up or down based on project needs with flexible engagement models that adapt to your business.",
-    image: "https://images.unsplash.com/photo-1517245386807-bb43f82c33c4?auto=format&fit=crop&w=1200&q=80"
+    image: "https://images.unsplash.com/photo-1522202176988-66273c2fd55f?auto=format&fit=crop&w=1200&q=80"
   },
   {
     id: 4,
     title: "Seamless Collaboration",
     description: "Our collaboration tools and talent success managers ensure smooth integration with your existing teams and workflows.",
-    image: "https://images.unsplash.com/photo-1552664730-d307ca884978?auto=format&fit=crop&w=1200&q=80"
+    image: "https://images.unsplash.com/photo-1600880292089-90a7e086ee0c?auto=format&fit=crop&w=1200&q=80"
   },
   {
     id: 5,
     title: "Global Diversity Advantage",
     description: "Leverage diverse perspectives and experiences from tech professionals across 100+ countries to drive innovation.",
-    image: "https://images.unsplash.com/photo-1543269865-cbf427effbad?auto=format&fit=crop&w=1200&q=80"
+    image: "https://images.unsplash.com/photo-1484712401471-05c7215830eb?auto=format&fit=crop&w=1200&q=80"
   }
 ];
 
@@ -173,15 +173,16 @@ const FocusScrollSection: React.FC = () => {
               {focusBlocks.map((block) => (
                 <motion.div
                   key={block.id}
-                  className={`focus-image absolute inset-0 rounded-xl overflow-hidden shadow-xl ${
+                  className={`focus-image absolute inset-0 rounded-xl overflow-hidden ${
                     block.id === activeBlockId ? "opacity-100" : "opacity-0"
                   }`}
                   initial={{ opacity: 0 }}
                   animate={{ 
                     opacity: block.id === activeBlockId ? 1 : 0,
                     scale: block.id === activeBlockId ? 1 : 0.95,
+                    translateY: block.id === activeBlockId ? 0 : 20
                   }}
-                  transition={{ duration: 0.5 }}
+                  transition={{ duration: 0.7, ease: "easeOut" }}
                 >
                   <img 
                     src={block.image}
@@ -203,15 +204,15 @@ const FocusScrollSection: React.FC = () => {
           </div>
 
           {/* Mobile image - only shown on small screens */}
-          <div className="lg:hidden rounded-xl overflow-hidden shadow-xl">
+          <div className="lg:hidden rounded-xl overflow-hidden">
             {focusBlocks.map((block) => (
               block.id === activeBlockId && (
                 <motion.div
                   key={block.id}
-                  initial={{ opacity: 0 }}
-                  animate={{ opacity: 1 }}
-                  exit={{ opacity: 0 }}
-                  transition={{ duration: 0.5 }}
+                  initial={{ opacity: 0, y: 20 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  exit={{ opacity: 0, y: -20 }}
+                  transition={{ duration: 0.7, ease: "easeOut" }}
                   className="relative"
                 >
                   <img 
@@ -232,28 +233,6 @@ const FocusScrollSection: React.FC = () => {
               )
             ))}
           </div>
-        </div>
-        
-        {/* Progress indicators - only visible on desktop */}
-        <div className="hidden lg:flex scroll-progress-indicator">
-          {focusBlocks.map((block) => (
-            <div 
-              key={block.id} 
-              className={`progress-dot ${block.id === activeBlockId ? "active" : ""} cursor-pointer`}
-              onClick={() => {
-                // Scroll the block into view when the dot is clicked
-                if (blockRefs.current[block.id - 1]) {
-                  blockRefs.current[block.id - 1]?.scrollIntoView({
-                    behavior: 'smooth',
-                    block: 'center'
-                  });
-                  // Set this as the active block
-                  setActiveBlockId(block.id);
-                }
-              }}
-              title={`Go to ${block.title}`}
-            />
-          ))}
         </div>
       </Container>
     </section>
