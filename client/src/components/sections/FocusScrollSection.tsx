@@ -136,15 +136,17 @@ const FocusScrollSection: React.FC = () => {
       console.log(`Blocks in view: ${JSON.stringify(blocksInView)}, current: ${currentPosition}`);
         
       // Update states based on scroll position
-      if (isSectionEnded || (lastBlock && lastBlock.getBoundingClientRect().top <= window.innerHeight * 0.4)) {
+      if (isSectionEnded || (lastBlock && lastBlock.getBoundingClientRect().top <= window.innerHeight * 0.5)) {
         // Section is ending OR last block is near top, force release fixed position
         setIsLastBlockVisible(true);
         
         // Always ensure the current image is visible when in release mode
         // Always set to the LAST block to ensure image 5 is showing
-        setActiveBlockId(LAST_BLOCK_ID);
-        updateActiveBlockStyles(LAST_BLOCK_ID);
-        console.log(`Fifth block is visible - setting active block to ${LAST_BLOCK_ID}`);
+        if (activeBlockId !== LAST_BLOCK_ID) {
+          console.log(`Fifth block is visible - setting active block to ${LAST_BLOCK_ID}`);
+          setActiveBlockId(LAST_BLOCK_ID);
+          updateActiveBlockStyles(LAST_BLOCK_ID);
+        }
       } else if (!isTopInView) {
         // We're at the top of the section, don't enable fixed positioning yet
         setIsFirstBlockAtTop(false);
@@ -219,16 +221,19 @@ const FocusScrollSection: React.FC = () => {
           
           if (lastBlockEntry) {
             // If last block is in the top portion of viewport, release fixed positioning
-            const lastBlockThreshold = window.innerHeight * 0.4; // Increase threshold a bit
+            const lastBlockThreshold = window.innerHeight * 0.5; // Match with scroll handler threshold
             const isLastBlockNearTop = lastBlockEntry.boundingClientRect.top <= lastBlockThreshold;
             
             if (isLastBlockNearTop) {
               console.log(`Last block ${LAST_BLOCK_ID} visible near top - releasing fixed position`);
               setIsLastBlockVisible(true);
-              setActiveBlockId(LAST_BLOCK_ID); // Show last block image
               
-              // Use our common function to update active states
-              updateActiveBlockStyles(LAST_BLOCK_ID);
+              // Only update if it's not already the last block to avoid unnecessary renders
+              if (activeBlockId !== LAST_BLOCK_ID) {
+                setActiveBlockId(LAST_BLOCK_ID); // Show last block image
+                // Use our common function to update active states
+                updateActiveBlockStyles(LAST_BLOCK_ID);
+              }
             }
           }
         } else {
@@ -254,8 +259,8 @@ const FocusScrollSection: React.FC = () => {
       },
       {
         root: null,
-        rootMargin: "-10% 0px -40% 0px", // More visible area at top to ensure proper ordering
-        threshold: [0.05, 0.1, 0.15, 0.2, 0.25], // Focus on top portion of blocks for more accurate detection
+        rootMargin: "-15% 0px -35% 0px", // More visible area at top to ensure proper ordering
+        threshold: [0.05, 0.1, 0.15, 0.2, 0.25, 0.3], // Focus on top portion of blocks for more accurate detection
       }
     );
 
@@ -319,8 +324,8 @@ const FocusScrollSection: React.FC = () => {
       },
       {
         root: null,
-        rootMargin: "-5% 0px -70% 0px", // Trigger when block enters top portion of viewport
-        threshold: [0, 0.1, 0.2, 0.3, 0.4, 0.5], // Multiple thresholds for smoother detection
+        rootMargin: "-10% 0px -70% 0px", // Trigger when block enters top portion of viewport
+        threshold: [0, 0.1, 0.2, 0.3, 0.4, 0.5, 0.6], // Multiple thresholds for smoother detection
       }
     );
 
@@ -447,32 +452,33 @@ const FocusScrollSection: React.FC = () => {
           {/* Mobile image - only shown on small screens */}
           <div className="lg:hidden rounded-xl overflow-hidden mb-8">
             {focusBlocks.map((block) => (
-              block.id === activeBlockId && (
-                <motion.div
-                  key={block.id}
-                  initial={{ opacity: 0, y: 20 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  exit={{ opacity: 0, y: -20 }}
-                  transition={{ duration: 0.7, ease: "easeOut" }}
-                  className="relative"
-                  data-active="true"
-                >
-                  <img 
-                    src={block.image}
-                    alt={block.title}
-                    className="w-full h-64 object-cover rounded-lg"
-                  />
-                  <div className="absolute inset-0 bg-black bg-opacity-20 rounded-lg"></div>
-                  <div className="absolute bottom-4 left-4">
-                    <span className="inline-block bg-andela-green text-white px-3 py-1 rounded-full text-xs font-medium mb-1">
-                      Feature {block.id}
-                    </span>
-                    <h4 className="text-lg font-bold text-white">
-                      {block.title}
-                    </h4>
-                  </div>
-                </motion.div>
-              )
+              <motion.div
+                key={block.id}
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ 
+                  opacity: block.id === activeBlockId ? 1 : 0,
+                  y: block.id === activeBlockId ? 0 : 20,
+                  scale: block.id === activeBlockId ? 1 : 0.95
+                }}
+                transition={{ duration: 0.7, ease: "easeOut" }}
+                className={`relative ${block.id === activeBlockId ? 'block' : 'hidden'}`}
+                data-active={block.id === activeBlockId ? "true" : "false"}
+              >
+                <img 
+                  src={block.image}
+                  alt={block.title}
+                  className="w-full h-64 object-cover rounded-lg transition-all duration-700"
+                />
+                <div className="absolute inset-0 bg-black bg-opacity-20 rounded-lg"></div>
+                <div className="absolute bottom-4 left-4">
+                  <span className="inline-block bg-andela-green text-white px-3 py-1 rounded-full text-xs font-medium mb-1">
+                    Feature {block.id}
+                  </span>
+                  <h4 className="text-lg font-bold text-white">
+                    {block.title}
+                  </h4>
+                </div>
+              </motion.div>
             ))}
           </div>
         </div>
