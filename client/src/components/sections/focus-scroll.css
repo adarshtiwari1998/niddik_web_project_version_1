@@ -102,19 +102,24 @@
 /* Special positioning only for last block (block 5) */
 .fixed-image-container.last-block-position {
   /* These styles ONLY apply to block 5 */
-  position: relative;
+  position: relative !important;
   height: 500px; /* Same height as fixed state */
-  width: 100%; /* Full width of its container */
-  top: 50%; /* Center vertically */
-  transform: translateY(-50%); /* Ensure perfect centering */
-  bottom: auto; /* Remove bottom alignment */
-  margin: 0 auto; /* Center horizontally */
+  width: 100% !important; /* Full width of its container */
+  bottom: 0 !important; /* Stick to bottom */
+  top: auto !important;
+  transform: none !important;
+  margin-top: auto !important; /* Push to bottom of container */
+  margin-bottom: 0 !important; /* No margin below */
+  display: block !important;
+  opacity: 1 !important;
+  visibility: visible !important;
 }
 
 /* Make sure the image for the last block is visible */
 .fixed-image-container.last-block-position .fixed-image[data-active="true"] {
-  opacity: 1;
-  visibility: visible;
+  opacity: 1 !important;
+  visibility: visible !important;
+  display: block !important;
 }
 
 /* Base wrapper styling that doesn't affect block appearance */
@@ -126,12 +131,12 @@
 }
 
 /* Only apply special styling to the wrapper for block 5 */
-.fixed-image-wrapper.h-full.flex.flex-col.justify-center {
-  display: flex;
-  flex-direction: column;
-  justify-content: center; /* Center vertically */
-  height: 100%;
-  min-height: 550px; /* Ensure enough height */
+.fixed-image-wrapper.h-full.flex.flex-col.justify-end {
+  display: flex !important;
+  flex-direction: column !important;
+  justify-content: flex-end !important;
+  height: 100% !important;
+  min-height: 550px !important; /* Ensure enough height */
 }
 
 /* When last block is visible OR section is exiting viewport */
