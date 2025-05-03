@@ -4,6 +4,7 @@ import { queryClient } from "./lib/queryClient";
 import { Toaster } from "@/components/ui/toaster";
 import NotFound from "@/pages/not-found";
 import Home from "@/pages/Home";
+import ServiceDetail from "@/pages/ServiceDetail";
 
 // Admin Pages
 import AdminDashboard from "@/pages/admin/AdminDashboard";
@@ -15,6 +16,9 @@ function Router() {
     <Switch>
       {/* Public Routes */}
       <Route path="/" component={Home} />
+      
+      {/* Service Detail Routes */}
+      <Route path="/services/:serviceSlug" component={ServiceDetail} />
       
       {/* Admin Routes */}
       <Route path="/admin" component={AdminDashboard} />

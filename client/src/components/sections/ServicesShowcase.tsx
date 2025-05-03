@@ -508,13 +508,19 @@ const ServicesShowcase = () => {
                 </div>
               </div>
               
-              <motion.button 
-                className="flex items-center font-medium text-andela-green hover:text-andela-green/80 transition-colors"
+              <motion.a
+                href={`/services/${
+                  activeService === 1 ? 'full-rpo' : 
+                  activeService === 2 ? 'on-demand' : 
+                  activeService === 3 ? 'hybrid-rpo' : 
+                  'contingent'
+                }`}
+                className="flex items-center font-medium text-andela-green hover:text-andela-green/80 transition-colors cursor-pointer"
                 whileHover={{ x: 5 }}
                 transition={{ type: "spring", stiffness: 400, damping: 10 }}
               >
                 Learn more <ChevronRight className="h-4 w-4 ml-1" />
-              </motion.button>
+              </motion.a>
             </div>
           </motion.div>
 
@@ -577,7 +583,17 @@ const ServicesShowcase = () => {
                       )}
                     </div>
                     {service.id === activeService && (
-                      <ChevronRight className="ml-auto flex-shrink-0 h-5 w-5 text-white" />
+                      <a 
+                        href={`/services/${
+                          service.id === 1 ? 'full-rpo' : 
+                          service.id === 2 ? 'on-demand' : 
+                          service.id === 3 ? 'hybrid-rpo' : 
+                          'contingent'
+                        }`} 
+                        className="ml-auto flex-shrink-0"
+                      >
+                        <ChevronRight className="h-5 w-5 text-white" />
+                      </a>
                     )}
                   </div>
                 </motion.div>

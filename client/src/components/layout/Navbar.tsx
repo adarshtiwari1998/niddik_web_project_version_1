@@ -30,6 +30,15 @@ const navItems: NavItem[] = [
     ]
   },
   {
+    label: "Solutions",
+    dropdown: [
+      { label: "Full RPO", href: "/services/full-rpo" },
+      { label: "On-Demand", href: "/services/on-demand" },
+      { label: "Hybrid RPO", href: "/services/hybrid-rpo" },
+      { label: "Contingent", href: "/services/contingent" }
+    ]
+  },
+  {
     label: "For Technologists",
     dropdown: [
       { label: "Apply to Andela", href: "#" },
