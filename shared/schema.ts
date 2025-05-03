@@ -1,4 +1,4 @@
-import { pgTable, text, serial, integer, boolean, timestamp } from "drizzle-orm/pg-core";
+import { pgTable, text, serial, integer, boolean, timestamp, varchar, decimal } from "drizzle-orm/pg-core";
 import { createInsertSchema } from "drizzle-zod";
 import { z } from "zod";
 import { relations } from "drizzle-orm";
@@ -62,3 +62,38 @@ export const clients = pgTable("clients", {
 export const clientSchema = createInsertSchema(clients);
 export type Client = typeof clients.$inferSelect;
 export type InsertClient = z.infer<typeof clientSchema>;
+
+// Job listings
+export const jobListings = pgTable("job_listings", {
+  id: serial("id").primaryKey(),
+  title: text("title").notNull(),
+  company: text("company").notNull(),
+  location: text("location").notNull(),
+  jobType: text("job_type").notNull(), // Full-time, Part-time, Contract, etc.
+  experienceLevel: text("experience_level").notNull(), // Entry, Mid, Senior, etc.
+  salary: text("salary").notNull(), // Salary range or specifics
+  description: text("description").notNull(),
+  requirements: text("requirements").notNull(),
+  benefits: text("benefits"),
+  applicationUrl: text("application_url"),
+  contactEmail: text("contact_email"),
+  status: text("status").notNull().default("active"), // active, filled, expired
+  featured: boolean("featured").notNull().default(false),
+  postedDate: timestamp("posted_date").defaultNow().notNull(),
+  expiryDate: timestamp("expiry_date"),
+  category: text("category").notNull(), // Technology, Design, Marketing, etc.
+  skills: text("skills").notNull(), // Comma-separated list of skills
+});
+
+export const jobListingSchema = createInsertSchema(jobListings, {
+  title: (schema) => schema.min(5, "Job title must be at least 5 characters"),
+  company: (schema) => schema.min(2, "Company name is required"),
+  location: (schema) => schema.min(2, "Location is required"),
+  description: (schema) => schema.min(50, "Job description must be detailed"),
+  requirements: (schema) => schema.min(30, "Job requirements must be detailed"),
+  category: (schema) => schema.min(2, "Category is required"),
+  skills: (schema) => schema.min(3, "Skills are required")
+});
+
+export type JobListing = typeof jobListings.$inferSelect;
+export type InsertJobListing = z.infer<typeof jobListingSchema>;
