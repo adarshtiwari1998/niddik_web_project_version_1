@@ -40,8 +40,8 @@ const Home = () => {
           <Hero />
           <ForBusinesses />
           <ForTechnologists />
-          <FocusScrollSection />
           <TrustedCompanies />
+          <FocusScrollSection />
           <SuccessStories />
           <HowItWorks />
           <FeaturedCaseStudy />
