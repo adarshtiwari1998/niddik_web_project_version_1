@@ -60,16 +60,16 @@
   position: fixed;
   width: calc(50% - 3rem); /* Half width minus padding/gap */
   max-width: 600px;
-  height: 550px;
+  height: 500px; /* Slightly shorter for better visual balance */
   top: 50%; /* Center vertically */
   transform: translateY(-50%); /* Center vertically */
   margin-top: 0; /* No additional offset */
-  z-index: 1;
+  z-index: 10; /* Higher z-index to ensure visibility */
   overflow: hidden;
   border-radius: 0.75rem;
   
   /* Ensure proper display of all images */
-  display: flex;
+  display: flex !important; /* Force display */
   justify-content: center;
   align-items: center;
 }
@@ -94,8 +94,9 @@
   top: auto;
   transform: none;
   margin: 0 0 2rem 0; /* Add bottom spacing when not fixed */
-  height: 550px; /* Same height as fixed state to avoid jumping */
+  height: 500px; /* Same height as fixed state to avoid jumping */
   width: 100%; /* Full width of its container */
+  z-index: 5; /* Higher than content but lower than fixed */
 }
 
 /* When last block is visible OR section is exiting viewport */
@@ -106,35 +107,34 @@
   transform: none !important;
   margin-top: 0;
   margin-bottom: 0;
-  height: 550px; /* Same height as fixed state */
+  height: 500px; /* Same height as fixed state */
   width: 100%; /* Full width of its container */
-  z-index: 0; /* Lower z-index to allow content below to flow normally */
+  z-index: 5; /* Higher than content but lower than fixed */
   opacity: 1 !important; /* Ensure image is visible */
   visibility: visible !important; /* Make sure it's not hidden */
   transition: all 0.3s ease-out; /* Smooth transition from fixed to static position */
+  display: flex !important;
 }
 
-/* Ensure image is always visible in release-fixed state */
-.fixed-image-container.release-fixed .fixed-image {
+/* Fixed image basic styles */
+.fixed-image {
+  position: absolute; 
+  inset: 0;
   opacity: 0;
-  transition: opacity 0.7s ease;
-  /* Always be present in DOM, just hidden */
-  display: block !important;
   visibility: hidden;
+  display: block; /* Always in the DOM */
+  transition: opacity 0.5s ease, transform 0.5s ease, visibility 0.5s ease;
 }
 
-/* Only show the active image */
-.fixed-image-container.release-fixed .fixed-image[data-active="true"] {
+/* Active image is visible */
+.fixed-image[data-active="true"] {
   opacity: 1 !important;
   visibility: visible !important;
-  position: relative !important; /* Make sure it's part of normal flow for 5th block */
-  transform: none !important; /* Reset any transform */
-  top: 0 !important;
-  left: 0 !important;
-  right: 0 !important;
-  bottom: 0 !important;
-  height: 100% !important;
-  width: 100% !important;
+  z-index: 2;
+}
+
+/* Make last block image always available in the DOM even when hidden */
+.fixed-image:last-child {
   display: block !important;
 }
 
