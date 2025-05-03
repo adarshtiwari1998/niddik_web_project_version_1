@@ -105,9 +105,10 @@
   position: relative;
   height: 500px; /* Same height as fixed state */
   width: 100%; /* Full width of its container */
-  bottom: 0; /* Stick to bottom */
-  margin-top: auto; /* Push to bottom of container */
-  margin-bottom: 0; /* No margin below */
+  top: 50%; /* Center vertically */
+  transform: translateY(-50%); /* Ensure perfect centering */
+  bottom: auto; /* Remove bottom alignment */
+  margin: 0 auto; /* Center horizontally */
 }
 
 /* Make sure the image for the last block is visible */
@@ -125,10 +126,10 @@
 }
 
 /* Only apply special styling to the wrapper for block 5 */
-.fixed-image-wrapper.h-full.flex.flex-col.justify-end {
+.fixed-image-wrapper.h-full.flex.flex-col.justify-center {
   display: flex;
   flex-direction: column;
-  justify-content: flex-end;
+  justify-content: center; /* Center vertically */
   height: 100%;
   min-height: 550px; /* Ensure enough height */
 }

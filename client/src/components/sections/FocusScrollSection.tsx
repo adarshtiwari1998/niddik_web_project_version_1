@@ -329,7 +329,7 @@ const FocusScrollSection: React.FC = () => {
           {/* Right column - Image container that becomes fixed or relative based on scroll position */}
           <div className="fixed-image-column hidden lg:block">
             <div 
-              className={`fixed-image-wrapper ${activeBlockId === LAST_BLOCK_ID ? "h-full flex flex-col justify-end" : ""}`}
+              className={`fixed-image-wrapper ${activeBlockId === LAST_BLOCK_ID ? "h-full flex flex-col justify-center" : ""}`}
             >
               <div 
                 ref={imageContainerRef}
@@ -340,11 +340,11 @@ const FocusScrollSection: React.FC = () => {
                     { 
                       position: "relative",
                       top: "auto", 
-                      bottom: "0",
+                      bottom: "auto",
                       transform: "none",
                       width: "100%",
                       transition: "all 0.2s ease-out",
-                      marginTop: "auto" // Push to bottom when at last block
+                      margin: "auto 0" // Center vertically
                     }
                   : // Original styles for blocks 1-4 
                     {
