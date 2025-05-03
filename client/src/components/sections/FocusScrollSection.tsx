@@ -63,35 +63,50 @@ const FocusScrollSection: React.FC = () => {
     // Observer for individual blocks
     const blockObserver = new IntersectionObserver(
       (entries) => {
-        // Sort entries by their position from top to bottom
-        const sortedEntries = [...entries].sort((a, b) => {
-          return a.boundingClientRect.top - b.boundingClientRect.top;
-        });
-        
-        sortedEntries.forEach((entry) => {
-          if (entry.isIntersecting) {
-            const blockId = Number(entry.target.getAttribute("data-block-id"));
-            if (blockId) {
-              // Set the active block ID to match the scroll position
+        // Process entries individually - don't sort them as that can cause unexpected behavior
+        entries.forEach((entry) => {
+          const blockId = Number(entry.target.getAttribute("data-block-id"));
+          
+          if (!blockId) return;
+          
+          // For the last block, we want special handling
+          if (blockId === focusBlocks.length) {
+            // Check if last block is entering the viewport (becoming visible)
+            // We use a lower threshold for the last block to release fixed position earlier
+            const lastBlockThreshold = window.innerHeight * 0.3; // Upper 30% of screen
+            const isLastBlockNearTop = entry.boundingClientRect.top <= lastBlockThreshold;
+            
+            // Set last block visibility based on whether it's near top AND intersecting
+            const isLastVisible = entry.isIntersecting && isLastBlockNearTop;
+            
+            if (isLastVisible) {
+              console.log(`Last block ${blockId} visible - releasing fixed position`);
+              setIsLastBlockVisible(true);
+              // Also ensure this is the active block for image change
               setActiveBlockId(blockId);
-              
-              // Log for debugging
-              console.log(`Block ${blockId} is now active at position ${entry.boundingClientRect.top}`);
-              
-              // Check if this is the last block
-              if (blockId === focusBlocks.length) {
-                setIsLastBlockVisible(true);
-              } else {
-                setIsLastBlockVisible(false);
-              }
+            } else if (!entry.isIntersecting && !isLastBlockNearTop) {
+              // If the last block is no longer in view and scrolled past bottom,
+              // make sure to turn off last block visibility
+              setIsLastBlockVisible(false);
             }
+          } 
+          // For regular blocks
+          else if (entry.isIntersecting) {
+            // Only update active block ID when the block is actually visible
+            setActiveBlockId(blockId);
+            
+            // Log for debugging
+            console.log(`Block ${blockId} is now active at position ${entry.boundingClientRect.top}`);
+            
+            // Ensure last block visibility is turned off for regular blocks
+            setIsLastBlockVisible(false);
           }
         });
       },
       {
         root: null,
-        rootMargin: "-20% 0px -20% 0px", // Adjust these values to control when blocks become active
-        threshold: [0.1, 0.2, 0.3], // Multiple thresholds for better accuracy
+        rootMargin: "-15% 0px -45% 0px", // More sensitive at top for quicker activation
+        threshold: [0.1, 0.2, 0.3, 0.4], // Multiple thresholds for smoother transitions
       }
     );
 
@@ -110,36 +125,60 @@ const FocusScrollSection: React.FC = () => {
       }
     );
     
-    // Observer specifically for the first block reaching top of viewport
+    // More sensitive observer just for determining section entry/exit
+    const sectionEntryExitObserver = new IntersectionObserver(
+      (entries) => {
+        entries.forEach((entry) => {
+          // When section is entering or exiting viewport
+          // This helps with quick transition on scroll up/down
+          if (!entry.isIntersecting) {
+            // Immediately remove fixed positioning when outside view
+            setIsSectionInView(false);
+          }
+        });
+      },
+      {
+        root: null,
+        rootMargin: "-5px 0px", // Near exact edge detection
+        threshold: 0,
+      }
+    );
+    
+    // Observer specifically for the first block
     const firstBlockObserver = new IntersectionObserver(
       (entries) => {
         entries.forEach((entry) => {
           // Check if first block has reached top of viewport
           const { top, height } = entry.boundingClientRect;
-          const topThreshold = window.innerHeight * 0.15; // Top 15% of screen
           
-          // First block is at/near top of viewport when:
-          // Either it's intersecting and near the top OR 
-          // it's already scrolled past (not intersecting and above viewport)
-          const isAtTop = (entry.isIntersecting && top <= topThreshold) || 
-                          (!entry.isIntersecting && top <= topThreshold);
+          // We want to make the image fixed when the first block is in the viewport
+          // and near the top (within the first 30% of the viewport height)
+          const topThreshold = window.innerHeight * 0.3;
           
-          setIsFirstBlockAtTop(isAtTop);
+          // First block in view criteria:
+          // 1. When the block is within the viewport AND near the top of viewport OR
+          // 2. When the block has scrolled past (not intersecting, above viewport)
+          const isFirstBlockInView = 
+            (entry.isIntersecting && top <= topThreshold) || 
+            (!entry.isIntersecting && top <= 0);
+          
+          setIsFirstBlockAtTop(isFirstBlockInView);
           
           // For debugging
-          console.log(`First block - top: ${top}, intersecting: ${entry.isIntersecting}, isAtTop: ${isAtTop}`);
+          console.log(`First block - top: ${top}, intersecting: ${entry.isIntersecting}, isAtTop: ${isFirstBlockInView}`);
         });
       },
       {
         root: null,
-        rootMargin: "-10% 0px 0px 0px", // Target top of viewport 
-        threshold: [0, 0.1, 0.2, 0.3, 0.4, 0.5, 0.6, 0.7, 0.8, 0.9, 1],
+        rootMargin: "-5% 0px -70% 0px", // Trigger when block enters top portion of viewport
+        threshold: [0, 0.1, 0.2, 0.3, 0.4, 0.5], // Multiple thresholds for smoother detection
       }
     );
 
-    // Observe the section
+    // Observe the section with both observers
     if (sectionRef.current) {
       sectionObserver.observe(sectionRef.current);
+      sectionEntryExitObserver.observe(sectionRef.current);
     }
     
     // Observe first block specifically
@@ -155,9 +194,10 @@ const FocusScrollSection: React.FC = () => {
     });
 
     return () => {
-      // Clean up observers
+      // Clean up all section observers
       if (sectionRef.current) {
         sectionObserver.unobserve(sectionRef.current);
+        sectionEntryExitObserver.unobserve(sectionRef.current);
       }
       
       // Clean up first block observer
