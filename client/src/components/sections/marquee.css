@@ -1,6 +1,4 @@
-/* Custom property for content width that will be set via JS */
 .marquee-container {
-  --content-width: 100%;
   overflow: hidden;
   position: relative;
   width: 100%;
@@ -10,30 +8,19 @@
 
 @keyframes marquee {
   0% { transform: translateX(0); }
-  100% { transform: translateX(calc(-1 * var(--content-width))); }
-}
-
-@keyframes marquee2 {
-  0% { transform: translateX(100%); }
-  100% { transform: translateX(calc(-1 * var(--content-width))); }
+  100% { transform: translateX(-50%); }
 }
 
 .marquee-content {
   display: flex;
-  animation-timing-function: linear;
-  animation-iteration-count: infinite;
-  width: max-content; /* Allow content to take its natural width */
-  /* Remove padding to avoid gaps */
+  animation: marquee 15s linear infinite;
+  width: max-content;
 }
 
-.marquee-content-primary {
-  animation-name: marquee;
+.marquee-content > * {
+  flex-shrink: 0;
 }
 
-.marquee-content-secondary {
-  position: absolute;
-  top: 0;
-  left: 0; /* Position the secondary content exactly where the primary one ends */
-  transform: translateX(100%); /* Push it to start after the primary content */
-  animation-name: marquee2;
+.marquee-content-duplicate {
+  display: flex;
 }

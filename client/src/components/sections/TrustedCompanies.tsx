@@ -1,4 +1,4 @@
-import { useEffect, useState, useRef } from "react";
+import React, { useEffect, useState, useRef } from "react";
 import { motion } from "framer-motion";
 import { FaMicrosoft, FaGithub, FaAmazon, FaGoogle, FaApple, FaFacebookF } from "react-icons/fa";
 import Container from "@/components/ui/container";
@@ -18,96 +18,38 @@ const fallbackCompanies = [
 ];
 
 // Component for a smooth marquee animation effect
-const InfiniteMarquee = ({ children, pauseOnHover = true, speed = 30 }: {
+const InfiniteMarquee = ({ children, pauseOnHover = true, speed = 15 }: {
   children: React.ReactNode;
   pauseOnHover?: boolean;
   speed?: number;
 }) => {
   const [isPaused, setIsPaused] = useState(false);
-  const duration = speed; // in seconds
-  const containerRef = useRef<HTMLDivElement>(null);
-  const contentRef = useRef<HTMLDivElement>(null);
-  const [contentWidth, setContentWidth] = useState(0);
-  const [copied, setCopied] = useState(false);
-
-  // Ensure the animation is properly calibrated based on content width
-  useEffect(() => {
-    const updateWidth = () => {
-      if (contentRef.current) {
-        // Get the actual width of the content
-        const newWidth = contentRef.current.scrollWidth;
-        
-        if (newWidth > 0 && newWidth !== contentWidth) {
-          setContentWidth(newWidth);
-          setCopied(true);
-        }
-      }
-    };
-    
-    // Update immediately and then again after a short delay to ensure images are loaded
-    updateWidth();
-    
-    // Create a mutationObserver to detect when images are loaded
-    if (contentRef.current) {
-      const observer = new MutationObserver(updateWidth);
-      observer.observe(contentRef.current, { 
-        childList: true, 
-        subtree: true, 
-        attributes: true,
-        attributeFilter: ['src', 'class'] 
-      });
-      
-      // Check multiple times as images load asynchronously
-      const timers = [
-        setTimeout(updateWidth, 200),
-        setTimeout(updateWidth, 500),
-        setTimeout(updateWidth, 1000)
-      ];
-      
-      // Update on window resize for responsiveness
-      window.addEventListener('resize', updateWidth);
-      
-      // Clean up
-      return () => {
-        observer.disconnect();
-        timers.forEach(clearTimeout);
-        window.removeEventListener('resize', updateWidth);
-      };
-    }
-  }, [children, contentWidth]);
-
+  
   return (
     <div 
-      ref={containerRef}
       className="marquee-container" 
       onMouseEnter={() => pauseOnHover && setIsPaused(true)}
       onMouseLeave={() => setIsPaused(false)}
-      style={{ 
-        // This ensures seamless looping
-        '--content-width': `${contentWidth}px` 
-      } as React.CSSProperties}
     >
       <div 
-        ref={contentRef}
-        className="marquee-content marquee-content-primary"
+        className="marquee-content"
         style={{
           animationPlayState: isPaused ? 'paused' : 'running',
-          animationDuration: `${duration}s`,
+          animationDuration: `${speed}s`,
         }}
       >
+        {/* Original content */}
         {children}
-      </div>
-      {copied && (
-        <div 
-          className="marquee-content marquee-content-secondary"
-          style={{
-            animationPlayState: isPaused ? 'paused' : 'running',
-            animationDuration: `${duration}s`,
-          }}
-        >
-          {children}
+        
+        {/* Duplicate content with unique keys */}
+        <div className="marquee-content-duplicate">
+          {React.Children.toArray(children).map((child, i) => 
+            React.isValidElement(child) && child.props.key ? 
+              React.cloneElement(child, { key: `dup-${child.props.key}` }) : 
+              child
+          )}
         </div>
-      )}
+      </div>
     </div>
   );
 };
