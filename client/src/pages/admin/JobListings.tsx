@@ -48,12 +48,16 @@ import { JobListing } from "@shared/schema";
 import { Link } from "wouter";
 import { Edit, Plus, Search, Trash2 } from "lucide-react";
 import { format } from "date-fns";
+import { useToast } from "@/hooks/use-toast";
+import { queryClient } from "@/lib/queryClient";
 
 export default function JobListings() {
+  const { toast } = useToast();
   const [page, setPage] = useState(1);
   const [search, setSearch] = useState("");
   const [category, setCategory] = useState("all");
   const [status, setStatus] = useState("all");
+  const [jobToDelete, setJobToDelete] = useState<number | null>(null);
 
   // Fetch job listings data
   const { data: jobListingsData, isLoading } = useQuery({
@@ -72,12 +76,14 @@ export default function JobListings() {
   });
 
   // Extract data and pagination info
-  const jobListings = jobListingsData?.data || [];
+  const jobListings: JobListing[] = jobListingsData?.data || [];
   const totalItems = jobListingsData?.meta?.total || 0;
   const totalPages = jobListingsData?.meta?.pages || 1;
 
-  const formatDate = (dateString: string) => {
-    return format(new Date(dateString), "MMM d, yyyy");
+  const formatDate = (dateString: string | Date) => {
+    if (!dateString) return "N/A";
+    const date = typeof dateString === 'string' ? new Date(dateString) : dateString;
+    return format(date, "MMM d, yyyy");
   };
 
   const handleSearchChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -94,6 +100,33 @@ export default function JobListings() {
     setStatus(value);
     setPage(1);
   };
+  
+  // Delete job mutation
+  const deleteMutation = useMutation({
+    mutationFn: async (id: number) => {
+      const response = await fetch(`/api/job-listings/${id}`, {
+        method: 'DELETE',
+      });
+      if (!response.ok) throw new Error('Failed to delete job listing');
+      return response.json();
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['/api/job-listings'] });
+      toast({
+        title: "Job listing deleted",
+        description: "The job listing has been deleted successfully.",
+      });
+      setJobToDelete(null);
+    },
+    onError: (error) => {
+      toast({
+        title: "Error",
+        description: "There was an error deleting the job listing. Please try again.",
+        variant: "destructive",
+      });
+      console.error("Error deleting job listing:", error);
+    }
+  });
 
   return (
     <AdminLayout>
@@ -241,14 +274,50 @@ export default function JobListings() {
                                     <span className="sr-only">Edit</span>
                                   </Button>
                                 </Link>
-                                <Button
-                                  size="icon"
-                                  variant="outline"
-                                  className="text-red-500 hover:text-red-700"
-                                >
-                                  <Trash2 className="h-4 w-4" />
-                                  <span className="sr-only">Delete</span>
-                                </Button>
+                                <AlertDialog>
+                                  <AlertDialogTrigger asChild>
+                                    <Button
+                                      size="icon"
+                                      variant="outline"
+                                      className="text-red-500 hover:text-red-700"
+                                      onClick={() => setJobToDelete(job.id)}
+                                    >
+                                      <Trash2 className="h-4 w-4" />
+                                      <span className="sr-only">Delete</span>
+                                    </Button>
+                                  </AlertDialogTrigger>
+                                  <AlertDialogContent>
+                                    <AlertDialogHeader>
+                                      <AlertDialogTitle>Are you sure?</AlertDialogTitle>
+                                      <AlertDialogDescription>
+                                        This action cannot be undone. This will permanently delete the job listing.
+                                      </AlertDialogDescription>
+                                    </AlertDialogHeader>
+                                    <AlertDialogFooter>
+                                      <AlertDialogCancel onClick={() => setJobToDelete(null)}>
+                                        Cancel
+                                      </AlertDialogCancel>
+                                      <AlertDialogAction
+                                        onClick={() => {
+                                          if (jobToDelete !== null) {
+                                            deleteMutation.mutate(jobToDelete);
+                                          }
+                                        }}
+                                        className="bg-red-600 hover:bg-red-700"
+                                      >
+                                        {deleteMutation.isPending ? (
+                                          <>
+                                            <svg className="animate-spin -ml-1 mr-2 h-4 w-4 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                                              <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
+                                              <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                                            </svg>
+                                            Deleting...
+                                          </>
+                                        ) : "Delete"}
+                                      </AlertDialogAction>
+                                    </AlertDialogFooter>
+                                  </AlertDialogContent>
+                                </AlertDialog>
                               </div>
                             </TableCell>
                           </TableRow>
