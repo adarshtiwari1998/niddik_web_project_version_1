@@ -422,9 +422,9 @@ const ServicesShowcase = () => {
                                   index === 1 ? Blocks : 
                                   index === 2 ? Zap : HeartHandshake;
                       } else if (activeServiceData.id === 3) { // Hybrid RPO
-                        StepIcon = index === 0 ? BarChartBig : 
+                        StepIcon = index === 0 ? BarChart4 : 
                                   index === 1 ? Database : 
-                                  index === 2 ? Network : BarChart4;
+                                  index === 2 ? Network : LineChart;
                       } else {
                         StepIcon = index === 0 ? ClipboardList : 
                                   index === 1 ? Search : 
