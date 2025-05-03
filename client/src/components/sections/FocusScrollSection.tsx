@@ -1,4 +1,4 @@
-import React, { useEffect, useState, useRef } from 'react';
+import React, { useEffect, useLayoutEffect, useState, useRef } from 'react';
 import { motion } from 'framer-motion';
 import Container from '@/components/ui/container';
 import './focus-scroll.css';
@@ -74,14 +74,26 @@ const FocusScrollSection: React.FC = () => {
     });
   };
   
+  // useLayoutEffect runs synchronously after all DOM mutations but before browser paint
+  // This ensures we set the initial active state as early as possible
+  useLayoutEffect(() => {
+    // Set initial active block styles immediately after the DOM is ready
+    updateActiveBlockStyles(activeBlockId);
+    
+    // Attach special styling to the active image
+    focusBlocks.forEach((block) => {
+      const image = document.querySelector(`.fixed-image[data-active="true"] img`);
+      if (image) {
+        (image as HTMLElement).style.transform = 'scale(1)';
+      }
+    });
+  }, [activeBlockId]); // Re-run when activeBlockId changes
+  
   // Use effect to initialize active block to 1 and add extra section detector
   useEffect(() => {
-    // Always start with the first block active and set its styles
+    // Always start with the first block active
+    // No need to set styles here as useLayoutEffect will handle it
     setActiveBlockId(1);
-    // Set initial active block styles after the DOM is ready
-    setTimeout(() => {
-      updateActiveBlockStyles(1);
-    }, 100);
     
     // Add enhanced scroll listener to handle section boundaries - crucial for smooth transition at edges
     const handleScroll = () => {
@@ -215,17 +227,8 @@ const FocusScrollSection: React.FC = () => {
               setIsLastBlockVisible(true);
               setActiveBlockId(LAST_BLOCK_ID); // Show last block image
               
-              // Force each block to update its active state
-              blockRefs.current.forEach(block => {
-                if (block) {
-                  const blockId = Number(block.getAttribute("data-block-id"));
-                  if (blockId === LAST_BLOCK_ID) {
-                    block.setAttribute("data-active", "true");
-                  } else {
-                    block.setAttribute("data-active", "false");
-                  }
-                }
-              });
+              // Use our common function to update active states
+              updateActiveBlockStyles(LAST_BLOCK_ID);
             }
           }
         } else {
@@ -237,21 +240,8 @@ const FocusScrollSection: React.FC = () => {
           if (topVisibleBlock > activeBlockId || topVisibleBlock === 1) {
             setActiveBlockId(topVisibleBlock);
             
-            // Update both the activeBlockId state and DOM attributes/classes
-            blockRefs.current.forEach(block => {
-              if (block) {
-                const blockId = Number(block.getAttribute("data-block-id"));
-                const isActive = blockId === topVisibleBlock;
-                block.setAttribute("data-active", isActive ? "true" : "false");
-                
-                // Manually toggle the 'active' class for more reliable styling
-                if (isActive) {
-                  block.classList.add("active");
-                } else {
-                  block.classList.remove("active");
-                }
-              }
-            });
+            // Use our common function to update active states
+            updateActiveBlockStyles(topVisibleBlock);
             
             console.log(`Block ${topVisibleBlock} is now active (top-most visible)`);
           } else {

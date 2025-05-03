@@ -24,25 +24,26 @@
 .scrollable-block.active,
 .scrollable-block[data-active="true"] {
   background-color: white;
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.08);
+  border-left: 3px solid #3eb489; /* Andela green */
+  transform: translateX(5px);
 }
 
-/* Green vertical indicator for active block */
-.scrollable-block::after {
-  content: '';
-  position: absolute;
-  left: -10px;
-  top: 50%;
-  transform: translateY(-50%) scaleY(0);
-  width: 3px;
-  height: 70%;
-  background-color: #3eb489; /* Andela green */
-  transition: transform 0.3s ease;
+/* Style text inside active blocks */
+.scrollable-block.active h3,
+.scrollable-block[data-active="true"] h3 {
+  color: #3eb489; /* Andela green */
 }
 
-.scrollable-block.active::after,
-.scrollable-block[data-active="true"]::after {
-  transform: translateY(-50%) scaleY(1);
+.scrollable-block.active p,
+.scrollable-block[data-active="true"] p {
+  color: #000000; /* Darker text for better contrast */
+}
+
+/* Smooth transition for all blocks */
+.scrollable-block {
+  border-left: 3px solid transparent;
+  padding-left: calc(2rem - 3px); /* Account for border width in padding */
 }
 
 /* Right column - truly fixed position */
@@ -131,9 +132,17 @@
   display: block !important;
 }
 
-/* Ensure the active image is shown clearly */
+/* Image transitions */
+.fixed-image img {
+  transform: scale(0.98);
+  transition: transform 0.8s ease-out, filter 0.8s ease-out;
+  filter: brightness(0.9);
+}
+
+/* Ensure the active image is shown clearly with animation */
 .fixed-image[data-active="true"] img {
   transform: scale(1) !important;
+  filter: brightness(1) !important;
 }
 
 /* Mobile adjustments */
