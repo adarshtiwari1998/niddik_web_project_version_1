@@ -111,7 +111,7 @@ const Hero = () => {
                 animate={{ opacity: 1, x: 0 }}
                 transition={{ duration: 0.7 }}
               >
-                Adaptive Hiring Lets You Put Every Project on the Front Burner
+                Unlock Global Talent to Accelerate Your Vision
               </motion.h1>
               <motion.p 
                 className="text-lg md:text-xl text-gray-200 mb-8"
@@ -208,7 +208,7 @@ const Hero = () => {
             <Check className="h-6 w-6" />
           </div>
           <div>
-            <p className="font-semibold text-white">Trusted by Fortune 500 & Tech Innovators</p>
+            <p className="font-semibold text-white">Trusted by Industry Leaders</p>
             <p className="text-sm text-gray-200">Global leaders choose NIIDIK expertise</p>
           </div>
         </div>
