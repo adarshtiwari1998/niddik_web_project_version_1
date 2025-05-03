@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useRef } from "react";
 import { motion } from "framer-motion";
 import Container from "@/components/ui/container";
 import "./focus-scroll.css";
@@ -45,63 +45,53 @@ const focusBlocks: FocusBlock[] = [
 
 const FocusScrollSection: React.FC = () => {
   const [activeBlockId, setActiveBlockId] = useState<number>(1);
+  const [isLastBlockVisible, setIsLastBlockVisible] = useState(false);
+  const blockRefs = useRef<(HTMLDivElement | null)[]>([]);
   
-  // Use scroll position to determine which image to show
+  // Set up intersection observer to track which block is in view
   useEffect(() => {
-    const handleScroll = () => {
-      // Get the section element
-      const section = document.getElementById('focus-scroll-section');
-      if (!section) return;
-      
-      // Get the section boundaries
-      const sectionRect = section.getBoundingClientRect();
-      const sectionTop = window.scrollY + sectionRect.top;
-      const sectionHeight = section.offsetHeight;
-      
-      // Current scroll position relative to the section
-      const scrollPosition = window.scrollY - sectionTop;
-      
-      // If we're not yet scrolling through the section
-      if (scrollPosition < 0) {
-        setActiveBlockId(1);
-        return;
+    const observer = new IntersectionObserver(
+      (entries) => {
+        entries.forEach((entry) => {
+          if (entry.isIntersecting) {
+            const blockId = Number(entry.target.getAttribute("data-block-id"));
+            if (blockId) {
+              setActiveBlockId(blockId);
+              // Check if this is the last block
+              if (blockId === focusBlocks.length) {
+                setIsLastBlockVisible(true);
+              } else {
+                setIsLastBlockVisible(false);
+              }
+            }
+          }
+        });
+      },
+      {
+        root: null,
+        rootMargin: "-40% 0px -40% 0px", // Adjust these values to control when blocks become active
+        threshold: 0.25,
       }
-      
-      // If we're past the section
-      if (scrollPosition > sectionHeight) {
-        setActiveBlockId(focusBlocks.length);
-        return;
+    );
+
+    // Observe all block elements
+    blockRefs.current.forEach((block) => {
+      if (block) {
+        observer.observe(block);
       }
-      
-      // Calculate which part of the section we're in
-      // Each block gets an equal portion of the section height
-      const blockHeight = sectionHeight / focusBlocks.length;
-      
-      // Determine the active block based on scroll position
-      const newActiveBlock = Math.min(
-        Math.floor(scrollPosition / blockHeight) + 1,
-        focusBlocks.length
-      );
-      
-      if (newActiveBlock !== activeBlockId) {
-        setActiveBlockId(newActiveBlock);
-      }
-    };
-    
-    // Add scroll listener
-    window.addEventListener('scroll', handleScroll, { passive: true });
-    
-    // Run once to set initial state
-    handleScroll();
-    
-    // Clean up
+    });
+
     return () => {
-      window.removeEventListener('scroll', handleScroll);
+      blockRefs.current.forEach((block) => {
+        if (block) {
+          observer.unobserve(block);
+        }
+      });
     };
-  }, [activeBlockId]);
+  }, []);
   
   return (
-    <section className="py-48 bg-gray-50" id="focus-scroll-section">
+    <section className="py-16 bg-gray-50" id="focus-scroll-section">
       <Container>
         <div className="text-center mb-20">
           <h2 className="text-4xl font-bold text-andela-dark mb-4">
@@ -112,42 +102,41 @@ const FocusScrollSection: React.FC = () => {
           </p>
         </div>
 
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 relative">
-          {/* Left column - Content blocks (fixed) */}
-          <div className="fixed-content-column">
-            {focusBlocks.map((block) => (
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-10 relative">
+          {/* Left column - Content blocks (scrollable) */}
+          <div className="scrollable-blocks-column">
+            {focusBlocks.map((block, index) => (
               <div 
                 key={block.id}
-                className={`fixed-content-block ${
+                ref={(el) => (blockRefs.current[index] = el)}
+                data-block-id={block.id}
+                className={`scrollable-block p-6 md:p-8 rounded-xl mb-12 ${
                   block.id === activeBlockId ? "active" : ""
                 }`}
               >
-                <div className="flex flex-col">
-                  <h3 className="text-2xl font-bold text-andela-dark mb-4">
-                    {block.title}
-                  </h3>
-                  <p className="text-andela-gray leading-relaxed">
-                    {block.description}
-                  </p>
-                </div>
+                <h3 className="text-2xl font-bold text-andela-dark mb-4">
+                  {block.title}
+                </h3>
+                <p className="text-andela-gray leading-relaxed">
+                  {block.description}
+                </p>
               </div>
             ))}
           </div>
 
-          {/* Right column - Sticky image */}
+          {/* Right column - Image that sticks until last block */}
           <div className="hidden lg:block">
-            <div className="fixed-image-container">
+            <div className={`sticky-image-container ${isLastBlockVisible ? "position-relative" : ""}`}>
               {focusBlocks.map((block) => (
                 <motion.div
                   key={block.id}
-                  className={`fixed-image ${
+                  className={`sticky-image ${
                     block.id === activeBlockId ? "opacity-100" : "opacity-0"
                   }`}
                   initial={{ opacity: 0 }}
                   animate={{ 
                     opacity: block.id === activeBlockId ? 1 : 0,
                     scale: block.id === activeBlockId ? 1 : 0.95,
-                    translateY: block.id === activeBlockId ? 0 : 20
                   }}
                   transition={{ duration: 0.7, ease: "easeOut" }}
                 >
@@ -171,7 +160,7 @@ const FocusScrollSection: React.FC = () => {
           </div>
 
           {/* Mobile image - only shown on small screens */}
-          <div className="lg:hidden rounded-xl overflow-hidden">
+          <div className="lg:hidden rounded-xl overflow-hidden mb-8">
             {focusBlocks.map((block) => (
               block.id === activeBlockId && (
                 <motion.div
@@ -200,19 +189,6 @@ const FocusScrollSection: React.FC = () => {
               )
             ))}
           </div>
-        </div>
-        
-        {/* This provides the scrolling space needed */}
-        <div className="scroll-height-provider">
-          {/* Hidden markers for each section to help with scrolling */}
-          {focusBlocks.map((block, index) => (
-            <div 
-              key={block.id} 
-              className="scroll-marker" 
-              style={{ top: `${index * 20}vh` }}
-              data-section={block.id}
-            />
-          ))}
         </div>
       </Container>
     </section>

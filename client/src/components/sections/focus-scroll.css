@@ -2,49 +2,26 @@
 #focus-scroll-section {
   position: relative;
   z-index: 1;
-  min-height: 300vh; /* Makes the section tall enough to scroll through */
-  padding-bottom: 200px;
 }
 
-/* Fixed content column */
-.fixed-content-column {
-  position: sticky;
-  top: 120px;
-  z-index: 10;
+/* Scrollable blocks column and blocks */
+.scrollable-blocks-column {
   display: flex;
   flex-direction: column;
-  align-items: flex-start;
-  justify-content: flex-start;
-  height: fit-content;
-  padding: 2rem 0;
+  gap: 1rem;
 }
 
-/* Fixed content blocks */
-.fixed-content-block {
-  position: absolute;
-  top: 0;
-  left: 0;
-  width: 100%;
-  opacity: 0;
-  transform: translateY(10px);
-  transition: all 0.4s ease;
-  padding: 2rem;
-  border-radius: 0.75rem;
-  visibility: hidden;
-  overflow: hidden;
-  pointer-events: none;
-}
-
-.fixed-content-block.active {
-  opacity: 1;
-  transform: translateY(0);
+.scrollable-block {
   background-color: white;
-  visibility: visible;
-  pointer-events: auto;
+  transition: all 0.3s ease;
   position: relative;
 }
 
-.fixed-content-block::after {
+.scrollable-block.active {
+  background-color: white;
+}
+
+.scrollable-block::after {
   content: '';
   position: absolute;
   left: -10px;
@@ -56,22 +33,28 @@
   transition: transform 0.3s ease;
 }
 
-.fixed-content-block.active::after {
+.scrollable-block.active::after {
   transform: translateY(-50%) scaleY(1);
 }
 
-/* Fixed image container */
-.fixed-image-container {
+/* Sticky image container that becomes relative on last block */
+.sticky-image-container {
   position: sticky;
   top: 120px;
+  height: 550px;
   display: flex;
   align-items: center;
   justify-content: center;
-  height: 550px;
   z-index: 1;
 }
 
-.fixed-image {
+/* When the last block is in view, the container becomes relative */
+.sticky-image-container.position-relative {
+  position: relative;
+  top: auto;
+}
+
+.sticky-image {
   position: absolute;
   inset: 0;
   opacity: 0;
@@ -79,52 +62,18 @@
   overflow: hidden;
   height: 100%;
   width: 100%;
+  border-radius: 0.75rem;
 }
 
-.fixed-image.opacity-100 {
+.sticky-image.opacity-100 {
   opacity: 1;
-}
-
-/* Add space at the bottom to allow scrolling */
-.scroll-height-provider {
-  height: 300vh;
-  pointer-events: none;
-  position: relative;
-}
-
-/* Hidden markers to help with scrolling */
-.scroll-marker {
-  position: absolute;
-  height: 50vh; /* Each marker takes up 50% of viewport height */
-  width: 1px;
-  opacity: 0;
-  pointer-events: none;
-  left: 0;
 }
 
 /* Mobile adjustments */
 @media (max-width: 1023px) {
-  #focus-scroll-section {
-    min-height: auto;
-    padding-bottom: 0;
-  }
-  
-  .fixed-content-column {
+  .sticky-image-container {
     position: relative;
     top: 0;
-    padding: 0;
-  }
-  
-  .fixed-content-block {
-    display: none;
-  }
-  
-  .fixed-content-block.active {
-    display: block;
-    padding: 1rem 0;
-  }
-  
-  .scroll-height-provider {
-    display: none;
+    height: auto;
   }
 }
