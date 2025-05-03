@@ -376,118 +376,67 @@ const ServicesShowcase = () => {
               <div className="mb-6">
                 <h4 className="text-lg font-semibold text-andela-dark mb-4">Our Process</h4>
                 
-                {/* Visual process flow with animated stages */}
-                <div className={`relative p-8 pt-6 pb-6 rounded-lg bg-white/90 backdrop-blur-sm border border-gray-100`}>
-                  
-                  {/* Process flow connection line (positioned above the steps) */}
-                  <div className="relative mx-auto h-4 my-4 z-10 flex items-center justify-center">
-                    {/* Connection line */}
-                    <div className={`h-[3px] absolute left-[10%] right-[10%] ${
-                      activeServiceData.color.includes('purple') ? 'bg-purple-200' : 
-                      activeServiceData.color.includes('blue') ? 'bg-blue-200' : 
-                      activeServiceData.color.includes('green') ? 'bg-green-200' : 
-                      'bg-amber-200'
-                    }`}>
-                      {/* Progress highlight that moves through the steps */}
-                      <motion.div 
-                        key={`progress-line-${activeService}`}
-                        className={`absolute top-0 bottom-0 w-[20%] ${
-                          activeServiceData.color.includes('purple') ? 'bg-purple-500' : 
-                          activeServiceData.color.includes('blue') ? 'bg-blue-500' : 
-                          activeServiceData.color.includes('green') ? 'bg-green-500' : 
-                          'bg-amber-500'
-                        }`}
-                        // Move from step 1 to 4, pausing at each step
-                        animate={{ 
-                          left: ["0%", "0%", "26.6%", "26.6%", "53.3%", "53.3%", "80%", "80%", "0%", "0%"]
-                        }}
-                        transition={{ 
-                          duration: 10,
-                          times: [0, 0.1, 0.2, 0.3, 0.4, 0.5, 0.6, 0.7, 0.8, 1],
-                          repeat: Infinity,
-                          ease: "easeInOut"
-                        }}
-                      />
-                    </div>
+                {/* Visual process flow with animated stages - HORIZONTAL DIRECTION */}
+                <div className={`relative p-8 pt-6 pb-8 rounded-lg bg-white/90 backdrop-blur-sm border border-gray-100`}>
+                  {activeServiceData.processSteps.map((step, index) => {
+                    // Determine icon based on service type and step index
+                    let StepIcon;
+                    if (activeServiceData.id === 1) { // Full RPO
+                      StepIcon = index === 0 ? Search : 
+                                index === 1 ? FileSpreadsheet : 
+                                index === 2 ? UsersRound : UserCheck;
+                    } else if (activeServiceData.id === 2) { // On-Demand
+                      StepIcon = index === 0 ? ZoomIn : 
+                                index === 1 ? Blocks : 
+                                index === 2 ? Zap : HeartHandshake;
+                    } else if (activeServiceData.id === 3) { // Hybrid RPO
+                      StepIcon = index === 0 ? BarChart4 : 
+                                index === 1 ? Database : 
+                                index === 2 ? Network : LineChart;
+                    } else {
+                      StepIcon = index === 0 ? ClipboardList : 
+                                index === 1 ? Search : 
+                                index === 2 ? Briefcase : LineChart;
+                    }
                     
-                    {/* Step markers on the line */}
-                    {[0, 1, 2, 3].map((i) => (
-                      <motion.div
-                        key={`step-marker-${i}`}
-                        className={`absolute h-4 w-4 rounded-full ${
-                          activeServiceData.color.includes('purple') ? 'bg-purple-400' : 
-                          activeServiceData.color.includes('blue') ? 'bg-blue-400' : 
-                          activeServiceData.color.includes('green') ? 'bg-green-400' : 
-                          'bg-amber-400'
-                        } z-20`}
-                        style={{ left: `${10 + i * 26.6}%` }}
-                        // Highlight each marker in sequence 
-                        animate={{ 
-                          scale: [1, 1.5, 1],
-                          boxShadow: [
-                            '0 0 0 0px rgba(255,255,255,0)', 
-                            '0 0 0 4px rgba(255,255,255,0.7)', 
-                            '0 0 0 0px rgba(255,255,255,0)'
-                          ]
-                        }}
-                        transition={{ 
-                          duration: 1.5,
-                          delay: i * 2.5,
-                          repeat: Infinity,
-                          repeatDelay: 8.5
-                        }}
-                      />
-                    ))}
-                  </div>
-                  
-                  {/* Process steps with sequential highlight animation */}
-                  <div className="grid grid-cols-4 gap-6 relative z-20 mt-12 mb-8">
-                    {activeServiceData.processSteps.map((step, index) => {
-                      // Determine icon based on service type and step index
-                      let StepIcon;
-                      if (activeServiceData.id === 1) { // Full RPO
-                        StepIcon = index === 0 ? Search : 
-                                  index === 1 ? FileSpreadsheet : 
-                                  index === 2 ? UsersRound : UserCheck;
-                      } else if (activeServiceData.id === 2) { // On-Demand
-                        StepIcon = index === 0 ? ZoomIn : 
-                                  index === 1 ? Blocks : 
-                                  index === 2 ? Zap : HeartHandshake;
-                      } else if (activeServiceData.id === 3) { // Hybrid RPO
-                        StepIcon = index === 0 ? BarChart4 : 
-                                  index === 1 ? Database : 
-                                  index === 2 ? Network : LineChart;
-                      } else {
-                        StepIcon = index === 0 ? ClipboardList : 
-                                  index === 1 ? Search : 
-                                  index === 2 ? Briefcase : LineChart;
-                      }
-                      
-                      // Calculate delay for sequential highlighting
-                      const sequenceDelay = index * 2.5;
-                      
-                      return (
-                        <motion.div 
-                          key={`${activeService}-step-${index}`}
-                          className="flex flex-col items-center px-1"
-                          initial={{ opacity: 0, y: 20 }}
-                          animate={{ opacity: 1, y: 0 }}
-                          transition={{ delay: index * 0.2 }}
-                        >
-                          {/* Step box with custom icon */}
+                    // Calculate delay for sequential highlighting
+                    const sequenceDelay = index * 2.5;
+                    
+                    return (
+                      <div key={`process-row-${index}`} className={`flex items-center mb-6 ${index < activeServiceData.processSteps.length - 1 ? 'border-b border-gray-100 pb-6' : ''}`}>
+                        <div className="flex-none mr-4">
+                          {/* Step number with large numbering */}
+                          <div className={`w-8 h-8 rounded-full flex items-center justify-center ${
+                              activeServiceData.color.includes('purple') ? 'bg-purple-500' : 
+                              activeServiceData.color.includes('blue') ? 'bg-blue-500' : 
+                              activeServiceData.color.includes('green') ? 'bg-green-500' : 
+                              'bg-amber-500'
+                            } text-white font-bold text-xl`}>
+                            {index + 1}
+                          </div>
+                        </div>
+                        
+                        <div className="flex-grow">
+                          {/* Step title */}
+                          <h5 className="font-semibold text-andela-dark mb-1">{step.title}</h5>
+                          <p className="text-sm text-andela-gray leading-relaxed pr-4">{step.description}</p>
+                        </div>
+                        
+                        <div className="flex-none ml-6">
+                          {/* Icon box */}
                           <motion.div 
-                            className={`w-[4.5rem] h-[4.5rem] rounded-lg flex items-center justify-center bg-white
-                              ${index === 0 ? 'rounded-tl-3xl' : 
-                                index === 1 ? 'rounded-tr-3xl' : 
-                                index === 2 ? 'rounded-bl-3xl' : 'rounded-br-3xl'} 
-                              border-2 mb-5 z-20 relative overflow-hidden
+                            className={`w-16 h-16 rounded-lg flex items-center justify-center bg-white
+                              ${index === 0 ? 'rounded-tl-2xl' : 
+                                index === 1 ? 'rounded-tr-2xl' : 
+                                index === 2 ? 'rounded-bl-2xl' : 'rounded-br-2xl'} 
+                              border-2 relative overflow-hidden
                               ${
                                 activeServiceData.color.includes('purple') ? 'border-purple-400' : 
                                 activeServiceData.color.includes('blue') ? 'border-blue-400' : 
                                 activeServiceData.color.includes('green') ? 'border-green-400' : 
                                 'border-amber-400'
                               }`}
-                            // Sequential highlight animation  
+                            // Sequential highlight animation
                             animate={{ 
                               scale: [1, 1.08, 1],
                               borderWidth: ['2px', '3px', '2px']
@@ -515,30 +464,46 @@ const ServicesShowcase = () => {
                             />
                             
                             {/* Custom icon for each step */}
-                            <div className={`relative z-10 text-xl font-semibold ${
+                            <div className={`relative z-10 ${
                               activeServiceData.color.includes('purple') ? 'text-purple-600' : 
                               activeServiceData.color.includes('blue') ? 'text-blue-600' : 
                               activeServiceData.color.includes('green') ? 'text-green-600' : 
                               'text-amber-600'
                             }`}>
-                              <StepIcon className="h-9 w-9" />
-                            </div>
-                            
-                            {/* Step number indicator */}
-                            <div className={`absolute top-0 right-0 w-6 h-6 rounded-bl-lg flex items-center justify-center
-                              bg-gradient-to-br ${activeServiceData.color} text-white text-xs font-bold`}>
-                              {index + 1}
+                              <StepIcon className="h-8 w-8" />
                             </div>
                           </motion.div>
-                          
-                          {/* Step title and description with more spacing */}
-                          <h5 className="font-medium text-andela-dark text-center mb-3 mt-2">{step.title}</h5>
-                          <div className="h-16">
-                            <p className="text-xs text-andela-gray text-center leading-normal max-w-[130px] mx-auto">{step.description}</p>
-                          </div>
-                        </motion.div>
-                      )
-                    })}
+                        </div>
+                      </div>
+                    );
+                  })}
+                  
+                  {/* Vertical timeline indicator */}
+                  <div className="absolute left-[3.5rem] top-20 bottom-20 w-[2px] z-0">
+                    <div className={`h-full ${
+                      activeServiceData.color.includes('purple') ? 'bg-purple-100' : 
+                      activeServiceData.color.includes('blue') ? 'bg-blue-100' : 
+                      activeServiceData.color.includes('green') ? 'bg-green-100' : 
+                      'bg-amber-100'
+                    }`}>
+                      {/* Animated progress indicator */}
+                      <motion.div 
+                        className={`w-full ${
+                          activeServiceData.color.includes('purple') ? 'bg-purple-500' : 
+                          activeServiceData.color.includes('blue') ? 'bg-blue-500' : 
+                          activeServiceData.color.includes('green') ? 'bg-green-500' : 
+                          'bg-amber-500'
+                        }`}
+                        animate={{ 
+                          height: ["0%", "33%", "33%", "66%", "66%", "100%", "100%", "0%"]
+                        }}
+                        transition={{ 
+                          duration: 10,
+                          repeat: Infinity,
+                          ease: "easeInOut"
+                        }}
+                      />
+                    </div>
                   </div>
                 </div>
               </div>
