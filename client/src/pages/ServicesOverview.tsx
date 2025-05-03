@@ -205,22 +205,48 @@ const ServicesOverview = () => {
                     <motion.div
                       key={service.id}
                       variants={itemVariants}
-                      className="bg-white rounded-2xl shadow-xl overflow-hidden group transition-all duration-500 hover:-translate-y-2 hover:shadow-2xl"
+                      className="bg-white rounded-xl shadow-md p-0 relative group hover:shadow-xl transition-all duration-500 hover:-translate-y-2 overflow-hidden"
                       style={{ 
                         transformStyle: 'preserve-3d',
                         perspective: '1000px'
                       }}
                     >
-                      {/* Subtle geometric pattern for each service card - LIGHTER AND SMALLER */}
-                      <div className="absolute bottom-0 right-0 w-1/2 h-1/2 overflow-hidden opacity-15 group-hover:opacity-25 transition-opacity duration-500 pointer-events-none">
+                      {/* Subtle geometric pattern for each service card - TINY GROUPED SHAPES */}
+                      <div className="absolute inset-0 pointer-events-none z-0 opacity-5 group-hover:opacity-10 transition-opacity duration-500">
                         {index === 0 && (
-                          <svg width="100%" height="100%" viewBox="0 0 400 400" fill="none" xmlns="http://www.w3.org/2000/svg">
-                            <path d="M50 0L100 86.6025L50 173.205L-50 173.205L-100 86.6025L-50 0L50 0Z" stroke="url(#service-grad-1)" strokeWidth="1.5" transform="translate(200 50)"/>
-                            <path d="M150 0L200 86.6025L150 173.205L50 173.205L0 86.6025L50 0L150 0Z" stroke="url(#service-grad-1)" strokeWidth="1.5" transform="translate(200 50)"/>
-                            <path d="M50 173.205L100 259.808L50 346.41L-50 346.41L-100 259.808L-50 173.205L50 173.205Z" stroke="url(#service-grad-1)" strokeWidth="1.5" transform="translate(200 50)"/>
-                            <path d="M150 173.205L200 259.808L150 346.41L50 346.41L0 259.808L50 173.205L150 173.205Z" stroke="url(#service-grad-1)" strokeWidth="1.5" transform="translate(200 50)"/>
+                          <svg width="100%" height="100%" viewBox="0 0 200 200" fill="none" xmlns="http://www.w3.org/2000/svg">
+                            {/* Group 1 - Small clustered hexagons */}
+                            <g transform="translate(140, 130) scale(0.3)">
+                              <path d="M0 10L8.7 5L8.7 -5L0 -10L-8.7 -5L-8.7 5L0 10Z" stroke="url(#service-grad-1)" strokeWidth="0.8" />
+                              <path d="M0 25L8.7 20L8.7 10L0 5L-8.7 10L-8.7 20L0 25Z" stroke="url(#service-grad-1)" strokeWidth="0.8" />
+                              <path d="M17.3 17.5L26 12.5L26 2.5L17.3 -2.5L8.6 2.5L8.6 12.5L17.3 17.5Z" stroke="url(#service-grad-1)" strokeWidth="0.8" />
+                              <line x1="3" y1="4" x2="14" y2="17" stroke="url(#service-grad-1)" strokeWidth="0.8"/>
+                            </g>
+                            
+                            {/* Group 2 - Scattered tiny hexes */}
+                            <g transform="translate(40, 150) scale(0.2)">
+                              <path d="M0 10L8.7 5L8.7 -5L0 -10L-8.7 -5L-8.7 5L0 10Z" stroke="url(#service-grad-1)" strokeWidth="0.8" />
+                              <path d="M25 10L33.7 5L33.7 -5L25 -10L16.3 -5L16.3 5L25 10Z" stroke="url(#service-grad-1)" strokeWidth="0.8" />
+                              <path d="M50 10L58.7 5L58.7 -5L50 -10L41.3 -5L41.3 5L50 10Z" stroke="url(#service-grad-1)" strokeWidth="0.8" />
+                              <path d="M12.5 30L21.2 25L21.2 15L12.5 10L3.8 15L3.8 25L12.5 30Z" stroke="url(#service-grad-1)" strokeWidth="0.8" />
+                              <path d="M37.5 30L46.2 25L46.2 15L37.5 10L28.8 15L28.8 25L37.5 30Z" stroke="url(#service-grad-1)" strokeWidth="0.8" />
+                            </g>
+                            
+                            {/* Group 3 - Dotted outline */}
+                            <g transform="translate(170, 30) scale(0.2)">
+                              <circle cx="0" cy="0" r="3" fill="url(#service-grad-1)" fillOpacity="0.4" />
+                              <circle cx="20" cy="0" r="3" fill="url(#service-grad-1)" fillOpacity="0.4" />
+                              <circle cx="40" cy="0" r="3" fill="url(#service-grad-1)" fillOpacity="0.4" />
+                              <circle cx="0" cy="20" r="3" fill="url(#service-grad-1)" fillOpacity="0.4" />
+                              <circle cx="20" cy="20" r="3" fill="url(#service-grad-1)" fillOpacity="0.4" />
+                              <circle cx="40" cy="20" r="3" fill="url(#service-grad-1)" fillOpacity="0.4" />
+                              <circle cx="0" cy="40" r="3" fill="url(#service-grad-1)" fillOpacity="0.4" />
+                              <circle cx="20" cy="40" r="3" fill="url(#service-grad-1)" fillOpacity="0.4" />
+                              <circle cx="40" cy="40" r="3" fill="url(#service-grad-1)" fillOpacity="0.4" />
+                            </g>
+                            
                             <defs>
-                              <linearGradient id="service-grad-1" x1="0" y1="0" x2="200" y2="400" gradientUnits="userSpaceOnUse">
+                              <linearGradient id="service-grad-1" x1="0" y1="0" x2="160" y2="160" gradientUnits="userSpaceOnUse">
                                 <stop stopColor="#818CF8"/>
                                 <stop offset="1" stopColor="#4F46E5"/>
                               </linearGradient>
@@ -228,17 +254,46 @@ const ServicesOverview = () => {
                           </svg>
                         )}
                         {index === 1 && (
-                          <svg width="100%" height="100%" viewBox="0 0 400 400" fill="none" xmlns="http://www.w3.org/2000/svg">
-                            <rect x="50" y="50" width="100" height="100" rx="20" stroke="url(#service-grad-2)" strokeWidth="1.5"/>
-                            <rect x="250" y="50" width="100" height="100" rx="20" stroke="url(#service-grad-2)" strokeWidth="1.5"/>
-                            <rect x="50" y="250" width="100" height="100" rx="20" stroke="url(#service-grad-2)" strokeWidth="1.5"/>
-                            <rect x="250" y="250" width="100" height="100" rx="20" stroke="url(#service-grad-2)" strokeWidth="1.5"/>
-                            <path d="M150 150L250 150" stroke="url(#service-grad-2)" strokeWidth="1.5"/>
-                            <path d="M150 250L150 150" stroke="url(#service-grad-2)" strokeWidth="1.5"/>
-                            <path d="M250 250L250 150" stroke="url(#service-grad-2)" strokeWidth="1.5"/>
-                            <path d="M150 250L250 250" stroke="url(#service-grad-2)" strokeWidth="1.5"/>
+                          <svg width="100%" height="100%" viewBox="0 0 200 200" fill="none" xmlns="http://www.w3.org/2000/svg">
+                            {/* Group 1 - Connected small squares */}
+                            <g transform="translate(150, 120) scale(0.3)">
+                              <rect x="0" y="0" width="15" height="15" rx="2" stroke="url(#service-grad-2)" strokeWidth="0.8"/>
+                              <rect x="20" y="0" width="15" height="15" rx="2" stroke="url(#service-grad-2)" strokeWidth="0.8"/>
+                              <rect x="0" y="20" width="15" height="15" rx="2" stroke="url(#service-grad-2)" strokeWidth="0.8"/>
+                              <rect x="20" y="20" width="15" height="15" rx="2" stroke="url(#service-grad-2)" strokeWidth="0.8"/>
+                              <line x1="15" y1="7.5" x2="20" y2="7.5" stroke="url(#service-grad-2)" strokeWidth="0.8"/>
+                              <line x1="7.5" y1="15" x2="7.5" y2="20" stroke="url(#service-grad-2)" strokeWidth="0.8"/>
+                              <line x1="27.5" y1="15" x2="27.5" y2="20" stroke="url(#service-grad-2)" strokeWidth="0.8"/>
+                            </g>
+                            
+                            {/* Group 2 - Grid of mini squares */}
+                            <g transform="translate(50, 150) scale(0.2)">
+                              <rect x="0" y="0" width="10" height="10" rx="1" stroke="url(#service-grad-2)" strokeWidth="0.8"/>
+                              <rect x="15" y="0" width="10" height="10" rx="1" stroke="url(#service-grad-2)" strokeWidth="0.8"/>
+                              <rect x="30" y="0" width="10" height="10" rx="1" stroke="url(#service-grad-2)" strokeWidth="0.8"/>
+                              <rect x="45" y="0" width="10" height="10" rx="1" stroke="url(#service-grad-2)" strokeWidth="0.8"/>
+                              <rect x="0" y="15" width="10" height="10" rx="1" stroke="url(#service-grad-2)" strokeWidth="0.8"/>
+                              <rect x="15" y="15" width="10" height="10" rx="1" stroke="url(#service-grad-2)" strokeWidth="0.8"/>
+                              <rect x="30" y="15" width="10" height="10" rx="1" stroke="url(#service-grad-2)" strokeWidth="0.8"/>
+                              <rect x="45" y="15" width="10" height="10" rx="1" stroke="url(#service-grad-2)" strokeWidth="0.8"/>
+                              <rect x="0" y="30" width="10" height="10" rx="1" stroke="url(#service-grad-2)" strokeWidth="0.8"/>
+                              <rect x="15" y="30" width="10" height="10" rx="1" stroke="url(#service-grad-2)" strokeWidth="0.8"/>
+                              <rect x="30" y="30" width="10" height="10" rx="1" stroke="url(#service-grad-2)" strokeWidth="0.8"/>
+                              <rect x="45" y="30" width="10" height="10" rx="1" stroke="url(#service-grad-2)" strokeWidth="0.8"/>
+                            </g>
+                            
+                            {/* Group 3 - Small scattered squares */}
+                            <g transform="translate(30, 40) scale(0.2)">
+                              <rect x="0" y="0" width="8" height="8" fill="url(#service-grad-2)" fillOpacity="0.4"/>
+                              <rect x="20" y="5" width="8" height="8" fill="url(#service-grad-2)" fillOpacity="0.4"/>
+                              <rect x="40" y="10" width="8" height="8" fill="url(#service-grad-2)" fillOpacity="0.4"/>
+                              <rect x="5" y="20" width="8" height="8" fill="url(#service-grad-2)" fillOpacity="0.4"/>
+                              <rect x="25" y="25" width="8" height="8" fill="url(#service-grad-2)" fillOpacity="0.4"/>
+                              <rect x="45" y="30" width="8" height="8" fill="url(#service-grad-2)" fillOpacity="0.4"/>
+                            </g>
+                            
                             <defs>
-                              <linearGradient id="service-grad-2" x1="50" y1="50" x2="350" y2="350" gradientUnits="userSpaceOnUse">
+                              <linearGradient id="service-grad-2" x1="10" y1="10" x2="130" y2="130" gradientUnits="userSpaceOnUse">
                                 <stop stopColor="#60A5FA"/>
                                 <stop offset="1" stopColor="#2563EB"/>
                               </linearGradient>
@@ -246,14 +301,40 @@ const ServicesOverview = () => {
                           </svg>
                         )}
                         {index === 2 && (
-                          <svg width="100%" height="100%" viewBox="0 0 400 400" fill="none" xmlns="http://www.w3.org/2000/svg">
-                            <circle cx="200" cy="200" r="150" stroke="url(#service-grad-3)" strokeWidth="1.5"/>
-                            <path d="M200 50L200 350" stroke="url(#service-grad-3)" strokeWidth="1.5"/>
-                            <path d="M50 200L350 200" stroke="url(#service-grad-3)" strokeWidth="1.5"/>
-                            <path d="M84.3146 84.3146L315.685 315.685" stroke="url(#service-grad-3)" strokeWidth="1.5"/>
-                            <path d="M315.685 84.3146L84.3146 315.685" stroke="url(#service-grad-3)" strokeWidth="1.5"/>
+                          <svg width="100%" height="100%" viewBox="0 0 200 200" fill="none" xmlns="http://www.w3.org/2000/svg">
+                            {/* Group 1 - Connected circles */}
+                            <g transform="translate(150, 130) scale(0.3)">
+                              <circle cx="0" cy="0" r="10" stroke="url(#service-grad-3)" strokeWidth="0.8"/>
+                              <circle cx="30" cy="0" r="10" stroke="url(#service-grad-3)" strokeWidth="0.8"/>
+                              <circle cx="15" cy="26" r="10" stroke="url(#service-grad-3)" strokeWidth="0.8"/>
+                              <line x1="8.5" y1="5" x2="21.5" y2="5" stroke="url(#service-grad-3)" strokeWidth="0.8"/>
+                              <line x1="28.5" y1="8" x2="22.5" y2="18" stroke="url(#service-grad-3)" strokeWidth="0.8"/>
+                              <line x1="7.5" y1="8" x2="10.5" y2="18" stroke="url(#service-grad-3)" strokeWidth="0.8"/>
+                            </g>
+                            
+                            {/* Group 2 - Scattered mini circles */}
+                            <g transform="translate(40, 150) scale(0.25)">
+                              <circle cx="0" cy="0" r="6" fill="url(#service-grad-3)" fillOpacity="0.4"/>
+                              <circle cx="20" cy="5" r="6" fill="url(#service-grad-3)" fillOpacity="0.4"/>
+                              <circle cx="40" cy="0" r="6" fill="url(#service-grad-3)" fillOpacity="0.4"/>
+                              <circle cx="10" cy="25" r="6" fill="url(#service-grad-3)" fillOpacity="0.4"/>
+                              <circle cx="30" cy="30" r="6" fill="url(#service-grad-3)" fillOpacity="0.4"/>
+                              <circle cx="50" cy="25" r="6" fill="url(#service-grad-3)" fillOpacity="0.4"/>
+                              <circle cx="20" cy="50" r="6" fill="url(#service-grad-3)" fillOpacity="0.4"/>
+                              <circle cx="40" cy="55" r="6" fill="url(#service-grad-3)" fillOpacity="0.4"/>
+                              <circle cx="60" cy="50" r="6" fill="url(#service-grad-3)" fillOpacity="0.4"/>
+                            </g>
+                            
+                            {/* Group 3 - Mini orbit pattern */}
+                            <g transform="translate(40, 50) scale(0.2)">
+                              <circle cx="25" cy="25" r="5" stroke="url(#service-grad-3)" strokeWidth="0.8"/>
+                              <ellipse cx="25" cy="25" rx="15" ry="8" stroke="url(#service-grad-3)" strokeWidth="0.8" transform="rotate(0 25 25)"/>
+                              <ellipse cx="25" cy="25" rx="15" ry="8" stroke="url(#service-grad-3)" strokeWidth="0.8" transform="rotate(60 25 25)"/>
+                              <ellipse cx="25" cy="25" rx="15" ry="8" stroke="url(#service-grad-3)" strokeWidth="0.8" transform="rotate(120 25 25)"/>
+                            </g>
+                            
                             <defs>
-                              <linearGradient id="service-grad-3" x1="50" y1="50" x2="350" y2="350" gradientUnits="userSpaceOnUse">
+                              <linearGradient id="service-grad-3" x1="20" y1="20" x2="140" y2="140" gradientUnits="userSpaceOnUse">
                                 <stop stopColor="#34D399"/>
                                 <stop offset="1" stopColor="#059669"/>
                               </linearGradient>
@@ -261,13 +342,39 @@ const ServicesOverview = () => {
                           </svg>
                         )}
                         {index === 3 && (
-                          <svg width="100%" height="100%" viewBox="0 0 400 400" fill="none" xmlns="http://www.w3.org/2000/svg">
-                            <path d="M100 50L300 50L350 200L300 350L100 350L50 200L100 50Z" stroke="url(#service-grad-4)" strokeWidth="1.5"/>
-                            <path d="M150 100L250 100L300 200L250 300L150 300L100 200L150 100Z" stroke="url(#service-grad-4)" strokeWidth="1.5"/>
-                            <path d="M200 150L200 250" stroke="url(#service-grad-4)" strokeWidth="1.5"/>
-                            <path d="M150 200L250 200" stroke="url(#service-grad-4)" strokeWidth="1.5"/>
+                          <svg width="100%" height="100%" viewBox="0 0 200 200" fill="none" xmlns="http://www.w3.org/2000/svg">
+                            {/* Group 1 - Clustered mini triangles */}
+                            <g transform="translate(140, 140) scale(0.3)">
+                              <path d="M0 0L15 26L-15 26L0 0Z" stroke="url(#service-grad-4)" strokeWidth="0.8"/>
+                              <path d="M30 0L45 26L15 26L30 0Z" stroke="url(#service-grad-4)" strokeWidth="0.8"/>
+                              <path d="M15 30L30 56L0 56L15 30Z" stroke="url(#service-grad-4)" strokeWidth="0.8"/>
+                              <path d="M45 30L60 56L30 56L45 30Z" stroke="url(#service-grad-4)" strokeWidth="0.8"/>
+                              <circle cx="22.5" cy="28" r="2" fill="url(#service-grad-4)" fillOpacity="0.5"/>
+                            </g>
+                            
+                            {/* Group 2 - Scattered small triangles */}
+                            <g transform="translate(30, 150) scale(0.2)">
+                              <path d="M0 0L10 17.3L-10 17.3L0 0Z" fill="url(#service-grad-4)" fillOpacity="0.4"/>
+                              <path d="M30 10L40 27.3L20 27.3L30 10Z" fill="url(#service-grad-4)" fillOpacity="0.4"/>
+                              <path d="M60 0L70 17.3L50 17.3L60 0Z" fill="url(#service-grad-4)" fillOpacity="0.4"/>
+                              <path d="M15 30L25 47.3L5 47.3L15 30Z" fill="url(#service-grad-4)" fillOpacity="0.4"/>
+                              <path d="M45 40L55 57.3L35 57.3L45 40Z" fill="url(#service-grad-4)" fillOpacity="0.4"/>
+                              <path d="M75 30L85 47.3L65 47.3L75 30Z" fill="url(#service-grad-4)" fillOpacity="0.4"/>
+                            </g>
+                            
+                            {/* Group 3 - Connected triangles */}
+                            <g transform="translate(40, 50) scale(0.2)">
+                              <path d="M0 0L12 20.8L-12 20.8L0 0Z" stroke="url(#service-grad-4)" strokeWidth="0.8"/>
+                              <path d="M24 0L36 20.8L12 20.8L24 0Z" stroke="url(#service-grad-4)" strokeWidth="0.8"/>
+                              <path d="M12 24L24 44.8L0 44.8L12 24Z" stroke="url(#service-grad-4)" strokeWidth="0.8"/>
+                              <path d="M36 24L48 44.8L24 44.8L36 24Z" stroke="url(#service-grad-4)" strokeWidth="0.8"/>
+                              <line x1="12" y1="20.8" x2="24" y2="20.8" stroke="url(#service-grad-4)" strokeWidth="0.8"/>
+                              <line x1="12" y1="20.8" x2="12" y2="24" stroke="url(#service-grad-4)" strokeWidth="0.8"/>
+                              <line x1="24" y1="20.8" x2="24" y2="24" stroke="url(#service-grad-4)" strokeWidth="0.8"/>
+                            </g>
+                            
                             <defs>
-                              <linearGradient id="service-grad-4" x1="50" y1="50" x2="350" y2="350" gradientUnits="userSpaceOnUse">
+                              <linearGradient id="service-grad-4" x1="20" y1="20" x2="140" y2="140" gradientUnits="userSpaceOnUse">
                                 <stop stopColor="#FBBF24"/>
                                 <stop offset="1" stopColor="#D97706"/>
                               </linearGradient>
@@ -278,7 +385,7 @@ const ServicesOverview = () => {
                       
                       {/* Service content with integrated light background icon */}
                       <div className="p-8">
-                        <div className={`w-16 h-16 rounded-lg mb-6 flex items-center justify-center bg-gradient-to-br from-gray-50 to-white shadow-md group-hover:shadow-lg transition-all duration-300 border border-gray-100`}>
+                        <div className={`w-16 h-16 rounded-lg mb-6 flex items-center justify-center bg-gradient-to-br from-gray-50 to-white shadow-sm group-hover:shadow-md transition-all duration-300 border border-gray-100`}>
                           <div className={`w-10 h-10 rounded-md flex items-center justify-center bg-gradient-to-r ${service.color}`}>
                             {React.cloneElement(service.icon as React.ReactElement, { className: 'h-5 w-5 text-white' })}
                           </div>
