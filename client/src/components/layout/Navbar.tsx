@@ -60,10 +60,8 @@ const Navbar = () => {
         <div className="flex justify-between items-center py-4">
           {/* Logo */}
           <div className="flex-shrink-0">
-            <Link href="/">
-              <a className="block">
-                <Logo className="h-10" />
-              </a>
+            <Link href="/" className="block">
+              <Logo className="h-10" />
             </Link>
           </div>
 
@@ -78,19 +76,15 @@ const Navbar = () => {
                   </button>
                   <div className="absolute left-0 mt-2 w-64 rounded-lg shadow-xl bg-white p-6 opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-300 transform origin-top-left">
                     {item.dropdown.map((dropdownItem, idx) => (
-                      <Link key={idx} href={dropdownItem.href}>
-                        <a className="block py-2 hover:text-andela-green transition-colors">
-                          {dropdownItem.label}
-                        </a>
+                      <Link key={idx} href={dropdownItem.href} className="block py-2 hover:text-andela-green transition-colors">
+                        {dropdownItem.label}
                       </Link>
                     ))}
                   </div>
                 </div>
               ) : (
-                <Link key={index} href={item.href || "#"}>
-                  <a className="text-andela-dark hover:text-andela-green font-medium transition-colors">
-                    {item.label}
-                  </a>
+                <Link key={index} href={item.href || "#"} className="text-andela-dark hover:text-andela-green font-medium transition-colors">
+                  {item.label}
                 </Link>
               )
             ))}
@@ -98,20 +92,14 @@ const Navbar = () => {
 
           {/* CTA Buttons */}
           <div className="hidden lg:flex items-center space-x-4">
-            <Link href="#">
-              <a className="hover:text-andela-green font-medium transition-colors">
-                Sign In
-              </a>
+            <Link href="#" className="hover:text-andela-green font-medium transition-colors">
+              Sign In
             </Link>
-            <Link href="#">
-              <a className="bg-andela-green hover:bg-opacity-90 transition-colors text-white px-6 py-2 rounded-md font-medium">
-                Hire Talent
-              </a>
+            <Link href="#" className="bg-andela-green hover:bg-opacity-90 transition-colors text-white px-6 py-2 rounded-md font-medium">
+              Hire Talent
             </Link>
-            <Link href="#">
-              <a className="border border-andela-green text-andela-green hover:bg-andela-green hover:text-white transition-colors px-6 py-2 rounded-md font-medium">
-                Apply as Talent
-              </a>
+            <Link href="#" className="border border-andela-green text-andela-green hover:bg-andela-green hover:text-white transition-colors px-6 py-2 rounded-md font-medium">
+              Apply as Talent
             </Link>
           </div>
 
@@ -149,26 +137,22 @@ const Navbar = () => {
                   <ChevronDown className="w-4 h-4" />
                 </button>
               ) : (
-                <Link href={item.href || "#"}>
-                  <a className="font-medium">{item.label}</a>
+                <Link href={item.href || "#"} className="font-medium">
+                  {item.label}
                 </Link>
               )}
             </div>
           ))}
 
           <div className="pt-4 flex flex-col space-y-3">
-            <Link href="#">
-              <a className="font-medium">Sign In</a>
+            <Link href="#" className="font-medium">
+              Sign In
             </Link>
-            <Link href="#">
-              <a className="bg-andela-green text-white px-4 py-2 rounded-md font-medium text-center">
-                Hire Talent
-              </a>
+            <Link href="#" className="bg-andela-green text-white px-4 py-2 rounded-md font-medium text-center">
+              Hire Talent
             </Link>
-            <Link href="#">
-              <a className="border border-andela-green text-andela-green px-4 py-2 rounded-md font-medium text-center">
-                Apply as Talent
-              </a>
+            <Link href="#" className="border border-andela-green text-andela-green px-4 py-2 rounded-md font-medium text-center">
+              Apply as Talent
             </Link>
           </div>
         </nav>
