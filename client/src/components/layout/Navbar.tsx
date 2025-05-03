@@ -80,9 +80,9 @@ const Navbar: React.FC<NavbarProps> = ({ hasAnnouncementAbove = true }) => {
         <div className="flex justify-between items-center py-4">
           {/* Logo */}
           <div className="flex-shrink-0">
-            <a href="/" className="block">
+            <Link href="/" className="block">
               <Logo className="h-10" />
-            </a>
+            </Link>
           </div>
 
           {/* Desktop Navigation */}
@@ -148,7 +148,9 @@ const Navbar: React.FC<NavbarProps> = ({ hasAnnouncementAbove = true }) => {
         isMobileMenuOpen && "open"
       )}>
         <div className="flex justify-between items-center mb-8">
-          <Logo className="h-8" />
+          <Link href="/" onClick={() => setIsMobileMenuOpen(false)}>
+            <Logo className="h-8" />
+          </Link>
           <button 
             className="text-andela-dark"
             onClick={() => setIsMobileMenuOpen(false)}
