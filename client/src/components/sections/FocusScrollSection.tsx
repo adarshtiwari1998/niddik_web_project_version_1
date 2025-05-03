@@ -49,6 +49,7 @@ const FocusScrollSection: React.FC = () => {
   const sectionRef = useRef<HTMLElement>(null);
   const blockRefs = useRef<(HTMLDivElement | null)[]>([]);
   const imageContainerRef = useRef<HTMLDivElement>(null);
+  const isJustChanged = useRef<boolean>(false); // Track recent changes
   
   // Last block ID to determine when we've reached the end
   const LAST_BLOCK_ID = focusBlocks.length;
@@ -96,6 +97,10 @@ const FocusScrollSection: React.FC = () => {
   
   // Handle scroll events
   useEffect(() => {
+    // Define local state for timing control
+    let lastTransitionTimestamp = 0;
+    const minTimeInBlock = 800; // Minimum time to stay in a block (in ms)
+    
     const handleScroll = () => {
       if (!sectionRef.current) return;
       
@@ -116,93 +121,91 @@ const FocusScrollSection: React.FC = () => {
         
       setIsFixedMode(shouldBeFixedMode);
       
-      // Use a much smaller threshold to make blocks active when fully visible
-      // This is the percentage from the top of the viewport
-      const threshold = windowHeight * 0.15; // Only 15% from the top
-      
-      // First, check if we're at the end of the section to show last block
+      // Check if we've reached the end of the section
       if (sectionBottom <= windowHeight + 100) {
         updateActiveState(LAST_BLOCK_ID);
         return;
       }
       
-      // Process ALL blocks to find the one that should be active
-      // We'll track blocks in view and prioritize by ID to ensure sequential activation
-      const visibleBlocks: {id: number, top: number}[] = [];
+      // Collect all blocks that are currently visible
+      const visibleBlocks: number[] = [];
       
+      // Threshold for detecting when a block should be active (as % of viewport height)
+      const blockActiveThreshold = windowHeight * 0.3;
+      
+      // Check which blocks are currently visible in the viewport
       blockRefs.current.forEach(block => {
         if (!block) return;
         
         const rect = block.getBoundingClientRect();
         const blockId = Number(block.getAttribute('data-block-id'));
         
-        // A block is considered "fully visible" when:
-        // 1. Its top is visible or just scrolled past by a bit (not too far)
-        // 2. Most of its content is still in the viewport
-        const isBlockFullyVisible = 
-          // Top edge is near the viewport's top (whether just above or below)
-          (rect.top <= threshold && rect.top >= -rect.height * 0.3) && 
-          // And most of the block is still visible in the viewport
-          (rect.bottom > rect.height * 0.3);
-        
-        // Special handling for blocks 3+ to ensure they get activated properly
-        // Make block detection more sensitive for blocks 3 and 4
-        const specialThreshold = blockId === 4 ? windowHeight * 0.4 : windowHeight * 0.2;
-        
-        if (isBlockFullyVisible || 
-            // Expanded detection for block 4 specifically
-            (blockId === 4 && rect.top <= specialThreshold && rect.bottom > 0) ||
-            // General detection for other blocks
-            (blockId >= 3 && rect.top <= windowHeight * 0.2 && rect.top >= -rect.height * 0.5)) {
-          
-          // Debug output for block 4
-          if (blockId === 4) {
-            console.log("Block 4 rect:", { 
-              top: rect.top, 
-              bottom: rect.bottom,
-              height: rect.height,
-              isVisible: rect.top <= specialThreshold && rect.bottom > 0
-            });
-          }
-          
-          visibleBlocks.push({
-            id: blockId,
-            top: rect.top
-          });
+        // Block is active when:
+        // 1. Top part is in the upper portion of the viewport
+        // 2. Most of the block is still visible
+        if (rect.top <= blockActiveThreshold && 
+            rect.top >= -rect.height * 0.4 && 
+            rect.bottom > rect.height * 0.6) {
+          visibleBlocks.push(blockId);
         }
       });
       
-      // Sort blocks by ID to ensure sequential activation (3 before 4 before 5)
-      // This prevents skipping blocks in the sequence
-      visibleBlocks.sort((a, b) => a.id - b.id);
-      
-      // Force sequential activation
-      // If we are on block 3 and block 5 is visible but 4 is not
-      if (activeBlockId === 3) {
-        const hasBlock4 = visibleBlocks.some(block => block.id === 4);
-        const hasBlock5 = visibleBlocks.some(block => block.id === 5);
-        
-        if (!hasBlock4 && hasBlock5) {
-          // Force activation of block 4 next
-          console.log("Forcing block 4 activation");
-          updateActiveState(4);
-          return; // Skip the rest of the logic
-        }
+      // If no blocks are visible, keep current state
+      if (visibleBlocks.length === 0) {
+        return;
       }
       
-      // Use the highest ID from visible blocks to ensure we don't skip any
-      if (visibleBlocks.length > 0) {
-        // Get the highest (last) block ID from sorted array
-        const highestBlockId = visibleBlocks[visibleBlocks.length - 1].id;
+      // Skip transitions if we just changed blocks (for timing consistency)
+      const now = Date.now();
+      if (now - lastTransitionTimestamp < minTimeInBlock) {
+        return;
+      }
+      
+      // Common case - a normal block is active
+      if (visibleBlocks.includes(activeBlockId)) {
+        // Current block is still visible, no need to change
+        return;
+      }
+      
+      // Special case for block 4 - always ensure it shows up
+      if (activeBlockId === 3 && visibleBlocks.includes(5) && !visibleBlocks.includes(4)) {
+        // Force block 4 to show if we're going from 3 to 5
+        updateActiveState(4);
+        lastTransitionTimestamp = now;
         
-        // Additional guard for block 4
-        if (activeBlockId === 3 && highestBlockId >= 4) {
-          // Always ensure block 4 is activated after block 3
+        // Ensure block 4 stays visible for a minimum amount of time
+        isJustChanged.current = true;
+        setTimeout(() => {
+          isJustChanged.current = false;
+        }, minTimeInBlock);
+        
+        return;
+      }
+      
+      // Prevent too-quick transitions away from block 4
+      if (activeBlockId === 4 && isJustChanged.current) {
+        return; // Keep block 4 active until minimum time has passed
+      }
+      
+      // Get the highest visible block ID
+      const maxVisibleBlockId = Math.max(...visibleBlocks);
+      
+      // Only update if there's a change needed
+      if (maxVisibleBlockId !== activeBlockId) {
+        // If moving from block 3 to block 4, add extra dwell time
+        if (activeBlockId === 3 && maxVisibleBlockId === 4) {
           updateActiveState(4);
-        } else if (highestBlockId !== activeBlockId) {
-          // Only update if different from current to avoid unnecessary renders
-          updateActiveState(highestBlockId);
+          isJustChanged.current = true;
+          setTimeout(() => {
+            isJustChanged.current = false;
+          }, minTimeInBlock);
+        } else {
+          // Normal transition to any other block
+          updateActiveState(maxVisibleBlockId);
         }
+        
+        // Remember when we made this transition
+        lastTransitionTimestamp = now;
       }
     };
     
