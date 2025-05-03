@@ -103,9 +103,9 @@ const FocusScrollSection: React.FC = () => {
         
       setIsFixedMode(shouldBeFixedMode);
       
-      // Find the block that should be active based on position
-      // We'll use a threshold of 40% from the top of the viewport
-      const threshold = windowHeight * 0.4;
+      // Use a much smaller threshold to make blocks active when fully visible
+      // This is the percentage from the top of the viewport
+      const threshold = windowHeight * 0.15; // Only 15% from the top
       
       // First, check if we're at the end of the section to show last block
       if (sectionBottom <= windowHeight + 100) {
@@ -113,9 +113,9 @@ const FocusScrollSection: React.FC = () => {
         return;
       }
       
-      // Find topmost visible block
-      let activeId = activeBlockId;
-      let minTop = Infinity;
+      // Process ALL blocks to find the one that should be active
+      // We'll track blocks in view and prioritize by ID to ensure sequential activation
+      const visibleBlocks: {id: number, top: number}[] = [];
       
       blockRefs.current.forEach(block => {
         if (!block) return;
@@ -123,19 +123,41 @@ const FocusScrollSection: React.FC = () => {
         const rect = block.getBoundingClientRect();
         const blockId = Number(block.getAttribute('data-block-id'));
         
-        // Block is visible and in the upper part of the screen
-        if (rect.top <= threshold && rect.bottom > 0) {
-          // Find the topmost block
-          if (rect.top < minTop) {
-            minTop = rect.top;
-            activeId = blockId;
-          }
+        // A block is considered "fully visible" when:
+        // 1. Its top is visible or just scrolled past by a bit (not too far)
+        // 2. Most of its content is still in the viewport
+        const isBlockFullyVisible = 
+          // Top edge is near the viewport's top (whether just above or below)
+          (rect.top <= threshold && rect.top >= -rect.height * 0.3) && 
+          // And most of the block is still visible in the viewport
+          (rect.bottom > rect.height * 0.3);
+        
+        // Special handling for blocks 3+ to ensure they get activated properly
+        if (isBlockFullyVisible || (blockId >= 3 && rect.top <= windowHeight * 0.2 && rect.top >= -rect.height * 0.5)) {
+          visibleBlocks.push({
+            id: blockId,
+            top: rect.top
+          });
         }
       });
       
-      // If we found a visible block, make it active
-      if (activeId !== activeBlockId) {
-        updateActiveState(activeId);
+      // Sort blocks by ID to ensure sequential activation (3 before 4 before 5)
+      // This prevents skipping blocks in the sequence
+      visibleBlocks.sort((a, b) => a.id - b.id);
+      
+      // Use the highest ID from visible blocks to ensure we don't skip any
+      if (visibleBlocks.length > 0) {
+        // Get the highest (last) block ID from sorted array
+        const highestBlockId = visibleBlocks[visibleBlocks.length - 1].id;
+        
+        // Ensure we never skip block 4 when going from 3 to 5
+        if (activeBlockId === 3 && highestBlockId === 5) {
+          // Force block 4 to be active first
+          updateActiveState(4);
+        } else if (highestBlockId !== activeBlockId) {
+          // Only update if different from current to avoid unnecessary renders
+          updateActiveState(highestBlockId);
+        }
       }
     };
     
@@ -201,18 +223,19 @@ const FocusScrollSection: React.FC = () => {
                 <motion.div
                   key={block.id}
                   className="fixed-image"
+                  data-block-id={block.id}
                   // Set inline styles AND toggle a class for better browser support
                   style={{ 
                     opacity: block.id === activeBlockId ? 1 : 0,
                     visibility: block.id === activeBlockId ? "visible" : "hidden",
-                    zIndex: block.id === activeBlockId ? 2 : 1
+                    zIndex: block.id === activeBlockId ? 5 : 1
                   }}
                   initial={{ opacity: 0, scale: 0.95 }}
                   animate={{ 
                     opacity: block.id === activeBlockId ? 1 : 0,
                     scale: block.id === activeBlockId ? 1 : 0.95,
-                    // Always keep block 5 in DOM to prevent disappearing
-                    display: block.id === LAST_BLOCK_ID ? "block" : undefined
+                    // Force all images to stay in DOM with display: block
+                    display: "block" 
                   }}
                   transition={{ duration: 0.5, ease: "easeOut" }}
                   data-active={block.id === activeBlockId ? "true" : "false"}
