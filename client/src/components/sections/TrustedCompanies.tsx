@@ -27,14 +27,14 @@ const TrustedCompanies = () => {
   });
 
   // Fetch clients from API
-  const { data: clientsData, isLoading } = useQuery({
+  const { data: apiResponse, isLoading } = useQuery<{success: boolean, data: ClientData[]}>({
     queryKey: ['/api/clients'],
     queryFn: getQueryFn({ on401: "returnNull" }),
   });
 
   // Determine which data to use (API data or fallback)
-  const clients = clientsData?.data && clientsData.data.length > 0 
-    ? clientsData.data 
+  const clients = apiResponse && apiResponse.data && apiResponse.data.length > 0 
+    ? apiResponse.data
     : null;
 
   // Set up autoplay

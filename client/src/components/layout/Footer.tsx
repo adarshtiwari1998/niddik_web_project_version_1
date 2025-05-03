@@ -83,10 +83,8 @@ const Footer = () => {
               <ul className="space-y-3">
                 {column.links.map((link, idx) => (
                   <li key={idx}>
-                    <Link href={link.href}>
-                      <a className="text-gray-300 hover:text-white transition-colors">
-                        {link.label}
-                      </a>
+                    <Link href={link.href} className="text-gray-300 hover:text-white transition-colors">
+                      {link.label}
                     </Link>
                   </li>
                 ))}
@@ -98,14 +96,14 @@ const Footer = () => {
         <div className="border-t border-gray-700 mt-12 pt-8 text-center md:flex md:justify-between md:text-left">
           <p className="text-gray-400 mb-4 md:mb-0">© {new Date().getFullYear()} Andela. All rights reserved.</p>
           <div className="flex flex-wrap justify-center md:justify-end gap-4 text-gray-400">
-            <Link href="#">
-              <a className="hover:text-white transition-colors">Privacy Policy</a>
+            <Link href="#" className="hover:text-white transition-colors">
+              Privacy Policy
             </Link>
-            <Link href="#">
-              <a className="hover:text-white transition-colors">Terms of Service</a>
+            <Link href="#" className="hover:text-white transition-colors">
+              Terms of Service
             </Link>
-            <Link href="#">
-              <a className="hover:text-white transition-colors">Cookie Policy</a>
+            <Link href="#" className="hover:text-white transition-colors">
+              Cookie Policy
             </Link>
           </div>
         </div>
