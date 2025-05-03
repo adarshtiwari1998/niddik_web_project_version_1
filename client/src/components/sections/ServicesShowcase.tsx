@@ -377,39 +377,59 @@ const ServicesShowcase = () => {
                 <h4 className="text-lg font-semibold text-andela-dark mb-4">Our Process</h4>
                 
                 {/* Visual process flow with animated stages */}
-                <div className={`relative p-6 rounded-lg bg-white/60 backdrop-blur-sm border border-${
-                  activeServiceData.color.includes('purple') ? 'purple' : 
-                  activeServiceData.color.includes('blue') ? 'blue' : 
-                  activeServiceData.color.includes('green') ? 'green' : 
-                  'amber'
-                }-200 shadow-md`}>
+                <div className={`relative p-6 pt-12 pb-16 rounded-lg bg-white/60 backdrop-blur-sm border shadow-md ${
+                  activeServiceData.color.includes('purple') ? 'border-purple-200' : 
+                  activeServiceData.color.includes('blue') ? 'border-blue-200' : 
+                  activeServiceData.color.includes('green') ? 'border-green-200' : 
+                  'border-amber-200'
+                }`}>
                   
-                  {/* Process flow arrow with animated pulse */}
-                  <div className="absolute top-1/2 left-6 right-6 h-2 transform -translate-y-1/2 z-0">
+                  {/* Process flow arrow (positioned below the steps) */}
+                  <div className="absolute left-8 right-8 h-2 bottom-8 z-0">
                     <div className={`h-full bg-gradient-to-r ${activeServiceData.color} rounded-full opacity-50`}>
-                      {/* Animated pulse dots */}
-                      {[0, 1, 2].map((i) => (
-                        <motion.div 
-                          key={`pulse-${i}`}
-                          className="absolute top-1/2 transform -translate-y-1/2 w-4 h-4 rounded-full bg-white shadow-md"
-                          style={{ left: `${25 + i * 25}%` }}
-                          animate={{ 
-                            scale: [1, 1.5, 1],
-                            opacity: [0.7, 1, 0.7]
-                          }}
-                          transition={{ 
-                            duration: 2,
-                            delay: i * 0.5,
-                            repeat: Infinity,
-                            repeatType: "reverse"
-                          }}
-                        />
-                      ))}
+                      {/* Sequential step highlighter */}
+                      <motion.div 
+                        key={`sequential-highlight-${activeService}`}
+                        className={`absolute top-1/2 transform -translate-y-1/2 w-16 h-16 rounded-full bg-white/10 ring-4 ring-white/50 mix-blend-overlay shadow-lg backdrop-blur-md`}
+                        animate={{ 
+                          left: ["12.5%", "37.5%", "62.5%", "87.5%", "87.5%", "87.5%", "62.5%", "37.5%", "12.5%", "12.5%"],
+                          scale: [1, 1.5, 1, 1.5, 1, 1, 1.5, 1, 1.5, 1],
+                          opacity: [0.7, 1, 0.7, 1, 0.7, 0.7, 1, 0.7, 1, 0.7]
+                        }}
+                        transition={{ 
+                          duration: 10,
+                          times: [0, 0.15, 0.3, 0.45, 0.5, 0.6, 0.75, 0.85, 0.95, 1],
+                          repeat: Infinity,
+                          ease: "easeInOut"
+                        }}
+                      />
                     </div>
                   </div>
                   
-                  {/* Process steps with specialized icons and animations */}
-                  <div className="flex justify-between pt-8 pb-6 relative z-10">
+                  {/* Connection vertical lines (behind the process steps) */}
+                  <div className="absolute left-0 right-0 top-[5.25rem] h-px z-0">
+                    {[0, 1, 2].map((i) => (
+                      <motion.div 
+                        key={`conn-${i}`}
+                        className={`absolute h-16 w-px ${
+                          activeServiceData.color.includes('purple') ? 'bg-purple-400' : 
+                          activeServiceData.color.includes('blue') ? 'bg-blue-400' : 
+                          activeServiceData.color.includes('green') ? 'bg-green-400' : 
+                          'bg-amber-400'
+                        }`}
+                        style={{ left: `${25 + i * 16.67}%` }}
+                        initial={{ height: 0 }}
+                        animate={{ height: 64 }}
+                        transition={{ 
+                          duration: 0.5, 
+                          delay: 0.8 + i * 0.2
+                        }}
+                      />
+                    ))}
+                  </div>
+                  
+                  {/* Process steps with sequential highlight animation */}
+                  <div className="flex justify-between relative z-10 mb-12">
                     {activeServiceData.processSteps.map((step, index) => {
                       // Determine icon based on service type and step index
                       let StepIcon;
@@ -431,6 +451,9 @@ const ServicesShowcase = () => {
                                   index === 2 ? Briefcase : LineChart;
                       }
                       
+                      // Calculate delay for sequential highlighting
+                      const sequenceDelay = index * 2.5;
+                      
                       return (
                         <motion.div 
                           key={`${activeService}-step-${index}`}
@@ -439,31 +462,34 @@ const ServicesShowcase = () => {
                           animate={{ opacity: 1, y: 0 }}
                           transition={{ delay: index * 0.2 }}
                         >
-                          {/* Step number indicator with custom icon */}
+                          {/* Step box with custom icon */}
                           <motion.div 
                             className={`w-16 h-16 rounded-lg flex items-center justify-center bg-white shadow-lg 
                               ${index === 0 ? 'rounded-tl-3xl' : 
                                 index === 1 ? 'rounded-tr-3xl' : 
                                 index === 2 ? 'rounded-bl-3xl' : 'rounded-br-3xl'} 
-                              border-2 border-${
-                                activeServiceData.color.includes('purple') ? 'purple' : 
-                                activeServiceData.color.includes('blue') ? 'blue' : 
-                                activeServiceData.color.includes('green') ? 'green' : 
-                                'amber'
-                              }-400 mb-4 z-20 relative overflow-hidden`}
+                              border-2 mb-5 z-20 relative overflow-hidden
+                              ${
+                                activeServiceData.color.includes('purple') ? 'border-purple-400' : 
+                                activeServiceData.color.includes('blue') ? 'border-blue-400' : 
+                                activeServiceData.color.includes('green') ? 'border-green-400' : 
+                                'border-amber-400'
+                              }`}
+                            // Sequential highlight animation  
                             animate={{ 
-                              y: [0, -8, 0],
                               boxShadow: [
                                 '0 4px 6px rgba(0, 0, 0, 0.1)',
-                                '0 12px 20px rgba(0, 0, 0, 0.15)',
+                                '0 10px 25px rgba(0, 0, 0, 0.2)',
                                 '0 4px 6px rgba(0, 0, 0, 0.1)'
-                              ]
+                              ],
+                              scale: [1, 1.1, 1],
+                              borderWidth: ['2px', '3px', '2px']
                             }}
                             transition={{ 
-                              duration: 3, 
-                              delay: index * 0.7,
+                              duration: 1.5,
+                              delay: sequenceDelay, 
                               repeat: Infinity,
-                              repeatDelay: 2
+                              repeatDelay: 8.5
                             }}
                           >
                             {/* Background pulse effect */}
@@ -471,12 +497,13 @@ const ServicesShowcase = () => {
                               className={`absolute inset-0 opacity-10 bg-gradient-to-br ${activeServiceData.color}`}
                               animate={{ 
                                 scale: [1, 1.2, 1],
-                                opacity: [0.1, 0.2, 0.1]
+                                opacity: [0.1, 0.3, 0.1]
                               }}
                               transition={{ 
-                                duration: 2,
+                                duration: 1.5,
+                                delay: sequenceDelay, 
                                 repeat: Infinity,
-                                repeatType: "reverse"
+                                repeatDelay: 8.5 
                               }}
                             />
                             
@@ -499,29 +526,32 @@ const ServicesShowcase = () => {
                           
                           {/* Step title and description */}
                           <h5 className="font-medium text-andela-dark text-center mb-1">{step.title}</h5>
-                          <p className="text-xs text-andela-gray text-center leading-tight">{step.description}</p>
+                          <p className="text-xs text-andela-gray text-center leading-tight max-w-[110px] mx-auto">{step.description}</p>
                         </motion.div>
                       )
                     })}
                   </div>
                   
-                  {/* Connection line indicators */}
-                  <div className="absolute inset-x-24 bottom-[4.5rem] h-px bg-gray-200 z-0">
-                    {[0, 1, 2].map((i) => (
+                  {/* Process arrow markers (beneath the main steps) */}
+                  <div className="absolute inset-x-8 bottom-6 flex justify-between">
+                    {[0, 1, 2, 3].map((i) => (
                       <motion.div 
-                        key={`conn-${i}`}
-                        className={`absolute h-8 w-px ${
+                        key={`marker-${i}`}
+                        className={`w-3 h-3 rounded-full shadow-sm relative ${
                           activeServiceData.color.includes('purple') ? 'bg-purple-400' : 
                           activeServiceData.color.includes('blue') ? 'bg-blue-400' : 
                           activeServiceData.color.includes('green') ? 'bg-green-400' : 
                           'bg-amber-400'
                         }`}
-                        style={{ left: `${25 + i * 25}%`, top: '-8px' }}
-                        initial={{ height: 0 }}
-                        animate={{ height: 32 }}
-                        transition={{ 
-                          duration: 0.5, 
-                          delay: 0.8 + i * 0.2
+                        animate={{
+                          scale: [1, 1.5, 1],
+                          boxShadow: ['0 0 0 0 rgba(0,0,0,0)', '0 0 0 4px rgba(255,255,255,0.5)', '0 0 0 0 rgba(0,0,0,0)'],
+                        }}
+                        transition={{
+                          duration: 1.5,
+                          delay: i * 2.5,
+                          repeat: Infinity,
+                          repeatDelay: 8.5
                         }}
                       />
                     ))}
