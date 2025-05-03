@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { useQuery } from "@tanstack/react-query";
+import { useQuery, useMutation } from "@tanstack/react-query";
 import { AdminLayout } from "@/components/layout/AdminLayout";
 import { Button } from "@/components/ui/button";
 import {
@@ -9,6 +9,17 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+  AlertDialogTrigger,
+} from "@/components/ui/alert-dialog";
 import {
   Table,
   TableBody,
@@ -47,56 +58,23 @@ export default function JobListings() {
   // Fetch job listings data
   const { data: jobListingsData, isLoading } = useQuery({
     queryKey: ["/api/job-listings", page, search, category, status],
-    enabled: true
+    queryFn: async () => {
+      const queryParams = new URLSearchParams();
+      queryParams.append('page', page.toString());
+      if (search) queryParams.append('search', search);
+      if (category && category !== 'all') queryParams.append('category', category);
+      if (status && status !== 'all') queryParams.append('status', status);
+      
+      const response = await fetch(`/api/job-listings?${queryParams.toString()}`);
+      if (!response.ok) throw new Error('Failed to fetch job listings');
+      return response.json();
+    }
   });
 
-  // Mock data for development (will be replaced by API data)
-  const mockJobListings = [
-    {
-      id: 1,
-      title: "Senior React Developer",
-      company: "Andela",
-      location: "Remote",
-      jobType: "Full-time",
-      experienceLevel: "Senior",
-      salary: "$120,000 - $150,000",
-      description: "We're looking for a senior React developer...",
-      requirements: "5+ years of experience with React...",
-      benefits: "Health insurance, remote work...",
-      applicationUrl: "https://example.com/apply",
-      contactEmail: "careers@example.com",
-      status: "active",
-      featured: true,
-      postedDate: new Date().toISOString(),
-      expiryDate: new Date(Date.now() + 30 * 24 * 60 * 60 * 1000).toISOString(),
-      category: "Engineering",
-      skills: "React, TypeScript, Node.js",
-    },
-    {
-      id: 2,
-      title: "Product Manager",
-      company: "Andela",
-      location: "New York, NY",
-      jobType: "Full-time",
-      experienceLevel: "Mid",
-      salary: "$100,000 - $130,000",
-      description: "We're looking for a product manager...",
-      requirements: "3+ years of experience in product management...",
-      benefits: "Health insurance, flexible work hours...",
-      applicationUrl: "https://example.com/apply",
-      contactEmail: "careers@example.com",
-      status: "active",
-      featured: false,
-      postedDate: new Date(Date.now() - 2 * 24 * 60 * 60 * 1000).toISOString(),
-      expiryDate: new Date(Date.now() + 28 * 24 * 60 * 60 * 1000).toISOString(),
-      category: "Product",
-      skills: "Product Management, Agile, UX",
-    },
-  ];
-
-  // Use mock data for now, would use jobListingsData from API in production
-  const jobListings = mockJobListings;
-  const totalPages = 1;
+  // Extract data and pagination info
+  const jobListings = jobListingsData?.data || [];
+  const totalItems = jobListingsData?.meta?.total || 0;
+  const totalPages = jobListingsData?.meta?.pages || 1;
 
   const formatDate = (dateString: string) => {
     return format(new Date(dateString), "MMM d, yyyy");

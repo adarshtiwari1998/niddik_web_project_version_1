@@ -25,16 +25,12 @@ const Hero = () => {
               We help you source, evaluate, and deliver world-class teams and technologists – fully vetted, compliant, and tailored to your needs.
             </p>
             <div className="flex flex-col sm:flex-row gap-4">
-              <Link href="#">
-                <a className="bg-andela-green hover:bg-opacity-90 transition-colors text-white px-8 py-3 rounded-md font-medium text-center">
-                  Hire Talent
-                </a>
-              </Link>
-              <Link href="#">
-                <a className="border border-andela-green text-andela-green hover:bg-andela-green hover:text-white transition-colors px-8 py-3 rounded-md font-medium text-center">
-                  Apply as Talent
-                </a>
-              </Link>
+              <div className="bg-andela-green hover:bg-opacity-90 transition-colors text-white px-8 py-3 rounded-md font-medium text-center">
+                <a href="#" className="text-white">Hire Talent</a>
+              </div>
+              <div className="border border-andela-green text-andela-green hover:bg-andela-green hover:text-white transition-colors px-8 py-3 rounded-md font-medium text-center">
+                <a href="#" className="text-andela-green hover:text-white">Apply as Talent</a>
+              </div>
             </div>
           </motion.div>
           
