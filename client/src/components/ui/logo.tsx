@@ -1,8 +1,8 @@
 const Logo = ({ className = "", white = false }: { className?: string; white?: boolean }) => {
   return (
     <img 
-      src="/images/niidik_logo.png" 
-      alt="NIIDIK Logo" 
+      src="/images/niddik_logo.png" 
+      alt="NIDDIK Logo" 
       className={className + " object-contain"}
     />
   );

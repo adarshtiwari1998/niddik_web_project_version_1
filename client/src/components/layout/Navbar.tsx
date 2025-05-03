@@ -54,6 +54,7 @@ const navItems: NavItem[] = [
 const Navbar: React.FC<NavbarProps> = ({ hasAnnouncementAbove = true }) => {
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const [isScrolled, setIsScrolled] = useState(false);
+  const [mobileDropdown, setMobileDropdown] = useState(-1);
 
   useEffect(() => {
     const handleScroll = () => {
@@ -92,21 +93,21 @@ const Navbar: React.FC<NavbarProps> = ({ hasAnnouncementAbove = true }) => {
                     {item.label}
                     <ChevronDown className="ml-1 w-4 h-4" />
                   </button>
-                  <div className="absolute left-0 mt-2 w-64 rounded-lg shadow-xl bg-white p-6 opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-300 transform origin-top-left">
+                  <div className="absolute left-0 mt-2 w-64 rounded-lg shadow-xl bg-white p-6 opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-300 transform origin-top-left z-50">
                     {item.dropdown.map((dropdownItem, idx) => (
                       <div key={idx} className="block py-2 hover:text-andela-green transition-colors">
-                        <a href={dropdownItem.href}>
+                        <Link href={dropdownItem.href}>
                           {dropdownItem.label}
-                        </a>
+                        </Link>
                       </div>
                     ))}
                   </div>
                 </div>
               ) : (
                 <div key={index} className="text-andela-dark hover:text-andela-green font-medium transition-colors">
-                  <a href={item.href || "#"}>
+                  <Link href={item.href || "#"}>
                     {item.label}
-                  </a>
+                  </Link>
                 </div>
               )
             ))}
@@ -154,14 +155,35 @@ const Navbar: React.FC<NavbarProps> = ({ hasAnnouncementAbove = true }) => {
           {navItems.map((item, index) => (
             <div key={index} className="py-2 border-b border-gray-100">
               {item.dropdown ? (
-                <button className="flex items-center justify-between w-full text-left font-medium">
-                  {item.label}
-                  <ChevronDown className="w-4 h-4" />
-                </button>
+                <div>
+                  <button 
+                    className="flex items-center justify-between w-full text-left font-medium mb-2"
+                    onClick={() => setMobileDropdown(index === mobileDropdown ? -1 : index)}
+                  >
+                    {item.label}
+                    <ChevronDown className={`w-4 h-4 transition-transform ${index === mobileDropdown ? 'rotate-180' : ''}`} />
+                  </button>
+                  
+                  {index === mobileDropdown && (
+                    <div className="ml-4 space-y-2 py-2">
+                      {item.dropdown?.map((dropdownItem, idx) => (
+                        <div key={idx} className="py-1">
+                          <Link 
+                            href={dropdownItem.href}
+                            className="text-andela-gray hover:text-andela-green transition-colors"
+                            onClick={() => setIsMobileMenuOpen(false)}
+                          >
+                            {dropdownItem.label}
+                          </Link>
+                        </div>
+                      ))}
+                    </div>
+                  )}
+                </div>
               ) : (
-                <a href={item.href || "#"} className="font-medium">
+                <Link href={item.href || "#"} className="font-medium">
                   {item.label}
-                </a>
+                </Link>
               )}
             </div>
           ))}
