@@ -51,15 +51,18 @@ const Navbar: React.FC<NavbarProps> = ({ hasAnnouncementAbove = true }) => {
       setIsScrolled(window.scrollY > 10);
     };
 
+    // Initial check
+    handleScroll();
+    
     window.addEventListener("scroll", handleScroll);
     return () => window.removeEventListener("scroll", handleScroll);
-  }, []);
+  }, [hasAnnouncementAbove]);
 
   return (
     <header className={cn(
       "fixed w-full bg-white z-40 transition-all duration-300",
       isScrolled ? "shadow-md" : "shadow-sm",
-      hasAnnouncementAbove ? "top-[40px]" : "top-0" // Adjust based on announcement bar visibility
+      hasAnnouncementAbove ? "top-10" : "top-0" // Adjust based on announcement bar visibility
     )}>
       <Container>
         <div className="flex justify-between items-center py-4">
