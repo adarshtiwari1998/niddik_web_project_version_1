@@ -50,14 +50,54 @@ const FocusScrollSection: React.FC = () => {
   const blockRefs = useRef<(HTMLDivElement | null)[]>([]);
   const imageContainerRef = useRef<HTMLDivElement>(null);
   const isJustChanged = useRef<boolean>(false); // Track recent changes
+  const lastTransitionTime = useRef<number>(0); // Track when last transition happened
+  const activateBlock4AfterDelay = useRef<boolean>(false); // Flag to force block 4 activation
   
   // Last block ID to determine when we've reached the end
   const LAST_BLOCK_ID = focusBlocks.length;
   
-  // Update active state of blocks and images
+  // Update active state of blocks and images with forced sequencing
   const updateActiveState = (blockId: number) => {
     if (blockId === activeBlockId) return;
     
+    // CRITICAL FIX: Never allow skipping block 4
+    // If we're at block 3 and trying to jump to 5+, force block 4 first
+    if (activeBlockId === 3 && blockId > 4) {
+      console.log(`Preventing skip of block 4, activating it first`);
+      
+      // Instead of jumping directly to 5, we'll activate block 4
+      // and schedule block 5 to activate after a delay
+      
+      // Store the timestamp of this transition
+      lastTransitionTime.current = Date.now();
+      
+      // Mark block 4 as active
+      activateBlock4First();
+      
+      // Schedule block 5 to activate later
+      setTimeout(() => {
+        console.log("Scheduled activation of block 5 after block 4");
+        setActiveBlockId(blockId);
+        
+        // Update DOM directly also for immediate visual feedback
+        blockRefs.current.forEach(block => {
+          if (!block) return;
+          const id = Number(block.getAttribute('data-block-id'));
+          
+          if (id === blockId) {
+            block.classList.add('active');
+            block.setAttribute('data-active', 'true');
+          } else {
+            block.classList.remove('active');
+            block.setAttribute('data-active', 'false');
+          }
+        });
+      }, 1000); // Force block 4 to stay visible for 1 second before showing block 5
+      
+      return;
+    }
+    
+    // Normal case - update active state
     console.log(`Setting active block: ${blockId}`);
     setActiveBlockId(blockId);
     
@@ -67,6 +107,28 @@ const FocusScrollSection: React.FC = () => {
       const id = Number(block.getAttribute('data-block-id'));
       
       if (id === blockId) {
+        block.classList.add('active');
+        block.setAttribute('data-active', 'true');
+      } else {
+        block.classList.remove('active');
+        block.setAttribute('data-active', 'false');
+      }
+    });
+    
+    // Store the timestamp of this transition
+    lastTransitionTime.current = Date.now();
+  };
+  
+  // Special function just to activate block 4
+  const activateBlock4First = () => {
+    setActiveBlockId(4);
+    
+    // Update DOM directly also for immediate visual feedback
+    blockRefs.current.forEach(block => {
+      if (!block) return;
+      const id = Number(block.getAttribute('data-block-id'));
+      
+      if (id === 4) {
         block.classList.add('active');
         block.setAttribute('data-active', 'true');
       } else {
@@ -169,16 +231,22 @@ const FocusScrollSection: React.FC = () => {
       
       // Special case for block 4 - always ensure it shows up
       if (activeBlockId === 3 && visibleBlocks.includes(5) && !visibleBlocks.includes(4)) {
-        // Force block 4 to show if we're going from 3 to 5
-        updateActiveState(4);
-        lastTransitionTimestamp = now;
+        console.log("Detected block 3 active with block 5 visible but block 4 skipped");
         
-        // Ensure block 4 stays visible for a minimum amount of time
-        isJustChanged.current = true;
+        // Never allow block 3 -> block 5 transition directly
+        // Use our specialized function to force block 4 to show first
+        activateBlock4First();
+        
+        // Schedule block 5 to activate later
         setTimeout(() => {
-          isJustChanged.current = false;
-        }, minTimeInBlock);
+          console.log("Scheduled activation of block 5 after showing block 4");
+          if (visibleBlocks.includes(5)) {
+            updateActiveState(5);
+          }
+        }, 1000); // Force block 4 to stay visible for 1 full second
         
+        // Update timestamp to prevent too-quick transitions
+        lastTransitionTimestamp = now;
         return;
       }
       
