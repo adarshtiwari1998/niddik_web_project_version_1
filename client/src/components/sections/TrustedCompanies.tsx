@@ -25,14 +25,52 @@ const InfiniteMarquee = ({ children, pauseOnHover = true, speed = 30 }: {
 }) => {
   const [isPaused, setIsPaused] = useState(false);
   const duration = speed; // in seconds
+  const containerRef = useRef<HTMLDivElement>(null);
+  const contentRef = useRef<HTMLDivElement>(null);
+  const [contentWidth, setContentWidth] = useState(0);
+  const [copied, setCopied] = useState(false);
+
+  // Ensure the animation is properly calibrated based on content width
+  useEffect(() => {
+    const updateWidth = () => {
+      if (contentRef.current) {
+        // Get the actual width of the content
+        const newWidth = contentRef.current.scrollWidth;
+        
+        if (newWidth > 0 && newWidth !== contentWidth) {
+          setContentWidth(newWidth);
+          setCopied(true);
+        }
+      }
+    };
+    
+    // Update immediately and then again after a short delay to ensure images are loaded
+    updateWidth();
+    const timer = setTimeout(updateWidth, 500);
+    
+    // Also update on window resize for responsiveness
+    window.addEventListener('resize', updateWidth);
+    
+    // Clean up event listener and timer
+    return () => {
+      window.removeEventListener('resize', updateWidth);
+      clearTimeout(timer);
+    };
+  }, [children, contentWidth]);
 
   return (
     <div 
-      className="marquee-container"
+      ref={containerRef}
+      className="marquee-container" 
       onMouseEnter={() => pauseOnHover && setIsPaused(true)}
       onMouseLeave={() => setIsPaused(false)}
+      style={{ 
+        // This ensures seamless looping
+        '--content-width': `${contentWidth}px` 
+      } as React.CSSProperties}
     >
       <div 
+        ref={contentRef}
         className="marquee-content marquee-content-primary"
         style={{
           animationPlayState: isPaused ? 'paused' : 'running',
@@ -41,15 +79,17 @@ const InfiniteMarquee = ({ children, pauseOnHover = true, speed = 30 }: {
       >
         {children}
       </div>
-      <div 
-        className="marquee-content marquee-content-secondary"
-        style={{
-          animationPlayState: isPaused ? 'paused' : 'running',
-          animationDuration: `${duration}s`,
-        }}
-      >
-        {children}
-      </div>
+      {copied && (
+        <div 
+          className="marquee-content marquee-content-secondary"
+          style={{
+            animationPlayState: isPaused ? 'paused' : 'running',
+            animationDuration: `${duration}s`,
+          }}
+        >
+          {children}
+        </div>
+      )}
     </div>
   );
 };

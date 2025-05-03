@@ -1,22 +1,27 @@
+/* Custom property for content width that will be set via JS */
+.marquee-container {
+  --content-width: 100%;
+  overflow: hidden;
+  position: relative;
+  width: 100%;
+}
+
 @keyframes marquee {
-  0% { transform: translateX(0%); }
-  100% { transform: translateX(-100%); }
+  0% { transform: translateX(0); }
+  100% { transform: translateX(calc(-1 * var(--content-width))); }
 }
 
 @keyframes marquee2 {
-  0% { transform: translateX(100%); }
-  100% { transform: translateX(0%); }
-}
-
-.marquee-container {
-  overflow: hidden;
-  position: relative;
+  0% { transform: translateX(calc(var(--content-width))); }
+  100% { transform: translateX(0); }
 }
 
 .marquee-content {
   display: flex;
   animation-timing-function: linear;
   animation-iteration-count: infinite;
+  width: max-content; /* Allow content to take its natural width */
+  padding-right: 3rem; /* Add more spacing between the end and start of the marquee */
 }
 
 .marquee-content-primary {
@@ -26,6 +31,6 @@
 .marquee-content-secondary {
   position: absolute;
   top: 0;
-  left: 0;
+  left: 100%; /* Start at the exact end of the primary content */
   animation-name: marquee2;
 }
