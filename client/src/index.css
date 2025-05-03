@@ -154,3 +154,26 @@
 .mobile-menu.open {
   transform: translateX(0);
 }
+
+/* Hero video styling */
+.hero-video {
+  object-fit: cover;
+  object-position: center center;
+  transform: scale(1.01); /* Prevents flickering at edges */
+  filter: brightness(1.05) contrast(1.1); /* Slightly enhance video quality */
+  will-change: transform, opacity; /* Optimization hint for browsers */
+}
+
+/* For larger displays, enhance the hero section */
+@media (min-width: 1600px) {
+  .hero-video {
+    object-position: center 30%; /* Better framing on ultra-wide displays */
+  }
+}
+
+/* For mobile displays, adjust video positioning */
+@media (max-width: 768px) {
+  .hero-video {
+    object-position: 70% center; /* Focus more on the right side of video on mobile */
+  }
+}
