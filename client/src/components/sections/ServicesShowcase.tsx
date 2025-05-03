@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef, useCallback } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { ChevronRight, Users, Calendar, Briefcase, PieChart } from 'lucide-react';
 import Container from '@/components/ui/container';
@@ -10,12 +10,15 @@ interface ServiceItem {
   description: string;
   icon: React.ReactNode;
   color: string;
+  bgColor: string;
 }
 
 const ServicesShowcase = () => {
   const [activeService, setActiveService] = useState<number>(1);
   const [isHovering, setIsHovering] = useState<boolean>(false);
-  const [autoRotate, setAutoRotate] = useState<boolean>(true);
+  const [autoRotate, setAutoRotate] = useState<boolean>(false);
+  const [forceRender, setForceRender] = useState<number>(0);
+  const leftPanelRef = useRef<HTMLDivElement>(null);
 
   // Define services
   const services: ServiceItem[] = [
@@ -24,30 +27,45 @@ const ServicesShowcase = () => {
       title: 'Full RPO',
       description: 'End-to-end recruitment process outsourcing for comprehensive talent acquisition needs.',
       icon: <Users className="h-6 w-6" />,
-      color: 'from-purple-500 to-purple-600'
+      color: 'from-purple-500 to-purple-600',
+      bgColor: 'bg-purple-100'
     },
     {
       id: 2,
       title: 'On-Demand',
       description: 'Flexible recruitment solutions that scale with your immediate business requirements.',
       icon: <Calendar className="h-6 w-6" />,
-      color: 'from-blue-500 to-blue-600'
+      color: 'from-blue-500 to-blue-600',
+      bgColor: 'bg-blue-100'
     },
     {
       id: 3,
       title: 'Hybrid RPO',
       description: 'Customized combination of in-house and outsourced recruitment processes for optimal results.',
       icon: <PieChart className="h-6 w-6" />,
-      color: 'from-green-500 to-green-600'
+      color: 'from-green-500 to-green-600',
+      bgColor: 'bg-green-100'
     },
     {
       id: 4,
       title: 'Contingent',
       description: 'Specialized talent acquisition for contract, temporary, and project-based positions.',
       icon: <Briefcase className="h-6 w-6" />,
-      color: 'from-amber-500 to-amber-600'
+      color: 'from-amber-500 to-amber-600',
+      bgColor: 'bg-amber-100'
     }
   ];
+
+  // Force a render to make sure the UI updates when service changes
+  const handleServiceChange = useCallback((id: number) => {
+    setActiveService(id);
+    setForceRender(prev => prev + 1);
+    
+    // If we're on mobile, scroll to the left panel
+    if (window.innerWidth < 1024 && leftPanelRef.current) {
+      leftPanelRef.current.scrollIntoView({ behavior: 'smooth' });
+    }
+  }, []);
 
   // Auto-rotate services every 4 seconds when not hovering
   useEffect(() => {
@@ -55,7 +73,11 @@ const ServicesShowcase = () => {
     
     if (autoRotate && !isHovering) {
       intervalId = setInterval(() => {
-        setActiveService(prev => (prev % services.length) + 1);
+        setActiveService(prev => {
+          const newService = (prev % services.length) + 1;
+          setForceRender(r => r + 1);
+          return newService;
+        });
       }, 4000);
     }
     
@@ -131,14 +153,26 @@ const ServicesShowcase = () => {
             viewport={{ once: true }}
             transition={{ duration: 0.6, delay: 0.2 }}
           >
-            {/* Center circle with gradient */}
-            <div className="w-48 h-48 md:w-64 md:h-64 rounded-full bg-gradient-to-br from-andela-green to-blue-600 flex items-center justify-center shadow-lg relative z-10">
+            {/* Center circle with gradient that changes color based on active service */}
+            <div className={`w-48 h-48 md:w-64 md:h-64 rounded-full bg-gradient-to-br ${activeServiceData.color} flex items-center justify-center shadow-lg relative z-10 transition-all duration-500`}>
               <div className="w-44 h-44 md:w-60 md:h-60 rounded-full bg-white flex items-center justify-center">
-                <img 
-                  src="/images/services-icon.svg" 
-                  alt="NIIDIK Services" 
-                  className="w-32 h-32 md:w-40 md:h-40 object-contain"
-                />
+                {/* Show active service icon in the center along with the logo */}
+                <div className="flex flex-col items-center justify-center text-center">
+                  <div className={`p-4 rounded-full ${activeServiceData.bgColor} mb-3`}>
+                    <div className={`h-10 w-10 ${activeServiceData.color.includes('purple') ? 'text-purple-600' : 
+                      activeServiceData.color.includes('blue') ? 'text-blue-600' : 
+                      activeServiceData.color.includes('green') ? 'text-green-600' : 
+                      'text-amber-600'}`
+                    }>
+                      {activeServiceData.icon}
+                    </div>
+                  </div>
+                  <img 
+                    src="/images/services-icon.svg" 
+                    alt="NIIDIK Services" 
+                    className="w-24 h-24 md:w-28 md:h-28 object-contain"
+                  />
+                </div>
               </div>
             </div>
 
@@ -164,7 +198,7 @@ const ServicesShowcase = () => {
                     transform: `translate(${x}px, ${y}px)`,
                   }}
                   whileHover={{ scale: 1.2 }}
-                  onClick={() => setActiveService(service.id)}
+                  onClick={() => handleServiceChange(service.id)}
                   onMouseEnter={() => setIsHovering(true)}
                   onMouseLeave={() => setIsHovering(false)}
                   animate={{ 
@@ -190,48 +224,33 @@ const ServicesShowcase = () => {
 
           {/* Service details panel */}
           <motion.div 
+            ref={leftPanelRef}
             className="order-2 lg:order-1 lg:w-1/3 bg-white p-8 rounded-xl shadow-lg"
             variants={containerVariants}
             initial="hidden"
             whileInView="visible"
             viewport={{ once: true }}
+            // This will ensure the panel stays visible regardless of scroll position
+            key={`panel-${activeService}-${forceRender}`}
           >
-            <AnimatePresence mode="wait">
-              <motion.div
-                key={activeService}
-                initial={{ opacity: 0, x: -20 }}
-                animate={{ opacity: 1, x: 0 }}
-                exit={{ opacity: 0, x: 20 }}
-                transition={{ duration: 0.3 }}
-                className="h-full"
-              >
-                <motion.div variants={itemVariants} className="mb-2">
-                  <div className={`inline-block p-3 rounded-full bg-gradient-to-r ${activeServiceData.color}`}>
-                    <div className="text-white">
-                      {activeServiceData.icon}
-                    </div>
+            <div className="h-full">
+              <div className="mb-2">
+                <div className={`inline-block p-3 rounded-full bg-gradient-to-r ${activeServiceData.color}`}>
+                  <div className="text-white">
+                    {activeServiceData.icon}
                   </div>
-                </motion.div>
-                <motion.h3 
-                  variants={itemVariants}
-                  className="text-2xl font-bold text-andela-dark mb-4"
-                >
-                  {activeServiceData.title}
-                </motion.h3>
-                <motion.p 
-                  variants={itemVariants}
-                  className="text-andela-gray mb-6"
-                >
-                  {activeServiceData.description}
-                </motion.p>
-                <motion.button 
-                  variants={itemVariants}
-                  className="flex items-center font-medium text-andela-green hover:text-andela-green/80 transition-colors"
-                >
-                  Learn more <ChevronRight className="h-4 w-4 ml-1" />
-                </motion.button>
-              </motion.div>
-            </AnimatePresence>
+                </div>
+              </div>
+              <h3 className="text-2xl font-bold text-andela-dark mb-4">
+                {activeServiceData.title}
+              </h3>
+              <p className="text-andela-gray mb-6">
+                {activeServiceData.description}
+              </p>
+              <button className="flex items-center font-medium text-andela-green hover:text-andela-green/80 transition-colors">
+                Learn more <ChevronRight className="h-4 w-4 ml-1" />
+              </button>
+            </div>
           </motion.div>
 
           {/* Service selector (visible on mobile, hidden on desktop) */}
@@ -239,7 +258,7 @@ const ServicesShowcase = () => {
             {services.map((service) => (
               <button
                 key={service.id}
-                onClick={() => setActiveService(service.id)}
+                onClick={() => handleServiceChange(service.id)}
                 className={`w-3 h-3 rounded-full ${
                   service.id === activeService
                     ? 'bg-andela-green'
@@ -268,7 +287,7 @@ const ServicesShowcase = () => {
                       ? `bg-gradient-to-r ${service.color} text-white shadow-lg`
                       : 'bg-white shadow hover:shadow-md'
                   }`}
-                  onClick={() => setActiveService(service.id)}
+                  onClick={() => handleServiceChange(service.id)}
                   onMouseEnter={() => setIsHovering(true)}
                   onMouseLeave={() => setIsHovering(false)}
                   whileHover={{ y: -5 }}
