@@ -158,14 +158,35 @@ const FocusScrollSection: React.FC = () => {
       // Section is visible when it's in the viewport
       const isSectionVisible = sectionTop < windowHeight && sectionBottom > 0;
       
-      // First determine if the image should be in fixed mode
-      // Only enable fixed mode when section is in view and we're not at the end
-      const shouldBeFixedMode = 
-        isSectionVisible && 
-        sectionTop < 0 && // Section has scrolled up partially
-        sectionBottom > windowHeight * 0.5; // Not near the end yet
-        
-      setIsFixedMode(shouldBeFixedMode);
+      // Special handling for fixed state:
+      // 1. When at the end of the section (last block is visible), immediately disable fixed state
+      // 2. When scrolling back up from the end, quickly re-enable fixed state
+      // 3. Otherwise, standard fixed state behavior
+      
+      // Check if the last block is visible (block 5)
+      let isLastBlockVisible = false;
+      blockRefs.current.forEach(block => {
+        if (!block) return;
+        const id = Number(block.getAttribute('data-block-id'));
+        if (id === LAST_BLOCK_ID) {
+          const rect = block.getBoundingClientRect();
+          isLastBlockVisible = rect.top <= windowHeight * 0.5;
+        }
+      });
+      
+      // Immediately lose fixed state when last block is visible
+      if (isLastBlockVisible || activeBlockId === LAST_BLOCK_ID) {
+        // If we're at the last block, image should scroll with content
+        setIsFixedMode(false);
+      } else {
+        // Normal fixed mode determination (for blocks 1-4)
+        const shouldBeFixedMode = 
+          isSectionVisible && 
+          sectionTop < 0 && // Section has scrolled up partially
+          sectionBottom > windowHeight * 0.5; // Not at the end
+          
+        setIsFixedMode(shouldBeFixedMode);
+      }
       
       // Enforce minimum display time before allowing new transitions
       const now = Date.now();
@@ -294,7 +315,8 @@ const FocusScrollSection: React.FC = () => {
                 position: isFixedMode ? "fixed" : "relative",
                 top: isFixedMode ? "50%" : "auto",
                 transform: isFixedMode ? "translateY(-50%)" : "none",
-                width: isFixedMode ? "calc(50% - 3rem)" : "100%"
+                width: isFixedMode ? "calc(50% - 3rem)" : "100%",
+                transition: "all 0.2s ease-out" // Add smooth transition for position changes
               }}
               data-fixed={isFixedMode ? "true" : "false"}
               data-active-block={activeBlockId}
