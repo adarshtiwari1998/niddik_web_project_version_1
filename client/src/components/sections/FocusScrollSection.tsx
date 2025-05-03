@@ -50,6 +50,7 @@ const FocusScrollSection: React.FC = () => {
   const blockRefs = useRef<(HTMLDivElement | null)[]>([]);
   const imageContainerRef = useRef<HTMLDivElement>(null);
   const lastTransitionTime = useRef<number>(Date.now());
+  const lastScrollY = useRef<number>(0); // Track last scroll position for detecting fast scrolls
   
   // Flag to enforce minimum display time for blocks
   const isEnforcingMinDisplayTime = useRef<boolean>(false);
@@ -206,20 +207,50 @@ const FocusScrollSection: React.FC = () => {
         return;
       }
       
-      // More aggressive detection for the last block
-      // Check if we're near the end of the section or if user scrolled quickly
-      if (
+      // Super aggressive detection for the last block to handle fast scrolling
+      // Use multiple conditions to detect when we're near end of page
+      const isNearBottom = (
         sectionBottom <= windowHeight + 200 || // More lenient threshold
-        sectionTop < -sectionHeight * 0.8 ||   // Deep scroll detection
-        (window.scrollY + window.innerHeight >= document.body.scrollHeight - 300) // Near page bottom
-      ) {
-        // Force last block activation immediately
-        updateActiveState(LAST_BLOCK_ID);
+        sectionTop < -sectionHeight * 0.7 ||   // Deep scroll detection (reduced threshold)
+        (window.scrollY + window.innerHeight >= document.body.scrollHeight - 400) || // Near page bottom (increased threshold)
+        (window.scrollY > document.body.scrollHeight * 0.8) // Deep scroll on the page
+      );
+      
+      // Special condition for handling very fast scrolls
+      const userScrolledFast = Math.abs(window.scrollY - lastScrollY.current) > 200;
+      lastScrollY.current = window.scrollY;
+      
+      if (isNearBottom || (userScrolledFast && sectionTop < 0)) {
+        // Force last block activation with no animation delay
+        // We update the state directly AND add the class immediately
+        setActiveBlockId(LAST_BLOCK_ID);
         
-        // Force immediate class application 
+        // Direct DOM manipulation for immediate visual update
+        blockRefs.current.forEach(block => {
+          if (!block) return;
+          const id = Number(block.getAttribute('data-block-id'));
+          
+          if (id === LAST_BLOCK_ID) {
+            block.classList.add('active');
+            block.setAttribute('data-active', 'true');
+          } else {
+            block.classList.remove('active');
+            block.setAttribute('data-active', 'false');
+          }
+        });
+        
+        // Also apply the image container class immediately
         if (imageContainerRef.current) {
           imageContainerRef.current.classList.add('last-block-position');
+          
+          // Force the image to be visible
+          const lastImage = imageContainerRef.current.querySelector(`[data-block-id="${LAST_BLOCK_ID}"]`);
+          if (lastImage) {
+            lastImage.setAttribute('style', 'opacity: 1; visibility: visible; z-index: 10;');
+          }
         }
+        
+        // Skip other checks - we've hit the bottom
         return;
       }
       
@@ -366,7 +397,8 @@ const FocusScrollSection: React.FC = () => {
                     style={{ 
                       opacity: block.id === activeBlockId ? 1 : 0,
                       visibility: block.id === activeBlockId ? "visible" : "hidden",
-                      zIndex: block.id === activeBlockId ? 5 : 1
+                      zIndex: block.id === activeBlockId ? 5 : 1,
+                      transform: `translateZ(0)` // Force hardware acceleration for stability
                     }}
                     initial={{ opacity: 0, scale: 0.95 }}
                     animate={{ 

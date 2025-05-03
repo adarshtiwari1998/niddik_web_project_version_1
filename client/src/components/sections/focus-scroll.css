@@ -3,6 +3,7 @@
   position: relative;
   z-index: 1;
   padding-bottom: 100px;
+  padding-top: 50px; /* Add space at the top to prevent overlap with nav */
 }
 
 /* Scrollable blocks column */
@@ -72,6 +73,15 @@
   display: flex !important; /* Force display */
   justify-content: center;
   align-items: center;
+  
+  /* Add these stabilizing properties to prevent jiggling */
+  will-change: transform, opacity; /* Performance hint */
+  backface-visibility: hidden; /* Prevent flickering */
+  transform-style: preserve-3d; /* Better 3D context */
+  perspective: 1000px; /* Depth perception */
+  
+  /* Faster transitions to reduce visible jumps */
+  transition: all 0.15s ease-out !important;
 }
 
 /* Image styling */
@@ -113,6 +123,14 @@
   display: block !important;
   opacity: 1 !important;
   visibility: visible !important;
+  z-index: 20 !important; /* Ensure highest z-index for the last block */
+}
+
+/* Special case for when we're back at block 1 */
+.scrollable-block[data-block-id="1"].active ~ .fixed-image-column .fixed-image-container,
+.scrollable-block[data-block-id="1"][data-active="true"] ~ .fixed-image-column .fixed-image-container {
+  margin-top: 30px !important; /* Add extra space at top when at first block */
+  transition: margin-top 0.3s ease-out !important;
 }
 
 /* Make sure the image for the last block is visible */
@@ -166,7 +184,11 @@
   visibility: hidden;
   display: block !important; /* ALWAYS in the DOM for reliable transitions */
   pointer-events: none; /* Don't intercept clicks when hidden */
-  transition: opacity 0.5s ease, transform 0.5s ease, visibility 0.5s ease;
+  transition: opacity 0.3s ease, transform 0.3s ease, visibility 0.3s ease; /* Faster transitions */
+  
+  /* Add stability properties to images as well */
+  will-change: opacity, transform; /* Performance hint */
+  backface-visibility: hidden; /* Prevent flickering */
 }
 
 /* Active image is visible */
