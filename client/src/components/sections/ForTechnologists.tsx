@@ -79,10 +79,8 @@ const ForTechnologists = () => {
               viewport={{ once: true }}
               transition={{ duration: 0.5, delay: 0.3 }}
             >
-              <Link href="#">
-                <a className="bg-andela-green hover:bg-opacity-90 transition-colors text-white px-8 py-3 rounded-md font-medium inline-block">
-                  Apply as Talent
-                </a>
+              <Link href="#" className="bg-andela-green hover:bg-opacity-90 transition-colors text-white px-8 py-3 rounded-md font-medium inline-block">
+                Apply as Talent
               </Link>
             </motion.div>
           </motion.div>
