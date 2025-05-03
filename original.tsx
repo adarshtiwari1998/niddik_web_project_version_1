@@ -49,83 +49,18 @@ const FocusScrollSection: React.FC = () => {
   const sectionRef = useRef<HTMLElement>(null);
   const blockRefs = useRef<(HTMLDivElement | null)[]>([]);
   const imageContainerRef = useRef<HTMLDivElement>(null);
-  const lastTransitionTime = useRef<number>(Date.now());
-  
-  // Flag to enforce minimum display time for blocks
-  const isEnforcingMinDisplayTime = useRef<boolean>(false);
-  
-  // Need to track which blocks have been shown to ensure proper sequence
-  const previousBlock = useRef<number>(1);
-  
-  // Minimum time (in ms) each block should be displayed
-  const MIN_DISPLAY_TIME = 500;
   
   // Last block ID to determine when we've reached the end
   const LAST_BLOCK_ID = focusBlocks.length;
   
   // Update active state of blocks and images
   const updateActiveState = (blockId: number) => {
-    // Don't update if we're already on this block
     if (blockId === activeBlockId) return;
     
-    // Special handling to ensure block 4 is never skipped
-    if (activeBlockId === 3 && blockId === 5) {
-      // If going from 3 to 5, force showing block 4 first for some time
-      console.log("Block 3->5 transition requested: showing block 4 first for proper sequence");
-      
-      // Activate block 4
-      setActiveBlockId(4);
-      
-      // Update DOM for immediate visual feedback
-      blockRefs.current.forEach(block => {
-        if (!block) return;
-        const id = Number(block.getAttribute('data-block-id'));
-        
-        if (id === 4) {
-          block.classList.add('active');
-          block.setAttribute('data-active', 'true');
-        } else {
-          block.classList.remove('active');
-          block.setAttribute('data-active', 'false');
-        }
-      });
-      
-      // Update timestamp and enforcing flag
-      lastTransitionTime.current = Date.now();
-      isEnforcingMinDisplayTime.current = true;
-      
-      // Schedule block 5 to appear after min display time
-      setTimeout(() => {
-        console.log("Now showing block 5 after required block 4 display");
-        setActiveBlockId(5);
-        
-        // Update DOM for immediate visual feedback
-        blockRefs.current.forEach(block => {
-          if (!block) return;
-          const id = Number(block.getAttribute('data-block-id'));
-          
-          if (id === 5) {
-            block.classList.add('active');
-            block.setAttribute('data-active', 'true');
-          } else {
-            block.classList.remove('active');
-            block.setAttribute('data-active', 'false');
-          }
-        });
-        
-        // Update timestamp and reset enforcing flag
-        lastTransitionTime.current = Date.now();
-        isEnforcingMinDisplayTime.current = false;
-      }, 1000); // Force block 4 display for 1 second
-      
-      return;
-    }
-    
-    // General case for other block transitions
     console.log(`Setting active block: ${blockId}`);
     setActiveBlockId(blockId);
     
-    // Update DOM for immediate visual feedback
+    // Update active classes directly for immediate visual feedback
     blockRefs.current.forEach(block => {
       if (!block) return;
       const id = Number(block.getAttribute('data-block-id'));
@@ -138,29 +73,12 @@ const FocusScrollSection: React.FC = () => {
         block.setAttribute('data-active', 'false');
       }
     });
-    
-    // Update the transition timestamp
-    lastTransitionTime.current = Date.now();
-    previousBlock.current = activeBlockId;
   };
   
   // Initialize and set first block active on mount
   useLayoutEffect(() => {
     // Set initial active state for block 1
     updateActiveState(1);
-    
-    // Force all images to be loaded and present in the DOM
-    const forceImagesVisibility = () => {
-      focusBlocks.forEach(block => {
-        const img = new Image();
-        img.src = block.image;
-        img.onload = () => {
-          console.log(`Image for block ${block.id} loaded`);
-        };
-      });
-    };
-    
-    forceImagesVisibility();
   }, []);
   
   // Handle scroll events
@@ -185,26 +103,19 @@ const FocusScrollSection: React.FC = () => {
         
       setIsFixedMode(shouldBeFixedMode);
       
-      // Enforce minimum display time before allowing new transitions
-      const now = Date.now();
-      const timeSinceLastTransition = now - lastTransitionTime.current;
+      // Use a much smaller threshold to make blocks active when fully visible
+      // This is the percentage from the top of the viewport
+      const threshold = windowHeight * 0.15; // Only 15% from the top
       
-      if (timeSinceLastTransition < MIN_DISPLAY_TIME || isEnforcingMinDisplayTime.current) {
-        // Don't process any transitions if we're still in minimum display time
-        return;
-      }
-      
-      // Check if we've reached the end of the section
+      // First, check if we're at the end of the section to show last block
       if (sectionBottom <= windowHeight + 100) {
         updateActiveState(LAST_BLOCK_ID);
         return;
       }
       
-      // Process visible blocks to find which one should be active
+      // Process ALL blocks to find the one that should be active
+      // We'll track blocks in view and prioritize by ID to ensure sequential activation
       const visibleBlocks: {id: number, top: number}[] = [];
-      
-      // Use threshold to determine when a block becomes active
-      const threshold = windowHeight * 0.2;
       
       blockRefs.current.forEach(block => {
         if (!block) return;
@@ -212,8 +123,17 @@ const FocusScrollSection: React.FC = () => {
         const rect = block.getBoundingClientRect();
         const blockId = Number(block.getAttribute('data-block-id'));
         
-        // Detect when a block is in the active area of the viewport
-        if (rect.top <= threshold && rect.bottom > rect.height * 0.3) {
+        // A block is considered "fully visible" when:
+        // 1. Its top is visible or just scrolled past by a bit (not too far)
+        // 2. Most of its content is still in the viewport
+        const isBlockFullyVisible = 
+          // Top edge is near the viewport's top (whether just above or below)
+          (rect.top <= threshold && rect.top >= -rect.height * 0.3) && 
+          // And most of the block is still visible in the viewport
+          (rect.bottom > rect.height * 0.3);
+        
+        // Special handling for blocks 3+ to ensure they get activated properly
+        if (isBlockFullyVisible || (blockId >= 3 && rect.top <= windowHeight * 0.2 && rect.top >= -rect.height * 0.5)) {
           visibleBlocks.push({
             id: blockId,
             top: rect.top
@@ -221,28 +141,21 @@ const FocusScrollSection: React.FC = () => {
         }
       });
       
-      // Special handling for block 4
-      // If block 3 is active and block 5 is visible, ensure block 4 is shown first
-      if (activeBlockId === 3) {
-        const hasBlock5 = visibleBlocks.some(block => block.id === 5);
-        const hasBlock4 = visibleBlocks.some(block => block.id === 4);
-        
-        if (hasBlock5 && !hasBlock4) {
-          // Force showing block 4 first before jumping to 5
-          updateActiveState(4);
-          return;
-        }
-      }
+      // Sort blocks by ID to ensure sequential activation (3 before 4 before 5)
+      // This prevents skipping blocks in the sequence
+      visibleBlocks.sort((a, b) => a.id - b.id);
       
-      // Find the block that should be active
+      // Use the highest ID from visible blocks to ensure we don't skip any
       if (visibleBlocks.length > 0) {
-        // Get the highest (last) visible block ID
-        // Sort by ID to ensure sequential activation
-        visibleBlocks.sort((a, b) => a.id - b.id);
+        // Get the highest (last) block ID from sorted array
         const highestBlockId = visibleBlocks[visibleBlocks.length - 1].id;
         
-        // Only update if there's a change needed
-        if (highestBlockId !== activeBlockId) {
+        // Ensure we never skip block 4 when going from 3 to 5
+        if (activeBlockId === 3 && highestBlockId === 5) {
+          // Force block 4 to be active first
+          updateActiveState(4);
+        } else if (highestBlockId !== activeBlockId) {
+          // Only update if different from current to avoid unnecessary renders
           updateActiveState(highestBlockId);
         }
       }
@@ -300,7 +213,8 @@ const FocusScrollSection: React.FC = () => {
                 position: isFixedMode ? "fixed" : "relative",
                 top: isFixedMode ? "50%" : "auto",
                 transform: isFixedMode ? "translateY(-50%)" : "none",
-                width: isFixedMode ? "calc(50% - 3rem)" : "100%"
+                width: isFixedMode ? "calc(50% - 3rem)" : "100%",
+                display: "block" // Always display the container
               }}
               data-fixed={isFixedMode ? "true" : "false"}
               data-active-block={activeBlockId}
@@ -310,6 +224,7 @@ const FocusScrollSection: React.FC = () => {
                   key={block.id}
                   className="fixed-image"
                   data-block-id={block.id}
+                  // Set inline styles AND toggle a class for better browser support
                   style={{ 
                     opacity: block.id === activeBlockId ? 1 : 0,
                     visibility: block.id === activeBlockId ? "visible" : "hidden",
@@ -318,7 +233,9 @@ const FocusScrollSection: React.FC = () => {
                   initial={{ opacity: 0, scale: 0.95 }}
                   animate={{ 
                     opacity: block.id === activeBlockId ? 1 : 0,
-                    scale: block.id === activeBlockId ? 1 : 0.95
+                    scale: block.id === activeBlockId ? 1 : 0.95,
+                    // Force all images to stay in DOM with display: block
+                    display: "block" 
                   }}
                   transition={{ duration: 0.5, ease: "easeOut" }}
                   data-active={block.id === activeBlockId ? "true" : "false"}
