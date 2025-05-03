@@ -1,57 +1,50 @@
 /* Styling for the focus scroll section */
 #focus-scroll-section {
-  min-height: 1500px;
   position: relative;
   z-index: 1;
-  overflow: hidden;
+  min-height: 300vh; /* Makes the section tall enough to scroll through */
+  padding-bottom: 200px;
 }
 
-/* Focus blocks wrapper and container */
-.focus-blocks-wrapper {
-  position: relative;
-  height: 100%;
-}
-
-.focus-blocks-container {
+/* Fixed content column */
+.fixed-content-column {
   position: sticky;
   top: 120px;
+  z-index: 10;
   display: flex;
   flex-direction: column;
-  gap: 1.5rem;
-  padding-bottom: 2rem;
-  max-width: 90%;
-  z-index: 2;
+  align-items: flex-start;
+  justify-content: flex-start;
+  height: fit-content;
+  padding: 2rem 0;
 }
 
-/* Creates vertical space for scrolling */
-.focus-scroll-space {
-  height: 2400px; /* Adjust this height to control total scroll length */
-}
-
-/* Focus block styling with enhanced transitions */
-.focus-block {
-  transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
-  position: relative;
+/* Fixed content blocks */
+.fixed-content-block {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  opacity: 0;
+  transform: translateY(10px);
+  transition: all 0.4s ease;
   padding: 2rem;
   border-radius: 0.75rem;
-  margin-bottom: 2rem;
-  height: auto;
+  visibility: hidden;
+  overflow: hidden;
+  pointer-events: none;
 }
 
-.focus-block.active {
-  transform: translateX(0) scale(1.01);
-  background-color: white;
+.fixed-content-block.active {
   opacity: 1;
-  z-index: 10;
+  transform: translateY(0);
+  background-color: white;
+  visibility: visible;
+  pointer-events: auto;
+  position: relative;
 }
 
-.focus-block:not(.active) {
-  opacity: 0.6;
-  filter: grayscale(20%);
-  transform: translateX(-10px);
-}
-
-.focus-block::after {
+.fixed-content-block::after {
   content: '';
   position: absolute;
   left: -10px;
@@ -63,53 +56,75 @@
   transition: transform 0.3s ease;
 }
 
-.focus-block.active::after {
+.fixed-content-block.active::after {
   transform: translateY(-50%) scaleY(1);
 }
 
-/* Image container styling */
-.focus-image-container {
-  height: 550px;
+/* Fixed image container */
+.fixed-image-container {
   position: sticky;
   top: 120px;
-  transition: all 0.3s ease;
-  overflow: hidden;
-  border-radius: 0.75rem;
   display: flex;
   align-items: center;
   justify-content: center;
+  height: 550px;
   z-index: 1;
 }
 
-/* Animation for image transition */
-@keyframes fadeIn {
-  from { opacity: 0; transform: scale(0.95); }
-  to { opacity: 1; transform: scale(1); }
+.fixed-image {
+  position: absolute;
+  inset: 0;
+  opacity: 0;
+  transition: opacity 0.5s ease, transform 0.5s ease;
+  overflow: hidden;
+  height: 100%;
+  width: 100%;
 }
 
-.focus-image {
-  animation: fadeIn 0.5s ease forwards;
+.fixed-image.opacity-100 {
+  opacity: 1;
 }
 
-/* Responsive adjustments */
+/* Add space at the bottom to allow scrolling */
+.scroll-height-provider {
+  height: 300vh;
+  pointer-events: none;
+  position: relative;
+}
+
+/* Hidden markers to help with scrolling */
+.scroll-marker {
+  position: absolute;
+  height: 50vh; /* Each marker takes up 50% of viewport height */
+  width: 1px;
+  opacity: 0;
+  pointer-events: none;
+  left: 0;
+}
+
+/* Mobile adjustments */
 @media (max-width: 1023px) {
-  .focus-block.active {
-    transform: translateX(0) scale(1.02);
+  #focus-scroll-section {
+    min-height: auto;
+    padding-bottom: 0;
   }
   
-  .focus-blocks-container {
+  .fixed-content-column {
     position: relative;
     top: 0;
+    padding: 0;
   }
   
-  .focus-image-container {
-    position: relative;
-    top: 0;
-    height: auto;
-    margin-bottom: 2rem;
+  .fixed-content-block {
+    display: none;
   }
   
-  .focus-scroll-space {
-    display: none; /* No scroll space needed on mobile */
+  .fixed-content-block.active {
+    display: block;
+    padding: 1rem 0;
+  }
+  
+  .scroll-height-provider {
+    display: none;
   }
 }

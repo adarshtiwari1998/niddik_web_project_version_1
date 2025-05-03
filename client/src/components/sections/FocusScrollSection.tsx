@@ -1,4 +1,4 @@
-import React, { useEffect, useState, useRef, useCallback } from "react";
+import React, { useEffect, useState } from "react";
 import { motion } from "framer-motion";
 import Container from "@/components/ui/container";
 import "./focus-scroll.css";
@@ -45,59 +45,65 @@ const focusBlocks: FocusBlock[] = [
 
 const FocusScrollSection: React.FC = () => {
   const [activeBlockId, setActiveBlockId] = useState<number>(1);
-  const sectionRef = useRef<HTMLDivElement>(null);
-  const blockRefs = useRef<(HTMLDivElement | null)[]>([]);
   
-  // This function calculates which block should be active based on scroll position
-  const calculateActiveBlock = useCallback(() => {
-    // Get which section of the scroll-space we're in (divide the scroll height into equal sections)
-    const scrollPosition = window.scrollY;
-    const sectionRef = document.getElementById('focus-scroll-section');
-    
-    if (!sectionRef) return;
-    
-    // Get the section's position
-    const sectionTop = sectionRef.offsetTop;
-    const viewportHeight = window.innerHeight;
-    const scrollProgress = scrollPosition - sectionTop + (viewportHeight * 0.5);
-    
-    if (scrollProgress < 0) return; // Not yet at the section
-    
-    // The number of blocks
-    const totalBlocks = focusBlocks.length;
-    // The total scroll height allocated for this section
-    const totalScrollSpace = 2400; // Should match the .focus-scroll-space height in CSS
-    
-    // Calculate which block should be active based on scroll progress
-    const blockHeight = totalScrollSpace / totalBlocks;
-    const activeBlock = Math.min(
-      Math.max(Math.floor(scrollProgress / blockHeight) + 1, 1),
-      totalBlocks
-    );
-    
-    if (activeBlock !== activeBlockId) {
-      setActiveBlockId(activeBlock);
-    }
-  }, [activeBlockId, focusBlocks.length]);
-
-  // Set up scroll listener to track scroll position
+  // Use scroll position to determine which image to show
   useEffect(() => {
-    // Initialize
-    calculateActiveBlock();
+    const handleScroll = () => {
+      // Get the section element
+      const section = document.getElementById('focus-scroll-section');
+      if (!section) return;
+      
+      // Get the section boundaries
+      const sectionRect = section.getBoundingClientRect();
+      const sectionTop = window.scrollY + sectionRect.top;
+      const sectionHeight = section.offsetHeight;
+      
+      // Current scroll position relative to the section
+      const scrollPosition = window.scrollY - sectionTop;
+      
+      // If we're not yet scrolling through the section
+      if (scrollPosition < 0) {
+        setActiveBlockId(1);
+        return;
+      }
+      
+      // If we're past the section
+      if (scrollPosition > sectionHeight) {
+        setActiveBlockId(focusBlocks.length);
+        return;
+      }
+      
+      // Calculate which part of the section we're in
+      // Each block gets an equal portion of the section height
+      const blockHeight = sectionHeight / focusBlocks.length;
+      
+      // Determine the active block based on scroll position
+      const newActiveBlock = Math.min(
+        Math.floor(scrollPosition / blockHeight) + 1,
+        focusBlocks.length
+      );
+      
+      if (newActiveBlock !== activeBlockId) {
+        setActiveBlockId(newActiveBlock);
+      }
+    };
     
     // Add scroll listener
-    window.addEventListener('scroll', calculateActiveBlock, { passive: true });
+    window.addEventListener('scroll', handleScroll, { passive: true });
     
-    // Cleanup
+    // Run once to set initial state
+    handleScroll();
+    
+    // Clean up
     return () => {
-      window.removeEventListener('scroll', calculateActiveBlock);
+      window.removeEventListener('scroll', handleScroll);
     };
-  }, [calculateActiveBlock]);
-
+  }, [activeBlockId]);
+  
   return (
-    <section ref={sectionRef} className="py-20 bg-gray-50" id="focus-scroll-section">
+    <section className="py-48 bg-gray-50" id="focus-scroll-section">
       <Container>
-        <div className="text-center mb-16">
+        <div className="text-center mb-20">
           <h2 className="text-4xl font-bold text-andela-dark mb-4">
             How We Transform Teams
           </h2>
@@ -106,41 +112,35 @@ const FocusScrollSection: React.FC = () => {
           </p>
         </div>
 
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 relative">
-          {/* Left column - Content blocks with scroll triggers */}
-          <div className="focus-blocks-wrapper">
-            <div className="focus-blocks-container">
-              {focusBlocks.map((block, index) => (
-                <div 
-                  key={block.id}
-                  ref={el => blockRefs.current[index] = el}
-                  data-block-id={block.id}
-                  className={`focus-block p-6 md:p-8 rounded-xl ${
-                    block.id === activeBlockId ? "active" : ""
-                  }`}
-                >
-                  <div className="flex flex-col">
-                    <h3 className="text-2xl font-bold text-andela-dark mb-4">
-                      {block.title}
-                    </h3>
-                    <p className="text-andela-gray leading-relaxed">
-                      {block.description}
-                    </p>
-                  </div>
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 relative">
+          {/* Left column - Content blocks (fixed) */}
+          <div className="fixed-content-column">
+            {focusBlocks.map((block) => (
+              <div 
+                key={block.id}
+                className={`fixed-content-block ${
+                  block.id === activeBlockId ? "active" : ""
+                }`}
+              >
+                <div className="flex flex-col">
+                  <h3 className="text-2xl font-bold text-andela-dark mb-4">
+                    {block.title}
+                  </h3>
+                  <p className="text-andela-gray leading-relaxed">
+                    {block.description}
+                  </p>
                 </div>
-              ))}
-            </div>
-            {/* This creates the scroll space needed */}
-            <div className="focus-scroll-space"></div>
+              </div>
+            ))}
           </div>
 
           {/* Right column - Sticky image */}
-          <div className="hidden lg:block relative h-full">
-            <div className="focus-image-container">
+          <div className="hidden lg:block">
+            <div className="fixed-image-container">
               {focusBlocks.map((block) => (
                 <motion.div
                   key={block.id}
-                  className={`focus-image absolute inset-0 rounded-xl overflow-hidden ${
+                  className={`fixed-image ${
                     block.id === activeBlockId ? "opacity-100" : "opacity-0"
                   }`}
                   initial={{ opacity: 0 }}
@@ -154,9 +154,9 @@ const FocusScrollSection: React.FC = () => {
                   <img 
                     src={block.image}
                     alt={block.title}
-                    className="w-full h-full object-cover"
+                    className="w-full h-full object-cover rounded-lg"
                   />
-                  <div className="absolute inset-0 bg-black bg-opacity-20"></div>
+                  <div className="absolute inset-0 bg-black bg-opacity-20 rounded-lg"></div>
                   <div className="absolute bottom-6 left-6 max-w-xs">
                     <span className="inline-block bg-andela-green text-white px-4 py-1 rounded-full text-sm font-medium mb-2">
                       Feature {block.id}
@@ -185,9 +185,9 @@ const FocusScrollSection: React.FC = () => {
                   <img 
                     src={block.image}
                     alt={block.title}
-                    className="w-full h-64 object-cover"
+                    className="w-full h-64 object-cover rounded-lg"
                   />
-                  <div className="absolute inset-0 bg-black bg-opacity-20"></div>
+                  <div className="absolute inset-0 bg-black bg-opacity-20 rounded-lg"></div>
                   <div className="absolute bottom-4 left-4">
                     <span className="inline-block bg-andela-green text-white px-3 py-1 rounded-full text-xs font-medium mb-1">
                       Feature {block.id}
@@ -200,6 +200,19 @@ const FocusScrollSection: React.FC = () => {
               )
             ))}
           </div>
+        </div>
+        
+        {/* This provides the scrolling space needed */}
+        <div className="scroll-height-provider">
+          {/* Hidden markers for each section to help with scrolling */}
+          {focusBlocks.map((block, index) => (
+            <div 
+              key={block.id} 
+              className="scroll-marker" 
+              style={{ top: `${index * 20}vh` }}
+              data-section={block.id}
+            />
+          ))}
         </div>
       </Container>
     </section>
