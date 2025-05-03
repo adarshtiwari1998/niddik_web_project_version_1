@@ -38,10 +38,10 @@ const Home = () => {
       <div className={`${isAnnouncementVisible ? 'pt-28' : 'pt-20'} transition-all duration-300`}>
         <main>
           <Hero />
-          <ForBusinesses />
-          <ForTechnologists />
           <TrustedCompanies />
           <FocusScrollSection />
+          <ForBusinesses />
+          <ForTechnologists />
           <SuccessStories />
           <HowItWorks />
           <FeaturedCaseStudy />
