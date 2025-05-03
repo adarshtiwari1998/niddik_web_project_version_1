@@ -68,11 +68,10 @@ const FocusScrollSection: React.FC = () => {
     // Don't update if we're already on this block
     if (blockId === activeBlockId) return;
     
-    // Special handling to ensure block 4 is never skipped
-    if (activeBlockId === 3 && blockId === 5) {
-      // If going from 3 to 5, force showing block 4 first and stay there
-      // (don't automatically go to block 5)
-      console.log("Block 3->5 transition intercepted: showing block 4 instead");
+    // Special handling to ensure block 4 is never skipped in either direction
+    if ((activeBlockId === 3 && blockId === 5) || (activeBlockId === 5 && blockId === 3)) {
+      // If going from 3 to 5 OR from 5 to 3, force showing block 4 first and stay there
+      console.log(`Block ${activeBlockId}->${blockId} transition intercepted: showing block 4 instead`);
       
       // Activate block 4 and STAY THERE
       setActiveBlockId(4);
@@ -96,7 +95,7 @@ const FocusScrollSection: React.FC = () => {
       isEnforcingMinDisplayTime.current = true;
       
       // Reset the enforcing flag after minimum display time
-      // but DON'T automatically move to block 5
+      // but DON'T automatically move to next block
       setTimeout(() => {
         isEnforcingMinDisplayTime.current = false;
       }, MIN_DISPLAY_TIME);
@@ -204,14 +203,26 @@ const FocusScrollSection: React.FC = () => {
         }
       });
       
-      // Special handling for block 4
-      // If block 3 is active and block 5 is visible, ensure block 4 is shown first
+      // Special handling for block 4 in both directions
+      // For scrolling down: If block 3 is active and block 5 is visible, ensure block 4 is shown first
       if (activeBlockId === 3) {
         const hasBlock5 = visibleBlocks.some(block => block.id === 5);
         const hasBlock4 = visibleBlocks.some(block => block.id === 4);
         
         if (hasBlock5 && !hasBlock4) {
           // Force showing block 4 first before jumping to 5
+          updateActiveState(4);
+          return;
+        }
+      }
+      
+      // For scrolling up: If block 5 is active and block 3 is visible, ensure block 4 is shown first
+      if (activeBlockId === 5) {
+        const hasBlock3 = visibleBlocks.some(block => block.id === 3);
+        const hasBlock4 = visibleBlocks.some(block => block.id === 4);
+        
+        if (hasBlock3 && !hasBlock4) {
+          // Force showing block 4 first before jumping to 3 when scrolling up
           updateActiveState(4);
           return;
         }
