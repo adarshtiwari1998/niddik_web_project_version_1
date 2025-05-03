@@ -1,0 +1,77 @@
+/* Styling for the focus scroll section */
+.focus-block {
+  transition: all 0.4s ease;
+}
+
+.focus-block.active {
+  transform: translateX(0) scale(1.05);
+  background-color: white;
+  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.08);
+}
+
+.focus-block:not(.active) {
+  opacity: 0.7;
+  filter: grayscale(20%);
+}
+
+/* Image container styling */
+.focus-image-container {
+  height: 500px;
+  position: sticky;
+  top: 120px;
+  transition: all 0.3s ease;
+}
+
+/* Responsive adjustments */
+@media (max-width: 1023px) {
+  .focus-block.active {
+    transform: translateX(0) scale(1.02);
+  }
+  
+  .focus-image-container {
+    position: relative;
+    top: 0;
+    height: auto;
+    margin-bottom: 2rem;
+  }
+  
+  /* Adjust spacing for mobile */
+  .focus-blocks-container > div {
+    margin-bottom: 2.5rem;
+  }
+}
+
+/* Animation for image transition */
+@keyframes fadeIn {
+  from { opacity: 0; transform: scale(0.95); }
+  to { opacity: 1; transform: scale(1); }
+}
+
+.focus-image {
+  animation: fadeIn 0.5s ease forwards;
+}
+
+/* Progress indicator styling */
+.scroll-progress-indicator {
+  position: fixed;
+  right: 5%;
+  top: 50%;
+  transform: translateY(-50%);
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  z-index: 10;
+}
+
+.progress-dot {
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  background-color: rgba(0, 0, 0, 0.2);
+  transition: all 0.3s ease;
+}
+
+.progress-dot.active {
+  background-color: #3eb489; /* Andela green */
+  transform: scale(1.3);
+}
