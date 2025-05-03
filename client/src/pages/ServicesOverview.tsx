@@ -1,5 +1,6 @@
 import React, { useState } from "react";
 import { motion } from "framer-motion";
+import { Link } from "wouter";
 import { 
   ChevronRight, Users, Calendar, PieChart, Briefcase,
   CheckCircle, ArrowRight, Zap, Award, BarChart
@@ -160,9 +161,9 @@ const ServicesOverview = () => {
                 <p className="text-xl text-gray-200 mb-8">
                   Our innovative suite of recruitment services is designed to meet the diverse talent acquisition needs of today's dynamic organizations.
                 </p>
-                <a href="#services-overview" className="inline-flex items-center bg-white text-andela-dark px-6 py-3 rounded-md font-medium hover:bg-gray-100 transition-colors">
+                <Link href="#services-overview" className="inline-flex items-center bg-white text-andela-dark px-6 py-3 rounded-md font-medium hover:bg-gray-100 transition-colors">
                   Explore our services <ChevronRight className="h-5 w-5 ml-2" />
-                </a>
+                </Link>
               </div>
             </Container>
           </section>
@@ -209,12 +210,12 @@ const ServicesOverview = () => {
                         </div>
                         <h3 className="text-2xl font-bold text-andela-dark mb-3">{service.title}</h3>
                         <p className="text-andela-gray mb-6">{service.description}</p>
-                        <a 
+                        <Link 
                           href={service.url} 
                           className="inline-flex items-center font-medium text-andela-green hover:text-andela-green/80 transition-colors"
                         >
                           Learn more <ChevronRight className="h-4 w-4 ml-1 group-hover:ml-2 transition-all" />
-                        </a>
+                        </Link>
                       </div>
                       
                       {/* Bottom color bar */}
@@ -443,18 +444,18 @@ const ServicesOverview = () => {
                   Let's discuss how our innovative services can help you build the teams you need to succeed.
                 </p>
                 <div className="flex flex-col sm:flex-row gap-4 justify-center">
-                  <a 
+                  <Link 
                     href="/contact"
                     className="py-3 px-8 rounded-md bg-andela-green text-white font-medium hover:bg-andela-green/90 transition-colors"
                   >
                     Schedule a Consultation
-                  </a>
-                  <a 
+                  </Link>
+                  <Link 
                     href="/case-studies"
                     className="py-3 px-8 rounded-md bg-transparent text-white font-medium border border-white/30 hover:bg-white/10 transition-colors"
                   >
                     View Success Stories
-                  </a>
+                  </Link>
                 </div>
               </div>
             </Container>
