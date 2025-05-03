@@ -67,7 +67,7 @@ const Hero = () => {
   };
 
   return (
-    <section className="relative overflow-hidden min-h-screen flex flex-col pt-28">
+    <section className="relative overflow-hidden min-h-screen flex flex-col">
       {/* Video Background with Fallback */}
       <div className="absolute inset-0 w-full h-full z-0">
         {!showFallback ? (

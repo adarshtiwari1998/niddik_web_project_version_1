@@ -20,26 +20,33 @@ const Home = () => {
 
   return (
     <div className="min-h-screen overflow-x-hidden">
-      <AnnouncementBar 
-        text="Join our upcoming webinar on scaling tech teams effectively."
-        linkText="Register now"
-        linkUrl="#"
-        bgColor="bg-indigo-600"
-        textColor="text-white"
-        onVisibilityChange={handleAnnouncementVisibilityChange}
-      />
+      {/* Fixed header components */}
+      <div className="fixed-header-group w-full z-50">
+        <AnnouncementBar 
+          text="Join our upcoming webinar on scaling tech teams effectively."
+          linkText="Register now"
+          linkUrl="#"
+          bgColor="bg-indigo-600"
+          textColor="text-white"
+          onVisibilityChange={handleAnnouncementVisibilityChange}
+        />
+      </div>
       <Navbar hasAnnouncementAbove={isAnnouncementVisible} />
-      <main>
-        <Hero />
-        <TrustedCompanies />
-        <ForBusinesses />
-        <ForTechnologists />
-        <SuccessStories />
-        <HowItWorks />
-        <FeaturedCaseStudy />
-        <ContactSection />
-      </main>
-      <Footer />
+      
+      {/* Add padding to account for fixed elements */}
+      <div className={`${isAnnouncementVisible ? 'pt-28' : 'pt-20'} transition-all duration-300`}>
+        <main>
+          <Hero />
+          <TrustedCompanies />
+          <ForBusinesses />
+          <ForTechnologists />
+          <SuccessStories />
+          <HowItWorks />
+          <FeaturedCaseStudy />
+          <ContactSection />
+        </main>
+        <Footer />
+      </div>
     </div>
   );
 };
