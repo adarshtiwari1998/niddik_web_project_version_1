@@ -102,7 +102,20 @@
   height: 550px; /* Same height as fixed state */
   width: 100%; /* Full width of its container */
   z-index: 0; /* Lower z-index to allow content below to flow normally */
-  transition: position 0.1s ease; /* Quick transition to avoid jank */
+  opacity: 1 !important; /* Ensure image is visible */
+  visibility: visible !important; /* Make sure it's not hidden */
+}
+
+/* Ensure image is always visible in release-fixed state */
+.fixed-image-container.release-fixed .fixed-image {
+  opacity: 0;
+  transition: opacity 0.7s ease;
+}
+
+/* Only show the active image */
+.fixed-image-container.release-fixed .fixed-image[data-active="true"] {
+  opacity: 1 !important;
+  visibility: visible !important;
 }
 
 /* Mobile adjustments */

@@ -86,8 +86,12 @@ const FocusScrollSection: React.FC = () => {
       if (isSectionEnded || (lastBlock && lastBlock.getBoundingClientRect().top <= window.innerHeight * 0.4)) {
         // Section is ending OR last block is near top, force release fixed position
         setIsLastBlockVisible(true);
-        // Ensure last block's image is showing
-        setActiveBlockId(LAST_BLOCK_ID);
+        
+        // Always ensure the current image is visible when in release mode
+        // If we're at block 5, show block 5's image
+        if (!activeBlockId || activeBlockId < LAST_BLOCK_ID) {
+          setActiveBlockId(LAST_BLOCK_ID);
+        }
       } else if (!isTopInView) {
         // We're at the top of the section, don't enable fixed positioning yet
         setIsFirstBlockAtTop(false);
@@ -327,6 +331,7 @@ const FocusScrollSection: React.FC = () => {
                     scale: block.id === activeBlockId ? 1 : 0.95,
                   }}
                   transition={{ duration: 0.7, ease: "easeOut" }}
+                  data-active={block.id === activeBlockId ? "true" : "false"}
                 >
                   <img 
                     src={block.image}
@@ -358,6 +363,7 @@ const FocusScrollSection: React.FC = () => {
                   exit={{ opacity: 0, y: -20 }}
                   transition={{ duration: 0.7, ease: "easeOut" }}
                   className="relative"
+                  data-active="true"
                 >
                   <img 
                     src={block.image}
