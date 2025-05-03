@@ -322,7 +322,7 @@ const ServicesOverview = () => {
                 viewport={{ once: true }}
               >
                 <motion.div variants={itemVariants} className="text-center mb-16">
-                  <h2 className="text-4xl font-bold text-andela-dark mb-4">The NIIDIK Difference</h2>
+                  <h2 className="text-4xl font-bold text-andela-dark mb-4">The NIDDIK Difference</h2>
                   <p className="text-xl text-andela-gray max-w-3xl mx-auto">
                     What makes our approach to talent acquisition truly revolutionary
                   </p>

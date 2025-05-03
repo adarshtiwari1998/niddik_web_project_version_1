@@ -209,7 +209,7 @@ const Hero = () => {
           </div>
           <div>
             <p className="font-semibold text-white">Trusted by Industry Leaders</p>
-            <p className="text-sm text-gray-200">Global leaders choose NIIDIK expertise</p>
+            <p className="text-sm text-gray-200">Global leaders choose NIDDIK expertise</p>
           </div>
         </div>
       </motion.div>

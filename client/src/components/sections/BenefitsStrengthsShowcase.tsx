@@ -128,7 +128,7 @@ const BenefitsStrengthsShowcase = () => {
             transition={{ duration: 0.6 }}
           >
             <span className="bg-andela-green/10 text-andela-green px-4 py-1.5 rounded-full text-sm font-medium mb-3 inline-block">
-              Why Choose NIIDIK
+              Why Choose NIDDIK
             </span>
             <h2 className="text-4xl md:text-5xl font-bold text-andela-dark mb-4">
               Transforming Talent Acquisition
