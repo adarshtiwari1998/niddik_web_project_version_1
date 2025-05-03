@@ -168,9 +168,23 @@ const ServicesOverview = () => {
             </Container>
           </section>
 
-          {/* Services Overview - Different presentation from home page */}
-          <section id="services-overview" className="py-20 bg-gray-50">
-            <Container>
+          {/* Services Overview - Enhanced Modern Design */}
+          <section id="services-overview" className="py-24 bg-gradient-to-br from-gray-50 to-white relative overflow-hidden">
+            {/* Background decorations */}
+            <div className="absolute -top-20 left-0 w-full h-40 bg-gradient-to-b from-blue-50/50 to-transparent"></div>
+            <div className="absolute top-40 left-1/2 -translate-x-1/2 opacity-10 pointer-events-none">
+              <svg width="800" height="800" viewBox="0 0 800 800" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <circle cx="400" cy="400" r="400" stroke="url(#paint4_linear)" strokeWidth="0.5" strokeDasharray="4 4"/>
+                <defs>
+                  <linearGradient id="paint4_linear" x1="0" y1="0" x2="800" y2="800" gradientUnits="userSpaceOnUse">
+                    <stop stopColor="#3ECF8E"/>
+                    <stop offset="1" stopColor="#3B82F6"/>
+                  </linearGradient>
+                </defs>
+              </svg>
+            </div>
+            
+            <Container className="relative z-10">
               <motion.div
                 variants={containerVariants}
                 initial="hidden"
@@ -178,48 +192,125 @@ const ServicesOverview = () => {
                 viewport={{ once: true }}
               >
                 <motion.div variants={itemVariants} className="text-center mb-16">
-                  <h2 className="text-4xl font-bold text-andela-dark mb-4">Our Comprehensive Service Offerings</h2>
+                  <span className="inline-block bg-gradient-to-r from-andela-green/10 to-blue-500/10 text-andela-green px-4 py-1 rounded-full font-medium mb-4">Talent Solutions</span>
+                  <h2 className="text-5xl font-bold text-andela-dark mb-6">Our Comprehensive Services</h2>
                   <p className="text-xl text-andela-gray max-w-3xl mx-auto">
-                    From full-scale recruitment process outsourcing to specialized contingent staffing, we have a solution tailored to your specific needs.
+                    From full-scale recruitment process outsourcing to specialized contingent staffing, 
+                    we have a solution tailored to your specific needs.
                   </p>
                 </motion.div>
 
-                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
-                  {services.map((service) => (
+                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-10">
+                  {services.map((service, index) => (
                     <motion.div
                       key={service.id}
                       variants={itemVariants}
-                      className="relative bg-white rounded-xl shadow-sm overflow-hidden group hover:shadow-md transition-all duration-300"
+                      className="bg-white rounded-2xl shadow-xl overflow-hidden group transition-all duration-500 hover:-translate-y-2 hover:shadow-2xl"
+                      style={{ 
+                        transformStyle: 'preserve-3d',
+                        perspective: '1000px'
+                      }}
                     >
-                      {/* Background decorative elements */}
-                      <div className="absolute bottom-0 right-0 opacity-5 pointer-events-none">
-                        <svg width="120" height="120" viewBox="0 0 120 120" fill="none" xmlns="http://www.w3.org/2000/svg">
-                          <path d="M60 0L95.3109 30L95.3109 90L60 120L24.6891 90L24.6891 30L60 0Z" fill="currentColor"/>
-                        </svg>
+                      {/* Custom geometric pattern for each service card */}
+                      <div className="absolute top-0 left-0 w-full h-full overflow-hidden opacity-10 pointer-events-none">
+                        {index === 0 && (
+                          <svg width="100%" height="100%" viewBox="0 0 400 400" fill="none" xmlns="http://www.w3.org/2000/svg">
+                            <path d="M50 0L100 86.6025L50 173.205L-50 173.205L-100 86.6025L-50 0L50 0Z" stroke="url(#service-grad-1)" strokeWidth="1.5" transform="translate(200 50)"/>
+                            <path d="M150 0L200 86.6025L150 173.205L50 173.205L0 86.6025L50 0L150 0Z" stroke="url(#service-grad-1)" strokeWidth="1.5" transform="translate(200 50)"/>
+                            <path d="M50 173.205L100 259.808L50 346.41L-50 346.41L-100 259.808L-50 173.205L50 173.205Z" stroke="url(#service-grad-1)" strokeWidth="1.5" transform="translate(200 50)"/>
+                            <path d="M150 173.205L200 259.808L150 346.41L50 346.41L0 259.808L50 173.205L150 173.205Z" stroke="url(#service-grad-1)" strokeWidth="1.5" transform="translate(200 50)"/>
+                            <defs>
+                              <linearGradient id="service-grad-1" x1="0" y1="0" x2="200" y2="400" gradientUnits="userSpaceOnUse">
+                                <stop stopColor="#818CF8"/>
+                                <stop offset="1" stopColor="#4F46E5"/>
+                              </linearGradient>
+                            </defs>
+                          </svg>
+                        )}
+                        {index === 1 && (
+                          <svg width="100%" height="100%" viewBox="0 0 400 400" fill="none" xmlns="http://www.w3.org/2000/svg">
+                            <rect x="50" y="50" width="100" height="100" rx="20" stroke="url(#service-grad-2)" strokeWidth="1.5"/>
+                            <rect x="250" y="50" width="100" height="100" rx="20" stroke="url(#service-grad-2)" strokeWidth="1.5"/>
+                            <rect x="50" y="250" width="100" height="100" rx="20" stroke="url(#service-grad-2)" strokeWidth="1.5"/>
+                            <rect x="250" y="250" width="100" height="100" rx="20" stroke="url(#service-grad-2)" strokeWidth="1.5"/>
+                            <path d="M150 150L250 150" stroke="url(#service-grad-2)" strokeWidth="1.5"/>
+                            <path d="M150 250L150 150" stroke="url(#service-grad-2)" strokeWidth="1.5"/>
+                            <path d="M250 250L250 150" stroke="url(#service-grad-2)" strokeWidth="1.5"/>
+                            <path d="M150 250L250 250" stroke="url(#service-grad-2)" strokeWidth="1.5"/>
+                            <defs>
+                              <linearGradient id="service-grad-2" x1="50" y1="50" x2="350" y2="350" gradientUnits="userSpaceOnUse">
+                                <stop stopColor="#60A5FA"/>
+                                <stop offset="1" stopColor="#2563EB"/>
+                              </linearGradient>
+                            </defs>
+                          </svg>
+                        )}
+                        {index === 2 && (
+                          <svg width="100%" height="100%" viewBox="0 0 400 400" fill="none" xmlns="http://www.w3.org/2000/svg">
+                            <circle cx="200" cy="200" r="150" stroke="url(#service-grad-3)" strokeWidth="1.5"/>
+                            <path d="M200 50L200 350" stroke="url(#service-grad-3)" strokeWidth="1.5"/>
+                            <path d="M50 200L350 200" stroke="url(#service-grad-3)" strokeWidth="1.5"/>
+                            <path d="M84.3146 84.3146L315.685 315.685" stroke="url(#service-grad-3)" strokeWidth="1.5"/>
+                            <path d="M315.685 84.3146L84.3146 315.685" stroke="url(#service-grad-3)" strokeWidth="1.5"/>
+                            <defs>
+                              <linearGradient id="service-grad-3" x1="50" y1="50" x2="350" y2="350" gradientUnits="userSpaceOnUse">
+                                <stop stopColor="#34D399"/>
+                                <stop offset="1" stopColor="#059669"/>
+                              </linearGradient>
+                            </defs>
+                          </svg>
+                        )}
+                        {index === 3 && (
+                          <svg width="100%" height="100%" viewBox="0 0 400 400" fill="none" xmlns="http://www.w3.org/2000/svg">
+                            <path d="M100 50L300 50L350 200L300 350L100 350L50 200L100 50Z" stroke="url(#service-grad-4)" strokeWidth="1.5"/>
+                            <path d="M150 100L250 100L300 200L250 300L150 300L100 200L150 100Z" stroke="url(#service-grad-4)" strokeWidth="1.5"/>
+                            <path d="M200 150L200 250" stroke="url(#service-grad-4)" strokeWidth="1.5"/>
+                            <path d="M150 200L250 200" stroke="url(#service-grad-4)" strokeWidth="1.5"/>
+                            <defs>
+                              <linearGradient id="service-grad-4" x1="50" y1="50" x2="350" y2="350" gradientUnits="userSpaceOnUse">
+                                <stop stopColor="#FBBF24"/>
+                                <stop offset="1" stopColor="#D97706"/>
+                              </linearGradient>
+                            </defs>
+                          </svg>
+                        )}
                       </div>
-                      <div className="absolute top-4 right-8 opacity-5 pointer-events-none">
-                        <svg width="60" height="60" viewBox="0 0 60 60" fill="none" xmlns="http://www.w3.org/2000/svg">
-                          <path d="M30 0L60 30L30 60L0 30L30 0Z" fill="currentColor"/>
-                        </svg>
+                      
+                      {/* Top colorful header */}
+                      <div className={`h-24 w-full bg-gradient-to-r ${service.color} relative overflow-hidden`}>
+                        <div className="absolute inset-0 opacity-30">
+                          <svg width="100%" height="100%" viewBox="0 0 100 100" preserveAspectRatio="none" fill="none" xmlns="http://www.w3.org/2000/svg">
+                            <path d="M0 0L100 0L100 100L0 100L0 0Z" fill="url(#header-pattern)" fillOpacity="0.3"/>
+                            <defs>
+                              <pattern id="header-pattern" patternContentUnits="objectBoundingBox" width="0.1" height="0.1">
+                                <use xlinkHref="#header-dots" transform="scale(0.01)"/>
+                              </pattern>
+                              <image id="header-dots" width="10" height="10" xlinkHref="data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTAiIGhlaWdodD0iMTAiIHZpZXdCb3g9IjAgMCAxMCAxMCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48Y2lyY2xlIGN4PSIxIiBjeT0iMSIgcj0iMSIgZmlsbD0iI2ZmZiIvPjwvc3ZnPgo="/>
+                            </defs>
+                          </svg>
+                        </div>
+                        
+                        {/* Icon with 3D effect */}
+                        <div className="absolute -bottom-10 left-8">
+                          <div className={`w-20 h-20 rounded-xl shadow-lg flex items-center justify-center bg-white transform group-hover:rotate-y-12 transition-transform duration-500`}>
+                            <div className={`w-12 h-12 rounded-lg flex items-center justify-center bg-gradient-to-r ${service.color}`}>
+                              {React.cloneElement(service.icon as React.ReactElement, { className: 'h-7 w-7 text-white' })}
+                            </div>
+                          </div>
+                        </div>
                       </div>
                       
                       {/* Service content */}
-                      <div className="p-8">
-                        <div className={`w-16 h-16 rounded-lg mb-6 flex items-center justify-center bg-gradient-to-r ${service.color} text-white`}>
-                          {service.icon}
-                        </div>
+                      <div className="p-8 pt-14">
                         <h3 className="text-2xl font-bold text-andela-dark mb-3">{service.title}</h3>
                         <p className="text-andela-gray mb-6">{service.description}</p>
                         <Link 
                           href={service.url} 
-                          className="inline-flex items-center font-medium text-andela-green hover:text-andela-green/80 transition-colors"
+                          className={`inline-flex items-center font-medium text-transparent bg-clip-text bg-gradient-to-r ${service.color} hover:opacity-80 transition-opacity`}
                         >
-                          Learn more <ChevronRight className="h-4 w-4 ml-1 group-hover:ml-2 transition-all" />
+                          Learn more <ChevronRight className={`h-4 w-4 ml-1 group-hover:ml-2 transition-all text-transparent bg-clip-text bg-gradient-to-r ${service.color}`} />
                         </Link>
                       </div>
-                      
-                      {/* Bottom color bar */}
-                      <div className={`h-1 w-full bg-gradient-to-r ${service.color}`}></div>
                     </motion.div>
                   ))}
                 </div>
@@ -227,83 +318,144 @@ const ServicesOverview = () => {
             </Container>
           </section>
 
-          {/* Tabs Section with Image and Content */}
-          <section className="py-20 bg-white">
+          {/* Tabs Section with Image and Content - Modern Vertical Design */}
+          <section className="py-24 bg-gradient-to-br from-gray-50 via-white to-gray-50 relative overflow-hidden">
+            {/* Background decorative elements */}
+            <div className="absolute top-0 right-0 opacity-5 pointer-events-none">
+              <svg width="600" height="600" viewBox="0 0 600 600" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <circle cx="300" cy="300" r="300" stroke="url(#paint0_linear)" strokeWidth="2"/>
+                <defs>
+                  <linearGradient id="paint0_linear" x1="0" y1="0" x2="600" y2="600" gradientUnits="userSpaceOnUse">
+                    <stop stopColor="#3ECF8E"/>
+                    <stop offset="1" stopColor="#3B82F6"/>
+                  </linearGradient>
+                </defs>
+              </svg>
+            </div>
+            <div className="absolute bottom-0 left-0 opacity-5 pointer-events-none">
+              <svg width="400" height="400" viewBox="0 0 400 400" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <path d="M100 0L200 100L100 200L0 100L100 0Z" stroke="url(#paint1_linear)" strokeWidth="2"/>
+                <path d="M300 0L400 100L300 200L200 100L300 0Z" stroke="url(#paint1_linear)" strokeWidth="2"/>
+                <path d="M100 200L200 300L100 400L0 300L100 200Z" stroke="url(#paint1_linear)" strokeWidth="2"/>
+                <path d="M300 200L400 300L300 400L200 300L300 200Z" stroke="url(#paint1_linear)" strokeWidth="2"/>
+                <defs>
+                  <linearGradient id="paint1_linear" x1="0" y1="0" x2="400" y2="400" gradientUnits="userSpaceOnUse">
+                    <stop stopColor="#F59E0B"/>
+                    <stop offset="1" stopColor="#EC4899"/>
+                  </linearGradient>
+                </defs>
+              </svg>
+            </div>
+            
             <Container>
               <motion.div
                 variants={containerVariants}
                 initial="hidden"
                 whileInView="visible"
                 viewport={{ once: true }}
+                className="relative z-10"
               >
                 <motion.div variants={itemVariants} className="text-center mb-16">
-                  <h2 className="text-4xl font-bold text-andela-dark mb-4">Why Choose Our Services</h2>
+                  <h2 className="text-4xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-andela-green to-blue-500 mb-4 inline-block">Why Choose Our Services</h2>
                   <p className="text-xl text-andela-gray max-w-3xl mx-auto">
                     Discover the unique advantages that make our talent solutions stand out from traditional recruitment approaches.
                   </p>
                 </motion.div>
 
                 <div className="flex flex-col lg:flex-row gap-12">
-                  {/* Tabs navigation */}
+                  {/* Vertical Tabs navigation - modern style */}
                   <div className="lg:w-1/3">
-                    <div className="relative">
-                      {/* Animated highlight line */}
-                      <motion.div 
-                        className="absolute left-0 w-1 bg-andela-green rounded-full"
-                        initial={{ top: 0, height: '0%' }}
-                        animate={{ 
-                          top: serviceTabs.findIndex(tab => tab.id === activeTab) * 25 + '%',
-                          height: '25%' 
-                        }}
-                        transition={{ type: "spring", stiffness: 300, damping: 30 }}
-                      />
-                      
-                      {/* Tab buttons */}
-                      <div className="space-y-6">
-                        {serviceTabs.map((tab) => (
-                          <button
-                            key={tab.id}
-                            onClick={() => setActiveTab(tab.id)}
-                            className={`pl-6 py-3 w-full text-left relative ${
-                              activeTab === tab.id 
-                                ? 'text-andela-green font-semibold' 
-                                : 'text-andela-gray hover:text-andela-dark'
-                            } transition-colors duration-200`}
-                          >
-                            {tab.label}
-                          </button>
-                        ))}
-                      </div>
+                    <div className="relative bg-white rounded-xl shadow-lg p-1">
+                      {/* Tab buttons in a vertical layout */}
+                      {serviceTabs.map((tab, index) => (
+                        <motion.button
+                          key={tab.id}
+                          onClick={() => setActiveTab(tab.id)}
+                          className={`relative w-full text-left p-4 rounded-lg mb-2 last:mb-0 overflow-hidden transition-all duration-300 ${
+                            activeTab === tab.id 
+                              ? 'bg-gradient-to-r from-andela-green/10 to-blue-500/10 text-andela-dark font-semibold' 
+                              : 'bg-white text-andela-gray hover:bg-gray-50'
+                          }`}
+                          whileHover={{ x: 5, transition: { duration: 0.2 } }}
+                        >
+                          {/* Accent marker for active tab */}
+                          {activeTab === tab.id && (
+                            <motion.div 
+                              className="absolute left-0 top-0 bottom-0 w-1 bg-gradient-to-b from-andela-green to-blue-500 rounded-full"
+                              layoutId="activeTabIndicator"
+                              initial={{ height: 0 }}
+                              animate={{ height: '100%' }}
+                              transition={{ type: "spring", stiffness: 300, damping: 30 }}
+                            />
+                          )}
+                          
+                          <span className="block text-lg">{tab.label}</span>
+                        </motion.button>
+                      ))}
                     </div>
                   </div>
 
-                  {/* Tab content with image */}
+                  {/* Tab content with enhanced design */}
                   <div className="lg:w-2/3">
                     {activeTabContent && (
                       <motion.div 
-                        className="grid grid-cols-1 md:grid-cols-2 gap-8"
-                        key={activeTabContent.id}
+                        className="bg-white p-8 rounded-xl shadow-lg overflow-hidden"
+                        layoutId="tabContent"
                         initial={{ opacity: 0, y: 20 }}
                         animate={{ opacity: 1, y: 0 }}
                         transition={{ duration: 0.5 }}
                       >
-                        {/* Left: Content */}
-                        <div className="flex flex-col justify-center">
-                          <h3 className="text-2xl font-bold text-andela-dark mb-4">
-                            {activeTabContent.heading}
-                          </h3>
-                          <p className="text-andela-gray">
-                            {activeTabContent.content}
-                          </p>
-                        </div>
-                        
-                        {/* Right: Image */}
-                        <div className={`rounded-lg overflow-hidden ${activeTabContent.color}`}>
-                          <img 
-                            src={activeTabContent.image} 
-                            alt={activeTabContent.heading}
-                            className="w-full h-full object-cover"
-                          />
+                        <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+                          {/* Left: Content with modern styling */}
+                          <div className="flex flex-col justify-center">
+                            <motion.h3 
+                              className="text-2xl font-bold text-andela-dark mb-4"
+                              layoutId="tabHeading"
+                              transition={{ duration: 0.4 }}
+                            >
+                              {activeTabContent.heading}
+                            </motion.h3>
+                            <motion.p 
+                              className="text-andela-gray"
+                              layoutId="tabParagraph"
+                              transition={{ duration: 0.4, delay: 0.1 }}
+                            >
+                              {activeTabContent.content}
+                            </motion.p>
+                            
+                            <motion.div
+                              initial={{ opacity: 0, y: 10 }}
+                              animate={{ opacity: 1, y: 0 }}
+                              transition={{ delay: 0.3 }}
+                              className="mt-6"
+                            >
+                              <Link 
+                                href="/contact" 
+                                className="inline-flex items-center text-andela-green font-medium hover:underline transition-all"
+                              >
+                                Learn more about this feature
+                                <ChevronRight className="ml-1 h-4 w-4" />
+                              </Link>
+                            </motion.div>
+                          </div>
+                          
+                          {/* Right: Enhanced image card */}
+                          <motion.div 
+                            className="rounded-xl overflow-hidden shadow-md group relative"
+                            whileHover={{ y: -5, transition: { duration: 0.2 } }}
+                          >
+                            <div className="absolute inset-0 bg-gradient-to-br from-black/50 to-black/20 z-10 group-hover:opacity-70 transition-opacity duration-300"></div>
+                            <img 
+                              src={activeTabContent.image} 
+                              alt={activeTabContent.heading}
+                              className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110"
+                            />
+                            <div className="absolute bottom-0 left-0 right-0 p-6 text-white z-20">
+                              <div className="bg-gradient-to-r from-andela-green/90 to-blue-500/90 p-4 rounded-lg backdrop-blur-sm">
+                                <h4 className="font-semibold text-lg">{activeTabContent.heading}</h4>
+                              </div>
+                            </div>
+                          </motion.div>
                         </div>
                       </motion.div>
                     )}
@@ -313,16 +465,44 @@ const ServicesOverview = () => {
             </Container>
           </section>
 
-          {/* NIIDIK Difference Section */}
-          <section className="py-20 bg-gray-50">
+          {/* NIDDIK Difference Section - Modernized with unique geometric shapes */}
+          <section className="py-24 bg-white relative overflow-hidden">
+            {/* Background geometric decorations */}
+            <div className="absolute top-0 left-0 opacity-5 pointer-events-none">
+              <svg width="300" height="300" viewBox="0 0 300 300" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <circle cx="150" cy="150" r="150" stroke="url(#paint2_linear)" strokeWidth="0.5"/>
+                <circle cx="150" cy="150" r="100" stroke="url(#paint2_linear)" strokeWidth="0.5"/>
+                <circle cx="150" cy="150" r="50" stroke="url(#paint2_linear)" strokeWidth="0.5"/>
+                <defs>
+                  <linearGradient id="paint2_linear" x1="0" y1="0" x2="300" y2="300" gradientUnits="userSpaceOnUse">
+                    <stop stopColor="#34D399"/>
+                    <stop offset="1" stopColor="#3B82F6"/>
+                  </linearGradient>
+                </defs>
+              </svg>
+            </div>
+            <div className="absolute bottom-0 right-0 opacity-5 pointer-events-none">
+              <svg width="400" height="400" viewBox="0 0 400 400" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <path d="M200 0L400 200L200 400L0 200L200 0Z" stroke="url(#paint3_linear)" strokeWidth="0.5"/>
+                <defs>
+                  <linearGradient id="paint3_linear" x1="0" y1="0" x2="400" y2="400" gradientUnits="userSpaceOnUse">
+                    <stop stopColor="#F97316"/>
+                    <stop offset="1" stopColor="#EC4899"/>
+                  </linearGradient>
+                </defs>
+              </svg>
+            </div>
+            
             <Container>
               <motion.div
                 variants={containerVariants}
                 initial="hidden"
                 whileInView="visible"
                 viewport={{ once: true }}
+                className="relative z-10"
               >
                 <motion.div variants={itemVariants} className="text-center mb-16">
+                  <span className="inline-block bg-gradient-to-r from-andela-green/10 to-amber-500/10 text-andela-green px-4 py-1 rounded-full font-medium mb-4">Our Expertise</span>
                   <h2 className="text-4xl font-bold text-andela-dark mb-4">The NIDDIK Difference</h2>
                   <p className="text-xl text-andela-gray max-w-3xl mx-auto">
                     What makes our approach to talent acquisition truly revolutionary
@@ -330,101 +510,150 @@ const ServicesOverview = () => {
                 </motion.div>
 
                 <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
-                  {/* Card 1 */}
+                  {/* Card 1 - Hexagon Pattern */}
                   <motion.div
                     variants={itemVariants}
-                    className="relative rounded-xl overflow-hidden group"
+                    className="bg-white rounded-xl shadow-lg p-8 relative group hover:shadow-xl transition-all duration-300 overflow-hidden"
+                    whileHover={{ y: -5, transition: { duration: 0.2 } }}
                   >
-                    <div className="absolute inset-0 bg-gradient-to-br from-sky-50 to-blue-50 z-0"></div>
-                    <div className="absolute bottom-0 right-0 opacity-10 pointer-events-none z-0">
-                      <svg width="120" height="120" viewBox="0 0 120 120" fill="none" xmlns="http://www.w3.org/2000/svg">
-                        <path d="M60 0L95.3109 30L95.3109 90L60 120L24.6891 90L24.6891 30L60 0Z" fill="currentColor"/>
-                        <path d="M60 20L85.3109 40L85.3109 80L60 100L34.6891 80L34.6891 40L60 20Z" fill="currentColor"/>
+                    {/* Background geometric pattern - Hexagon-based */}
+                    <div className="absolute -bottom-6 -right-6 pointer-events-none z-0">
+                      <svg width="160" height="160" viewBox="0 0 160 160" fill="none" xmlns="http://www.w3.org/2000/svg">
+                        <path d="M40 0L60 34.641L40 69.282L0 69.282L-20 34.641L0 0L40 0Z" stroke="url(#hex-grad-1)" strokeWidth="1.5"/>
+                        <path d="M120 0L140 34.641L120 69.282L80 69.282L60 34.641L80 0L120 0Z" stroke="url(#hex-grad-1)" strokeWidth="1.5"/>
+                        <path d="M40 69.282L60 103.923L40 138.564L0 138.564L-20 103.923L0 69.282L40 69.282Z" stroke="url(#hex-grad-1)" strokeWidth="1.5"/>
+                        <path d="M120 69.282L140 103.923L120 138.564L80 138.564L60 103.923L80 69.282L120 69.282Z" stroke="url(#hex-grad-1)" strokeWidth="1.5"/>
+                        <defs>
+                          <linearGradient id="hex-grad-1" x1="0" y1="0" x2="160" y2="160" gradientUnits="userSpaceOnUse">
+                            <stop stopColor="#3B82F6"/>
+                            <stop offset="1" stopColor="#60A5FA"/>
+                          </linearGradient>
+                        </defs>
                       </svg>
                     </div>
-                    <div className="p-8 relative z-10">
-                      <div className="w-12 h-12 rounded-full bg-blue-100 flex items-center justify-center mb-6">
-                        <Zap className="h-6 w-6 text-blue-600" />
+                    
+                    {/* Content */}
+                    <div className="relative z-10">
+                      <div className="w-14 h-14 bg-gradient-to-br from-blue-500 to-blue-600 rounded-lg flex items-center justify-center mb-6 rotate-12 group-hover:rotate-0 transition-transform duration-300 shadow-lg">
+                        <Zap className="h-7 w-7 text-white" />
                       </div>
                       <h3 className="text-xl font-bold text-andela-dark mb-3">Speed to Market</h3>
+                      <div className="h-1 w-16 bg-gradient-to-r from-blue-400 to-blue-600 mb-4"></div>
                       <p className="text-andela-gray">
                         Our streamlined processes and global talent network reduce time-to-hire by up to 65% compared to industry averages.
                       </p>
                     </div>
                   </motion.div>
 
-                  {/* Card 2 */}
+                  {/* Card 2 - Connected Squares Pattern */}
                   <motion.div
                     variants={itemVariants}
-                    className="relative rounded-xl overflow-hidden group"
+                    className="bg-white rounded-xl shadow-lg p-8 relative group hover:shadow-xl transition-all duration-300 overflow-hidden"
+                    whileHover={{ y: -5, transition: { duration: 0.2 } }}
                   >
-                    <div className="absolute inset-0 bg-gradient-to-br from-green-50 to-emerald-50 z-0"></div>
-                    <div className="absolute bottom-0 right-0 opacity-10 pointer-events-none z-0">
-                      <svg width="120" height="120" viewBox="0 0 120 120" fill="none" xmlns="http://www.w3.org/2000/svg">
-                        <path d="M30 0L60 30L30 60L0 30L30 0Z" fill="currentColor"/>
-                        <path d="M90 0L120 30L90 60L60 30L90 0Z" fill="currentColor"/>
-                        <path d="M30 60L60 90L30 120L0 90L30 60Z" fill="currentColor"/>
-                        <path d="M90 60L120 90L90 120L60 90L90 60Z" fill="currentColor"/>
+                    {/* Background geometric pattern - Connected squares */}
+                    <div className="absolute -bottom-6 -right-6 pointer-events-none z-0">
+                      <svg width="160" height="160" viewBox="0 0 160 160" fill="none" xmlns="http://www.w3.org/2000/svg">
+                        <path d="M30 10L50 10L50 30L30 30L30 10Z" stroke="url(#square-grad-1)" strokeWidth="1.5"/>
+                        <path d="M60 10L80 10L80 30L60 30L60 10Z" stroke="url(#square-grad-1)" strokeWidth="1.5"/>
+                        <path d="M90 10L110 10L110 30L90 30L90 10Z" stroke="url(#square-grad-1)" strokeWidth="1.5"/>
+                        <path d="M30 40L50 40L50 60L30 60L30 40Z" stroke="url(#square-grad-1)" strokeWidth="1.5"/>
+                        <path d="M60 40L80 40L80 60L60 60L60 40Z" stroke="url(#square-grad-1)" strokeWidth="1.5"/>
+                        <path d="M90 40L110 40L110 60L90 60L90 40Z" stroke="url(#square-grad-1)" strokeWidth="1.5"/>
+                        <path d="M30 70L50 70L50 90L30 90L30 70Z" stroke="url(#square-grad-1)" strokeWidth="1.5"/>
+                        <path d="M60 70L80 70L80 90L60 90L60 70Z" stroke="url(#square-grad-1)" strokeWidth="1.5"/>
+                        <path d="M90 70L110 70L110 90L90 90L90 70Z" stroke="url(#square-grad-1)" strokeWidth="1.5"/>
+                        <defs>
+                          <linearGradient id="square-grad-1" x1="10" y1="10" x2="130" y2="130" gradientUnits="userSpaceOnUse">
+                            <stop stopColor="#10B981"/>
+                            <stop offset="1" stopColor="#34D399"/>
+                          </linearGradient>
+                        </defs>
                       </svg>
                     </div>
-                    <div className="p-8 relative z-10">
-                      <div className="w-12 h-12 rounded-full bg-green-100 flex items-center justify-center mb-6">
-                        <Award className="h-6 w-6 text-green-600" />
+                    
+                    {/* Content */}
+                    <div className="relative z-10">
+                      <div className="w-14 h-14 bg-gradient-to-br from-green-500 to-green-600 rounded-lg flex items-center justify-center mb-6 -rotate-12 group-hover:rotate-0 transition-transform duration-300 shadow-lg">
+                        <Award className="h-7 w-7 text-white" />
                       </div>
                       <h3 className="text-xl font-bold text-andela-dark mb-3">Quality-Assured Talent</h3>
+                      <div className="h-1 w-16 bg-gradient-to-r from-green-400 to-green-600 mb-4"></div>
                       <p className="text-andela-gray">
                         Our rigorous vetting process ensures that only the top 3% of talent makes it into our exclusive network.
                       </p>
                     </div>
                   </motion.div>
 
-                  {/* Card 3 */}
+                  {/* Card 3 - Triangular Pattern */}
                   <motion.div
                     variants={itemVariants}
-                    className="relative rounded-xl overflow-hidden group"
+                    className="bg-white rounded-xl shadow-lg p-8 relative group hover:shadow-xl transition-all duration-300 overflow-hidden"
+                    whileHover={{ y: -5, transition: { duration: 0.2 } }}
                   >
-                    <div className="absolute inset-0 bg-gradient-to-br from-purple-50 to-indigo-50 z-0"></div>
-                    <div className="absolute bottom-0 right-0 opacity-10 pointer-events-none z-0">
-                      <svg width="120" height="120" viewBox="0 0 120 120" fill="none" xmlns="http://www.w3.org/2000/svg">
-                        <path d="M60 0L120 60L60 120L0 60L60 0Z" fill="currentColor"/>
-                        <path d="M60 30L90 60L60 90L30 60L60 30Z" fill="currentColor"/>
+                    {/* Background geometric pattern - Triangular */}
+                    <div className="absolute -bottom-6 -right-6 pointer-events-none z-0">
+                      <svg width="160" height="160" viewBox="0 0 160 160" fill="none" xmlns="http://www.w3.org/2000/svg">
+                        <path d="M40 20L60 50.981L20 50.981L40 20Z" stroke="url(#tri-grad-1)" strokeWidth="1.5"/>
+                        <path d="M80 20L100 50.981L60 50.981L80 20Z" stroke="url(#tri-grad-1)" strokeWidth="1.5"/>
+                        <path d="M120 20L140 50.981L100 50.981L120 20Z" stroke="url(#tri-grad-1)" strokeWidth="1.5"/>
+                        <path d="M40 60L60 90.981L20 90.981L40 60Z" stroke="url(#tri-grad-1)" strokeWidth="1.5"/>
+                        <path d="M80 60L100 90.981L60 90.981L80 60Z" stroke="url(#tri-grad-1)" strokeWidth="1.5"/>
+                        <path d="M120 60L140 90.981L100 90.981L120 60Z" stroke="url(#tri-grad-1)" strokeWidth="1.5"/>
+                        <path d="M40 100L60 130.981L20 130.981L40 100Z" stroke="url(#tri-grad-1)" strokeWidth="1.5"/>
+                        <path d="M80 100L100 130.981L60 130.981L80 100Z" stroke="url(#tri-grad-1)" strokeWidth="1.5"/>
+                        <path d="M120 100L140 130.981L100 130.981L120 100Z" stroke="url(#tri-grad-1)" strokeWidth="1.5"/>
+                        <defs>
+                          <linearGradient id="tri-grad-1" x1="20" y1="20" x2="140" y2="140" gradientUnits="userSpaceOnUse">
+                            <stop stopColor="#8B5CF6"/>
+                            <stop offset="1" stopColor="#A78BFA"/>
+                          </linearGradient>
+                        </defs>
                       </svg>
                     </div>
-                    <div className="p-8 relative z-10">
-                      <div className="w-12 h-12 rounded-full bg-purple-100 flex items-center justify-center mb-6">
-                        <BarChart className="h-6 w-6 text-purple-600" />
+                    
+                    {/* Content */}
+                    <div className="relative z-10">
+                      <div className="w-14 h-14 bg-gradient-to-br from-purple-500 to-purple-600 rounded-lg flex items-center justify-center mb-6 rotate-45 group-hover:rotate-0 transition-transform duration-300 shadow-lg">
+                        <BarChart className="h-7 w-7 text-white" />
                       </div>
                       <h3 className="text-xl font-bold text-andela-dark mb-3">Data-Driven Insights</h3>
+                      <div className="h-1 w-16 bg-gradient-to-r from-purple-400 to-purple-600 mb-4"></div>
                       <p className="text-andela-gray">
                         Our analytics platform provides real-time visibility into your talent acquisition performance and market trends.
                       </p>
                     </div>
                   </motion.div>
 
-                  {/* Card 4 */}
+                  {/* Card 4 - Circular Orbits Pattern */}
                   <motion.div
                     variants={itemVariants}
-                    className="relative rounded-xl overflow-hidden group"
+                    className="bg-white rounded-xl shadow-lg p-8 relative group hover:shadow-xl transition-all duration-300 overflow-hidden"
+                    whileHover={{ y: -5, transition: { duration: 0.2 } }}
                   >
-                    <div className="absolute inset-0 bg-gradient-to-br from-amber-50 to-yellow-50 z-0"></div>
-                    <div className="absolute bottom-0 right-0 opacity-10 pointer-events-none z-0">
-                      <svg width="120" height="120" viewBox="0 0 120 120" fill="none" xmlns="http://www.w3.org/2000/svg">
-                        <path d="M20 0L40 20L20 40L0 20L20 0Z" fill="currentColor"/>
-                        <path d="M60 0L80 20L60 40L40 20L60 0Z" fill="currentColor"/>
-                        <path d="M100 0L120 20L100 40L80 20L100 0Z" fill="currentColor"/>
-                        <path d="M20 40L40 60L20 80L0 60L20 40Z" fill="currentColor"/>
-                        <path d="M60 40L80 60L60 80L40 60L60 40Z" fill="currentColor"/>
-                        <path d="M100 40L120 60L100 80L80 60L100 40Z" fill="currentColor"/>
-                        <path d="M20 80L40 100L20 120L0 100L20 80Z" fill="currentColor"/>
-                        <path d="M60 80L80 100L60 120L40 100L60 80Z" fill="currentColor"/>
-                        <path d="M100 80L120 100L100 120L80 100L100 80Z" fill="currentColor"/>
+                    {/* Background geometric pattern - Circular Orbits */}
+                    <div className="absolute -bottom-6 -right-6 pointer-events-none z-0">
+                      <svg width="160" height="160" viewBox="0 0 160 160" fill="none" xmlns="http://www.w3.org/2000/svg">
+                        <ellipse cx="80" cy="80" rx="60" ry="20" stroke="url(#circle-grad-1)" strokeWidth="1.5" transform="rotate(0 80 80)"/>
+                        <ellipse cx="80" cy="80" rx="60" ry="20" stroke="url(#circle-grad-1)" strokeWidth="1.5" transform="rotate(60 80 80)"/>
+                        <ellipse cx="80" cy="80" rx="60" ry="20" stroke="url(#circle-grad-1)" strokeWidth="1.5" transform="rotate(120 80 80)"/>
+                        <circle cx="80" cy="80" r="10" stroke="url(#circle-grad-1)" strokeWidth="1.5"/>
+                        <defs>
+                          <linearGradient id="circle-grad-1" x1="20" y1="20" x2="140" y2="140" gradientUnits="userSpaceOnUse">
+                            <stop stopColor="#F59E0B"/>
+                            <stop offset="1" stopColor="#FBBF24"/>
+                          </linearGradient>
+                        </defs>
                       </svg>
                     </div>
-                    <div className="p-8 relative z-10">
-                      <div className="w-12 h-12 rounded-full bg-amber-100 flex items-center justify-center mb-6">
-                        <CheckCircle className="h-6 w-6 text-amber-600" />
+                    
+                    {/* Content */}
+                    <div className="relative z-10">
+                      <div className="w-14 h-14 bg-gradient-to-br from-amber-500 to-amber-600 rounded-lg flex items-center justify-center mb-6 -rotate-45 group-hover:rotate-0 transition-transform duration-300 shadow-lg">
+                        <CheckCircle className="h-7 w-7 text-white" />
                       </div>
                       <h3 className="text-xl font-bold text-andela-dark mb-3">Scalable Solutions</h3>
+                      <div className="h-1 w-16 bg-gradient-to-r from-amber-400 to-amber-600 mb-4"></div>
                       <p className="text-andela-gray">
                         Our flexible models adapt seamlessly to your changing talent needs, whether you're hiring one specialist or building an entire team.
                       </p>
