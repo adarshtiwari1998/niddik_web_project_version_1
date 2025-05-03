@@ -79,6 +79,19 @@ const FocusScrollSection: React.FC = () => {
   useLayoutEffect(() => {
     // Set initial active state for block 1
     updateActiveState(1);
+    
+    // Force all images to be loaded and present in the DOM
+    const forceImagesVisibility = () => {
+      focusBlocks.forEach(block => {
+        const img = new Image();
+        img.src = block.image;
+        img.onload = () => {
+          console.log(`Image for block ${block.id} loaded`);
+        };
+      });
+    };
+    
+    forceImagesVisibility();
   }, []);
   
   // Handle scroll events
@@ -133,7 +146,25 @@ const FocusScrollSection: React.FC = () => {
           (rect.bottom > rect.height * 0.3);
         
         // Special handling for blocks 3+ to ensure they get activated properly
-        if (isBlockFullyVisible || (blockId >= 3 && rect.top <= windowHeight * 0.2 && rect.top >= -rect.height * 0.5)) {
+        // Make block detection more sensitive for blocks 3 and 4
+        const specialThreshold = blockId === 4 ? windowHeight * 0.4 : windowHeight * 0.2;
+        
+        if (isBlockFullyVisible || 
+            // Expanded detection for block 4 specifically
+            (blockId === 4 && rect.top <= specialThreshold && rect.bottom > 0) ||
+            // General detection for other blocks
+            (blockId >= 3 && rect.top <= windowHeight * 0.2 && rect.top >= -rect.height * 0.5)) {
+          
+          // Debug output for block 4
+          if (blockId === 4) {
+            console.log("Block 4 rect:", { 
+              top: rect.top, 
+              bottom: rect.bottom,
+              height: rect.height,
+              isVisible: rect.top <= specialThreshold && rect.bottom > 0
+            });
+          }
+          
           visibleBlocks.push({
             id: blockId,
             top: rect.top
@@ -145,14 +176,28 @@ const FocusScrollSection: React.FC = () => {
       // This prevents skipping blocks in the sequence
       visibleBlocks.sort((a, b) => a.id - b.id);
       
+      // Force sequential activation
+      // If we are on block 3 and block 5 is visible but 4 is not
+      if (activeBlockId === 3) {
+        const hasBlock4 = visibleBlocks.some(block => block.id === 4);
+        const hasBlock5 = visibleBlocks.some(block => block.id === 5);
+        
+        if (!hasBlock4 && hasBlock5) {
+          // Force activation of block 4 next
+          console.log("Forcing block 4 activation");
+          updateActiveState(4);
+          return; // Skip the rest of the logic
+        }
+      }
+      
       // Use the highest ID from visible blocks to ensure we don't skip any
       if (visibleBlocks.length > 0) {
         // Get the highest (last) block ID from sorted array
         const highestBlockId = visibleBlocks[visibleBlocks.length - 1].id;
         
-        // Ensure we never skip block 4 when going from 3 to 5
-        if (activeBlockId === 3 && highestBlockId === 5) {
-          // Force block 4 to be active first
+        // Additional guard for block 4
+        if (activeBlockId === 3 && highestBlockId >= 4) {
+          // Always ensure block 4 is activated after block 3
           updateActiveState(4);
         } else if (highestBlockId !== activeBlockId) {
           // Only update if different from current to avoid unnecessary renders
