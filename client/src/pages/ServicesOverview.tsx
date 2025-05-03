@@ -504,12 +504,38 @@ const ServicesOverview = () => {
                     className="bg-white rounded-xl shadow-xl p-8 relative group hover:shadow-2xl transition-all duration-500 overflow-hidden border border-blue-100"
                     whileHover={{ y: -8, transition: { duration: 0.3 } }}
                   >
-                    {/* Background geometric pattern - LIGHTER AND SMALLER */}
-                    <div className="absolute bottom-0 right-0 w-1/2 h-1/2 pointer-events-none z-0 opacity-15 group-hover:opacity-25 transition-opacity duration-500">
-                      <svg width="100%" height="100%" viewBox="0 0 180 180" fill="none" xmlns="http://www.w3.org/2000/svg">
-                        <path d="M40 0L60 34.641L40 69.282L0 69.282L-20 34.641L0 0L40 0Z" stroke="url(#hex-grad-1)" strokeWidth="1.5" transform="translate(90 40)"/>
-                        <path d="M120 0L140 34.641L120 69.282L80 69.282L60 34.641L80 0L120 0Z" stroke="url(#hex-grad-1)" strokeWidth="1.5" transform="translate(30 40)"/>
-                        <path d="M40 69.282L60 103.923L40 138.564L0 138.564L-20 103.923L0 69.282L40 69.282Z" stroke="url(#hex-grad-1)" strokeWidth="1.5" transform="translate(90 20)"/>
+                    {/* Background geometric pattern - TINY GROUPED SHAPES */}
+                    <div className="absolute inset-0 pointer-events-none z-0 opacity-10 group-hover:opacity-15 transition-opacity duration-500">
+                      <svg width="100%" height="100%" viewBox="0 0 200 200" fill="none" xmlns="http://www.w3.org/2000/svg">
+                        {/* Group 1 - Small clustered hexagons */}
+                        <g transform="translate(140, 130) scale(0.6)">
+                          <path d="M0 10L8.7 5L8.7 -5L0 -10L-8.7 -5L-8.7 5L0 10Z" stroke="url(#hex-grad-1)" strokeWidth="0.8" />
+                          <path d="M0 25L8.7 20L8.7 10L0 5L-8.7 10L-8.7 20L0 25Z" stroke="url(#hex-grad-1)" strokeWidth="0.8" />
+                          <path d="M17.3 17.5L26 12.5L26 2.5L17.3 -2.5L8.6 2.5L8.6 12.5L17.3 17.5Z" stroke="url(#hex-grad-1)" strokeWidth="0.8" />
+                        </g>
+                        
+                        {/* Group 2 - Scattered tiny hexes */}
+                        <g transform="translate(40, 150) scale(0.5)">
+                          <path d="M0 10L8.7 5L8.7 -5L0 -10L-8.7 -5L-8.7 5L0 10Z" stroke="url(#hex-grad-1)" strokeWidth="0.8" />
+                          <path d="M20 10L28.7 5L28.7 -5L20 -10L11.3 -5L11.3 5L20 10Z" stroke="url(#hex-grad-1)" strokeWidth="0.8" />
+                          <path d="M40 10L48.7 5L48.7 -5L40 -10L31.3 -5L31.3 5L40 10Z" stroke="url(#hex-grad-1)" strokeWidth="0.8" />
+                          <path d="M10 25L18.7 20L18.7 10L10 5L1.3 10L1.3 20L10 25Z" stroke="url(#hex-grad-1)" strokeWidth="0.8" />
+                          <path d="M30 25L38.7 20L38.7 10L30 5L21.3 10L21.3 20L30 25Z" stroke="url(#hex-grad-1)" strokeWidth="0.8" />
+                        </g>
+                        
+                        {/* Group 3 - Dotted outline */}
+                        <g transform="translate(170, 30) scale(0.4)">
+                          <circle cx="0" cy="0" r="3" fill="url(#hex-grad-1)" fillOpacity="0.5" />
+                          <circle cx="20" cy="0" r="3" fill="url(#hex-grad-1)" fillOpacity="0.5" />
+                          <circle cx="40" cy="0" r="3" fill="url(#hex-grad-1)" fillOpacity="0.5" />
+                          <circle cx="0" cy="20" r="3" fill="url(#hex-grad-1)" fillOpacity="0.5" />
+                          <circle cx="20" cy="20" r="3" fill="url(#hex-grad-1)" fillOpacity="0.5" />
+                          <circle cx="40" cy="20" r="3" fill="url(#hex-grad-1)" fillOpacity="0.5" />
+                          <circle cx="0" cy="40" r="3" fill="url(#hex-grad-1)" fillOpacity="0.5" />
+                          <circle cx="20" cy="40" r="3" fill="url(#hex-grad-1)" fillOpacity="0.5" />
+                          <circle cx="40" cy="40" r="3" fill="url(#hex-grad-1)" fillOpacity="0.5" />
+                        </g>
+                        
                         <defs>
                           <linearGradient id="hex-grad-1" x1="0" y1="0" x2="160" y2="160" gradientUnits="userSpaceOnUse">
                             <stop stopColor="#3B82F6"/>
@@ -543,18 +569,46 @@ const ServicesOverview = () => {
                     className="bg-white rounded-xl shadow-xl p-8 relative group hover:shadow-2xl transition-all duration-500 overflow-hidden border border-green-100"
                     whileHover={{ y: -8, transition: { duration: 0.3 } }}
                   >
-                    {/* Background geometric pattern - LIGHTER AND SMALLER */}
-                    <div className="absolute bottom-0 right-0 w-1/2 h-1/2 pointer-events-none z-0 opacity-15 group-hover:opacity-25 transition-opacity duration-500">
-                      <svg width="100%" height="100%" viewBox="0 0 180 180" fill="none" xmlns="http://www.w3.org/2000/svg">
-                        <path d="M30 10L50 10L50 30L30 30L30 10Z" stroke="url(#square-grad-1)" strokeWidth="1.5"/>
-                        <path d="M60 10L80 10L80 30L60 30L60 10Z" stroke="url(#square-grad-1)" strokeWidth="1.5"/>
-                        <path d="M90 10L110 10L110 30L90 30L90 10Z" stroke="url(#square-grad-1)" strokeWidth="1.5"/>
-                        <path d="M30 40L50 40L50 60L30 60L30 40Z" stroke="url(#square-grad-1)" strokeWidth="1.5"/>
-                        <path d="M60 40L80 40L80 60L60 60L60 40Z" stroke="url(#square-grad-1)" strokeWidth="1.5"/>
-                        <path d="M90 40L110 40L110 60L90 60L90 40Z" stroke="url(#square-grad-1)" strokeWidth="1.5"/>
-                        <path d="M30 70L50 70L50 90L30 90L30 70Z" stroke="url(#square-grad-1)" strokeWidth="1.5"/>
-                        <path d="M60 70L80 70L80 90L60 90L60 70Z" stroke="url(#square-grad-1)" strokeWidth="1.5"/>
-                        <path d="M90 70L110 70L110 90L90 90L90 70Z" stroke="url(#square-grad-1)" strokeWidth="1.5"/>
+                    {/* Background geometric pattern - TINY GROUPED SHAPES */}
+                    <div className="absolute inset-0 pointer-events-none z-0 opacity-10 group-hover:opacity-15 transition-opacity duration-500">
+                      <svg width="100%" height="100%" viewBox="0 0 200 200" fill="none" xmlns="http://www.w3.org/2000/svg">
+                        {/* Group 1 - Connected small squares */}
+                        <g transform="translate(150, 120) scale(0.5)">
+                          <rect x="0" y="0" width="15" height="15" rx="2" stroke="url(#square-grad-1)" strokeWidth="0.8"/>
+                          <rect x="20" y="0" width="15" height="15" rx="2" stroke="url(#square-grad-1)" strokeWidth="0.8"/>
+                          <rect x="0" y="20" width="15" height="15" rx="2" stroke="url(#square-grad-1)" strokeWidth="0.8"/>
+                          <rect x="20" y="20" width="15" height="15" rx="2" stroke="url(#square-grad-1)" strokeWidth="0.8"/>
+                          <line x1="15" y1="7.5" x2="20" y2="7.5" stroke="url(#square-grad-1)" strokeWidth="0.8"/>
+                          <line x1="7.5" y1="15" x2="7.5" y2="20" stroke="url(#square-grad-1)" strokeWidth="0.8"/>
+                          <line x1="27.5" y1="15" x2="27.5" y2="20" stroke="url(#square-grad-1)" strokeWidth="0.8"/>
+                        </g>
+                        
+                        {/* Group 2 - Grid of mini squares */}
+                        <g transform="translate(50, 150) scale(0.3)">
+                          <rect x="0" y="0" width="10" height="10" rx="1" stroke="url(#square-grad-1)" strokeWidth="0.8"/>
+                          <rect x="15" y="0" width="10" height="10" rx="1" stroke="url(#square-grad-1)" strokeWidth="0.8"/>
+                          <rect x="30" y="0" width="10" height="10" rx="1" stroke="url(#square-grad-1)" strokeWidth="0.8"/>
+                          <rect x="45" y="0" width="10" height="10" rx="1" stroke="url(#square-grad-1)" strokeWidth="0.8"/>
+                          <rect x="0" y="15" width="10" height="10" rx="1" stroke="url(#square-grad-1)" strokeWidth="0.8"/>
+                          <rect x="15" y="15" width="10" height="10" rx="1" stroke="url(#square-grad-1)" strokeWidth="0.8"/>
+                          <rect x="30" y="15" width="10" height="10" rx="1" stroke="url(#square-grad-1)" strokeWidth="0.8"/>
+                          <rect x="45" y="15" width="10" height="10" rx="1" stroke="url(#square-grad-1)" strokeWidth="0.8"/>
+                          <rect x="0" y="30" width="10" height="10" rx="1" stroke="url(#square-grad-1)" strokeWidth="0.8"/>
+                          <rect x="15" y="30" width="10" height="10" rx="1" stroke="url(#square-grad-1)" strokeWidth="0.8"/>
+                          <rect x="30" y="30" width="10" height="10" rx="1" stroke="url(#square-grad-1)" strokeWidth="0.8"/>
+                          <rect x="45" y="30" width="10" height="10" rx="1" stroke="url(#square-grad-1)" strokeWidth="0.8"/>
+                        </g>
+                        
+                        {/* Group 3 - Small scattered squares */}
+                        <g transform="translate(30, 40) scale(0.4)">
+                          <rect x="0" y="0" width="8" height="8" fill="url(#square-grad-1)" fillOpacity="0.3"/>
+                          <rect x="20" y="5" width="8" height="8" fill="url(#square-grad-1)" fillOpacity="0.3"/>
+                          <rect x="40" y="10" width="8" height="8" fill="url(#square-grad-1)" fillOpacity="0.3"/>
+                          <rect x="5" y="20" width="8" height="8" fill="url(#square-grad-1)" fillOpacity="0.3"/>
+                          <rect x="25" y="25" width="8" height="8" fill="url(#square-grad-1)" fillOpacity="0.3"/>
+                          <rect x="45" y="30" width="8" height="8" fill="url(#square-grad-1)" fillOpacity="0.3"/>
+                        </g>
+                        
                         <defs>
                           <linearGradient id="square-grad-1" x1="10" y1="10" x2="130" y2="130" gradientUnits="userSpaceOnUse">
                             <stop stopColor="#10B981"/>
@@ -588,15 +642,39 @@ const ServicesOverview = () => {
                     className="bg-white rounded-xl shadow-xl p-8 relative group hover:shadow-2xl transition-all duration-500 overflow-hidden border border-purple-100"
                     whileHover={{ y: -8, transition: { duration: 0.3 } }}
                   >
-                    {/* Background geometric pattern - LIGHTER AND SMALLER */}
-                    <div className="absolute bottom-0 right-0 w-1/2 h-1/2 pointer-events-none z-0 opacity-15 group-hover:opacity-25 transition-opacity duration-500">
-                      <svg width="100%" height="100%" viewBox="0 0 180 180" fill="none" xmlns="http://www.w3.org/2000/svg">
-                        <path d="M40 20L60 50.981L20 50.981L40 20Z" stroke="url(#tri-grad-1)" strokeWidth="1.5"/>
-                        <path d="M80 20L100 50.981L60 50.981L80 20Z" stroke="url(#tri-grad-1)" strokeWidth="1.5"/>
-                        <path d="M120 20L140 50.981L100 50.981L120 20Z" stroke="url(#tri-grad-1)" strokeWidth="1.5"/>
-                        <path d="M40 60L60 90.981L20 90.981L40 60Z" stroke="url(#tri-grad-1)" strokeWidth="1.5"/>
-                        <path d="M80 60L100 90.981L60 90.981L80 60Z" stroke="url(#tri-grad-1)" strokeWidth="1.5"/>
-                        <path d="M120 60L140 90.981L100 90.981L120 60Z" stroke="url(#tri-grad-1)" strokeWidth="1.5"/>
+                    {/* Background geometric pattern - TINY GROUPED SHAPES */}
+                    <div className="absolute inset-0 pointer-events-none z-0 opacity-10 group-hover:opacity-15 transition-opacity duration-500">
+                      <svg width="100%" height="100%" viewBox="0 0 200 200" fill="none" xmlns="http://www.w3.org/2000/svg">
+                        {/* Group 1 - Clustered mini triangles */}
+                        <g transform="translate(140, 140) scale(0.4)">
+                          <path d="M0 0L15 26L-15 26L0 0Z" stroke="url(#tri-grad-1)" strokeWidth="0.8"/>
+                          <path d="M30 0L45 26L15 26L30 0Z" stroke="url(#tri-grad-1)" strokeWidth="0.8"/>
+                          <path d="M15 30L30 56L0 56L15 30Z" stroke="url(#tri-grad-1)" strokeWidth="0.8"/>
+                          <path d="M45 30L60 56L30 56L45 30Z" stroke="url(#tri-grad-1)" strokeWidth="0.8"/>
+                          <circle cx="22.5" cy="28" r="2" fill="url(#tri-grad-1)" fillOpacity="0.5"/>
+                        </g>
+                        
+                        {/* Group 2 - Scattered small triangles */}
+                        <g transform="translate(30, 150) scale(0.3)">
+                          <path d="M0 0L10 17.3L-10 17.3L0 0Z" fill="url(#tri-grad-1)" fillOpacity="0.4"/>
+                          <path d="M30 10L40 27.3L20 27.3L30 10Z" fill="url(#tri-grad-1)" fillOpacity="0.4"/>
+                          <path d="M60 0L70 17.3L50 17.3L60 0Z" fill="url(#tri-grad-1)" fillOpacity="0.4"/>
+                          <path d="M15 30L25 47.3L5 47.3L15 30Z" fill="url(#tri-grad-1)" fillOpacity="0.4"/>
+                          <path d="M45 40L55 57.3L35 57.3L45 40Z" fill="url(#tri-grad-1)" fillOpacity="0.4"/>
+                          <path d="M75 30L85 47.3L65 47.3L75 30Z" fill="url(#tri-grad-1)" fillOpacity="0.4"/>
+                        </g>
+                        
+                        {/* Group 3 - Connected triangles */}
+                        <g transform="translate(40, 50) scale(0.35)">
+                          <path d="M0 0L12 20.8L-12 20.8L0 0Z" stroke="url(#tri-grad-1)" strokeWidth="0.8"/>
+                          <path d="M24 0L36 20.8L12 20.8L24 0Z" stroke="url(#tri-grad-1)" strokeWidth="0.8"/>
+                          <path d="M12 24L24 44.8L0 44.8L12 24Z" stroke="url(#tri-grad-1)" strokeWidth="0.8"/>
+                          <path d="M36 24L48 44.8L24 44.8L36 24Z" stroke="url(#tri-grad-1)" strokeWidth="0.8"/>
+                          <line x1="12" y1="20.8" x2="24" y2="20.8" stroke="url(#tri-grad-1)" strokeWidth="0.8"/>
+                          <line x1="12" y1="20.8" x2="12" y2="24" stroke="url(#tri-grad-1)" strokeWidth="0.8"/>
+                          <line x1="24" y1="20.8" x2="24" y2="24" stroke="url(#tri-grad-1)" strokeWidth="0.8"/>
+                        </g>
+                        
                         <defs>
                           <linearGradient id="tri-grad-1" x1="20" y1="20" x2="140" y2="140" gradientUnits="userSpaceOnUse">
                             <stop stopColor="#8B5CF6"/>
@@ -630,13 +708,40 @@ const ServicesOverview = () => {
                     className="bg-white rounded-xl shadow-xl p-8 relative group hover:shadow-2xl transition-all duration-500 overflow-hidden border border-amber-100"
                     whileHover={{ y: -8, transition: { duration: 0.3 } }}
                   >
-                    {/* Background geometric pattern - LIGHTER AND SMALLER */}
-                    <div className="absolute bottom-0 right-0 w-1/2 h-1/2 pointer-events-none z-0 opacity-15 group-hover:opacity-25 transition-opacity duration-500">
-                      <svg width="100%" height="100%" viewBox="0 0 180 180" fill="none" xmlns="http://www.w3.org/2000/svg">
-                        <ellipse cx="80" cy="80" rx="60" ry="20" stroke="url(#circle-grad-1)" strokeWidth="1.5" transform="rotate(0 80 80)"/>
-                        <ellipse cx="80" cy="80" rx="60" ry="20" stroke="url(#circle-grad-1)" strokeWidth="1.5" transform="rotate(60 80 80)"/>
-                        <ellipse cx="80" cy="80" rx="60" ry="20" stroke="url(#circle-grad-1)" strokeWidth="1.5" transform="rotate(120 80 80)"/>
-                        <circle cx="80" cy="80" r="10" stroke="url(#circle-grad-1)" strokeWidth="1.5"/>
+                    {/* Background geometric pattern - TINY GROUPED SHAPES */}
+                    <div className="absolute inset-0 pointer-events-none z-0 opacity-10 group-hover:opacity-15 transition-opacity duration-500">
+                      <svg width="100%" height="100%" viewBox="0 0 200 200" fill="none" xmlns="http://www.w3.org/2000/svg">
+                        {/* Group 1 - Connected circles */}
+                        <g transform="translate(150, 130) scale(0.5)">
+                          <circle cx="0" cy="0" r="10" stroke="url(#circle-grad-1)" strokeWidth="0.8"/>
+                          <circle cx="30" cy="0" r="10" stroke="url(#circle-grad-1)" strokeWidth="0.8"/>
+                          <circle cx="15" cy="26" r="10" stroke="url(#circle-grad-1)" strokeWidth="0.8"/>
+                          <line x1="8.5" y1="5" x2="21.5" y2="5" stroke="url(#circle-grad-1)" strokeWidth="0.8"/>
+                          <line x1="28.5" y1="8" x2="22.5" y2="18" stroke="url(#circle-grad-1)" strokeWidth="0.8"/>
+                          <line x1="7.5" y1="8" x2="10.5" y2="18" stroke="url(#circle-grad-1)" strokeWidth="0.8"/>
+                        </g>
+                        
+                        {/* Group 2 - Scattered mini circles */}
+                        <g transform="translate(40, 150) scale(0.4)">
+                          <circle cx="0" cy="0" r="6" fill="url(#circle-grad-1)" fillOpacity="0.3"/>
+                          <circle cx="20" cy="5" r="6" fill="url(#circle-grad-1)" fillOpacity="0.3"/>
+                          <circle cx="40" cy="0" r="6" fill="url(#circle-grad-1)" fillOpacity="0.3"/>
+                          <circle cx="10" cy="25" r="6" fill="url(#circle-grad-1)" fillOpacity="0.3"/>
+                          <circle cx="30" cy="30" r="6" fill="url(#circle-grad-1)" fillOpacity="0.3"/>
+                          <circle cx="50" cy="25" r="6" fill="url(#circle-grad-1)" fillOpacity="0.3"/>
+                          <circle cx="20" cy="50" r="6" fill="url(#circle-grad-1)" fillOpacity="0.3"/>
+                          <circle cx="40" cy="55" r="6" fill="url(#circle-grad-1)" fillOpacity="0.3"/>
+                          <circle cx="60" cy="50" r="6" fill="url(#circle-grad-1)" fillOpacity="0.3"/>
+                        </g>
+                        
+                        {/* Group 3 - Mini orbit pattern */}
+                        <g transform="translate(40, 50) scale(0.35)">
+                          <circle cx="25" cy="25" r="5" stroke="url(#circle-grad-1)" strokeWidth="0.8"/>
+                          <ellipse cx="25" cy="25" rx="15" ry="8" stroke="url(#circle-grad-1)" strokeWidth="0.8" transform="rotate(0 25 25)"/>
+                          <ellipse cx="25" cy="25" rx="15" ry="8" stroke="url(#circle-grad-1)" strokeWidth="0.8" transform="rotate(60 25 25)"/>
+                          <ellipse cx="25" cy="25" rx="15" ry="8" stroke="url(#circle-grad-1)" strokeWidth="0.8" transform="rotate(120 25 25)"/>
+                        </g>
+                        
                         <defs>
                           <linearGradient id="circle-grad-1" x1="20" y1="20" x2="140" y2="140" gradientUnits="userSpaceOnUse">
                             <stop stopColor="#F59E0B"/>
