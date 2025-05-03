@@ -1,11 +1,11 @@
-import { useEffect, useState } from "react";
+import { useEffect, useState, useRef } from "react";
 import { motion } from "framer-motion";
-import useEmblaCarousel from "embla-carousel-react";
 import { FaMicrosoft, FaGithub, FaAmazon, FaGoogle, FaApple, FaFacebookF } from "react-icons/fa";
 import Container from "@/components/ui/container";
 import { useQuery } from "@tanstack/react-query";
 import { getQueryFn } from "@/lib/queryClient";
 import { ClientData } from "@/lib/types";
+import "./marquee.css";
 
 // Fallback data with React icons in case the API is not returning data
 const fallbackCompanies = [
@@ -17,15 +17,44 @@ const fallbackCompanies = [
   { name: "Facebook", logo: <FaFacebookF className="w-full h-full" /> }
 ];
 
-const TrustedCompanies = () => {
-  const [autoplayInterval, setAutoplayInterval] = useState<NodeJS.Timeout | null>(null);
-  const [emblaRef, emblaApi] = useEmblaCarousel({ 
-    loop: true,
-    align: "start",
-    skipSnaps: false,
-    dragFree: true
-  });
+// Component for a smooth marquee animation effect
+const InfiniteMarquee = ({ children, pauseOnHover = true, speed = 30 }: {
+  children: React.ReactNode;
+  pauseOnHover?: boolean;
+  speed?: number;
+}) => {
+  const [isPaused, setIsPaused] = useState(false);
+  const duration = speed; // in seconds
 
+  return (
+    <div 
+      className="marquee-container"
+      onMouseEnter={() => pauseOnHover && setIsPaused(true)}
+      onMouseLeave={() => setIsPaused(false)}
+    >
+      <div 
+        className="marquee-content marquee-content-primary"
+        style={{
+          animationPlayState: isPaused ? 'paused' : 'running',
+          animationDuration: `${duration}s`,
+        }}
+      >
+        {children}
+      </div>
+      <div 
+        className="marquee-content marquee-content-secondary"
+        style={{
+          animationPlayState: isPaused ? 'paused' : 'running',
+          animationDuration: `${duration}s`,
+        }}
+      >
+        {children}
+      </div>
+    </div>
+  );
+};
+
+const TrustedCompanies = () => {
   // Fetch clients from API
   const { data: apiResponse, isLoading } = useQuery<{success: boolean, data: ClientData[]}>({
     queryKey: ['/api/clients'],
@@ -37,44 +66,33 @@ const TrustedCompanies = () => {
     ? apiResponse.data
     : null;
 
-  // Set up autoplay
-  useEffect(() => {
-    if (!emblaApi) return;
-
-    const autoplay = () => {
-      if (!emblaApi || !emblaApi.canScrollNext()) return;
-      emblaApi.scrollNext();
-    };
-
-    // Start autoplay
-    const interval = setInterval(autoplay, 3000);
-    setAutoplayInterval(interval);
-
-    // Clear interval on unmount
-    return () => {
-      if (autoplayInterval) clearInterval(autoplayInterval);
-    };
-  }, [emblaApi]);
-
-  // Pause autoplay on hover
-  const handleMouseEnter = () => {
-    if (autoplayInterval) {
-      clearInterval(autoplayInterval);
-      setAutoplayInterval(null);
+  // Function to render logos
+  const renderLogos = () => {
+    if (clients) {
+      return clients.map((client: ClientData, index) => (
+        <div 
+          key={`${client.id}-${index}`}
+          className="flex-none mx-10 grayscale hover:grayscale-0 transition-all duration-300 w-32 h-16 flex items-center justify-center"
+        >
+          <img 
+            src={client.logo} 
+            alt={client.name}
+            className="max-h-12 max-w-full object-contain"
+          />
+        </div>
+      ));
+    } else {
+      return fallbackCompanies.map((company, index) => (
+        <div 
+          key={`${company.name}-${index}`}
+          className="flex-none mx-10 grayscale hover:grayscale-0 transition-all duration-300 w-32 h-16 flex items-center justify-center"
+        >
+          <div className="w-20 h-10 text-andela-dark">
+            {company.logo}
+          </div>
+        </div>
+      ));
     }
-  };
-
-  // Resume autoplay on mouse leave
-  const handleMouseLeave = () => {
-    if (!emblaApi) return;
-    
-    const autoplay = () => {
-      if (!emblaApi || !emblaApi.canScrollNext()) return;
-      emblaApi.scrollNext();
-    };
-    
-    const interval = setInterval(autoplay, 3000);
-    setAutoplayInterval(interval);
   };
 
   return (
@@ -105,43 +123,9 @@ const TrustedCompanies = () => {
             viewport={{ once: true }}
             transition={{ duration: 0.5, delay: 0.2 }}
           >
-            <div 
-              className="overflow-hidden" 
-              ref={emblaRef}
-              onMouseEnter={handleMouseEnter}
-              onMouseLeave={handleMouseLeave}
-            >
-              <div className="flex items-center">
-                {/* If API data exists, use it */}
-                {clients ? (
-                  // Duplicate logos to create an infinite feel
-                  [...clients, ...clients].map((client: ClientData, index) => (
-                    <div 
-                      key={`${client.id}-${index}`}
-                      className="flex-none mx-8 grayscale hover:grayscale-0 transition-all duration-300 w-28 h-12 flex items-center justify-center"
-                    >
-                      <img 
-                        src={client.logo} 
-                        alt={client.name}
-                        className="max-h-10 max-w-full object-contain"
-                      />
-                    </div>
-                  ))
-                ) : (
-                  // Use fallback icons
-                  [...fallbackCompanies, ...fallbackCompanies].map((company, index) => (
-                    <div 
-                      key={`${company.name}-${index}`}
-                      className="flex-none mx-8 grayscale hover:grayscale-0 transition-all duration-300 w-28 h-12 flex items-center justify-center"
-                    >
-                      <div className="w-16 h-8 text-andela-dark">
-                        {company.logo}
-                      </div>
-                    </div>
-                  ))
-                )}
-              </div>
-            </div>
+            <InfiniteMarquee speed={15}>
+              {renderLogos()}
+            </InfiniteMarquee>
           </motion.div>
         </div>
       </Container>

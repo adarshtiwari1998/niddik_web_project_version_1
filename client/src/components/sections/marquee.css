@@ -1,0 +1,31 @@
+@keyframes marquee {
+  0% { transform: translateX(0%); }
+  100% { transform: translateX(-100%); }
+}
+
+@keyframes marquee2 {
+  0% { transform: translateX(100%); }
+  100% { transform: translateX(0%); }
+}
+
+.marquee-container {
+  overflow: hidden;
+  position: relative;
+}
+
+.marquee-content {
+  display: flex;
+  animation-timing-function: linear;
+  animation-iteration-count: infinite;
+}
+
+.marquee-content-primary {
+  animation-name: marquee;
+}
+
+.marquee-content-secondary {
+  position: absolute;
+  top: 0;
+  left: 0;
+  animation-name: marquee2;
+}
