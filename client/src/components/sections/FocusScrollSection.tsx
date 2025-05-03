@@ -318,26 +318,31 @@ const FocusScrollSection: React.FC = () => {
           <div className="fixed-image-column hidden lg:block">
             <div 
               className={`fixed-image-wrapper ${activeBlockId === LAST_BLOCK_ID ? "h-full flex flex-col justify-end" : ""}`}
-              style={{
-                height: "100%",
-                position: "relative",
-                display: "block"
-              }}
             >
               <div 
                 ref={imageContainerRef}
                 className={`fixed-image-container ${isFixedMode ? "" : "not-fixed"} ${activeBlockId === LAST_BLOCK_ID ? "last-block-position" : ""}`}
-                style={{ 
-                  position: isFixedMode ? "fixed" : "relative",
-                  top: isFixedMode ? "50%" : (activeBlockId === LAST_BLOCK_ID ? "auto" : "0"),
-                  bottom: (!isFixedMode && activeBlockId === LAST_BLOCK_ID) ? "0" : "auto", // Anchor to bottom for last block
-                  transform: isFixedMode ? "translateY(-50%)" : "none",
-                  width: isFixedMode ? "calc(50% - 3rem)" : "100%",
-                  transition: "all 0.3s ease-out", // Add smooth transition for position changes
-                  marginTop: (!isFixedMode && activeBlockId === LAST_BLOCK_ID) ? "auto" : "0", // Push to bottom when at last block
-                  opacity: 1, // Always ensure it's visible
-                  visibility: "visible" // Always ensure it's visible
-                }}
+                style={
+                  activeBlockId === LAST_BLOCK_ID 
+                  ? // Special styles only for block 5
+                    { 
+                      position: "relative",
+                      top: "auto", 
+                      bottom: "0",
+                      transform: "none",
+                      width: "100%",
+                      transition: "all 0.2s ease-out",
+                      marginTop: "auto" // Push to bottom when at last block
+                    }
+                  : // Original styles for blocks 1-4 
+                    {
+                      position: isFixedMode ? "fixed" : "relative",
+                      top: isFixedMode ? "50%" : "auto", 
+                      transform: isFixedMode ? "translateY(-50%)" : "none",
+                      width: isFixedMode ? "calc(50% - 3rem)" : "100%",
+                      transition: "all 0.2s ease-out"
+                    } 
+                }
                 data-fixed={isFixedMode ? "true" : "false"}
                 data-active-block={activeBlockId}
               >
