@@ -99,6 +99,22 @@
   z-index: 5; /* Higher than content but lower than fixed */
 }
 
+/* Special positioning for last block (block 5) */
+.fixed-image-container.last-block-position {
+  position: relative !important;
+  top: auto !important;
+  left: auto !important;
+  bottom: 0 !important; /* Stick to bottom */
+  transform: none !important;
+  margin-top: auto !important; /* Push to bottom of container */
+  height: 500px; /* Same height as fixed state */
+  width: 100%; /* Full width of its container */
+  display: flex !important;
+  align-items: flex-end !important; /* Align to bottom */
+  align-self: flex-end !important; /* Align to bottom */
+  transition: all 0.3s ease-out;
+}
+
 /* When last block is visible OR section is exiting viewport */
 .fixed-image-container.release-fixed {
   position: relative !important; /* Important to override fixed positioning */

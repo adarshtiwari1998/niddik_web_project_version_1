@@ -158,11 +158,6 @@ const FocusScrollSection: React.FC = () => {
       // Section is visible when it's in the viewport
       const isSectionVisible = sectionTop < windowHeight && sectionBottom > 0;
       
-      // Special handling for fixed state:
-      // 1. When at the end of the section (last block is visible), immediately disable fixed state
-      // 2. When scrolling back up from the end, quickly re-enable fixed state
-      // 3. Otherwise, standard fixed state behavior
-      
       // Check if the last block is visible (block 5)
       let isLastBlockVisible = false;
       blockRefs.current.forEach(block => {
@@ -174,10 +169,17 @@ const FocusScrollSection: React.FC = () => {
         }
       });
       
-      // Immediately lose fixed state when last block is visible
+      // Handle the transition to the last block specially
       if (isLastBlockVisible || activeBlockId === LAST_BLOCK_ID) {
         // If we're at the last block, image should scroll with content
         setIsFixedMode(false);
+        
+        // Force the image container to be aligned to the bottom of the column
+        if (imageContainerRef.current) {
+          // Set a special position class for the last block
+          // This ensures proper alignment when transitioning from fixed to relative
+          imageContainerRef.current.classList.add('last-block-position');
+        }
       } else {
         // Normal fixed mode determination (for blocks 1-4)
         const shouldBeFixedMode = 
@@ -186,6 +188,11 @@ const FocusScrollSection: React.FC = () => {
           sectionBottom > windowHeight * 0.5; // Not at the end
           
         setIsFixedMode(shouldBeFixedMode);
+        
+        // Remove the special positioning class when not at the last block
+        if (imageContainerRef.current) {
+          imageContainerRef.current.classList.remove('last-block-position');
+        }
       }
       
       // Enforce minimum display time before allowing new transitions
@@ -309,52 +316,63 @@ const FocusScrollSection: React.FC = () => {
           {/* Right column - Image container that becomes fixed or relative based on scroll position */}
           <div className="fixed-image-column hidden lg:block">
             <div 
-              ref={imageContainerRef}
-              className={`fixed-image-container ${isFixedMode ? "" : "not-fixed"}`}
-              style={{ 
-                position: isFixedMode ? "fixed" : "relative",
-                top: isFixedMode ? "50%" : "auto",
-                transform: isFixedMode ? "translateY(-50%)" : "none",
-                width: isFixedMode ? "calc(50% - 3rem)" : "100%",
-                transition: "all 0.2s ease-out" // Add smooth transition for position changes
+              className={`fixed-image-wrapper ${activeBlockId === LAST_BLOCK_ID ? "h-full flex flex-col justify-end" : ""}`}
+              style={{
+                height: "100%",
+                position: "relative",
+                display: "block"
               }}
-              data-fixed={isFixedMode ? "true" : "false"}
-              data-active-block={activeBlockId}
             >
-              {focusBlocks.map((block) => (
-                <motion.div
-                  key={block.id}
-                  className="fixed-image"
-                  data-block-id={block.id}
-                  style={{ 
-                    opacity: block.id === activeBlockId ? 1 : 0,
-                    visibility: block.id === activeBlockId ? "visible" : "hidden",
-                    zIndex: block.id === activeBlockId ? 5 : 1
-                  }}
-                  initial={{ opacity: 0, scale: 0.95 }}
-                  animate={{ 
-                    opacity: block.id === activeBlockId ? 1 : 0,
-                    scale: block.id === activeBlockId ? 1 : 0.95
-                  }}
-                  transition={{ duration: 0.5, ease: "easeOut" }}
-                  data-active={block.id === activeBlockId ? "true" : "false"}
-                >
-                  <img 
-                    src={block.image}
-                    alt={block.title}
-                    className="w-full h-full object-cover rounded-lg"
-                  />
-                  <div className="absolute inset-0 bg-black bg-opacity-20 rounded-lg"></div>
-                  <div className="absolute bottom-6 left-6 max-w-xs">
-                    <span className="inline-block bg-andela-green text-white px-4 py-1 rounded-full text-sm font-medium mb-2">
-                      Feature {block.id}
-                    </span>
-                    <h4 className="text-xl font-bold text-white">
-                      {block.title}
-                    </h4>
-                  </div>
-                </motion.div>
-              ))}
+              <div 
+                ref={imageContainerRef}
+                className={`fixed-image-container ${isFixedMode ? "" : "not-fixed"}`}
+                style={{ 
+                  position: isFixedMode ? "fixed" : "relative",
+                  top: isFixedMode ? "50%" : "auto",
+                  bottom: (!isFixedMode && activeBlockId === LAST_BLOCK_ID) ? "0" : "auto", // Anchor to bottom for last block
+                  transform: isFixedMode ? "translateY(-50%)" : "none",
+                  width: isFixedMode ? "calc(50% - 3rem)" : "100%",
+                  transition: "all 0.2s ease-out", // Add smooth transition for position changes
+                  marginTop: (!isFixedMode && activeBlockId === LAST_BLOCK_ID) ? "auto" : "0" // Push to bottom when at last block
+                }}
+                data-fixed={isFixedMode ? "true" : "false"}
+                data-active-block={activeBlockId}
+              >
+                {focusBlocks.map((block) => (
+                  <motion.div
+                    key={block.id}
+                    className="fixed-image"
+                    data-block-id={block.id}
+                    style={{ 
+                      opacity: block.id === activeBlockId ? 1 : 0,
+                      visibility: block.id === activeBlockId ? "visible" : "hidden",
+                      zIndex: block.id === activeBlockId ? 5 : 1
+                    }}
+                    initial={{ opacity: 0, scale: 0.95 }}
+                    animate={{ 
+                      opacity: block.id === activeBlockId ? 1 : 0,
+                      scale: block.id === activeBlockId ? 1 : 0.95
+                    }}
+                    transition={{ duration: 0.5, ease: "easeOut" }}
+                    data-active={block.id === activeBlockId ? "true" : "false"}
+                  >
+                    <img 
+                      src={block.image}
+                      alt={block.title}
+                      className="w-full h-full object-cover rounded-lg"
+                    />
+                    <div className="absolute inset-0 bg-black bg-opacity-20 rounded-lg"></div>
+                    <div className="absolute bottom-6 left-6 max-w-xs">
+                      <span className="inline-block bg-andela-green text-white px-4 py-1 rounded-full text-sm font-medium mb-2">
+                        Feature {block.id}
+                      </span>
+                      <h4 className="text-xl font-bold text-white">
+                        {block.title}
+                      </h4>
+                    </div>
+                  </motion.div>
+                ))}
+              </div>
             </div>
           </div>
 
