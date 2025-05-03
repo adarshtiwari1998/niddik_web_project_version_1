@@ -125,6 +125,58 @@ const ServicesShowcase = () => {
       <div className="absolute top-0 right-0 w-96 h-96 bg-andela-green opacity-5 rounded-full filter blur-3xl -translate-y-1/2 translate-x-1/3"></div>
       <div className="absolute bottom-0 left-0 w-96 h-96 bg-blue-600 opacity-5 rounded-full filter blur-3xl translate-y-1/2 -translate-x-1/3"></div>
       
+      {/* Animated floating elements in background */}
+      <motion.div 
+        className="absolute top-1/4 left-1/4 w-12 h-12 bg-purple-500 opacity-20 rounded-lg"
+        animate={{ 
+          y: [0, -20, 0],
+          rotate: [0, 15, 0]
+        }}
+        transition={{ 
+          duration: 5,
+          repeat: Infinity,
+          ease: "easeInOut"
+        }}
+      />
+      <motion.div 
+        className="absolute top-1/3 right-1/4 w-8 h-8 bg-blue-500 opacity-20 rounded-full"
+        animate={{ 
+          y: [0, 20, 0],
+          x: [0, -20, 0]
+        }}
+        transition={{ 
+          duration: 7,
+          repeat: Infinity,
+          ease: "easeInOut"
+        }}
+      />
+      <motion.div 
+        className="absolute bottom-1/4 right-1/3 w-16 h-16 bg-green-500 opacity-20 rounded-md rotate-45"
+        animate={{ 
+          y: [0, -30, 0],
+          x: [0, 20, 0],
+          rotate: [45, 90, 45]
+        }}
+        transition={{ 
+          duration: 9,
+          repeat: Infinity,
+          ease: "easeInOut"
+        }}
+      />
+      <motion.div 
+        className="absolute bottom-1/3 left-1/3 w-10 h-10 bg-amber-500 opacity-20 rounded-lg"
+        animate={{ 
+          y: [0, 25, 0],
+          x: [0, 15, 0],
+          rotate: [0, -30, 0]
+        }}
+        transition={{ 
+          duration: 6,
+          repeat: Infinity,
+          ease: "easeInOut"
+        }}
+      />
+      
       <Container>
         <motion.div 
           className="text-center mb-16"
@@ -155,11 +207,34 @@ const ServicesShowcase = () => {
           >
             {/* Center circle with gradient that changes color based on active service */}
             <div className={`w-48 h-48 md:w-64 md:h-64 rounded-full bg-gradient-to-br ${activeServiceData.color} flex items-center justify-center shadow-lg relative z-10 transition-all duration-500`}>
-              <div className="w-44 h-44 md:w-60 md:h-60 rounded-full bg-white flex items-center justify-center">
-                {/* Show active service icon in the center along with the logo */}
-                <div className="flex flex-col items-center justify-center text-center">
-                  <div className={`p-4 rounded-full ${activeServiceData.bgColor} mb-3`}>
-                    <div className={`h-10 w-10 ${activeServiceData.color.includes('purple') ? 'text-purple-600' : 
+              <div className="w-44 h-44 md:w-60 md:h-60 rounded-full bg-white flex items-center justify-center relative overflow-hidden">
+                {/* Dynamic background texture based on service */}
+                <div className="absolute inset-0 opacity-5">
+                  {activeServiceData.id === 1 && (
+                    <div className="service-texture-grid w-full h-full"></div>
+                  )}
+                  {activeServiceData.id === 2 && (
+                    <div className="service-texture-dots w-full h-full"></div>
+                  )}
+                  {activeServiceData.id === 3 && (
+                    <div className="service-texture-waves w-full h-full"></div>
+                  )}
+                  {activeServiceData.id === 4 && (
+                    <div className="service-texture-lines w-full h-full"></div>
+                  )}
+                </div>
+                
+                {/* Central content with service icon and NIIDIK logo */}
+                <motion.div 
+                  key={`center-icon-${activeService}`}
+                  initial={{ scale: 0.8, opacity: 0 }}
+                  animate={{ scale: 1, opacity: 1 }}
+                  exit={{ scale: 0.8, opacity: 0 }}
+                  transition={{ duration: 0.3 }}
+                  className="flex flex-col items-center justify-center text-center z-10"
+                >
+                  <div className={`p-4 rounded-full ${activeServiceData.bgColor} mb-3 flex items-center justify-center`}>
+                    <div className={`h-12 w-12 ${activeServiceData.color.includes('purple') ? 'text-purple-600' : 
                       activeServiceData.color.includes('blue') ? 'text-blue-600' : 
                       activeServiceData.color.includes('green') ? 'text-green-600' : 
                       'text-amber-600'}`
@@ -167,12 +242,8 @@ const ServicesShowcase = () => {
                       {activeServiceData.icon}
                     </div>
                   </div>
-                  <img 
-                    src="/images/services-icon.svg" 
-                    alt="NIIDIK Services" 
-                    className="w-24 h-24 md:w-28 md:h-28 object-contain"
-                  />
-                </div>
+                  <div className="text-lg font-semibold mb-1 text-andela-dark">{activeServiceData.title}</div>
+                </motion.div>
               </div>
             </div>
 
