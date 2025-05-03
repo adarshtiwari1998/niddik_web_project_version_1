@@ -82,6 +82,24 @@ const FocusScrollSection: React.FC = () => {
         block => Number(block?.getAttribute("data-block-id")) === LAST_BLOCK_ID
       );
       
+      // Check which blocks are in view to maintain sequential ordering
+      const blocksInView = allBlocks
+        .filter(block => {
+          if (!block) return false;
+          const rect = block.getBoundingClientRect();
+          // Consider a block "in view" when it's in the upper half of the viewport
+          return rect.top <= window.innerHeight * 0.5 && rect.bottom >= 0;
+        })
+        .map(block => Number(block?.getAttribute("data-block-id") || 0))
+        .sort((a, b) => a - b); // Sort by block ID to maintain sequence
+        
+      // Get current position based on blocks in view (top-most visible block)
+      const visibleBlocks = blocksInView.length > 0 ? blocksInView : [activeBlockId];
+      const currentPosition = Math.min(...visibleBlocks);
+      
+      // Debug info
+      console.log(`Blocks in view: ${JSON.stringify(blocksInView)}, current: ${currentPosition}`);
+        
       // Update states based on scroll position
       if (isSectionEnded || (lastBlock && lastBlock.getBoundingClientRect().top <= window.innerHeight * 0.4)) {
         // Section is ending OR last block is near top, force release fixed position
@@ -99,6 +117,13 @@ const FocusScrollSection: React.FC = () => {
         // Section is in normal scrolling range - make sure last block release is disabled
         // This ensures blocks 1-4 all maintain the fixed position
         setIsLastBlockVisible(false);
+        
+        // Update active block ID only if we're not already showing the last block
+        // This ensures proper sequential transition of images
+        if (currentPosition && currentPosition !== activeBlockId && 
+            (currentPosition > activeBlockId || currentPosition === 1)) {
+          setActiveBlockId(currentPosition);
+        }
       }
     };
     
@@ -108,7 +133,7 @@ const FocusScrollSection: React.FC = () => {
     return () => {
       window.removeEventListener('scroll', handleScroll);
     };
-  }, []);
+  }, [activeBlockId]);
   
   // Set up intersection observers to track section and blocks
   useEffect(() => {
@@ -131,9 +156,18 @@ const FocusScrollSection: React.FC = () => {
         // When no blocks are visible, keep the previous active block
         if (visibleBlocks.size === 0) return;
         
-        // For regular blocks - find the smallest visible block ID (top-most visible block)
-        const visibleBlocksList = Array.from(visibleBlocks);
-        const topVisibleBlock = Math.min(...visibleBlocksList);
+        // Always get all visible blocks and sort them by their position from top to bottom
+        // This ensures we always get the correct block in view order
+        const visibleBlocksArray = Array.from(blockRefs.current)
+          .filter(block => block && visibleBlocks.has(Number(block.getAttribute("data-block-id"))))
+          .sort((a, b) => {
+            if (!a || !b) return 0;
+            return a.getBoundingClientRect().top - b.getBoundingClientRect().top;
+          });
+          
+        // Get the ID of the top-most visible block
+        const topBlock = visibleBlocksArray[0];
+        const topVisibleBlock = topBlock ? Number(topBlock.getAttribute("data-block-id")) : 1;
         
         // Special handling for last block - only apply release logic when actually at the LAST block
         if (visibleBlocks.has(LAST_BLOCK_ID)) {
@@ -156,15 +190,20 @@ const FocusScrollSection: React.FC = () => {
           // Not on last block, ensure image stays fixed
           setIsLastBlockVisible(false);
           
-          // Set active ID to the top-most visible block (to change which image is shown)
-          setActiveBlockId(topVisibleBlock);
-          console.log(`Block ${topVisibleBlock} is now active (top-most visible)`);
+          // Only update active block ID if the new block is sequential
+          // This prevents going backward (e.g., 3→1) which causes image jumping
+          if (topVisibleBlock > activeBlockId || topVisibleBlock === 1) {
+            setActiveBlockId(topVisibleBlock);
+            console.log(`Block ${topVisibleBlock} is now active (top-most visible)`);
+          } else {
+            console.log(`Skipping non-sequential block ${topVisibleBlock} (current: ${activeBlockId})`);
+          }
         }
       },
       {
         root: null,
-        rootMargin: "-20% 0px -20% 0px", // Balanced detection for better block transitions
-        threshold: [0.1, 0.3, 0.5], // Multiple thresholds for smoother transitions
+        rootMargin: "-10% 0px -40% 0px", // More visible area at top to ensure proper ordering
+        threshold: [0.05, 0.1, 0.15, 0.2, 0.25], // Focus on top portion of blocks for more accurate detection
       }
     );
 
@@ -270,7 +309,7 @@ const FocusScrollSection: React.FC = () => {
         }
       });
     };
-  }, []);
+  }, [activeBlockId]);
   
   return (
     <section ref={sectionRef} className="py-16 bg-gray-50" id="focus-scroll-section">
