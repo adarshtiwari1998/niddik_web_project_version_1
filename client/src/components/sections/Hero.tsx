@@ -77,11 +77,11 @@ const Hero = () => {
             loop
             muted
             playsInline
-            className={`object-cover w-full h-full ${isVideoLoaded ? 'opacity-100' : 'opacity-0'} transition-opacity duration-500`}
+            className={`hero-video object-cover w-full h-full ${isVideoLoaded ? 'opacity-100' : 'opacity-0'} transition-opacity duration-500`}
             onLoadedData={handleVideoLoaded}
             onError={handleVideoError}
           >
-            <source src="https://cdn.coverr.co/videos/coverr-a-business-team-in-a-meeting-1574/1080p.mp4" type="video/mp4" />
+            <source src="https://res.cloudinary.com/dhanz6zty/video/upload/v1746298068/Project_03-26_4K_HIGH_FR60_26mb_fxvo0l.mp4" type="video/mp4" />
             Your browser does not support the video tag.
           </video>
         ) : null}
@@ -95,43 +95,70 @@ const Hero = () => {
           />
         )}
         
-        {/* Dark Overlay */}
-        <div className="absolute inset-0 bg-black bg-opacity-50 z-10"></div>
+        {/* Gradient Overlay - more sophisticated than a simple dark overlay */}
+        <div className="absolute inset-0 bg-gradient-to-r from-black via-black/60 to-transparent z-10"></div>
       </div>
       
       {/* Main Content */}
       <div className="relative z-20 flex-grow flex items-center pt-24">
         <Container>
-          <div className="max-w-4xl mx-auto text-center">
-            <motion.h1 
-              className="text-4xl md:text-6xl font-bold leading-tight text-white mb-6"
-              initial={{ opacity: 0, y: -20 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.7 }}
-            >
-              Find tech experts for your projects in record time
-            </motion.h1>
-            <motion.p 
-              className="text-lg md:text-xl text-gray-200 mb-8 max-w-2xl mx-auto"
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              transition={{ duration: 0.7, delay: 0.2 }}
-            >
-              We help you source, evaluate, and deliver world-class teams and technologists – fully vetted, compliant, and tailored to your needs.
-            </motion.p>
-            <motion.div 
-              className="flex flex-col sm:flex-row gap-4 justify-center"
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.5, delay: 0.4 }}
-            >
-              <Link href="#" className="bg-andela-green hover:bg-opacity-90 transition-all duration-300 text-white px-8 py-4 rounded-md font-medium text-center transform hover:scale-105">
-                Hire Talent
-              </Link>
-              <Link href="#" className="bg-white text-andela-green hover:bg-gray-100 transition-all duration-300 px-8 py-4 rounded-md font-medium text-center transform hover:scale-105">
-                Apply as Talent
-              </Link>
-            </motion.div>
+          <div className="flex flex-col md:flex-row items-center justify-between">
+            {/* Left-aligned text container */}
+            <div className="max-w-2xl text-left md:mr-auto">
+              <motion.h1 
+                className="text-4xl md:text-6xl font-bold leading-tight text-white mb-6"
+                initial={{ opacity: 0, x: -30 }}
+                animate={{ opacity: 1, x: 0 }}
+                transition={{ duration: 0.7 }}
+              >
+                Find tech experts for your projects in record time
+              </motion.h1>
+              <motion.p 
+                className="text-lg md:text-xl text-gray-200 mb-8"
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                transition={{ duration: 0.7, delay: 0.2 }}
+              >
+                We help you source, evaluate, and deliver world-class teams and technologists – fully vetted, compliant, and tailored to your needs.
+              </motion.p>
+              <motion.div 
+                className="flex flex-col sm:flex-row gap-4"
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.5, delay: 0.4 }}
+              >
+                <Link href="#" className="bg-andela-green hover:bg-opacity-90 transition-all duration-300 text-white px-8 py-4 rounded-md font-medium text-center transform hover:scale-105">
+                  Hire Talent
+                </Link>
+                <Link href="#" className="bg-white text-andela-green hover:bg-gray-100 transition-all duration-300 px-8 py-4 rounded-md font-medium text-center transform hover:scale-105">
+                  Apply as Talent
+                </Link>
+              </motion.div>
+              
+              {/* Social proof stats - only visible on desktop */}
+              <motion.div 
+                className="hidden lg:flex items-center gap-8 mt-10"
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                transition={{ duration: 0.5, delay: 0.7 }}
+              >
+                <div className="flex flex-col">
+                  <span className="text-3xl font-bold text-white">96%</span>
+                  <span className="text-gray-300 text-sm">Success Rate</span>
+                </div>
+                <div className="flex flex-col">
+                  <span className="text-3xl font-bold text-white">100+</span>
+                  <span className="text-gray-300 text-sm">Countries</span>
+                </div>
+                <div className="flex flex-col">
+                  <span className="text-3xl font-bold text-white">48h</span>
+                  <span className="text-gray-300 text-sm">Average Matching</span>
+                </div>
+              </motion.div>
+            </div>
+            
+            {/* Right side empty space (for video focus) */}
+            <div className="hidden md:block md:w-1/3"></div>
           </div>
         </Container>
       </div>
@@ -166,9 +193,9 @@ const Hero = () => {
         </Container>
       </div>
       
-      {/* Ad Overlay Box */}
+      {/* Modern floating highlight badge */}
       <motion.div 
-        className="absolute top-32 right-8 bg-white bg-opacity-90 p-4 rounded-lg shadow-lg z-30 max-w-xs hidden md:block"
+        className="absolute top-32 right-8 bg-white/10 backdrop-blur-md p-4 rounded-lg shadow-lg z-30 max-w-xs hidden md:block border border-white/20"
         initial={{ opacity: 0, x: 50 }}
         animate={{ opacity: 1, x: 0 }}
         transition={{ duration: 0.8, delay: 1 }}
@@ -178,13 +205,10 @@ const Hero = () => {
             <Check className="h-6 w-6" />
           </div>
           <div>
-            <p className="font-semibold text-andela-dark">96% Success Rate</p>
-            <p className="text-sm text-andela-gray">Join companies achieving their tech goals</p>
+            <p className="font-semibold text-white">Trusted by Fortune 500</p>
+            <p className="text-sm text-gray-200">Leading companies rely on our network</p>
           </div>
         </div>
-        <Link href="#" className="text-andela-green text-sm font-medium mt-2 block hover:underline">
-          Learn how →
-        </Link>
       </motion.div>
     </section>
   );
