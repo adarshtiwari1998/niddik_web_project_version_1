@@ -70,10 +70,11 @@ const FocusScrollSection: React.FC = () => {
     
     // Special handling to ensure block 4 is never skipped
     if (activeBlockId === 3 && blockId === 5) {
-      // If going from 3 to 5, force showing block 4 first for some time
-      console.log("Block 3->5 transition requested: showing block 4 first for proper sequence");
+      // If going from 3 to 5, force showing block 4 first and stay there
+      // (don't automatically go to block 5)
+      console.log("Block 3->5 transition intercepted: showing block 4 instead");
       
-      // Activate block 4
+      // Activate block 4 and STAY THERE
       setActiveBlockId(4);
       
       // Update DOM for immediate visual feedback
@@ -94,29 +95,11 @@ const FocusScrollSection: React.FC = () => {
       lastTransitionTime.current = Date.now();
       isEnforcingMinDisplayTime.current = true;
       
-      // Schedule block 5 to appear after min display time
+      // Reset the enforcing flag after minimum display time
+      // but DON'T automatically move to block 5
       setTimeout(() => {
-        console.log("Now showing block 5 after required block 4 display");
-        setActiveBlockId(5);
-        
-        // Update DOM for immediate visual feedback
-        blockRefs.current.forEach(block => {
-          if (!block) return;
-          const id = Number(block.getAttribute('data-block-id'));
-          
-          if (id === 5) {
-            block.classList.add('active');
-            block.setAttribute('data-active', 'true');
-          } else {
-            block.classList.remove('active');
-            block.setAttribute('data-active', 'false');
-          }
-        });
-        
-        // Update timestamp and reset enforcing flag
-        lastTransitionTime.current = Date.now();
         isEnforcingMinDisplayTime.current = false;
-      }, 1000); // Force block 4 display for 1 second
+      }, MIN_DISPLAY_TIME);
       
       return;
     }
