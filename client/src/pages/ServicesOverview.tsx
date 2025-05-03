@@ -211,14 +211,14 @@ const ServicesOverview = () => {
                         perspective: '1000px'
                       }}
                     >
-                      {/* Custom geometric pattern for each service card - MORE VISIBLE */}
-                      <div className="absolute top-0 left-0 w-full h-full overflow-hidden opacity-30 group-hover:opacity-50 transition-opacity duration-500 pointer-events-none">
+                      {/* Subtle geometric pattern for each service card - LIGHTER AND SMALLER */}
+                      <div className="absolute bottom-0 right-0 w-1/2 h-1/2 overflow-hidden opacity-15 group-hover:opacity-25 transition-opacity duration-500 pointer-events-none">
                         {index === 0 && (
                           <svg width="100%" height="100%" viewBox="0 0 400 400" fill="none" xmlns="http://www.w3.org/2000/svg">
-                            <path d="M50 0L100 86.6025L50 173.205L-50 173.205L-100 86.6025L-50 0L50 0Z" stroke="url(#service-grad-1)" strokeWidth="2.5" transform="translate(200 50)"/>
-                            <path d="M150 0L200 86.6025L150 173.205L50 173.205L0 86.6025L50 0L150 0Z" stroke="url(#service-grad-1)" strokeWidth="2.5" transform="translate(200 50)"/>
-                            <path d="M50 173.205L100 259.808L50 346.41L-50 346.41L-100 259.808L-50 173.205L50 173.205Z" stroke="url(#service-grad-1)" strokeWidth="2.5" transform="translate(200 50)"/>
-                            <path d="M150 173.205L200 259.808L150 346.41L50 346.41L0 259.808L50 173.205L150 173.205Z" stroke="url(#service-grad-1)" strokeWidth="2.5" transform="translate(200 50)"/>
+                            <path d="M50 0L100 86.6025L50 173.205L-50 173.205L-100 86.6025L-50 0L50 0Z" stroke="url(#service-grad-1)" strokeWidth="1.5" transform="translate(200 50)"/>
+                            <path d="M150 0L200 86.6025L150 173.205L50 173.205L0 86.6025L50 0L150 0Z" stroke="url(#service-grad-1)" strokeWidth="1.5" transform="translate(200 50)"/>
+                            <path d="M50 173.205L100 259.808L50 346.41L-50 346.41L-100 259.808L-50 173.205L50 173.205Z" stroke="url(#service-grad-1)" strokeWidth="1.5" transform="translate(200 50)"/>
+                            <path d="M150 173.205L200 259.808L150 346.41L50 346.41L0 259.808L50 173.205L150 173.205Z" stroke="url(#service-grad-1)" strokeWidth="1.5" transform="translate(200 50)"/>
                             <defs>
                               <linearGradient id="service-grad-1" x1="0" y1="0" x2="200" y2="400" gradientUnits="userSpaceOnUse">
                                 <stop stopColor="#818CF8"/>
@@ -229,14 +229,14 @@ const ServicesOverview = () => {
                         )}
                         {index === 1 && (
                           <svg width="100%" height="100%" viewBox="0 0 400 400" fill="none" xmlns="http://www.w3.org/2000/svg">
-                            <rect x="50" y="50" width="100" height="100" rx="20" stroke="url(#service-grad-2)" strokeWidth="2.5"/>
-                            <rect x="250" y="50" width="100" height="100" rx="20" stroke="url(#service-grad-2)" strokeWidth="2.5"/>
-                            <rect x="50" y="250" width="100" height="100" rx="20" stroke="url(#service-grad-2)" strokeWidth="2.5"/>
-                            <rect x="250" y="250" width="100" height="100" rx="20" stroke="url(#service-grad-2)" strokeWidth="2.5"/>
-                            <path d="M150 150L250 150" stroke="url(#service-grad-2)" strokeWidth="2.5"/>
-                            <path d="M150 250L150 150" stroke="url(#service-grad-2)" strokeWidth="2.5"/>
-                            <path d="M250 250L250 150" stroke="url(#service-grad-2)" strokeWidth="2.5"/>
-                            <path d="M150 250L250 250" stroke="url(#service-grad-2)" strokeWidth="2.5"/>
+                            <rect x="50" y="50" width="100" height="100" rx="20" stroke="url(#service-grad-2)" strokeWidth="1.5"/>
+                            <rect x="250" y="50" width="100" height="100" rx="20" stroke="url(#service-grad-2)" strokeWidth="1.5"/>
+                            <rect x="50" y="250" width="100" height="100" rx="20" stroke="url(#service-grad-2)" strokeWidth="1.5"/>
+                            <rect x="250" y="250" width="100" height="100" rx="20" stroke="url(#service-grad-2)" strokeWidth="1.5"/>
+                            <path d="M150 150L250 150" stroke="url(#service-grad-2)" strokeWidth="1.5"/>
+                            <path d="M150 250L150 150" stroke="url(#service-grad-2)" strokeWidth="1.5"/>
+                            <path d="M250 250L250 150" stroke="url(#service-grad-2)" strokeWidth="1.5"/>
+                            <path d="M150 250L250 250" stroke="url(#service-grad-2)" strokeWidth="1.5"/>
                             <defs>
                               <linearGradient id="service-grad-2" x1="50" y1="50" x2="350" y2="350" gradientUnits="userSpaceOnUse">
                                 <stop stopColor="#60A5FA"/>
@@ -247,11 +247,11 @@ const ServicesOverview = () => {
                         )}
                         {index === 2 && (
                           <svg width="100%" height="100%" viewBox="0 0 400 400" fill="none" xmlns="http://www.w3.org/2000/svg">
-                            <circle cx="200" cy="200" r="150" stroke="url(#service-grad-3)" strokeWidth="2.5"/>
-                            <path d="M200 50L200 350" stroke="url(#service-grad-3)" strokeWidth="2.5"/>
-                            <path d="M50 200L350 200" stroke="url(#service-grad-3)" strokeWidth="2.5"/>
-                            <path d="M84.3146 84.3146L315.685 315.685" stroke="url(#service-grad-3)" strokeWidth="2.5"/>
-                            <path d="M315.685 84.3146L84.3146 315.685" stroke="url(#service-grad-3)" strokeWidth="2.5"/>
+                            <circle cx="200" cy="200" r="150" stroke="url(#service-grad-3)" strokeWidth="1.5"/>
+                            <path d="M200 50L200 350" stroke="url(#service-grad-3)" strokeWidth="1.5"/>
+                            <path d="M50 200L350 200" stroke="url(#service-grad-3)" strokeWidth="1.5"/>
+                            <path d="M84.3146 84.3146L315.685 315.685" stroke="url(#service-grad-3)" strokeWidth="1.5"/>
+                            <path d="M315.685 84.3146L84.3146 315.685" stroke="url(#service-grad-3)" strokeWidth="1.5"/>
                             <defs>
                               <linearGradient id="service-grad-3" x1="50" y1="50" x2="350" y2="350" gradientUnits="userSpaceOnUse">
                                 <stop stopColor="#34D399"/>
@@ -262,10 +262,10 @@ const ServicesOverview = () => {
                         )}
                         {index === 3 && (
                           <svg width="100%" height="100%" viewBox="0 0 400 400" fill="none" xmlns="http://www.w3.org/2000/svg">
-                            <path d="M100 50L300 50L350 200L300 350L100 350L50 200L100 50Z" stroke="url(#service-grad-4)" strokeWidth="2.5"/>
-                            <path d="M150 100L250 100L300 200L250 300L150 300L100 200L150 100Z" stroke="url(#service-grad-4)" strokeWidth="2.5"/>
-                            <path d="M200 150L200 250" stroke="url(#service-grad-4)" strokeWidth="2.5"/>
-                            <path d="M150 200L250 200" stroke="url(#service-grad-4)" strokeWidth="2.5"/>
+                            <path d="M100 50L300 50L350 200L300 350L100 350L50 200L100 50Z" stroke="url(#service-grad-4)" strokeWidth="1.5"/>
+                            <path d="M150 100L250 100L300 200L250 300L150 300L100 200L150 100Z" stroke="url(#service-grad-4)" strokeWidth="1.5"/>
+                            <path d="M200 150L200 250" stroke="url(#service-grad-4)" strokeWidth="1.5"/>
+                            <path d="M150 200L250 200" stroke="url(#service-grad-4)" strokeWidth="1.5"/>
                             <defs>
                               <linearGradient id="service-grad-4" x1="50" y1="50" x2="350" y2="350" gradientUnits="userSpaceOnUse">
                                 <stop stopColor="#FBBF24"/>
@@ -276,32 +276,14 @@ const ServicesOverview = () => {
                         )}
                       </div>
                       
-                      {/* Top colorful header */}
-                      <div className={`h-24 w-full bg-gradient-to-r ${service.color} relative overflow-hidden`}>
-                        <div className="absolute inset-0 opacity-30">
-                          <svg width="100%" height="100%" viewBox="0 0 100 100" preserveAspectRatio="none" fill="none" xmlns="http://www.w3.org/2000/svg">
-                            <path d="M0 0L100 0L100 100L0 100L0 0Z" fill="url(#header-pattern)" fillOpacity="0.3"/>
-                            <defs>
-                              <pattern id="header-pattern" patternContentUnits="objectBoundingBox" width="0.1" height="0.1">
-                                <use xlinkHref="#header-dots" transform="scale(0.01)"/>
-                              </pattern>
-                              <image id="header-dots" width="10" height="10" xlinkHref="data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTAiIGhlaWdodD0iMTAiIHZpZXdCb3g9IjAgMCAxMCAxMCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48Y2lyY2xlIGN4PSIxIiBjeT0iMSIgcj0iMSIgZmlsbD0iI2ZmZiIvPjwvc3ZnPgo="/>
-                            </defs>
-                          </svg>
-                        </div>
-                        
-                        {/* Icon with 3D effect */}
-                        <div className="absolute -bottom-10 left-8">
-                          <div className={`w-20 h-20 rounded-xl shadow-lg flex items-center justify-center bg-white transform group-hover:rotate-y-12 transition-transform duration-500`}>
-                            <div className={`w-12 h-12 rounded-lg flex items-center justify-center bg-gradient-to-r ${service.color}`}>
-                              {React.cloneElement(service.icon as React.ReactElement, { className: 'h-7 w-7 text-white' })}
-                            </div>
+                      {/* Service content with integrated light background icon */}
+                      <div className="p-8">
+                        <div className={`w-16 h-16 rounded-lg mb-6 flex items-center justify-center bg-gradient-to-br from-gray-50 to-white shadow-md group-hover:shadow-lg transition-all duration-300 border border-gray-100`}>
+                          <div className={`w-10 h-10 rounded-md flex items-center justify-center bg-gradient-to-r ${service.color}`}>
+                            {React.cloneElement(service.icon as React.ReactElement, { className: 'h-5 w-5 text-white' })}
                           </div>
                         </div>
-                      </div>
-                      
-                      {/* Service content */}
-                      <div className="p-8 pt-14">
+                        
                         <h3 className="text-2xl font-bold text-andela-dark mb-3">{service.title}</h3>
                         <p className="text-andela-gray mb-6">{service.description}</p>
                         <Link 
@@ -522,13 +504,12 @@ const ServicesOverview = () => {
                     className="bg-white rounded-xl shadow-xl p-8 relative group hover:shadow-2xl transition-all duration-500 overflow-hidden border border-blue-100"
                     whileHover={{ y: -8, transition: { duration: 0.3 } }}
                   >
-                    {/* Background geometric pattern - Hexagon-based - MORE VISIBLE */}
-                    <div className="absolute -bottom-6 -right-6 pointer-events-none z-0 opacity-30 group-hover:opacity-60 transition-opacity duration-500">
-                      <svg width="180" height="180" viewBox="0 0 180 180" fill="none" xmlns="http://www.w3.org/2000/svg">
-                        <path d="M40 0L60 34.641L40 69.282L0 69.282L-20 34.641L0 0L40 0Z" stroke="url(#hex-grad-1)" strokeWidth="3"/>
-                        <path d="M120 0L140 34.641L120 69.282L80 69.282L60 34.641L80 0L120 0Z" stroke="url(#hex-grad-1)" strokeWidth="3"/>
-                        <path d="M40 69.282L60 103.923L40 138.564L0 138.564L-20 103.923L0 69.282L40 69.282Z" stroke="url(#hex-grad-1)" strokeWidth="3"/>
-                        <path d="M120 69.282L140 103.923L120 138.564L80 138.564L60 103.923L80 69.282L120 69.282Z" stroke="url(#hex-grad-1)" strokeWidth="3"/>
+                    {/* Background geometric pattern - LIGHTER AND SMALLER */}
+                    <div className="absolute bottom-0 right-0 w-1/2 h-1/2 pointer-events-none z-0 opacity-15 group-hover:opacity-25 transition-opacity duration-500">
+                      <svg width="100%" height="100%" viewBox="0 0 180 180" fill="none" xmlns="http://www.w3.org/2000/svg">
+                        <path d="M40 0L60 34.641L40 69.282L0 69.282L-20 34.641L0 0L40 0Z" stroke="url(#hex-grad-1)" strokeWidth="1.5" transform="translate(90 40)"/>
+                        <path d="M120 0L140 34.641L120 69.282L80 69.282L60 34.641L80 0L120 0Z" stroke="url(#hex-grad-1)" strokeWidth="1.5" transform="translate(30 40)"/>
+                        <path d="M40 69.282L60 103.923L40 138.564L0 138.564L-20 103.923L0 69.282L40 69.282Z" stroke="url(#hex-grad-1)" strokeWidth="1.5" transform="translate(90 20)"/>
                         <defs>
                           <linearGradient id="hex-grad-1" x1="0" y1="0" x2="160" y2="160" gradientUnits="userSpaceOnUse">
                             <stop stopColor="#3B82F6"/>
@@ -538,10 +519,12 @@ const ServicesOverview = () => {
                       </svg>
                     </div>
                     
-                    {/* Content */}
+                    {/* Content with consistently aligned icon */}
                     <div className="relative z-10">
-                      <div className="w-16 h-16 bg-gradient-to-br from-blue-500 to-blue-600 rounded-xl flex items-center justify-center mb-6 rotate-12 group-hover:rotate-0 transition-transform duration-500 shadow-lg">
-                        <Zap className="h-8 w-8 text-white" />
+                      <div className="w-16 h-16 rounded-lg mb-6 flex items-center justify-center bg-gradient-to-br from-gray-50 to-white shadow-md border border-gray-100 group-hover:shadow-lg transition-all duration-300">
+                        <div className="w-10 h-10 bg-gradient-to-br from-blue-500 to-blue-600 rounded-md flex items-center justify-center">
+                          <Zap className="h-5 w-5 text-white" />
+                        </div>
                       </div>
                       <h3 className="text-xl font-bold text-andela-dark mb-3">Speed to Market</h3>
                       <div className="h-1 w-16 bg-gradient-to-r from-blue-400 to-blue-600 mb-4"></div>
@@ -560,18 +543,18 @@ const ServicesOverview = () => {
                     className="bg-white rounded-xl shadow-xl p-8 relative group hover:shadow-2xl transition-all duration-500 overflow-hidden border border-green-100"
                     whileHover={{ y: -8, transition: { duration: 0.3 } }}
                   >
-                    {/* Background geometric pattern - Connected squares - MORE VISIBLE */}
-                    <div className="absolute -bottom-6 -right-6 pointer-events-none z-0 opacity-30 group-hover:opacity-60 transition-opacity duration-500">
-                      <svg width="180" height="180" viewBox="0 0 180 180" fill="none" xmlns="http://www.w3.org/2000/svg">
-                        <path d="M30 10L50 10L50 30L30 30L30 10Z" stroke="url(#square-grad-1)" strokeWidth="3"/>
-                        <path d="M60 10L80 10L80 30L60 30L60 10Z" stroke="url(#square-grad-1)" strokeWidth="3"/>
-                        <path d="M90 10L110 10L110 30L90 30L90 10Z" stroke="url(#square-grad-1)" strokeWidth="3"/>
-                        <path d="M30 40L50 40L50 60L30 60L30 40Z" stroke="url(#square-grad-1)" strokeWidth="3"/>
-                        <path d="M60 40L80 40L80 60L60 60L60 40Z" stroke="url(#square-grad-1)" strokeWidth="3"/>
-                        <path d="M90 40L110 40L110 60L90 60L90 40Z" stroke="url(#square-grad-1)" strokeWidth="3"/>
-                        <path d="M30 70L50 70L50 90L30 90L30 70Z" stroke="url(#square-grad-1)" strokeWidth="3"/>
-                        <path d="M60 70L80 70L80 90L60 90L60 70Z" stroke="url(#square-grad-1)" strokeWidth="3"/>
-                        <path d="M90 70L110 70L110 90L90 90L90 70Z" stroke="url(#square-grad-1)" strokeWidth="3"/>
+                    {/* Background geometric pattern - LIGHTER AND SMALLER */}
+                    <div className="absolute bottom-0 right-0 w-1/2 h-1/2 pointer-events-none z-0 opacity-15 group-hover:opacity-25 transition-opacity duration-500">
+                      <svg width="100%" height="100%" viewBox="0 0 180 180" fill="none" xmlns="http://www.w3.org/2000/svg">
+                        <path d="M30 10L50 10L50 30L30 30L30 10Z" stroke="url(#square-grad-1)" strokeWidth="1.5"/>
+                        <path d="M60 10L80 10L80 30L60 30L60 10Z" stroke="url(#square-grad-1)" strokeWidth="1.5"/>
+                        <path d="M90 10L110 10L110 30L90 30L90 10Z" stroke="url(#square-grad-1)" strokeWidth="1.5"/>
+                        <path d="M30 40L50 40L50 60L30 60L30 40Z" stroke="url(#square-grad-1)" strokeWidth="1.5"/>
+                        <path d="M60 40L80 40L80 60L60 60L60 40Z" stroke="url(#square-grad-1)" strokeWidth="1.5"/>
+                        <path d="M90 40L110 40L110 60L90 60L90 40Z" stroke="url(#square-grad-1)" strokeWidth="1.5"/>
+                        <path d="M30 70L50 70L50 90L30 90L30 70Z" stroke="url(#square-grad-1)" strokeWidth="1.5"/>
+                        <path d="M60 70L80 70L80 90L60 90L60 70Z" stroke="url(#square-grad-1)" strokeWidth="1.5"/>
+                        <path d="M90 70L110 70L110 90L90 90L90 70Z" stroke="url(#square-grad-1)" strokeWidth="1.5"/>
                         <defs>
                           <linearGradient id="square-grad-1" x1="10" y1="10" x2="130" y2="130" gradientUnits="userSpaceOnUse">
                             <stop stopColor="#10B981"/>
@@ -581,10 +564,12 @@ const ServicesOverview = () => {
                       </svg>
                     </div>
                     
-                    {/* Content */}
+                    {/* Content with consistently aligned icon */}
                     <div className="relative z-10">
-                      <div className="w-16 h-16 bg-gradient-to-br from-green-500 to-green-600 rounded-xl flex items-center justify-center mb-6 -rotate-12 group-hover:rotate-0 transition-transform duration-500 shadow-lg">
-                        <Award className="h-8 w-8 text-white" />
+                      <div className="w-16 h-16 rounded-lg mb-6 flex items-center justify-center bg-gradient-to-br from-gray-50 to-white shadow-md border border-gray-100 group-hover:shadow-lg transition-all duration-300">
+                        <div className="w-10 h-10 bg-gradient-to-br from-green-500 to-green-600 rounded-md flex items-center justify-center">
+                          <Award className="h-5 w-5 text-white" />
+                        </div>
                       </div>
                       <h3 className="text-xl font-bold text-andela-dark mb-3">Quality-Assured Talent</h3>
                       <div className="h-1 w-16 bg-gradient-to-r from-green-400 to-green-600 mb-4"></div>
@@ -603,18 +588,15 @@ const ServicesOverview = () => {
                     className="bg-white rounded-xl shadow-xl p-8 relative group hover:shadow-2xl transition-all duration-500 overflow-hidden border border-purple-100"
                     whileHover={{ y: -8, transition: { duration: 0.3 } }}
                   >
-                    {/* Background geometric pattern - Triangular - MORE VISIBLE */}
-                    <div className="absolute -bottom-6 -right-6 pointer-events-none z-0 opacity-30 group-hover:opacity-60 transition-opacity duration-500">
-                      <svg width="180" height="180" viewBox="0 0 180 180" fill="none" xmlns="http://www.w3.org/2000/svg">
-                        <path d="M40 20L60 50.981L20 50.981L40 20Z" stroke="url(#tri-grad-1)" strokeWidth="3"/>
-                        <path d="M80 20L100 50.981L60 50.981L80 20Z" stroke="url(#tri-grad-1)" strokeWidth="3"/>
-                        <path d="M120 20L140 50.981L100 50.981L120 20Z" stroke="url(#tri-grad-1)" strokeWidth="3"/>
-                        <path d="M40 60L60 90.981L20 90.981L40 60Z" stroke="url(#tri-grad-1)" strokeWidth="3"/>
-                        <path d="M80 60L100 90.981L60 90.981L80 60Z" stroke="url(#tri-grad-1)" strokeWidth="3"/>
-                        <path d="M120 60L140 90.981L100 90.981L120 60Z" stroke="url(#tri-grad-1)" strokeWidth="3"/>
-                        <path d="M40 100L60 130.981L20 130.981L40 100Z" stroke="url(#tri-grad-1)" strokeWidth="3"/>
-                        <path d="M80 100L100 130.981L60 130.981L80 100Z" stroke="url(#tri-grad-1)" strokeWidth="3"/>
-                        <path d="M120 100L140 130.981L100 130.981L120 100Z" stroke="url(#tri-grad-1)" strokeWidth="3"/>
+                    {/* Background geometric pattern - LIGHTER AND SMALLER */}
+                    <div className="absolute bottom-0 right-0 w-1/2 h-1/2 pointer-events-none z-0 opacity-15 group-hover:opacity-25 transition-opacity duration-500">
+                      <svg width="100%" height="100%" viewBox="0 0 180 180" fill="none" xmlns="http://www.w3.org/2000/svg">
+                        <path d="M40 20L60 50.981L20 50.981L40 20Z" stroke="url(#tri-grad-1)" strokeWidth="1.5"/>
+                        <path d="M80 20L100 50.981L60 50.981L80 20Z" stroke="url(#tri-grad-1)" strokeWidth="1.5"/>
+                        <path d="M120 20L140 50.981L100 50.981L120 20Z" stroke="url(#tri-grad-1)" strokeWidth="1.5"/>
+                        <path d="M40 60L60 90.981L20 90.981L40 60Z" stroke="url(#tri-grad-1)" strokeWidth="1.5"/>
+                        <path d="M80 60L100 90.981L60 90.981L80 60Z" stroke="url(#tri-grad-1)" strokeWidth="1.5"/>
+                        <path d="M120 60L140 90.981L100 90.981L120 60Z" stroke="url(#tri-grad-1)" strokeWidth="1.5"/>
                         <defs>
                           <linearGradient id="tri-grad-1" x1="20" y1="20" x2="140" y2="140" gradientUnits="userSpaceOnUse">
                             <stop stopColor="#8B5CF6"/>
@@ -624,10 +606,12 @@ const ServicesOverview = () => {
                       </svg>
                     </div>
                     
-                    {/* Content */}
+                    {/* Content with consistently aligned icon */}
                     <div className="relative z-10">
-                      <div className="w-16 h-16 bg-gradient-to-br from-purple-500 to-purple-600 rounded-xl flex items-center justify-center mb-6 rotate-45 group-hover:rotate-0 transition-transform duration-500 shadow-lg">
-                        <BarChart className="h-8 w-8 text-white" />
+                      <div className="w-16 h-16 rounded-lg mb-6 flex items-center justify-center bg-gradient-to-br from-gray-50 to-white shadow-md border border-gray-100 group-hover:shadow-lg transition-all duration-300">
+                        <div className="w-10 h-10 bg-gradient-to-br from-purple-500 to-purple-600 rounded-md flex items-center justify-center">
+                          <BarChart className="h-5 w-5 text-white" />
+                        </div>
                       </div>
                       <h3 className="text-xl font-bold text-andela-dark mb-3">Data-Driven Insights</h3>
                       <div className="h-1 w-16 bg-gradient-to-r from-purple-400 to-purple-600 mb-4"></div>
@@ -646,13 +630,13 @@ const ServicesOverview = () => {
                     className="bg-white rounded-xl shadow-xl p-8 relative group hover:shadow-2xl transition-all duration-500 overflow-hidden border border-amber-100"
                     whileHover={{ y: -8, transition: { duration: 0.3 } }}
                   >
-                    {/* Background geometric pattern - Circular Orbits - MORE VISIBLE */}
-                    <div className="absolute -bottom-6 -right-6 pointer-events-none z-0 opacity-30 group-hover:opacity-60 transition-opacity duration-500">
-                      <svg width="180" height="180" viewBox="0 0 180 180" fill="none" xmlns="http://www.w3.org/2000/svg">
-                        <ellipse cx="80" cy="80" rx="60" ry="20" stroke="url(#circle-grad-1)" strokeWidth="3" transform="rotate(0 80 80)"/>
-                        <ellipse cx="80" cy="80" rx="60" ry="20" stroke="url(#circle-grad-1)" strokeWidth="3" transform="rotate(60 80 80)"/>
-                        <ellipse cx="80" cy="80" rx="60" ry="20" stroke="url(#circle-grad-1)" strokeWidth="3" transform="rotate(120 80 80)"/>
-                        <circle cx="80" cy="80" r="10" stroke="url(#circle-grad-1)" strokeWidth="3"/>
+                    {/* Background geometric pattern - LIGHTER AND SMALLER */}
+                    <div className="absolute bottom-0 right-0 w-1/2 h-1/2 pointer-events-none z-0 opacity-15 group-hover:opacity-25 transition-opacity duration-500">
+                      <svg width="100%" height="100%" viewBox="0 0 180 180" fill="none" xmlns="http://www.w3.org/2000/svg">
+                        <ellipse cx="80" cy="80" rx="60" ry="20" stroke="url(#circle-grad-1)" strokeWidth="1.5" transform="rotate(0 80 80)"/>
+                        <ellipse cx="80" cy="80" rx="60" ry="20" stroke="url(#circle-grad-1)" strokeWidth="1.5" transform="rotate(60 80 80)"/>
+                        <ellipse cx="80" cy="80" rx="60" ry="20" stroke="url(#circle-grad-1)" strokeWidth="1.5" transform="rotate(120 80 80)"/>
+                        <circle cx="80" cy="80" r="10" stroke="url(#circle-grad-1)" strokeWidth="1.5"/>
                         <defs>
                           <linearGradient id="circle-grad-1" x1="20" y1="20" x2="140" y2="140" gradientUnits="userSpaceOnUse">
                             <stop stopColor="#F59E0B"/>
@@ -662,10 +646,12 @@ const ServicesOverview = () => {
                       </svg>
                     </div>
                     
-                    {/* Content */}
+                    {/* Content with consistently aligned icon */}
                     <div className="relative z-10">
-                      <div className="w-16 h-16 bg-gradient-to-br from-amber-500 to-amber-600 rounded-xl flex items-center justify-center mb-6 -rotate-45 group-hover:rotate-0 transition-transform duration-500 shadow-lg">
-                        <CheckCircle className="h-8 w-8 text-white" />
+                      <div className="w-16 h-16 rounded-lg mb-6 flex items-center justify-center bg-gradient-to-br from-gray-50 to-white shadow-md border border-gray-100 group-hover:shadow-lg transition-all duration-300">
+                        <div className="w-10 h-10 bg-gradient-to-br from-amber-500 to-amber-600 rounded-md flex items-center justify-center">
+                          <CheckCircle className="h-5 w-5 text-white" />
+                        </div>
                       </div>
                       <h3 className="text-xl font-bold text-andela-dark mb-3">Scalable Solutions</h3>
                       <div className="h-1 w-16 bg-gradient-to-r from-amber-400 to-amber-600 mb-4"></div>
