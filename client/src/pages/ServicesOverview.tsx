@@ -501,39 +501,40 @@ const ServicesOverview = () => {
                   {/* Card 1 - Hexagon Pattern */}
                   <motion.div
                     variants={itemVariants}
-                    className="bg-white rounded-xl shadow-xl p-8 relative group hover:shadow-2xl transition-all duration-500 overflow-hidden border border-blue-100"
+                    className="bg-white rounded-xl shadow-md p-8 relative group hover:shadow-xl transition-all duration-500 overflow-hidden"
                     whileHover={{ y: -8, transition: { duration: 0.3 } }}
                   >
                     {/* Background geometric pattern - TINY GROUPED SHAPES */}
-                    <div className="absolute inset-0 pointer-events-none z-0 opacity-10 group-hover:opacity-15 transition-opacity duration-500">
+                    <div className="absolute inset-0 pointer-events-none z-0 opacity-5 group-hover:opacity-10 transition-opacity duration-500">
                       <svg width="100%" height="100%" viewBox="0 0 200 200" fill="none" xmlns="http://www.w3.org/2000/svg">
                         {/* Group 1 - Small clustered hexagons */}
-                        <g transform="translate(140, 130) scale(0.6)">
+                        <g transform="translate(140, 130) scale(0.4)">
                           <path d="M0 10L8.7 5L8.7 -5L0 -10L-8.7 -5L-8.7 5L0 10Z" stroke="url(#hex-grad-1)" strokeWidth="0.8" />
                           <path d="M0 25L8.7 20L8.7 10L0 5L-8.7 10L-8.7 20L0 25Z" stroke="url(#hex-grad-1)" strokeWidth="0.8" />
                           <path d="M17.3 17.5L26 12.5L26 2.5L17.3 -2.5L8.6 2.5L8.6 12.5L17.3 17.5Z" stroke="url(#hex-grad-1)" strokeWidth="0.8" />
+                          <line x1="3" y1="4" x2="14" y2="17" stroke="url(#hex-grad-1)" strokeWidth="0.8"/>
                         </g>
                         
                         {/* Group 2 - Scattered tiny hexes */}
-                        <g transform="translate(40, 150) scale(0.5)">
+                        <g transform="translate(40, 150) scale(0.3)">
                           <path d="M0 10L8.7 5L8.7 -5L0 -10L-8.7 -5L-8.7 5L0 10Z" stroke="url(#hex-grad-1)" strokeWidth="0.8" />
-                          <path d="M20 10L28.7 5L28.7 -5L20 -10L11.3 -5L11.3 5L20 10Z" stroke="url(#hex-grad-1)" strokeWidth="0.8" />
-                          <path d="M40 10L48.7 5L48.7 -5L40 -10L31.3 -5L31.3 5L40 10Z" stroke="url(#hex-grad-1)" strokeWidth="0.8" />
-                          <path d="M10 25L18.7 20L18.7 10L10 5L1.3 10L1.3 20L10 25Z" stroke="url(#hex-grad-1)" strokeWidth="0.8" />
-                          <path d="M30 25L38.7 20L38.7 10L30 5L21.3 10L21.3 20L30 25Z" stroke="url(#hex-grad-1)" strokeWidth="0.8" />
+                          <path d="M25 10L33.7 5L33.7 -5L25 -10L16.3 -5L16.3 5L25 10Z" stroke="url(#hex-grad-1)" strokeWidth="0.8" />
+                          <path d="M50 10L58.7 5L58.7 -5L50 -10L41.3 -5L41.3 5L50 10Z" stroke="url(#hex-grad-1)" strokeWidth="0.8" />
+                          <path d="M12.5 30L21.2 25L21.2 15L12.5 10L3.8 15L3.8 25L12.5 30Z" stroke="url(#hex-grad-1)" strokeWidth="0.8" />
+                          <path d="M37.5 30L46.2 25L46.2 15L37.5 10L28.8 15L28.8 25L37.5 30Z" stroke="url(#hex-grad-1)" strokeWidth="0.8" />
                         </g>
                         
                         {/* Group 3 - Dotted outline */}
-                        <g transform="translate(170, 30) scale(0.4)">
-                          <circle cx="0" cy="0" r="3" fill="url(#hex-grad-1)" fillOpacity="0.5" />
-                          <circle cx="20" cy="0" r="3" fill="url(#hex-grad-1)" fillOpacity="0.5" />
-                          <circle cx="40" cy="0" r="3" fill="url(#hex-grad-1)" fillOpacity="0.5" />
-                          <circle cx="0" cy="20" r="3" fill="url(#hex-grad-1)" fillOpacity="0.5" />
-                          <circle cx="20" cy="20" r="3" fill="url(#hex-grad-1)" fillOpacity="0.5" />
-                          <circle cx="40" cy="20" r="3" fill="url(#hex-grad-1)" fillOpacity="0.5" />
-                          <circle cx="0" cy="40" r="3" fill="url(#hex-grad-1)" fillOpacity="0.5" />
-                          <circle cx="20" cy="40" r="3" fill="url(#hex-grad-1)" fillOpacity="0.5" />
-                          <circle cx="40" cy="40" r="3" fill="url(#hex-grad-1)" fillOpacity="0.5" />
+                        <g transform="translate(170, 30) scale(0.2)">
+                          <circle cx="0" cy="0" r="3" fill="url(#hex-grad-1)" fillOpacity="0.4" />
+                          <circle cx="20" cy="0" r="3" fill="url(#hex-grad-1)" fillOpacity="0.4" />
+                          <circle cx="40" cy="0" r="3" fill="url(#hex-grad-1)" fillOpacity="0.4" />
+                          <circle cx="0" cy="20" r="3" fill="url(#hex-grad-1)" fillOpacity="0.4" />
+                          <circle cx="20" cy="20" r="3" fill="url(#hex-grad-1)" fillOpacity="0.4" />
+                          <circle cx="40" cy="20" r="3" fill="url(#hex-grad-1)" fillOpacity="0.4" />
+                          <circle cx="0" cy="40" r="3" fill="url(#hex-grad-1)" fillOpacity="0.4" />
+                          <circle cx="20" cy="40" r="3" fill="url(#hex-grad-1)" fillOpacity="0.4" />
+                          <circle cx="40" cy="40" r="3" fill="url(#hex-grad-1)" fillOpacity="0.4" />
                         </g>
                         
                         <defs>
@@ -547,7 +548,7 @@ const ServicesOverview = () => {
                     
                     {/* Content with consistently aligned icon */}
                     <div className="relative z-10">
-                      <div className="w-16 h-16 rounded-lg mb-6 flex items-center justify-center bg-gradient-to-br from-gray-50 to-white shadow-md border border-gray-100 group-hover:shadow-lg transition-all duration-300">
+                      <div className="w-16 h-16 rounded-lg mb-6 flex items-center justify-center bg-gradient-to-br from-gray-50 to-white shadow-sm border border-gray-100 group-hover:shadow-md transition-all duration-300">
                         <div className="w-10 h-10 bg-gradient-to-br from-blue-500 to-blue-600 rounded-md flex items-center justify-center">
                           <Zap className="h-5 w-5 text-white" />
                         </div>
@@ -558,22 +559,19 @@ const ServicesOverview = () => {
                         Our streamlined processes and global talent network reduce time-to-hire by up to 65% compared to industry averages.
                       </p>
                     </div>
-                    
-                    {/* Hover accent border */}
-                    <div className="absolute inset-0 border-2 border-transparent group-hover:border-blue-500/20 rounded-xl transition-colors duration-300 pointer-events-none"></div>
                   </motion.div>
 
                   {/* Card 2 - Connected Squares Pattern */}
                   <motion.div
                     variants={itemVariants}
-                    className="bg-white rounded-xl shadow-xl p-8 relative group hover:shadow-2xl transition-all duration-500 overflow-hidden border border-green-100"
+                    className="bg-white rounded-xl shadow-md p-8 relative group hover:shadow-xl transition-all duration-500 overflow-hidden"
                     whileHover={{ y: -8, transition: { duration: 0.3 } }}
                   >
                     {/* Background geometric pattern - TINY GROUPED SHAPES */}
-                    <div className="absolute inset-0 pointer-events-none z-0 opacity-10 group-hover:opacity-15 transition-opacity duration-500">
+                    <div className="absolute inset-0 pointer-events-none z-0 opacity-5 group-hover:opacity-10 transition-opacity duration-500">
                       <svg width="100%" height="100%" viewBox="0 0 200 200" fill="none" xmlns="http://www.w3.org/2000/svg">
                         {/* Group 1 - Connected small squares */}
-                        <g transform="translate(150, 120) scale(0.5)">
+                        <g transform="translate(150, 120) scale(0.35)">
                           <rect x="0" y="0" width="15" height="15" rx="2" stroke="url(#square-grad-1)" strokeWidth="0.8"/>
                           <rect x="20" y="0" width="15" height="15" rx="2" stroke="url(#square-grad-1)" strokeWidth="0.8"/>
                           <rect x="0" y="20" width="15" height="15" rx="2" stroke="url(#square-grad-1)" strokeWidth="0.8"/>
@@ -584,7 +582,7 @@ const ServicesOverview = () => {
                         </g>
                         
                         {/* Group 2 - Grid of mini squares */}
-                        <g transform="translate(50, 150) scale(0.3)">
+                        <g transform="translate(50, 150) scale(0.25)">
                           <rect x="0" y="0" width="10" height="10" rx="1" stroke="url(#square-grad-1)" strokeWidth="0.8"/>
                           <rect x="15" y="0" width="10" height="10" rx="1" stroke="url(#square-grad-1)" strokeWidth="0.8"/>
                           <rect x="30" y="0" width="10" height="10" rx="1" stroke="url(#square-grad-1)" strokeWidth="0.8"/>
@@ -600,13 +598,13 @@ const ServicesOverview = () => {
                         </g>
                         
                         {/* Group 3 - Small scattered squares */}
-                        <g transform="translate(30, 40) scale(0.4)">
-                          <rect x="0" y="0" width="8" height="8" fill="url(#square-grad-1)" fillOpacity="0.3"/>
-                          <rect x="20" y="5" width="8" height="8" fill="url(#square-grad-1)" fillOpacity="0.3"/>
-                          <rect x="40" y="10" width="8" height="8" fill="url(#square-grad-1)" fillOpacity="0.3"/>
-                          <rect x="5" y="20" width="8" height="8" fill="url(#square-grad-1)" fillOpacity="0.3"/>
-                          <rect x="25" y="25" width="8" height="8" fill="url(#square-grad-1)" fillOpacity="0.3"/>
-                          <rect x="45" y="30" width="8" height="8" fill="url(#square-grad-1)" fillOpacity="0.3"/>
+                        <g transform="translate(30, 40) scale(0.2)">
+                          <rect x="0" y="0" width="8" height="8" fill="url(#square-grad-1)" fillOpacity="0.4"/>
+                          <rect x="20" y="5" width="8" height="8" fill="url(#square-grad-1)" fillOpacity="0.4"/>
+                          <rect x="40" y="10" width="8" height="8" fill="url(#square-grad-1)" fillOpacity="0.4"/>
+                          <rect x="5" y="20" width="8" height="8" fill="url(#square-grad-1)" fillOpacity="0.4"/>
+                          <rect x="25" y="25" width="8" height="8" fill="url(#square-grad-1)" fillOpacity="0.4"/>
+                          <rect x="45" y="30" width="8" height="8" fill="url(#square-grad-1)" fillOpacity="0.4"/>
                         </g>
                         
                         <defs>
@@ -620,7 +618,7 @@ const ServicesOverview = () => {
                     
                     {/* Content with consistently aligned icon */}
                     <div className="relative z-10">
-                      <div className="w-16 h-16 rounded-lg mb-6 flex items-center justify-center bg-gradient-to-br from-gray-50 to-white shadow-md border border-gray-100 group-hover:shadow-lg transition-all duration-300">
+                      <div className="w-16 h-16 rounded-lg mb-6 flex items-center justify-center bg-gradient-to-br from-gray-50 to-white shadow-sm border border-gray-100 group-hover:shadow-md transition-all duration-300">
                         <div className="w-10 h-10 bg-gradient-to-br from-green-500 to-green-600 rounded-md flex items-center justify-center">
                           <Award className="h-5 w-5 text-white" />
                         </div>
@@ -631,22 +629,19 @@ const ServicesOverview = () => {
                         Our rigorous vetting process ensures that only the top 3% of talent makes it into our exclusive network.
                       </p>
                     </div>
-                    
-                    {/* Hover accent border */}
-                    <div className="absolute inset-0 border-2 border-transparent group-hover:border-green-500/20 rounded-xl transition-colors duration-300 pointer-events-none"></div>
                   </motion.div>
 
                   {/* Card 3 - Triangular Pattern */}
                   <motion.div
                     variants={itemVariants}
-                    className="bg-white rounded-xl shadow-xl p-8 relative group hover:shadow-2xl transition-all duration-500 overflow-hidden border border-purple-100"
+                    className="bg-white rounded-xl shadow-md p-8 relative group hover:shadow-xl transition-all duration-500 overflow-hidden"
                     whileHover={{ y: -8, transition: { duration: 0.3 } }}
                   >
                     {/* Background geometric pattern - TINY GROUPED SHAPES */}
-                    <div className="absolute inset-0 pointer-events-none z-0 opacity-10 group-hover:opacity-15 transition-opacity duration-500">
+                    <div className="absolute inset-0 pointer-events-none z-0 opacity-5 group-hover:opacity-10 transition-opacity duration-500">
                       <svg width="100%" height="100%" viewBox="0 0 200 200" fill="none" xmlns="http://www.w3.org/2000/svg">
                         {/* Group 1 - Clustered mini triangles */}
-                        <g transform="translate(140, 140) scale(0.4)">
+                        <g transform="translate(140, 140) scale(0.3)">
                           <path d="M0 0L15 26L-15 26L0 0Z" stroke="url(#tri-grad-1)" strokeWidth="0.8"/>
                           <path d="M30 0L45 26L15 26L30 0Z" stroke="url(#tri-grad-1)" strokeWidth="0.8"/>
                           <path d="M15 30L30 56L0 56L15 30Z" stroke="url(#tri-grad-1)" strokeWidth="0.8"/>
@@ -655,7 +650,7 @@ const ServicesOverview = () => {
                         </g>
                         
                         {/* Group 2 - Scattered small triangles */}
-                        <g transform="translate(30, 150) scale(0.3)">
+                        <g transform="translate(30, 150) scale(0.2)">
                           <path d="M0 0L10 17.3L-10 17.3L0 0Z" fill="url(#tri-grad-1)" fillOpacity="0.4"/>
                           <path d="M30 10L40 27.3L20 27.3L30 10Z" fill="url(#tri-grad-1)" fillOpacity="0.4"/>
                           <path d="M60 0L70 17.3L50 17.3L60 0Z" fill="url(#tri-grad-1)" fillOpacity="0.4"/>
@@ -665,7 +660,7 @@ const ServicesOverview = () => {
                         </g>
                         
                         {/* Group 3 - Connected triangles */}
-                        <g transform="translate(40, 50) scale(0.35)">
+                        <g transform="translate(40, 50) scale(0.2)">
                           <path d="M0 0L12 20.8L-12 20.8L0 0Z" stroke="url(#tri-grad-1)" strokeWidth="0.8"/>
                           <path d="M24 0L36 20.8L12 20.8L24 0Z" stroke="url(#tri-grad-1)" strokeWidth="0.8"/>
                           <path d="M12 24L24 44.8L0 44.8L12 24Z" stroke="url(#tri-grad-1)" strokeWidth="0.8"/>
@@ -686,7 +681,7 @@ const ServicesOverview = () => {
                     
                     {/* Content with consistently aligned icon */}
                     <div className="relative z-10">
-                      <div className="w-16 h-16 rounded-lg mb-6 flex items-center justify-center bg-gradient-to-br from-gray-50 to-white shadow-md border border-gray-100 group-hover:shadow-lg transition-all duration-300">
+                      <div className="w-16 h-16 rounded-lg mb-6 flex items-center justify-center bg-gradient-to-br from-gray-50 to-white shadow-sm border border-gray-100 group-hover:shadow-md transition-all duration-300">
                         <div className="w-10 h-10 bg-gradient-to-br from-purple-500 to-purple-600 rounded-md flex items-center justify-center">
                           <BarChart className="h-5 w-5 text-white" />
                         </div>
@@ -697,22 +692,19 @@ const ServicesOverview = () => {
                         Our analytics platform provides real-time visibility into your talent acquisition performance and market trends.
                       </p>
                     </div>
-                    
-                    {/* Hover accent border */}
-                    <div className="absolute inset-0 border-2 border-transparent group-hover:border-purple-500/20 rounded-xl transition-colors duration-300 pointer-events-none"></div>
                   </motion.div>
 
                   {/* Card 4 - Circular Orbits Pattern */}
                   <motion.div
                     variants={itemVariants}
-                    className="bg-white rounded-xl shadow-xl p-8 relative group hover:shadow-2xl transition-all duration-500 overflow-hidden border border-amber-100"
+                    className="bg-white rounded-xl shadow-md p-8 relative group hover:shadow-xl transition-all duration-500 overflow-hidden"
                     whileHover={{ y: -8, transition: { duration: 0.3 } }}
                   >
                     {/* Background geometric pattern - TINY GROUPED SHAPES */}
-                    <div className="absolute inset-0 pointer-events-none z-0 opacity-10 group-hover:opacity-15 transition-opacity duration-500">
+                    <div className="absolute inset-0 pointer-events-none z-0 opacity-5 group-hover:opacity-10 transition-opacity duration-500">
                       <svg width="100%" height="100%" viewBox="0 0 200 200" fill="none" xmlns="http://www.w3.org/2000/svg">
                         {/* Group 1 - Connected circles */}
-                        <g transform="translate(150, 130) scale(0.5)">
+                        <g transform="translate(150, 130) scale(0.3)">
                           <circle cx="0" cy="0" r="10" stroke="url(#circle-grad-1)" strokeWidth="0.8"/>
                           <circle cx="30" cy="0" r="10" stroke="url(#circle-grad-1)" strokeWidth="0.8"/>
                           <circle cx="15" cy="26" r="10" stroke="url(#circle-grad-1)" strokeWidth="0.8"/>
@@ -722,20 +714,20 @@ const ServicesOverview = () => {
                         </g>
                         
                         {/* Group 2 - Scattered mini circles */}
-                        <g transform="translate(40, 150) scale(0.4)">
-                          <circle cx="0" cy="0" r="6" fill="url(#circle-grad-1)" fillOpacity="0.3"/>
-                          <circle cx="20" cy="5" r="6" fill="url(#circle-grad-1)" fillOpacity="0.3"/>
-                          <circle cx="40" cy="0" r="6" fill="url(#circle-grad-1)" fillOpacity="0.3"/>
-                          <circle cx="10" cy="25" r="6" fill="url(#circle-grad-1)" fillOpacity="0.3"/>
-                          <circle cx="30" cy="30" r="6" fill="url(#circle-grad-1)" fillOpacity="0.3"/>
-                          <circle cx="50" cy="25" r="6" fill="url(#circle-grad-1)" fillOpacity="0.3"/>
-                          <circle cx="20" cy="50" r="6" fill="url(#circle-grad-1)" fillOpacity="0.3"/>
-                          <circle cx="40" cy="55" r="6" fill="url(#circle-grad-1)" fillOpacity="0.3"/>
-                          <circle cx="60" cy="50" r="6" fill="url(#circle-grad-1)" fillOpacity="0.3"/>
+                        <g transform="translate(40, 150) scale(0.25)">
+                          <circle cx="0" cy="0" r="6" fill="url(#circle-grad-1)" fillOpacity="0.4"/>
+                          <circle cx="20" cy="5" r="6" fill="url(#circle-grad-1)" fillOpacity="0.4"/>
+                          <circle cx="40" cy="0" r="6" fill="url(#circle-grad-1)" fillOpacity="0.4"/>
+                          <circle cx="10" cy="25" r="6" fill="url(#circle-grad-1)" fillOpacity="0.4"/>
+                          <circle cx="30" cy="30" r="6" fill="url(#circle-grad-1)" fillOpacity="0.4"/>
+                          <circle cx="50" cy="25" r="6" fill="url(#circle-grad-1)" fillOpacity="0.4"/>
+                          <circle cx="20" cy="50" r="6" fill="url(#circle-grad-1)" fillOpacity="0.4"/>
+                          <circle cx="40" cy="55" r="6" fill="url(#circle-grad-1)" fillOpacity="0.4"/>
+                          <circle cx="60" cy="50" r="6" fill="url(#circle-grad-1)" fillOpacity="0.4"/>
                         </g>
                         
                         {/* Group 3 - Mini orbit pattern */}
-                        <g transform="translate(40, 50) scale(0.35)">
+                        <g transform="translate(40, 50) scale(0.2)">
                           <circle cx="25" cy="25" r="5" stroke="url(#circle-grad-1)" strokeWidth="0.8"/>
                           <ellipse cx="25" cy="25" rx="15" ry="8" stroke="url(#circle-grad-1)" strokeWidth="0.8" transform="rotate(0 25 25)"/>
                           <ellipse cx="25" cy="25" rx="15" ry="8" stroke="url(#circle-grad-1)" strokeWidth="0.8" transform="rotate(60 25 25)"/>
@@ -753,7 +745,7 @@ const ServicesOverview = () => {
                     
                     {/* Content with consistently aligned icon */}
                     <div className="relative z-10">
-                      <div className="w-16 h-16 rounded-lg mb-6 flex items-center justify-center bg-gradient-to-br from-gray-50 to-white shadow-md border border-gray-100 group-hover:shadow-lg transition-all duration-300">
+                      <div className="w-16 h-16 rounded-lg mb-6 flex items-center justify-center bg-gradient-to-br from-gray-50 to-white shadow-sm border border-gray-100 group-hover:shadow-md transition-all duration-300">
                         <div className="w-10 h-10 bg-gradient-to-br from-amber-500 to-amber-600 rounded-md flex items-center justify-center">
                           <CheckCircle className="h-5 w-5 text-white" />
                         </div>
@@ -764,9 +756,6 @@ const ServicesOverview = () => {
                         Our flexible models adapt seamlessly to your changing talent needs, whether you're hiring one specialist or building an entire team.
                       </p>
                     </div>
-                    
-                    {/* Hover accent border */}
-                    <div className="absolute inset-0 border-2 border-transparent group-hover:border-amber-500/20 rounded-xl transition-colors duration-300 pointer-events-none"></div>
                   </motion.div>
                 </div>
               </motion.div>
