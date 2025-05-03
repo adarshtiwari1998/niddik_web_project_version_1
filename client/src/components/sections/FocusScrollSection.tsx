@@ -153,6 +153,7 @@ const FocusScrollSection: React.FC = () => {
       const sectionRect = sectionRef.current.getBoundingClientRect();
       const sectionTop = sectionRect.top;
       const sectionBottom = sectionRect.bottom;
+      const sectionHeight = sectionRect.height; // Add section height for calculations
       const windowHeight = window.innerHeight;
       
       // Section is visible when it's in the viewport
@@ -205,9 +206,20 @@ const FocusScrollSection: React.FC = () => {
         return;
       }
       
-      // Check if we've reached the end of the section
-      if (sectionBottom <= windowHeight + 100) {
+      // More aggressive detection for the last block
+      // Check if we're near the end of the section or if user scrolled quickly
+      if (
+        sectionBottom <= windowHeight + 200 || // More lenient threshold
+        sectionTop < -sectionHeight * 0.8 ||   // Deep scroll detection
+        (window.scrollY + window.innerHeight >= document.body.scrollHeight - 300) // Near page bottom
+      ) {
+        // Force last block activation immediately
         updateActiveState(LAST_BLOCK_ID);
+        
+        // Force immediate class application 
+        if (imageContainerRef.current) {
+          imageContainerRef.current.classList.add('last-block-position');
+        }
         return;
       }
       
@@ -361,7 +373,10 @@ const FocusScrollSection: React.FC = () => {
                       opacity: block.id === activeBlockId ? 1 : 0,
                       scale: block.id === activeBlockId ? 1 : 0.95
                     }}
-                    transition={{ duration: 0.5, ease: "easeOut" }}
+                    transition={{ 
+                      duration: block.id === LAST_BLOCK_ID ? 0.2 : 0.5, 
+                      ease: "easeOut" 
+                    }}
                     data-active={block.id === activeBlockId ? "true" : "false"}
                   >
                     <img 
