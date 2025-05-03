@@ -60,9 +60,9 @@ const Navbar = () => {
         <div className="flex justify-between items-center py-4">
           {/* Logo */}
           <div className="flex-shrink-0">
-            <Link href="/" className="block">
+            <a href="/" className="block">
               <Logo className="h-10" />
-            </Link>
+            </a>
           </div>
 
           {/* Desktop Navigation */}
@@ -76,31 +76,35 @@ const Navbar = () => {
                   </button>
                   <div className="absolute left-0 mt-2 w-64 rounded-lg shadow-xl bg-white p-6 opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-300 transform origin-top-left">
                     {item.dropdown.map((dropdownItem, idx) => (
-                      <Link key={idx} href={dropdownItem.href} className="block py-2 hover:text-andela-green transition-colors">
-                        {dropdownItem.label}
-                      </Link>
+                      <div key={idx} className="block py-2 hover:text-andela-green transition-colors">
+                        <a href={dropdownItem.href}>
+                          {dropdownItem.label}
+                        </a>
+                      </div>
                     ))}
                   </div>
                 </div>
               ) : (
-                <Link key={index} href={item.href || "#"} className="text-andela-dark hover:text-andela-green font-medium transition-colors">
-                  {item.label}
-                </Link>
+                <div key={index} className="text-andela-dark hover:text-andela-green font-medium transition-colors">
+                  <a href={item.href || "#"}>
+                    {item.label}
+                  </a>
+                </div>
               )
             ))}
           </nav>
 
           {/* CTA Buttons */}
           <div className="hidden lg:flex items-center space-x-4">
-            <Link href="#" className="hover:text-andela-green font-medium transition-colors">
-              Sign In
-            </Link>
-            <Link href="#" className="bg-andela-green hover:bg-opacity-90 transition-colors text-white px-6 py-2 rounded-md font-medium">
-              Hire Talent
-            </Link>
-            <Link href="#" className="border border-andela-green text-andela-green hover:bg-andela-green hover:text-white transition-colors px-6 py-2 rounded-md font-medium">
-              Apply as Talent
-            </Link>
+            <div className="hover:text-andela-green font-medium transition-colors">
+              <a href="#">Sign In</a>
+            </div>
+            <div className="bg-andela-green hover:bg-opacity-90 transition-colors text-white px-6 py-2 rounded-md font-medium">
+              <a href="#" className="text-white">Hire Talent</a>
+            </div>
+            <div className="border border-andela-green text-andela-green hover:bg-andela-green hover:text-white transition-colors px-6 py-2 rounded-md font-medium">
+              <a href="#" className="text-andela-green hover:text-white">Apply as Talent</a>
+            </div>
           </div>
 
           {/* Mobile Menu Button */}
@@ -137,23 +141,23 @@ const Navbar = () => {
                   <ChevronDown className="w-4 h-4" />
                 </button>
               ) : (
-                <Link href={item.href || "#"} className="font-medium">
+                <a href={item.href || "#"} className="font-medium">
                   {item.label}
-                </Link>
+                </a>
               )}
             </div>
           ))}
 
           <div className="pt-4 flex flex-col space-y-3">
-            <Link href="#" className="font-medium">
-              Sign In
-            </Link>
-            <Link href="#" className="bg-andela-green text-white px-4 py-2 rounded-md font-medium text-center">
-              Hire Talent
-            </Link>
-            <Link href="#" className="border border-andela-green text-andela-green px-4 py-2 rounded-md font-medium text-center">
-              Apply as Talent
-            </Link>
+            <div className="font-medium">
+              <a href="#">Sign In</a>
+            </div>
+            <div className="bg-andela-green text-white px-4 py-2 rounded-md font-medium text-center">
+              <a href="#" className="text-white">Hire Talent</a>
+            </div>
+            <div className="border border-andela-green text-andela-green px-4 py-2 rounded-md font-medium text-center">
+              <a href="#" className="text-andela-green">Apply as Talent</a>
+            </div>
           </div>
         </nav>
       </div>
