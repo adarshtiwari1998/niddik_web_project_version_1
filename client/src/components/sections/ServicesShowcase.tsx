@@ -20,39 +20,84 @@ const ServicesShowcase = () => {
   const [forceRender, setForceRender] = useState<number>(0);
   const leftPanelRef = useRef<HTMLDivElement>(null);
 
-  // Define services
+  // Define service process steps for each service
+  interface ProcessStep {
+    title: string;
+    description: string;
+  }
+
+  // Define services with expanded descriptions and process steps
+  interface ServiceItem {
+    id: number;
+    title: string;
+    description: string;
+    extendedDescription: string;
+    icon: React.ReactNode;
+    color: string;
+    bgColor: string;
+    processSteps: ProcessStep[];
+  }
+
   const services: ServiceItem[] = [
     {
       id: 1,
       title: 'Full RPO',
       description: 'End-to-end recruitment process outsourcing for comprehensive talent acquisition needs.',
+      extendedDescription: 'Our Full RPO service delivers a complete recruitment solution, managing the entire hiring process from sourcing to onboarding. We integrate with your HR team to create a seamless talent pipeline that aligns with your organizational goals and company culture.',
       icon: <Users className="h-6 w-6" />,
       color: 'from-purple-500 to-purple-600',
-      bgColor: 'bg-purple-100'
+      bgColor: 'bg-purple-100',
+      processSteps: [
+        { title: 'Needs Analysis', description: 'In-depth assessment of your hiring requirements' },
+        { title: 'Strategy Development', description: 'Custom recruitment approach aligned with your goals' },
+        { title: 'Talent Sourcing', description: 'Extensive candidate search and engagement' },
+        { title: 'Selection & Hiring', description: 'Thorough screening and onboarding support' }
+      ]
     },
     {
       id: 2,
       title: 'On-Demand',
       description: 'Flexible recruitment solutions that scale with your immediate business requirements.',
+      extendedDescription: 'Our On-Demand recruitment service provides flexible talent acquisition support precisely when you need it. Perfect for project-based hiring, seasonal demands, or unexpected growth, this adaptable solution scales to meet your changing recruitment requirements without long-term commitments.',
       icon: <Calendar className="h-6 w-6" />,
       color: 'from-blue-500 to-blue-600',
-      bgColor: 'bg-blue-100'
+      bgColor: 'bg-blue-100',
+      processSteps: [
+        { title: 'Rapid Assessment', description: 'Quick evaluation of immediate hiring needs' },
+        { title: 'Resource Allocation', description: 'Dedicated recruiters assigned to your project' },
+        { title: 'Accelerated Sourcing', description: 'Fast-track candidate identification' },
+        { title: 'Seamless Handoff', description: 'Smooth transition to your internal HR team' }
+      ]
     },
     {
       id: 3,
       title: 'Hybrid RPO',
       description: 'Customized combination of in-house and outsourced recruitment processes for optimal results.',
+      extendedDescription: 'Our Hybrid RPO solution combines the best aspects of internal recruitment with our specialized expertise. This collaborative approach allows you to maintain control over key hiring decisions while leveraging our resources and technology to enhance efficiency and improve candidate quality.',
       icon: <PieChart className="h-6 w-6" />,
       color: 'from-green-500 to-green-600',
-      bgColor: 'bg-green-100'
+      bgColor: 'bg-green-100',
+      processSteps: [
+        { title: 'Process Mapping', description: 'Identifying optimal division of responsibilities' },
+        { title: 'Integration Planning', description: 'Seamless connection with your HR systems' },
+        { title: 'Collaborative Execution', description: 'Joint implementation of recruitment strategy' },
+        { title: 'Continuous Optimization', description: 'Ongoing refinement of the hybrid approach' }
+      ]
     },
     {
       id: 4,
       title: 'Contingent',
       description: 'Specialized talent acquisition for contract, temporary, and project-based positions.',
+      extendedDescription: 'Our Contingent staffing service specializes in connecting you with qualified professionals for temporary, contract, and project-based roles. We handle the entire process from identifying specialized talent to managing contracts, ensuring you have the right expertise exactly when your business needs it.',
       icon: <Briefcase className="h-6 w-6" />,
       color: 'from-amber-500 to-amber-600',
-      bgColor: 'bg-amber-100'
+      bgColor: 'bg-amber-100',
+      processSteps: [
+        { title: 'Requirement Definition', description: 'Precise specification of temporary talent needs' },
+        { title: 'Specialized Sourcing', description: 'Targeting candidates with niche expertise' },
+        { title: 'Compliance Management', description: 'Handling contracts and legal requirements' },
+        { title: 'Performance Monitoring', description: 'Ensuring successful project completion' }
+      ]
     }
   ];
 
@@ -316,11 +361,54 @@ const ServicesShowcase = () => {
                 {activeServiceData.title}
               </h3>
               <p className="text-andela-gray mb-6">
-                {activeServiceData.description}
+                {activeServiceData.extendedDescription}
               </p>
-              <button className="flex items-center font-medium text-andela-green hover:text-andela-green/80 transition-colors">
+              
+              {/* Process steps animation */}
+              <div className="mb-6">
+                <h4 className="text-lg font-semibold text-andela-dark mb-4">Our Process</h4>
+                <div className={`space-y-4 process-steps-container ${
+                  activeServiceData.color.includes('purple') ? 'process-step-purple' : 
+                  activeServiceData.color.includes('blue') ? 'process-step-blue' : 
+                  activeServiceData.color.includes('green') ? 'process-step-green' : 
+                  'process-step-amber'
+                }`}>
+                  {activeServiceData.processSteps.map((step, index) => (
+                    <motion.div 
+                      key={`${activeService}-step-${index}`}
+                      initial={{ opacity: 0, x: -20 }}
+                      animate={{ opacity: 1, x: 0 }}
+                      transition={{ delay: index * 0.15 }}
+                      className="flex items-start relative z-10"
+                    >
+                      <motion.div 
+                        className={`flex-shrink-0 w-8 h-8 rounded-full flex items-center justify-center mr-3 bg-gradient-to-r ${activeServiceData.color} text-white shadow-md`}
+                        initial={{ scale: 0.8 }}
+                        animate={{ scale: 1 }}
+                        transition={{ delay: index * 0.15 + 0.1, type: "spring" }}
+                      >
+                        <span className="text-sm font-semibold">{index + 1}</span>
+                      </motion.div>
+                      <motion.div
+                        initial={{ opacity: 0, y: 10 }}
+                        animate={{ opacity: 1, y: 0 }}
+                        transition={{ delay: index * 0.15 + 0.2 }}
+                      >
+                        <h5 className="font-medium text-andela-dark">{step.title}</h5>
+                        <p className="text-sm text-andela-gray">{step.description}</p>
+                      </motion.div>
+                    </motion.div>
+                  ))}
+                </div>
+              </div>
+              
+              <motion.button 
+                className="flex items-center font-medium text-andela-green hover:text-andela-green/80 transition-colors"
+                whileHover={{ x: 5 }}
+                transition={{ type: "spring", stiffness: 400, damping: 10 }}
+              >
                 Learn more <ChevronRight className="h-4 w-4 ml-1" />
-              </button>
+              </motion.button>
             </div>
           </motion.div>
 

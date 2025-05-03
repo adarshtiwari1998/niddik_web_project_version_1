@@ -265,3 +265,39 @@
       transparent 15px
     );
 }
+
+/* Service process steps connector line */
+.process-steps-container {
+  position: relative;
+}
+
+.process-steps-container::before {
+  content: '';
+  position: absolute;
+  top: 16px;
+  left: 15px;
+  bottom: 16px;
+  width: 2px;
+  background: linear-gradient(to bottom, 
+    rgba(139, 92, 246, 0.3), 
+    rgba(59, 130, 246, 0.3), 
+    rgba(16, 185, 129, 0.3), 
+    rgba(245, 158, 11, 0.3));
+  z-index: 0;
+}
+
+.process-step-purple::before {
+  background: linear-gradient(to bottom, rgba(139, 92, 246, 0.3), rgba(139, 92, 246, 0.1));
+}
+
+.process-step-blue::before {
+  background: linear-gradient(to bottom, rgba(59, 130, 246, 0.3), rgba(59, 130, 246, 0.1));
+}
+
+.process-step-green::before {
+  background: linear-gradient(to bottom, rgba(16, 185, 129, 0.3), rgba(16, 185, 129, 0.1));
+}
+
+.process-step-amber::before {
+  background: linear-gradient(to bottom, rgba(245, 158, 11, 0.3), rgba(245, 158, 11, 0.1));
+}
