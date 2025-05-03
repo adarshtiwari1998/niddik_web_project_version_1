@@ -1,4 +1,5 @@
 import React, { useState, useEffect, useRef, useCallback } from 'react';
+import { Link } from 'wouter';
 import { motion, AnimatePresence } from 'framer-motion';
 import { 
   ChevronRight, Users, Calendar, Briefcase, PieChart, 
@@ -275,7 +276,7 @@ const ServicesShowcase = () => {
                   )}
                 </div>
                 
-                {/* Central content with service icon and NIIDIK logo */}
+                {/* Central content with service icon and NIDDIK logo */}
                 <motion.div 
                   key={`center-icon-${activeService}`}
                   initial={{ scale: 0.8, opacity: 0 }}
@@ -508,23 +509,26 @@ const ServicesShowcase = () => {
                 </div>
               </div>
               
-              <motion.a
-                href={`/services/${
-                  activeService === 1 ? 'full-rpo' : 
-                  activeService === 2 ? 'on-demand' : 
-                  activeService === 3 ? 'hybrid-rpo' : 
-                  'contingent'
-                }`}
-                className="flex items-center font-medium text-andela-green hover:text-andela-green/80 transition-colors cursor-pointer"
+              <motion.div
                 whileHover={{ x: 5 }}
-                transition={{ type: "spring", stiffness: 400, damping: 10 }}
+                className="flex items-center font-medium"
               >
-                Learn more <ChevronRight className="h-4 w-4 ml-1" />
-              </motion.a>
+                <Link
+                  href={`/services/${
+                    activeService === 1 ? 'full-rpo' : 
+                    activeService === 2 ? 'on-demand' : 
+                    activeService === 3 ? 'hybrid-rpo' : 
+                    'contingent'
+                  }`}
+                  className="flex items-center font-medium text-andela-green hover:text-andela-green/80 transition-colors cursor-pointer"
+                >
+                  Learn more <ChevronRight className="h-4 w-4 ml-1" />
+                </Link>
+              </motion.div>
               
-              <a href="/services" className="mt-2 text-sm text-gray-500 hover:text-andela-green transition-colors">
+              <Link href="/services" className="mt-2 text-sm text-gray-500 hover:text-andela-green transition-colors">
                 View all services
-              </a>
+              </Link>
             </div>
           </motion.div>
 
@@ -587,7 +591,7 @@ const ServicesShowcase = () => {
                       )}
                     </div>
                     {service.id === activeService && (
-                      <a 
+                      <Link 
                         href={`/services/${
                           service.id === 1 ? 'full-rpo' : 
                           service.id === 2 ? 'on-demand' : 
@@ -597,7 +601,7 @@ const ServicesShowcase = () => {
                         className="ml-auto flex-shrink-0"
                       >
                         <ChevronRight className="h-5 w-5 text-white" />
-                      </a>
+                      </Link>
                     )}
                   </div>
                 </motion.div>
