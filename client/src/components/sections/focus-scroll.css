@@ -213,6 +213,24 @@
   z-index: 3; /* Higher z-index for these specific blocks */
 }
 
+/* Special treatment for block 4 which tends to be skipped */
+.fixed-image[data-block-id="4"] {
+  z-index: 4 !important; /* Even higher z-index for block 4 */
+  transition: opacity 0.2s ease-in-out !important; /* Faster transitions */
+}
+
+/* Ensure block 4 content and image are always prioritized when relevant */
+.scrollable-block[data-block-id="4"] {
+  z-index: 5 !important; /* Higher than others */
+  transition: all 0.2s ease-in-out !important; /* Faster transition */
+}
+
+.scrollable-block[data-block-id="4"].active,
+.scrollable-block[data-block-id="4"][data-active="true"] {
+  transform: translateX(8px) !important; /* Move even more when active for emphasis */
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1) !important; /* Stronger shadow */
+}
+
 /* Image transitions */
 .fixed-image img {
   transform: scale(0.98);

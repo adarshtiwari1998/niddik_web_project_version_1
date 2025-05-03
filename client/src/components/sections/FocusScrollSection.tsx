@@ -69,15 +69,20 @@ const FocusScrollSection: React.FC = () => {
     // Don't update if we're already on this block
     if (blockId === activeBlockId) return;
     
-    // Special handling to ensure block 4 is never skipped in either direction
+    // Enhanced handling to ensure block 4 is never skipped in either direction
     if ((activeBlockId === 3 && blockId === 5) || (activeBlockId === 5 && blockId === 3)) {
       // If going from 3 to 5 OR from 5 to 3, force showing block 4 first and stay there
       console.log(`Block ${activeBlockId}->${blockId} transition intercepted: showing block 4 instead`);
       
       // Activate block 4 and STAY THERE
       setActiveBlockId(4);
+      previousBlock.current = activeBlockId; // Remember where we came from
       
-      // Update DOM for immediate visual feedback
+      // Set a longer minimum display time for block 4 since it's problematic
+      lastTransitionTime.current = Date.now();
+      isEnforcingMinDisplayTime.current = true;
+      
+      // Update DOM for immediate visual feedback 
       blockRefs.current.forEach(block => {
         if (!block) return;
         const id = Number(block.getAttribute('data-block-id'));
@@ -85,11 +90,28 @@ const FocusScrollSection: React.FC = () => {
         if (id === 4) {
           block.classList.add('active');
           block.setAttribute('data-active', 'true');
+          
+          // Make block 4 extra visible
+          block.style.zIndex = '100';
+          block.style.position = 'relative';
+          block.style.transform = 'translateX(8px)';
+          
+          // Force a reflow to ensure CSS changes apply immediately
+          void block.offsetHeight;
         } else {
           block.classList.remove('active');
           block.setAttribute('data-active', 'false');
         }
       });
+      
+      // Ensure the image for block 4 is visible
+      if (imageContainerRef.current) {
+        const block4Image = imageContainerRef.current.querySelector('[data-block-id="4"]');
+        if (block4Image) {
+          // Force the image to be visible with inline styles
+          block4Image.setAttribute('style', 'opacity: 1 !important; visibility: visible !important; z-index: 100 !important;');
+        }
+      }
       
       // Update timestamp and enforcing flag
       lastTransitionTime.current = Date.now();
@@ -207,51 +229,52 @@ const FocusScrollSection: React.FC = () => {
         return;
       }
       
-      // Super aggressive detection for the last block to handle fast scrolling
-      // Use multiple conditions to detect when we're near end of page
-      const isNearBottom = (
-        sectionBottom <= windowHeight + 200 || // More lenient threshold
-        sectionTop < -sectionHeight * 0.7 ||   // Deep scroll detection (reduced threshold)
-        (window.scrollY + window.innerHeight >= document.body.scrollHeight - 400) || // Near page bottom (increased threshold)
-        (window.scrollY > document.body.scrollHeight * 0.8) // Deep scroll on the page
+      // Detection for when we're at the very bottom of the page
+      const isAtAbsoluteBottom = (
+        window.scrollY + window.innerHeight >= document.body.scrollHeight - 200 || // Near page bottom
+        sectionBottom <= windowHeight + 100 // Section end is very close
       );
       
-      // Special condition for handling very fast scrolls
+      // Track fast scrolling but don't use it to skip blocks
       const userScrolledFast = Math.abs(window.scrollY - lastScrollY.current) > 200;
       lastScrollY.current = window.scrollY;
       
-      if (isNearBottom || (userScrolledFast && sectionTop < 0)) {
-        // Force last block activation with no animation delay
-        // We update the state directly AND add the class immediately
-        setActiveBlockId(LAST_BLOCK_ID);
-        
-        // Direct DOM manipulation for immediate visual update
-        blockRefs.current.forEach(block => {
-          if (!block) return;
-          const id = Number(block.getAttribute('data-block-id'));
+      // Only activate last block when truly at the bottom to prevent skipping block 4
+      if (isAtAbsoluteBottom) {
+        // Only if we're not already on block 4
+        if (activeBlockId !== 4) {
+          console.log("Near bottom of page, showing last block");
+          // Force last block activation
+          setActiveBlockId(LAST_BLOCK_ID);
           
-          if (id === LAST_BLOCK_ID) {
-            block.classList.add('active');
-            block.setAttribute('data-active', 'true');
-          } else {
-            block.classList.remove('active');
-            block.setAttribute('data-active', 'false');
-          }
-        });
-        
-        // Also apply the image container class immediately
-        if (imageContainerRef.current) {
-          imageContainerRef.current.classList.add('last-block-position');
+          // Direct DOM manipulation for immediate visual update
+          blockRefs.current.forEach(block => {
+            if (!block) return;
+            const id = Number(block.getAttribute('data-block-id'));
+            
+            if (id === LAST_BLOCK_ID) {
+              block.classList.add('active');
+              block.setAttribute('data-active', 'true');
+            } else {
+              block.classList.remove('active');
+              block.setAttribute('data-active', 'false');
+            }
+          });
           
-          // Force the image to be visible
-          const lastImage = imageContainerRef.current.querySelector(`[data-block-id="${LAST_BLOCK_ID}"]`);
-          if (lastImage) {
-            lastImage.setAttribute('style', 'opacity: 1; visibility: visible; z-index: 10;');
+          // Also apply the image container class immediately
+          if (imageContainerRef.current) {
+            imageContainerRef.current.classList.add('last-block-position');
+            
+            // Force the image to be visible
+            const lastImage = imageContainerRef.current.querySelector(`[data-block-id="${LAST_BLOCK_ID}"]`);
+            if (lastImage) {
+              lastImage.setAttribute('style', 'opacity: 1; visibility: visible; z-index: 10;');
+            }
           }
+          
+          // Skip other checks - we've hit the bottom
+          return;
         }
-        
-        // Skip other checks - we've hit the bottom
-        return;
       }
       
       // Process visible blocks to find which one should be active
@@ -275,28 +298,48 @@ const FocusScrollSection: React.FC = () => {
         }
       });
       
-      // Special handling for block 4 in both directions
-      // For scrolling down: If block 3 is active and block 5 is visible, ensure block 4 is shown first
+      // Enhanced handling for block 4 in all directions
+      // Don't skip block 4 when scrolling in either direction
+      
+      // When scrolling down from 3
       if (activeBlockId === 3) {
-        const hasBlock5 = visibleBlocks.some(block => block.id === 5);
-        const hasBlock4 = visibleBlocks.some(block => block.id === 4);
+        const block4Ref = blockRefs.current.find(ref => ref?.getAttribute('data-block-id') === '4');
+        const block4Position = block4Ref?.getBoundingClientRect();
         
-        if (hasBlock5 && !hasBlock4) {
-          // Force showing block 4 first before jumping to 5
+        // If block 4 is ANYWHERE near the viewport, make it active
+        if (block4Position && block4Position.bottom > 0 && block4Position.top < window.innerHeight) {
+          console.log("Block 4 is nearby, activating it");
           updateActiveState(4);
           return;
         }
       }
       
-      // For scrolling up: If block 5 is active and block 3 is visible, ensure block 4 is shown first
+      // When scrolling up from 5
       if (activeBlockId === 5) {
-        const hasBlock3 = visibleBlocks.some(block => block.id === 3);
-        const hasBlock4 = visibleBlocks.some(block => block.id === 4);
+        const block4Ref = blockRefs.current.find(ref => ref?.getAttribute('data-block-id') === '4');
+        const block4Position = block4Ref?.getBoundingClientRect();
         
-        if (hasBlock3 && !hasBlock4) {
-          // Force showing block 4 first before jumping to 3 when scrolling up
+        // If block 4 is ANYWHERE near the viewport, make it active
+        if (block4Position && block4Position.bottom > 0 && block4Position.top < window.innerHeight) {
+          console.log("Block 4 is nearby when scrolling up, activating it");
           updateActiveState(4);
           return;
+        }
+      }
+      
+      // Extra safety check - explicitly look for block 4 when transitioning
+      if ((activeBlockId === 3 || activeBlockId === 5)) {
+        // Check if we're close to section 4 in the viewport
+        const block4Ref = blockRefs.current.find(ref => ref?.getAttribute('data-block-id') === '4');
+        if (block4Ref) {
+          const rect = block4Ref.getBoundingClientRect();
+          // Very generous condition - if block 4 is even partially in view, activate it
+          if (rect.top < windowHeight && rect.bottom > 0) {
+            // This is a safety check to make sure we don't skip block 4
+            console.log("Special protection for block 4 activated");
+            updateActiveState(4);
+            return;
+          }
         }
       }
       
