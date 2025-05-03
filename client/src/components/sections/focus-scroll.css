@@ -37,43 +37,53 @@
   transform: translateY(-50%) scaleY(1);
 }
 
-/* Sticky image container that becomes relative on last block */
-.sticky-image-container {
+/* Sticky image wrapper */
+.sticky-image-wrapper {
+  position: relative;
+}
+
+.sticky-image-wrapper:before {
+  content: '';
+  display: block;
+  height: 100%;
+  width: 100%;
   position: sticky;
   top: 120px;
-  height: 550px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  z-index: 1;
 }
 
-/* When the last block is in view, the container becomes relative */
-.sticky-image-container.position-relative {
-  position: relative;
-  top: auto;
-}
-
+/* Sticky image */
 .sticky-image {
   position: absolute;
-  inset: 0;
+  left: 0;
+  top: 0;
+  right: 0;
+  height: 550px;
+  width: 100%;
   opacity: 0;
   transition: opacity 0.5s ease, transform 0.5s ease;
   overflow: hidden;
-  height: 100%;
-  width: 100%;
   border-radius: 0.75rem;
+  background-color: #f5f5f5;
 }
 
+/* When the image is active */
 .sticky-image.opacity-100 {
   opacity: 1;
+  position: sticky;
+  top: 120px;
+}
+
+/* When last block is in view, disable stickyness */
+.sticky-image-wrapper.unsticky .sticky-image {
+  position: relative !important;
+  top: auto !important;
 }
 
 /* Mobile adjustments */
 @media (max-width: 1023px) {
-  .sticky-image-container {
+  .sticky-image {
     position: relative;
     top: 0;
-    height: auto;
+    height: 400px;
   }
 }

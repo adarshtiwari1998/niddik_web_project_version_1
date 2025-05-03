@@ -125,38 +125,36 @@ const FocusScrollSection: React.FC = () => {
           </div>
 
           {/* Right column - Image that sticks until last block */}
-          <div className="hidden lg:block">
-            <div className={`sticky-image-container ${isLastBlockVisible ? "position-relative" : ""}`}>
-              {focusBlocks.map((block) => (
-                <motion.div
-                  key={block.id}
-                  className={`sticky-image ${
-                    block.id === activeBlockId ? "opacity-100" : "opacity-0"
-                  }`}
-                  initial={{ opacity: 0 }}
-                  animate={{ 
-                    opacity: block.id === activeBlockId ? 1 : 0,
-                    scale: block.id === activeBlockId ? 1 : 0.95,
-                  }}
-                  transition={{ duration: 0.7, ease: "easeOut" }}
-                >
-                  <img 
-                    src={block.image}
-                    alt={block.title}
-                    className="w-full h-full object-cover rounded-lg"
-                  />
-                  <div className="absolute inset-0 bg-black bg-opacity-20 rounded-lg"></div>
-                  <div className="absolute bottom-6 left-6 max-w-xs">
-                    <span className="inline-block bg-andela-green text-white px-4 py-1 rounded-full text-sm font-medium mb-2">
-                      Feature {block.id}
-                    </span>
-                    <h4 className="text-xl font-bold text-white">
-                      {block.title}
-                    </h4>
-                  </div>
-                </motion.div>
-              ))}
-            </div>
+          <div className={`sticky-image-wrapper hidden lg:block ${isLastBlockVisible ? "unsticky" : ""}`}>
+            {focusBlocks.map((block) => (
+              <motion.div
+                key={block.id}
+                className={`sticky-image ${
+                  block.id === activeBlockId ? "opacity-100" : "opacity-0"
+                }`}
+                initial={{ opacity: 0 }}
+                animate={{ 
+                  opacity: block.id === activeBlockId ? 1 : 0,
+                  scale: block.id === activeBlockId ? 1 : 0.95,
+                }}
+                transition={{ duration: 0.7, ease: "easeOut" }}
+              >
+                <img 
+                  src={block.image}
+                  alt={block.title}
+                  className="w-full h-full object-cover rounded-lg"
+                />
+                <div className="absolute inset-0 bg-black bg-opacity-20 rounded-lg"></div>
+                <div className="absolute bottom-6 left-6 max-w-xs">
+                  <span className="inline-block bg-andela-green text-white px-4 py-1 rounded-full text-sm font-medium mb-2">
+                    Feature {block.id}
+                  </span>
+                  <h4 className="text-xl font-bold text-white">
+                    {block.title}
+                  </h4>
+                </div>
+              </motion.div>
+            ))}
           </div>
 
           {/* Mobile image - only shown on small screens */}
