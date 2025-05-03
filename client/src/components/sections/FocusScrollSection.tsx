@@ -52,16 +52,32 @@ const FocusScrollSection: React.FC = () => {
   const sectionRef = useRef<HTMLDivElement>(null);
   const firstBlockRef = useRef<HTMLDivElement>(null);
   
+  // Use effect to initialize active block to 1
+  useEffect(() => {
+    // Always start with the first block active
+    setActiveBlockId(1);
+  }, []);
+  
   // Set up intersection observers to track section and blocks
   useEffect(() => {
     // Observer for individual blocks
     const blockObserver = new IntersectionObserver(
       (entries) => {
-        entries.forEach((entry) => {
+        // Sort entries by their position from top to bottom
+        const sortedEntries = [...entries].sort((a, b) => {
+          return a.boundingClientRect.top - b.boundingClientRect.top;
+        });
+        
+        sortedEntries.forEach((entry) => {
           if (entry.isIntersecting) {
             const blockId = Number(entry.target.getAttribute("data-block-id"));
             if (blockId) {
+              // Set the active block ID to match the scroll position
               setActiveBlockId(blockId);
+              
+              // Log for debugging
+              console.log(`Block ${blockId} is now active at position ${entry.boundingClientRect.top}`);
+              
               // Check if this is the last block
               if (blockId === focusBlocks.length) {
                 setIsLastBlockVisible(true);
@@ -74,8 +90,8 @@ const FocusScrollSection: React.FC = () => {
       },
       {
         root: null,
-        rootMargin: "-40% 0px -40% 0px", // Adjust these values to control when blocks become active
-        threshold: 0.25,
+        rootMargin: "-20% 0px -20% 0px", // Adjust these values to control when blocks become active
+        threshold: [0.1, 0.2, 0.3], // Multiple thresholds for better accuracy
       }
     );
 
@@ -102,14 +118,22 @@ const FocusScrollSection: React.FC = () => {
           const { top, height } = entry.boundingClientRect;
           const topThreshold = window.innerHeight * 0.15; // Top 15% of screen
           
-          // First block is at/near top of viewport when not intersecting and above viewport
-          setIsFirstBlockAtTop(!entry.isIntersecting && top <= topThreshold);
+          // First block is at/near top of viewport when:
+          // Either it's intersecting and near the top OR 
+          // it's already scrolled past (not intersecting and above viewport)
+          const isAtTop = (entry.isIntersecting && top <= topThreshold) || 
+                          (!entry.isIntersecting && top <= topThreshold);
+          
+          setIsFirstBlockAtTop(isAtTop);
+          
+          // For debugging
+          console.log(`First block - top: ${top}, intersecting: ${entry.isIntersecting}, isAtTop: ${isAtTop}`);
         });
       },
       {
         root: null,
-        rootMargin: "-15% 0px 0px 0px", // Target top of viewport 
-        threshold: [0, 0.1, 0.5, 1],
+        rootMargin: "-10% 0px 0px 0px", // Target top of viewport 
+        threshold: [0, 0.1, 0.2, 0.3, 0.4, 0.5, 0.6, 0.7, 0.8, 0.9, 1],
       }
     );
 
@@ -186,7 +210,17 @@ const FocusScrollSection: React.FC = () => {
 
           {/* Right column - fixed image only when first block reaches top and section is in view */}
           <div className="fixed-image-column hidden lg:block">
-            <div className={`fixed-image-container ${(!isSectionInView || !isFirstBlockAtTop) ? "not-fixed" : ""} ${isLastBlockVisible ? "release-fixed" : ""}`}>
+            <div 
+              className={`fixed-image-container ${
+                // Not fixed when either section is not in view or the first block hasn't reached top
+                (!isSectionInView || !isFirstBlockAtTop) ? "not-fixed" : ""
+              } ${
+                // Release fixed position when the last block is visible
+                isLastBlockVisible ? "release-fixed" : ""
+              }`}
+              // Add a debug comment to show current state
+              data-debug={`section-in-view:${isSectionInView}, first-block-at-top:${isFirstBlockAtTop}, active-block:${activeBlockId}`}
+            >
               {focusBlocks.map((block) => (
                 <motion.div
                   key={block.id}

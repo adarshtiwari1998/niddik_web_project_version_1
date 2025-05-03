@@ -56,10 +56,15 @@
   height: 550px;
   top: 50%; /* Center vertically */
   transform: translateY(-50%); /* Center vertically */
-  margin-top: 20px; /* Slight offset to adjust visual balance */
+  margin-top: 0; /* No additional offset */
   z-index: 1;
   overflow: hidden;
   border-radius: 0.75rem;
+  
+  /* Ensure proper display of all images */
+  display: flex;
+  justify-content: center;
+  align-items: center;
 }
 
 /* Image styling */
@@ -81,8 +86,9 @@
   position: relative;
   top: auto;
   transform: none;
-  margin-top: 0;
-  margin: 2rem 0; /* Add spacing around the image when not fixed */
+  margin: 0 0 2rem 0; /* Add bottom spacing when not fixed */
+  height: 550px; /* Same height as fixed state to avoid jumping */
+  width: 100%; /* Full width of its container */
 }
 
 /* When last block is visible */
@@ -92,6 +98,8 @@
   top: auto;
   transform: none;
   margin-top: 0;
+  height: 550px; /* Same height as fixed state */
+  width: 100%; /* Full width of its container */
 }
 
 /* Mobile adjustments */
