@@ -44,60 +44,46 @@ const focusBlocks: FocusBlock[] = [
 ];
 
 const FocusScrollSection: React.FC = () => {
+  // State for managing active block and UI modes
   const [activeBlockId, setActiveBlockId] = useState<number>(1);
   const [isFixedMode, setIsFixedMode] = useState(false);
+  
+  // References to DOM elements
   const sectionRef = useRef<HTMLElement>(null);
   const blockRefs = useRef<(HTMLDivElement | null)[]>([]);
   const imageContainerRef = useRef<HTMLDivElement>(null);
-  const isJustChanged = useRef<boolean>(false); // Track recent changes
-  const lastTransitionTime = useRef<number>(0); // Track when last transition happened
-  const activateBlock4AfterDelay = useRef<boolean>(false); // Flag to force block 4 activation
   
-  // Last block ID to determine when we've reached the end
+  // Timing control
+  const lastChangeTime = useRef<number>(Date.now());
+  const minimumDuration = 1500; // Fixed time each block should remain active (ms)
   const LAST_BLOCK_ID = focusBlocks.length;
   
-  // Update active state of blocks and images with forced sequencing
-  const updateActiveState = (blockId: number) => {
+  // Sequential block tracking to ensure no block is skipped
+  const [blockSequence, setBlockSequence] = useState<number[]>([1]);
+  
+  /**
+   * Add a block to the sequence to ensure proper ordering
+   */
+  const addToSequence = (blockId: number) => {
+    if (blockSequence[blockSequence.length - 1] === blockId) return;
+    
+    setBlockSequence(prev => {
+      // Logic to ensure we never skip block 4
+      if (prev[prev.length - 1] === 3 && blockId === 5) {
+        // Must go through block 4 when going from 3 to 5
+        return [...prev, 4, 5];
+      }
+      return [...prev, blockId];
+    });
+  };
+  
+  /**
+   * The main function to update active state of blocks
+   * This only updates UI elements, not the sequence
+   */
+  const updateActiveStateUI = (blockId: number) => {
     if (blockId === activeBlockId) return;
     
-    // CRITICAL FIX: Never allow skipping block 4
-    // If we're at block 3 and trying to jump to 5+, force block 4 first
-    if (activeBlockId === 3 && blockId > 4) {
-      console.log(`Preventing skip of block 4, activating it first`);
-      
-      // Instead of jumping directly to 5, we'll activate block 4
-      // and schedule block 5 to activate after a delay
-      
-      // Store the timestamp of this transition
-      lastTransitionTime.current = Date.now();
-      
-      // Mark block 4 as active
-      activateBlock4First();
-      
-      // Schedule block 5 to activate later
-      setTimeout(() => {
-        console.log("Scheduled activation of block 5 after block 4");
-        setActiveBlockId(blockId);
-        
-        // Update DOM directly also for immediate visual feedback
-        blockRefs.current.forEach(block => {
-          if (!block) return;
-          const id = Number(block.getAttribute('data-block-id'));
-          
-          if (id === blockId) {
-            block.classList.add('active');
-            block.setAttribute('data-active', 'true');
-          } else {
-            block.classList.remove('active');
-            block.setAttribute('data-active', 'false');
-          }
-        });
-      }, 1000); // Force block 4 to stay visible for 1 second before showing block 5
-      
-      return;
-    }
-    
-    // Normal case - update active state
     console.log(`Setting active block: ${blockId}`);
     setActiveBlockId(blockId);
     
@@ -115,54 +101,66 @@ const FocusScrollSection: React.FC = () => {
       }
     });
     
-    // Store the timestamp of this transition
-    lastTransitionTime.current = Date.now();
-  };
-  
-  // Special function just to activate block 4
-  const activateBlock4First = () => {
-    setActiveBlockId(4);
-    
-    // Update DOM directly also for immediate visual feedback
-    blockRefs.current.forEach(block => {
-      if (!block) return;
-      const id = Number(block.getAttribute('data-block-id'));
-      
-      if (id === 4) {
-        block.classList.add('active');
-        block.setAttribute('data-active', 'true');
-      } else {
-        block.classList.remove('active');
-        block.setAttribute('data-active', 'false');
-      }
-    });
+    // Update the timing reference
+    lastChangeTime.current = Date.now();
   };
   
   // Initialize and set first block active on mount
   useLayoutEffect(() => {
-    // Set initial active state for block 1
-    updateActiveState(1);
-    
-    // Force all images to be loaded and present in the DOM
-    const forceImagesVisibility = () => {
+    // Pre-load all images
+    const preloadImages = () => {
       focusBlocks.forEach(block => {
         const img = new Image();
         img.src = block.image;
-        img.onload = () => {
-          console.log(`Image for block ${block.id} loaded`);
-        };
+        img.onload = () => console.log(`Image for block ${block.id} loaded`);
       });
     };
     
-    forceImagesVisibility();
+    preloadImages();
+    
+    // Set initial block
+    updateActiveStateUI(1);
   }, []);
   
-  // Handle scroll events
+  // Effect to process the block sequence with proper timing
   useEffect(() => {
-    // Define local state for timing control
-    let lastTransitionTimestamp = 0;
-    const minTimeInBlock = 800; // Minimum time to stay in a block (in ms)
+    if (blockSequence.length <= 1) return;
     
+    let currentIndex = 0;
+    
+    // Initial activation of the first block
+    updateActiveStateUI(blockSequence[0]);
+    
+    // Function to activate blocks sequentially with consistent timing
+    const processBlockSequence = () => {
+      if (currentIndex >= blockSequence.length - 1) {
+        // We've processed all blocks in sequence
+        return;
+      }
+      
+      // Advance to next block
+      currentIndex++;
+      const nextBlockId = blockSequence[currentIndex];
+      
+      // Update the UI for this block
+      updateActiveStateUI(nextBlockId);
+      
+      // Schedule the next block after the fixed duration
+      // This ensures every block gets the same display time
+      setTimeout(processBlockSequence, minimumDuration);
+    };
+    
+    // Start the sequence timing
+    // Important: This fixes block 4 timing by ensuring it gets the same time duration as all blocks
+    const sequenceTimeout = setTimeout(processBlockSequence, minimumDuration);
+    
+    return () => clearTimeout(sequenceTimeout);
+  }, [blockSequence]);
+  
+  /**
+   * Handle scroll logic only for block detection, not timing/activation
+   */
+  useEffect(() => {
     const handleScroll = () => {
       if (!sectionRef.current) return;
       
@@ -174,37 +172,32 @@ const FocusScrollSection: React.FC = () => {
       // Section is visible when it's in the viewport
       const isSectionVisible = sectionTop < windowHeight && sectionBottom > 0;
       
-      // First determine if the image should be in fixed mode
-      // Only enable fixed mode when section is in view and we're not at the end
+      // Determine if the image container should be in fixed mode
       const shouldBeFixedMode = 
         isSectionVisible && 
-        sectionTop < 0 && // Section has scrolled up partially
-        sectionBottom > windowHeight * 0.5; // Not near the end yet
+        sectionTop < 0 && 
+        sectionBottom > windowHeight * 0.5;
         
       setIsFixedMode(shouldBeFixedMode);
       
-      // Check if we've reached the end of the section
+      // Handle end of section case - show last block
       if (sectionBottom <= windowHeight + 100) {
-        updateActiveState(LAST_BLOCK_ID);
+        addToSequence(LAST_BLOCK_ID);
         return;
       }
       
-      // Collect all blocks that are currently visible
+      // Detect visible blocks
       const visibleBlocks: number[] = [];
-      
-      // Threshold for detecting when a block should be active (as % of viewport height)
       const blockActiveThreshold = windowHeight * 0.3;
       
-      // Check which blocks are currently visible in the viewport
+      // Check each block's position relative to viewport
       blockRefs.current.forEach(block => {
         if (!block) return;
         
         const rect = block.getBoundingClientRect();
         const blockId = Number(block.getAttribute('data-block-id'));
         
-        // Block is active when:
-        // 1. Top part is in the upper portion of the viewport
-        // 2. Most of the block is still visible
+        // Determine if block should be active based on position
         if (rect.top <= blockActiveThreshold && 
             rect.top >= -rect.height * 0.4 && 
             rect.bottom > rect.height * 0.6) {
@@ -212,77 +205,24 @@ const FocusScrollSection: React.FC = () => {
         }
       });
       
-      // If no blocks are visible, keep current state
-      if (visibleBlocks.length === 0) {
-        return;
-      }
+      // Don't proceed if no blocks are visible
+      if (visibleBlocks.length === 0) return;
       
-      // Skip transitions if we just changed blocks (for timing consistency)
-      const now = Date.now();
-      if (now - lastTransitionTimestamp < minTimeInBlock) {
-        return;
-      }
+      // Find the highest visible block ID and add to sequence
+      const highestVisibleId = Math.max(...visibleBlocks);
       
-      // Common case - a normal block is active
-      if (visibleBlocks.includes(activeBlockId)) {
-        // Current block is still visible, no need to change
-        return;
-      }
-      
-      // Special case for block 4 - always ensure it shows up
-      if (activeBlockId === 3 && visibleBlocks.includes(5) && !visibleBlocks.includes(4)) {
-        console.log("Detected block 3 active with block 5 visible but block 4 skipped");
-        
-        // Never allow block 3 -> block 5 transition directly
-        // Use our specialized function to force block 4 to show first
-        activateBlock4First();
-        
-        // Schedule block 5 to activate later
-        setTimeout(() => {
-          console.log("Scheduled activation of block 5 after showing block 4");
-          if (visibleBlocks.includes(5)) {
-            updateActiveState(5);
-          }
-        }, 1000); // Force block 4 to stay visible for 1 full second
-        
-        // Update timestamp to prevent too-quick transitions
-        lastTransitionTimestamp = now;
-        return;
-      }
-      
-      // Prevent too-quick transitions away from block 4
-      if (activeBlockId === 4 && isJustChanged.current) {
-        return; // Keep block 4 active until minimum time has passed
-      }
-      
-      // Get the highest visible block ID
-      const maxVisibleBlockId = Math.max(...visibleBlocks);
-      
-      // Only update if there's a change needed
-      if (maxVisibleBlockId !== activeBlockId) {
-        // If moving from block 3 to block 4, add extra dwell time
-        if (activeBlockId === 3 && maxVisibleBlockId === 4) {
-          updateActiveState(4);
-          isJustChanged.current = true;
-          setTimeout(() => {
-            isJustChanged.current = false;
-          }, minTimeInBlock);
-        } else {
-          // Normal transition to any other block
-          updateActiveState(maxVisibleBlockId);
-        }
-        
-        // Remember when we made this transition
-        lastTransitionTimestamp = now;
+      if (highestVisibleId !== blockSequence[blockSequence.length - 1]) {
+        addToSequence(highestVisibleId);
       }
     };
     
-    // Run once on mount to set initial state
+    // Run once to establish initial state
     handleScroll();
     
+    // Add scroll listener
     window.addEventListener('scroll', handleScroll, { passive: true });
     return () => window.removeEventListener('scroll', handleScroll);
-  }, [activeBlockId]);
+  }, [blockSequence]);
   
   return (
     <section ref={sectionRef} className="py-16 bg-gray-50" id="focus-scroll-section">
@@ -308,7 +248,15 @@ const FocusScrollSection: React.FC = () => {
                   block.id === activeBlockId ? "active" : ""
                 }`}
                 data-active={block.id === activeBlockId ? "true" : "false"}
-                onClick={() => updateActiveState(block.id)}
+                onClick={() => {
+                  // Handle click by adding to sequence
+                  if (block.id > activeBlockId) {
+                    addToSequence(block.id);
+                  } else {
+                    // For backwards jumps, just set directly
+                    updateActiveStateUI(block.id);
+                  }
+                }}
               >
                 <h3 className="text-2xl font-bold text-andela-dark mb-4">
                   {block.title}
