@@ -10,6 +10,7 @@ import HowItWorks from "@/components/sections/HowItWorks";
 import FocusScrollSection from "@/components/sections/FocusScrollSection";
 import FeaturedCaseStudy from "@/components/sections/FeaturedCaseStudy";
 import ContactSection from "@/components/sections/ContactSection";
+import BenefitsStrengthsShowcase from "@/components/sections/BenefitsStrengthsShowcase";
 import AnnouncementBar from "@/components/layout/AnnouncementBar";
 
 const Home = () => {
@@ -40,6 +41,7 @@ const Home = () => {
           <Hero />
           <TrustedCompanies />
           <FocusScrollSection />
+          <BenefitsStrengthsShowcase />
           <ForBusinesses />
           <ForTechnologists />
           <SuccessStories />
