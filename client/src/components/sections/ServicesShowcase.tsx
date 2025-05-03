@@ -2,6 +2,7 @@ import React, { useState, useEffect, useRef, useCallback } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { ChevronRight, Users, Calendar, Briefcase, PieChart } from 'lucide-react';
 import Container from '@/components/ui/container';
+import { TypeAnimation } from 'react-type-animation';
 
 // Define service item structure
 interface ServiceItem {
@@ -287,7 +288,14 @@ const ServicesShowcase = () => {
                       {activeServiceData.icon}
                     </div>
                   </div>
-                  <div className="text-lg font-semibold mb-1 text-andela-dark">{activeServiceData.title}</div>
+                  <div className="text-lg font-semibold mb-1 text-andela-dark">
+                    <TypeAnimation
+                      key={`center-title-${activeService}`}
+                      sequence={[activeServiceData.title]}
+                      speed={50}
+                      cursor={false}
+                    />
+                  </div>
                 </motion.div>
               </div>
             </div>
@@ -357,12 +365,33 @@ const ServicesShowcase = () => {
                   </div>
                 </div>
               </div>
-              <h3 className="text-2xl font-bold text-andela-dark mb-4">
-                {activeServiceData.title}
+              <h3 className="text-2xl font-bold text-andela-dark mb-4 h-8">
+                <TypeAnimation
+                  key={`title-${activeService}`}
+                  sequence={[
+                    '',
+                    200, // Small delay before starting
+                    activeServiceData.title
+                  ]}
+                  speed={50}
+                  cursor={false}
+                  className="inline-block"
+                  repeat={0}
+                />
               </h3>
-              <p className="text-andela-gray mb-6">
-                {activeServiceData.extendedDescription}
-              </p>
+              <div className="text-andela-gray mb-6 min-h-[140px]">
+                <TypeAnimation
+                  key={`desc-${activeService}`}
+                  sequence={[
+                    '',
+                    500, // Delay after title finishes
+                    activeServiceData.extendedDescription
+                  ]}
+                  speed={80}
+                  cursor={false}
+                  repeat={0}
+                />
+              </div>
               
               {/* Process steps animation */}
               <div className="mb-6">
@@ -394,8 +423,30 @@ const ServicesShowcase = () => {
                         animate={{ opacity: 1, y: 0 }}
                         transition={{ delay: index * 0.15 + 0.2 }}
                       >
-                        <h5 className="font-medium text-andela-dark">{step.title}</h5>
-                        <p className="text-sm text-andela-gray">{step.description}</p>
+                        <h5 className="font-medium text-andela-dark">
+                          <TypeAnimation
+                            key={`step-title-${activeService}-${index}`}
+                            sequence={[
+                              '', 
+                              index * 200, // Small delay for each consecutive step
+                              step.title
+                            ]}
+                            speed={50}
+                            cursor={false}
+                          />
+                        </h5>
+                        <p className="text-sm text-andela-gray">
+                          <TypeAnimation
+                            key={`step-desc-${activeService}-${index}`}
+                            sequence={[
+                              '', // Start with empty string
+                              index * 300 + 500, // Wait for previous steps
+                              step.description
+                            ]}
+                            speed={85}
+                            cursor={false}
+                          />
+                        </p>
                       </motion.div>
                     </motion.div>
                   ))}
