@@ -67,7 +67,6 @@ const formSchema = z.object({
 export default function JobForm() {
   const { toast } = useToast();
   const [, navigate] = useLocation();
-  const [, setParams] = useRouter();
   const [isNewJob, setIsNewJob] = useState(true);
   const [jobId, setJobId] = useState<number | null>(null);
   
@@ -111,11 +110,25 @@ export default function JobForm() {
 
   // Set form values when editing an existing job
   useEffect(() => {
-    if (!isNewJob && jobData && jobData.data) {
-      const job = jobData.data;
+    if (!isNewJob && jobData && typeof jobData === 'object' && 'data' in jobData) {
+      const job = jobData.data as Record<string, any>;
       
       form.reset({
-        ...job,
+        title: job.title || "",
+        company: job.company || "Andela",
+        location: job.location || "",
+        jobType: job.jobType || "Full-time",
+        experienceLevel: job.experienceLevel || "Mid",
+        salary: job.salary || "",
+        description: job.description || "",
+        requirements: job.requirements || "",
+        benefits: job.benefits || "",
+        applicationUrl: job.applicationUrl || "",
+        contactEmail: job.contactEmail || "",
+        status: job.status || "active",
+        featured: Boolean(job.featured),
+        category: job.category || "Engineering",
+        skills: job.skills || "",
         expiryDate: job.expiryDate ? new Date(job.expiryDate) : undefined,
       });
     }
@@ -124,10 +137,7 @@ export default function JobForm() {
   // Create job mutation
   const createMutation = useMutation({
     mutationFn: (data: z.infer<typeof formSchema>) => 
-      apiRequest("/api/job-listings", {
-        method: "POST",
-        body: JSON.stringify(data),
-      }),
+      apiRequest("POST", "/api/job-listings", data),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["/api/job-listings"] });
       toast({
@@ -149,10 +159,7 @@ export default function JobForm() {
   // Update job mutation
   const updateMutation = useMutation({
     mutationFn: (data: z.infer<typeof formSchema>) =>
-      apiRequest(`/api/job-listings/${jobId}`, {
-        method: "PUT",
-        body: JSON.stringify(data),
-      }),
+      apiRequest("PUT", `/api/job-listings/${jobId}`, data),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["/api/job-listings"] });
       toast({
