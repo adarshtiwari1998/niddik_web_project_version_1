@@ -3,17 +3,19 @@
 .focus-block {
   transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
   position: relative;
-  padding: 1.5rem;
-  border-radius: 0.5rem;
+  padding: 2rem;
+  border-radius: 0.75rem;
+  max-width: 95%;
 }
 
 .focus-block.active {
-  transform: translateX(0) scale(1.03);
+  transform: translateX(0) scale(1.01);
   background-color: white;
+  opacity: 1;
 }
 
 .focus-block:not(.active) {
-  opacity: 0.7;
+  opacity: 0.6;
   filter: grayscale(20%);
 }
 
@@ -37,10 +39,13 @@
 .focus-image-container {
   height: 550px;
   position: sticky;
-  top: 100px;
+  top: 120px;
   transition: all 0.3s ease;
   overflow: hidden;
   border-radius: 0.75rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
 
 /* Animation for image transition */
