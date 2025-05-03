@@ -91,15 +91,18 @@
   width: 100%; /* Full width of its container */
 }
 
-/* When last block is visible */
+/* When last block is visible OR section is exiting viewport */
 .fixed-image-container.release-fixed {
-  position: absolute;
-  bottom: 0;
-  top: auto;
-  transform: none;
+  position: relative !important; /* Important to override fixed positioning */
+  bottom: auto !important;
+  top: auto !important;
+  transform: none !important;
   margin-top: 0;
+  margin-bottom: 0;
   height: 550px; /* Same height as fixed state */
   width: 100%; /* Full width of its container */
+  z-index: 0; /* Lower z-index to allow content below to flow normally */
+  transition: position 0.1s ease; /* Quick transition to avoid jank */
 }
 
 /* Mobile adjustments */

@@ -52,10 +52,44 @@ const FocusScrollSection: React.FC = () => {
   const sectionRef = useRef<HTMLDivElement>(null);
   const firstBlockRef = useRef<HTMLDivElement>(null);
   
-  // Use effect to initialize active block to 1
+  // Use effect to initialize active block to 1 and add extra section detector
   useEffect(() => {
     // Always start with the first block active
     setActiveBlockId(1);
+    
+    // Add enhanced scroll listener to handle section boundaries
+    const handleScroll = () => {
+      if (!sectionRef.current) return;
+      
+      // Get section boundaries
+      const sectionRect = sectionRef.current.getBoundingClientRect();
+      
+      // Section end detection - release fixed positioning when section bottom is in view
+      // This prevents overlap with content below
+      const isSectionEnded = sectionRect.bottom <= window.innerHeight + 100; // Add small buffer
+      
+      // Section beginning detection - only enable fixed positioning after section has entered viewport
+      const isTopInView = sectionRect.top <= 0.3 * window.innerHeight;
+      
+      // Set states based on scroll position
+      if (isSectionEnded) {
+        // Section is ending, force release fixed position
+        setIsLastBlockVisible(true);
+      } else if (!isTopInView) {
+        // We're at the top of the section, so don't enable fixed positioning yet
+        setIsFirstBlockAtTop(false);
+      }
+      
+      // Debug info
+      console.log(`Section top: ${sectionRect.top}, bottom: ${sectionRect.bottom}, ended: ${isSectionEnded}`);
+    };
+    
+    // Add scroll listener
+    window.addEventListener('scroll', handleScroll, { passive: true });
+    
+    return () => {
+      window.removeEventListener('scroll', handleScroll);
+    };
   }, []);
   
   // Set up intersection observers to track section and blocks
@@ -63,50 +97,56 @@ const FocusScrollSection: React.FC = () => {
     // Observer for individual blocks
     const blockObserver = new IntersectionObserver(
       (entries) => {
-        // Process entries individually - don't sort them as that can cause unexpected behavior
+        // To track which blocks are currently in view
+        const visibleBlocks = new Set<number>();
+        
+        // First, collect all visible blocks from entries
         entries.forEach((entry) => {
           const blockId = Number(entry.target.getAttribute("data-block-id"));
-          
           if (!blockId) return;
           
-          // For the last block, we want special handling
-          if (blockId === focusBlocks.length) {
-            // Check if last block is entering the viewport (becoming visible)
-            // We use a lower threshold for the last block to release fixed position earlier
-            const lastBlockThreshold = window.innerHeight * 0.3; // Upper 30% of screen
-            const isLastBlockNearTop = entry.boundingClientRect.top <= lastBlockThreshold;
-            
-            // Set last block visibility based on whether it's near top AND intersecting
-            const isLastVisible = entry.isIntersecting && isLastBlockNearTop;
-            
-            if (isLastVisible) {
-              console.log(`Last block ${blockId} visible - releasing fixed position`);
-              setIsLastBlockVisible(true);
-              // Also ensure this is the active block for image change
-              setActiveBlockId(blockId);
-            } else if (!entry.isIntersecting && !isLastBlockNearTop) {
-              // If the last block is no longer in view and scrolled past bottom,
-              // make sure to turn off last block visibility
-              setIsLastBlockVisible(false);
-            }
-          } 
-          // For regular blocks
-          else if (entry.isIntersecting) {
-            // Only update active block ID when the block is actually visible
-            setActiveBlockId(blockId);
-            
-            // Log for debugging
-            console.log(`Block ${blockId} is now active at position ${entry.boundingClientRect.top}`);
-            
-            // Ensure last block visibility is turned off for regular blocks
-            setIsLastBlockVisible(false);
+          if (entry.isIntersecting) {
+            visibleBlocks.add(blockId);
           }
         });
+        
+        // When no blocks are visible, keep the previous active block
+        if (visibleBlocks.size === 0) return;
+        
+        // For regular blocks - find the smallest visible block ID (top-most visible block)
+        const visibleBlocksList = Array.from(visibleBlocks);
+        const topVisibleBlock = Math.min(...visibleBlocksList);
+        
+        // Special handling for last block
+        if (visibleBlocks.has(focusBlocks.length)) {
+          const lastBlockEntry = entries.find(
+            entry => Number(entry.target.getAttribute("data-block-id")) === focusBlocks.length
+          );
+          
+          if (lastBlockEntry) {
+            // If last block is in the top portion of viewport, release fixed positioning
+            const lastBlockThreshold = window.innerHeight * 0.3;
+            const isLastBlockNearTop = lastBlockEntry.boundingClientRect.top <= lastBlockThreshold;
+            
+            if (isLastBlockNearTop) {
+              console.log(`Last block visible near top - releasing fixed position`);
+              setIsLastBlockVisible(true);
+              setActiveBlockId(focusBlocks.length); // Show last block image
+            }
+          }
+        } else {
+          // Not on last block, so ensure last block visibility is turned off
+          setIsLastBlockVisible(false);
+          
+          // Set active ID to the top-most visible block
+          setActiveBlockId(topVisibleBlock);
+          console.log(`Block ${topVisibleBlock} is now active (top-most visible)`);
+        }
       },
       {
         root: null,
-        rootMargin: "-15% 0px -45% 0px", // More sensitive at top for quicker activation
-        threshold: [0.1, 0.2, 0.3, 0.4], // Multiple thresholds for smoother transitions
+        rootMargin: "-20% 0px -20% 0px", // Balanced detection for better block transitions
+        threshold: [0.1, 0.3, 0.5], // Multiple thresholds for smoother transitions
       }
     );
 
