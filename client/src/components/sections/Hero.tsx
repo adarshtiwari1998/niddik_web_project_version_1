@@ -111,7 +111,7 @@ const Hero = () => {
                 animate={{ opacity: 1, x: 0 }}
                 transition={{ duration: 0.7 }}
               >
-                Find tech experts for your projects in record time
+                Adaptive Hiring Lets You Put Every Project on the Front Burner
               </motion.h1>
               <motion.p 
                 className="text-lg md:text-xl text-gray-200 mb-8"
@@ -119,7 +119,7 @@ const Hero = () => {
                 animate={{ opacity: 1 }}
                 transition={{ duration: 0.7, delay: 0.2 }}
               >
-                We help you source, evaluate, and deliver world-class teams and technologists – fully vetted, compliant, and tailored to your needs.
+                <span className="text-white font-semibold">Connecting People, Changing Lives</span> - We empower businesses to scale with precision through our global network of exceptional talent.
               </motion.p>
               <motion.div 
                 className="flex flex-col sm:flex-row gap-4"
@@ -135,7 +135,7 @@ const Hero = () => {
                 </Link>
               </motion.div>
               
-              {/* Social proof stats - only visible on desktop */}
+              {/* Social proof stats with horizontal dividers - only visible on desktop */}
               <motion.div 
                 className="hidden lg:flex items-center gap-8 mt-10"
                 initial={{ opacity: 0 }}
@@ -144,14 +144,17 @@ const Hero = () => {
               >
                 <div className="flex flex-col">
                   <span className="text-3xl font-bold text-white">96%</span>
+                  <div className="w-12 h-0.5 bg-white/40 my-2"></div>
                   <span className="text-gray-300 text-sm">Success Rate</span>
                 </div>
                 <div className="flex flex-col">
                   <span className="text-3xl font-bold text-white">100+</span>
+                  <div className="w-12 h-0.5 bg-white/40 my-2"></div>
                   <span className="text-gray-300 text-sm">Countries</span>
                 </div>
                 <div className="flex flex-col">
                   <span className="text-3xl font-bold text-white">48h</span>
+                  <div className="w-12 h-0.5 bg-white/40 my-2"></div>
                   <span className="text-gray-300 text-sm">Average Matching</span>
                 </div>
               </motion.div>
@@ -205,8 +208,8 @@ const Hero = () => {
             <Check className="h-6 w-6" />
           </div>
           <div>
-            <p className="font-semibold text-white">Trusted by Fortune 500</p>
-            <p className="text-sm text-gray-200">Leading companies rely on our network</p>
+            <p className="font-semibold text-white">Trusted by Fortune 500 & Tech Innovators</p>
+            <p className="text-sm text-gray-200">Global leaders choose NIIDIK expertise</p>
           </div>
         </div>
       </motion.div>
