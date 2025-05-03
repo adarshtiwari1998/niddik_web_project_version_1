@@ -73,7 +73,7 @@ const ServicesShowcase = () => {
     return () => clearTimeout(timeoutId);
   }, []);
 
-  const getServiceById = (id: number) => services.find(service => service.id === id);
+  const getServiceById = (id: number) => services.find(service => service.id === id) || services[0];
   const activeServiceData = getServiceById(activeService);
 
   // Animation variants
@@ -206,9 +206,9 @@ const ServicesShowcase = () => {
                 className="h-full"
               >
                 <motion.div variants={itemVariants} className="mb-2">
-                  <div className={`inline-block p-3 rounded-full bg-gradient-to-r ${activeServiceData?.color}`}>
+                  <div className={`inline-block p-3 rounded-full bg-gradient-to-r ${activeServiceData.color}`}>
                     <div className="text-white">
-                      {activeServiceData?.icon}
+                      {activeServiceData.icon}
                     </div>
                   </div>
                 </motion.div>
@@ -216,13 +216,13 @@ const ServicesShowcase = () => {
                   variants={itemVariants}
                   className="text-2xl font-bold text-andela-dark mb-4"
                 >
-                  {activeServiceData?.title}
+                  {activeServiceData.title}
                 </motion.h3>
                 <motion.p 
                   variants={itemVariants}
                   className="text-andela-gray mb-6"
                 >
-                  {activeServiceData?.description}
+                  {activeServiceData.description}
                 </motion.p>
                 <motion.button 
                   variants={itemVariants}
@@ -274,10 +274,10 @@ const ServicesShowcase = () => {
                   whileHover={{ y: -5 }}
                 >
                   <div className="flex items-center">
-                    <div className={`mr-4 ${service.id === activeService ? 'text-white' : service.color.split(' ')[1]}`}>
+                    <div className={`flex-shrink-0 mr-4 ${service.id === activeService ? 'text-white' : service.color.split(" ")[0].replace("from", "text")}`}>
                       {service.icon}
                     </div>
-                    <div>
+                    <div className="flex-grow min-w-0">
                       <h3 className={`font-semibold ${service.id === activeService ? 'text-white' : 'text-andela-dark'}`}>
                         {service.title}
                       </h3>
@@ -293,7 +293,7 @@ const ServicesShowcase = () => {
                       )}
                     </div>
                     {service.id === activeService && (
-                      <ChevronRight className="ml-auto h-5 w-5 text-white" />
+                      <ChevronRight className="ml-auto flex-shrink-0 h-5 w-5 text-white" />
                     )}
                   </div>
                 </motion.div>
