@@ -47,8 +47,10 @@ const FocusScrollSection: React.FC = () => {
   const [activeBlockId, setActiveBlockId] = useState<number>(1);
   const [isLastBlockVisible, setIsLastBlockVisible] = useState(false);
   const [isSectionInView, setIsSectionInView] = useState(false);
+  const [isFirstBlockAtTop, setIsFirstBlockAtTop] = useState(false);
   const blockRefs = useRef<(HTMLDivElement | null)[]>([]);
   const sectionRef = useRef<HTMLDivElement>(null);
+  const firstBlockRef = useRef<HTMLDivElement>(null);
   
   // Set up intersection observers to track section and blocks
   useEffect(() => {
@@ -91,10 +93,34 @@ const FocusScrollSection: React.FC = () => {
         threshold: 0.1,
       }
     );
+    
+    // Observer specifically for the first block reaching top of viewport
+    const firstBlockObserver = new IntersectionObserver(
+      (entries) => {
+        entries.forEach((entry) => {
+          // Check if first block has reached top of viewport
+          const { top, height } = entry.boundingClientRect;
+          const topThreshold = window.innerHeight * 0.15; // Top 15% of screen
+          
+          // First block is at/near top of viewport when not intersecting and above viewport
+          setIsFirstBlockAtTop(!entry.isIntersecting && top <= topThreshold);
+        });
+      },
+      {
+        root: null,
+        rootMargin: "-15% 0px 0px 0px", // Target top of viewport 
+        threshold: [0, 0.1, 0.5, 1],
+      }
+    );
 
     // Observe the section
     if (sectionRef.current) {
       sectionObserver.observe(sectionRef.current);
+    }
+    
+    // Observe first block specifically
+    if (blockRefs.current[0]) {
+      firstBlockObserver.observe(blockRefs.current[0]);
     }
 
     // Observe all block elements
@@ -110,6 +136,12 @@ const FocusScrollSection: React.FC = () => {
         sectionObserver.unobserve(sectionRef.current);
       }
       
+      // Clean up first block observer
+      if (blockRefs.current[0]) {
+        firstBlockObserver.unobserve(blockRefs.current[0]);
+      }
+      
+      // Clean up block observers
       blockRefs.current.forEach((block) => {
         if (block) {
           blockObserver.unobserve(block);
@@ -152,9 +184,9 @@ const FocusScrollSection: React.FC = () => {
             ))}
           </div>
 
-          {/* Right column - fixed image only when section is in view */}
+          {/* Right column - fixed image only when first block reaches top and section is in view */}
           <div className="fixed-image-column hidden lg:block">
-            <div className={`fixed-image-container ${!isSectionInView ? "not-fixed" : ""} ${isLastBlockVisible ? "release-fixed" : ""}`}>
+            <div className={`fixed-image-container ${(!isSectionInView || !isFirstBlockAtTop) ? "not-fixed" : ""} ${isLastBlockVisible ? "release-fixed" : ""}`}>
               {focusBlocks.map((block) => (
                 <motion.div
                   key={block.id}
