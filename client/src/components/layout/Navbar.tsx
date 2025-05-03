@@ -31,6 +31,7 @@ const navItems: NavItem[] = [
   },
   {
     label: "Solutions",
+    href: "/services",
     dropdown: [
       { label: "Full RPO", href: "/services/full-rpo" },
       { label: "On-Demand", href: "/services/on-demand" },
@@ -89,10 +90,15 @@ const Navbar: React.FC<NavbarProps> = ({ hasAnnouncementAbove = true }) => {
             {navItems.map((item, index) => (
               item.dropdown ? (
                 <div key={index} className="relative group">
-                  <button className="flex items-center text-andela-dark group-hover:text-andela-green font-medium transition-colors">
-                    {item.label}
-                    <ChevronDown className="ml-1 w-4 h-4" />
-                  </button>
+                  <div className="flex items-center">
+                    <Link 
+                      href={item.href || "#"} 
+                      className="text-andela-dark group-hover:text-andela-green font-medium transition-colors"
+                    >
+                      {item.label}
+                    </Link>
+                    <ChevronDown className="ml-1 w-4 h-4 text-andela-dark group-hover:text-andela-green" />
+                  </div>
                   <div className="absolute left-0 mt-2 w-64 rounded-lg shadow-xl bg-white p-6 opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-300 transform origin-top-left z-50">
                     {item.dropdown.map((dropdownItem, idx) => (
                       <div key={idx} className="block py-2 hover:text-andela-green transition-colors">
@@ -156,13 +162,21 @@ const Navbar: React.FC<NavbarProps> = ({ hasAnnouncementAbove = true }) => {
             <div key={index} className="py-2 border-b border-gray-100">
               {item.dropdown ? (
                 <div>
-                  <button 
-                    className="flex items-center justify-between w-full text-left font-medium mb-2"
-                    onClick={() => setMobileDropdown(index === mobileDropdown ? -1 : index)}
-                  >
-                    {item.label}
-                    <ChevronDown className={`w-4 h-4 transition-transform ${index === mobileDropdown ? 'rotate-180' : ''}`} />
-                  </button>
+                  <div className="flex items-center justify-between w-full mb-2">
+                    <Link 
+                      href={item.href || "#"} 
+                      className="font-medium"
+                      onClick={() => setIsMobileMenuOpen(false)}
+                    >
+                      {item.label}
+                    </Link>
+                    <button
+                      onClick={() => setMobileDropdown(index === mobileDropdown ? -1 : index)}
+                      className="ml-2"
+                    >
+                      <ChevronDown className={`w-4 h-4 transition-transform ${index === mobileDropdown ? 'rotate-180' : ''}`} />
+                    </button>
+                  </div>
                   
                   {index === mobileDropdown && (
                     <div className="ml-4 space-y-2 py-2">

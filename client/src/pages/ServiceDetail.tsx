@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { useRoute } from 'wouter';
+import { useRoute, Link } from 'wouter';
 import { motion } from 'framer-motion';
 import { 
   Users, Calendar, PieChart, Briefcase,
@@ -268,13 +268,13 @@ const ServiceDetail = () => {
         <section className={`py-16 ${service.bgColor}`}>
           <Container>
             <div className="flex flex-col gap-4">
-              <a 
-                href="/#services" 
+              <Link 
+                href="/services" 
                 className="inline-flex items-center text-gray-600 hover:text-andela-green transition-colors mb-4"
               >
                 <ArrowLeft className="h-4 w-4 mr-2" />
                 Back to Services
-              </a>
+              </Link>
               
               <motion.div
                 initial={{ opacity: 0, y: 20 }}
@@ -307,12 +307,12 @@ const ServiceDetail = () => {
                     ))}
                   </ul>
                   <div className="mt-6">
-                    <a 
+                    <Link
                       href="/contact" 
                       className={`inline-flex items-center justify-center w-full py-3 px-4 rounded-md text-white font-medium transition-all bg-gradient-to-r ${service.color} hover:shadow-lg`}
                     >
                       Request a Consultation
-                    </a>
+                    </Link>
                   </div>
                 </div>
               </motion.div>
@@ -456,18 +456,18 @@ const ServiceDetail = () => {
                 Let's discuss how our {service.title} service can help you achieve your talent acquisition goals.
               </p>
               <div className="flex flex-col sm:flex-row gap-4 justify-center">
-                <a 
+                <Link
                   href="/contact"
                   className={`py-3 px-8 rounded-md text-white font-medium transition-colors bg-gradient-to-r ${service.color} hover:shadow-lg`}
                 >
                   Schedule a Consultation
-                </a>
-                <a 
+                </Link>
+                <Link
                   href="/case-studies"
                   className="py-3 px-8 rounded-md bg-white text-andela-dark font-medium border border-gray-200 hover:border-gray-300 transition-colors"
                 >
                   View Success Stories
-                </a>
+                </Link>
               </div>
             </div>
           </Container>
