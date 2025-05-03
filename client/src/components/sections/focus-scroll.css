@@ -1,22 +1,54 @@
 /* Styling for the focus scroll section */
+#focus-scroll-section {
+  min-height: 1500px;
+  position: relative;
+  z-index: 1;
+  overflow: hidden;
+}
+
+/* Focus blocks wrapper and container */
+.focus-blocks-wrapper {
+  position: relative;
+  height: 100%;
+}
+
+.focus-blocks-container {
+  position: sticky;
+  top: 120px;
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+  padding-bottom: 2rem;
+  max-width: 90%;
+  z-index: 2;
+}
+
+/* Creates vertical space for scrolling */
+.focus-scroll-space {
+  height: 2400px; /* Adjust this height to control total scroll length */
+}
+
 /* Focus block styling with enhanced transitions */
 .focus-block {
   transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
   position: relative;
   padding: 2rem;
   border-radius: 0.75rem;
-  max-width: 95%;
+  margin-bottom: 2rem;
+  height: auto;
 }
 
 .focus-block.active {
   transform: translateX(0) scale(1.01);
   background-color: white;
   opacity: 1;
+  z-index: 10;
 }
 
 .focus-block:not(.active) {
   opacity: 0.6;
   filter: grayscale(20%);
+  transform: translateX(-10px);
 }
 
 .focus-block::after {
@@ -46,6 +78,7 @@
   display: flex;
   align-items: center;
   justify-content: center;
+  z-index: 1;
 }
 
 /* Animation for image transition */
@@ -64,6 +97,11 @@
     transform: translateX(0) scale(1.02);
   }
   
+  .focus-blocks-container {
+    position: relative;
+    top: 0;
+  }
+  
   .focus-image-container {
     position: relative;
     top: 0;
@@ -71,14 +109,7 @@
     margin-bottom: 2rem;
   }
   
-  /* Adjust spacing for mobile */
-  .focus-blocks-container > div {
-    margin-bottom: 2.5rem;
+  .focus-scroll-space {
+    display: none; /* No scroll space needed on mobile */
   }
-}
-
-/* Ensure the right image stays fixed while scrolling */
-.focus-blocks-container {
-  position: relative;
-  z-index: 1;
 }

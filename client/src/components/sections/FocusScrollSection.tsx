@@ -1,4 +1,4 @@
-import React, { useEffect, useState, useRef } from "react";
+import React, { useEffect, useState, useRef, useCallback } from "react";
 import { motion } from "framer-motion";
 import Container from "@/components/ui/container";
 import "./focus-scroll.css";
@@ -48,56 +48,51 @@ const FocusScrollSection: React.FC = () => {
   const sectionRef = useRef<HTMLDivElement>(null);
   const blockRefs = useRef<(HTMLDivElement | null)[]>([]);
   
-  // Set up intersection observer to track which block is most visible and centered
-  useEffect(() => {
-    // This is the preferred method to detect when a block is centered in the viewport
-    const handleScroll = () => {
-      // We use requestAnimationFrame to limit updates for performance
-      requestAnimationFrame(() => {
-        // Get the viewport dimensions
-        const viewportHeight = window.innerHeight;
-        const viewportCenter = viewportHeight / 2;
-        
-        // Track which block is closest to center
-        let closestToCenter = { blockId: activeBlockId, distance: Infinity };
-        
-        // Check each block's position relative to viewport center
-        blockRefs.current.forEach((block, index) => {
-          if (!block) return;
-          
-          const rect = block.getBoundingClientRect();
-          // Calculate the center point of the block
-          const blockCenter = rect.top + (rect.height / 2);
-          // Calculate distance from block center to viewport center
-          const distanceFromCenter = Math.abs(blockCenter - viewportCenter);
-          
-          // If this block is closer to center than our current closest
-          if (distanceFromCenter < closestToCenter.distance) {
-            closestToCenter = {
-              blockId: index + 1, // +1 because our IDs start at 1, not 0
-              distance: distanceFromCenter
-            };
-          }
-        });
-        
-        // Only update if there's a change
-        if (closestToCenter.blockId !== activeBlockId) {
-          setActiveBlockId(closestToCenter.blockId);
-        }
-      });
-    };
+  // This function calculates which block should be active based on scroll position
+  const calculateActiveBlock = useCallback(() => {
+    // Get which section of the scroll-space we're in (divide the scroll height into equal sections)
+    const scrollPosition = window.scrollY;
+    const sectionRef = document.getElementById('focus-scroll-section');
     
-    // Initialize by running once
-    handleScroll();
+    if (!sectionRef) return;
     
-    // Set up the scroll listener
-    window.addEventListener('scroll', handleScroll, { passive: true });
+    // Get the section's position
+    const sectionTop = sectionRef.offsetTop;
+    const viewportHeight = window.innerHeight;
+    const scrollProgress = scrollPosition - sectionTop + (viewportHeight * 0.5);
+    
+    if (scrollProgress < 0) return; // Not yet at the section
+    
+    // The number of blocks
+    const totalBlocks = focusBlocks.length;
+    // The total scroll height allocated for this section
+    const totalScrollSpace = 2400; // Should match the .focus-scroll-space height in CSS
+    
+    // Calculate which block should be active based on scroll progress
+    const blockHeight = totalScrollSpace / totalBlocks;
+    const activeBlock = Math.min(
+      Math.max(Math.floor(scrollProgress / blockHeight) + 1, 1),
+      totalBlocks
+    );
+    
+    if (activeBlock !== activeBlockId) {
+      setActiveBlockId(activeBlock);
+    }
+  }, [activeBlockId, focusBlocks.length]);
 
+  // Set up scroll listener to track scroll position
+  useEffect(() => {
+    // Initialize
+    calculateActiveBlock();
+    
+    // Add scroll listener
+    window.addEventListener('scroll', calculateActiveBlock, { passive: true });
+    
     // Cleanup
     return () => {
-      window.removeEventListener('scroll', handleScroll);
+      window.removeEventListener('scroll', calculateActiveBlock);
     };
-  }, [activeBlockId]);
+  }, [calculateActiveBlock]);
 
   return (
     <section ref={sectionRef} className="py-20 bg-gray-50" id="focus-scroll-section">
@@ -112,27 +107,31 @@ const FocusScrollSection: React.FC = () => {
         </div>
 
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 relative">
-          {/* Left column - Scrollable blocks */}
-          <div className="flex flex-col space-y-48 pb-32 focus-blocks-container">
-            {focusBlocks.map((block, index) => (
-              <div 
-                key={block.id}
-                ref={el => blockRefs.current[index] = el}
-                data-block-id={block.id}
-                className={`focus-block p-6 md:p-8 rounded-xl ${
-                  block.id === activeBlockId ? "active" : ""
-                }`}
-              >
-                <div className="flex flex-col">
-                  <h3 className="text-2xl font-bold text-andela-dark mb-4">
-                    {block.title}
-                  </h3>
-                  <p className="text-andela-gray leading-relaxed">
-                    {block.description}
-                  </p>
+          {/* Left column - Content blocks with scroll triggers */}
+          <div className="focus-blocks-wrapper">
+            <div className="focus-blocks-container">
+              {focusBlocks.map((block, index) => (
+                <div 
+                  key={block.id}
+                  ref={el => blockRefs.current[index] = el}
+                  data-block-id={block.id}
+                  className={`focus-block p-6 md:p-8 rounded-xl ${
+                    block.id === activeBlockId ? "active" : ""
+                  }`}
+                >
+                  <div className="flex flex-col">
+                    <h3 className="text-2xl font-bold text-andela-dark mb-4">
+                      {block.title}
+                    </h3>
+                    <p className="text-andela-gray leading-relaxed">
+                      {block.description}
+                    </p>
+                  </div>
                 </div>
-              </div>
-            ))}
+              ))}
+            </div>
+            {/* This creates the scroll space needed */}
+            <div className="focus-scroll-space"></div>
           </div>
 
           {/* Right column - Sticky image */}
