@@ -377,7 +377,7 @@ const ServicesShowcase = () => {
                 <h4 className="text-lg font-semibold text-andela-dark mb-4">Our Process</h4>
                 
                 {/* Visual process flow with animated stages */}
-                <div className={`relative p-8 pt-6 pb-6 rounded-lg bg-white/90 backdrop-blur-sm shadow-lg`}>
+                <div className={`relative p-8 pt-6 pb-6 rounded-lg bg-white/90 backdrop-blur-sm border border-gray-100`}>
                   
                   {/* Process flow connection line (positioned above the steps) */}
                   <div className="relative mx-auto h-4 my-4 z-10 flex items-center justify-center">
@@ -441,7 +441,7 @@ const ServicesShowcase = () => {
                   </div>
                   
                   {/* Process steps with sequential highlight animation */}
-                  <div className="flex justify-around relative z-20 mt-12 mb-6 space-x-3">
+                  <div className="grid grid-cols-4 gap-6 relative z-20 mt-12 mb-8">
                     {activeServiceData.processSteps.map((step, index) => {
                       // Determine icon based on service type and step index
                       let StepIcon;
@@ -469,18 +469,18 @@ const ServicesShowcase = () => {
                       return (
                         <motion.div 
                           key={`${activeService}-step-${index}`}
-                          className="flex flex-col items-center"
+                          className="flex flex-col items-center px-1"
                           initial={{ opacity: 0, y: 20 }}
                           animate={{ opacity: 1, y: 0 }}
                           transition={{ delay: index * 0.2 }}
                         >
                           {/* Step box with custom icon */}
                           <motion.div 
-                            className={`w-[4.5rem] h-[4.5rem] rounded-lg flex items-center justify-center bg-white shadow-md
+                            className={`w-[4.5rem] h-[4.5rem] rounded-lg flex items-center justify-center bg-white
                               ${index === 0 ? 'rounded-tl-3xl' : 
                                 index === 1 ? 'rounded-tr-3xl' : 
                                 index === 2 ? 'rounded-bl-3xl' : 'rounded-br-3xl'} 
-                              border-2 mb-4 z-20 relative overflow-hidden
+                              border-2 mb-5 z-20 relative overflow-hidden
                               ${
                                 activeServiceData.color.includes('purple') ? 'border-purple-400' : 
                                 activeServiceData.color.includes('blue') ? 'border-blue-400' : 
@@ -489,11 +489,6 @@ const ServicesShowcase = () => {
                               }`}
                             // Sequential highlight animation  
                             animate={{ 
-                              boxShadow: [
-                                '0 4px 6px rgba(0, 0, 0, 0.1)',
-                                '0 8px 15px rgba(0, 0, 0, 0.15)',
-                                '0 4px 6px rgba(0, 0, 0, 0.1)'
-                              ],
                               scale: [1, 1.08, 1],
                               borderWidth: ['2px', '3px', '2px']
                             }}
@@ -536,9 +531,11 @@ const ServicesShowcase = () => {
                             </div>
                           </motion.div>
                           
-                          {/* Step title and description */}
-                          <h5 className="font-medium text-andela-dark text-center mb-2 mt-1">{step.title}</h5>
-                          <p className="text-xs text-andela-gray text-center leading-tight max-w-[120px] mx-auto">{step.description}</p>
+                          {/* Step title and description with more spacing */}
+                          <h5 className="font-medium text-andela-dark text-center mb-3 mt-2">{step.title}</h5>
+                          <div className="h-16">
+                            <p className="text-xs text-andela-gray text-center leading-normal max-w-[130px] mx-auto">{step.description}</p>
+                          </div>
                         </motion.div>
                       )
                     })}
