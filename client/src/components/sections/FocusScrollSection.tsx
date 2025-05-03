@@ -52,14 +52,20 @@ const FocusScrollSection: React.FC = () => {
   const sectionRef = useRef<HTMLDivElement>(null);
   const firstBlockRef = useRef<HTMLDivElement>(null);
   
+  // Define the actual last block ID - important to track when we've reached the end
+  const LAST_BLOCK_ID = 5; // Match this with the actual ID of the last block
+  
   // Use effect to initialize active block to 1 and add extra section detector
   useEffect(() => {
     // Always start with the first block active
     setActiveBlockId(1);
     
-    // Add enhanced scroll listener to handle section boundaries
+    // Add enhanced scroll listener to handle section boundaries - crucial for smooth transition at edges
     const handleScroll = () => {
       if (!sectionRef.current) return;
+      
+      // Get all blocks to check their positions
+      const allBlocks = blockRefs.current.filter(block => block !== null);
       
       // Get section boundaries
       const sectionRect = sectionRef.current.getBoundingClientRect();
@@ -71,17 +77,25 @@ const FocusScrollSection: React.FC = () => {
       // Section beginning detection - only enable fixed positioning after section has entered viewport
       const isTopInView = sectionRect.top <= 0.3 * window.innerHeight;
       
-      // Set states based on scroll position
-      if (isSectionEnded) {
-        // Section is ending, force release fixed position
-        setIsLastBlockVisible(true);
-      } else if (!isTopInView) {
-        // We're at the top of the section, so don't enable fixed positioning yet
-        setIsFirstBlockAtTop(false);
-      }
+      // Find the last block (block 5) if available
+      const lastBlock = allBlocks.find(
+        block => Number(block?.getAttribute("data-block-id")) === LAST_BLOCK_ID
+      );
       
-      // Debug info
-      console.log(`Section top: ${sectionRect.top}, bottom: ${sectionRect.bottom}, ended: ${isSectionEnded}`);
+      // Update states based on scroll position
+      if (isSectionEnded || (lastBlock && lastBlock.getBoundingClientRect().top <= window.innerHeight * 0.4)) {
+        // Section is ending OR last block is near top, force release fixed position
+        setIsLastBlockVisible(true);
+        // Ensure last block's image is showing
+        setActiveBlockId(LAST_BLOCK_ID);
+      } else if (!isTopInView) {
+        // We're at the top of the section, don't enable fixed positioning yet
+        setIsFirstBlockAtTop(false);
+      } else {
+        // Section is in normal scrolling range - make sure last block release is disabled
+        // This ensures blocks 1-4 all maintain the fixed position
+        setIsLastBlockVisible(false);
+      }
     };
     
     // Add scroll listener
@@ -117,28 +131,28 @@ const FocusScrollSection: React.FC = () => {
         const visibleBlocksList = Array.from(visibleBlocks);
         const topVisibleBlock = Math.min(...visibleBlocksList);
         
-        // Special handling for last block
-        if (visibleBlocks.has(focusBlocks.length)) {
+        // Special handling for last block - only apply release logic when actually at the LAST block
+        if (visibleBlocks.has(LAST_BLOCK_ID)) {
           const lastBlockEntry = entries.find(
-            entry => Number(entry.target.getAttribute("data-block-id")) === focusBlocks.length
+            entry => Number(entry.target.getAttribute("data-block-id")) === LAST_BLOCK_ID
           );
           
           if (lastBlockEntry) {
             // If last block is in the top portion of viewport, release fixed positioning
-            const lastBlockThreshold = window.innerHeight * 0.3;
+            const lastBlockThreshold = window.innerHeight * 0.4; // Increase threshold a bit
             const isLastBlockNearTop = lastBlockEntry.boundingClientRect.top <= lastBlockThreshold;
             
             if (isLastBlockNearTop) {
-              console.log(`Last block visible near top - releasing fixed position`);
+              console.log(`Last block ${LAST_BLOCK_ID} visible near top - releasing fixed position`);
               setIsLastBlockVisible(true);
-              setActiveBlockId(focusBlocks.length); // Show last block image
+              setActiveBlockId(LAST_BLOCK_ID); // Show last block image
             }
           }
         } else {
-          // Not on last block, so ensure last block visibility is turned off
+          // Not on last block, ensure image stays fixed
           setIsLastBlockVisible(false);
           
-          // Set active ID to the top-most visible block
+          // Set active ID to the top-most visible block (to change which image is shown)
           setActiveBlockId(topVisibleBlock);
           console.log(`Block ${topVisibleBlock} is now active (top-most visible)`);
         }
