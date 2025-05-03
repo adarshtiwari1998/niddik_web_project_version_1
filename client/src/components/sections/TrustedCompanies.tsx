@@ -46,16 +46,34 @@ const InfiniteMarquee = ({ children, pauseOnHover = true, speed = 30 }: {
     
     // Update immediately and then again after a short delay to ensure images are loaded
     updateWidth();
-    const timer = setTimeout(updateWidth, 500);
     
-    // Also update on window resize for responsiveness
-    window.addEventListener('resize', updateWidth);
-    
-    // Clean up event listener and timer
-    return () => {
-      window.removeEventListener('resize', updateWidth);
-      clearTimeout(timer);
-    };
+    // Create a mutationObserver to detect when images are loaded
+    if (contentRef.current) {
+      const observer = new MutationObserver(updateWidth);
+      observer.observe(contentRef.current, { 
+        childList: true, 
+        subtree: true, 
+        attributes: true,
+        attributeFilter: ['src', 'class'] 
+      });
+      
+      // Check multiple times as images load asynchronously
+      const timers = [
+        setTimeout(updateWidth, 200),
+        setTimeout(updateWidth, 500),
+        setTimeout(updateWidth, 1000)
+      ];
+      
+      // Update on window resize for responsiveness
+      window.addEventListener('resize', updateWidth);
+      
+      // Clean up
+      return () => {
+        observer.disconnect();
+        timers.forEach(clearTimeout);
+        window.removeEventListener('resize', updateWidth);
+      };
+    }
   }, [children, contentWidth]);
 
   return (
@@ -108,30 +126,35 @@ const TrustedCompanies = () => {
 
   // Function to render logos
   const renderLogos = () => {
-    if (clients) {
-      return clients.map((client: ClientData, index) => (
-        <div 
-          key={`${client.id}-${index}`}
-          className="flex-none mx-10 grayscale hover:grayscale-0 transition-all duration-300 w-32 h-16 flex items-center justify-center"
-        >
+    // Create function to render a single logo with consistent styling
+    const renderLogo = (id: string | number, name: string, logo: string | JSX.Element) => (
+      <div 
+        key={`${id}`}
+        className="flex-none mx-6 grayscale hover:grayscale-0 transition-all duration-300 w-32 h-16 flex items-center justify-center"
+      >
+        {typeof logo === 'string' ? (
           <img 
-            src={client.logo} 
-            alt={client.name}
+            src={logo} 
+            alt={name}
             className="max-h-12 max-w-full object-contain"
           />
-        </div>
-      ));
-    } else {
-      return fallbackCompanies.map((company, index) => (
-        <div 
-          key={`${company.name}-${index}`}
-          className="flex-none mx-10 grayscale hover:grayscale-0 transition-all duration-300 w-32 h-16 flex items-center justify-center"
-        >
+        ) : (
           <div className="w-20 h-10 text-andela-dark">
-            {company.logo}
+            {logo}
           </div>
-        </div>
-      ));
+        )}
+      </div>
+    );
+    
+    // Determine which dataset to use
+    if (clients && clients.length > 0) {
+      return clients.map((client: ClientData) => 
+        renderLogo(client.id, client.name, client.logo)
+      );
+    } else {
+      return fallbackCompanies.map((company, index) => 
+        renderLogo(`fallback-${index}`, company.name, company.logo)
+      );
     }
   };
 
