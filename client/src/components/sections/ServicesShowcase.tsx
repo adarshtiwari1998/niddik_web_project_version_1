@@ -521,6 +521,10 @@ const ServicesShowcase = () => {
               >
                 Learn more <ChevronRight className="h-4 w-4 ml-1" />
               </motion.a>
+              
+              <a href="/services" className="mt-2 text-sm text-gray-500 hover:text-andela-green transition-colors">
+                View all services
+              </a>
             </div>
           </motion.div>
 

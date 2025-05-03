@@ -5,6 +5,7 @@ import { Toaster } from "@/components/ui/toaster";
 import NotFound from "@/pages/not-found";
 import Home from "@/pages/Home";
 import ServiceDetail from "@/pages/ServiceDetail";
+import ServicesOverview from "@/pages/ServicesOverview";
 
 // Admin Pages
 import AdminDashboard from "@/pages/admin/AdminDashboard";
@@ -17,7 +18,8 @@ function Router() {
       {/* Public Routes */}
       <Route path="/" component={Home} />
       
-      {/* Service Detail Routes */}
+      {/* Service Routes */}
+      <Route path="/services" component={ServicesOverview} />
       <Route path="/services/:serviceSlug" component={ServiceDetail} />
       
       {/* Admin Routes */}
