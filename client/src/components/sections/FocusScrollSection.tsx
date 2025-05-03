@@ -1,7 +1,7 @@
-import React, { useEffect, useState, useRef } from "react";
-import { motion } from "framer-motion";
-import Container from "@/components/ui/container";
-import "./focus-scroll.css";
+import React, { useEffect, useState, useRef } from 'react';
+import { motion } from 'framer-motion';
+import Container from '@/components/ui/container';
+import './focus-scroll.css';
 
 interface FocusBlock {
   id: number;
@@ -14,31 +14,31 @@ const focusBlocks: FocusBlock[] = [
   {
     id: 1,
     title: "Discover Top Tech Talent",
-    description: "Access a global network of pre-vetted software engineers, data scientists, and product managers ready to join your team. Our platform connects you with talent across 100+ countries, all carefully assessed through technical evaluations and professional background checks. We verify both technical skills and soft skills like communication and teamwork to ensure you get well-rounded professionals who can contribute effectively from day one.",
+    description: "Access a global network of pre-vetted software engineers, data scientists, and product managers ready to join your team. Our platform connects you with talent across 100+ countries, all carefully assessed through technical evaluations and professional background checks.",
     image: "https://images.unsplash.com/photo-1600880292203-757bb62b4baf?auto=format&fit=crop&w=1200&q=80"
   },
   {
     id: 2,
     title: "Streamlined Matching Process",
-    description: "Our AI-powered platform matches your requirements with the perfect candidates, saving weeks of recruitment time. Rather than sifting through hundreds of applications, our intelligent algorithms identify the most suitable matches based on technical skills, experience level, domain expertise, and cultural fit. We analyze over 30 different parameters to ensure compatibility, reducing the hiring process from months to days while maintaining exceptionally high quality standards.",
+    description: "Our AI-powered platform matches your requirements with the perfect candidates, saving weeks of recruitment time. Rather than sifting through hundreds of applications, our intelligent algorithms identify the most suitable matches based on technical skills, experience level, domain expertise, and cultural fit.",
     image: "https://images.unsplash.com/photo-1531538606174-0f90ff5dce83?auto=format&fit=crop&w=1200&q=80"
   },
   {
     id: 3,
     title: "Flexible Team Scaling",
-    description: "Scale your engineering team up or down based on project needs with flexible engagement models that adapt to your business. Whether you need to quickly expand your team for a major product launch or adjust capacity during different development phases, our platform makes it seamless. Choose from full-time, part-time, or project-based engagements, with options to convert contractors to permanent employees as your needs evolve. This flexibility helps you optimize costs while maintaining development velocity.",
+    description: "Scale your engineering team up or down based on project needs with flexible engagement models that adapt to your business. Whether you need to quickly expand your team for a major product launch or adjust capacity during different development phases, our platform makes it seamless.",
     image: "https://images.unsplash.com/photo-1522202176988-66273c2fd55f?auto=format&fit=crop&w=1200&q=80"
   },
   {
     id: 4,
     title: "Seamless Collaboration",
-    description: "Our collaboration tools and talent success managers ensure smooth integration with your existing teams and workflows. We provide onboarding support, communication frameworks, and project management integration to minimize transition time. Each engagement includes access to our proprietary collaboration platform designed specifically for distributed teams, with features for time zone management, asynchronous updates, and knowledge sharing. Your dedicated talent success manager provides ongoing support to optimize team performance.",
+    description: "Our collaboration tools and talent success managers ensure smooth integration with your existing teams and workflows. We provide onboarding support, communication frameworks, and project management integration to minimize transition time and maximize productivity.",
     image: "https://images.unsplash.com/photo-1600880292089-90a7e086ee0c?auto=format&fit=crop&w=1200&q=80"
   },
   {
     id: 5,
     title: "Global Diversity Advantage",
-    description: "Leverage diverse perspectives and experiences from tech professionals across 100+ countries to drive innovation. Research consistently shows that diverse teams produce more creative solutions and deliver better business outcomes. Our global talent pool brings together professionals with unique educational backgrounds, industry experiences, and cultural perspectives. This diversity fosters more robust problem-solving approaches and helps companies develop products with broader appeal. Access talent beyond geographical constraints to gain competitive advantage.",
+    description: "Leverage diverse perspectives and experiences from tech professionals across 100+ countries to drive innovation. Research consistently shows that diverse teams produce more creative solutions and deliver better business outcomes.",
     image: "https://images.unsplash.com/photo-1484712401471-05c7215830eb?auto=format&fit=crop&w=1200&q=80"
   }
 ];
@@ -110,7 +110,7 @@ const FocusScrollSection: React.FC = () => {
                 key={block.id}
                 ref={(el) => (blockRefs.current[index] = el)}
                 data-block-id={block.id}
-                className={`scrollable-block p-6 md:p-8 rounded-xl mb-12 ${
+                className={`scrollable-block mb-12 ${
                   block.id === activeBlockId ? "active" : ""
                 }`}
               >
@@ -124,37 +124,39 @@ const FocusScrollSection: React.FC = () => {
             ))}
           </div>
 
-          {/* Right column - Image that sticks until last block */}
-          <div className={`sticky-image-wrapper hidden lg:block ${isLastBlockVisible ? "unsticky" : ""}`}>
-            {focusBlocks.map((block) => (
-              <motion.div
-                key={block.id}
-                className={`sticky-image ${
-                  block.id === activeBlockId ? "opacity-100" : "opacity-0"
-                }`}
-                initial={{ opacity: 0 }}
-                animate={{ 
-                  opacity: block.id === activeBlockId ? 1 : 0,
-                  scale: block.id === activeBlockId ? 1 : 0.95,
-                }}
-                transition={{ duration: 0.7, ease: "easeOut" }}
-              >
-                <img 
-                  src={block.image}
-                  alt={block.title}
-                  className="w-full h-full object-cover rounded-lg"
-                />
-                <div className="absolute inset-0 bg-black bg-opacity-20 rounded-lg"></div>
-                <div className="absolute bottom-6 left-6 max-w-xs">
-                  <span className="inline-block bg-andela-green text-white px-4 py-1 rounded-full text-sm font-medium mb-2">
-                    Feature {block.id}
-                  </span>
-                  <h4 className="text-xl font-bold text-white">
-                    {block.title}
-                  </h4>
-                </div>
-              </motion.div>
-            ))}
+          {/* Right column - truly fixed image that changes with scroll */}
+          <div className="fixed-image-column hidden lg:block">
+            <div className={`fixed-image-container ${isLastBlockVisible ? "release-fixed" : ""}`}>
+              {focusBlocks.map((block) => (
+                <motion.div
+                  key={block.id}
+                  className={`fixed-image ${
+                    block.id === activeBlockId ? "opacity-100" : "opacity-0"
+                  }`}
+                  initial={{ opacity: 0 }}
+                  animate={{ 
+                    opacity: block.id === activeBlockId ? 1 : 0,
+                    scale: block.id === activeBlockId ? 1 : 0.95,
+                  }}
+                  transition={{ duration: 0.7, ease: "easeOut" }}
+                >
+                  <img 
+                    src={block.image}
+                    alt={block.title}
+                    className="w-full h-full object-cover rounded-lg"
+                  />
+                  <div className="absolute inset-0 bg-black bg-opacity-20 rounded-lg"></div>
+                  <div className="absolute bottom-6 left-6 max-w-xs">
+                    <span className="inline-block bg-andela-green text-white px-4 py-1 rounded-full text-sm font-medium mb-2">
+                      Feature {block.id}
+                    </span>
+                    <h4 className="text-xl font-bold text-white">
+                      {block.title}
+                    </h4>
+                  </div>
+                </motion.div>
+              ))}
+            </div>
           </div>
 
           {/* Mobile image - only shown on small screens */}

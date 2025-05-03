@@ -2,17 +2,21 @@
 #focus-scroll-section {
   position: relative;
   z-index: 1;
+  padding-bottom: 100px;
 }
 
-/* Scrollable blocks column and blocks */
+/* Scrollable blocks column */
 .scrollable-blocks-column {
   display: flex;
   flex-direction: column;
-  gap: 1rem;
+  gap: 1.5rem;
 }
 
+/* Block styling */
 .scrollable-block {
   background-color: white;
+  border-radius: 0.75rem;
+  padding: 2rem;
   transition: all 0.3s ease;
   position: relative;
 }
@@ -21,6 +25,7 @@
   background-color: white;
 }
 
+/* Green vertical indicator for active block */
 .scrollable-block::after {
   content: '';
   position: absolute;
@@ -28,7 +33,7 @@
   top: 50%;
   transform: translateY(-50%) scaleY(0);
   width: 3px;
-  height: 60%;
+  height: 70%;
   background-color: #3eb489; /* Andela green */
   transition: transform 0.3s ease;
 }
@@ -37,53 +42,51 @@
   transform: translateY(-50%) scaleY(1);
 }
 
-/* Sticky image wrapper */
-.sticky-image-wrapper {
+/* Right column - truly fixed position */
+.fixed-image-column {
   position: relative;
-}
-
-.sticky-image-wrapper:before {
-  content: '';
-  display: block;
   height: 100%;
-  width: 100%;
-  position: sticky;
-  top: 120px;
 }
 
-/* Sticky image */
-.sticky-image {
-  position: absolute;
-  left: 0;
-  top: 0;
-  right: 0;
+/* Fixed container for images */
+.fixed-image-container {
+  position: fixed;
+  width: calc(50% - 3rem); /* Half width minus padding/gap */
+  max-width: 600px;
   height: 550px;
-  width: 100%;
-  opacity: 0;
-  transition: opacity 0.5s ease, transform 0.5s ease;
+  top: 120px; /* Match navbar height + some padding */
+  z-index: 1;
   overflow: hidden;
   border-radius: 0.75rem;
-  background-color: #f5f5f5;
 }
 
-/* When the image is active */
-.sticky-image.opacity-100 {
+/* Image styling */
+.fixed-image {
+  position: absolute;
+  inset: 0;
+  opacity: 0;
+  transition: opacity 0.5s ease, transform 0.5s ease;
+  height: 100%;
+  width: 100%;
+}
+
+.fixed-image.opacity-100 {
   opacity: 1;
-  position: sticky;
-  top: 120px;
 }
 
-/* When last block is in view, disable stickyness */
-.sticky-image-wrapper.unsticky .sticky-image {
-  position: relative !important;
-  top: auto !important;
+/* When last block is visible */
+.fixed-image-container.release-fixed {
+  position: absolute;
+  bottom: 0;
+  top: auto;
 }
 
 /* Mobile adjustments */
 @media (max-width: 1023px) {
-  .sticky-image {
+  .fixed-image-container {
     position: relative;
-    top: 0;
+    width: 100%;
     height: 400px;
+    top: 0;
   }
 }
