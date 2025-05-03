@@ -74,6 +74,12 @@
   opacity: 1;
 }
 
+/* When section is not in view, disable fixed positioning */
+.fixed-image-container.not-fixed {
+  position: relative;
+  top: auto;
+}
+
 /* When last block is visible */
 .fixed-image-container.release-fixed {
   position: absolute;

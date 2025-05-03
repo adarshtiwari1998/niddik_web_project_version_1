@@ -46,11 +46,14 @@ const focusBlocks: FocusBlock[] = [
 const FocusScrollSection: React.FC = () => {
   const [activeBlockId, setActiveBlockId] = useState<number>(1);
   const [isLastBlockVisible, setIsLastBlockVisible] = useState(false);
+  const [isSectionInView, setIsSectionInView] = useState(false);
   const blockRefs = useRef<(HTMLDivElement | null)[]>([]);
+  const sectionRef = useRef<HTMLDivElement>(null);
   
-  // Set up intersection observer to track which block is in view
+  // Set up intersection observers to track section and blocks
   useEffect(() => {
-    const observer = new IntersectionObserver(
+    // Observer for individual blocks
+    const blockObserver = new IntersectionObserver(
       (entries) => {
         entries.forEach((entry) => {
           if (entry.isIntersecting) {
@@ -74,24 +77,49 @@ const FocusScrollSection: React.FC = () => {
       }
     );
 
+    // Observer for the entire section
+    const sectionObserver = new IntersectionObserver(
+      (entries) => {
+        entries.forEach((entry) => {
+          // Only apply stickiness when section is in view
+          setIsSectionInView(entry.isIntersecting);
+        });
+      },
+      {
+        root: null,
+        rootMargin: "-10% 0px", // Start a bit before the section is fully in view
+        threshold: 0.1,
+      }
+    );
+
+    // Observe the section
+    if (sectionRef.current) {
+      sectionObserver.observe(sectionRef.current);
+    }
+
     // Observe all block elements
     blockRefs.current.forEach((block) => {
       if (block) {
-        observer.observe(block);
+        blockObserver.observe(block);
       }
     });
 
     return () => {
+      // Clean up observers
+      if (sectionRef.current) {
+        sectionObserver.unobserve(sectionRef.current);
+      }
+      
       blockRefs.current.forEach((block) => {
         if (block) {
-          observer.unobserve(block);
+          blockObserver.unobserve(block);
         }
       });
     };
   }, []);
   
   return (
-    <section className="py-16 bg-gray-50" id="focus-scroll-section">
+    <section ref={sectionRef} className="py-16 bg-gray-50" id="focus-scroll-section">
       <Container>
         <div className="text-center mb-20">
           <h2 className="text-4xl font-bold text-andela-dark mb-4">
@@ -124,9 +152,9 @@ const FocusScrollSection: React.FC = () => {
             ))}
           </div>
 
-          {/* Right column - truly fixed image that changes with scroll */}
+          {/* Right column - fixed image only when section is in view */}
           <div className="fixed-image-column hidden lg:block">
-            <div className={`fixed-image-container ${isLastBlockVisible ? "release-fixed" : ""}`}>
+            <div className={`fixed-image-container ${!isSectionInView ? "not-fixed" : ""} ${isLastBlockVisible ? "release-fixed" : ""}`}>
               {focusBlocks.map((block) => (
                 <motion.div
                   key={block.id}
