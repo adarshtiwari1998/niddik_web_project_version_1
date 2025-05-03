@@ -53,7 +53,7 @@ const Navbar = () => {
 
   return (
     <header className={cn(
-      "fixed w-full bg-white z-50 transition-shadow duration-300",
+      "fixed w-full bg-white z-40 transition-shadow duration-300",
       isScrolled ? "shadow-md" : "shadow-sm"
     )}>
       <Container>

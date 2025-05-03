@@ -100,7 +100,7 @@ const Hero = () => {
       </div>
       
       {/* Main Content */}
-      <div className="relative z-20 flex-grow flex items-center pt-20">
+      <div className="relative z-20 flex-grow flex items-center pt-24">
         <Container>
           <div className="max-w-4xl mx-auto text-center">
             <motion.h1 

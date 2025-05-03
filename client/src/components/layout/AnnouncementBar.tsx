@@ -1,0 +1,56 @@
+import { useState } from 'react';
+import { X } from 'lucide-react';
+import { Link } from 'wouter';
+import { motion, AnimatePresence } from 'framer-motion';
+
+interface AnnouncementBarProps {
+  text: string;
+  linkText: string;
+  linkUrl: string;
+  bgColor?: string;
+  textColor?: string;
+}
+
+export default function AnnouncementBar({ 
+  text, 
+  linkText, 
+  linkUrl, 
+  bgColor = "bg-andela-green", 
+  textColor = "text-white" 
+}: AnnouncementBarProps) {
+  const [isVisible, setIsVisible] = useState(true);
+
+  const handleClose = () => {
+    setIsVisible(false);
+  };
+
+  return (
+    <AnimatePresence>
+      {isVisible && (
+        <motion.div
+          initial={{ height: 0, opacity: 0 }}
+          animate={{ height: 'auto', opacity: 1 }}
+          exit={{ height: 0, opacity: 0 }}
+          transition={{ duration: 0.3 }}
+          className={`${bgColor} ${textColor} w-full text-center py-2 relative z-50`}
+        >
+          <div className="container mx-auto px-4 flex justify-center items-center">
+            <p className="text-sm md:text-base">
+              {text}{' '}
+              <Link href={linkUrl} className={`font-bold underline ${textColor} hover:opacity-80`}>
+                {linkText}
+              </Link>
+            </p>
+            <button 
+              onClick={handleClose}
+              className="ml-4 p-1 rounded-full hover:bg-white/20 transition-colors"
+              aria-label="Close announcement"
+            >
+              <X className="h-4 w-4" />
+            </button>
+          </div>
+        </motion.div>
+      )}
+    </AnimatePresence>
+  );
+}

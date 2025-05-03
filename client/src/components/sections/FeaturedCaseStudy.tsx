@@ -55,13 +55,11 @@ const FeaturedCaseStudy = () => {
                 </motion.div>
               ))}
             </ul>
-            <Link href="#">
-              <a className="bg-andela-green hover:bg-opacity-90 transition-colors text-white px-6 py-3 rounded-md font-medium inline-flex items-center">
-                Read Full Case Study
-                <svg className="w-4 h-4 ml-2" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M14 5l7 7m0 0l-7 7m7-7H3"></path>
-                </svg>
-              </a>
+            <Link href="#" className="bg-andela-green hover:bg-opacity-90 transition-colors text-white px-6 py-3 rounded-md font-medium inline-flex items-center">
+              Read Full Case Study
+              <svg className="w-4 h-4 ml-2" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M14 5l7 7m0 0l-7 7m7-7H3"></path>
+              </svg>
             </Link>
           </motion.div>
           
