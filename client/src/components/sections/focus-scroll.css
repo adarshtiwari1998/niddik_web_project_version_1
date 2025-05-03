@@ -107,6 +107,7 @@
   z-index: 0; /* Lower z-index to allow content below to flow normally */
   opacity: 1 !important; /* Ensure image is visible */
   visibility: visible !important; /* Make sure it's not hidden */
+  transition: all 0.3s ease-out; /* Smooth transition from fixed to static position */
 }
 
 /* Ensure image is always visible in release-fixed state */
@@ -121,6 +122,13 @@
   visibility: visible !important;
   position: relative !important; /* Make sure it's part of normal flow for 5th block */
   transform: none !important; /* Reset any transform */
+  top: 0 !important;
+  left: 0 !important;
+  right: 0 !important;
+  bottom: 0 !important;
+  height: 100% !important;
+  width: 100% !important;
+  display: block !important;
 }
 
 /* Ensure the active image is shown clearly */

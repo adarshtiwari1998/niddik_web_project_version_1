@@ -55,10 +55,33 @@ const FocusScrollSection: React.FC = () => {
   // Define the actual last block ID - important to track when we've reached the end
   const LAST_BLOCK_ID = 5; // Match this with the actual ID of the last block
   
+  // Function to update active block CSS classes and attributes
+  const updateActiveBlockStyles = (activeId: number) => {
+    // Update data-active attributes for all blocks
+    blockRefs.current.forEach(block => {
+      if (block) {
+        const blockId = Number(block.getAttribute("data-block-id"));
+        const isActive = blockId === activeId;
+        block.setAttribute("data-active", isActive ? "true" : "false");
+        
+        // Manually toggle the 'active' class for more reliable styling
+        if (isActive) {
+          block.classList.add("active");
+        } else {
+          block.classList.remove("active");
+        }
+      }
+    });
+  };
+  
   // Use effect to initialize active block to 1 and add extra section detector
   useEffect(() => {
-    // Always start with the first block active
+    // Always start with the first block active and set its styles
     setActiveBlockId(1);
+    // Set initial active block styles after the DOM is ready
+    setTimeout(() => {
+      updateActiveBlockStyles(1);
+    }, 100);
     
     // Add enhanced scroll listener to handle section boundaries - crucial for smooth transition at edges
     const handleScroll = () => {
@@ -108,6 +131,7 @@ const FocusScrollSection: React.FC = () => {
         // Always ensure the current image is visible when in release mode
         // Always set to the LAST block to ensure image 5 is showing
         setActiveBlockId(LAST_BLOCK_ID);
+        updateActiveBlockStyles(LAST_BLOCK_ID);
         console.log(`Fifth block is visible - setting active block to ${LAST_BLOCK_ID}`);
       } else if (!isTopInView) {
         // We're at the top of the section, don't enable fixed positioning yet
@@ -127,6 +151,7 @@ const FocusScrollSection: React.FC = () => {
           if (nextBlock !== activeBlockId && (nextBlock > activeBlockId || nextBlock === 1)) {
             console.log(`Updating active block from ${activeBlockId} to ${nextBlock}`);
             setActiveBlockId(nextBlock);
+            updateActiveBlockStyles(nextBlock);
           }
         }
       }
@@ -211,6 +236,23 @@ const FocusScrollSection: React.FC = () => {
           // This prevents going backward (e.g., 3→1) which causes image jumping
           if (topVisibleBlock > activeBlockId || topVisibleBlock === 1) {
             setActiveBlockId(topVisibleBlock);
+            
+            // Update both the activeBlockId state and DOM attributes/classes
+            blockRefs.current.forEach(block => {
+              if (block) {
+                const blockId = Number(block.getAttribute("data-block-id"));
+                const isActive = blockId === topVisibleBlock;
+                block.setAttribute("data-active", isActive ? "true" : "false");
+                
+                // Manually toggle the 'active' class for more reliable styling
+                if (isActive) {
+                  block.classList.add("active");
+                } else {
+                  block.classList.remove("active");
+                }
+              }
+            });
+            
             console.log(`Block ${topVisibleBlock} is now active (top-most visible)`);
           } else {
             console.log(`Skipping non-sequential block ${topVisibleBlock} (current: ${activeBlockId})`);
