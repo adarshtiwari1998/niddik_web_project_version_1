@@ -1,0 +1,64 @@
+import { pgTable, text, serial, integer, boolean, timestamp } from "drizzle-orm/pg-core";
+import { createInsertSchema } from "drizzle-zod";
+import { z } from "zod";
+import { relations } from "drizzle-orm";
+
+export const users = pgTable("users", {
+  id: serial("id").primaryKey(),
+  username: text("username").notNull().unique(),
+  password: text("password").notNull(),
+});
+
+export const insertUserSchema = createInsertSchema(users).pick({
+  username: true,
+  password: true,
+});
+
+export type InsertUser = z.infer<typeof insertUserSchema>;
+export type User = typeof users.$inferSelect;
+
+// Contact form submissions
+export const contactSubmissions = pgTable("contact_submissions", {
+  id: serial("id").primaryKey(),
+  fullName: text("full_name").notNull(),
+  email: text("email").notNull(),
+  company: text("company").notNull(),
+  interest: text("interest").notNull(),
+  createdAt: timestamp("created_at").defaultNow().notNull(),
+});
+
+export const contactSubmissionSchema = createInsertSchema(contactSubmissions, {
+  fullName: (schema) => schema.min(2, "Full name must be at least 2 characters"),
+  email: (schema) => schema.email("Please enter a valid email address"),
+  company: (schema) => schema.min(1, "Company name is required"),
+  interest: (schema) => schema.min(1, "Please select an interest")
+});
+
+export type ContactSubmission = typeof contactSubmissions.$inferSelect;
+export type InsertContactSubmission = z.infer<typeof contactSubmissionSchema>;
+
+// Testimonials for the success stories section
+export const testimonials = pgTable("testimonials", {
+  id: serial("id").primaryKey(),
+  name: text("name").notNull(),
+  role: text("role").notNull(),
+  company: text("company"),
+  quote: text("quote").notNull(),
+  rating: integer("rating").notNull(),
+  image: text("image").notNull(),
+});
+
+export const testimonialSchema = createInsertSchema(testimonials);
+export type Testimonial = typeof testimonials.$inferSelect;
+export type InsertTestimonial = z.infer<typeof testimonialSchema>;
+
+// Client companies to show in the trusted companies section
+export const clients = pgTable("clients", {
+  id: serial("id").primaryKey(),
+  name: text("name").notNull(),
+  logo: text("logo").notNull(),
+});
+
+export const clientSchema = createInsertSchema(clients);
+export type Client = typeof clients.$inferSelect;
+export type InsertClient = z.infer<typeof clientSchema>;
