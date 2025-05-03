@@ -19,6 +19,8 @@
   padding: 2rem;
   transition: all 0.3s ease;
   position: relative;
+  border-left: 3px solid transparent;
+  padding-left: calc(2rem - 3px); /* Account for border width in padding */
 }
 
 .scrollable-block.active,
@@ -27,6 +29,7 @@
   box-shadow: 0 8px 24px rgba(0, 0, 0, 0.08);
   border-left: 3px solid #3eb489; /* Andela green */
   transform: translateX(5px);
+  z-index: 2; /* Bring active blocks to front */
 }
 
 /* Style text inside active blocks */
@@ -115,6 +118,9 @@
 .fixed-image-container.release-fixed .fixed-image {
   opacity: 0;
   transition: opacity 0.7s ease;
+  /* Always be present in DOM, just hidden */
+  display: block !important;
+  visibility: hidden;
 }
 
 /* Only show the active image */

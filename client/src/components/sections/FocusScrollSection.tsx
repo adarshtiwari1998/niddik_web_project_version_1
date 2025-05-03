@@ -123,10 +123,15 @@ const FocusScrollSection: React.FC = () => {
           if (!block) return false;
           const rect = block.getBoundingClientRect();
           // Consider a block "in view" when it's in the upper half of the viewport
+          // Prioritize blocks closer to the top of the viewport
           return rect.top <= window.innerHeight * 0.5 && rect.bottom >= 0;
         })
-        .map(block => Number(block?.getAttribute("data-block-id") || 0))
-        .sort((a, b) => a - b); // Sort by block ID to maintain sequence
+        .sort((a, b) => {
+          if (!a || !b) return 0;
+          // Sort by position first (top-most block first)
+          return a.getBoundingClientRect().top - b.getBoundingClientRect().top;
+        })
+        .map(block => Number(block?.getAttribute("data-block-id") || 0));
         
       // Get current position based on blocks in view (top-most visible block)
       const visibleBlocks = blocksInView.length > 0 ? blocksInView : [activeBlockId];
@@ -270,6 +275,15 @@ const FocusScrollSection: React.FC = () => {
         entries.forEach((entry) => {
           // Only apply stickiness when section is in view
           setIsSectionInView(entry.isIntersecting);
+          
+          // When section comes into view, force an active state update
+          if (entry.isIntersecting && activeBlockId) {
+            console.log("Section visible, forcing active state update for block", activeBlockId);
+            // Slight delay to ensure DOM is ready
+            setTimeout(() => {
+              updateActiveBlockStyles(activeBlockId);
+            }, 100);
+          }
         });
       },
       {
@@ -413,6 +427,8 @@ const FocusScrollSection: React.FC = () => {
                 // Release fixed position when the last block is visible
                 isLastBlockVisible ? "release-fixed" : ""
               }`}
+              // Never hide the container entirely, just change its positioning mode
+              style={{display: "block", position: isSectionInView ? "sticky" : "relative"}}
               // Add a debug comment to show current state
               data-debug={`section-in-view:${isSectionInView}, first-block-at-top:${isFirstBlockAtTop}, active-block:${activeBlockId}`}
             >
@@ -426,6 +442,8 @@ const FocusScrollSection: React.FC = () => {
                   animate={{ 
                     opacity: block.id === activeBlockId ? 1 : 0,
                     scale: block.id === activeBlockId ? 1 : 0.95,
+                    // Ensure block 5 doesn't disappear if it's the last block
+                    display: block.id === LAST_BLOCK_ID ? "block" : undefined
                   }}
                   transition={{ duration: 0.7, ease: "easeOut" }}
                   data-active={block.id === activeBlockId ? "true" : "false"}
@@ -458,7 +476,9 @@ const FocusScrollSection: React.FC = () => {
                 animate={{ 
                   opacity: block.id === activeBlockId ? 1 : 0,
                   y: block.id === activeBlockId ? 0 : 20,
-                  scale: block.id === activeBlockId ? 1 : 0.95
+                  scale: block.id === activeBlockId ? 1 : 0.95,
+                  // Always keep last block in DOM for mobile too
+                  display: block.id === LAST_BLOCK_ID ? "block" : undefined
                 }}
                 transition={{ duration: 0.7, ease: "easeOut" }}
                 className={`relative ${block.id === activeBlockId ? 'block' : 'hidden'}`}
