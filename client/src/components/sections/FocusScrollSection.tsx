@@ -169,19 +169,20 @@ const FocusScrollSection: React.FC = () => {
         }
       });
       
-      // Handle the transition to the last block specially
-      if (isLastBlockVisible || activeBlockId === LAST_BLOCK_ID) {
-        // If we're at the last block, image should scroll with content
+      // For last block handling
+      if (activeBlockId === LAST_BLOCK_ID) {
+        // Always make sure image is visible for the last block and not in fixed mode
         setIsFixedMode(false);
+        console.log("Last block active, fixed mode disabled");
         
-        // Force the image container to be aligned to the bottom of the column
+        // We'll handle positioning with CSS in our last-block-position class
         if (imageContainerRef.current) {
-          // Set a special position class for the last block
-          // This ensures proper alignment when transitioning from fixed to relative
           imageContainerRef.current.classList.add('last-block-position');
         }
-      } else {
-        // Normal fixed mode determination (for blocks 1-4)
+      } 
+      // For all other blocks (1-4)
+      else {
+        // Normal fixed mode determination for blocks 1-4
         const shouldBeFixedMode = 
           isSectionVisible && 
           sectionTop < 0 && // Section has scrolled up partially
@@ -189,7 +190,7 @@ const FocusScrollSection: React.FC = () => {
           
         setIsFixedMode(shouldBeFixedMode);
         
-        // Remove the special positioning class when not at the last block
+        // Make sure we remove special positioning when not at the last block
         if (imageContainerRef.current) {
           imageContainerRef.current.classList.remove('last-block-position');
         }
@@ -325,15 +326,17 @@ const FocusScrollSection: React.FC = () => {
             >
               <div 
                 ref={imageContainerRef}
-                className={`fixed-image-container ${isFixedMode ? "" : "not-fixed"}`}
+                className={`fixed-image-container ${isFixedMode ? "" : "not-fixed"} ${activeBlockId === LAST_BLOCK_ID ? "last-block-position" : ""}`}
                 style={{ 
                   position: isFixedMode ? "fixed" : "relative",
-                  top: isFixedMode ? "50%" : "auto",
+                  top: isFixedMode ? "50%" : (activeBlockId === LAST_BLOCK_ID ? "auto" : "0"),
                   bottom: (!isFixedMode && activeBlockId === LAST_BLOCK_ID) ? "0" : "auto", // Anchor to bottom for last block
                   transform: isFixedMode ? "translateY(-50%)" : "none",
                   width: isFixedMode ? "calc(50% - 3rem)" : "100%",
-                  transition: "all 0.2s ease-out", // Add smooth transition for position changes
-                  marginTop: (!isFixedMode && activeBlockId === LAST_BLOCK_ID) ? "auto" : "0" // Push to bottom when at last block
+                  transition: "all 0.3s ease-out", // Add smooth transition for position changes
+                  marginTop: (!isFixedMode && activeBlockId === LAST_BLOCK_ID) ? "auto" : "0", // Push to bottom when at last block
+                  opacity: 1, // Always ensure it's visible
+                  visibility: "visible" // Always ensure it's visible
                 }}
                 data-fixed={isFixedMode ? "true" : "false"}
                 data-active-block={activeBlockId}

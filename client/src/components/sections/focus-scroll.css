@@ -107,12 +107,40 @@
   bottom: 0 !important; /* Stick to bottom */
   transform: none !important;
   margin-top: auto !important; /* Push to bottom of container */
+  margin-bottom: 0 !important; /* No bottom margin for last block */
   height: 500px; /* Same height as fixed state */
-  width: 100%; /* Full width of its container */
-  display: flex !important;
-  align-items: flex-end !important; /* Align to bottom */
-  align-self: flex-end !important; /* Align to bottom */
+  width: 100% !important; /* Full width of its container */
+  display: block !important;
+  opacity: 1 !important;
+  visibility: visible !important;
+  z-index: 10 !important;
   transition: all 0.3s ease-out;
+}
+
+/* Make sure fixed image for the last block is visible */
+.fixed-image-container.last-block-position .fixed-image[data-active="true"] {
+  opacity: 1 !important;
+  visibility: visible !important;
+  display: block !important;
+  position: relative !important;
+  z-index: 15 !important;
+}
+
+/* Add special styling to make sure it's visible in the wrapper */
+.fixed-image-wrapper {
+  display: block;
+  position: relative;
+  height: 100%;
+  width: 100%;
+}
+
+/* When we're at block 5, make the wrapper flex with justify-end */
+.fixed-image-wrapper.h-full.flex.flex-col.justify-end {
+  display: flex !important;
+  flex-direction: column !important;
+  justify-content: flex-end !important;
+  height: 100% !important;
+  min-height: 600px !important; /* Ensure enough height */
 }
 
 /* When last block is visible OR section is exiting viewport */
