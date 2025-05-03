@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { X } from 'lucide-react';
 import { Link } from 'wouter';
 import { motion, AnimatePresence } from 'framer-motion';
@@ -9,6 +9,7 @@ interface AnnouncementBarProps {
   linkUrl: string;
   bgColor?: string;
   textColor?: string;
+  onVisibilityChange?: (isVisible: boolean) => void;
 }
 
 export default function AnnouncementBar({ 
@@ -16,9 +17,17 @@ export default function AnnouncementBar({
   linkText, 
   linkUrl, 
   bgColor = "bg-andela-green", 
-  textColor = "text-white" 
+  textColor = "text-white",
+  onVisibilityChange
 }: AnnouncementBarProps) {
   const [isVisible, setIsVisible] = useState(true);
+
+  // Notify parent component when visibility changes
+  useEffect(() => {
+    if (onVisibilityChange) {
+      onVisibilityChange(isVisible);
+    }
+  }, [isVisible, onVisibilityChange]);
 
   const handleClose = () => {
     setIsVisible(false);
@@ -32,7 +41,7 @@ export default function AnnouncementBar({
           animate={{ height: 'auto', opacity: 1 }}
           exit={{ height: 0, opacity: 0 }}
           transition={{ duration: 0.3 }}
-          className={`${bgColor} ${textColor} w-full text-center py-2 relative z-50`}
+          className={`${bgColor} ${textColor} w-full text-center py-2 h-10 relative z-50`}
         >
           <div className="container mx-auto px-4 flex justify-center items-center">
             <p className="text-sm md:text-base">

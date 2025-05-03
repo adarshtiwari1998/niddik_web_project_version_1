@@ -1,3 +1,4 @@
+import { useState } from "react";
 import Navbar from "@/components/layout/Navbar";
 import Footer from "@/components/layout/Footer";
 import Hero from "@/components/sections/Hero";
@@ -11,6 +12,12 @@ import ContactSection from "@/components/sections/ContactSection";
 import AnnouncementBar from "@/components/layout/AnnouncementBar";
 
 const Home = () => {
+  const [isAnnouncementVisible, setIsAnnouncementVisible] = useState(true);
+
+  const handleAnnouncementVisibilityChange = (isVisible: boolean) => {
+    setIsAnnouncementVisible(isVisible);
+  };
+
   return (
     <div className="min-h-screen overflow-x-hidden">
       <AnnouncementBar 
@@ -19,8 +26,9 @@ const Home = () => {
         linkUrl="#"
         bgColor="bg-indigo-600"
         textColor="text-white"
+        onVisibilityChange={handleAnnouncementVisibilityChange}
       />
-      <Navbar />
+      <Navbar hasAnnouncementAbove={isAnnouncementVisible} />
       <main>
         <Hero />
         <TrustedCompanies />

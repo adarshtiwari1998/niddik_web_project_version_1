@@ -16,6 +16,10 @@ interface NavItem {
   dropdown?: DropdownItem[];
 }
 
+interface NavbarProps {
+  hasAnnouncementAbove?: boolean;
+}
+
 const navItems: NavItem[] = [
   {
     label: "For Business",
@@ -38,7 +42,7 @@ const navItems: NavItem[] = [
   { label: "About Us", href: "#" }
 ];
 
-const Navbar = () => {
+const Navbar: React.FC<NavbarProps> = ({ hasAnnouncementAbove = true }) => {
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const [isScrolled, setIsScrolled] = useState(false);
 
@@ -53,8 +57,9 @@ const Navbar = () => {
 
   return (
     <header className={cn(
-      "fixed w-full bg-white z-40 transition-shadow duration-300",
-      isScrolled ? "shadow-md" : "shadow-sm"
+      "fixed w-full bg-white z-40 transition-all duration-300",
+      isScrolled ? "shadow-md" : "shadow-sm",
+      hasAnnouncementAbove ? "top-[40px]" : "top-0" // Adjust based on announcement bar visibility
     )}>
       <Container>
         <div className="flex justify-between items-center py-4">
