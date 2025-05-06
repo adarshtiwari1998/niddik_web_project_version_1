@@ -64,32 +64,7 @@ const WebAppSolutions = () => {
     }
   ];
 
-  const caseStudies = [
-    {
-      title: "E-Commerce Platform",
-      client: "RetailTech Innovations",
-      description: "Developed a comprehensive e-commerce solution with inventory management, payment processing, and customer analytics.",
-      results: [
-        "Increased online sales by 142% in the first quarter",
-        "Reduced page load time by 65%",
-        "Improved checkout conversion rate by 28%"
-      ],
-      image: "https://images.unsplash.com/photo-1561997968-aa846c2bf255?auto=format&fit=crop&w=800&q=80",
-      tags: ["E-commerce", "React", "Node.js", "PostgreSQL"]
-    },
-    {
-      title: "Healthcare Management System",
-      client: "MedCare Solutions",
-      description: "Created a secure and compliant healthcare management application for patient records, appointments, and telemedicine capabilities.",
-      results: [
-        "Reduced administrative workload by 40%",
-        "HIPAA compliant data security implementation",
-        "Enabled 24/7 service accessibility with 99.9% uptime"
-      ],
-      image: "https://images.unsplash.com/photo-1576091160550-2173dba999ef?auto=format&fit=crop&w=800&q=80",
-      tags: ["Healthcare", "Angular", "C#", "Azure"]
-    }
-  ];
+  // Case studies removed as requested
 
   const developmentProcess = [
     {
@@ -342,83 +317,7 @@ const WebAppSolutions = () => {
         </Container>
       </section>
       
-      {/* Case Studies Section */}
-      <section className="py-20 bg-white">
-        <Container>
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true }}
-            transition={{ duration: 0.5 }}
-            className="text-center mb-16"
-          >
-            <div className="inline-block mb-4">
-              <div className="px-4 py-1 bg-purple-500/10 rounded-full text-purple-500 text-sm font-medium">
-                Success Stories
-              </div>
-            </div>
-            <h2 className="text-3xl md:text-4xl font-bold mb-4 text-andela-dark">Case Studies</h2>
-            <p className="text-lg text-andela-gray max-w-2xl mx-auto">
-              Real-world examples of how our web applications have helped businesses achieve their goals.
-            </p>
-          </motion.div>
-          
-          <div className="space-y-16">
-            {caseStudies.map((caseStudy, index) => (
-              <motion.div
-                key={index}
-                initial={{ opacity: 0, y: 20 }}
-                whileInView={{ opacity: 1, y: 0 }}
-                viewport={{ once: true }}
-                transition={{ duration: 0.5 }}
-                className={`grid grid-cols-1 lg:grid-cols-2 gap-10 items-center ${
-                  index % 2 === 1 ? 'lg:flex-row-reverse' : ''
-                }`}
-              >
-                <div className={`order-2 ${index % 2 === 1 ? 'lg:order-1' : 'lg:order-2'}`}>
-                  <div className="rounded-xl overflow-hidden shadow-lg">
-                    <img 
-                      src={caseStudy.image} 
-                      alt={caseStudy.title} 
-                      className="w-full h-auto object-cover"
-                    />
-                  </div>
-                </div>
-                <div className={`order-1 ${index % 2 === 1 ? 'lg:order-2' : 'lg:order-1'}`}>
-                  <div className="space-y-4">
-                    <div className="flex gap-2 flex-wrap">
-                      {caseStudy.tags.map((tag, i) => (
-                        <span 
-                          key={i} 
-                          className="px-3 py-1 bg-gray-100 text-andela-gray text-xs rounded-full"
-                        >
-                          {tag}
-                        </span>
-                      ))}
-                    </div>
-                    <h3 className="text-2xl font-bold text-andela-dark">{caseStudy.title}</h3>
-                    <p className="text-andela-green font-medium">Client: {caseStudy.client}</p>
-                    <p className="text-andela-gray">{caseStudy.description}</p>
-                    <div>
-                      <p className="font-medium text-andela-dark mb-2">Results:</p>
-                      <ul className="space-y-2">
-                        {caseStudy.results.map((result, i) => (
-                          <li key={i} className="flex items-start">
-                            <svg className="w-5 h-5 text-andela-green flex-shrink-0 mr-2 mt-1" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor">
-                              <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clipRule="evenodd" />
-                            </svg>
-                            <span className="text-andela-gray">{result}</span>
-                          </li>
-                        ))}
-                      </ul>
-                    </div>
-                  </div>
-                </div>
-              </motion.div>
-            ))}
-          </div>
-        </Container>
-      </section>
+      {/* Case Studies section has been removed as requested */}
       
       {/* Why Choose Us */}
       <section className="py-20 bg-gradient-to-r from-andela-dark to-andela-dark/90 text-white">
