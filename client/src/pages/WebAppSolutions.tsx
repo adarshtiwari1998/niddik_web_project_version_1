@@ -16,7 +16,13 @@ import {
   BarChart3,
   PenTool,
   Monitor,
-  ShoppingCart
+  ShoppingCart,
+  Building2,
+  GraduationCap,
+  HeartPulse,
+  Store,
+  BadgePercent,
+  RefreshCw
 } from "lucide-react";
 import Navbar from "@/components/layout/Navbar";
 import Footer from "@/components/layout/Footer";
@@ -264,6 +270,99 @@ const WebAppSolutions = () => {
         </Container>
       </section>
       
+      {/* Types of Web Applications Section */}
+      <section className="py-20 bg-white">
+        <Container>
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true }}
+            transition={{ duration: 0.5 }}
+            className="text-center mb-16"
+          >
+            <div className="inline-block mb-4">
+              <div className="px-4 py-1 bg-andela-green/10 rounded-full text-andela-green text-sm font-medium">
+                Web App Solutions
+              </div>
+            </div>
+            <h2 className="text-3xl md:text-4xl font-bold mb-4 text-andela-dark">Types of Web Applications We Build</h2>
+            <p className="text-lg text-andela-gray max-w-2xl mx-auto">
+              We develop a wide range of web applications tailored to specific industries and business needs.
+            </p>
+          </motion.div>
+          
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+            {[
+              {
+                icon: <ShoppingCart className="h-8 w-8 text-pink-500" />,
+                title: "E-commerce Platforms",
+                description: "Custom online stores with inventory management, secure payments, and customer analytics.",
+                features: ["Product catalogs", "Secure checkout", "Inventory management", "Customer accounts", "Analytics dashboard"]
+              },
+              {
+                icon: <Building2 className="h-8 w-8 text-blue-500" />,
+                title: "Business Applications",
+                description: "Streamline operations with custom CRM, ERP, and project management solutions.",
+                features: ["Customer relationship management", "Resource planning", "Task tracking", "Team collaboration", "Process automation"]
+              },
+              {
+                icon: <GraduationCap className="h-8 w-8 text-green-500" />,
+                title: "Educational Platforms",
+                description: "Learning management systems and educational platforms for schools and online courses.",
+                features: ["Course management", "Student progress tracking", "Assessment tools", "Discussion forums", "Certificate generation"]
+              },
+              {
+                icon: <HeartPulse className="h-8 w-8 text-red-500" />,
+                title: "Healthcare Applications",
+                description: "Secure, HIPAA-compliant solutions for patient management and telehealth services.",
+                features: ["Patient records", "Appointment scheduling", "Telemedicine integration", "Prescription management", "Billing systems"]
+              },
+              {
+                icon: <Store className="h-8 w-8 text-orange-500" />,
+                title: "Marketplace Platforms",
+                description: "Multi-vendor marketplaces connecting buyers and sellers with robust management tools.",
+                features: ["Vendor management", "Product listings", "Reviews & ratings", "Payment processing", "Communications systems"]
+              },
+              {
+                icon: <BadgePercent className="h-8 w-8 text-purple-500" />,
+                title: "Fintech Applications",
+                description: "Secure financial applications for payments, budgeting, and financial management.",
+                features: ["Payment processing", "User authentication", "Transaction history", "Financial reporting", "Notification systems"]
+              }
+            ].map((app, index) => (
+              <motion.div
+                key={index}
+                initial={{ opacity: 0, y: 20 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                viewport={{ once: true }}
+                transition={{ duration: 0.4, delay: index * 0.1 }}
+                className="bg-white border border-gray-100 rounded-xl p-8 shadow-sm hover:shadow-xl transition-all"
+              >
+                <div className="w-16 h-16 bg-gray-50 rounded-lg flex items-center justify-center mb-6">
+                  {app.icon}
+                </div>
+                <h3 className="text-xl font-bold mb-3 text-andela-dark">{app.title}</h3>
+                <p className="text-andela-gray mb-6">{app.description}</p>
+                
+                <div>
+                  <p className="text-sm font-medium text-andela-green mb-3">Key Features:</p>
+                  <ul className="space-y-2">
+                    {app.features.map((feature, i) => (
+                      <li key={i} className="flex items-start">
+                        <svg className="w-5 h-5 text-andela-green flex-shrink-0 mr-2 mt-0.5" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor">
+                          <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clipRule="evenodd" />
+                        </svg>
+                        <span className="text-andela-gray">{feature}</span>
+                      </li>
+                    ))}
+                  </ul>
+                </div>
+              </motion.div>
+            ))}
+          </div>
+        </Container>
+      </section>
+      
       {/* Development Process */}
       <section className="py-20 bg-gray-50">
         <Container>
@@ -319,9 +418,14 @@ const WebAppSolutions = () => {
       
       {/* Case Studies section has been removed as requested */}
       
-      {/* Why Choose Us */}
-      <section className="py-20 bg-gradient-to-r from-andela-dark to-andela-dark/90 text-white">
-        <Container>
+      {/* Why Choose Us - Improved Section */}
+      <section className="py-20 bg-gradient-to-r from-andela-dark to-andela-dark/90 text-white relative overflow-hidden">
+        {/* Decorative elements */}
+        <div className="absolute top-0 right-0 w-96 h-96 bg-andela-green/5 rounded-full blur-3xl"></div>
+        <div className="absolute bottom-0 left-0 w-80 h-80 bg-blue-500/5 rounded-full blur-3xl"></div>
+        <div className="absolute bottom-20 right-20 w-40 h-40 bg-yellow-500/5 rounded-full blur-3xl"></div>
+        
+        <Container className="relative z-10">
           <motion.div
             initial={{ opacity: 0, y: 20 }}
             whileInView={{ opacity: 1, y: 0 }}
@@ -329,6 +433,11 @@ const WebAppSolutions = () => {
             transition={{ duration: 0.5 }}
             className="text-center mb-16"
           >
+            <div className="inline-block mb-4">
+              <div className="px-4 py-1 bg-andela-green/20 rounded-full text-andela-green text-sm font-medium">
+                Our Expertise
+              </div>
+            </div>
             <h2 className="text-3xl md:text-4xl font-bold mb-4">Why Choose Niddik for Web Development</h2>
             <p className="text-xl text-gray-300 max-w-2xl mx-auto">
               We combine technical expertise with business acumen to deliver web applications that exceed expectations.
@@ -337,46 +446,187 @@ const WebAppSolutions = () => {
           
           <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
             <motion.div
-              initial={{ opacity: 0, y: 20 }}
-              whileInView={{ opacity: 1, y: 0 }}
+              initial={{ opacity: 0, scale: 0.95, y: 20 }}
+              whileInView={{ opacity: 1, scale: 1, y: 0 }}
               viewport={{ once: true }}
               transition={{ duration: 0.5 }}
-              className="bg-white/10 backdrop-blur-sm p-6 rounded-xl"
+              whileHover={{ 
+                y: -5,
+                boxShadow: "0 10px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04)"
+              }}
+              className="bg-white/10 backdrop-blur-sm p-8 rounded-xl border border-white/5"
             >
-              <Users className="h-10 w-10 text-andela-green mb-4" />
-              <h3 className="text-xl font-bold mb-3">Dedicated Team</h3>
-              <p className="text-gray-300">
-                We assign a dedicated team of developers, designers, and project managers to ensure consistent communication and delivery.
+              <div className="bg-andela-green/10 p-3 rounded-lg w-14 h-14 flex items-center justify-center mb-6">
+                <Users className="h-8 w-8 text-andela-green" />
+              </div>
+              <h3 className="text-xl font-bold mb-4">Dedicated Team</h3>
+              <p className="text-gray-300 leading-relaxed">
+                We assign a dedicated team of developers, designers, and project managers to ensure consistent communication and delivery. Our experts work seamlessly to bring your vision to life.
               </p>
             </motion.div>
             
             <motion.div
-              initial={{ opacity: 0, y: 20 }}
-              whileInView={{ opacity: 1, y: 0 }}
+              initial={{ opacity: 0, scale: 0.95, y: 20 }}
+              whileInView={{ opacity: 1, scale: 1, y: 0 }}
               viewport={{ once: true }}
               transition={{ duration: 0.5, delay: 0.1 }}
-              className="bg-white/10 backdrop-blur-sm p-6 rounded-xl"
+              whileHover={{ 
+                y: -5,
+                boxShadow: "0 10px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04)"
+              }}
+              className="bg-white/10 backdrop-blur-sm p-8 rounded-xl border border-white/5"
             >
-              <Zap className="h-10 w-10 text-andela-green mb-4" />
-              <h3 className="text-xl font-bold mb-3">Cutting-Edge Technology</h3>
-              <p className="text-gray-300">
-                We stay ahead of the curve with the latest web technologies and best practices to build future-proof applications.
+              <div className="bg-andela-green/10 p-3 rounded-lg w-14 h-14 flex items-center justify-center mb-6">
+                <Zap className="h-8 w-8 text-andela-green" />
+              </div>
+              <h3 className="text-xl font-bold mb-4">Cutting-Edge Technology</h3>
+              <p className="text-gray-300 leading-relaxed">
+                We stay ahead of the curve with the latest web technologies and best practices to build future-proof applications. Our solutions are optimized for performance, security, and scalability.
               </p>
             </motion.div>
             
             <motion.div
-              initial={{ opacity: 0, y: 20 }}
-              whileInView={{ opacity: 1, y: 0 }}
+              initial={{ opacity: 0, scale: 0.95, y: 20 }}
+              whileInView={{ opacity: 1, scale: 1, y: 0 }}
               viewport={{ once: true }}
               transition={{ duration: 0.5, delay: 0.2 }}
-              className="bg-white/10 backdrop-blur-sm p-6 rounded-xl"
+              whileHover={{ 
+                y: -5,
+                boxShadow: "0 10px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04)"
+              }}
+              className="bg-white/10 backdrop-blur-sm p-8 rounded-xl border border-white/5"
             >
-              <PenTool className="h-10 w-10 text-andela-green mb-4" />
-              <h3 className="text-xl font-bold mb-3">Custom Solutions</h3>
-              <p className="text-gray-300">
-                Every project is unique, and we tailor our development approach to meet your specific business requirements and goals.
+              <div className="bg-andela-green/10 p-3 rounded-lg w-14 h-14 flex items-center justify-center mb-6">
+                <PenTool className="h-8 w-8 text-andela-green" />
+              </div>
+              <h3 className="text-xl font-bold mb-4">Custom Solutions</h3>
+              <p className="text-gray-300 leading-relaxed">
+                Every project is unique, and we tailor our development approach to meet your specific business requirements and goals. We create solutions that perfectly align with your vision and objectives.
               </p>
             </motion.div>
+          </div>
+        </Container>
+      </section>
+      
+      {/* Web App Development Process - Animated Section */}
+      <section className="py-24 bg-gray-50">
+        <Container>
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true }}
+            transition={{ duration: 0.5 }}
+            className="text-center mb-16"
+          >
+            <div className="inline-block mb-4">
+              <div className="px-4 py-1 bg-andela-green/10 rounded-full text-andela-green text-sm font-medium">
+                Development Lifecycle
+              </div>
+            </div>
+            <h2 className="text-3xl md:text-4xl font-bold mb-4 text-andela-dark">Our Web Application Development Process</h2>
+            <p className="text-lg text-andela-gray max-w-3xl mx-auto">
+              Our proven development methodology ensures we deliver high-quality web applications that meet your business goals and exceed user expectations.
+            </p>
+          </motion.div>
+          
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-10 mb-16">
+            {[
+              {
+                step: "1",
+                title: "Discovery & Planning",
+                description: "We work with you to understand your business objectives, target audience, and technical requirements to create a detailed project roadmap.",
+                icon: <Database className="h-6 w-6 text-indigo-500" />,
+                color: "bg-indigo-50",
+                iconColor: "text-indigo-500",
+                borderColor: "border-indigo-100"
+              },
+              {
+                step: "2",
+                title: "Design & Prototyping",
+                description: "Our designers create intuitive UI/UX designs and interactive prototypes that focus on user experience and visual appeal.",
+                icon: <PenTool className="h-6 w-6 text-blue-500" />,
+                color: "bg-blue-50",
+                iconColor: "text-blue-500",
+                borderColor: "border-blue-100"
+              },
+              {
+                step: "3",
+                title: "Development",
+                description: "Our engineers build your application using modern technologies and best practices for performance, security, and maintainability.",
+                icon: <Code className="h-6 w-6 text-green-500" />,
+                color: "bg-green-50",
+                iconColor: "text-green-500",
+                borderColor: "border-green-100"
+              }
+            ].map((step, index) => (
+              <motion.div
+                key={index}
+                initial={{ opacity: 0, y: 20 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                viewport={{ once: true }}
+                transition={{ duration: 0.4, delay: index * 0.1 }}
+                className={`relative bg-white rounded-xl shadow-sm p-8 border ${step.borderColor}`}
+              >
+                <div className="absolute -top-5 left-8 w-10 h-10 rounded-full bg-white border border-gray-100 shadow-md flex items-center justify-center font-bold text-lg text-andela-green">
+                  {step.step}
+                </div>
+                <div className={`w-14 h-14 ${step.color} rounded-lg flex items-center justify-center mb-5`}>
+                  {step.icon}
+                </div>
+                <h3 className="text-lg font-bold mb-3 text-andela-dark">{step.title}</h3>
+                <p className="text-andela-gray">{step.description}</p>
+              </motion.div>
+            ))}
+          </div>
+
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-10">
+            {[
+              {
+                step: "4",
+                title: "Testing & QA",
+                description: "We rigorously test across devices and browsers to ensure your application functions flawlessly under all conditions.",
+                icon: <ShieldCheck className="h-6 w-6 text-yellow-500" />,
+                color: "bg-yellow-50",
+                iconColor: "text-yellow-500",
+                borderColor: "border-yellow-100"
+              },
+              {
+                step: "5",
+                title: "Deployment",
+                description: "We handle the launch process with zero-downtime strategies and implement CI/CD pipelines for smooth deployment.",
+                icon: <Globe className="h-6 w-6 text-red-500" />,
+                color: "bg-red-50",
+                iconColor: "text-red-500",
+                borderColor: "border-red-100"
+              },
+              {
+                step: "6",
+                title: "Maintenance & Support",
+                description: "Our relationship continues after launch with ongoing support, monitoring, and regular updates to keep your application running smoothly.",
+                icon: <RefreshCw className="h-6 w-6 text-purple-500" />,
+                color: "bg-purple-50",
+                iconColor: "text-purple-500",
+                borderColor: "border-purple-100"
+              }
+            ].map((step, index) => (
+              <motion.div
+                key={index}
+                initial={{ opacity: 0, y: 20 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                viewport={{ once: true }}
+                transition={{ duration: 0.4, delay: index * 0.1 + 0.3 }}
+                className={`relative bg-white rounded-xl shadow-sm p-8 border ${step.borderColor}`}
+              >
+                <div className="absolute -top-5 left-8 w-10 h-10 rounded-full bg-white border border-gray-100 shadow-md flex items-center justify-center font-bold text-lg text-andela-green">
+                  {step.step}
+                </div>
+                <div className={`w-14 h-14 ${step.color} rounded-lg flex items-center justify-center mb-5`}>
+                  {step.icon}
+                </div>
+                <h3 className="text-lg font-bold mb-3 text-andela-dark">{step.title}</h3>
+                <p className="text-andela-gray">{step.description}</p>
+              </motion.div>
+            ))}
           </div>
         </Container>
       </section>
