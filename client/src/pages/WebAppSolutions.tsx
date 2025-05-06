@@ -72,39 +72,109 @@ const WebAppSolutions = () => {
         />
       )}
       
-      {/* Hero Section - Exactly matching reference image */}
-      <section className="bg-gray-50 py-24">
-        <Container>
-          <div className="max-w-4xl">
-            <div className="mb-4">
-              <div className="text-andela-green text-base font-medium">
-                Web Application Development
+      {/* Hero Section */}
+      <section className="relative py-24 overflow-hidden">
+        {/* Background elements */}
+        <div className="absolute inset-0 bg-gradient-to-b from-gray-50 to-white"></div>
+        <div className="absolute right-0 top-20 w-96 h-96 bg-andela-green/5 rounded-full blur-3xl"></div>
+        <div className="absolute left-0 bottom-20 w-80 h-80 bg-purple-500/5 rounded-full blur-3xl"></div>
+        
+        {/* Code-like decorative elements */}
+        <div className="absolute top-40 left-10 text-4xl text-andela-green/10 font-mono hidden md:block">
+          &lt;div&gt;
+        </div>
+        <div className="absolute top-60 left-20 text-3xl text-andela-green/10 font-mono hidden md:block">
+          &lt;code&gt;
+        </div>
+        <div className="absolute bottom-40 right-10 text-4xl text-andela-green/10 font-mono hidden md:block">
+          &lt;/div&gt;
+        </div>
+        
+        <Container className="relative z-10">
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-16 items-center">
+            <motion.div
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.6 }}
+            >
+              <div className="inline-block mb-4">
+                <div className="px-4 py-1 bg-andela-green/10 rounded-full text-andela-green text-sm font-medium">
+                  Web Application Development
+                </div>
               </div>
-            </div>
-            <h1 className="text-4xl md:text-5xl lg:text-6xl font-bold mb-6 text-andela-dark leading-tight">
-              Transforming Ideas into<br />
-              <span className="text-andela-green">Powerful Web</span><br />
-              <span className="text-andela-green">Applications</span>
-            </h1>
-            <p className="text-lg text-andela-gray mb-10 max-w-2xl">
-              We build custom, scalable, and secure web applications 
-              that solve complex business challenges and deliver 
-              exceptional user experiences.
-            </p>
-            <div className="flex flex-col sm:flex-row gap-5">
-              <Link 
-                href="/contact" 
-                className="inline-flex items-center justify-center bg-andela-green hover:bg-andela-green/90 text-white px-8 py-4 rounded-md font-medium transition-colors"
-              >
-                Start Your Project <ArrowRight className="ml-2 h-5 w-5" />
-              </Link>
-              <Link 
-                href="#services" 
-                className="inline-flex items-center justify-center bg-white border border-gray-200 hover:bg-gray-50 text-andela-dark px-8 py-4 rounded-md font-medium transition-colors"
-              >
-                Explore Services
-              </Link>
-            </div>
+              <h1 className="text-4xl md:text-5xl lg:text-6xl font-bold mb-6 text-andela-dark leading-tight">
+                Transforming Ideas into <span className="text-andela-green">Powerful Web Applications</span>
+              </h1>
+              <p className="text-lg text-andela-gray mb-8 max-w-lg">
+                We build custom, scalable, and secure web applications that solve complex business challenges and deliver exceptional user experiences.
+              </p>
+              <div className="flex flex-col sm:flex-row gap-4">
+                <Link 
+                  href="/contact" 
+                  className="inline-flex items-center justify-center bg-andela-green hover:bg-andela-green/90 text-white px-6 py-3 rounded-md font-medium transition-colors shadow-lg"
+                >
+                  Start Your Project
+                  <ArrowRight className="ml-2 h-5 w-5" />
+                </Link>
+                <Link 
+                  href="#services" 
+                  className="inline-flex items-center justify-center bg-white border border-gray-200 hover:bg-gray-50 text-andela-dark px-6 py-3 rounded-md font-medium transition-colors"
+                >
+                  Explore Services
+                </Link>
+              </div>
+            </motion.div>
+            
+            <motion.div
+              initial={{ opacity: 0, scale: 0.95 }}
+              animate={{ opacity: 1, scale: 1 }}
+              transition={{ duration: 0.6, delay: 0.2 }}
+              className="hidden lg:block relative"
+            >
+              <div className="relative w-full max-w-lg mx-auto">
+                <div className="absolute top-0 left-0 w-72 h-72 bg-andela-green/30 rounded-full filter blur-3xl opacity-30 animate-blob"></div>
+                <div className="absolute top-0 right-0 w-72 h-72 bg-blue-300 rounded-full filter blur-3xl opacity-30 animate-blob animation-delay-2000"></div>
+                <div className="absolute bottom-0 left-20 w-72 h-72 bg-purple-300 rounded-full filter blur-3xl opacity-30 animate-blob animation-delay-4000"></div>
+                <div className="relative">
+                  <div className="bg-white shadow-xl rounded-xl p-6 md:p-8 border border-gray-100">
+                    <div className="grid grid-cols-2 gap-4 mb-6">
+                      <div className="flex items-center gap-3 bg-gray-50 p-3 rounded-lg">
+                        <Code className="h-6 w-6 text-andela-green" />
+                        <span className="text-sm font-medium">Clean Code</span>
+                      </div>
+                      <div className="flex items-center gap-3 bg-gray-50 p-3 rounded-lg">
+                        <Database className="h-6 w-6 text-blue-500" />
+                        <span className="text-sm font-medium">Secure Data</span>
+                      </div>
+                      <div className="flex items-center gap-3 bg-gray-50 p-3 rounded-lg">
+                        <Globe className="h-6 w-6 text-purple-500" />
+                        <span className="text-sm font-medium">Responsive</span>
+                      </div>
+                      <div className="flex items-center gap-3 bg-gray-50 p-3 rounded-lg">
+                        <Zap className="h-6 w-6 text-yellow-500" />
+                        <span className="text-sm font-medium">Fast Loading</span>
+                      </div>
+                    </div>
+                    <div className="space-y-3">
+                      <div className="h-8 bg-gray-100 rounded-md w-3/4"></div>
+                      <div className="h-24 bg-gray-100 rounded-md"></div>
+                      <div className="flex gap-2">
+                        <div className="h-10 bg-andela-green/20 rounded-md w-1/3"></div>
+                        <div className="h-10 bg-gray-100 rounded-md w-1/3"></div>
+                        <div className="h-10 bg-gray-100 rounded-md w-1/3"></div>
+                      </div>
+                    </div>
+                    <div className="mt-6 flex justify-end">
+                      <div className="flex space-x-2">
+                        <div className="w-3 h-3 rounded-full bg-red-500"></div>
+                        <div className="w-3 h-3 rounded-full bg-yellow-500"></div>
+                        <div className="w-3 h-3 rounded-full bg-green-500"></div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </motion.div>
           </div>
         </Container>
       </section>
