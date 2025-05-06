@@ -191,7 +191,7 @@ As Abhishek's career progressed, he took on increasingly senior leadership roles
             >
               <div className="relative">
                 <img 
-                  src="/attached_assets/image_1746543692402.png" 
+                  src="/assets/image_1746543692402.png" 
                   alt="Team working together" 
                   className="w-full h-auto object-cover rounded-md shadow-lg"
                 />
@@ -248,7 +248,7 @@ As Abhishek's career progressed, he took on increasingly senior leadership roles
               className="relative"
             >
               <img 
-                src="/attached_assets/image_1746544199102.png" 
+                src="/assets/image_1746544199102.png" 
                 alt="Business professionals collaborating" 
                 className="w-full h-auto rounded-xl shadow-lg"
               />
