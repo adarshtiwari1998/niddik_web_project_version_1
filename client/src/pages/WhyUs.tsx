@@ -515,6 +515,8 @@ const WhyUs = () => {
           </div>
         </Container>
       </section>
+      
+      <Footer />
     </div>
   );
 };
