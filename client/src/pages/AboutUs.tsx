@@ -156,11 +156,26 @@ As Abhishek's career progressed, he took on increasingly senior leadership roles
               Exceptional Talent
             </motion.h1>
             
+            {/* Additional Branded Text */}
+            <motion.div
+              initial={{ opacity: 0, y: 10 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.6, delay: 0.2 }}
+              className="text-center mb-6"
+            >
+              <h3 className="text-xl md:text-2xl font-semibold text-gray-800 mb-2">
+                A workforce partner that understands every inch of Your Ground
+              </h3>
+              <h4 className="text-lg md:text-xl font-medium text-andela-green">
+                Helping Our Clients Navigate the complexities Of Talent Sourcing
+              </h4>
+            </motion.div>
+            
             {/* Subheading Text */}
             <motion.p
               initial={{ opacity: 0, y: 10 }}
               animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.6, delay: 0.2 }}
+              transition={{ duration: 0.6, delay: 0.3 }}
               className="text-base md:text-lg text-gray-600 max-w-2xl mx-auto mb-12"
             >
               We're building the future of work by connecting brilliant minds with the 
@@ -176,7 +191,7 @@ As Abhishek's career progressed, he took on increasingly senior leadership roles
             >
               <div className="relative">
                 <img 
-                  src="https://images.unsplash.com/photo-1542744173-8659b8e77b1a?auto=format&fit=crop&w=1200&q=80" 
+                  src="/attached_assets/image_1746543692402.png" 
                   alt="Team working together" 
                   className="w-full h-auto object-cover rounded-md shadow-lg"
                 />
