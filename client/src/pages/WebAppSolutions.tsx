@@ -473,27 +473,27 @@ const WebAppSolutions = () => {
                 step: "1",
                 title: "Discovery & Planning",
                 description: "We work with you to understand your business objectives, target audience, and technical requirements to create a detailed project roadmap.",
-                icon: <Database className="h-6 w-6 text-indigo-500" />,
-                color: "bg-indigo-50",
-                iconColor: "text-indigo-500",
+                icon: <Database className="h-6 w-6 text-andela-green" />,
+                color: "bg-andela-green/10",
+                iconColor: "text-andela-green",
                 borderColor: "border-indigo-100"
               },
               {
                 step: "2",
                 title: "Design & Prototyping",
                 description: "Our designers create intuitive UI/UX designs and interactive prototypes that focus on user experience and visual appeal.",
-                icon: <PenTool className="h-6 w-6 text-blue-500" />,
-                color: "bg-blue-50",
-                iconColor: "text-blue-500",
+                icon: <PenTool className="h-6 w-6 text-andela-green" />,
+                color: "bg-andela-green/10",
+                iconColor: "text-andela-green",
                 borderColor: "border-blue-100"
               },
               {
                 step: "3",
                 title: "Development",
                 description: "Our engineers build your application using modern technologies and best practices for performance, security, and maintainability.",
-                icon: <Code className="h-6 w-6 text-green-500" />,
-                color: "bg-green-50",
-                iconColor: "text-green-500",
+                icon: <Code className="h-6 w-6 text-andela-green" />,
+                color: "bg-andela-green/10",
+                iconColor: "text-andela-green",
                 borderColor: "border-green-100"
               }
             ].map((step, index) => (

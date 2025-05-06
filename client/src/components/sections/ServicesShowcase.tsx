@@ -555,7 +555,7 @@ const ServicesShowcase = () => {
                           initial={{ opacity: 0, height: 0 }}
                           animate={{ opacity: 1, height: 'auto' }}
                           exit={{ opacity: 0, height: 0 }}
-                          className="text-sm mt-2"
+                          className="text-sm mt-2 text-white"
                         >
                           {service.description}
                         </motion.p>
