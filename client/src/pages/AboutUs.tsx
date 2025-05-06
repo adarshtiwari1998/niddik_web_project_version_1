@@ -12,7 +12,7 @@ const AboutUs = () => {
   
   const teamMembers = [
     {
-      name: "Abhishek Anchal",
+      name: "Abhishek Anhal",
       role: "CEO & Co-Founder",
       image: "https://niddik.com/wp-content/uploads/2025/02/abhishk-anhal.jpg",
       bio: "With over 20 years of experience in talent acquisition, Abhishek has established himself as a renowned expert in the field of recruitment.",
@@ -652,7 +652,7 @@ As Abhishek's career progressed, he took on increasingly senior leadership roles
               <div className="w-full lg:w-2/5 flex-shrink-0">
                 <div className="relative rounded-xl overflow-hidden shadow-lg h-full">
                   <img 
-                    src="https://images.unsplash.com/photo-1560250097-0b93528c311a?auto=format&fit=crop&w=600&q=80" 
+                    src="https://niddik.com/wp-content/uploads/2025/02/abhishk-anhal.jpg" 
                     alt={teamMembers[0].name} 
                     className="w-full h-full object-cover object-center"
                   />
@@ -735,7 +735,7 @@ As Abhishek's career progressed, he took on increasingly senior leadership roles
                 <div className="flex flex-col md:flex-row gap-8">
                   <div className="flex-shrink-0">
                     <img 
-                      src={teamMembers[selectedTeamMember].image} 
+                      src="https://niddik.com/wp-content/uploads/2025/02/abhishk-anhal.jpg" 
                       alt={teamMembers[selectedTeamMember].name}
                       className="w-full md:w-64 h-64 object-cover object-center rounded-xl shadow-md" 
                     />
