@@ -28,7 +28,7 @@ const Home = () => {
         text="Join our upcoming webinar on scaling tech teams effectively."
         linkText="Register now"
         linkUrl="#"
-        bgColor="bg-andela-green" 
+        bgColor="bg-green-600" 
         textColor="text-white"
         onVisibilityChange={handleAnnouncementVisibilityChange}
       />
