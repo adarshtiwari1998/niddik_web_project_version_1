@@ -52,8 +52,8 @@ const ServicesShowcase = () => {
       description: 'End-to-end recruitment process outsourcing for comprehensive talent acquisition needs.',
       extendedDescription: 'Our Full RPO service delivers a complete recruitment solution, managing the entire hiring process from sourcing to onboarding. We integrate with your HR team to create a seamless talent pipeline that aligns with your organizational goals and company culture.',
       icon: <Users className="h-6 w-6" />,
-      color: 'from-purple-500 to-purple-600',
-      bgColor: 'bg-purple-100',
+      color: 'from-andela-green to-andela-green/90',
+      bgColor: 'bg-andela-green/10',
       processSteps: [
         { title: 'Needs Analysis', description: 'In-depth assessment of your hiring requirements' },
         { title: 'Strategy Development', description: 'Custom recruitment approach aligned with your goals' },
@@ -67,8 +67,8 @@ const ServicesShowcase = () => {
       description: 'Flexible recruitment solutions that scale with your immediate business requirements.',
       extendedDescription: 'Our On-Demand recruitment service provides flexible talent acquisition support precisely when you need it. Perfect for project-based hiring, seasonal demands, or unexpected growth, this adaptable solution scales to meet your changing recruitment requirements without long-term commitments.',
       icon: <Calendar className="h-6 w-6" />,
-      color: 'from-blue-500 to-blue-600',
-      bgColor: 'bg-blue-100',
+      color: 'from-andela-green to-andela-green/90',
+      bgColor: 'bg-andela-green/10',
       processSteps: [
         { title: 'Rapid Assessment', description: 'Quick evaluation of immediate hiring needs' },
         { title: 'Resource Allocation', description: 'Dedicated recruiters assigned to your project' },
@@ -82,8 +82,8 @@ const ServicesShowcase = () => {
       description: 'Customized combination of in-house and outsourced recruitment processes for optimal results.',
       extendedDescription: 'Our Hybrid RPO solution combines the best aspects of internal recruitment with our specialized expertise. This collaborative approach allows you to maintain control over key hiring decisions while leveraging our resources and technology to enhance efficiency and improve candidate quality.',
       icon: <PieChart className="h-6 w-6" />,
-      color: 'from-green-500 to-green-600',
-      bgColor: 'bg-green-100',
+      color: 'from-andela-green to-andela-green/90',
+      bgColor: 'bg-andela-green/10',
       processSteps: [
         { title: 'Process Mapping', description: 'Identifying optimal division of responsibilities' },
         { title: 'Integration Planning', description: 'Seamless connection with your HR systems' },
@@ -97,8 +97,8 @@ const ServicesShowcase = () => {
       description: 'Specialized talent acquisition for contract, temporary, and project-based positions.',
       extendedDescription: 'Our Contingent staffing service specializes in connecting you with qualified professionals for temporary, contract, and project-based roles. We handle the entire process from identifying specialized talent to managing contracts, ensuring you have the right expertise exactly when your business needs it.',
       icon: <Briefcase className="h-6 w-6" />,
-      color: 'from-amber-500 to-amber-600',
-      bgColor: 'bg-amber-100',
+      color: 'from-andela-green to-andela-green/90',
+      bgColor: 'bg-andela-green/10',
       processSteps: [
         { title: 'Requirement Definition', description: 'Precise specification of temporary talent needs' },
         { title: 'Specialized Sourcing', description: 'Targeting candidates with niche expertise' },
@@ -175,11 +175,11 @@ const ServicesShowcase = () => {
     <section className="py-20 overflow-hidden relative bg-gradient-to-br from-gray-50 to-gray-100">
       {/* Decorative blobs as background elements */}
       <div className="absolute top-0 right-0 w-96 h-96 bg-andela-green opacity-5 rounded-full filter blur-3xl -translate-y-1/2 translate-x-1/3"></div>
-      <div className="absolute bottom-0 left-0 w-96 h-96 bg-blue-600 opacity-5 rounded-full filter blur-3xl translate-y-1/2 -translate-x-1/3"></div>
+      <div className="absolute bottom-0 left-0 w-96 h-96 bg-andela-green opacity-5 rounded-full filter blur-3xl translate-y-1/2 -translate-x-1/3"></div>
       
-      {/* Animated floating elements in background */}
+      {/* Animated floating elements in background using andela-green */}
       <motion.div 
-        className="absolute top-1/4 left-1/4 w-12 h-12 bg-purple-500 opacity-20 rounded-lg"
+        className="absolute top-1/4 left-1/4 w-12 h-12 bg-andela-green opacity-20 rounded-lg"
         animate={{ 
           y: [0, -20, 0],
           rotate: [0, 15, 0]
@@ -191,7 +191,7 @@ const ServicesShowcase = () => {
         }}
       />
       <motion.div 
-        className="absolute top-1/3 right-1/4 w-8 h-8 bg-blue-500 opacity-20 rounded-full"
+        className="absolute top-1/3 right-1/4 w-8 h-8 bg-andela-green opacity-20 rounded-full"
         animate={{ 
           y: [0, 20, 0],
           x: [0, -20, 0]
@@ -203,7 +203,7 @@ const ServicesShowcase = () => {
         }}
       />
       <motion.div 
-        className="absolute bottom-1/4 right-1/3 w-16 h-16 bg-green-500 opacity-20 rounded-md rotate-45"
+        className="absolute bottom-1/4 right-1/3 w-16 h-16 bg-andela-green opacity-20 rounded-md rotate-45"
         animate={{ 
           y: [0, -30, 0],
           x: [0, 20, 0],
@@ -216,7 +216,7 @@ const ServicesShowcase = () => {
         }}
       />
       <motion.div 
-        className="absolute bottom-1/3 left-1/3 w-10 h-10 bg-amber-500 opacity-20 rounded-lg"
+        className="absolute bottom-1/3 left-1/3 w-10 h-10 bg-andela-green opacity-20 rounded-lg"
         animate={{ 
           y: [0, 25, 0],
           x: [0, 15, 0],
@@ -407,12 +407,7 @@ const ServicesShowcase = () => {
                       <div key={`process-row-${index}`} className={`flex items-center mb-6 ${index < activeServiceData.processSteps.length - 1 ? 'border-b border-gray-100 pb-6' : ''}`}>
                         <div className="flex-none mr-4">
                           {/* Step number with large numbering */}
-                          <div className={`w-8 h-8 rounded-full flex items-center justify-center ${
-                              activeServiceData.color.includes('purple') ? 'bg-purple-500' : 
-                              activeServiceData.color.includes('blue') ? 'bg-blue-500' : 
-                              activeServiceData.color.includes('green') ? 'bg-green-500' : 
-                              'bg-amber-500'
-                            } text-white font-bold text-xl`}>
+                          <div className="w-8 h-8 rounded-full flex items-center justify-center bg-andela-green text-white font-bold text-xl">
                             {index + 1}
                           </div>
                         </div>
@@ -431,12 +426,7 @@ const ServicesShowcase = () => {
                                 index === 1 ? 'rounded-tr-2xl' : 
                                 index === 2 ? 'rounded-bl-2xl' : 'rounded-br-2xl'} 
                               border-2 relative overflow-hidden
-                              ${
-                                activeServiceData.color.includes('purple') ? 'border-purple-400' : 
-                                activeServiceData.color.includes('blue') ? 'border-blue-400' : 
-                                activeServiceData.color.includes('green') ? 'border-green-400' : 
-                                'border-amber-400'
-                              }`}
+                              border-andela-green/40`}
                             // Sequential highlight animation
                             animate={{ 
                               scale: [1, 1.08, 1],
@@ -465,12 +455,7 @@ const ServicesShowcase = () => {
                             />
                             
                             {/* Custom icon for each step */}
-                            <div className={`relative z-10 ${
-                              activeServiceData.color.includes('purple') ? 'text-purple-600' : 
-                              activeServiceData.color.includes('blue') ? 'text-blue-600' : 
-                              activeServiceData.color.includes('green') ? 'text-green-600' : 
-                              'text-amber-600'
-                            }`}>
+                            <div className="relative z-10 text-andela-green">
                               <StepIcon className="h-8 w-8" />
                             </div>
                           </motion.div>
@@ -481,12 +466,7 @@ const ServicesShowcase = () => {
                   
                   {/* Vertical timeline indicator - positioned behind the numbers */}
                   <div className="absolute left-[1.625rem] top-8 bottom-8 w-[2px] -z-10">
-                    <div className={`h-full ${
-                      activeServiceData.color.includes('purple') ? 'bg-purple-200' : 
-                      activeServiceData.color.includes('blue') ? 'bg-blue-200' : 
-                      activeServiceData.color.includes('green') ? 'bg-green-200' : 
-                      'bg-amber-200'
-                    }`}>
+                    <div className="h-full bg-andela-green/20">
                       {/* Animated progress indicator */}
                       <motion.div 
                         className={`w-full ${
