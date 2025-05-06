@@ -157,26 +157,71 @@ const WhyUs = () => {
         textColor="text-white"
       />
       <Navbar hasAnnouncementAbove={true} />
-      {/* Hero Section */}
-      <section className="py-32 bg-white text-center">
-        <Container>
+      {/* Hero Section with Modern Banner */}
+      <section className="relative pt-40 pb-32 overflow-hidden">
+        {/* Abstract background elements */}
+        <div className="absolute inset-0 bg-gradient-to-b from-white to-gray-50 z-0"></div>
+        <div className="absolute top-0 right-0 w-1/3 h-full bg-gradient-to-l from-andela-green/5 to-transparent z-0"></div>
+        <div className="absolute bottom-0 left-0 w-1/3 h-full bg-gradient-to-r from-andela-green/5 to-transparent z-0"></div>
+        
+        {/* Decorative elements */}
+        <div className="absolute top-20 left-1/4 w-64 h-64 rounded-full bg-andela-green/3 blur-3xl z-0"></div>
+        <div className="absolute bottom-20 right-1/4 w-80 h-80 rounded-full bg-andela-green/2 blur-3xl z-0"></div>
+        
+        {/* Geometric shapes */}
+        <div className="absolute top-32 right-1/4 w-8 h-8 border-2 border-andela-green/20 rounded-lg rotate-12 z-0"></div>
+        <div className="absolute bottom-32 left-1/4 w-12 h-12 border-2 border-andela-green/30 rounded-full z-0"></div>
+        <div className="absolute top-60 left-1/3 w-4 h-4 bg-andela-green/30 rounded-full z-0"></div>
+        <div className="absolute bottom-40 right-1/3 w-6 h-6 bg-andela-green/20 rounded-lg rotate-45 z-0"></div>
+        
+        <Container className="relative z-10">
           <div className="max-w-4xl mx-auto text-center">
-            <motion.h1
-              initial={{ opacity: 0, y: -10 }}
-              animate={{ opacity: 1, y: 0 }}
+            <motion.div
+              initial={{ opacity: 0, scale: 0.95 }}
+              animate={{ opacity: 1, scale: 1 }}
               transition={{ duration: 0.7 }}
-              className="text-5xl md:text-6xl font-bold mb-8 text-andela-green"
+              className="relative"
             >
-              Niddik
-            </motion.h1>
+              <div className="inline-block mb-3">
+                <div className="px-4 py-1 bg-andela-green/10 rounded-full text-andela-green text-sm font-medium tracking-wider uppercase">
+                  Why Choose Us
+                </div>
+              </div>
+              <h1 className="text-6xl md:text-7xl font-bold mb-6 text-andela-green inline-block relative">
+                Niddik
+                <div className="absolute -bottom-2 left-0 right-0 h-1 bg-gradient-to-r from-transparent via-andela-green to-transparent"></div>
+              </h1>
+            </motion.div>
+            
             <motion.p
               initial={{ opacity: 0, y: 10 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.7, delay: 0.2 }}
-              className="text-xl md:text-2xl text-andela-gray bg-white px-4 py-2 mb-16 max-w-3xl mx-auto"
+              className="text-xl md:text-2xl text-andela-dark font-light mb-16 max-w-3xl mx-auto"
             >
               Our innovative approach to technical talent is redefining how companies build teams and how professionals grow their careers.
             </motion.p>
+            
+            {/* Call to action buttons */}
+            <motion.div
+              initial={{ opacity: 0, y: 10 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.7, delay: 0.4 }}
+              className="flex flex-col sm:flex-row gap-4 justify-center"
+            >
+              <Link
+                href="/contact"
+                className="px-8 py-3 bg-andela-green text-white font-medium rounded-md hover:bg-andela-green/90 transition-colors shadow-lg hover:shadow-xl transform hover:-translate-y-1 transition-all"
+              >
+                Get Started
+              </Link>
+              <Link
+                href="/services"
+                className="px-8 py-3 border-2 border-andela-green text-andela-green font-medium rounded-md hover:bg-andela-green/5 transition-colors"
+              >
+                Learn More
+              </Link>
+            </motion.div>
           </div>
         </Container>
       </section>
