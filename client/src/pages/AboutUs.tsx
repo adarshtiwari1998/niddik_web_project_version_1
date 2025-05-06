@@ -619,7 +619,7 @@ As Abhishek's career progressed, he took on increasingly senior leadership roles
       </section>
 
       {/* Leadership Team */}
-      <section className="py-20 bg-gradient-to-b from-gray-50 to-white">
+      <section className="py-20 bg-gradient-to-r from-andela-green/5 to-gray-50">
         <Container>
           <motion.div
             className="text-center mb-16"
@@ -628,57 +628,90 @@ As Abhishek's career progressed, he took on increasingly senior leadership roles
             viewport={{ once: true }}
             transition={{ duration: 0.5 }}
           >
-            <h2 className="text-3xl md:text-4xl font-bold mb-4 text-andela-dark">Our Leadership</h2>
+            <h2 className="text-3xl md:text-4xl font-bold mb-6 text-andela-dark">
+              Our <span className="text-andela-green">Leadership</span>
+            </h2>
+            <div className="w-24 h-1 bg-andela-green mx-auto mb-6"></div>
             <p className="text-xl text-andela-gray max-w-2xl mx-auto">
               Meet the visionary behind Niddik's mission
             </p>
           </motion.div>
 
-          <div className="max-w-4xl mx-auto">
+          <div className="max-w-5xl mx-auto relative">
+            {/* Decorative elements */}
+            <div className="absolute -top-10 -left-10 w-20 h-20 rounded-full bg-andela-green/10 blur-xl"></div>
+            <div className="absolute -bottom-10 -right-10 w-20 h-20 rounded-full bg-andela-green/10 blur-xl"></div>
+            
             <motion.div
-              className="flex flex-col lg:flex-row gap-10 p-6 bg-white rounded-2xl shadow-xl overflow-hidden"
+              className="flex flex-col lg:flex-row gap-12 p-8 bg-white rounded-2xl shadow-xl overflow-hidden relative z-10"
               initial={{ opacity: 0, y: 20 }}
               whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true }}
               transition={{ duration: 0.5 }}
             >
-              <div className="w-full lg:w-1/3 flex-shrink-0">
-                <div className="relative rounded-xl overflow-hidden shadow-lg h-full max-h-[400px]">
+              <div className="w-full lg:w-2/5 flex-shrink-0">
+                <div className="relative rounded-xl overflow-hidden shadow-lg h-full">
                   <img 
-                    src={teamMembers[0].image} 
+                    src="https://images.unsplash.com/photo-1560250097-0b93528c311a?auto=format&fit=crop&w=600&q=80" 
                     alt={teamMembers[0].name} 
                     className="w-full h-full object-cover object-center"
                   />
-                  <div className="absolute inset-0 bg-gradient-to-t from-black/70 to-transparent opacity-40"></div>
+                  <div className="absolute inset-0 bg-gradient-to-t from-black/50 to-transparent"></div>
+                  
+                  {/* Social links */}
+                  <div className="absolute bottom-4 left-0 right-0 flex justify-center gap-3">
+                    <a 
+                      href="#" 
+                      className="w-10 h-10 bg-white rounded-full flex items-center justify-center text-andela-green hover:bg-andela-green hover:text-white transition-colors"
+                    >
+                      <svg className="w-5 h-5" fill="currentColor" viewBox="0 0 24 24">
+                        <path d="M19 0h-14c-2.761 0-5 2.239-5 5v14c0 2.761 2.239 5 5 5h14c2.762 0 5-2.239 5-5v-14c0-2.761-2.238-5-5-5zm-11 19h-3v-11h3v11zm-1.5-12.268c-.966 0-1.75-.79-1.75-1.764s.784-1.764 1.75-1.764 1.75.79 1.75 1.764-.783 1.764-1.75 1.764zm13.5 12.268h-3v-5.604c0-3.368-4-3.113-4 0v5.604h-3v-11h3v1.765c1.396-2.586 7-2.777 7 2.476v6.759z"/>
+                      </svg>
+                    </a>
+                    <a 
+                      href="#" 
+                      className="w-10 h-10 bg-white rounded-full flex items-center justify-center text-andela-green hover:bg-andela-green hover:text-white transition-colors"
+                    >
+                      <svg className="w-5 h-5" fill="currentColor" viewBox="0 0 24 24">
+                        <path d="M12 0c-6.627 0-12 5.373-12 12s5.373 12 12 12 12-5.373 12-12-5.373-12-12-12zm6.066 9.645c.183 4.04-2.83 8.544-8.164 8.544-1.622 0-3.131-.476-4.402-1.291 1.524.18 3.045-.244 4.252-1.189-1.256-.023-2.317-.854-2.684-1.995.451.086.895.061 1.298-.049-1.381-.278-2.335-1.522-2.304-2.853.388.215.83.344 1.301.359-1.279-.855-1.641-2.544-.889-3.835 1.416 1.738 3.533 2.881 5.92 3.001-.419-1.796.944-3.527 2.799-3.527.825 0 1.572.349 2.096.907.654-.128 1.27-.368 1.824-.697-.215.671-.67 1.233-1.263 1.589.581-.07 1.135-.224 1.649-.453-.384.578-.87 1.084-1.433 1.489z"/>
+                      </svg>
+                    </a>
+                  </div>
                 </div>
               </div>
               
               <div className="flex-1 flex flex-col justify-between">
                 <div>
-                  <div className="inline-block px-3 py-1 bg-andela-green/10 rounded-full text-andela-green text-sm font-medium mb-4">
-                    Leadership
+                  <div className="inline-block px-4 py-1 bg-andela-green/10 rounded-full text-andela-green text-sm font-medium mb-4">
+                    Founder & CEO
                   </div>
                   <h3 className="text-3xl font-bold mb-2 text-andela-dark">{teamMembers[0].name}</h3>
-                  <p className="text-andela-green text-xl font-medium mb-6">{teamMembers[0].role}</p>
+                  <div className="h-1 w-16 bg-andela-green/50 mb-6"></div>
                   
                   <div className="space-y-4 text-andela-gray">
-                    <p className="text-lg">{teamMembers[0].bio}</p>
-                    <p className="text-lg">
+                    <p className="text-lg leading-relaxed">{teamMembers[0].bio}</p>
+                    <p className="text-lg leading-relaxed">
                       Under his guidance, Niddik has grown into a premier talent matching platform, connecting talented professionals with innovative companies worldwide.
                     </p>
                   </div>
                 </div>
                 
-                <div className="mt-8 pt-6 border-t border-gray-100">
+                <div className="mt-8 pt-6 border-t border-gray-100 flex flex-col sm:flex-row gap-4">
                   <button 
                     onClick={() => {
                       setSelectedTeamMember(0);
                       setModalOpen(true);
                     }}
-                    className="inline-flex items-center bg-andela-green hover:bg-andela-dark text-white px-6 py-3 rounded-md font-medium transition-colors"
+                    className="inline-flex items-center justify-center bg-andela-green hover:bg-andela-dark text-white px-6 py-3 rounded-md font-medium transition-colors"
                   >
                     Read Full Bio <ExternalLink className="ml-2 h-4 w-4" />
                   </button>
+                  <a 
+                    href="#"
+                    className="inline-flex items-center justify-center border-2 border-andela-green text-andela-green hover:bg-andela-green hover:text-white px-6 py-3 rounded-md font-medium transition-colors"
+                  >
+                    Contact Me
+                  </a>
                 </div>
               </div>
             </motion.div>
@@ -743,74 +776,118 @@ As Abhishek's career progressed, he took on increasingly senior leadership roles
         </Container>
       </section>
 
-      {/* Modern Workforce Partner CTA */}
-      <section className="py-16 bg-no-repeat bg-cover bg-center relative text-white overflow-hidden">
-        {/* Semi-transparent overlay */}
-        <div className="absolute inset-0 bg-gradient-to-r from-andela-dark to-blue-800/80"></div>
+      {/* Ready to Transform Your Talent Strategy - CTA */}
+      <section className="py-20 bg-no-repeat bg-cover bg-center relative text-white overflow-hidden">
+        {/* Semi-transparent overlay with gradient */}
+        <div className="absolute inset-0 bg-gradient-to-br from-andela-dark to-blue-900"></div>
         
-        {/* Light circle accent */}
-        <div className="absolute top-0 left-0 w-64 h-64 rounded-full bg-blue-300/20 blur-2xl"></div>
+        {/* Decorative elements */}
+        <div className="absolute top-0 right-0 w-80 h-80 rounded-full bg-andela-green/10 blur-3xl"></div>
+        <div className="absolute bottom-0 left-0 w-80 h-80 rounded-full bg-blue-400/10 blur-3xl"></div>
+        <div className="absolute top-1/4 left-1/4 w-2 h-2 bg-andela-green rounded-full"></div>
+        <div className="absolute top-3/4 right-1/4 w-2 h-2 bg-andela-green rounded-full"></div>
+        <div className="absolute top-1/2 right-1/3 w-4 h-4 border border-andela-green/30 rounded-full"></div>
         
         <Container className="relative z-10">
-          <div className="max-w-5xl mx-auto">
-            {/* Content grid */}
-            <div className="grid grid-cols-1 md:grid-cols-2 items-center gap-8">
-              {/* Left side - Text content */}
-              <div className="space-y-6">
-                <motion.h2
-                  initial={{ opacity: 0, y: 20 }}
-                  whileInView={{ opacity: 1, y: 0 }}
-                  viewport={{ once: true }}
-                  transition={{ duration: 0.5 }}
-                  className="text-4xl md:text-5xl font-bold leading-tight"
-                >
-                  A workforce partner that understands every inch of Your Ground
-                </motion.h2>
+          <div className="max-w-7xl mx-auto">
+            <div className="grid grid-cols-1 lg:grid-cols-2 items-center gap-12">
+              {/* Left side - Content */}
+              <motion.div
+                initial={{ opacity: 0, y: 30 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                viewport={{ once: true }}
+                transition={{ duration: 0.6 }}
+                className="space-y-6"
+              >
+                <div className="bg-andela-green text-white inline-block px-4 py-1 rounded-full text-sm font-medium mb-2">
+                  REACH YOUR BUSINESS GOALS
+                </div>
                 
-                <motion.p
-                  initial={{ opacity: 0, y: 20 }}
-                  whileInView={{ opacity: 1, y: 0 }}
-                  viewport={{ once: true }}
-                  transition={{ duration: 0.5, delay: 0.1 }}
-                  className="text-xl text-blue-50"
-                >
-                  Helping Our Clients Navigate the complexities Of Talent Sourcing
-                </motion.p>
+                <h2 className="text-3xl md:text-5xl font-bold leading-tight">
+                  A workforce partner that <span className="text-andela-green">understands</span> every inch of <span className="text-andela-green">Your Ground</span>
+                </h2>
                 
-                <motion.div
-                  initial={{ opacity: 0, y: 20 }}
-                  whileInView={{ opacity: 1, y: 0 }}
-                  viewport={{ once: true }}
-                  transition={{ duration: 0.5, delay: 0.2 }}
-                  className="flex flex-col sm:flex-row gap-4 pt-4"
-                >
+                <div className="h-1 w-28 bg-andela-green"></div>
+                
+                <p className="text-xl text-blue-50 leading-relaxed">
+                  Helping Our Clients Navigate the complexities Of Talent Sourcing with specialized expertise and a human-centered approach.
+                </p>
+                
+                <ul className="space-y-3 text-blue-50">
+                  <li className="flex items-start">
+                    <svg className="w-6 h-6 text-andela-green flex-shrink-0 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
+                    </svg>
+                    <span>Specialized recruitment for technical and leadership roles</span>
+                  </li>
+                  <li className="flex items-start">
+                    <svg className="w-6 h-6 text-andela-green flex-shrink-0 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
+                    </svg>
+                    <span>Custom talent solutions tailored to your company's needs</span>
+                  </li>
+                  <li className="flex items-start">
+                    <svg className="w-6 h-6 text-andela-green flex-shrink-0 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
+                    </svg>
+                    <span>Human-first approach with cutting-edge technology</span>
+                  </li>
+                </ul>
+                
+                <div className="flex flex-col sm:flex-row gap-4 pt-6">
                   <a 
                     href="#" 
-                    className="bg-andela-green hover:bg-opacity-90 text-white px-8 py-3 rounded-full font-medium transition-colors inline-flex justify-center uppercase tracking-wide"
+                    className="bg-andela-green hover:bg-white hover:text-andela-green text-white px-8 py-4 rounded-md font-medium transition-all shadow-lg hover:shadow-xl transform hover:-translate-y-1 flex items-center justify-center"
                   >
-                    Looking To Hire
+                    <span className="uppercase tracking-wide">Looking To Hire</span>
+                    <svg className="w-5 h-5 ml-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M14 5l7 7m0 0l-7 7m7-7H3" />
+                    </svg>
                   </a>
                   <a 
                     href="#" 
-                    className="bg-white hover:bg-gray-100 text-andela-dark px-8 py-3 rounded-full font-medium transition-colors inline-flex justify-center uppercase tracking-wide"
+                    className="bg-transparent border-2 border-white hover:bg-white hover:text-andela-dark text-white px-8 py-4 rounded-md font-medium transition-all shadow-lg hover:shadow-xl transform hover:-translate-y-1 flex items-center justify-center"
                   >
-                    I Am A Job Seeker
+                    <span className="uppercase tracking-wide">I Am A Job Seeker</span>
                   </a>
-                </motion.div>
-              </div>
+                </div>
+              </motion.div>
               
-              {/* Right side - Image */}
-              <div className="hidden md:block">
-                <motion.img
-                  initial={{ opacity: 0, scale: 0.95 }}
-                  whileInView={{ opacity: 1, scale: 1 }}
-                  viewport={{ once: true }}
-                  transition={{ duration: 0.5 }}
-                  src="https://images.unsplash.com/photo-1600880292203-757bb62b4baf?auto=format&fit=crop&w=600&q=80"
-                  alt="Professional team meeting"
-                  className="rounded-lg shadow-2xl"
-                />
-              </div>
+              {/* Right side - Image with decorative elements */}
+              <motion.div
+                initial={{ opacity: 0, scale: 0.95 }}
+                whileInView={{ opacity: 1, scale: 1 }}
+                viewport={{ once: true }}
+                transition={{ duration: 0.7, delay: 0.1 }}
+                className="relative hidden lg:block"
+              >
+                <div className="absolute -top-6 -left-6 w-32 h-32 border-2 border-andela-green/20 rounded-lg"></div>
+                <div className="absolute -bottom-6 -right-6 w-32 h-32 border-2 border-andela-green/20 rounded-lg"></div>
+                
+                <div className="relative z-10 rounded-lg overflow-hidden shadow-2xl transform rotate-1">
+                  <img
+                    src="https://images.unsplash.com/photo-1556761175-5973dc0f32e7?auto=format&fit=crop&w=800&q=80"
+                    alt="Business professionals discussing strategy"
+                    className="w-full h-auto"
+                  />
+                  <div className="absolute inset-0 bg-gradient-to-t from-andela-dark/60 to-transparent"></div>
+                  
+                  <div className="absolute bottom-8 left-8 right-8 bg-white/10 backdrop-blur-sm p-6 rounded-lg border border-white/20">
+                    <p className="text-white text-lg font-medium leading-snug">
+                      "Niddik transformed our hiring process by connecting us with exceptional talent that aligned perfectly with our company culture."
+                    </p>
+                    <div className="mt-4 flex items-center">
+                      <div className="h-10 w-10 rounded-full bg-andela-green flex items-center justify-center text-white font-bold text-lg">
+                        A
+                      </div>
+                      <div className="ml-3">
+                        <p className="text-white font-medium">Alex Johnson</p>
+                        <p className="text-white/80 text-sm">CTO, TechVision Inc.</p>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </motion.div>
             </div>
           </div>
         </Container>
