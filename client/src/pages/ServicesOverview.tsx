@@ -70,6 +70,14 @@ const ServicesOverview = () => {
       icon: <Briefcase className="h-8 w-8" />,
       color: "from-amber-500 to-amber-600",
       url: "/services/contingent"
+    },
+    {
+      id: 5,
+      title: "Web App Solutions",
+      description: "Custom, scalable, and secure web applications that solve complex business challenges and deliver exceptional user experiences.",
+      icon: <Zap className="h-8 w-8" />,
+      color: "from-teal-500 to-teal-600",
+      url: "/web-app-solutions"
     }
   ];
 
@@ -200,7 +208,7 @@ const ServicesOverview = () => {
                   </p>
                 </motion.div>
 
-                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-10">
+                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-5 gap-6 lg:gap-8">
                   {services.map((service, index) => (
                     <motion.div
                       key={service.id}
@@ -377,6 +385,48 @@ const ServicesOverview = () => {
                               <linearGradient id="service-grad-4" x1="20" y1="20" x2="140" y2="140" gradientUnits="userSpaceOnUse">
                                 <stop stopColor="#FBBF24"/>
                                 <stop offset="1" stopColor="#D97706"/>
+                              </linearGradient>
+                            </defs>
+                          </svg>
+                        )}
+                        {index === 4 && (
+                          <svg width="100%" height="100%" viewBox="0 0 200 200" fill="none" xmlns="http://www.w3.org/2000/svg">
+                            {/* Group 1 - Code brackets and symbols */}
+                            <g transform="translate(140, 140) scale(0.3)">
+                              <path d="M0 0L10 20L-10 20L0 0Z" stroke="url(#service-grad-5)" strokeWidth="0.8"/>
+                              <path d="M-15 5L-5 25L-25 25L-15 5Z" stroke="url(#service-grad-5)" strokeWidth="0.8"/>
+                              <path d="M15 5L25 25L5 25L15 5Z" stroke="url(#service-grad-5)" strokeWidth="0.8"/>
+                              <rect x="-40" y="0" width="20" height="20" stroke="url(#service-grad-5)" strokeWidth="0.8"/>
+                              <rect x="20" y="0" width="20" height="20" stroke="url(#service-grad-5)" strokeWidth="0.8"/>
+                            </g>
+                            
+                            {/* Group 2 - Code symbols */}
+                            <g transform="translate(40, 150) scale(0.25)">
+                              <path d="M0 0L-10 10L0 20L10 10L0 0Z" stroke="url(#service-grad-5)" strokeWidth="0.8"/>
+                              <path d="M25 0L15 10L25 20L35 10L25 0Z" stroke="url(#service-grad-5)" strokeWidth="0.8"/>
+                              <path d="M50 0L40 10L50 20L60 10L50 0Z" stroke="url(#service-grad-5)" strokeWidth="0.8"/>
+                              <rect x="0" y="30" width="15" height="15" rx="2" stroke="url(#service-grad-5)" strokeWidth="0.8"/>
+                              <rect x="25" y="30" width="15" height="15" rx="2" stroke="url(#service-grad-5)" strokeWidth="0.8"/>
+                              <rect x="50" y="30" width="15" height="15" rx="2" stroke="url(#service-grad-5)" strokeWidth="0.8"/>
+                            </g>
+                            
+                            {/* Group 3 - Code lines */}
+                            <g transform="translate(30, 50) scale(0.15)">
+                              <line x1="0" y1="0" x2="40" y2="0" stroke="url(#service-grad-5)" strokeWidth="1.5"/>
+                              <line x1="0" y1="10" x2="60" y2="10" stroke="url(#service-grad-5)" strokeWidth="1.5"/>
+                              <line x1="0" y1="20" x2="50" y2="20" stroke="url(#service-grad-5)" strokeWidth="1.5"/>
+                              <line x1="0" y1="30" x2="70" y2="30" stroke="url(#service-grad-5)" strokeWidth="1.5"/>
+                              <line x1="0" y1="40" x2="45" y2="40" stroke="url(#service-grad-5)" strokeWidth="1.5"/>
+                              <line x1="0" y1="50" x2="55" y2="50" stroke="url(#service-grad-5)" strokeWidth="1.5"/>
+                              <line x1="0" y1="60" x2="35" y2="60" stroke="url(#service-grad-5)" strokeWidth="1.5"/>
+                              <line x1="0" y1="70" x2="65" y2="70" stroke="url(#service-grad-5)" strokeWidth="1.5"/>
+                              <line x1="0" y1="80" x2="40" y2="80" stroke="url(#service-grad-5)" strokeWidth="1.5"/>
+                            </g>
+                            
+                            <defs>
+                              <linearGradient id="service-grad-5" x1="0" y1="0" x2="140" y2="140" gradientUnits="userSpaceOnUse">
+                                <stop stopColor="#2DD4BF"/>
+                                <stop offset="1" stopColor="#0D9488"/>
                               </linearGradient>
                             </defs>
                           </svg>
