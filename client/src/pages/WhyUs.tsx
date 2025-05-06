@@ -27,8 +27,8 @@ const WhyUs = () => {
     },
     {
       icon: <Globe2 className="h-12 w-12 text-andela-green" />,
-      title: "Global Talent Pool",
-      description: "Access extraordinary talent from over 100 countries, bringing diverse perspectives and solutions to your challenges."
+      title: "Strategic Market Focus",
+      description: "We specialize in 5 core technology markets (US, UK, India, Canada, Australia) for optimal talent quality and cultural alignment."
     },
     {
       icon: <CheckCircle2 className="h-12 w-12 text-andela-green" />,
@@ -77,9 +77,9 @@ const WhyUs = () => {
       niddik: "92% after one year"
     },
     {
-      category: "Global Reach",
-      traditional: "Typically limited to local or regional markets",
-      niddik: "Access to talent in 100+ countries"
+      category: "Market Focus",
+      traditional: "Widely scattered talent from many regions",
+      niddik: "Specialized talent from 5 core technology markets"
     }
   ];
 
@@ -288,8 +288,15 @@ const WhyUs = () => {
               viewport={{ once: true }}
               transition={{ duration: 0.5 }}
             >
-              <h3 className="text-6xl font-bold text-andela-green mb-2">100+</h3>
-              <p className="text-andela-gray/70 text-lg">Countries with active talent</p>
+              <h3 className="text-6xl font-bold text-andela-green mb-2 flex items-center justify-center">
+                5
+                <span className="flex ml-3 -space-x-2 scale-75">
+                  <span className="h-8 w-8 rounded-full bg-blue-100 flex items-center justify-center text-blue-600 text-xs font-bold border-2 border-white">US</span>
+                  <span className="h-8 w-8 rounded-full bg-green-100 flex items-center justify-center text-green-600 text-xs font-bold border-2 border-white">IN</span>
+                  <span className="h-8 w-8 rounded-full bg-blue-100 flex items-center justify-center text-blue-600 text-xs font-bold border-2 border-white">UK</span>
+                </span>
+              </h3>
+              <p className="text-andela-gray/70 text-lg">Core technology markets</p>
             </motion.div>
             
             <motion.div
