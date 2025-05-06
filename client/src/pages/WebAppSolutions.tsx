@@ -72,15 +72,14 @@ const WebAppSolutions = () => {
         />
       )}
       
-      {/* Hero Section - Split design with code preview */}
-      <section className="bg-white py-20 mt-8">
+      {/* Hero Section - Matching reference design */}
+      <section className="bg-white py-32">
         <Container>
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-16 items-center">
             <motion.div
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.6 }}
-              className="max-w-xl"
             >
               <div className="mb-4">
                 <div className="text-andela-green font-medium">
@@ -88,22 +87,25 @@ const WebAppSolutions = () => {
                 </div>
               </div>
               <h1 className="text-4xl md:text-5xl font-bold mb-6 text-andela-dark leading-tight">
-                Transforming Ideas into <span className="text-andela-green">Powerful Web Applications</span>
+                Transforming Ideas into<br />
+                <span className="text-andela-green">Powerful Web</span><br />
+                <span className="text-andela-green">Applications</span>
               </h1>
-              <p className="text-lg text-andela-gray mb-8">
-                We build custom, scalable, and secure web applications that solve complex business challenges and deliver exceptional user experiences.
+              <p className="text-lg text-andela-gray mb-10">
+                We build custom, scalable, and secure web applications 
+                that solve complex business challenges and deliver 
+                exceptional user experiences.
               </p>
-              <div className="flex flex-col sm:flex-row gap-4">
+              <div className="flex flex-col sm:flex-row gap-5">
                 <Link 
                   href="/contact" 
-                  className="inline-flex items-center justify-center bg-andela-green hover:bg-andela-green/90 text-white px-6 py-3 rounded-md font-medium transition-colors"
+                  className="inline-flex items-center justify-center bg-andela-green hover:bg-andela-green/90 text-white px-8 py-4 rounded-md font-medium transition-colors"
                 >
-                  Start Your Project
-                  <ArrowRight className="ml-2 h-5 w-5" />
+                  Start Your Project <ArrowRight className="ml-2 h-5 w-5" />
                 </Link>
                 <Link 
                   href="#services" 
-                  className="inline-flex items-center justify-center bg-white border border-gray-200 hover:bg-gray-50 text-andela-dark px-6 py-3 rounded-md font-medium transition-colors"
+                  className="inline-flex items-center justify-center bg-white border border-gray-200 hover:bg-gray-50 text-andela-dark px-8 py-4 rounded-md font-medium transition-colors"
                 >
                   Explore Services
                 </Link>
@@ -111,88 +113,98 @@ const WebAppSolutions = () => {
             </motion.div>
             
             <motion.div
-              initial={{ opacity: 0, x: 40 }}
-              animate={{ opacity: 1, x: 0 }}
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.8, delay: 0.2 }}
               className="hidden lg:block"
             >
-              <div className="relative perspective-1000">
-                {/* Code editor interface */}
-                <div className="bg-andela-dark rounded-xl shadow-2xl transform rotate-y-5 rotate-x-5">
-                  {/* Editor header */}
-                  <div className="bg-andela-dark/90 p-3 rounded-t-xl border-b border-gray-700 flex justify-between items-center">
+              <div className="relative mx-auto max-w-lg">
+                <div 
+                  className="bg-andela-dark rounded-lg shadow-2xl overflow-hidden transform transition-transform hover:scale-101"
+                  style={{ transform: 'perspective(1000px) rotateY(-5deg) rotateX(5deg)' }}
+                >
+                  {/* Code editor header */}
+                  <div className="flex items-center justify-between p-3 border-b border-gray-700">
                     <div className="flex space-x-2">
                       <div className="w-3 h-3 rounded-full bg-red-500"></div>
                       <div className="w-3 h-3 rounded-full bg-yellow-500"></div>
                       <div className="w-3 h-3 rounded-full bg-green-500"></div>
                     </div>
-                    <div className="px-3 py-1 rounded bg-andela-dark/60 text-gray-400 text-xs">app.component.tsx</div>
+                    <div className="text-gray-400 text-xs">app.component.tsx</div>
                   </div>
                   
                   {/* Code content */}
-                  <div className="grid grid-cols-2 gap-4 p-5">
-                    {/* Left side - Sample code */}
-                    <div className="space-y-3">
-                      <div className="text-xs text-gray-400 font-mono mb-1">// Web App Component</div>
-                      <div className="space-y-1">
-                        <div className="flex">
-                          <span className="text-blue-400 mr-2 text-xs font-mono">import</span>
-                          <span className="text-white text-xs font-mono">React from 'react';</span>
-                        </div>
-                        <div className="flex">
-                          <span className="text-blue-400 mr-2 text-xs font-mono">function</span>
-                          <span className="text-yellow-300 text-xs font-mono">WebApp() {`{`}</span>
-                        </div>
-                        <div className="ml-4 text-green-400 text-xs font-mono">// Web application logic</div>
-                        <div className="ml-4 text-white text-xs font-mono">return (</div>
-                        <div className="ml-8 text-blue-300 text-xs font-mono">{`<div className="app">`}</div>
-                        <div className="ml-12 text-purple-400 text-xs font-mono">{`<Header />`}</div>
-                        <div className="ml-12 text-purple-400 text-xs font-mono">{`<MainContent />`}</div>
-                        <div className="ml-12 text-purple-400 text-xs font-mono">{`<Footer />`}</div>
-                        <div className="ml-8 text-blue-300 text-xs font-mono">{`</div>`}</div>
-                        <div className="ml-4 text-white text-xs font-mono">);</div>
-                        <div className="text-yellow-300 text-xs font-mono">{`}`}</div>
+                  <div className="p-5">
+                    <div className="mb-4">
+                      <div className="text-gray-400 text-xs font-mono">// Web App Component</div>
+                      <div className="mt-2 text-xs font-mono">
+                        <span className="text-blue-400">import</span>
+                        <span className="text-white"> React from </span>
+                        <span className="text-yellow-300">'react'</span>
+                        <span className="text-white">;</span>
+                      </div>
+                      <div className="text-xs font-mono">
+                        <span className="text-blue-400">function</span>
+                        <span className="text-yellow-300"> WebApp</span>
+                        <span className="text-white">() {`{`}</span>
+                      </div>
+                      <div className="text-xs font-mono text-green-400 ml-4">// Web application logic</div>
+                      <div className="text-xs font-mono text-white ml-4">return (</div>
+                      <div className="text-xs font-mono text-blue-300 ml-8">{`<div className="app">`}</div>
+                      <div className="text-xs font-mono text-purple-400 ml-12">{`<Header />`}</div>
+                      <div className="text-xs font-mono text-purple-400 ml-12">{`<MainContent />`}</div>
+                      <div className="text-xs font-mono text-purple-400 ml-12">{`<Footer />`}</div>
+                      <div className="text-xs font-mono text-blue-300 ml-8">{`</div>`}</div>
+                      <div className="text-xs font-mono text-white ml-4">);</div>
+                      <div className="text-xs font-mono text-white">{`}`}</div>
+                    </div>
+
+                    {/* Input section */}
+                    <div className="mt-6">
+                      <div className="text-gray-300 text-xs mb-2 font-semibold">Input</div>
+                      <div className="flex flex-wrap gap-2">
+                        <div className="h-4 w-10 bg-blue-500 rounded-sm"></div>
+                        <div className="h-4 w-14 bg-yellow-500 rounded-sm"></div>
+                        <div className="h-4 w-8 bg-green-500 rounded-sm"></div>
+                        <div className="h-4 w-12 bg-purple-500 rounded-sm"></div>
+                        
+                        <div className="h-4 w-16 bg-blue-400 rounded-sm"></div>
+                        <div className="h-4 w-10 bg-green-400 rounded-sm"></div>
+                        <div className="h-4 w-12 bg-pink-400 rounded-sm"></div>
+                        
+                        <div className="h-4 w-8 bg-yellow-400 rounded-sm"></div>
+                        <div className="h-4 w-14 bg-purple-400 rounded-sm"></div>
+                        <div className="h-4 w-10 bg-blue-400 rounded-sm"></div>
                       </div>
                     </div>
                     
-                    {/* Right side - Colorful blocks */}
-                    <div className="space-y-3">
-                      <div className="flex flex-wrap gap-2 justify-center">
-                        <div className="h-5 w-14 bg-blue-400 rounded-sm"></div>
-                        <div className="h-5 w-10 bg-yellow-400 rounded-sm"></div>
-                        <div className="h-5 w-12 bg-green-400 rounded-sm"></div>
-                        <div className="h-5 w-8 bg-purple-400 rounded-sm"></div>
+                    {/* Output section */}
+                    <div className="mt-6">
+                      <div className="flex items-center justify-between">
+                        <div className="text-gray-300 text-xs font-semibold">Output</div>
+                        <div className="px-3 py-1 bg-green-500 rounded text-xs text-white font-medium">Submit</div>
                       </div>
-                      <div className="flex flex-wrap gap-2 justify-center">
-                        <div className="h-5 w-10 bg-red-400 rounded-sm"></div>
-                        <div className="h-5 w-16 bg-indigo-400 rounded-sm"></div>
-                        <div className="h-5 w-12 bg-pink-400 rounded-sm"></div>
-                      </div>
-                      <div className="flex flex-wrap gap-2 justify-center">
-                        <div className="h-5 w-14 bg-green-400 rounded-sm"></div>
-                        <div className="h-5 w-8 bg-blue-400 rounded-sm"></div>
-                        <div className="h-5 w-12 bg-yellow-400 rounded-sm"></div>
-                      </div>
-                      <div className="mt-8 space-y-2">
+                      
+                      <div className="mt-2 space-y-2">
                         <div className="flex items-center">
-                          <div className="h-5 w-5 bg-red-500 mr-2 rounded-full flex items-center justify-center text-xs text-white">✕</div>
-                          <div className="h-3 w-full bg-red-400 rounded-sm"></div>
+                          <div className="h-4 w-4 bg-red-500 mr-2 rounded-full flex items-center justify-center text-[10px] text-white">×</div>
+                          <div className="h-4 w-full bg-red-400 rounded-sm"></div>
                         </div>
                         <div className="flex items-center">
-                          <div className="h-5 w-5 bg-green-500 mr-2 rounded-full flex items-center justify-center text-xs text-white">✓</div>
-                          <div className="h-3 w-full bg-green-400 rounded-sm"></div>
+                          <div className="h-4 w-4 bg-green-500 mr-2 rounded-full flex items-center justify-center text-[10px] text-white">✓</div>
+                          <div className="h-4 w-full bg-green-400 rounded-sm"></div>
                         </div>
                         <div className="flex items-center">
-                          <div className="h-5 w-5 bg-green-500 mr-2 rounded-full flex items-center justify-center text-xs text-white">✓</div>
-                          <div className="h-3 w-full bg-green-400 rounded-sm"></div>
+                          <div className="h-4 w-4 bg-green-500 mr-2 rounded-full flex items-center justify-center text-[10px] text-white">✓</div>
+                          <div className="h-4 w-full bg-green-400 rounded-sm"></div>
                         </div>
                       </div>
                     </div>
                   </div>
                 </div>
                 
-                {/* Shadow element */}
-                <div className="absolute -bottom-6 -right-6 w-full h-full bg-gradient-to-br from-andela-dark/20 to-andela-dark/5 rounded-xl -z-10 blur-md"></div>
+                {/* Shadow effect */}
+                <div className="absolute -bottom-4 -right-4 w-full h-full bg-gradient-to-br from-andela-dark/20 to-andela-dark/5 rounded-lg -z-10 blur-md"></div>
               </div>
             </motion.div>
           </div>
@@ -292,9 +304,29 @@ const WebAppSolutions = () => {
         </Container>
       </section>
       
-      {/* New Why Choose Us Section - Modern Design */}
-      <section className="py-24 bg-white">
+      {/* What Makes Our Approach Different - Centered section */}
+      <section className="py-36 bg-white">
         <Container>
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true }}
+            transition={{ duration: 0.5 }}
+            className="text-center mb-16"
+          >
+            <div className="inline-block mb-4">
+              <div className="px-4 py-1 bg-andela-green/10 rounded-full text-andela-green text-sm font-medium">
+                Our Approach
+              </div>
+            </div>
+            <h2 className="text-3xl md:text-4xl font-bold mb-4 text-andela-dark">
+              What Makes Our <span className="text-andela-green">Development Process</span> Different
+            </h2>
+            <p className="text-lg text-andela-gray max-w-2xl mx-auto">
+              We blend technical expertise with strategic thinking to deliver web applications that drive business growth.
+            </p>
+          </motion.div>
+
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-16 items-center">
             <motion.div
               initial={{ opacity: 0, y: 20 }}
@@ -303,15 +335,6 @@ const WebAppSolutions = () => {
               transition={{ duration: 0.5 }}
               className="order-2 lg:order-1"
             >
-              <div className="mb-6">
-                <h2 className="text-3xl md:text-4xl font-bold mb-6 text-andela-dark">
-                  What Makes Our Web Development <span className="text-andela-green">Approach Different</span>
-                </h2>
-                <p className="text-lg text-andela-gray mb-8">
-                  We blend technical expertise with strategic thinking to deliver web applications that drive business growth.
-                </p>
-              </div>
-              
               <div className="space-y-6">
                 <motion.div
                   initial={{ opacity: 0, x: -20 }}
@@ -370,10 +393,10 @@ const WebAppSolutions = () => {
             </motion.div>
             
             <motion.div
-              initial={{ opacity: 0, scale: 0.95 }}
-              whileInView={{ opacity: 1, scale: 1 }}
+              initial={{ opacity: 0, y: 20 }}
+              whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true }}
-              transition={{ duration: 0.6 }}
+              transition={{ duration: 0.6, delay: 0.2 }}
               className="order-1 lg:order-2"
             >
               <div className="relative">
