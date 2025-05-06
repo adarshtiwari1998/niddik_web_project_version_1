@@ -243,7 +243,7 @@ const ServicesOverview = () => {
                         {/* Service content with integrated light background icon */}
                         <div className="p-8">
                           <div className={`w-16 h-16 rounded-lg mb-6 flex items-center justify-center bg-gradient-to-br from-gray-50 to-white shadow-sm group-hover:shadow-md transition-all duration-300 border border-gray-100`}>
-                            <div className={`w-10 h-10 rounded-md flex items-center justify-center bg-gradient-to-r ${service.color}`}>
+                            <div className="w-10 h-10 rounded-md flex items-center justify-center bg-gradient-to-r from-andela-green to-andela-green/90">
                               {React.cloneElement(service.icon as React.ReactElement, { className: 'h-5 w-5 text-white' })}
                             </div>
                           </div>

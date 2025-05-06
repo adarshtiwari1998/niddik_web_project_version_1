@@ -335,7 +335,7 @@ const ServicesShowcase = () => {
                     } 
                   }}
                 >
-                  <div className={`${service.id === activeService ? 'text-white' : 'text-gray-700'}`}>
+                  <div className={`${service.id === activeService ? 'text-white' : 'text-andela-green'}`}>
                     {service.icon}
                   </div>
                 </motion.div>
