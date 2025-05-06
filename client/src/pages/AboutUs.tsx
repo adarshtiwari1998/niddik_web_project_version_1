@@ -2,6 +2,9 @@ import React, { useState } from "react";
 import { motion } from "framer-motion";
 import { Users, Globe, Award, Heart, Leaf, Zap, X, ExternalLink } from "lucide-react";
 import Container from "@/components/ui/container";
+import Navbar from "@/components/layout/Navbar";
+import Footer from "@/components/layout/Footer";
+import AnnouncementBar from "@/components/layout/AnnouncementBar";
 
 const AboutUs = () => {
   const [modalOpen, setModalOpen] = useState(false);
@@ -11,7 +14,7 @@ const AboutUs = () => {
     {
       name: "Abhishek Anchal",
       role: "CEO & Co-Founder",
-      image: "https://images.unsplash.com/photo-1519085360753-af0119f7cbe7?auto=format&fit=crop&w=300&h=300&q=80",
+      image: "https://niddik.com/wp-content/uploads/2025/02/abhishk-anhal.jpg",
       bio: "With over 20 years of experience in talent acquisition, Abhishek has established himself as a renowned expert in the field of recruitment.",
       fullBio: `Abhishek is a seasoned Talent Acquisition Professional with over 20 years of extensive experience in talent acquisition, he has established himself as a renowned expert in the field of recruitment. His impressive career trajectory, marked by progressive leadership roles and a strong academic foundation, is a testament to his dedication, passion, and commitment to excellence.
 
@@ -20,24 +23,6 @@ Born with a natural aptitude for mathematics and computer science, Abhishek purs
 Upon graduating, he embarked on his professional journey in the talent acquisition space. His early experiences as a recruiter and lead recruiter helped him develop a keen eye for talent and a deep understanding of the recruitment process.
 
 As Abhishek's career progressed, he took on increasingly senior leadership roles, including Talent Acquisition Manager and Delivery Head – Recruitment. His expertise and leadership skills caught the attention of prominent global organizations, leading to opportunities to work with esteemed companies such as Lehman Brothers (NJ-USA), Thomson Reuters (NY-USA), and Calance (India).`
-    },
-    {
-      name: "Michael Rodriguez",
-      role: "CTO",
-      image: "https://images.unsplash.com/photo-1560250097-0b93528c311a?auto=format&fit=crop&w=300&h=300&q=80",
-      bio: "A software engineer turned talent advocate, Michael leads Niddik's platform development and technical strategy."
-    },
-    {
-      name: "Sarah Chen",
-      role: "COO",
-      image: "https://images.unsplash.com/photo-1573496359142-b8d87734a5a2?auto=format&fit=crop&w=300&h=300&q=80",
-      bio: "Sarah brings operational excellence and a human-centered approach to scaling Niddik's global talent services."
-    },
-    {
-      name: "David Okafor",
-      role: "Head of Talent",
-      image: "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?auto=format&fit=crop&w=300&h=300&q=80",
-      bio: "David's expertise in talent assessment and career development has shaped Niddik's unique talent matching approach."
     }
   ];
 
@@ -129,7 +114,13 @@ As Abhishek's career progressed, he took on increasingly senior leadership roles
   };
 
   return (
-    <div>
+    <div className="flex flex-col min-h-screen">
+      <AnnouncementBar 
+        text="Join our talent network today!"
+        linkText="Apply Now"
+        linkUrl="#"
+      />
+      <Navbar hasAnnouncementAbove={true} />
       {/* Hero Section - Modern redesign */}
       <section className="relative bg-white text-andela-dark overflow-hidden">
         <div className="absolute top-0 right-0 -translate-y-1/4 translate-x-1/4 w-[600px] h-[600px] rounded-full bg-andela-green/5 blur-3xl pointer-events-none"></div>
@@ -362,48 +353,58 @@ As Abhishek's career progressed, he took on increasingly senior leadership roles
           >
             <h2 className="text-3xl md:text-4xl font-bold mb-4 text-andela-dark">Our Leadership</h2>
             <p className="text-xl text-andela-gray max-w-2xl mx-auto">
-              Meet the team behind Niddik's mission and vision
+              Meet the visionary behind Niddik's mission
             </p>
           </motion.div>
 
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
-            {teamMembers.map((member, index) => (
-              <motion.div
-                key={index}
-                className="bg-white rounded-xl overflow-hidden shadow-lg group"
-                initial={{ opacity: 0, y: 20 }}
-                whileInView={{ opacity: 1, y: 0 }}
-                viewport={{ once: true }}
-                transition={{ duration: 0.5, delay: index * 0.1 }}
-              >
-                <div className="relative overflow-hidden">
+          <div className="max-w-4xl mx-auto">
+            <motion.div
+              className="flex flex-col lg:flex-row gap-10 p-6 bg-white rounded-2xl shadow-xl overflow-hidden"
+              initial={{ opacity: 0, y: 20 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true }}
+              transition={{ duration: 0.5 }}
+            >
+              <div className="w-full lg:w-1/3 flex-shrink-0">
+                <div className="relative rounded-xl overflow-hidden shadow-lg h-full max-h-[400px]">
                   <img 
-                    src={member.image} 
-                    alt={member.name} 
-                    className="w-full h-80 object-cover object-center transition-transform duration-500 group-hover:scale-105"
+                    src={teamMembers[0].image} 
+                    alt={teamMembers[0].name} 
+                    className="w-full h-full object-cover object-center"
                   />
-                  <div className="absolute inset-0 bg-gradient-to-t from-black/70 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
-                  <div className="absolute bottom-0 left-0 right-0 p-6 text-white transform translate-y-full group-hover:translate-y-0 transition-transform duration-300">
-                    <p className="text-sm font-light">{member.bio}</p>
+                  <div className="absolute inset-0 bg-gradient-to-t from-black/70 to-transparent opacity-40"></div>
+                </div>
+              </div>
+              
+              <div className="flex-1 flex flex-col justify-between">
+                <div>
+                  <div className="inline-block px-3 py-1 bg-andela-green/10 rounded-full text-andela-green text-sm font-medium mb-4">
+                    Leadership
+                  </div>
+                  <h3 className="text-3xl font-bold mb-2 text-andela-dark">{teamMembers[0].name}</h3>
+                  <p className="text-andela-green text-xl font-medium mb-6">{teamMembers[0].role}</p>
+                  
+                  <div className="space-y-4 text-andela-gray">
+                    <p className="text-lg">{teamMembers[0].bio}</p>
+                    <p className="text-lg">
+                      Under his guidance, Niddik has grown into a premier talent matching platform, connecting talented professionals with innovative companies worldwide.
+                    </p>
                   </div>
                 </div>
-                <div className="p-6">
-                  <h3 className="text-xl font-bold mb-1 text-andela-dark">{member.name}</h3>
-                  <p className="text-andela-green mb-4">{member.role}</p>
-                  {index === 0 && (
-                    <button 
-                      onClick={() => {
-                        setSelectedTeamMember(index);
-                        setModalOpen(true);
-                      }}
-                      className="inline-flex items-center text-andela-green hover:text-andela-dark font-medium transition-colors"
-                    >
-                      Learn More <ExternalLink className="ml-1 h-4 w-4" />
-                    </button>
-                  )}
+                
+                <div className="mt-8 pt-6 border-t border-gray-100">
+                  <button 
+                    onClick={() => {
+                      setSelectedTeamMember(0);
+                      setModalOpen(true);
+                    }}
+                    className="inline-flex items-center bg-andela-green hover:bg-andela-dark text-white px-6 py-3 rounded-md font-medium transition-colors"
+                  >
+                    Read Full Bio <ExternalLink className="ml-2 h-4 w-4" />
+                  </button>
                 </div>
-              </motion.div>
-            ))}
+              </div>
+            </motion.div>
           </div>
           
           {/* Team Member Modal */}
@@ -510,6 +511,8 @@ As Abhishek's career progressed, he took on increasingly senior leadership roles
           </div>
         </Container>
       </section>
+      
+      <Footer />
     </div>
   );
 };
