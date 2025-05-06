@@ -178,6 +178,11 @@
   }
 }
 
+/* Fixed header and announcement bar */
+body {
+  padding-top: 80px; /* Allow space for fixed header (40px for announcement + 40px for navbar) */
+}
+
 /* Hexagon Shape Styling for BenefitsStrengthsShowcase */
 .hexagon-container {
   width: 100%;

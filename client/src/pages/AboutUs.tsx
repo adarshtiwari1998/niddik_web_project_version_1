@@ -114,16 +114,14 @@ As Abhishek's career progressed, he took on increasingly senior leadership roles
   };
 
   return (
-    <div className="flex flex-col min-h-screen">
-      <div className="pt-10">
-        <AnnouncementBar 
-          text="Join our talent network today!"
-          linkText="Apply Now"
-          linkUrl="#"
-          bgColor="bg-andela-green"
-          textColor="text-white"
-        />
-      </div>
+    <div className="flex flex-col min-h-screen pt-10"> {/* Added pt-10 for announcement bar space */}
+      <AnnouncementBar 
+        text="Join our upcoming webinar on scaling tech teams effectively."
+        linkText="Register now"
+        linkUrl="#"
+        bgColor="bg-andela-green"
+        textColor="text-white"
+      />
       <Navbar hasAnnouncementAbove={true} />
       {/* Hero Section - Modern redesign */}
       <section className="relative bg-white text-andela-dark overflow-hidden">
@@ -131,7 +129,7 @@ As Abhishek's career progressed, he took on increasingly senior leadership roles
         <div className="absolute bottom-0 left-0 translate-y-1/4 -translate-x-1/4 w-[600px] h-[600px] rounded-full bg-andela-green/5 blur-3xl pointer-events-none"></div>
         
         <Container>
-          <div className="py-32 flex flex-col items-center justify-center relative z-10">
+          <div className="pt-16 pb-32 flex flex-col items-center justify-center relative z-10">
             <div className="max-w-4xl mx-auto text-center mb-12">
               <div className="inline-block mb-4 px-4 py-1 bg-andela-green/10 rounded-full text-andela-green font-medium">
                 About Niddik

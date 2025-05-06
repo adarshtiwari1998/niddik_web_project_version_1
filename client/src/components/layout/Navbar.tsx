@@ -77,9 +77,8 @@ const Navbar: React.FC<NavbarProps> = ({ hasAnnouncementAbove = true }) => {
 
   return (
     <header className={cn(
-      "fixed w-full bg-white z-40 transition-all duration-300",
+      "fixed w-full bg-white z-40 transition-all duration-300 top-10", // Always keep navbar below announcement bar
       isScrolled ? "shadow-md" : "shadow-sm",
-      hasAnnouncementAbove ? "top-10" : "top-0", // Adjust based on announcement bar visibility
       "transition-all duration-300"
     )}>
       <Container>
