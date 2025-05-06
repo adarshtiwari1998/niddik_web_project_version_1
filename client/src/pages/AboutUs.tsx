@@ -779,7 +779,7 @@ As Abhishek's career progressed, he took on increasingly senior leadership roles
       {/* Ready to Transform Your Talent Strategy - CTA */}
       <section className="py-20 bg-no-repeat bg-cover bg-center relative text-white overflow-hidden">
         {/* Semi-transparent overlay with gradient */}
-        <div className="absolute inset-0 bg-gradient-to-br from-andela-dark to-blue-900"></div>
+        <div className="absolute inset-0 bg-gradient-to-br from-black via-andela-dark to-blue-950"></div>
         
         {/* Decorative elements */}
         <div className="absolute top-0 right-0 w-80 h-80 rounded-full bg-andela-green/10 blur-3xl"></div>
@@ -797,23 +797,23 @@ As Abhishek's career progressed, he took on increasingly senior leadership roles
                 whileInView={{ opacity: 1, y: 0 }}
                 viewport={{ once: true }}
                 transition={{ duration: 0.6 }}
-                className="space-y-6"
+                className="space-y-6 bg-black/40 p-8 rounded-lg shadow-xl relative z-20"
               >
                 <div className="bg-andela-green text-white inline-block px-4 py-1 rounded-full text-sm font-medium mb-2">
                   REACH YOUR BUSINESS GOALS
                 </div>
                 
-                <h2 className="text-3xl md:text-5xl font-bold leading-tight">
-                  A workforce partner that <span className="text-andela-green">understands</span> every inch of <span className="text-andela-green">Your Ground</span>
+                <h2 className="text-3xl md:text-5xl font-bold leading-tight text-white">
+                  A workforce partner that <span className="bg-andela-green text-white px-2 py-1 rounded">understands</span> every inch of <span className="bg-andela-green text-white px-2 py-1 rounded">Your Ground</span>
                 </h2>
                 
-                <div className="h-1 w-28 bg-andela-green"></div>
+                <div className="h-2 w-28 bg-white"></div>
                 
-                <p className="text-xl text-blue-50 leading-relaxed">
+                <p className="text-xl text-white leading-relaxed">
                   Helping Our Clients Navigate the complexities Of Talent Sourcing with specialized expertise and a human-centered approach.
                 </p>
                 
-                <ul className="space-y-3 text-blue-50">
+                <ul className="space-y-3 text-white">
                   <li className="flex items-start">
                     <svg className="w-6 h-6 text-andela-green flex-shrink-0 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                       <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
