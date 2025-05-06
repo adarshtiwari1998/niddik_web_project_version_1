@@ -797,23 +797,23 @@ As Abhishek's career progressed, he took on increasingly senior leadership roles
                 whileInView={{ opacity: 1, y: 0 }}
                 viewport={{ once: true }}
                 transition={{ duration: 0.6 }}
-                className="space-y-6 bg-black/40 p-8 rounded-lg shadow-xl relative z-20"
+                className="space-y-6 bg-white p-8 rounded-lg shadow-xl relative z-20"
               >
                 <div className="bg-andela-green text-white inline-block px-4 py-1 rounded-full text-sm font-medium mb-2">
                   REACH YOUR BUSINESS GOALS
                 </div>
                 
-                <h2 className="text-3xl md:text-5xl font-bold leading-tight text-white">
+                <h2 className="text-3xl md:text-5xl font-bold leading-tight text-andela-dark">
                   A workforce partner that <span className="bg-andela-green text-white px-2 py-1 rounded">understands</span> every inch of <span className="bg-andela-green text-white px-2 py-1 rounded">Your Ground</span>
                 </h2>
                 
-                <div className="h-2 w-28 bg-white"></div>
+                <div className="h-2 w-28 bg-andela-green"></div>
                 
-                <p className="text-xl text-white leading-relaxed">
+                <p className="text-xl text-gray-700 leading-relaxed">
                   Helping Our Clients Navigate the complexities Of Talent Sourcing with specialized expertise and a human-centered approach.
                 </p>
                 
-                <ul className="space-y-3 text-white">
+                <ul className="space-y-3 text-gray-700">
                   <li className="flex items-start">
                     <svg className="w-6 h-6 text-andela-green flex-shrink-0 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                       <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
@@ -837,7 +837,7 @@ As Abhishek's career progressed, he took on increasingly senior leadership roles
                 <div className="flex flex-col sm:flex-row gap-4 pt-6">
                   <a 
                     href="#" 
-                    className="bg-andela-green hover:bg-white hover:text-andela-green text-white px-8 py-4 rounded-md font-medium transition-all shadow-lg hover:shadow-xl transform hover:-translate-y-1 flex items-center justify-center"
+                    className="bg-andela-green hover:bg-andela-dark text-white px-8 py-4 rounded-md font-medium transition-all shadow-lg hover:shadow-xl transform hover:-translate-y-1 flex items-center justify-center"
                   >
                     <span className="uppercase tracking-wide">Looking To Hire</span>
                     <svg className="w-5 h-5 ml-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -846,7 +846,7 @@ As Abhishek's career progressed, he took on increasingly senior leadership roles
                   </a>
                   <a 
                     href="#" 
-                    className="bg-transparent border-2 border-white hover:bg-white hover:text-andela-dark text-white px-8 py-4 rounded-md font-medium transition-all shadow-lg hover:shadow-xl transform hover:-translate-y-1 flex items-center justify-center"
+                    className="bg-transparent border-2 border-andela-green text-andela-green hover:bg-andela-green hover:text-white px-8 py-4 rounded-md font-medium transition-all shadow-lg hover:shadow-xl transform hover:-translate-y-1 flex items-center justify-center"
                   >
                     <span className="uppercase tracking-wide">I Am A Job Seeker</span>
                   </a>
