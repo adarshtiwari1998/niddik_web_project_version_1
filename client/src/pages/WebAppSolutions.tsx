@@ -8,17 +8,15 @@ import {
   Zap, 
   Database, 
   LineChart, 
-  PenTool, 
-  ArrowRight,
+  ShieldCheck, 
+  ArrowRight, 
+  BrainCircuit, 
+  Bot, 
+  GitMerge,
+  BarChart3,
+  PenTool,
   Monitor,
-  ShoppingCart,
-  Briefcase,
-  Home,
-  Newspaper,
-  Layout,
-  Share2,
-  Shield,
-  RefreshCw
+  ShoppingCart
 } from "lucide-react";
 import Navbar from "@/components/layout/Navbar";
 import Footer from "@/components/layout/Footer";
@@ -27,197 +25,133 @@ import AnnouncementBar from "@/components/layout/AnnouncementBar";
 import { Link } from "wouter";
 
 const WebAppSolutions = () => {
-  const webAppTypes = [
+  const webAppServices = [
     {
-      icon: <ShoppingCart className="h-8 w-8 text-blue-500" />,
-      title: "E-commerce Websites",
-      description: "Fully-featured online stores with secure payments, inventory management, and customer analytics.",
-      features: [
-        "Product catalog and inventory management",
-        "Secure payment processing",
-        "Customer accounts and wish lists",
-        "Order tracking and fulfillment",
-        "Mobile-responsive design"
-      ]
-    },
-    {
-      icon: <Briefcase className="h-8 w-8 text-indigo-500" />,
-      title: "Business & Corporate Sites",
-      description: "Professional websites that showcase your brand, services, and establish credibility with potential clients.",
-      features: [
-        "Brand-aligned design",
-        "Service and product showcase",
-        "Team and company profiles",
-        "Testimonials and case studies",
-        "Contact forms and lead generation"
-      ]
-    },
-    {
-      icon: <Monitor className="h-8 w-8 text-green-500" />,
-      title: "Web Applications",
-      description: "Interactive, data-driven applications that provide specific functionality and solve business problems.",
-      features: [
-        "User authentication and accounts",
-        "Real-time data processing",
-        "Custom dashboards and reporting",
-        "API integrations",
-        "Database-driven functionality"
-      ]
-    },
-    {
-      icon: <Home className="h-8 w-8 text-amber-500" />,
-      title: "Real Estate Platforms",
-      description: "Property listing websites with search functionality, maps integration, and client management tools.",
-      features: [
-        "Property listings with advanced search",
-        "Interactive maps and location data",
-        "Image galleries and virtual tours",
-        "Agent profiles and contact forms",
-        "Client management systems"
-      ]
-    },
-    {
-      icon: <Newspaper className="h-8 w-8 text-red-500" />,
-      title: "Content Management Systems",
-      description: "Easily manageable websites that allow non-technical users to update content independently.",
-      features: [
-        "User-friendly content editor",
-        "Image and media management",
-        "Content scheduling and publishing",
-        "User role management",
-        "SEO tools and optimization"
-      ]
-    },
-    {
-      icon: <Share2 className="h-8 w-8 text-purple-500" />,
-      title: "Social Networks & Communities",
-      description: "Interactive platforms that enable user connections, content sharing, and community building.",
-      features: [
-        "User profiles and connections",
-        "Content creation and sharing",
-        "Messaging and notifications",
-        "Groups and forums",
-        "Content moderation tools"
-      ]
-    }
-  ];
-
-  const technologies = [
-    {
-      category: "Frontend",
-      items: [
-        { name: "React.js", description: "A JavaScript library for building user interfaces" },
-        { name: "Next.js", description: "React framework for production with server-side rendering" },
-        { name: "Angular", description: "Platform for building mobile and desktop web applications" },
-        { name: "Vue.js", description: "Progressive JavaScript framework for building UIs" },
-        { name: "Tailwind CSS", description: "Utility-first CSS framework for rapid UI development" }
-      ]
-    },
-    {
-      category: "Backend",
-      items: [
-        { name: "Node.js", description: "JavaScript runtime built on Chrome's V8 engine" },
-        { name: "Express", description: "Fast, unopinionated, minimalist web framework for Node.js" },
-        { name: "Django", description: "High-level Python web framework" },
-        { name: "Ruby on Rails", description: "Server-side web application framework written in Ruby" },
-        { name: "Laravel", description: "PHP web application framework with elegant syntax" }
-      ]
-    },
-    {
-      category: "Databases",
-      items: [
-        { name: "MongoDB", description: "Cross-platform document-oriented NoSQL database" },
-        { name: "PostgreSQL", description: "Powerful, open source object-relational database system" },
-        { name: "MySQL", description: "Open-source relational database management system" },
-        { name: "Redis", description: "In-memory data structure store used as database, cache, and message broker" },
-        { name: "Firebase", description: "Google's platform for mobile and web applications development" }
-      ]
-    }
-  ];
-
-  const services = [
-    {
-      icon: <Layout className="h-10 w-10 text-blue-500" />,
-      title: "Custom Web Design",
-      description: "Bespoke designs tailored to your brand identity and business goals, creating a unique online presence that stands out from competitors."
-    },
-    {
-      icon: <Code className="h-10 w-10 text-indigo-500" />,
+      icon: <Code className="h-8 w-8 text-andela-green" />,
       title: "Frontend Development",
-      description: "Expert creation of responsive, intuitive, and engaging user interfaces using the latest frontend technologies and best practices."
+      description: "Responsive and intuitive UI/UX with modern frameworks like React, Vue, and Angular.",
+      tech: ["React", "Vue.js", "Angular", "TypeScript", "HTML5/CSS3"]
     },
     {
-      icon: <Server className="h-10 w-10 text-green-500" />,
+      icon: <Server className="h-8 w-8 text-purple-500" />,
       title: "Backend Development",
-      description: "Robust server-side solutions with scalable architecture, efficient data processing, and secure API integrations."
+      description: "Scalable and secure server-side solutions with robust APIs and microservices architecture.",
+      tech: ["Node.js", "Python", "Java", "C#", "Ruby on Rails"]
     },
     {
-      icon: <Database className="h-10 w-10 text-amber-500" />,
-      title: "Database Design",
-      description: "Optimized database architecture for efficient data storage, retrieval, and management, supporting your application's specific needs."
+      icon: <Database className="h-8 w-8 text-green-500" />,
+      title: "Database Solutions",
+      description: "Efficient data storage and retrieval systems optimized for performance and scalability.",
+      tech: ["PostgreSQL", "MongoDB", "MySQL", "Redis", "GraphQL"]
     },
     {
-      icon: <PenTool className="h-10 w-10 text-red-500" />,
-      title: "UX/UI Design",
-      description: "User-centered design approach focusing on intuitive navigation, visual hierarchy, and seamless interactions across all devices."
+      icon: <Globe className="h-8 w-8 text-teal-500" />,
+      title: "Full-Stack Applications",
+      description: "End-to-end web application development with seamless integration between all components.",
+      tech: ["MERN Stack", "LAMP Stack", "JAMstack", "Serverless", "Cloud-native"]
     },
     {
-      icon: <Shield className="h-10 w-10 text-purple-500" />,
+      icon: <ShieldCheck className="h-8 w-8 text-red-500" />,
       title: "Security Implementation",
-      description: "Comprehensive security measures including user authentication, data encryption, vulnerability testing, and compliance with regulations."
+      description: "Comprehensive security measures to protect data and ensure compliance with regulations.",
+      tech: ["OAuth", "JWT", "HTTPS", "Data Encryption", "Security Audits"]
     },
     {
-      icon: <Zap className="h-10 w-10 text-teal-500" />,
-      title: "Performance Optimization",
-      description: "Enhancing website speed and performance through code optimization, caching strategies, and efficient resource management."
-    },
-    {
-      icon: <RefreshCw className="h-10 w-10 text-pink-500" />,
-      title: "Maintenance & Support",
-      description: "Ongoing technical support, regular updates, security patches, and feature enhancements to keep your website running optimally."
+      icon: <LineChart className="h-8 w-8 text-amber-500" />,
+      title: "Analytics Integration",
+      description: "Data-driven insights through powerful analytics integration and visualization tools.",
+      tech: ["Google Analytics", "Mixpanel", "D3.js", "Chart.js", "Kibana"]
     }
   ];
 
-  const faq = [
+  const caseStudies = [
     {
-      question: "How long does it take to develop a web application?",
-      answer: "Development timelines vary based on complexity, features, and scope. Simple websites can take 4-8 weeks, while complex web applications may require 3-6 months or more. During our initial consultation, we'll provide a more accurate timeline based on your specific requirements."
+      title: "E-Commerce Platform",
+      client: "RetailTech Innovations",
+      description: "Developed a comprehensive e-commerce solution with inventory management, payment processing, and customer analytics.",
+      results: [
+        "Increased online sales by 142% in the first quarter",
+        "Reduced page load time by 65%",
+        "Improved checkout conversion rate by 28%"
+      ],
+      image: "https://images.unsplash.com/photo-1561997968-aa846c2bf255?auto=format&fit=crop&w=800&q=80",
+      tags: ["E-commerce", "React", "Node.js", "PostgreSQL"]
     },
     {
-      question: "What is your web development process?",
-      answer: "Our process includes: 1) Discovery and requirements gathering, 2) Planning and architecture, 3) UI/UX design, 4) Development, 5) Testing and quality assurance, 6) Deployment, and 7) Post-launch support and maintenance. We use agile methodologies to ensure regular communication and iterative improvements throughout the development lifecycle."
+      title: "Healthcare Management System",
+      client: "MedCare Solutions",
+      description: "Created a secure and compliant healthcare management application for patient records, appointments, and telemedicine capabilities.",
+      results: [
+        "Reduced administrative workload by 40%",
+        "HIPAA compliant data security implementation",
+        "Enabled 24/7 service accessibility with 99.9% uptime"
+      ],
+      image: "https://images.unsplash.com/photo-1576091160550-2173dba999ef?auto=format&fit=crop&w=800&q=80",
+      tags: ["Healthcare", "Angular", "C#", "Azure"]
+    }
+  ];
+
+  const developmentProcess = [
+    {
+      number: 1,
+      title: "Requirements Analysis",
+      description: "We work closely with you to understand your business needs, user expectations, and technical requirements to define the scope and objectives of your web application."
     },
     {
-      question: "Do you provide ongoing maintenance and support?",
-      answer: "Yes, we offer various maintenance and support packages to ensure your web application remains secure, up-to-date, and functioning optimally. Our support services include security updates, bug fixes, performance monitoring, content updates, and feature enhancements."
+      number: 2,
+      title: "Design & Architecture",
+      description: "Our team creates intuitive UI/UX designs and establishes a robust technical architecture to ensure your application is both user-friendly and technically sound."
     },
     {
-      question: "Will my website be mobile-friendly?",
-      answer: "Absolutely! All our web applications are built with a mobile-first approach, ensuring they work perfectly across all devices and screen sizes. We use responsive design techniques and thoroughly test on multiple devices to guarantee a seamless experience for all users."
+      number: 3,
+      title: "Development",
+      description: "Using agile methodologies, we develop your web application with clean, maintainable code and regular iterative improvements based on continuous feedback."
     },
     {
-      question: "What technologies do you use for web development?",
-      answer: "We specialize in modern web technologies including React, Angular, Node.js, Express, MongoDB, PostgreSQL, and more. We select the technology stack based on your specific requirements, ensuring the best fit for your project's needs, performance expectations, and long-term maintenance."
+      number: 4,
+      title: "Testing & QA",
+      description: "Rigorous testing across multiple devices and scenarios ensures your application is bug-free, secure, and delivers an optimal user experience."
+    },
+    {
+      number: 5,
+      title: "Deployment",
+      description: "We handle the deployment process with zero-downtime strategies and implement CI/CD pipelines for smooth transitions to production environments."
+    },
+    {
+      number: 6,
+      title: "Maintenance & Support",
+      description: "Our relationship continues after launch with proactive monitoring, regular updates, and responsive technical support to keep your application running flawlessly."
     }
   ];
 
   return (
     <div className="pt-10">
       <AnnouncementBar 
-        text="Transform your digital presence with our custom web application development services."
-        linkText="Get a free consultation"
+        text="Discover how our web development solutions can transform your business."
+        linkText="Book a consultation"
         linkUrl="#"
-        bgColor="bg-blue-600"
+        bgColor="bg-andela-green"
         textColor="text-white"
       />
       <Navbar hasAnnouncementAbove={true} />
 
       {/* Hero Section */}
-      <section className="relative py-24 bg-gradient-to-b from-blue-50 to-white overflow-hidden">
+      <section className="relative py-24 overflow-hidden">
         {/* Background elements */}
-        <div className="absolute right-0 top-0 w-1/3 h-full bg-blue-50 opacity-50"></div>
-        <div className="absolute -top-20 -right-20 w-80 h-80 bg-blue-100 rounded-full opacity-80"></div>
-        <div className="absolute -bottom-20 -left-20 w-80 h-80 bg-blue-100 rounded-full opacity-50"></div>
+        <div className="absolute inset-0 bg-gradient-to-b from-gray-50 to-white"></div>
+        <div className="absolute right-0 top-20 w-96 h-96 bg-andela-green/5 rounded-full blur-3xl"></div>
+        <div className="absolute left-0 bottom-20 w-80 h-80 bg-purple-500/5 rounded-full blur-3xl"></div>
+        
+        {/* Code-like decorative elements */}
+        <div className="absolute top-40 left-10 text-4xl text-andela-green/10 font-mono hidden md:block">
+          &lt;div&gt;
+        </div>
+        <div className="absolute top-60 left-20 text-3xl text-andela-green/10 font-mono hidden md:block">
+          &lt;code&gt;
+        </div>
+        <div className="absolute bottom-40 right-10 text-4xl text-andela-green/10 font-mono hidden md:block">
+          &lt;/div&gt;
+        </div>
         
         <Container className="relative z-10">
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-16 items-center">
@@ -227,29 +161,29 @@ const WebAppSolutions = () => {
               transition={{ duration: 0.6 }}
             >
               <div className="inline-block mb-4">
-                <div className="px-4 py-1 bg-blue-100 rounded-full text-blue-600 text-sm font-medium">
-                  Web Applications
+                <div className="px-4 py-1 bg-andela-green/10 rounded-full text-andela-green text-sm font-medium">
+                  Web Application Development
                 </div>
               </div>
               <h1 className="text-4xl md:text-5xl lg:text-6xl font-bold mb-6 text-andela-dark leading-tight">
-                Custom <span className="text-blue-600">Web Application</span> Development
+                Transforming Ideas into <span className="text-andela-green">Powerful Web Applications</span>
               </h1>
               <p className="text-lg text-andela-gray mb-8 max-w-lg">
-                From concept to deployment, we build scalable, intuitive, and high-performance web applications that solve real business challenges.
+                We build custom, scalable, and secure web applications that solve complex business challenges and deliver exceptional user experiences.
               </p>
               <div className="flex flex-col sm:flex-row gap-4">
                 <Link 
                   href="/contact" 
-                  className="inline-flex items-center justify-center bg-blue-600 hover:bg-blue-700 text-white px-6 py-3 rounded-md font-medium transition-colors shadow-lg"
+                  className="inline-flex items-center justify-center bg-andela-green hover:bg-andela-green/90 text-white px-6 py-3 rounded-md font-medium transition-colors shadow-lg"
                 >
-                  Discuss Your Project
+                  Start Your Project
                   <ArrowRight className="ml-2 h-5 w-5" />
                 </Link>
                 <a 
                   href="#services"
-                  className="inline-flex items-center justify-center border-2 border-blue-600 text-blue-600 hover:bg-blue-50 px-6 py-3 rounded-md font-medium transition-colors"
+                  className="inline-flex items-center justify-center border-2 border-andela-green text-andela-green hover:bg-andela-green/5 px-6 py-3 rounded-md font-medium transition-colors"
                 >
-                  Explore Our Services
+                  Explore Services
                 </a>
               </div>
             </motion.div>
@@ -260,22 +194,48 @@ const WebAppSolutions = () => {
               transition={{ duration: 0.6, delay: 0.2 }}
               className="relative hidden lg:block"
             >
-              <div className="w-full h-auto rounded-xl shadow-2xl overflow-hidden">
-                <img 
-                  src="https://images.unsplash.com/photo-1581291518633-83b4ebd1d83e?auto=format&fit=crop&w=1200&q=80" 
-                  alt="Web application development" 
-                  className="w-full h-auto"
-                />
+              {/* Decorative code editor window */}
+              <div className="w-full rounded-xl bg-gray-900 shadow-2xl overflow-hidden">
+                <div className="h-10 bg-gray-800 flex items-center px-4">
+                  <div className="flex gap-2">
+                    <div className="w-3 h-3 rounded-full bg-red-500"></div>
+                    <div className="w-3 h-3 rounded-full bg-yellow-500"></div>
+                    <div className="w-3 h-3 rounded-full bg-green-500"></div>
+                  </div>
+                  <div className="ml-4 px-3 py-1 rounded bg-gray-700 text-gray-300 text-xs font-mono">
+                    app.js
+                  </div>
+                </div>
+                <div className="p-6 text-left">
+                  <pre className="text-gray-300 font-mono text-sm">
+                    <code>
+                      <span className="text-purple-400">import</span> <span className="text-yellow-400">React</span> <span className="text-purple-400">from</span> <span className="text-green-400">'react'</span>;<br/>
+                      <br/>
+                      <span className="text-purple-400">function</span> <span className="text-blue-400">App</span>() {'{'}<br/>
+                      {'  '}<span className="text-purple-400">return</span> (<br/>
+                      {'    '}&lt;<span className="text-blue-400">div</span> <span className="text-yellow-400">className</span>=<span className="text-green-400">"app"</span>&gt;<br/>
+                      {'      '}&lt;<span className="text-blue-400">h1</span>&gt;Welcome to Niddik Solutions&lt;/<span className="text-blue-400">h1</span>&gt;<br/>
+                      {'      '}&lt;<span className="text-blue-400">p</span>&gt;Building the future with code&lt;/<span className="text-blue-400">p</span>&gt;<br/>
+                      {'    '}&lt;/<span className="text-blue-400">div</span>&gt;<br/>
+                      {'  '});<br/>
+                      {'}'}<br/>
+                      <br/>
+                      <span className="text-purple-400">export</span> <span className="text-purple-400">default</span> <span className="text-blue-400">App</span>;
+                    </code>
+                  </pre>
+                </div>
               </div>
-              <div className="absolute -bottom-5 -right-5 w-32 h-32 bg-blue-100 rounded-lg transform rotate-6 z-0"></div>
-              <div className="absolute -top-5 -left-5 w-24 h-24 bg-blue-200 rounded-lg transform -rotate-6 z-0"></div>
+              
+              {/* Decorative elements */}
+              <div className="absolute -bottom-4 -right-4 w-80 h-20 bg-gradient-to-r from-purple-500/20 to-andela-green/20 blur-2xl rounded-full"></div>
+              <div className="absolute -top-4 -left-4 w-40 h-40 bg-andela-green/10 rounded-full"></div>
             </motion.div>
           </div>
         </Container>
       </section>
       
-      {/* Web Application Types */}
-      <section id="app-types" className="py-20 bg-white">
+      {/* Services Section */}
+      <section id="services" className="py-20 bg-white">
         <Container>
           <motion.div
             initial={{ opacity: 0, y: 20 }}
@@ -285,18 +245,18 @@ const WebAppSolutions = () => {
             className="text-center mb-16"
           >
             <div className="inline-block mb-4">
-              <div className="px-4 py-1 bg-blue-100 rounded-full text-blue-600 text-sm font-medium">
-                Solutions
+              <div className="px-4 py-1 bg-andela-green/10 rounded-full text-andela-green text-sm font-medium">
+                Our Expertise
               </div>
             </div>
-            <h2 className="text-3xl md:text-4xl font-bold mb-4 text-andela-dark">Types of Web Applications We Build</h2>
+            <h2 className="text-3xl md:text-4xl font-bold mb-4 text-andela-dark">Web Development Services</h2>
             <p className="text-lg text-andela-gray max-w-2xl mx-auto">
-              We develop a wide range of web applications tailored to diverse business needs and industries.
+              From frontend interfaces to complex backend systems, we deliver end-to-end web solutions tailored to your unique business needs.
             </p>
           </motion.div>
           
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-            {webAppTypes.map((type, index) => (
+            {webAppServices.map((service, index) => (
               <motion.div
                 key={index}
                 initial={{ opacity: 0, y: 20 }}
@@ -305,110 +265,23 @@ const WebAppSolutions = () => {
                 transition={{ duration: 0.5, delay: index * 0.1 }}
                 className="bg-white border border-gray-100 rounded-xl p-6 shadow-sm hover:shadow-md transition-shadow"
               >
-                <div className="w-14 h-14 bg-blue-50 rounded-lg flex items-center justify-center mb-6">
-                  {type.icon}
-                </div>
-                <h3 className="text-xl font-bold mb-3 text-andela-dark">{type.title}</h3>
-                <p className="text-andela-gray mb-6">{type.description}</p>
-                <div>
-                  <p className="text-sm font-medium text-blue-600 mb-2">Key Features:</p>
-                  <ul className="space-y-2">
-                    {type.features.map((feature, i) => (
-                      <li key={i} className="flex items-start">
-                        <svg className="w-5 h-5 text-blue-500 flex-shrink-0 mr-2 mt-0.5" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor">
-                          <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clipRule="evenodd" />
-                        </svg>
-                        <span className="text-andela-gray">{feature}</span>
-                      </li>
-                    ))}
-                  </ul>
-                </div>
-              </motion.div>
-            ))}
-          </div>
-        </Container>
-      </section>
-      
-      {/* Our Services */}
-      <section id="services" className="py-20 bg-blue-50">
-        <Container>
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true }}
-            transition={{ duration: 0.5 }}
-            className="text-center mb-16"
-          >
-            <div className="inline-block mb-4">
-              <div className="px-4 py-1 bg-blue-200 rounded-full text-blue-700 text-sm font-medium">
-                What We Offer
-              </div>
-            </div>
-            <h2 className="text-3xl md:text-4xl font-bold mb-4 text-andela-dark">Our Web Development Services</h2>
-            <p className="text-lg text-andela-gray max-w-2xl mx-auto">
-              We provide end-to-end web application development services tailored to your business requirements.
-            </p>
-          </motion.div>
-          
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
-            {services.map((service, index) => (
-              <motion.div
-                key={index}
-                initial={{ opacity: 0, y: 20 }}
-                whileInView={{ opacity: 1, y: 0 }}
-                viewport={{ once: true }}
-                transition={{ duration: 0.5, delay: index * 0.1 }}
-                className="bg-white rounded-xl p-6 shadow-md hover:shadow-lg transition-shadow"
-              >
-                <div className="w-16 h-16 bg-blue-50 rounded-lg flex items-center justify-center mb-6">
+                <div className="w-14 h-14 bg-gray-50 rounded-lg flex items-center justify-center mb-6">
                   {service.icon}
                 </div>
                 <h3 className="text-xl font-bold mb-3 text-andela-dark">{service.title}</h3>
-                <p className="text-andela-gray">{service.description}</p>
-              </motion.div>
-            ))}
-          </div>
-        </Container>
-      </section>
-      
-      {/* Technologies */}
-      <section className="py-20 bg-white">
-        <Container>
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true }}
-            transition={{ duration: 0.5 }}
-            className="text-center mb-16"
-          >
-            <div className="inline-block mb-4">
-              <div className="px-4 py-1 bg-blue-100 rounded-full text-blue-600 text-sm font-medium">
-                Tech Stack
-              </div>
-            </div>
-            <h2 className="text-3xl md:text-4xl font-bold mb-4 text-andela-dark">Technologies We Use</h2>
-            <p className="text-lg text-andela-gray max-w-2xl mx-auto">
-              We leverage modern technologies to build scalable, secure, and high-performance web applications.
-            </p>
-          </motion.div>
-          
-          <div className="space-y-12">
-            {technologies.map((tech, index) => (
-              <motion.div
-                key={index}
-                initial={{ opacity: 0, y: 20 }}
-                whileInView={{ opacity: 1, y: 0 }}
-                viewport={{ once: true }}
-                transition={{ duration: 0.5 }}
-              >
-                <h3 className="text-2xl font-bold mb-6 text-andela-dark">{tech.category}</h3>
-                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-                  {tech.items.map((item, i) => (
-                    <div key={i} className="bg-gray-50 rounded-lg p-4 border border-gray-100">
-                      <h4 className="text-lg font-bold text-blue-600 mb-1">{item.name}</h4>
-                      <p className="text-andela-gray text-sm">{item.description}</p>
-                    </div>
-                  ))}
+                <p className="text-andela-gray mb-6">{service.description}</p>
+                <div>
+                  <p className="text-sm font-medium text-andela-green mb-2">Technologies:</p>
+                  <div className="flex flex-wrap gap-2">
+                    {service.tech.map((tech, i) => (
+                      <span 
+                        key={i} 
+                        className="px-3 py-1 bg-gray-50 text-andela-gray text-xs rounded-full"
+                      >
+                        {tech}
+                      </span>
+                    ))}
+                  </div>
                 </div>
               </motion.div>
             ))}
@@ -416,8 +289,8 @@ const WebAppSolutions = () => {
         </Container>
       </section>
       
-      {/* Process */}
-      <section className="py-20 bg-blue-50">
+      {/* Development Process */}
+      <section className="py-20 bg-gray-50">
         <Container>
           <motion.div
             initial={{ opacity: 0, y: 20 }}
@@ -427,7 +300,7 @@ const WebAppSolutions = () => {
             className="text-center mb-16"
           >
             <div className="inline-block mb-4">
-              <div className="px-4 py-1 bg-blue-200 rounded-full text-blue-700 text-sm font-medium">
+              <div className="px-4 py-1 bg-andela-green/10 rounded-full text-andela-green text-sm font-medium">
                 Our Approach
               </div>
             </div>
@@ -439,18 +312,10 @@ const WebAppSolutions = () => {
           
           <div className="relative">
             {/* Timeline line */}
-            <div className="absolute left-[28px] md:left-1/2 top-0 bottom-0 w-1 bg-blue-200 hidden md:block"></div>
+            <div className="absolute left-0 md:left-1/2 transform md:-translate-x-1/2 top-0 bottom-0 w-1 bg-andela-green/20"></div>
             
             <div className="space-y-12">
-              {[
-                { number: 1, title: "Discovery", description: "We work closely with you to understand your business needs, user expectations, and project requirements." },
-                { number: 2, title: "Planning", description: "We create a detailed project plan, define deliverables, and establish project milestones and timelines." },
-                { number: 3, title: "Design", description: "Our designers create intuitive user interfaces and experiences that align with your brand and user needs." },
-                { number: 4, title: "Development", description: "Our developers build your web application using the most appropriate technologies and best practices." },
-                { number: 5, title: "Testing", description: "We conduct rigorous testing to ensure your application is bug-free, secure, and performs optimally." },
-                { number: 6, title: "Deployment", description: "We deploy your application to production and ensure a smooth transition with minimal downtime." },
-                { number: 7, title: "Support", description: "We provide ongoing maintenance and support to keep your application running smoothly." }
-              ].map((step, index) => (
+              {developmentProcess.map((step, index) => (
                 <motion.div
                   key={index}
                   initial={{ opacity: 0, y: 20 }}
@@ -459,21 +324,14 @@ const WebAppSolutions = () => {
                   transition={{ duration: 0.5, delay: index * 0.1 }}
                   className={`flex flex-col ${index % 2 === 0 ? 'md:flex-row' : 'md:flex-row-reverse'} gap-8 relative`}
                 >
-                  <div className="md:w-1/2 flex md:block">
-                    {/* Numbered circle on the timeline */}
-                    <div className={`w-14 h-14 rounded-full bg-blue-600 flex items-center justify-center text-white font-bold text-xl z-10 flex-shrink-0 ${
-                      index % 2 === 0 ? 'md:ml-auto md:mr-8' : 'md:ml-8'
-                    }`}>
-                      {step.number}
-                    </div>
-                    
-                    <div className="block md:hidden ml-6 flex-grow">
-                      <h3 className="text-xl font-bold mb-2 text-andela-dark pt-2">{step.title}</h3>
-                      <p className="text-andela-gray">{step.description}</p>
-                    </div>
+                  <div className="md:w-1/2"></div>
+                  
+                  {/* Numbered circle on the timeline */}
+                  <div className="absolute left-0 md:left-1/2 transform -translate-x-1/2 w-10 h-10 rounded-full bg-andela-green flex items-center justify-center text-white font-bold z-10">
+                    {step.number}
                   </div>
                   
-                  <div className="hidden md:block md:w-1/2 bg-white p-6 rounded-xl shadow-sm border border-gray-100">
+                  <div className="md:w-1/2 bg-white p-6 rounded-xl shadow-sm border border-gray-100">
                     <h3 className="text-xl font-bold mb-3 text-andela-dark">{step.title}</h3>
                     <p className="text-andela-gray">{step.description}</p>
                   </div>
@@ -484,7 +342,7 @@ const WebAppSolutions = () => {
         </Container>
       </section>
       
-      {/* FAQ */}
+      {/* Case Studies Section */}
       <section className="py-20 bg-white">
         <Container>
           <motion.div
@@ -495,71 +353,157 @@ const WebAppSolutions = () => {
             className="text-center mb-16"
           >
             <div className="inline-block mb-4">
-              <div className="px-4 py-1 bg-blue-100 rounded-full text-blue-600 text-sm font-medium">
-                Common Questions
+              <div className="px-4 py-1 bg-purple-500/10 rounded-full text-purple-500 text-sm font-medium">
+                Success Stories
               </div>
             </div>
-            <h2 className="text-3xl md:text-4xl font-bold mb-4 text-andela-dark">Frequently Asked Questions</h2>
+            <h2 className="text-3xl md:text-4xl font-bold mb-4 text-andela-dark">Case Studies</h2>
             <p className="text-lg text-andela-gray max-w-2xl mx-auto">
-              Get answers to common questions about our web application development services.
+              Real-world examples of how our web applications have helped businesses achieve their goals.
             </p>
           </motion.div>
           
-          <div className="max-w-3xl mx-auto">
-            <div className="space-y-6">
-              {faq.map((item, index) => (
-                <motion.div
-                  key={index}
-                  initial={{ opacity: 0, y: 20 }}
-                  whileInView={{ opacity: 1, y: 0 }}
-                  viewport={{ once: true }}
-                  transition={{ duration: 0.5, delay: index * 0.1 }}
-                  className="bg-gray-50 rounded-xl p-6 border border-gray-100"
-                >
-                  <h3 className="text-xl font-bold mb-3 text-andela-dark">{item.question}</h3>
-                  <p className="text-andela-gray">{item.answer}</p>
-                </motion.div>
-              ))}
-            </div>
+          <div className="space-y-16">
+            {caseStudies.map((caseStudy, index) => (
+              <motion.div
+                key={index}
+                initial={{ opacity: 0, y: 20 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                viewport={{ once: true }}
+                transition={{ duration: 0.5 }}
+                className={`grid grid-cols-1 lg:grid-cols-2 gap-10 items-center ${
+                  index % 2 === 1 ? 'lg:flex-row-reverse' : ''
+                }`}
+              >
+                <div className={`order-2 ${index % 2 === 1 ? 'lg:order-1' : 'lg:order-2'}`}>
+                  <div className="rounded-xl overflow-hidden shadow-lg">
+                    <img 
+                      src={caseStudy.image} 
+                      alt={caseStudy.title} 
+                      className="w-full h-auto object-cover"
+                    />
+                  </div>
+                </div>
+                <div className={`order-1 ${index % 2 === 1 ? 'lg:order-2' : 'lg:order-1'}`}>
+                  <div className="space-y-4">
+                    <div className="flex gap-2 flex-wrap">
+                      {caseStudy.tags.map((tag, i) => (
+                        <span 
+                          key={i} 
+                          className="px-3 py-1 bg-gray-100 text-andela-gray text-xs rounded-full"
+                        >
+                          {tag}
+                        </span>
+                      ))}
+                    </div>
+                    <h3 className="text-2xl font-bold text-andela-dark">{caseStudy.title}</h3>
+                    <p className="text-andela-green font-medium">Client: {caseStudy.client}</p>
+                    <p className="text-andela-gray">{caseStudy.description}</p>
+                    <div>
+                      <p className="font-medium text-andela-dark mb-2">Results:</p>
+                      <ul className="space-y-2">
+                        {caseStudy.results.map((result, i) => (
+                          <li key={i} className="flex items-start">
+                            <svg className="w-5 h-5 text-andela-green flex-shrink-0 mr-2 mt-1" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor">
+                              <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clipRule="evenodd" />
+                            </svg>
+                            <span className="text-andela-gray">{result}</span>
+                          </li>
+                        ))}
+                      </ul>
+                    </div>
+                  </div>
+                </div>
+              </motion.div>
+            ))}
+          </div>
+        </Container>
+      </section>
+      
+      {/* Why Choose Us */}
+      <section className="py-20 bg-gradient-to-r from-andela-dark to-andela-dark/90 text-white">
+        <Container>
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true }}
+            transition={{ duration: 0.5 }}
+            className="text-center mb-16"
+          >
+            <h2 className="text-3xl md:text-4xl font-bold mb-4">Why Choose Niddik for Web Development</h2>
+            <p className="text-xl text-gray-300 max-w-2xl mx-auto">
+              We combine technical expertise with business acumen to deliver web applications that exceed expectations.
+            </p>
+          </motion.div>
+          
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+            <motion.div
+              initial={{ opacity: 0, y: 20 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true }}
+              transition={{ duration: 0.5 }}
+              className="bg-white/10 backdrop-blur-sm p-6 rounded-xl"
+            >
+              <Users className="h-10 w-10 text-andela-green mb-4" />
+              <h3 className="text-xl font-bold mb-3">Dedicated Team</h3>
+              <p className="text-gray-300">
+                We assign a dedicated team of developers, designers, and project managers to ensure consistent communication and delivery.
+              </p>
+            </motion.div>
+            
+            <motion.div
+              initial={{ opacity: 0, y: 20 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true }}
+              transition={{ duration: 0.5, delay: 0.1 }}
+              className="bg-white/10 backdrop-blur-sm p-6 rounded-xl"
+            >
+              <Zap className="h-10 w-10 text-andela-green mb-4" />
+              <h3 className="text-xl font-bold mb-3">Cutting-Edge Technology</h3>
+              <p className="text-gray-300">
+                We stay ahead of the curve with the latest web technologies and best practices to build future-proof applications.
+              </p>
+            </motion.div>
+            
+            <motion.div
+              initial={{ opacity: 0, y: 20 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true }}
+              transition={{ duration: 0.5, delay: 0.2 }}
+              className="bg-white/10 backdrop-blur-sm p-6 rounded-xl"
+            >
+              <PenTool className="h-10 w-10 text-andela-green mb-4" />
+              <h3 className="text-xl font-bold mb-3">Custom Solutions</h3>
+              <p className="text-gray-300">
+                Every project is unique, and we tailor our development approach to meet your specific business requirements and goals.
+              </p>
+            </motion.div>
           </div>
         </Container>
       </section>
       
       {/* CTA Section */}
-      <section className="py-16 bg-blue-50">
+      <section className="py-20 bg-gray-50">
         <Container>
-          <div className="bg-white rounded-xl p-8 md:p-12 shadow-xl relative overflow-hidden">
-            {/* Background decorative elements */}
-            <div className="absolute -top-10 -right-10 w-40 h-40 bg-blue-100 rounded-full opacity-70"></div>
-            <div className="absolute -bottom-10 -left-10 w-40 h-40 bg-blue-100 rounded-full opacity-50"></div>
-            
-            <div className="relative z-10 flex flex-col md:flex-row items-center justify-between gap-8">
-              <div className="max-w-2xl">
-                <h2 className="text-3xl font-bold mb-4 text-andela-dark">Ready to Build Your Web Application?</h2>
-                <p className="text-lg text-andela-gray mb-6">
-                  Let's discuss how our web development expertise can help bring your digital vision to life. Schedule a free consultation today.
-                </p>
-                <div className="flex flex-col sm:flex-row gap-4">
-                  <Link 
-                    href="/contact" 
-                    className="inline-flex items-center justify-center bg-blue-600 hover:bg-blue-700 text-white px-6 py-3 rounded-md font-medium transition-colors shadow-lg"
-                  >
-                    Start Your Project
-                    <ArrowRight className="ml-2 h-5 w-5" />
-                  </Link>
-                  <a 
-                    href="tel:+1234567890" 
-                    className="inline-flex items-center justify-center border-2 border-blue-600 text-blue-600 hover:bg-blue-50 px-6 py-3 rounded-md font-medium transition-colors"
-                  >
-                    Call Us
-                  </a>
-                </div>
-              </div>
-              
-              <div className="hidden lg:block">
-                <Code className="h-32 w-32 text-blue-600 opacity-20" />
-              </div>
-            </div>
+          <div className="bg-white rounded-2xl shadow-xl p-8 md:p-12 text-center">
+            <motion.div
+              initial={{ opacity: 0, y: 20 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true }}
+              transition={{ duration: 0.5 }}
+            >
+              <h2 className="text-3xl md:text-4xl font-bold mb-4 text-andela-dark">Ready to Start Your Web Project?</h2>
+              <p className="text-xl text-andela-gray mb-8 max-w-3xl mx-auto">
+                Let's discuss how our web development expertise can help you achieve your business goals.
+              </p>
+              <Link 
+                href="/contact" 
+                className="inline-flex items-center justify-center bg-andela-green hover:bg-andela-green/90 text-white px-8 py-3 rounded-md font-medium transition-colors shadow-lg"
+              >
+                Contact Us Today
+                <ArrowRight className="ml-2 h-5 w-5" />
+              </Link>
+            </motion.div>
           </div>
         </Container>
       </section>
