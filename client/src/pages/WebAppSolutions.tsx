@@ -292,57 +292,133 @@ const WebAppSolutions = () => {
         </Container>
       </section>
       
-      {/* Why Choose Us - Exactly as in the reference image */}
-      <section className="py-20 bg-gradient-to-r from-andela-dark to-andela-dark/90 text-white">
+      {/* New Why Choose Us Section - Modern Design */}
+      <section className="py-24 bg-white">
         <Container>
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true }}
-            transition={{ duration: 0.5 }}
-            className="text-center mb-16"
-          >
-            <div className="inline-block mb-4">
-              <div className="px-4 py-1 bg-andela-green/20 rounded-full text-andela-green text-sm font-medium">
-                Our Expertise
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-16 items-center">
+            <motion.div
+              initial={{ opacity: 0, y: 20 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true }}
+              transition={{ duration: 0.5 }}
+              className="order-2 lg:order-1"
+            >
+              <div className="mb-6">
+                <h2 className="text-3xl md:text-4xl font-bold mb-6 text-andela-dark">
+                  What Makes Our Web Development <span className="text-andela-green">Approach Different</span>
+                </h2>
+                <p className="text-lg text-andela-gray mb-8">
+                  We blend technical expertise with strategic thinking to deliver web applications that drive business growth.
+                </p>
               </div>
-            </div>
-            <h2 className="text-3xl md:text-4xl font-bold mb-4">Why Choose Niddik for Web Development</h2>
-            <p className="text-xl text-gray-300 max-w-2xl mx-auto">
-              We combine technical expertise with business acumen to deliver web applications that exceed expectations.
-            </p>
-          </motion.div>
-          
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-12">
-            <div className="text-center">
-              <div className="flex justify-center mb-6">
-                <Users className="h-16 w-16 text-green-500" />
+              
+              <div className="space-y-6">
+                <motion.div
+                  initial={{ opacity: 0, x: -20 }}
+                  whileInView={{ opacity: 1, x: 0 }}
+                  viewport={{ once: true }}
+                  transition={{ duration: 0.4 }}
+                  className="flex items-start gap-4"
+                >
+                  <div className="mt-1 bg-andela-green/10 p-3 rounded-lg">
+                    <Users className="h-6 w-6 text-andela-green" />
+                  </div>
+                  <div>
+                    <h3 className="text-xl font-bold mb-2 text-andela-dark">Expert Development Team</h3>
+                    <p className="text-andela-gray">
+                      Our specialists combine deep technical knowledge with industry experience to deliver solutions that meet your exact business needs.
+                    </p>
+                  </div>
+                </motion.div>
+                
+                <motion.div
+                  initial={{ opacity: 0, x: -20 }}
+                  whileInView={{ opacity: 1, x: 0 }}
+                  viewport={{ once: true }}
+                  transition={{ duration: 0.4, delay: 0.1 }}
+                  className="flex items-start gap-4"
+                >
+                  <div className="mt-1 bg-andela-green/10 p-3 rounded-lg">
+                    <Zap className="h-6 w-6 text-andela-green" />
+                  </div>
+                  <div>
+                    <h3 className="text-xl font-bold mb-2 text-andela-dark">Modern Tech Stack</h3>
+                    <p className="text-andela-gray">
+                      We use cutting-edge technologies and frameworks to build scalable, high-performance web applications that can grow with your business.
+                    </p>
+                  </div>
+                </motion.div>
+                
+                <motion.div
+                  initial={{ opacity: 0, x: -20 }}
+                  whileInView={{ opacity: 1, x: 0 }}
+                  viewport={{ once: true }}
+                  transition={{ duration: 0.4, delay: 0.2 }}
+                  className="flex items-start gap-4"
+                >
+                  <div className="mt-1 bg-andela-green/10 p-3 rounded-lg">
+                    <PenTool className="h-6 w-6 text-andela-green" />
+                  </div>
+                  <div>
+                    <h3 className="text-xl font-bold mb-2 text-andela-dark">User-Centered Design</h3>
+                    <p className="text-andela-gray">
+                      We prioritize user experience in every project, creating intuitive interfaces that enhance engagement and drive conversion.
+                    </p>
+                  </div>
+                </motion.div>
               </div>
-              <h3 className="text-xl font-bold mb-4">Dedicated Team</h3>
-              <p className="text-gray-300">
-                We assign a dedicated team of developers, designers, and project managers to ensure consistent communication and delivery. Our experts work seamlessly to bring your vision to life.
-              </p>
-            </div>
+            </motion.div>
             
-            <div className="text-center">
-              <div className="flex justify-center mb-6">
-                <Zap className="h-16 w-16 text-green-500" />
+            <motion.div
+              initial={{ opacity: 0, scale: 0.95 }}
+              whileInView={{ opacity: 1, scale: 1 }}
+              viewport={{ once: true }}
+              transition={{ duration: 0.6 }}
+              className="order-1 lg:order-2"
+            >
+              <div className="relative">
+                {/* Decorative elements */}
+                <div className="absolute -top-10 -right-10 w-40 h-40 bg-andela-green/10 rounded-full"></div>
+                <div className="absolute -bottom-10 -left-10 w-40 h-40 bg-blue-500/10 rounded-full"></div>
+                
+                {/* Feature image with stats */}
+                <div className="relative z-10 bg-white rounded-xl shadow-xl overflow-hidden border border-gray-100">
+                  <div className="p-6 bg-gradient-to-br from-andela-dark to-andela-dark/80 text-white">
+                    <h3 className="text-xl font-bold mb-3">Our Impact in Numbers</h3>
+                    <p className="text-gray-300 text-sm">Measurable results that speak for themselves</p>
+                  </div>
+                  <div className="grid grid-cols-2 gap-4 p-6">
+                    <div className="text-center p-4 bg-gray-50 rounded-lg">
+                      <div className="text-3xl font-bold text-andela-green mb-1">95%</div>
+                      <div className="text-sm text-andela-gray">Client Satisfaction</div>
+                    </div>
+                    <div className="text-center p-4 bg-gray-50 rounded-lg">
+                      <div className="text-3xl font-bold text-andela-green mb-1">100+</div>
+                      <div className="text-sm text-andela-gray">Projects Completed</div>
+                    </div>
+                    <div className="text-center p-4 bg-gray-50 rounded-lg">
+                      <div className="text-3xl font-bold text-andela-green mb-1">40%</div>
+                      <div className="text-sm text-andela-gray">Avg. Performance Boost</div>
+                    </div>
+                    <div className="text-center p-4 bg-gray-50 rounded-lg">
+                      <div className="text-3xl font-bold text-andela-green mb-1">24/7</div>
+                      <div className="text-sm text-andela-gray">Support & Monitoring</div>
+                    </div>
+                  </div>
+                  <div className="px-6 pb-6">
+                    <div className="bg-gray-50 p-4 rounded-lg">
+                      <div className="flex items-center justify-between mb-2">
+                        <div className="text-sm font-medium text-andela-dark">Client Retention Rate</div>
+                        <div className="text-sm font-medium text-andela-green">92%</div>
+                      </div>
+                      <div className="w-full bg-gray-200 rounded-full h-2.5">
+                        <div className="bg-andela-green h-2.5 rounded-full" style={{ width: '92%' }}></div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
               </div>
-              <h3 className="text-xl font-bold mb-4">Cutting-Edge Technology</h3>
-              <p className="text-gray-300">
-                We stay ahead of the curve with the latest web technologies and best practices to build future-proof applications. Our solutions are optimized for performance, security, and scalability.
-              </p>
-            </div>
-            
-            <div className="text-center">
-              <div className="flex justify-center mb-6">
-                <PenTool className="h-16 w-16 text-green-500" />
-              </div>
-              <h3 className="text-xl font-bold mb-4">Custom Solutions</h3>
-              <p className="text-gray-300">
-                Every project is unique, and we tailor our development approach to meet your specific business requirements and goals. We create solutions that perfectly align with your vision and objectives.
-              </p>
-            </div>
+            </motion.div>
           </div>
         </Container>
       </section>
