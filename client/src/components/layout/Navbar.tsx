@@ -33,11 +33,11 @@ const navItems: NavItem[] = [
     label: "Services",
     href: "/services",
     dropdown: [
-      { label: "Web App Solutions", href: "/web-app-solutions" },
       { label: "Full RPO", href: "/services/full-rpo" },
       { label: "On-Demand", href: "/services/on-demand" },
       { label: "Hybrid RPO", href: "/services/hybrid-rpo" },
-      { label: "Contingent", href: "/services/contingent" }
+      { label: "Contingent", href: "/services/contingent" },
+      { label: "Web App Solutions", href: "/web-app-solutions" }
     ]
   },
   {
