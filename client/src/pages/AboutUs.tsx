@@ -123,50 +123,59 @@ As Abhishek's career progressed, he took on increasingly senior leadership roles
         textColor="text-white"
       />
       <Navbar hasAnnouncementAbove={true} />
-      {/* Hero Section - Clean Split Layout */}
-      <section className="min-h-[600px] relative bg-[#f5f9ff] text-andela-dark overflow-hidden">
+      {/* Hero Section - Centered Design with Light Background */}
+      <section className="relative bg-[#f5fff7] text-andela-dark overflow-hidden py-12 md:py-16">
+        {/* Decorative Elements */}
+        <div className="absolute top-0 left-0 w-20 h-20 rounded-full bg-yellow-100 opacity-50"></div>
+        <div className="absolute bottom-0 right-0 w-24 h-24 rounded-full bg-blue-100 opacity-40"></div>
+        
         <Container>
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 py-20 items-center">
-            {/* Left Column - Text Content */}
+          <div className="flex flex-col items-center justify-center text-center max-w-4xl mx-auto">
+            {/* Small Label */}
             <motion.div
-              initial={{ opacity: 0, x: -20 }}
-              animate={{ opacity: 1, x: 0 }}
-              transition={{ duration: 0.6 }}
-              className="flex flex-col max-w-xl"
+              initial={{ opacity: 0, y: 10 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.5 }}
+              className="text-sm font-medium text-andela-green mb-3"
             >
-              <h1 className="text-4xl md:text-5xl font-bold mb-6 text-andela-dark">
-                Helping <span className="text-andela-green">businesses</span> find the right talent to progress in the digital world
-              </h1>
-              
-              <div className="flex flex-wrap gap-4 mt-8">
-                <a 
-                  href="#" 
-                  className="bg-andela-green hover:bg-andela-green/90 text-white font-medium px-8 py-3 rounded-full transition-colors"
-                >
-                  LOOKING TO HIRE
-                </a>
-                <a 
-                  href="#" 
-                  className="border border-andela-dark text-andela-dark font-medium px-8 py-3 rounded-full hover:bg-andela-dark hover:text-white transition-colors"
-                >
-                  I AM A JOB SEEKER
-                </a>
-              </div>
+              About Niddik
             </motion.div>
-
-            {/* Right Column - Image */}
-            <motion.div
-              initial={{ opacity: 0, x: 20 }}
-              animate={{ opacity: 1, x: 0 }}
-              transition={{ duration: 0.6, delay: 0.2 }}
-              className="relative rounded-xl overflow-hidden shadow-2xl"
+            
+            {/* Main Heading */}
+            <motion.h1
+              initial={{ opacity: 0, y: -10 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.7 }}
+              className="text-4xl md:text-5xl font-bold mb-6 text-andela-green"
             >
-              <img 
-                src="https://images.unsplash.com/photo-1600880292089-90a7e086ee0c?auto=format&fit=crop&w=1200&q=80" 
-                alt="Business professionals high-fiving" 
-                className="w-full h-auto rounded-xl object-cover"
-              />
-              <div className="absolute inset-0 shadow-inner"></div>
+              Exceptional Talent
+            </motion.h1>
+            
+            {/* Subheading Text */}
+            <motion.p
+              initial={{ opacity: 0, y: 10 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.7, delay: 0.2 }}
+              className="text-base md:text-lg text-gray-600 max-w-3xl mx-auto mb-10"
+            >
+              We're building the future of work by connecting brilliant minds with the 
+              companies that need them most, regardless of location.
+            </motion.p>
+            
+            {/* Image Container */}
+            <motion.div
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.6, delay: 0.3 }}
+              className="w-full max-w-3xl mx-auto"
+            >
+              <div className="relative rounded-lg overflow-hidden">
+                <img 
+                  src="https://images.unsplash.com/photo-1542744173-8659b8e77b1a?auto=format&fit=crop&w=1200&q=80" 
+                  alt="Team working together" 
+                  className="w-full h-auto object-cover"
+                />
+              </div>
             </motion.div>
           </div>
         </Container>

@@ -8,6 +8,7 @@ import ServiceDetail from "@/pages/ServiceDetail";
 import ServicesOverview from "@/pages/ServicesOverview";
 import AboutUs from "@/pages/AboutUs";
 import WhyUs from "@/pages/WhyUs";
+import LandingPage from "@/pages/LandingPage";
 
 // Admin Pages
 import AdminDashboard from "@/pages/admin/AdminDashboard";
@@ -19,6 +20,7 @@ function Router() {
     <Switch>
       {/* Public Routes */}
       <Route path="/" component={Home} />
+      <Route path="/landing" component={LandingPage} />
       
       {/* Service Routes */}
       <Route path="/services" component={ServicesOverview} />
