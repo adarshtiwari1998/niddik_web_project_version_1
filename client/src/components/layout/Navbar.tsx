@@ -108,7 +108,7 @@ const Navbar: React.FC<NavbarProps> = ({ hasAnnouncementAbove = true }) => {
                   <div className="absolute left-0 mt-2 w-64 rounded-lg shadow-xl bg-white p-6 opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-300 transform origin-top-left z-50">
                     {item.dropdown.map((dropdownItem, idx) => (
                       <div key={idx} className="block py-2 hover:text-andela-green transition-colors">
-                        <Link href={dropdownItem.href} className="text-andela-dark hover:text-andela-green">
+                        <Link href={dropdownItem.href}>
                           {dropdownItem.label}
                         </Link>
                       </div>
