@@ -426,10 +426,7 @@ const ServicesShowcase = () => {
                                 index === 2 ? 'rounded-bl-2xl' : 'rounded-br-2xl'} 
                               border-2 relative overflow-hidden
                               ${
-                                activeServiceData.color.includes('purple') ? 'border-purple-400' : 
-                                activeServiceData.color.includes('blue') ? 'border-blue-400' : 
-                                activeServiceData.color.includes('green') ? 'border-green-400' : 
-                                'border-amber-400'
+                                activeServiceData.color.includes('blue') ? 'border-blue-400' : 'border-green-400'
                               }`}
                             // Sequential highlight animation
                             animate={{ 
@@ -460,10 +457,7 @@ const ServicesShowcase = () => {
                             
                             {/* Custom icon for each step */}
                             <div className={`relative z-10 ${
-                              activeServiceData.color.includes('purple') ? 'text-purple-600' : 
-                              activeServiceData.color.includes('blue') ? 'text-blue-600' : 
-                              activeServiceData.color.includes('green') ? 'text-green-600' : 
-                              'text-amber-600'
+                              activeServiceData.color.includes('blue') ? 'text-blue-600' : 'text-green-600'
                             }`}>
                               <StepIcon className="h-8 w-8" />
                             </div>
@@ -476,18 +470,12 @@ const ServicesShowcase = () => {
                   {/* Vertical timeline indicator - positioned behind the numbers */}
                   <div className="absolute left-[1.625rem] top-8 bottom-8 w-[2px] -z-10">
                     <div className={`h-full ${
-                      activeServiceData.color.includes('purple') ? 'bg-purple-200' : 
-                      activeServiceData.color.includes('blue') ? 'bg-blue-200' : 
-                      activeServiceData.color.includes('green') ? 'bg-green-200' : 
-                      'bg-amber-200'
+                      activeServiceData.color.includes('blue') ? 'bg-blue-200' : 'bg-green-200'
                     }`}>
                       {/* Animated progress indicator */}
                       <motion.div 
                         className={`w-full ${
-                          activeServiceData.color.includes('purple') ? 'bg-purple-500' : 
-                          activeServiceData.color.includes('blue') ? 'bg-blue-500' : 
-                          activeServiceData.color.includes('green') ? 'bg-green-500' : 
-                          'bg-amber-500'
+                          activeServiceData.color.includes('blue') ? 'bg-blue-500' : 'bg-green-500'
                         }`}
                         animate={{ 
                           height: ["0%", "33%", "33%", "66%", "66%", "100%", "100%", "0%"]

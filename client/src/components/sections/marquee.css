@@ -1,26 +1,25 @@
+/* Marquee animation for the trusted companies section */
 .marquee-container {
-  overflow: hidden;
   position: relative;
   width: 100%;
-  -webkit-mask-image: -webkit-linear-gradient(left, rgba(0,0,0,0) 0%, rgba(0,0,0,1) 5%, rgba(0,0,0,1) 95%, rgba(0,0,0,0) 100%);
-  mask-image: linear-gradient(to right, rgba(0,0,0,0) 0%, rgba(0,0,0,1) 5%, rgba(0,0,0,1) 95%, rgba(0,0,0,0) 100%);
-}
-
-@keyframes marquee {
-  0% { transform: translateX(0); }
-  100% { transform: translateX(-50%); }
+  overflow: hidden;
 }
 
 .marquee-content {
   display: flex;
-  animation: marquee 15s linear infinite;
-  width: max-content;
-}
-
-.marquee-content > * {
-  flex-shrink: 0;
+  animation: marquee 30s linear infinite;
+  white-space: nowrap;
 }
 
 .marquee-content-duplicate {
   display: flex;
+}
+
+@keyframes marquee {
+  0% {
+    transform: translateX(0);
+  }
+  100% {
+    transform: translateX(-50%);
+  }
 }
