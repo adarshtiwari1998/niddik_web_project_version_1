@@ -163,8 +163,8 @@ As Abhishek's career progressed, he took on increasingly senior leadership roles
               transition={{ duration: 0.6, delay: 0.2 }}
               className="text-center mb-6"
             >
-              <h3 className="text-xl md:text-2xl font-semibold text-andela-green mb-2 tracking-tight">
-                A workforce partner that understands every inch of Your Ground
+              <h3 className="text-xl md:text-2xl font-semibold mb-2 tracking-tight">
+                <span className="bg-andela-green text-white px-2 py-1 rounded-md">A workforce partner</span> that understands every inch of <span className="text-andela-green font-bold">Your Ground</span>
               </h3>
               <h4 className="text-lg md:text-xl font-medium text-andela-green">
                 Helping Our Clients Navigate the complexities Of Talent Sourcing
@@ -201,7 +201,93 @@ As Abhishek's career progressed, he took on increasingly senior leadership roles
           </div>
         </Container>
       </section>
-
+      
+      {/* Partner with Us Call-to-Action Section */}
+      <section className="py-16 bg-gradient-to-r from-andela-green/5 to-andela-green/10 relative overflow-hidden">
+        <div className="absolute top-0 left-0 w-full h-20 bg-gradient-to-b from-white to-transparent"></div>
+        <div className="absolute -top-20 -right-20 w-64 h-64 rounded-full bg-andela-green/10 blur-xl"></div>
+        <div className="absolute -bottom-20 -left-20 w-64 h-64 rounded-full bg-andela-green/10 blur-xl"></div>
+        
+        <Container>
+          <div className="max-w-4xl mx-auto text-center">
+            <motion.div
+              initial={{ opacity: 0, y: 20 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true }}
+              transition={{ duration: 0.6 }}
+            >
+              <h2 className="text-3xl md:text-4xl font-bold mb-6 text-andela-dark">
+                Partner with <span className="text-andela-green">Industry Experts</span>
+              </h2>
+              
+              <p className="text-lg text-gray-700 mb-8 max-w-3xl mx-auto">
+                Our team of seasoned recruitment professionals bring decades of combined experience across industries. 
+                We understand the unique challenges faced by businesses and technologists in today's rapidly evolving landscape.
+              </p>
+              
+              <div className="grid grid-cols-1 md:grid-cols-3 gap-8 mt-12">
+                {/* Feature 1 */}
+                <motion.div
+                  initial={{ opacity: 0, y: 20 }}
+                  whileInView={{ opacity: 1, y: 0 }}
+                  viewport={{ once: true }}
+                  transition={{ duration: 0.5, delay: 0.1 }}
+                  className="bg-white rounded-lg p-8 shadow-lg hover:shadow-xl transition-shadow"
+                >
+                  <div className="w-16 h-16 bg-andela-green/10 rounded-full flex items-center justify-center mb-6 mx-auto">
+                    <svg className="w-8 h-8 text-andela-green" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                      <path d="M17 20H22V18C22 16.3431 20.6569 15 19 15C18.0444 15 17.1931 15.4468 16.6438 16.1429M17 20H7M17 20V18C17 17.3438 16.8736 16.717 16.6438 16.1429M7 20H2V18C2 16.3431 3.34315 15 5 15C5.95561 15 6.80686 15.4468 7.35625 16.1429M7 20V18C7 17.3438 7.12642 16.717 7.35625 16.1429M7.35625 16.1429C8.0935 14.301 9.89482 13 12 13C14.1052 13 15.9065 14.301 16.6438 16.1429M15 7C15 8.65685 13.6569 10 12 10C10.3431 10 9 8.65685 9 7C9 5.34315 10.3431 4 12 4C13.6569 4 15 5.34315 15 7ZM21 10C21 11.1046 20.1046 12 19 12C17.8954 12 17 11.1046 17 10C17 8.89543 17.8954 8 19 8C20.1046 8 21 8.89543 21 10ZM7 10C7 11.1046 6.10457 12 5 12C3.89543 12 3 11.1046 3 10C3 8.89543 3.89543 8 5 8C6.10457 8 7 8.89543 7 10Z" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+                    </svg>
+                  </div>
+                  <h3 className="text-xl font-semibold text-andela-dark mb-3 text-center">For Organizations</h3>
+                  <p className="text-gray-600 text-center">
+                    Custom talent solutions designed to meet your specific business goals and technical requirements.
+                  </p>
+                </motion.div>
+                
+                {/* Feature 2 */}
+                <motion.div
+                  initial={{ opacity: 0, y: 20 }}
+                  whileInView={{ opacity: 1, y: 0 }}
+                  viewport={{ once: true }}
+                  transition={{ duration: 0.5, delay: 0.2 }}
+                  className="bg-white rounded-lg p-8 shadow-lg hover:shadow-xl transition-shadow"
+                >
+                  <div className="w-16 h-16 bg-andela-green/10 rounded-full flex items-center justify-center mb-6 mx-auto">
+                    <svg className="w-8 h-8 text-andela-green" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                      <path d="M9.5 11L12.5 8M12.5 8L15.5 11M12.5 8V16M7 20H18C19.1046 20 20 19.1046 20 18V6C20 4.89543 19.1046 4 18 4H7C5.89543 4 5 4.89543 5 6V18C5 19.1046 5.89543 20 7 20Z" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+                    </svg>
+                  </div>
+                  <h3 className="text-xl font-semibold text-andela-dark mb-3 text-center">For Technologists</h3>
+                  <p className="text-gray-600 text-center">
+                    Access to exclusive opportunities with leading companies that value your unique skills and experience.
+                  </p>
+                </motion.div>
+                
+                {/* Feature 3 */}
+                <motion.div
+                  initial={{ opacity: 0, y: 20 }}
+                  whileInView={{ opacity: 1, y: 0 }}
+                  viewport={{ once: true }}
+                  transition={{ duration: 0.5, delay: 0.3 }}
+                  className="bg-white rounded-lg p-8 shadow-lg hover:shadow-xl transition-shadow"
+                >
+                  <div className="w-16 h-16 bg-andela-green/10 rounded-full flex items-center justify-center mb-6 mx-auto">
+                    <svg className="w-8 h-8 text-andela-green" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                      <path d="M11 5L17 12L11 19M17 12H3" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+                    </svg>
+                  </div>
+                  <h3 className="text-xl font-semibold text-andela-dark mb-3 text-center">Get Started</h3>
+                  <p className="text-gray-600 text-center">
+                    Schedule a consultation with our talent experts to discuss your specific needs and find the right solution.
+                  </p>
+                </motion.div>
+              </div>
+            </motion.div>
+          </div>
+        </Container>
+      </section>
+      
       {/* Story & Vision Section */}
       <section className="py-20 bg-gradient-to-b from-gray-50 to-white">
         <Container>
