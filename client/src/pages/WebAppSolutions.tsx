@@ -363,69 +363,13 @@ const WebAppSolutions = () => {
         </Container>
       </section>
       
-      {/* Development Process */}
-      <section className="py-20 bg-gray-50">
-        <Container>
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true }}
-            transition={{ duration: 0.5 }}
-            className="text-center mb-16"
-          >
-            <div className="inline-block mb-4">
-              <div className="px-4 py-1 bg-andela-green/10 rounded-full text-andela-green text-sm font-medium">
-                Our Approach
-              </div>
-            </div>
-            <h2 className="text-3xl md:text-4xl font-bold mb-4 text-andela-dark">Development Process</h2>
-            <p className="text-lg text-andela-gray max-w-2xl mx-auto">
-              Our systematic approach ensures we deliver high-quality web applications on time and within budget.
-            </p>
-          </motion.div>
-          
-          <div className="relative">
-            {/* Timeline line */}
-            <div className="absolute left-0 md:left-1/2 transform md:-translate-x-1/2 top-0 bottom-0 w-1 bg-andela-green/20"></div>
-            
-            <div className="space-y-12">
-              {developmentProcess.map((step, index) => (
-                <motion.div
-                  key={index}
-                  initial={{ opacity: 0, y: 20 }}
-                  whileInView={{ opacity: 1, y: 0 }}
-                  viewport={{ once: true }}
-                  transition={{ duration: 0.5, delay: index * 0.1 }}
-                  className={`flex flex-col ${index % 2 === 0 ? 'md:flex-row' : 'md:flex-row-reverse'} gap-8 relative`}
-                >
-                  <div className="md:w-1/2"></div>
-                  
-                  {/* Numbered circle on the timeline */}
-                  <div className="absolute left-0 md:left-1/2 transform -translate-x-1/2 w-10 h-10 rounded-full bg-andela-green flex items-center justify-center text-white font-bold z-10">
-                    {step.number}
-                  </div>
-                  
-                  <div className="md:w-1/2 bg-white p-6 rounded-xl shadow-sm border border-gray-100">
-                    <h3 className="text-xl font-bold mb-3 text-andela-dark">{step.title}</h3>
-                    <p className="text-andela-gray">{step.description}</p>
-                  </div>
-                </motion.div>
-              ))}
-            </div>
-          </div>
-        </Container>
-      </section>
+
       
       {/* Case Studies section has been removed as requested */}
       
-      {/* Why Choose Us - Improved Section */}
-      <section className="py-20 bg-gradient-to-r from-andela-dark to-andela-dark/90 text-white relative overflow-hidden">
-        {/* Decorative elements */}
-        <div className="absolute top-0 right-0 w-96 h-96 bg-andela-green/5 rounded-full blur-3xl"></div>
-        <div className="absolute bottom-0 left-0 w-80 h-80 bg-blue-500/5 rounded-full blur-3xl"></div>
-        <div className="absolute bottom-20 right-20 w-40 h-40 bg-yellow-500/5 rounded-full blur-3xl"></div>
-        
-        <Container className="relative z-10">
+      {/* Why Choose Us - Exactly as in the reference image */}
+      <section className="py-20 bg-gradient-to-r from-andela-dark to-andela-dark/90 text-white">
+        <Container>
           <motion.div
             initial={{ opacity: 0, y: 20 }}
             whileInView={{ opacity: 1, y: 0 }}
@@ -444,66 +388,36 @@ const WebAppSolutions = () => {
             </p>
           </motion.div>
           
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-            <motion.div
-              initial={{ opacity: 0, scale: 0.95, y: 20 }}
-              whileInView={{ opacity: 1, scale: 1, y: 0 }}
-              viewport={{ once: true }}
-              transition={{ duration: 0.5 }}
-              whileHover={{ 
-                y: -5,
-                boxShadow: "0 10px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04)"
-              }}
-              className="bg-white/10 backdrop-blur-sm p-8 rounded-xl border border-white/5"
-            >
-              <div className="bg-andela-green/10 p-3 rounded-lg w-14 h-14 flex items-center justify-center mb-6">
-                <Users className="h-8 w-8 text-andela-green" />
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-12">
+            <div className="text-center">
+              <div className="flex justify-center mb-6">
+                <Users className="h-16 w-16 text-green-500" />
               </div>
               <h3 className="text-xl font-bold mb-4">Dedicated Team</h3>
-              <p className="text-gray-300 leading-relaxed">
+              <p className="text-gray-300">
                 We assign a dedicated team of developers, designers, and project managers to ensure consistent communication and delivery. Our experts work seamlessly to bring your vision to life.
               </p>
-            </motion.div>
+            </div>
             
-            <motion.div
-              initial={{ opacity: 0, scale: 0.95, y: 20 }}
-              whileInView={{ opacity: 1, scale: 1, y: 0 }}
-              viewport={{ once: true }}
-              transition={{ duration: 0.5, delay: 0.1 }}
-              whileHover={{ 
-                y: -5,
-                boxShadow: "0 10px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04)"
-              }}
-              className="bg-white/10 backdrop-blur-sm p-8 rounded-xl border border-white/5"
-            >
-              <div className="bg-andela-green/10 p-3 rounded-lg w-14 h-14 flex items-center justify-center mb-6">
-                <Zap className="h-8 w-8 text-andela-green" />
+            <div className="text-center">
+              <div className="flex justify-center mb-6">
+                <Zap className="h-16 w-16 text-green-500" />
               </div>
               <h3 className="text-xl font-bold mb-4">Cutting-Edge Technology</h3>
-              <p className="text-gray-300 leading-relaxed">
+              <p className="text-gray-300">
                 We stay ahead of the curve with the latest web technologies and best practices to build future-proof applications. Our solutions are optimized for performance, security, and scalability.
               </p>
-            </motion.div>
+            </div>
             
-            <motion.div
-              initial={{ opacity: 0, scale: 0.95, y: 20 }}
-              whileInView={{ opacity: 1, scale: 1, y: 0 }}
-              viewport={{ once: true }}
-              transition={{ duration: 0.5, delay: 0.2 }}
-              whileHover={{ 
-                y: -5,
-                boxShadow: "0 10px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04)"
-              }}
-              className="bg-white/10 backdrop-blur-sm p-8 rounded-xl border border-white/5"
-            >
-              <div className="bg-andela-green/10 p-3 rounded-lg w-14 h-14 flex items-center justify-center mb-6">
-                <PenTool className="h-8 w-8 text-andela-green" />
+            <div className="text-center">
+              <div className="flex justify-center mb-6">
+                <PenTool className="h-16 w-16 text-green-500" />
               </div>
               <h3 className="text-xl font-bold mb-4">Custom Solutions</h3>
-              <p className="text-gray-300 leading-relaxed">
+              <p className="text-gray-300">
                 Every project is unique, and we tailor our development approach to meet your specific business requirements and goals. We create solutions that perfectly align with your vision and objectives.
               </p>
-            </motion.div>
+            </div>
           </div>
         </Container>
       </section>
@@ -603,7 +517,7 @@ const WebAppSolutions = () => {
                 step: "6",
                 title: "Maintenance & Support",
                 description: "Our relationship continues after launch with ongoing support, monitoring, and regular updates to keep your application running smoothly.",
-                icon: <RefreshCw className="h-6 w-6 text-purple-500" />,
+                icon: <Server className="h-6 w-6 text-purple-500" />,
                 color: "bg-purple-50",
                 iconColor: "text-purple-500",
                 borderColor: "border-purple-100"
