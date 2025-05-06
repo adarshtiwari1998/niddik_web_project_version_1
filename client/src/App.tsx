@@ -7,6 +7,7 @@ import Home from "@/pages/Home";
 import ServiceDetail from "@/pages/ServiceDetail";
 import ServicesOverview from "@/pages/ServicesOverview";
 import Solutions from "@/pages/Solutions";
+import WebAppSolutions from "@/pages/WebAppSolutions";
 import AboutUs from "@/pages/AboutUs";
 import WhyUs from "@/pages/WhyUs";
 import LandingPage from "@/pages/LandingPage";
@@ -27,6 +28,7 @@ function Router() {
       <Route path="/services" component={ServicesOverview} />
       <Route path="/services/:serviceSlug" component={ServiceDetail} />
       <Route path="/solutions" component={Solutions} />
+      <Route path="/web-app-solutions" component={WebAppSolutions} />
       
       {/* Company Routes */}
       <Route path="/about-us" component={AboutUs} />

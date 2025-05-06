@@ -284,6 +284,46 @@ const Solutions = () => {
               </motion.div>
             ))}
           </div>
+          
+          <div className="mt-16">
+            <motion.div
+              initial={{ opacity: 0, y: 20 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true }}
+              transition={{ duration: 0.5 }}
+              className="bg-gradient-to-r from-blue-50 to-indigo-50 rounded-xl p-8 border border-blue-100"
+            >
+              <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
+                <div className="lg:col-span-2">
+                  <div className="flex items-center mb-4">
+                    <div className="w-12 h-12 bg-blue-100 rounded-lg flex items-center justify-center mr-4">
+                      <Globe className="h-6 w-6 text-blue-600" />
+                    </div>
+                    <h3 className="text-2xl font-bold text-andela-dark">Web Application Solutions</h3>
+                  </div>
+                  <p className="text-lg text-andela-gray mb-6">
+                    Explore our complete range of web application development services, including custom websites, enterprise applications, e-commerce platforms, and more.
+                  </p>
+                  <Link 
+                    href="/web-app-solutions" 
+                    className="inline-flex items-center justify-center bg-blue-600 hover:bg-blue-700 text-white px-6 py-3 rounded-md font-medium transition-colors"
+                  >
+                    View Web App Solutions
+                    <ArrowRight className="ml-2 h-5 w-5" />
+                  </Link>
+                </div>
+                <div className="hidden lg:flex justify-center items-center">
+                  <div className="relative">
+                    <div className="w-64 h-64 bg-white rounded-xl shadow-lg flex items-center justify-center">
+                      <Code className="h-24 w-24 text-blue-200" />
+                    </div>
+                    <div className="absolute -top-3 -right-3 w-16 h-16 bg-blue-100 rounded-lg transform rotate-12"></div>
+                    <div className="absolute -bottom-3 -left-3 w-10 h-10 bg-indigo-100 rounded-lg transform -rotate-12"></div>
+                  </div>
+                </div>
+              </div>
+            </motion.div>
+          </div>
         </Container>
       </section>
       
