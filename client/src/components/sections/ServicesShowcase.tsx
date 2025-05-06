@@ -52,8 +52,8 @@ const ServicesShowcase = () => {
       description: 'End-to-end recruitment process outsourcing for comprehensive talent acquisition needs.',
       extendedDescription: 'Our Full RPO service delivers a complete recruitment solution, managing the entire hiring process from sourcing to onboarding. We integrate with your HR team to create a seamless talent pipeline that aligns with your organizational goals and company culture.',
       icon: <Users className="h-6 w-6" />,
-      color: 'from-purple-500 to-purple-600',
-      bgColor: 'bg-purple-100',
+      color: 'from-blue-500 to-blue-600',
+      bgColor: 'bg-blue-100',
       processSteps: [
         { title: 'Needs Analysis', description: 'In-depth assessment of your hiring requirements' },
         { title: 'Strategy Development', description: 'Custom recruitment approach aligned with your goals' },
@@ -97,8 +97,8 @@ const ServicesShowcase = () => {
       description: 'Specialized talent acquisition for contract, temporary, and project-based positions.',
       extendedDescription: 'Our Contingent staffing service specializes in connecting you with qualified professionals for temporary, contract, and project-based roles. We handle the entire process from identifying specialized talent to managing contracts, ensuring you have the right expertise exactly when your business needs it.',
       icon: <Briefcase className="h-6 w-6" />,
-      color: 'from-amber-500 to-amber-600',
-      bgColor: 'bg-amber-100',
+      color: 'from-green-500 to-green-600',
+      bgColor: 'bg-green-100',
       processSteps: [
         { title: 'Requirement Definition', description: 'Precise specification of temporary talent needs' },
         { title: 'Specialized Sourcing', description: 'Targeting candidates with niche expertise' },
@@ -179,7 +179,7 @@ const ServicesShowcase = () => {
       
       {/* Animated floating elements in background */}
       <motion.div 
-        className="absolute top-1/4 left-1/4 w-12 h-12 bg-purple-500 opacity-20 rounded-lg"
+        className="absolute top-1/4 left-1/4 w-12 h-12 bg-blue-500 opacity-20 rounded-lg"
         animate={{ 
           y: [0, -20, 0],
           rotate: [0, 15, 0]
@@ -216,7 +216,7 @@ const ServicesShowcase = () => {
         }}
       />
       <motion.div 
-        className="absolute bottom-1/3 left-1/3 w-10 h-10 bg-amber-500 opacity-20 rounded-lg"
+        className="absolute bottom-1/3 left-1/3 w-10 h-10 bg-green-500 opacity-20 rounded-lg"
         animate={{ 
           y: [0, 25, 0],
           x: [0, 15, 0],
@@ -286,10 +286,7 @@ const ServicesShowcase = () => {
                   className="flex flex-col items-center justify-center text-center z-10"
                 >
                   <div className={`p-4 rounded-full ${activeServiceData.bgColor} mb-3 flex items-center justify-center`}>
-                    <div className={`h-12 w-12 ${activeServiceData.color.includes('purple') ? 'text-purple-600' : 
-                      activeServiceData.color.includes('blue') ? 'text-blue-600' : 
-                      activeServiceData.color.includes('green') ? 'text-green-600' : 
-                      'text-amber-600'}`
+                    <div className={`h-12 w-12 ${activeServiceData.color.includes('blue') ? 'text-blue-600' : 'text-green-600'}`
                     }>
                       {activeServiceData.icon}
                     </div>
@@ -408,10 +405,7 @@ const ServicesShowcase = () => {
                         <div className="flex-none mr-4">
                           {/* Step number with large numbering */}
                           <div className={`w-8 h-8 rounded-full flex items-center justify-center ${
-                              activeServiceData.color.includes('purple') ? 'bg-purple-500' : 
-                              activeServiceData.color.includes('blue') ? 'bg-blue-500' : 
-                              activeServiceData.color.includes('green') ? 'bg-green-500' : 
-                              'bg-amber-500'
+                              activeServiceData.color.includes('blue') ? 'bg-blue-500' : 'bg-green-500'
                             } text-white font-bold text-xl`}>
                             {index + 1}
                           </div>
