@@ -22,18 +22,16 @@ const Home = () => {
   };
 
   return (
-    <div className="min-h-screen overflow-x-hidden">
+    <div className="min-h-screen overflow-x-hidden pt-10"> {/* Added pt-10 for announcement bar space */}
       {/* Fixed header components */}
-      <div className="fixed-header-group w-full z-50">
-        <AnnouncementBar 
-          text="Join our upcoming webinar on scaling tech teams effectively."
-          linkText="Register now"
-          linkUrl="#"
-          bgColor="bg-indigo-600"
-          textColor="text-white"
-          onVisibilityChange={handleAnnouncementVisibilityChange}
-        />
-      </div>
+      <AnnouncementBar 
+        text="Join our upcoming webinar on scaling tech teams effectively."
+        linkText="Register now"
+        linkUrl="#"
+        bgColor="bg-andela-green" 
+        textColor="text-white"
+        onVisibilityChange={handleAnnouncementVisibilityChange}
+      />
       <Navbar hasAnnouncementAbove={isAnnouncementVisible} />
       
       {/* Add padding to account for fixed elements */}

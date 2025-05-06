@@ -14,6 +14,9 @@ import {
 } from "lucide-react";
 import Container from "@/components/ui/container";
 import { Link } from "wouter";
+import Navbar from "@/components/layout/Navbar";
+import AnnouncementBar from "@/components/layout/AnnouncementBar";
+import Footer from "@/components/layout/Footer";
 
 const WhyUs = () => {
   const advantages = [
@@ -145,7 +148,15 @@ const WhyUs = () => {
   };
 
   return (
-    <div className="pt-20">
+    <div className="pt-10"> {/* Fixed for consistent header spacing */}
+      <AnnouncementBar 
+        text="Join our upcoming webinar on scaling tech teams effectively."
+        linkText="Register now"
+        linkUrl="#"
+        bgColor="bg-andela-green"
+        textColor="text-white"
+      />
+      <Navbar hasAnnouncementAbove={true} />
       {/* Hero Section */}
       <section className="py-24 bg-gradient-to-r from-andela-dark to-andela-dark/90 text-white">
         <Container>
