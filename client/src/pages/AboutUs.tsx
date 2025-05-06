@@ -730,6 +730,60 @@ As Abhishek's career progressed, he took on increasingly senior leadership roles
         </Container>
       </section>
       
+      {/* Call-to-Action Section with Split Layout */}
+      <section className="py-20 bg-gradient-to-r from-white to-gray-50">
+        <Container>
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-16 items-center">
+            {/* Left Column - Text and Buttons */}
+            <motion.div
+              initial={{ opacity: 0, y: 20 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true }}
+              transition={{ duration: 0.6 }}
+              className="flex flex-col"
+            >
+              <h2 className="text-3xl md:text-4xl font-bold text-gray-800 mb-8 leading-tight">
+                Unlock your potential with the right <span className="text-andela-green">career opportunity</span>
+              </h2>
+              
+              <p className="text-lg text-gray-600 mb-10">
+                Whether you're looking to hire top talent or find your dream job, we can help you achieve your goals.
+              </p>
+              
+              <div className="flex flex-wrap gap-6 mt-2">
+                <a 
+                  href="#" 
+                  className="bg-andela-green hover:bg-andela-green/90 text-white font-medium px-8 py-3 rounded-full transition-colors shadow-md hover:shadow-lg inline-flex items-center justify-center min-w-[180px]"
+                >
+                  LOOKING TO HIRE
+                </a>
+                <a 
+                  href="#" 
+                  className="inline-flex items-center justify-center min-w-[180px] text-gray-700 font-medium hover:text-andela-green transition-colors"
+                >
+                  I AM A JOB SEEKER
+                </a>
+              </div>
+            </motion.div>
+
+            {/* Right Column - Image */}
+            <motion.div
+              initial={{ opacity: 0, y: 20 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true }}
+              transition={{ duration: 0.6, delay: 0.2 }}
+              className="relative"
+            >
+              <img 
+                src="/attached_assets/image_1746544199102.png" 
+                alt="Business professionals collaborating" 
+                className="w-full h-auto rounded-xl shadow-xl"
+              />
+            </motion.div>
+          </div>
+        </Container>
+      </section>
+      
       <Footer />
     </div>
   );
