@@ -62,19 +62,19 @@ const businessCards = [
     href: "#"
   },
   {
-    icon: <Rocket className="text-purple-600 text-2xl" />,
-    iconBgColor: "bg-purple-100",
+    icon: <Rocket className="text-green-600 text-2xl" />,
+    iconBgColor: "bg-green-100",
     title: "Enterprise Solution",
     description: "Flexible talent solutions designed specifically for enterprise needs and compliance requirements.",
     linkText: "Learn More",
-    linkColor: "text-purple-600",
+    linkColor: "text-green-600",
     href: "#"
   }
 ];
 
 const ForBusinesses = () => {
   return (
-    <section className="py-20 bg-andela-dark">
+    <section className="py-20 bg-white">
       <Container>
         <motion.div 
           className="text-center mb-16"
@@ -83,8 +83,8 @@ const ForBusinesses = () => {
           viewport={{ once: true }}
           transition={{ duration: 0.5 }}
         >
-          <h2 className="text-3xl md:text-4xl font-bold text-white mb-4">For Businesses</h2>
-          <p className="text-lg text-gray-300 max-w-2xl mx-auto">
+          <h2 className="text-3xl md:text-4xl font-bold text-andela-dark mb-4">For Businesses</h2>
+          <p className="text-lg text-gray-600 max-w-2xl mx-auto">
             Find exceptional talent to augment your workforce and scale your business
           </p>
         </motion.div>
