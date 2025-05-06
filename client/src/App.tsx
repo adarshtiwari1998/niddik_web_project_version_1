@@ -6,6 +6,8 @@ import NotFound from "@/pages/not-found";
 import Home from "@/pages/Home";
 import ServiceDetail from "@/pages/ServiceDetail";
 import ServicesOverview from "@/pages/ServicesOverview";
+import AboutUs from "@/pages/AboutUs";
+import WhyUs from "@/pages/WhyUs";
 
 // Admin Pages
 import AdminDashboard from "@/pages/admin/AdminDashboard";
@@ -21,6 +23,10 @@ function Router() {
       {/* Service Routes */}
       <Route path="/services" component={ServicesOverview} />
       <Route path="/services/:serviceSlug" component={ServiceDetail} />
+      
+      {/* Company Routes */}
+      <Route path="/about-us" component={AboutUs} />
+      <Route path="/why-us" component={WhyUs} />
       
       {/* Admin Routes */}
       <Route path="/admin" component={AdminDashboard} />

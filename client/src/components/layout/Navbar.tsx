@@ -49,7 +49,13 @@ const navItems: NavItem[] = [
   },
   { label: "Enterprise", href: "#" },
   { label: "Resources", href: "#" },
-  { label: "About Us", href: "#" }
+  {
+    label: "Company",
+    dropdown: [
+      { label: "About Us", href: "/about-us" },
+      { label: "Why Us", href: "/why-us" }
+    ]
+  }
 ];
 
 const Navbar: React.FC<NavbarProps> = ({ hasAnnouncementAbove = true }) => {

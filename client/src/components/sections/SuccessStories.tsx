@@ -46,7 +46,7 @@ const testimonials: TestimonialProps[] = [
     role: "CTO",
     company: "TechCorp",
     image: "https://images.unsplash.com/photo-1560250097-0b93528c311a?auto=format&fit=crop&w=100&h=100&q=80",
-    quote: "Andela helped us scale our engineering team quickly with top talent. The quality of developers and their integration into our team has been seamless.",
+    quote: "Niddik helped us scale our engineering team quickly with top talent. The quality of developers and their integration into our team has been seamless.",
     rating: 5
   },
   {
@@ -54,7 +54,7 @@ const testimonials: TestimonialProps[] = [
     role: "Software Engineer",
     company: "",
     image: "https://images.unsplash.com/photo-1573496359142-b8d87734a5a2?auto=format&fit=crop&w=100&h=100&q=80",
-    quote: "Joining Andela was the best career decision I've made. I've worked with amazing teams on challenging projects, all while growing professionally.",
+    quote: "Joining Niddik was the best career decision I've made. I've worked with amazing teams on challenging projects, all while growing professionally.",
     rating: 5
   },
   {
@@ -62,7 +62,7 @@ const testimonials: TestimonialProps[] = [
     role: "VP of Engineering",
     company: "InnovateX",
     image: "https://images.unsplash.com/photo-1519085360753-af0119f7cbe7?auto=format&fit=crop&w=100&h=100&q=80",
-    quote: "The talent we've accessed through Andela has been exceptional. Their team understood our needs and matched us with perfect candidates.",
+    quote: "The talent we've accessed through Niddik has been exceptional. Their team understood our needs and matched us with perfect candidates.",
     rating: 4.5
   }
 ];
