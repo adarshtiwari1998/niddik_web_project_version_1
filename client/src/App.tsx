@@ -6,7 +6,6 @@ import NotFound from "@/pages/not-found";
 import Home from "@/pages/Home";
 import ServiceDetail from "@/pages/ServiceDetail";
 import ServicesOverview from "@/pages/ServicesOverview";
-import Solutions from "@/pages/Solutions";
 import WebAppSolutions from "@/pages/WebAppSolutions";
 import AboutUs from "@/pages/AboutUs";
 import WhyUs from "@/pages/WhyUs";
@@ -27,7 +26,6 @@ function Router() {
       {/* Service Routes */}
       <Route path="/services" component={ServicesOverview} />
       <Route path="/services/:serviceSlug" component={ServiceDetail} />
-      <Route path="/solutions" component={Solutions} />
       <Route path="/web-app-solutions" component={WebAppSolutions} />
       
       {/* Company Routes */}

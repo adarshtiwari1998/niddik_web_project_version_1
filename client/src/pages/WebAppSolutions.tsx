@@ -467,7 +467,7 @@ const WebAppSolutions = () => {
             </p>
           </motion.div>
           
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-10 mb-16">
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-6 lg:gap-10 mb-16">
             {[
               {
                 step: "1",
@@ -503,7 +503,7 @@ const WebAppSolutions = () => {
                 whileInView={{ opacity: 1, y: 0 }}
                 viewport={{ once: true }}
                 transition={{ duration: 0.4, delay: index * 0.1 }}
-                className={`relative bg-white rounded-xl shadow-sm p-8 border ${step.borderColor}`}
+                className={`relative bg-white rounded-xl shadow-sm p-6 lg:p-8 border ${step.borderColor}`}
               >
                 <div className="absolute -top-5 left-8 w-10 h-10 rounded-full bg-white border border-gray-100 shadow-md flex items-center justify-center font-bold text-lg text-andela-green">
                   {step.step}
@@ -517,7 +517,7 @@ const WebAppSolutions = () => {
             ))}
           </div>
 
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-10">
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-6 lg:gap-10">
             {[
               {
                 step: "4",
@@ -553,7 +553,7 @@ const WebAppSolutions = () => {
                 whileInView={{ opacity: 1, y: 0 }}
                 viewport={{ once: true }}
                 transition={{ duration: 0.4, delay: index * 0.1 + 0.3 }}
-                className={`relative bg-white rounded-xl shadow-sm p-8 border ${step.borderColor}`}
+                className={`relative bg-white rounded-xl shadow-sm p-6 lg:p-8 border ${step.borderColor}`}
               >
                 <div className="absolute -top-5 left-8 w-10 h-10 rounded-full bg-white border border-gray-100 shadow-md flex items-center justify-center font-bold text-lg text-andela-green">
                   {step.step}

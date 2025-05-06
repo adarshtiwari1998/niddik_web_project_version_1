@@ -149,6 +149,12 @@
   @apply hover:text-primary;
 }
 
+/* Fix for horizontal scrollbar */
+html, body {
+  overflow-x: hidden;
+  max-width: 100%;
+}
+
 .animate-slide-up {
   animation: slideUp 0.5s ease-out;
 }
