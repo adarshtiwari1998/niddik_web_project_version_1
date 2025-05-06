@@ -158,22 +158,22 @@ const WhyUs = () => {
       />
       <Navbar hasAnnouncementAbove={true} />
       {/* Hero Section */}
-      <section className="py-24 bg-gradient-to-r from-andela-dark to-andela-dark/90 text-white">
+      <section className="py-32 bg-white text-center">
         <Container>
-          <div className="max-w-3xl mx-auto text-center">
+          <div className="max-w-4xl mx-auto text-center">
             <motion.h1
-              initial={{ opacity: 0, y: -20 }}
+              initial={{ opacity: 0, y: -10 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.7 }}
-              className="text-4xl md:text-5xl font-bold mb-6"
+              className="text-5xl md:text-6xl font-bold mb-8 text-andela-green"
             >
-              Why Choose <span className="text-andela-green">Niddik</span> for Your Talent Needs
+              Niddik
             </motion.h1>
             <motion.p
-              initial={{ opacity: 0, y: 20 }}
+              initial={{ opacity: 0, y: 10 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.7, delay: 0.2 }}
-              className="text-xl text-gray-300 mb-8"
+              className="text-xl md:text-2xl text-andela-gray bg-white px-4 py-2 mb-16 max-w-3xl mx-auto"
             >
               Our innovative approach to technical talent is redefining how companies build teams and how professionals grow their careers.
             </motion.p>
@@ -221,64 +221,63 @@ const WhyUs = () => {
       </section>
 
       {/* By the Numbers Section */}
-      <section className="py-20 bg-gradient-to-r from-andela-dark to-andela-dark/90 text-white">
+      <section className="py-28 bg-white">
         <Container>
           <motion.div
-            className="text-center mb-16"
+            className="text-center mb-10"
             initial={{ opacity: 0, y: 20 }}
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true }}
             transition={{ duration: 0.5 }}
           >
-            <h2 className="text-3xl md:text-4xl font-bold mb-4">Niddik By The Numbers</h2>
-            <p className="text-xl text-gray-300 max-w-2xl mx-auto">
+            <p className="text-xl text-andela-gray/70 max-w-2xl mx-auto mb-14">
               Our impact in transforming how the world connects talent with opportunity
             </p>
           </motion.div>
 
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8 text-center">
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-10 text-center">
             <motion.div
-              className="bg-white/10 backdrop-blur-sm rounded-xl p-8"
-              initial={{ opacity: 0, scale: 0.9 }}
-              whileInView={{ opacity: 1, scale: 1 }}
+              className="flex flex-col items-center"
+              initial={{ opacity: 0, y: 10 }}
+              whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true }}
               transition={{ duration: 0.5 }}
             >
-              <h3 className="text-5xl font-bold text-andela-green mb-3">100+</h3>
-              <p className="text-gray-200">Countries with active talent</p>
+              <h3 className="text-6xl font-bold text-andela-green mb-2">100+</h3>
+              <p className="text-andela-gray/70 text-lg">Countries with active talent</p>
             </motion.div>
             
             <motion.div
-              className="bg-white/10 backdrop-blur-sm rounded-xl p-8"
-              initial={{ opacity: 0, scale: 0.9 }}
-              whileInView={{ opacity: 1, scale: 1 }}
+              className="flex flex-col items-center"
+              initial={{ opacity: 0, y: 10 }}
+              whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true }}
               transition={{ duration: 0.5, delay: 0.1 }}
             >
-              <h3 className="text-5xl font-bold text-andela-green mb-3">92%</h3>
-              <p className="text-gray-200">Talent retention after one year</p>
+              <h3 className="text-6xl font-bold text-andela-green mb-2">92%</h3>
+              <p className="text-andela-gray/70 text-lg">Talent retention after one year</p>
             </motion.div>
             
             <motion.div
-              className="bg-white/10 backdrop-blur-sm rounded-xl p-8"
-              initial={{ opacity: 0, scale: 0.9 }}
-              whileInView={{ opacity: 1, scale: 1 }}
+              className="flex flex-col items-center"
+              initial={{ opacity: 0, y: 10 }}
+              whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true }}
               transition={{ duration: 0.5, delay: 0.2 }}
             >
-              <h3 className="text-5xl font-bold text-andela-green mb-3">7-14</h3>
-              <p className="text-gray-200">Days average time to hire</p>
+              <h3 className="text-6xl font-bold text-andela-green mb-2">7-14</h3>
+              <p className="text-andela-gray/70 text-lg">Days average time to hire</p>
             </motion.div>
             
             <motion.div
-              className="bg-white/10 backdrop-blur-sm rounded-xl p-8"
-              initial={{ opacity: 0, scale: 0.9 }}
-              whileInView={{ opacity: 1, scale: 1 }}
+              className="flex flex-col items-center"
+              initial={{ opacity: 0, y: 10 }}
+              whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true }}
               transition={{ duration: 0.5, delay: 0.3 }}
             >
-              <h3 className="text-5xl font-bold text-andela-green mb-3">10K+</h3>
-              <p className="text-gray-200">Successful placements made</p>
+              <h3 className="text-6xl font-bold text-andela-green mb-2">10K+</h3>
+              <p className="text-andela-gray/70 text-lg">Successful placements made</p>
             </motion.div>
           </div>
         </Container>
