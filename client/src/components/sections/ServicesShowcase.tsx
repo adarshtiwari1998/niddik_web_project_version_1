@@ -258,7 +258,7 @@ const ServicesShowcase = () => {
             transition={{ duration: 0.6, delay: 0.2 }}
           >
             {/* Center circle with gradient that changes color based on active service */}
-            <div className={`w-48 h-48 md:w-64 md:h-64 rounded-full bg-gradient-to-br ${activeServiceData.color} flex items-center justify-center shadow-lg relative z-10 transition-all duration-500`}>
+            <div className="w-48 h-48 md:w-64 md:h-64 rounded-full bg-gradient-to-br from-andela-green to-andela-green/90 flex items-center justify-center shadow-lg relative z-10 transition-all duration-500">
               <div className="w-44 h-44 md:w-60 md:h-60 rounded-full bg-white flex items-center justify-center relative overflow-hidden">
                 {/* Dynamic background texture based on service */}
                 <div className="absolute inset-0 opacity-5">
@@ -286,11 +286,7 @@ const ServicesShowcase = () => {
                   className="flex flex-col items-center justify-center text-center z-10"
                 >
                   <div className={`p-4 rounded-full ${activeServiceData.bgColor} mb-3 flex items-center justify-center`}>
-                    <div className={`h-12 w-12 ${activeServiceData.color.includes('purple') ? 'text-purple-600' : 
-                      activeServiceData.color.includes('blue') ? 'text-blue-600' : 
-                      activeServiceData.color.includes('green') ? 'text-green-600' : 
-                      'text-amber-600'}`
-                    }>
+                    <div className="h-12 w-12 text-andela-green">
                       {activeServiceData.icon}
                     </div>
                   </div>
@@ -318,7 +314,7 @@ const ServicesShowcase = () => {
                 <motion.div
                   key={service.id}
                   className={`absolute w-10 h-10 rounded-full flex items-center justify-center shadow-md cursor-pointer z-20
-                    ${service.id === activeService ? 'bg-gradient-to-r ' + service.color : 'bg-white'}`}
+                    ${service.id === activeService ? 'bg-gradient-to-r from-andela-green to-andela-green/90' : 'bg-white'}`}
                   style={{
                     transform: `translate(${x}px, ${y}px)`,
                   }}
@@ -360,7 +356,7 @@ const ServicesShowcase = () => {
           >
             <div className="h-full">
               <div className="mb-2">
-                <div className={`inline-block p-3 rounded-full bg-gradient-to-r ${activeServiceData.color}`}>
+                <div className="inline-block p-3 rounded-full bg-gradient-to-r from-andela-green to-andela-green/90">
                   <div className="text-white">
                     {activeServiceData.icon}
                   </div>
@@ -441,7 +437,7 @@ const ServicesShowcase = () => {
                           >
                             {/* Background pulse effect */}
                             <motion.div 
-                              className={`absolute inset-0 opacity-10 bg-gradient-to-br ${activeServiceData.color}`}
+                              className="absolute inset-0 opacity-10 bg-gradient-to-br from-andela-green to-andela-green/80"
                               animate={{ 
                                 scale: [1, 1.2, 1],
                                 opacity: [0.1, 0.3, 0.1]
@@ -469,12 +465,7 @@ const ServicesShowcase = () => {
                     <div className="h-full bg-andela-green/20">
                       {/* Animated progress indicator */}
                       <motion.div 
-                        className={`w-full ${
-                          activeServiceData.color.includes('purple') ? 'bg-purple-500' : 
-                          activeServiceData.color.includes('blue') ? 'bg-blue-500' : 
-                          activeServiceData.color.includes('green') ? 'bg-green-500' : 
-                          'bg-amber-500'
-                        }`}
+                        className="w-full bg-andela-green"
                         animate={{ 
                           height: ["0%", "33%", "33%", "66%", "66%", "100%", "100%", "0%"]
                         }}
@@ -543,7 +534,7 @@ const ServicesShowcase = () => {
                   variants={itemVariants}
                   className={`p-4 rounded-lg cursor-pointer transition-all duration-300 ${
                     service.id === activeService
-                      ? `bg-gradient-to-r ${service.color} text-white shadow-lg`
+                      ? 'bg-gradient-to-r from-andela-green to-andela-green/90 text-white shadow-lg'
                       : 'bg-white shadow hover:shadow-md'
                   }`}
                   onClick={() => handleServiceChange(service.id)}
@@ -552,7 +543,7 @@ const ServicesShowcase = () => {
                   whileHover={{ y: -5 }}
                 >
                   <div className="flex items-center">
-                    <div className={`flex-shrink-0 mr-4 ${service.id === activeService ? 'text-white' : service.color.split(" ")[0].replace("from", "text")}`}>
+                    <div className={`flex-shrink-0 mr-4 ${service.id === activeService ? 'text-white' : 'text-andela-green'}`}>
                       {service.icon}
                     </div>
                     <div className="flex-grow min-w-0">
