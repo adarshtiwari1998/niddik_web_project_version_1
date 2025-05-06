@@ -189,12 +189,12 @@ const Solutions = () => {
                   Start Your Project
                   <ArrowRight className="ml-2 h-5 w-5" />
                 </Link>
-                <a 
-                  href="#services"
+                <Link 
+                  href="/web-app-solutions"
                   className="inline-flex items-center justify-center border-2 border-andela-green text-andela-green hover:bg-andela-green/5 px-6 py-3 rounded-md font-medium transition-colors"
                 >
-                  Explore Services
-                </a>
+                  Web App Development
+                </Link>
               </div>
             </motion.div>
             
@@ -280,6 +280,11 @@ const Solutions = () => {
                 </div>
                 <h3 className="text-xl font-bold mb-3 text-andela-dark">{service.title}</h3>
                 <p className="text-andela-gray mb-6">{service.description}</p>
+                {service.title === "Website Development" && (
+                  <Link href="/web-app-solutions" className="text-andela-green font-medium inline-flex items-center hover:underline mb-4">
+                    Learn more <ArrowRight className="ml-1 h-4 w-4" />
+                  </Link>
+                )}
                 <div>
                   <p className="text-sm font-medium text-andela-green mb-2">Technologies:</p>
                   <div className="flex flex-wrap gap-2">
