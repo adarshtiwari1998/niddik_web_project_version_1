@@ -22,7 +22,7 @@ const Home = () => {
   };
 
   return (
-    <div className="min-h-screen overflow-x-hidden pt-10"> {/* Added pt-10 for announcement bar space */}
+    <div className="min-h-screen overflow-x-hidden pt-0"> {/* Removed padding-top */}
       {/* Fixed header components */}
       <AnnouncementBar 
         text="Join our upcoming webinar on scaling tech teams effectively."
@@ -34,8 +34,8 @@ const Home = () => {
       />
       <Navbar hasAnnouncementAbove={isAnnouncementVisible} />
       
-      {/* Add padding to account for fixed elements */}
-      <div className={`${isAnnouncementVisible ? 'pt-28' : 'pt-20'} transition-all duration-300`}>
+      {/* Add minimal padding to account for fixed elements */}
+      <div className={`${isAnnouncementVisible ? 'pt-[80px]' : 'pt-[40px]'} transition-all duration-300`}>
         <main>
           <Hero />
           <TrustedCompanies />

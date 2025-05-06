@@ -180,7 +180,7 @@
 
 /* Fixed header and announcement bar */
 body {
-  padding-top: 80px; /* Allow space for fixed header (40px for announcement + 40px for navbar) */
+  padding-top: 0; /* Remove extra padding */
 }
 
 /* Hexagon Shape Styling for BenefitsStrengthsShowcase */
