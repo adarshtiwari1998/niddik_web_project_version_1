@@ -123,49 +123,83 @@ As Abhishek's career progressed, he took on increasingly senior leadership roles
         textColor="text-white"
       />
       <Navbar hasAnnouncementAbove={true} />
-      {/* Hero Section - Modern redesign */}
-      <section className="relative bg-white text-andela-dark overflow-hidden">
-        <div className="absolute top-0 right-0 -translate-y-1/4 translate-x-1/4 w-[600px] h-[600px] rounded-full bg-andela-green/5 blur-3xl pointer-events-none"></div>
-        <div className="absolute bottom-0 left-0 translate-y-1/4 -translate-x-1/4 w-[600px] h-[600px] rounded-full bg-andela-green/5 blur-3xl pointer-events-none"></div>
+      {/* Hero Section - Enhanced with Banner Background */}
+      <section className="relative overflow-hidden bg-white text-andela-dark">
+        {/* Banner Background Image */}
+        <div className="absolute inset-0 w-full h-full">
+          <img 
+            src="/images/about/about-banner.svg" 
+            alt="Background Pattern" 
+            className="w-full h-full object-cover"
+          />
+        </div>
+        
+        {/* Overlay Gradient */}
+        <div className="absolute inset-0 bg-gradient-to-b from-transparent to-white/80"></div>
+        
+        {/* Decorative Elements */}
+        <div className="absolute top-20 left-10 w-24 h-24 rounded-full bg-yellow-100 opacity-60 blur-md"></div>
+        <div className="absolute bottom-20 right-10 w-32 h-32 rounded-full bg-blue-100 opacity-60 blur-md"></div>
+        <div className="absolute top-1/2 left-1/4 w-4 h-4 rounded-full bg-green-300 opacity-40"></div>
+        <div className="absolute top-1/3 right-1/3 w-6 h-6 rounded-full border-2 border-green-300 opacity-40"></div>
         
         <Container>
-          <div className="pt-16 pb-32 flex flex-col items-center justify-center relative z-10">
-            <div className="max-w-4xl mx-auto text-center mb-12">
-              <div className="inline-block mb-4 px-4 py-1 bg-andela-green/10 rounded-full text-andela-green font-medium">
+          <div className="pt-20 pb-24 flex flex-col items-center justify-center relative z-10">
+            <div className="max-w-4xl mx-auto text-center mb-14">
+              <motion.div
+                initial={{ opacity: 0, y: 10 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.5 }}
+                className="inline-block mb-4 px-5 py-1.5 bg-andela-green/10 rounded-full text-andela-green font-medium shadow-sm"
+              >
                 About Niddik
-              </div>
+              </motion.div>
+              
               <motion.h1
                 initial={{ opacity: 0, y: -20 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ duration: 0.7 }}
-                className="text-4xl md:text-6xl font-bold mb-6 leading-tight"
+                className="text-5xl md:text-6xl font-bold mb-6 leading-tight"
               >
                 <span className="text-andela-green">Exceptional Talent</span>
               </motion.h1>
+              
               <motion.p
                 initial={{ opacity: 0, y: 20 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ duration: 0.7, delay: 0.2 }}
-                className="text-xl text-andela-gray mb-8 max-w-3xl mx-auto"
+                className="text-xl text-andela-gray mb-10 max-w-3xl mx-auto leading-relaxed"
               >
-                We're building the future of work by connecting brilliant minds with the companies that need them most, regardless of location.
+                We're building the future of work by connecting brilliant minds with the 
+                companies that need them most, regardless of location.
               </motion.p>
             </div>
             
             <motion.div
-              initial={{ opacity: 0, scale: 0.9 }}
+              initial={{ opacity: 0, scale: 0.95 }}
               animate={{ opacity: 1, scale: 1 }}
-              transition={{ duration: 0.5, delay: 0.3 }}
-              className="w-full max-w-5xl relative"
+              transition={{ duration: 0.6, delay: 0.3 }}
+              className="w-full max-w-4xl relative flex justify-center"
             >
-              <div className="absolute -top-10 -left-10 w-20 h-20 bg-yellow-400/20 rounded-full"></div>
-              <div className="absolute -bottom-5 -right-5 w-32 h-32 bg-blue-500/10 rounded-full"></div>
-              
-              <img 
-                src="/attached_assets/image_1746533828699.png" 
-                alt="Exceptional Talent" 
-                className="w-full rounded-2xl shadow-xl relative z-10 border border-gray-100"
-              />
+              {/* Image Container with Enhanced Shadow and Border */}
+              <div className="relative w-full md:w-3/4 overflow-hidden rounded-2xl shadow-2xl">
+                {/* Yellow Accent Circle */}
+                <div className="absolute -top-10 -left-10 w-32 h-32 bg-yellow-300/20 rounded-full blur-md"></div>
+                
+                {/* Blue Accent Circle */}
+                <div className="absolute -bottom-10 -right-10 w-40 h-40 bg-blue-300/20 rounded-full blur-md"></div>
+                
+                <div className="absolute inset-0 bg-gradient-to-tr from-green-50/50 to-transparent rounded-2xl"></div>
+                
+                <img 
+                  src="https://images.unsplash.com/photo-1522071820081-009f0129c71c?auto=format&fit=crop&w=1200&q=80" 
+                  alt="Exceptional Talent" 
+                  className="w-full rounded-2xl relative z-10 border border-green-100/50"
+                />
+                
+                {/* Green Accent Line */}
+                <div className="absolute bottom-0 left-0 right-0 h-1 bg-gradient-to-r from-green-200 via-green-400 to-green-200"></div>
+              </div>
             </motion.div>
           </div>
         </Container>
