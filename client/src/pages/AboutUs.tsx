@@ -14,7 +14,7 @@ const AboutUs = () => {
     {
       name: "Abhishek Anchal",
       role: "CEO & Co-Founder",
-      image: "https://niddik.com/wp-content/uploads/2025/02/abhishk-anhal.jpg",
+      image: "/attached_assets/image_1746534393473.png",
       bio: "With over 20 years of experience in talent acquisition, Abhishek has established himself as a renowned expert in the field of recruitment.",
       fullBio: `Abhishek is a seasoned Talent Acquisition Professional with over 20 years of extensive experience in talent acquisition, he has established himself as a renowned expert in the field of recruitment. His impressive career trajectory, marked by progressive leadership roles and a strong academic foundation, is a testament to his dedication, passion, and commitment to excellence.
 
@@ -115,15 +115,13 @@ As Abhishek's career progressed, he took on increasingly senior leadership roles
 
   return (
     <div className="flex flex-col min-h-screen">
-      <div className="pt-10">
-        <AnnouncementBar 
-          text="Join our talent network today!"
-          linkText="Apply Now"
-          linkUrl="#"
-          bgColor="bg-andela-green"
-          textColor="text-white"
-        />
-      </div>
+      <AnnouncementBar 
+        text="Join our talent network today!"
+        linkText="Apply Now"
+        linkUrl="#"
+        bgColor="bg-andela-green"
+        textColor="text-white"
+      />
       <Navbar hasAnnouncementAbove={true} />
       {/* Hero Section - Modern redesign */}
       <section className="relative bg-white text-andela-dark overflow-hidden">
@@ -163,11 +161,13 @@ As Abhishek's career progressed, he took on increasingly senior leadership roles
               <div className="absolute -top-10 -left-10 w-20 h-20 bg-yellow-400/20 rounded-full"></div>
               <div className="absolute -bottom-5 -right-5 w-32 h-32 bg-blue-500/10 rounded-full"></div>
               
-              <img 
-                src="/attached_assets/image_1746533828699.png" 
-                alt="Exceptional Talent" 
-                className="w-full rounded-2xl shadow-xl relative z-10 border border-gray-100"
-              />
+              <div className="relative w-full h-64 md:h-80 rounded-2xl shadow-xl border border-gray-100 overflow-hidden">
+                <img 
+                  src="/attached_assets/image_1746534366280.png" 
+                  alt="Exceptional Talent" 
+                  className="w-full h-full object-cover object-center"
+                />
+              </div>
             </motion.div>
           </div>
         </Container>

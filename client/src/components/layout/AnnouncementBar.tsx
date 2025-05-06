@@ -37,11 +37,11 @@ export default function AnnouncementBar({
     <AnimatePresence>
       {isVisible && (
         <motion.div
-          initial={{ height: 0, opacity: 0 }}
-          animate={{ height: '40px', opacity: 1 }}
-          exit={{ height: 0, opacity: 0 }}
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          exit={{ opacity: 0 }}
           transition={{ duration: 0.3 }}
-          className={`${bgColor} ${textColor} w-full text-center py-2 h-10 relative z-50 overflow-hidden`}
+          className={`${bgColor} ${textColor} w-full text-center py-2 h-10 fixed top-0 left-0 right-0 z-50`}
         >
           <div className="container mx-auto px-4 flex justify-center items-center">
             <p className="text-sm md:text-base">
