@@ -191,7 +191,7 @@ As Abhishek's career progressed, he took on increasingly senior leadership roles
             >
               <div className="relative">
                 <img 
-                  src="/assets/image_1746543692402.png" 
+                  src="https://images.unsplash.com/photo-1542744173-8659b8e77b1a?auto=format&fit=crop&w=1200&q=80" 
                   alt="Team working together" 
                   className="w-full h-auto object-cover rounded-md shadow-lg"
                 />
