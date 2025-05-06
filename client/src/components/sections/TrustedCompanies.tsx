@@ -1,8 +1,66 @@
-import React from "react";
+import React, { useState } from "react";
 import { motion } from "framer-motion";
 import Container from "@/components/ui/container";
+import { 
+  FaMicrosoft, 
+  FaGithub, 
+  FaAmazon, 
+  FaGoogle, 
+  FaBuilding, 
+  FaCreditCard
+} from "react-icons/fa";
+// Remove problematic imports that don't exist
+import "./marquee.css";
 
-// Simple component to exactly match the reference image
+// Company logos and reliable icons 
+const companies = [
+  { name: "Microsoft", logo: <FaMicrosoft size={32} color="#666" /> },
+  { name: "KPMG", logo: <FaBuilding size={32} color="#666" /> },
+  { name: "JP Morgan", logo: <FaCreditCard size={32} color="#666" /> },
+  { name: "Goldman Sachs", logo: <FaBuilding size={32} color="#666" /> },
+  { name: "GitHub", logo: <FaGithub size={32} color="#666" /> },
+  { name: "Amazon", logo: <FaAmazon size={32} color="#666" /> },
+  { name: "Google", logo: <FaGoogle size={32} color="#666" /> }
+];
+
+// Component for a smooth marquee animation effect
+const InfiniteMarquee = ({ children, pauseOnHover = true, speed = 15 }: {
+  children: React.ReactNode;
+  pauseOnHover?: boolean;
+  speed?: number;
+}) => {
+  const [isPaused, setIsPaused] = useState(false);
+  
+  return (
+    <div 
+      className="marquee-container" 
+      onMouseEnter={() => pauseOnHover && setIsPaused(true)}
+      onMouseLeave={() => setIsPaused(false)}
+    >
+      <div 
+        className="marquee-content"
+        style={{
+          animationPlayState: isPaused ? 'paused' : 'running',
+          animationDuration: `${speed}s`,
+        }}
+      >
+        {/* Original content */}
+        {children}
+        
+        {/* Duplicate content with unique keys */}
+        <div className="marquee-content-duplicate">
+          {React.Children.toArray(children).map((child, i) => 
+            React.isValidElement(child) && child.props.key ? 
+              React.cloneElement(child, { key: `dup-${child.props.key}` }) : 
+              child
+          )}
+        </div>
+      </div>
+    </div>
+  );
+};
+
+// Simple component to match the reference image with marquee effect
 const TrustedCompanies = () => {
   return (
     <section className="py-16 bg-white border-t border-gray-100">
@@ -25,39 +83,26 @@ const TrustedCompanies = () => {
               </p>
             </motion.div>
             
-            {/* Right column with company logos in grid */}
+            {/* Right column with company logos in marquee */}
             <motion.div 
-              className="md:w-2/3 grid grid-cols-2 md:grid-cols-3 gap-8 items-center"
+              className="md:w-2/3"
               initial={{ opacity: 0, y: 20 }}
               whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true }}
               transition={{ duration: 0.5, delay: 0.2 }}
             >
-              {/* Company logos as images */}
-              <div className="grayscale hover:grayscale-0 transition-all duration-300">
-                <img src="https://upload.wikimedia.org/wikipedia/commons/9/96/Microsoft_logo_%282012%29.svg" 
-                     alt="Microsoft" className="h-8 max-w-full" />
-              </div>
-              <div className="grayscale hover:grayscale-0 transition-all duration-300">
-                <img src="https://upload.wikimedia.org/wikipedia/commons/2/2f/KPMG_logo.svg" 
-                     alt="KPMG" className="h-8 max-w-full" />
-              </div>
-              <div className="grayscale hover:grayscale-0 transition-all duration-300">
-                <img src="https://upload.wikimedia.org/wikipedia/commons/4/4f/Goldman_Sachs.svg" 
-                     alt="Goldman Sachs" className="h-8 max-w-full" />
-              </div>
-              <div className="grayscale hover:grayscale-0 transition-all duration-300">
-                <img src="https://upload.wikimedia.org/wikipedia/commons/a/a0/J.P._Morgan_logo.svg" 
-                     alt="JP Morgan" className="h-8 max-w-full" />
-              </div>
-              <div className="grayscale hover:grayscale-0 transition-all duration-300">
-                <img src="https://upload.wikimedia.org/wikipedia/commons/8/8a/Viacom_CBS_logo.svg" 
-                     alt="Viacom CBS" className="h-8 max-w-full" />
-              </div>
-              <div className="grayscale hover:grayscale-0 transition-all duration-300">
-                <img src="https://upload.wikimedia.org/wikipedia/commons/9/91/Octicons-mark-github.svg" 
-                     alt="GitHub" className="h-8 max-w-full" />
-              </div>
+              <InfiniteMarquee speed={30}>
+                {companies.map((company, index) => (
+                  <div 
+                    key={`company-${index}`}
+                    className="flex-none mx-10 grayscale hover:grayscale-0 transition-all duration-300"
+                  >
+                    <div className="w-28 h-16 flex items-center justify-center">
+                      {company.logo}
+                    </div>
+                  </div>
+                ))}
+              </InfiniteMarquee>
             </motion.div>
           </div>
         </div>
