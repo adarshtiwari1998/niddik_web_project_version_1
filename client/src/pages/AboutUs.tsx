@@ -123,20 +123,25 @@ As Abhishek's career progressed, he took on increasingly senior leadership roles
         textColor="text-white"
       />
       <Navbar hasAnnouncementAbove={true} />
-      {/* Hero Section - Centered Design with Light Background */}
-      <section className="relative bg-[#f5fff7] text-andela-dark overflow-hidden py-12 md:py-16">
-        {/* Decorative Elements */}
-        <div className="absolute top-0 left-0 w-20 h-20 rounded-full bg-yellow-100 opacity-50"></div>
-        <div className="absolute bottom-0 right-0 w-24 h-24 rounded-full bg-blue-100 opacity-40"></div>
+      {/* Hero Section - With Banner and Centered Content */}
+      <section className="relative text-andela-dark overflow-hidden pt-32 pb-16">
+        {/* Banner Background */}
+        <div className="absolute inset-0 z-0">
+          <img 
+            src="/images/about/green-banner.svg" 
+            alt="Banner background" 
+            className="w-full h-full object-cover"
+          />
+        </div>
         
-        <Container>
-          <div className="flex flex-col items-center justify-center text-center max-w-4xl mx-auto">
+        <Container className="relative z-10">
+          <div className="flex flex-col items-center justify-center text-center">
             {/* Small Label */}
             <motion.div
               initial={{ opacity: 0, y: 10 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.5 }}
-              className="text-sm font-medium text-andela-green mb-3"
+              className="text-sm font-medium text-andela-green mb-2"
             >
               About Niddik
             </motion.div>
@@ -145,8 +150,8 @@ As Abhishek's career progressed, he took on increasingly senior leadership roles
             <motion.h1
               initial={{ opacity: 0, y: -10 }}
               animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.7 }}
-              className="text-4xl md:text-5xl font-bold mb-6 text-andela-green"
+              transition={{ duration: 0.6 }}
+              className="text-4xl md:text-6xl font-bold mb-5 text-andela-green"
             >
               Exceptional Talent
             </motion.h1>
@@ -155,8 +160,8 @@ As Abhishek's career progressed, he took on increasingly senior leadership roles
             <motion.p
               initial={{ opacity: 0, y: 10 }}
               animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.7, delay: 0.2 }}
-              className="text-base md:text-lg text-gray-600 max-w-3xl mx-auto mb-10"
+              transition={{ duration: 0.6, delay: 0.2 }}
+              className="text-base md:text-lg text-gray-600 max-w-2xl mx-auto mb-12"
             >
               We're building the future of work by connecting brilliant minds with the 
               companies that need them most, regardless of location.
@@ -169,12 +174,13 @@ As Abhishek's career progressed, he took on increasingly senior leadership roles
               transition={{ duration: 0.6, delay: 0.3 }}
               className="w-full max-w-3xl mx-auto"
             >
-              <div className="relative rounded-lg overflow-hidden">
+              <div className="relative">
                 <img 
                   src="https://images.unsplash.com/photo-1542744173-8659b8e77b1a?auto=format&fit=crop&w=1200&q=80" 
                   alt="Team working together" 
-                  className="w-full h-auto object-cover"
+                  className="w-full h-auto object-cover rounded-md shadow-lg"
                 />
+                <div className="absolute inset-0 rounded-md shadow-inner"></div>
               </div>
             </motion.div>
           </div>
