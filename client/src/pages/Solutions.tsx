@@ -25,79 +25,67 @@ import { Link } from "wouter";
 const Solutions = () => {
   const webAppServices = [
     {
-      icon: <Globe className="h-8 w-8 text-blue-500" />,
-      title: "Website Development",
-      description: "Custom, responsive websites built with modern technologies to deliver exceptional user experiences.",
-      tech: ["React", "Next.js", "WordPress", "Tailwind CSS", "Responsive Design"]
+      icon: <Code className="h-8 w-8 text-blue-500" />,
+      title: "Frontend Development",
+      description: "Responsive and intuitive UI/UX with modern frameworks like React, Vue, and Angular.",
+      tech: ["React", "Vue.js", "Angular", "TypeScript", "HTML5/CSS3"]
     },
     {
-      icon: <GitMerge className="h-8 w-8 text-indigo-600" />,
-      title: "MERN Stack Development",
-      description: "Full-stack applications leveraging MongoDB, Express, React, and Node.js for scalable modern websites.",
-      tech: ["MongoDB", "Express", "React", "Node.js", "Redux"]
+      icon: <Server className="h-8 w-8 text-indigo-500" />,
+      title: "Backend Development",
+      description: "Scalable and secure server-side solutions with robust APIs and microservices architecture.",
+      tech: ["Node.js", "Python", "Java", "C#", "Ruby on Rails"]
     },
     {
-      icon: <Database className="h-8 w-8 text-green-600" />,
-      title: "MEAN Stack Development",
-      description: "End-to-end solutions using MongoDB, Express, Angular and Node.js for enterprise-grade applications.",
-      tech: ["MongoDB", "Express", "Angular", "Node.js", "TypeScript"]
+      icon: <Database className="h-8 w-8 text-green-500" />,
+      title: "Database Solutions",
+      description: "Efficient data storage and retrieval systems optimized for performance and scalability.",
+      tech: ["PostgreSQL", "MongoDB", "MySQL", "Redis", "GraphQL"]
     },
     {
-      icon: <BrainCircuit className="h-8 w-8 text-purple-600" />,
-      title: "AI-Powered Solutions",
-      description: "Intelligent applications leveraging AI to automate processes, provide insights, and enhance user experience.",
-      tech: ["OpenAI", "Machine Learning", "Natural Language Processing", "Computer Vision", "Predictive Analytics"]
+      icon: <Globe className="h-8 w-8 text-teal-500" />,
+      title: "Full-Stack Applications",
+      description: "End-to-end web application development with seamless integration between all components.",
+      tech: ["MERN Stack", "LAMP Stack", "JAMstack", "Serverless", "Cloud-native"]
     },
     {
-      icon: <Bot className="h-8 w-8 text-teal-600" />,
-      title: "AI Agent Development",
-      description: "Custom intelligent agents that can perform tasks, answer questions, and provide personalized assistance.",
-      tech: ["LangChain", "Vector Databases", "Prompt Engineering", "GPT Models", "Knowledge Graphs"]
+      icon: <ShieldCheck className="h-8 w-8 text-red-500" />,
+      title: "Security Implementation",
+      description: "Comprehensive security measures to protect data and ensure compliance with regulations.",
+      tech: ["OAuth", "JWT", "HTTPS", "Data Encryption", "Security Audits"]
     },
     {
-      icon: <PenTool className="h-8 w-8 text-red-500" />,
-      title: "UI/UX Design",
-      description: "Human-centered design approach that creates intuitive, engaging, and accessible digital experiences.",
-      tech: ["Figma", "User Research", "Prototyping", "Wireframing", "Usability Testing"]
+      icon: <LineChart className="h-8 w-8 text-purple-500" />,
+      title: "Analytics Integration",
+      description: "Data-driven insights through powerful analytics integration and visualization tools.",
+      tech: ["Google Analytics", "Mixpanel", "D3.js", "Chart.js", "Kibana"]
     }
   ];
 
   const caseStudies = [
     {
-      title: "AI-Powered Customer Service Platform",
-      client: "Global Retail Chain",
-      description: "Developed an intelligent customer service platform with AI agents that handle inquiries, process returns, and provide personalized recommendations.",
+      title: "E-Commerce Platform",
+      client: "RetailTech Innovations",
+      description: "Developed a comprehensive e-commerce solution with inventory management, payment processing, and customer analytics.",
       results: [
-        "Reduced customer service costs by 47%",
-        "Improved response time from hours to seconds",
-        "Achieved 92% customer satisfaction rating"
+        "Increased online sales by 142% in the first quarter",
+        "Reduced page load time by 65%",
+        "Improved checkout conversion rate by 28%"
       ],
-      image: "https://images.unsplash.com/photo-1596742578443-7682ef7b7057?auto=format&fit=crop&w=800&q=80",
-      tags: ["AI Agents", "NLP", "React", "Node.js", "MongoDB"]
+      image: "https://images.unsplash.com/photo-1561997968-aa846c2bf255?auto=format&fit=crop&w=800&q=80",
+      tags: ["E-commerce", "React", "Node.js", "PostgreSQL"]
     },
     {
-      title: "Enterprise Resource Management System",
-      client: "Manufacturing Corporation",
-      description: "Built a comprehensive MERN stack application for resource planning, inventory management, and supply chain optimization.",
+      title: "Healthcare Management System",
+      client: "MedCare Solutions",
+      description: "Created a secure and compliant healthcare management application for patient records, appointments, and telemedicine capabilities.",
       results: [
-        "Streamlined operations resulting in 28% cost reduction",
-        "Reduced inventory waste by 35%",
-        "Improved supplier coordination by 42%"
+        "Reduced administrative workload by 40%",
+        "HIPAA compliant data security implementation",
+        "Enabled 24/7 service accessibility with 99.9% uptime"
       ],
-      image: "https://images.unsplash.com/photo-1519389950473-47ba0277781c?auto=format&fit=crop&w=800&q=80",
-      tags: ["MERN Stack", "Enterprise", "MongoDB", "Express", "React", "Node.js"]
-    },
-    {
-      title: "Financial Analytics Dashboard",
-      client: "Investment Firm",
-      description: "Designed a sophisticated MEAN stack application for real-time financial data visualization and predictive analytics.",
-      results: [
-        "Enabled data-driven decisions resulting in 19% portfolio growth",
-        "Reduced analysis time by 75%",
-        "Improved forecast accuracy by 32%"
-      ],
-      image: "https://images.unsplash.com/photo-1551288049-bebda4e38f71?auto=format&fit=crop&w=800&q=80",
-      tags: ["MEAN Stack", "Angular", "Financial Services", "Data Visualization"]
+      image: "https://images.unsplash.com/photo-1576091160550-2173dba999ef?auto=format&fit=crop&w=800&q=80",
+      tags: ["Healthcare", "Angular", "C#", "Azure"]
     }
   ];
 
@@ -189,12 +177,12 @@ const Solutions = () => {
                   Start Your Project
                   <ArrowRight className="ml-2 h-5 w-5" />
                 </Link>
-                <Link 
-                  href="/web-app-solutions"
+                <a 
+                  href="#services"
                   className="inline-flex items-center justify-center border-2 border-andela-green text-andela-green hover:bg-andela-green/5 px-6 py-3 rounded-md font-medium transition-colors"
                 >
-                  Web App Development
-                </Link>
+                  Explore Services
+                </a>
               </div>
             </motion.div>
             
@@ -280,11 +268,6 @@ const Solutions = () => {
                 </div>
                 <h3 className="text-xl font-bold mb-3 text-andela-dark">{service.title}</h3>
                 <p className="text-andela-gray mb-6">{service.description}</p>
-                {service.title === "Website Development" && (
-                  <Link href="/web-app-solutions" className="text-andela-green font-medium inline-flex items-center hover:underline mb-4">
-                    Learn more <ArrowRight className="ml-1 h-4 w-4" />
-                  </Link>
-                )}
                 <div>
                   <p className="text-sm font-medium text-andela-green mb-2">Technologies:</p>
                   <div className="flex flex-wrap gap-2">
