@@ -138,26 +138,7 @@ const ServicesOverview = () => {
     }
   };
 
-  // Service carousel functionality
-  const [currentServiceIndex, setCurrentServiceIndex] = useState(0);
-  const cardsToShow = 3;
-  const maxIndex = Math.max(0, services.length - cardsToShow);
-  
-  const nextServices = () => {
-    setCurrentServiceIndex(prev => Math.min(prev + 1, maxIndex));
-  };
-  
-  const prevServices = () => {
-    setCurrentServiceIndex(prev => Math.max(prev - 1, 0));
-  };
-  
-  const isNextDisabled = currentServiceIndex >= maxIndex;
-  const isPrevDisabled = currentServiceIndex <= 0;
-  
-  const visibleServices = services.slice(
-    currentServiceIndex, 
-    currentServiceIndex + cardsToShow
-  );
+  // No carousel functionality needed anymore - show all services in a grid
 
   const activeTabContent = serviceTabs.find(tab => tab.id === activeTab);
 
@@ -230,31 +211,11 @@ const ServicesOverview = () => {
                   </p>
                 </motion.div>
                 
-                {/* Services Carousel Section */}
+                {/* Services Grid Section */}
                 <div className="mb-20">
-                  {/* Carousel Navigation Controls */}
-                  <div className="flex justify-end mb-6 space-x-2">
-                    <button 
-                      onClick={prevServices}
-                      disabled={isPrevDisabled}
-                      className={`p-2 rounded-full border ${isPrevDisabled ? 'bg-gray-100 text-gray-400 cursor-not-allowed' : 'bg-white text-gray-700 hover:bg-gray-50'}`}
-                      aria-label="Previous services"
-                    >
-                      <ChevronLeft className="h-5 w-5" />
-                    </button>
-                    <button 
-                      onClick={nextServices}
-                      disabled={isNextDisabled}
-                      className={`p-2 rounded-full border ${isNextDisabled ? 'bg-gray-100 text-gray-400 cursor-not-allowed' : 'bg-white text-gray-700 hover:bg-gray-50'}`}
-                      aria-label="Next services"
-                    >
-                      <ChevronRight className="h-5 w-5" />
-                    </button>
-                  </div>
-                  
-                  {/* Service Cards Grid */}
-                  <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-                    {visibleServices.map((service, index) => (
+                  {/* Service Cards Grid - Two Rows */}
+                  <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8">
+                    {services.map((service, index: number) => (
                       <motion.div
                         key={service.id}
                         variants={itemVariants}
@@ -348,9 +309,9 @@ const ServicesOverview = () => {
                     >
                       <button
                         onClick={() => setActiveTab(tab.id)}
-                        className={`px-6 py-3 rounded-full text-sm font-medium transition-all duration-300 ${
+                        className={`px-6 py-2 rounded-full text-sm font-medium transition-all duration-300 ${
                           activeTab === tab.id
-                            ? 'bg-gradient-to-r from-andela-green to-teal-600 text-white shadow-md'
+                            ? 'bg-andela-green text-white shadow-md'
                             : 'bg-white text-gray-600 hover:bg-gray-50 border border-gray-200'
                         }`}
                       >
@@ -396,7 +357,7 @@ const ServicesOverview = () => {
                           </div>
                         </div>
                         <div className="mt-10">
-                          <Link href="#contact" className="inline-flex items-center bg-gradient-to-r from-andela-green to-teal-600 text-white px-6 py-3 rounded-md font-medium hover:from-teal-600 hover:to-andela-green transition-all">
+                          <Link href="#contact" className="inline-flex items-center bg-andela-green text-white px-6 py-3 rounded-md font-medium hover:bg-andela-green/90 transition-all">
                             Get started today <ArrowRight className="h-5 w-5 ml-2" />
                           </Link>
                         </div>
