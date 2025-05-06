@@ -777,13 +777,10 @@ As Abhishek's career progressed, he took on increasingly senior leadership roles
       </section>
 
       {/* Ready to Transform Your Talent Strategy - CTA */}
-      <section className="py-20 bg-no-repeat bg-cover bg-center relative text-white overflow-hidden">
-        {/* Semi-transparent overlay with gradient */}
-        <div className="absolute inset-0 bg-gradient-to-br from-black via-andela-dark to-blue-950"></div>
-        
+      <section className="py-20 bg-gray-100 relative overflow-hidden">
         {/* Decorative elements */}
-        <div className="absolute top-0 right-0 w-80 h-80 rounded-full bg-andela-green/10 blur-3xl"></div>
-        <div className="absolute bottom-0 left-0 w-80 h-80 rounded-full bg-blue-400/10 blur-3xl"></div>
+        <div className="absolute top-0 right-0 w-80 h-80 rounded-full bg-andela-green/5 blur-3xl"></div>
+        <div className="absolute bottom-0 left-0 w-80 h-80 rounded-full bg-andela-green/5 blur-3xl"></div>
         <div className="absolute top-1/4 left-1/4 w-2 h-2 bg-andela-green rounded-full"></div>
         <div className="absolute top-3/4 right-1/4 w-2 h-2 bg-andela-green rounded-full"></div>
         <div className="absolute top-1/2 right-1/3 w-4 h-4 border border-andela-green/30 rounded-full"></div>
@@ -870,10 +867,10 @@ As Abhishek's career progressed, he took on increasingly senior leadership roles
                     alt="Business professionals discussing strategy"
                     className="w-full h-auto"
                   />
-                  <div className="absolute inset-0 bg-gradient-to-t from-andela-dark/60 to-transparent"></div>
+                  <div className="absolute inset-0 bg-gradient-to-b from-transparent to-white/90"></div>
                   
-                  <div className="absolute bottom-8 left-8 right-8 bg-white/10 backdrop-blur-sm p-6 rounded-lg border border-white/20">
-                    <p className="text-white text-lg font-medium leading-snug">
+                  <div className="absolute bottom-8 left-8 right-8 bg-white p-6 rounded-lg shadow-lg border border-gray-100">
+                    <p className="text-gray-700 text-lg font-medium leading-snug">
                       "Niddik transformed our hiring process by connecting us with exceptional talent that aligned perfectly with our company culture."
                     </p>
                     <div className="mt-4 flex items-center">
@@ -881,8 +878,8 @@ As Abhishek's career progressed, he took on increasingly senior leadership roles
                         A
                       </div>
                       <div className="ml-3">
-                        <p className="text-white font-medium">Alex Johnson</p>
-                        <p className="text-white/80 text-sm">CTO, TechVision Inc.</p>
+                        <p className="text-andela-dark font-medium">Alex Johnson</p>
+                        <p className="text-gray-500 text-sm">CTO, TechVision Inc.</p>
                       </div>
                     </div>
                   </div>
