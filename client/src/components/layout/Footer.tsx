@@ -38,7 +38,7 @@ const footerColumns: FooterColumn[] = [
     ]
   },
   {
-    title: "About Andela",
+    title: "About Niddik",
     links: [
       { label: "Our Story", href: "#" },
       { label: "Leadership", href: "#" },
@@ -58,7 +58,7 @@ const Footer = () => {
           <div className="lg:col-span-2">
             <Logo className="h-10 mb-6" white />
             <p className="text-gray-300 mb-6">
-              Andela is a global talent marketplace that connects companies with vetted, remote technical talent in emerging markets.
+              Niddik is a global talent marketplace that connects companies with vetted, remote technical talent in emerging markets.
             </p>
             <div className="flex space-x-4">
               <a href="#" className="text-gray-400 hover:text-white transition-colors">
@@ -94,7 +94,7 @@ const Footer = () => {
         </div>
 
         <div className="border-t border-gray-700 mt-12 pt-8 text-center md:flex md:justify-between md:text-left">
-          <p className="text-gray-400 mb-4 md:mb-0">© {new Date().getFullYear()} Andela. All rights reserved.</p>
+          <p className="text-gray-400 mb-4 md:mb-0">© {new Date().getFullYear()} Niddik. All rights reserved.</p>
           <div className="flex flex-wrap justify-center md:justify-end gap-4 text-gray-400">
             <Link href="#" className="hover:text-white transition-colors">
               Privacy Policy

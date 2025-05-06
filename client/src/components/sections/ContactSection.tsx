@@ -70,7 +70,7 @@ const ContactSection = () => {
             <div className="p-8 lg:p-12">
               <h2 className="text-3xl font-bold mb-6">Ready to get started?</h2>
               <p className="text-andela-gray mb-8">
-                Connect with us today and discover how Andela can help you find the perfect tech talent for your needs.
+                Connect with us today and discover how Niddik can help you find the perfect tech talent for your needs.
               </p>
               
               <Form {...form}>

@@ -42,7 +42,7 @@ const navItems: NavItem[] = [
   {
     label: "For Technologists",
     dropdown: [
-      { label: "Apply to Andela", href: "#" },
+      { label: "Apply to Niddik", href: "#" },
       { label: "Learning Community", href: "#" },
       { label: "Expert Network", href: "#" }
     ]

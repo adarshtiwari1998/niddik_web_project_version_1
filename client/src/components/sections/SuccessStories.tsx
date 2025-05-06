@@ -80,7 +80,7 @@ const SuccessStories = () => {
         >
           <h2 className="text-3xl md:text-4xl font-bold mb-4">Success Stories</h2>
           <p className="text-lg text-andela-gray max-w-2xl mx-auto">
-            Hear from our clients and technologists about their experience with Andela
+            Hear from our clients and technologists about their experience with Niddik
           </p>
         </motion.div>
         
