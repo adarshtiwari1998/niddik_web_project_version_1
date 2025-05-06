@@ -254,7 +254,7 @@ const ServicesOverview = () => {
                   
                   {/* Service Cards Grid */}
                   <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-                    {visibleServices.map((service, index) => (
+                    {services.map((service, index) => (
                       <motion.div
                         key={service.id}
                         variants={itemVariants}
@@ -331,7 +331,7 @@ const ServicesOverview = () => {
                 viewport={{ once: true }}
               >
                 <motion.div variants={itemVariants} className="text-center mb-16">
-                  <span className="inline-block bg-gradient-to-r from-blue-500/10 to-indigo-500/10 text-blue-600 px-4 py-1 rounded-full font-medium mb-4">Why Choose Us</span>
+                  <span className="inline-block bg-gradient-to-r from-andela-green/10 to-gray-200 text-andela-dark px-4 py-1 rounded-full font-medium mb-4">Why Choose Us</span>
                   <h2 className="text-5xl font-bold text-andela-dark mb-6">Our Competitive Advantage</h2>
                   <p className="text-xl text-andela-gray max-w-3xl mx-auto">
                     We combine industry expertise with cutting-edge technology to deliver exceptional recruitment solutions that outperform traditional approaches.
@@ -350,7 +350,7 @@ const ServicesOverview = () => {
                         onClick={() => setActiveTab(tab.id)}
                         className={`px-6 py-3 rounded-full text-sm font-medium transition-all duration-300 ${
                           activeTab === tab.id
-                            ? 'bg-gradient-to-r from-blue-600 to-indigo-600 text-white shadow-md'
+                            ? 'bg-gradient-to-r from-andela-green to-teal-600 text-white shadow-md'
                             : 'bg-white text-gray-600 hover:bg-gray-50 border border-gray-200'
                         }`}
                       >
@@ -383,20 +383,20 @@ const ServicesOverview = () => {
                         <p className="text-andela-gray mb-8 text-lg leading-relaxed">{activeTabContent?.content}</p>
                         <div className="space-y-4">
                           <div className="flex items-start">
-                            <CheckCircle className="h-6 w-6 text-blue-600 mr-3 flex-shrink-0 mt-0.5" />
+                            <CheckCircle className="h-6 w-6 text-andela-green mr-3 flex-shrink-0 mt-0.5" />
                             <p className="text-andela-dark">Faster hiring cycles with our AI-powered matching technology</p>
                           </div>
                           <div className="flex items-start">
-                            <CheckCircle className="h-6 w-6 text-blue-600 mr-3 flex-shrink-0 mt-0.5" />
+                            <CheckCircle className="h-6 w-6 text-andela-green mr-3 flex-shrink-0 mt-0.5" />
                             <p className="text-andela-dark">Access to a diverse pool of pre-vetted talent across industries</p>
                           </div>
                           <div className="flex items-start">
-                            <CheckCircle className="h-6 w-6 text-blue-600 mr-3 flex-shrink-0 mt-0.5" />
+                            <CheckCircle className="h-6 w-6 text-andela-green mr-3 flex-shrink-0 mt-0.5" />
                             <p className="text-andela-dark">Flexible engagement models tailored to your unique needs</p>
                           </div>
                         </div>
                         <div className="mt-10">
-                          <Link href="#contact" className="inline-flex items-center bg-gradient-to-r from-blue-600 to-indigo-600 text-white px-6 py-3 rounded-md font-medium hover:from-blue-700 hover:to-indigo-700 transition-all">
+                          <Link href="#contact" className="inline-flex items-center bg-gradient-to-r from-andela-green to-teal-600 text-white px-6 py-3 rounded-md font-medium hover:from-teal-600 hover:to-andela-green transition-all">
                             Get started today <ArrowRight className="h-5 w-5 ml-2" />
                           </Link>
                         </div>
@@ -418,7 +418,7 @@ const ServicesOverview = () => {
                 viewport={{ once: true }}
               >
                 <motion.div variants={itemVariants} className="text-center mb-16">
-                  <span className="inline-block bg-gradient-to-r from-green-500/10 to-emerald-500/10 text-green-600 px-4 py-1 rounded-full font-medium mb-4">Success Metrics</span>
+                  <span className="inline-block bg-gradient-to-r from-andela-green/10 to-gray-200 text-andela-dark px-4 py-1 rounded-full font-medium mb-4">Success Metrics</span>
                   <h2 className="text-5xl font-bold text-andela-dark mb-6">Real Business Outcomes</h2>
                   <p className="text-xl text-andela-gray max-w-3xl mx-auto">
                     Our clients have experienced significant improvements in their recruitment effectiveness and overall business performance.
@@ -430,8 +430,8 @@ const ServicesOverview = () => {
                     variants={itemVariants}
                     className="bg-white rounded-xl shadow-md p-8 text-center hover:shadow-lg transition-all duration-300"
                   >
-                    <div className="w-16 h-16 bg-purple-100 rounded-full mx-auto mb-6 flex items-center justify-center">
-                      <Award className="h-8 w-8 text-purple-600" />
+                    <div className="w-16 h-16 bg-gray-100 rounded-full mx-auto mb-6 flex items-center justify-center">
+                      <Award className="h-8 w-8 text-andela-green" />
                     </div>
                     <h3 className="text-4xl font-bold text-andela-dark mb-2">93%</h3>
                     <p className="text-andela-gray">Client retention rate</p>
@@ -441,8 +441,8 @@ const ServicesOverview = () => {
                     variants={itemVariants}
                     className="bg-white rounded-xl shadow-md p-8 text-center hover:shadow-lg transition-all duration-300"
                   >
-                    <div className="w-16 h-16 bg-blue-100 rounded-full mx-auto mb-6 flex items-center justify-center">
-                      <BarChart className="h-8 w-8 text-blue-600" />
+                    <div className="w-16 h-16 bg-gray-100 rounded-full mx-auto mb-6 flex items-center justify-center">
+                      <BarChart className="h-8 w-8 text-andela-green" />
                     </div>
                     <h3 className="text-4xl font-bold text-andela-dark mb-2">45%</h3>
                     <p className="text-andela-gray">Reduction in time-to-hire</p>
@@ -452,8 +452,8 @@ const ServicesOverview = () => {
                     variants={itemVariants}
                     className="bg-white rounded-xl shadow-md p-8 text-center hover:shadow-lg transition-all duration-300"
                   >
-                    <div className="w-16 h-16 bg-green-100 rounded-full mx-auto mb-6 flex items-center justify-center">
-                      <CheckCircle className="h-8 w-8 text-green-600" />
+                    <div className="w-16 h-16 bg-gray-100 rounded-full mx-auto mb-6 flex items-center justify-center">
+                      <CheckCircle className="h-8 w-8 text-andela-green" />
                     </div>
                     <h3 className="text-4xl font-bold text-andela-dark mb-2">98%</h3>
                     <p className="text-andela-gray">Placement success rate</p>
@@ -463,8 +463,8 @@ const ServicesOverview = () => {
                     variants={itemVariants}
                     className="bg-white rounded-xl shadow-md p-8 text-center hover:shadow-lg transition-all duration-300"
                   >
-                    <div className="w-16 h-16 bg-amber-100 rounded-full mx-auto mb-6 flex items-center justify-center">
-                      <Zap className="h-8 w-8 text-amber-600" />
+                    <div className="w-16 h-16 bg-gray-100 rounded-full mx-auto mb-6 flex items-center justify-center">
+                      <Zap className="h-8 w-8 text-andela-green" />
                     </div>
                     <h3 className="text-4xl font-bold text-andela-dark mb-2">32%</h3>
                     <p className="text-andela-gray">Average cost savings</p>
