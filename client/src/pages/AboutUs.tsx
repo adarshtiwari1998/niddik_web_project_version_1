@@ -163,7 +163,7 @@ As Abhishek's career progressed, he took on increasingly senior leadership roles
               transition={{ duration: 0.6, delay: 0.2 }}
               className="text-center mb-6"
             >
-              <h3 className="text-xl md:text-2xl font-semibold text-gray-800 mb-2 tracking-tight">
+              <h3 className="text-xl md:text-2xl font-semibold text-andela-green mb-2 tracking-tight">
                 A workforce partner that understands every inch of Your Ground
               </h3>
               <h4 className="text-lg md:text-xl font-medium text-andela-green">
