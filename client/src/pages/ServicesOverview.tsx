@@ -1,14 +1,22 @@
-import React, { useState } from "react";
+import React, { useState, useRef, useEffect } from "react";
 import { motion } from "framer-motion";
 import { Link } from "wouter";
 import { 
   ChevronRight, Users, Calendar, PieChart, Briefcase,
-  CheckCircle, ArrowRight, Zap, Award, BarChart
+  CheckCircle, ArrowRight, Zap, Award, BarChart,
+  ChevronLeft
 } from "lucide-react";
 import Navbar from "@/components/layout/Navbar";
 import Footer from "@/components/layout/Footer";
 import Container from "@/components/ui/container";
 import AnnouncementBar from "@/components/layout/AnnouncementBar";
+import {
+  Carousel,
+  CarouselContent,
+  CarouselItem,
+  CarouselNext,
+  CarouselPrevious,
+} from "@/components/ui/carousel";
 
 // Define types
 interface ServiceTab {
