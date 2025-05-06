@@ -97,14 +97,23 @@ const ForTechnologists = () => {
               alt="Diverse tech professional working" 
               className="rounded-xl shadow-xl w-full"
             />
-            <div className="absolute -bottom-6 -right-6 bg-white p-4 rounded-xl shadow-lg hidden md:block">
-              <div className="flex items-center gap-3">
-                <div className="bg-andela-blue h-12 w-12 rounded-full flex items-center justify-center text-white">
-                  <Laptop className="text-lg" />
-                </div>
-                <div>
-                  <p className="font-semibold">175+</p>
-                  <p className="text-sm text-andela-gray">Countries Represented</p>
+            <div className="absolute -bottom-10 -right-10 bg-gradient-to-r from-blue-600 to-green-500 p-1 rounded-2xl shadow-xl hidden md:block backdrop-blur-md overflow-hidden">
+              <div className="relative bg-white/90 backdrop-blur-md p-5 rounded-xl border-t border-l border-white/50 hover:scale-105 transition-transform duration-300">
+                <div className="flex flex-col">
+                  <div className="flex items-center justify-between mb-3">
+                    <div className="flex -space-x-2">
+                      <div className="h-8 w-8 rounded-full bg-blue-100 flex items-center justify-center text-blue-600 text-xs font-bold border-2 border-white">US</div>
+                      <div className="h-8 w-8 rounded-full bg-green-100 flex items-center justify-center text-green-600 text-xs font-bold border-2 border-white">IN</div>
+                      <div className="h-8 w-8 rounded-full bg-blue-100 flex items-center justify-center text-blue-600 text-xs font-bold border-2 border-white">UK</div>
+                      <div className="h-8 w-8 rounded-full bg-green-100 flex items-center justify-center text-green-600 text-xs font-bold border-2 border-white">CA</div>
+                      <div className="h-8 w-8 rounded-full bg-blue-100 flex items-center justify-center text-blue-600 text-xs font-bold border-2 border-white">AU</div>
+                    </div>
+                    <div className="bg-gradient-to-r from-blue-600 to-green-500 text-white text-xs py-1 px-2 rounded-full ml-3">
+                      Top 5
+                    </div>
+                  </div>
+                  <h4 className="font-bold text-xl bg-gradient-to-r from-blue-600 to-green-600 bg-clip-text text-transparent">5 Core Countries</h4>
+                  <p className="text-xs text-andela-gray mt-1">Where our best talent is based</p>
                 </div>
               </div>
             </div>

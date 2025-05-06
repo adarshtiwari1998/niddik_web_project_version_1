@@ -27,8 +27,8 @@ const keyPoints = [
   },
   {
     icon: <Globe className="h-6 w-6" />,
-    title: "Global Reach",
-    description: "Connect with experts from over 100 countries"
+    title: "Core Markets Focus",
+    description: "Specialized talent from 5 key technology markets"
   },
   {
     icon: <Zap className="h-6 w-6" />,
@@ -147,10 +147,17 @@ const Hero = () => {
                   <div className="w-12 h-0.5 bg-white/40 my-2"></div>
                   <span className="text-gray-300 text-sm">Success Rate</span>
                 </div>
-                <div className="flex flex-col">
-                  <span className="text-3xl font-bold text-white">100+</span>
+                <div className="flex flex-col relative">
+                  <div className="flex items-center">
+                    <span className="text-3xl font-bold text-white mr-2">5</span>
+                    <div className="flex -space-x-1 scale-75 origin-left">
+                      <div className="h-6 w-6 rounded-full bg-blue-400 flex items-center justify-center text-white text-xs font-bold border border-white">US</div>
+                      <div className="h-6 w-6 rounded-full bg-green-400 flex items-center justify-center text-white text-xs font-bold border border-white">IN</div>
+                      <div className="h-6 w-6 rounded-full bg-blue-400 flex items-center justify-center text-white text-xs font-bold border border-white">UK</div>
+                    </div>
+                  </div>
                   <div className="w-12 h-0.5 bg-white/40 my-2"></div>
-                  <span className="text-gray-300 text-sm">Countries</span>
+                  <span className="text-gray-300 text-sm">Core Countries</span>
                 </div>
                 <div className="flex flex-col">
                   <span className="text-3xl font-bold text-white">48h</span>
