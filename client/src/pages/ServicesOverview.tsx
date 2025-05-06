@@ -254,7 +254,7 @@ const ServicesOverview = () => {
                   
                   {/* Service Cards Grid */}
                   <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-                    {services.map((service, index) => (
+                    {visibleServices.map((service, index) => (
                       <motion.div
                         key={service.id}
                         variants={itemVariants}
@@ -269,8 +269,8 @@ const ServicesOverview = () => {
                           <svg width="100%" height="100%" viewBox="0 0 200 200" fill="none" xmlns="http://www.w3.org/2000/svg">
                             <defs>
                               <linearGradient id={`service-grad-${index + 1}`} x1="0" y1="0" x2="200" y2="200" gradientUnits="userSpaceOnUse">
-                                <stop stopColor="#60A5FA"/>
-                                <stop offset="1" stopColor="#3B82F6"/>
+                                <stop stopColor="#3ECF8E"/>
+                                <stop offset="1" stopColor="#3ECF8E"/>
                               </linearGradient>
                             </defs>
                             <circle cx="160" cy="40" r="20" stroke={`url(#service-grad-${index + 1})`} strokeWidth="0.5" strokeDasharray="2 2"/>
@@ -317,7 +317,7 @@ const ServicesOverview = () => {
                 <defs>
                   <linearGradient id="paint0_linear" x1="0" y1="0" x2="600" y2="600" gradientUnits="userSpaceOnUse">
                     <stop stopColor="#3ECF8E"/>
-                    <stop offset="1" stopColor="#3B82F6"/>
+                    <stop offset="1" stopColor="#3ECF8E"/>
                   </linearGradient>
                 </defs>
               </svg>
