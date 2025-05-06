@@ -176,7 +176,7 @@ const ContactSection = () => {
                     </div>
                     <div>
                       <p className="font-medium mb-1">Email</p>
-                      <a href="mailto:info@andela.com" className="text-gray-300 hover:text-white transition-colors">info@andela.com</a>
+                      <a href="mailto:info@niddik.com" className="text-gray-300 hover:text-white transition-colors">info@niddik.com</a>
                     </div>
                   </div>
                   
@@ -186,7 +186,7 @@ const ContactSection = () => {
                     </div>
                     <div>
                       <p className="font-medium mb-1">Headquarters</p>
-                      <p className="text-gray-300">New York, NY</p>
+                      <p className="text-gray-300">Platina Heights, Sector 59, Noida - 201301</p>
                     </div>
                   </div>
                   
@@ -195,8 +195,9 @@ const ContactSection = () => {
                       <Globe className="text-andela-green" />
                     </div>
                     <div>
-                      <p className="font-medium mb-1">Global Presence</p>
-                      <p className="text-gray-300">Operating in 100+ countries</p>
+                      <p className="font-medium mb-1">Contact Numbers</p>
+                      <p className="text-gray-300">+91 9717312058 (INDIA)</p>
+                      <p className="text-gray-300">+1 (646) 889-9517 (USA)</p>
                     </div>
                   </div>
                 </div>

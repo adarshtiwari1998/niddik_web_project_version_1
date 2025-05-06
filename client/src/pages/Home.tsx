@@ -8,7 +8,7 @@ import ForTechnologists from "@/components/sections/ForTechnologists";
 import SuccessStories from "@/components/sections/SuccessStories";
 import HowItWorks from "@/components/sections/HowItWorks";
 import FocusScrollSection from "@/components/sections/FocusScrollSection";
-import FeaturedCaseStudy from "@/components/sections/FeaturedCaseStudy";
+
 import ContactSection from "@/components/sections/ContactSection";
 import BenefitsStrengthsShowcase from "@/components/sections/BenefitsStrengthsShowcase";
 import ServicesShowcase from "@/components/sections/ServicesShowcase";
@@ -48,7 +48,7 @@ const Home = () => {
           <ForTechnologists />
           <SuccessStories />
           <HowItWorks />
-          <FeaturedCaseStudy />
+
           <ContactSection />
         </main>
         <Footer />
