@@ -123,7 +123,7 @@ export default function LandingPage() {
               className="relative"
             >
               <img 
-                src="/attached_assets/image_1746544199102.png" 
+                src="https://images.unsplash.com/photo-1522202176988-66273c2fd55f?auto=format&fit=crop&w=1200&q=80" 
                 alt="Business professionals collaborating" 
                 className="w-full h-auto rounded-xl shadow-xl"
               />
