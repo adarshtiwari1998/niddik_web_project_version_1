@@ -193,6 +193,9 @@ export default function RequestDemo() {
           <CardTitle>Demo Request Status</CardTitle>
           <CardDescription>
             Current status of your demo request
+            <span className="ml-2 text-xs text-green-600 animate-pulse inline-block">
+              (Auto-refreshing every 15 seconds)
+            </span>
           </CardDescription>
         </CardHeader>
         <CardContent>

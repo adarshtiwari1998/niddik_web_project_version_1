@@ -122,6 +122,10 @@ export default function DemoRequests() {
       const response = await apiRequest("GET", `/api/admin/demo-requests?${params.toString()}`);
       return await response.json();
     },
+    // Auto-refresh every 10 seconds
+    refetchInterval: 10000,
+    // Continue refreshing even when window is not in focus
+    refetchIntervalInBackground: true,
   });
   
   // Extract data and meta from response
@@ -228,6 +232,9 @@ export default function DemoRequests() {
           <CardTitle>Demo Requests</CardTitle>
           <CardDescription>
             Manage and track customer demo requests
+            <span className="ml-2 text-xs text-green-600 animate-pulse">
+              (Auto-refreshing every 10 seconds)
+            </span>
           </CardDescription>
         </CardHeader>
         <CardContent>
