@@ -19,15 +19,26 @@ export default function AdminLayout({ children, title, description }: AdminLayou
   const [isLoggingOut, setIsLoggingOut] = useState(false);
 
   const handleLogout = () => {
+    // Show loading screen immediately
     setIsLoggingOut(true);
+    
+    // Store a flag in sessionStorage that the login page will check
+    sessionStorage.setItem('admin_login_after_logout', 'true');
+    
     logoutMutation.mutate(undefined, {
       onSuccess: () => {
+        // Ensure loading screen stays up for enough time to be visible
+        // but not so long that it delays the user experience
         setTimeout(() => {
-          window.location.href = "/admin/login";
-        }, 500);
+          // Use window.location.replace instead of href to avoid creating a history entry
+          window.location.replace("/admin/login");
+        }, 800);
       },
-      onError: () => {
+      onError: (error) => {
+        console.error("Logout error:", error);
         setIsLoggingOut(false);
+        // If there's an error, clear the flag
+        sessionStorage.removeItem('admin_login_after_logout');
       }
     });
   };

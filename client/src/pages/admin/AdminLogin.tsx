@@ -15,13 +15,27 @@ export default function AdminLogin() {
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
   const [isRedirecting, setIsRedirecting] = useState(false);
+  const [isComingFromLogout, setIsComingFromLogout] = useState(false);
   const { loginMutation } = useAuth();
   const { toast } = useToast();
   const [_, setLocation] = useLocation();
   const [lastLogoutTime, setLastLogoutTime] = useState<string | null>(null);
   
-  // Fetch last logout time
+  // Check if we're coming from logout and fetch last logout time
   useEffect(() => {
+    // Check if we're coming from a logout
+    const isComingFromLogout = sessionStorage.getItem('admin_login_after_logout') === 'true';
+    if (isComingFromLogout) {
+      setIsComingFromLogout(true);
+      sessionStorage.removeItem('admin_login_after_logout');
+      
+      // Set a timeout to remove the loading screen after a short delay
+      setTimeout(() => {
+        setIsComingFromLogout(false);
+      }, 500);
+    }
+    
+    // Fetch last logout time
     const fetchLastLogout = async () => {
       try {
         const response = await fetch('/api/last-logout');
@@ -89,11 +103,11 @@ export default function AdminLogin() {
             // Navigate immediately to admin dashboard or specified redirect URL
             setTimeout(() => {
               if (redirectUrl) {
-                window.location.href = redirectUrl; // Force immediate navigation
+                window.location.replace(redirectUrl); // Use replace to avoid a history entry
               } else {
-                window.location.href = "/admin/dashboard"; // Force immediate navigation
+                window.location.replace("/admin/dashboard"); // Use replace to avoid a history entry
               }
-            }, 0); // No delay needed - loading screen is already showing
+            }, 100); // Small delay to ensure loading screen shows properly
           },
           onError: (error) => {
             console.error("Login error:", error);
@@ -118,6 +132,7 @@ export default function AdminLogin() {
   return (
     <div className="flex flex-col min-h-screen bg-gray-50 dark:bg-gray-900">
       {isRedirecting && <LoadingScreen message="Logging in..." />}
+      {isComingFromLogout && <LoadingScreen message="Finishing logout..." />}
       {/* Header */}
       <header className="border-b bg-background">
         <div className="container flex h-16 items-center justify-between">
