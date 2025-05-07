@@ -86,7 +86,7 @@ const Navbar: React.FC<NavbarProps> = ({ hasAnnouncementAbove = true }) => {
         <div className="flex justify-between items-center py-4">
           {/* Logo with slogan */}
           <div className="flex-shrink-0">
-            <div>
+            <div className="flex flex-col items-center">
               <Link href="/" className="block">
                 <Logo className="h-10" />
               </Link>
@@ -158,7 +158,7 @@ const Navbar: React.FC<NavbarProps> = ({ hasAnnouncementAbove = true }) => {
       )}>
         <div className="flex justify-between items-center mb-8">
           <div className="flex flex-col">
-            <div>
+            <div className="flex flex-col items-center">
               <Link href="/" onClick={() => setIsMobileMenuOpen(false)}>
                 <Logo className="h-8" />
               </Link>
