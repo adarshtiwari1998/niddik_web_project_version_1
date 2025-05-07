@@ -80,12 +80,10 @@ export default function RequestDemo() {
     enabled: !!checkEmail,
     queryFn: async () => {
       try {
-        const response = await apiRequest(`/api/demo-requests/check?email=${encodeURIComponent(checkEmail || "")}`);
-        if (response.success) {
-          return response.data;
-        }
-        return null;
+        const response = await apiRequest("GET", `/api/demo-requests/check?email=${encodeURIComponent(checkEmail || "")}`);
+        return await response.json();
       } catch (error) {
+        console.error("Error checking demo request:", error);
         return null;
       }
     },
@@ -95,10 +93,8 @@ export default function RequestDemo() {
   // Submit mutation
   const { mutate, isPending } = useMutation({
     mutationFn: async (data: FormValues) => {
-      return await apiRequest("/api/demo-requests", {
-        method: "POST",
-        data,
-      });
+      const response = await apiRequest("POST", "/api/demo-requests", data);
+      return await response.json();
     },
     onSuccess: (response) => {
       toast({
@@ -110,14 +106,28 @@ export default function RequestDemo() {
       queryClient.invalidateQueries({ queryKey: ['/api/demo-requests/check'] });
     },
     onError: (error: any) => {
-      if (error.response?.data?.existingRequest) {
-        setCheckEmail(form.getValues().workEmail);
-      } else {
+      try {
+        // Handle API error response
+        const errorData = JSON.parse(error.message.split(': ')[1]);
+        
+        if (errorData.existingRequest) {
+          // If user already has a request, just check its status
+          setCheckEmail(form.getValues().workEmail);
+        } else {
+          toast({
+            title: "Error",
+            description: errorData.message || "Failed to submit request. Please try again.",
+            variant: "destructive",
+          });
+        }
+      } catch (parseError) {
+        // Fallback error handling
         toast({
           title: "Error",
-          description: error.response?.data?.message || "Failed to submit request. Please try again.",
+          description: "Failed to submit request. Please try again.",
           variant: "destructive",
         });
+        console.error("Error parsing error response:", error);
       }
     },
   });
