@@ -1362,9 +1362,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
       }
       
       // Check if the demo request exists
-      const existingRequest = await db.query.demoRequests.findFirst({
-        where: eq(demoRequests.id, id)
-      });
+      const existingRequest = await storage.getDemoRequestById(id);
       
       if (!existingRequest) {
         return res.status(404).json({
@@ -1376,18 +1374,13 @@ export async function registerRoutes(app: Express): Promise<Server> {
       // Validate and update
       const { status, adminNotes, scheduledDate } = req.body;
       
-      const updateData: any = {
-        updatedAt: new Date()
-      };
+      const updateData: any = {};
       
       if (status) updateData.status = status;
       if (adminNotes !== undefined) updateData.adminNotes = adminNotes;
       if (scheduledDate !== undefined) updateData.scheduledDate = scheduledDate ? new Date(scheduledDate) : null;
       
-      const [updatedRequest] = await db.update(demoRequests)
-        .set(updateData)
-        .where(eq(demoRequests.id, id))
-        .returning();
+      const updatedRequest = await storage.updateDemoRequest(id, updateData);
       
       return res.status(200).json({
         success: true,

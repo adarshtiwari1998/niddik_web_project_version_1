@@ -20,6 +20,7 @@ import MyApplications from "@/pages/MyApplications";
 import ProfilePage from "@/pages/ProfilePage";
 import JobApplication from "@/pages/JobApplication";
 import CandidateDashboard from "@/pages/CandidateDashboard";
+import RequestDemo from "@/pages/RequestDemo";
 
 // Admin Pages
 import AdminLogin from "@/pages/admin/AdminLogin";
@@ -28,6 +29,7 @@ import JobListings from "@/pages/admin/JobListings";
 import JobForm from "@/pages/admin/JobForm";
 import Candidates from "@/pages/admin/Candidates";
 import SubmittedCandidates from "@/pages/admin/SubmittedCandidates";
+import DemoRequests from "@/pages/admin/DemoRequests";
 
 // Auth Provider
 import { AuthProvider } from "@/hooks/use-auth";
@@ -80,6 +82,10 @@ function Router() {
       <ProtectedRoute path="/admin/jobs/:id/edit" component={JobForm} requiredRole="admin" />
       <ProtectedRoute path="/admin/candidates" component={Candidates} requiredRole="admin" />
       <ProtectedRoute path="/admin/submitted-candidates" component={SubmittedCandidates} requiredRole="admin" />
+      <ProtectedRoute path="/admin/demo-requests" component={DemoRequests} requiredRole="admin" />
+      
+      {/* Demo Request */}
+      <Route path="/request-demo" component={RequestDemo} />
       
       {/* 404 - Not Found */}
       <Route component={NotFound} />
