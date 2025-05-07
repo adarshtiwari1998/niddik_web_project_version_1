@@ -450,8 +450,16 @@ export async function registerRoutes(app: Express): Promise<Server> {
   });
   
   // Admin API: Get all applications with pagination
-  app.get('/api/admin/job-applications', async (req, res) => {
+  app.get('/api/admin/applications', async (req: AuthenticatedRequest, res) => {
     try {
+      // Check if user is authenticated and is an admin
+      if (!req.isAuthenticated() || req.user.role !== 'admin') {
+        return res.status(403).json({ 
+          success: false, 
+          message: "Not authorized" 
+        });
+      }
+      
       const page = req.query.page ? parseInt(req.query.page as string) : 1;
       const limit = req.query.limit ? parseInt(req.query.limit as string) : 10;
       const status = req.query.status as string;

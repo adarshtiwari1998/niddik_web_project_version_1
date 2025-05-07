@@ -24,7 +24,11 @@ export default function AdminDashboard() {
   });
   
   // Fetch application statistics
-  const { data: applicationsData, isLoading: isLoadingApplications } = useQuery<{ data: JobApplication[] }>({
+  const { data: applicationsData, isLoading: isLoadingApplications } = useQuery<{ 
+    success: boolean; 
+    data: Array<JobApplication & { user: any; job: any }>;
+    meta: { total: number; page: number; limit: number; pages: number }
+  }>({
     queryKey: ['/api/admin/applications'],
     queryFn: async () => {
       const res = await fetch('/api/admin/applications');
@@ -47,8 +51,8 @@ export default function AdminDashboard() {
   const recentApplications = applicationsData?.data?.slice(0, 5) || [];
   
   // Format date
-  const formatDate = (dateString: string) => {
-    const date = new Date(dateString);
+  const formatDate = (dateString: string | Date) => {
+    const date = typeof dateString === 'string' ? new Date(dateString) : dateString;
     return new Intl.DateTimeFormat('en-US', {
       year: 'numeric',
       month: 'short',
