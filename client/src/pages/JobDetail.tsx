@@ -1,4 +1,4 @@
-import { useState } from "react";
+import React, { useState } from "react";
 import { useParams, useLocation } from "wouter";
 import { useQuery } from "@tanstack/react-query";
 import { getQueryFn } from "@/lib/queryClient";
@@ -29,8 +29,39 @@ export default function JobDetail() {
 
   const job = jobData?.data;
 
+  // Check if user has already applied for this job
+  const { data: userApplicationsData } = useQuery<{ success: boolean; data: any[] }>({
+    queryKey: ['/api/my-applications'],
+    queryFn: getQueryFn({ on401: "returnNull" }),
+    enabled: !!user
+  });
+  
+  // Determine if user has already applied to this job
+  const hasApplied = React.useMemo(() => {
+    if (!userApplicationsData?.data) return false;
+    return userApplicationsData.data.some(app => app.jobId === jobId);
+  }, [userApplicationsData, jobId]);
+  
+  // Get application date if user has applied
+  const applicationDate = React.useMemo(() => {
+    if (!hasApplied || !userApplicationsData?.data) return null;
+    const application = userApplicationsData.data.find(app => app.jobId === jobId);
+    return application ? new Date(application.appliedDate).toLocaleDateString() : null;
+  }, [userApplicationsData, jobId, hasApplied]);
+
   // Apply for job function
   const handleApply = () => {
+    // If user has already applied, don't do anything
+    if (hasApplied) {
+      toast({
+        title: "Already applied",
+        description: `You have already applied to this job on ${applicationDate}`,
+        variant: "default"
+      });
+      return;
+    }
+    
+    // If user is not logged in, redirect to auth page
     if (!user) {
       toast({
         title: "Authentication required",
