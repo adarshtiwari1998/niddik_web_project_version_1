@@ -484,28 +484,7 @@ const AdaptiveHiring = () => {
     setIsAnnouncementVisible(isVisible);
   };
 
-  const features = [
-    {
-      icon: <Target className="h-12 w-12 text-blue-500" />,
-      title: "Precision Matching",
-      description: "Our AI-powered platform analyzes over 100 data points to find the perfect match between company needs and candidate capabilities."
-    },
-    {
-      icon: <BarChart3 className="h-12 w-12 text-green-500" />,
-      title: "Dynamic Skill Assessment",
-      description: "Evaluate candidates through customized technical and soft skills assessments designed for your specific requirements."
-    },
-    {
-      icon: <Users className="h-12 w-12 text-blue-500" />,
-      title: "Team Compatibility Analysis",
-      description: "Beyond skills, we assess how candidates will integrate with your existing team culture and dynamics."
-    },
-    {
-      icon: <Briefcase className="h-12 w-12 text-green-500" />,
-      title: "Flexible Engagement Models",
-      description: "Choose from project-based, full-time, or hybrid work arrangements that adapt to your business needs."
-    }
-  ];
+  // Using AdaptiveHiringTabs component instead of the features grid
 
   const benefits = [
     {
