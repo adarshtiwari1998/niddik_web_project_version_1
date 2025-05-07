@@ -495,46 +495,46 @@ const AdaptiveHiringWorkflow = () => {
         );
       case 2: // FIND TALENT
         return (
-          <div className="bg-blue-50 rounded-lg overflow-hidden p-8">
-            <div className="flex justify-between items-center mb-5">
-              <h4 className="font-semibold text-sm text-blue-600">TALENT MATCHING</h4>
-              <span className="text-xs text-gray-500 bg-white px-2 py-1 rounded-full">4 matches found</span>
+          <div className="bg-blue-50 rounded-lg overflow-hidden p-8 w-full">
+            <div className="flex justify-between items-center mb-6">
+              <h4 className="font-semibold text-xl text-blue-600">TALENT MATCHING</h4>
+              <span className="text-sm text-gray-500 bg-white px-3 py-1.5 rounded-full">4 matches found</span>
             </div>
-            <div className="grid grid-cols-2 gap-3">
-              <div className="bg-white p-3 rounded-md shadow-sm flex items-center gap-2">
-                <div className="w-9 h-9 bg-blue-400 rounded-full flex items-center justify-center text-white font-bold text-xs">
+            <div className="grid grid-cols-2 gap-4">
+              <div className="bg-white p-5 rounded-md shadow-md flex items-center gap-4">
+                <div className="w-14 h-14 bg-blue-400 rounded-full flex items-center justify-center text-white font-bold text-base">
                   JS
                 </div>
                 <div>
-                  <div className="text-xs font-semibold">Jason S.</div>
-                  <div className="text-xs text-gray-500">React Expert</div>
+                  <div className="text-base font-semibold">Jason S.</div>
+                  <div className="text-sm text-gray-500">React Expert</div>
                 </div>
               </div>
-              <div className="bg-white p-3 rounded-md shadow-sm flex items-center gap-2">
-                <div className="w-9 h-9 bg-green-400 rounded-full flex items-center justify-center text-white font-bold text-xs">
+              <div className="bg-white p-5 rounded-md shadow-md flex items-center gap-4">
+                <div className="w-14 h-14 bg-green-400 rounded-full flex items-center justify-center text-white font-bold text-base">
                   AT
                 </div>
                 <div>
-                  <div className="text-xs font-semibold">Amy T.</div>
-                  <div className="text-xs text-gray-500">Full Stack</div>
+                  <div className="text-base font-semibold">Amy T.</div>
+                  <div className="text-sm text-gray-500">Full Stack</div>
                 </div>
               </div>
-              <div className="bg-white p-3 rounded-md shadow-sm flex items-center gap-2">
-                <div className="w-9 h-9 bg-purple-400 rounded-full flex items-center justify-center text-white font-bold text-xs">
+              <div className="bg-white p-5 rounded-md shadow-md flex items-center gap-4">
+                <div className="w-14 h-14 bg-purple-400 rounded-full flex items-center justify-center text-white font-bold text-base">
                   RK
                 </div>
                 <div>
-                  <div className="text-xs font-semibold">Raj K.</div>
-                  <div className="text-xs text-gray-500">Node.js Dev</div>
+                  <div className="text-base font-semibold">Raj K.</div>
+                  <div className="text-sm text-gray-500">Node.js Dev</div>
                 </div>
               </div>
-              <div className="bg-white p-3 rounded-md shadow-sm flex items-center gap-2">
-                <div className="w-9 h-9 bg-yellow-400 rounded-full flex items-center justify-center text-white font-bold text-xs">
+              <div className="bg-white p-5 rounded-md shadow-md flex items-center gap-4">
+                <div className="w-14 h-14 bg-yellow-400 rounded-full flex items-center justify-center text-white font-bold text-base">
                   ML
                 </div>
                 <div>
-                  <div className="text-xs font-semibold">Maria L.</div>
-                  <div className="text-xs text-gray-500">UI Designer</div>
+                  <div className="text-base font-semibold">Maria L.</div>
+                  <div className="text-sm text-gray-500">UI Designer</div>
                 </div>
               </div>
             </div>
@@ -542,35 +542,35 @@ const AdaptiveHiringWorkflow = () => {
         );
       case 3: // ADAPT QUICKLY
         return (
-          <div className="bg-blue-50 rounded-lg overflow-hidden p-8">
-            <h4 className="font-semibold text-sm text-blue-600 mb-5">TEAM SCALING</h4>
-            <div className="space-y-5">
+          <div className="bg-blue-50 rounded-lg overflow-hidden p-8 w-full">
+            <h4 className="font-semibold text-xl text-blue-600 mb-8">TEAM SCALING</h4>
+            <div className="space-y-8">
               <div className="flex justify-between items-center">
-                <span className="text-sm font-medium">Team Size</span>
+                <span className="text-lg font-medium">Team Size</span>
                 <div className="flex items-center">
-                  <span className="text-sm font-medium mr-2">+2</span>
-                  <div className="flex -space-x-2">
-                    <div className="w-8 h-8 bg-blue-400 rounded-full border-2 border-white z-30"></div>
-                    <div className="w-8 h-8 bg-green-400 rounded-full border-2 border-white z-20"></div>
-                    <div className="w-8 h-8 bg-yellow-400 rounded-full border-2 border-white z-10"></div>
+                  <span className="text-lg font-medium mr-3">+2</span>
+                  <div className="flex -space-x-3">
+                    <div className="w-12 h-12 bg-blue-400 rounded-full border-2 border-white z-30"></div>
+                    <div className="w-12 h-12 bg-green-400 rounded-full border-2 border-white z-20"></div>
+                    <div className="w-12 h-12 bg-yellow-400 rounded-full border-2 border-white z-10"></div>
                   </div>
                 </div>
               </div>
-              <div className="h-2 bg-gray-200 rounded-full w-full">
-                <div className="h-2 bg-blue-500 rounded-full w-2/3"></div>
+              <div className="h-3 bg-gray-200 rounded-full w-full">
+                <div className="h-3 bg-blue-500 rounded-full w-2/3"></div>
               </div>
-              <div className="flex justify-between text-xs text-gray-600">
+              <div className="flex justify-between text-base text-gray-600">
                 <span>Current: 3</span>
                 <span>Target: 5</span>
               </div>
-              <div className="mt-4 flex justify-between items-center">
-                <span className="text-sm font-medium">Duration</span>
-                <span className="text-sm font-semibold">3 months</span>
+              <div className="mt-8 flex justify-between items-center">
+                <span className="text-lg font-medium">Duration</span>
+                <span className="text-lg font-semibold">3 months</span>
               </div>
-              <div className="h-2 bg-gray-200 rounded-full w-full">
-                <div className="h-2 bg-green-500 rounded-full w-1/4"></div>
+              <div className="h-3 bg-gray-200 rounded-full w-full">
+                <div className="h-3 bg-green-500 rounded-full w-1/4"></div>
               </div>
-              <div className="flex justify-between text-xs text-gray-600">
+              <div className="flex justify-between text-base text-gray-600">
                 <span>Flexible</span>
                 <span>Extendable</span>
               </div>
@@ -579,44 +579,44 @@ const AdaptiveHiringWorkflow = () => {
         );
       case 4: // CHANGE QUICKLY
         return (
-          <div className="bg-blue-50 rounded-lg overflow-hidden p-8">
-            <h4 className="font-semibold text-sm text-blue-600 mb-5">BUSINESS AGILITY</h4>
-            <div className="space-y-5">
-              <div className="bg-white rounded-lg p-4 shadow-sm">
-                <div className="flex items-center justify-between mb-3">
-                  <div className="flex items-center gap-2">
-                    <div className="w-8 h-8 bg-green-100 rounded-full flex items-center justify-center">
-                      <div className="w-4 h-4 bg-green-500 rounded-full"></div>
+          <div className="bg-blue-50 rounded-lg overflow-hidden p-8 w-full">
+            <h4 className="font-semibold text-xl text-blue-600 mb-8">BUSINESS AGILITY</h4>
+            <div className="space-y-8">
+              <div className="bg-white rounded-lg p-6 shadow-md">
+                <div className="flex items-center justify-between mb-4">
+                  <div className="flex items-center gap-4">
+                    <div className="w-12 h-12 bg-green-100 rounded-full flex items-center justify-center">
+                      <div className="w-6 h-6 bg-green-500 rounded-full"></div>
                     </div>
-                    <span className="text-sm font-medium">Current Sprint</span>
+                    <span className="text-lg font-medium">Current Sprint</span>
                   </div>
-                  <span className="text-xs bg-green-100 text-green-700 px-2 py-1 rounded-full">Active</span>
+                  <span className="text-sm bg-green-100 text-green-700 px-3 py-1.5 rounded-full">Active</span>
                 </div>
-                <div className="h-2 bg-gray-100 rounded-full w-full mb-2">
-                  <div className="h-2 bg-green-500 rounded-full w-3/4"></div>
+                <div className="h-3 bg-gray-100 rounded-full w-full mb-3">
+                  <div className="h-3 bg-green-500 rounded-full w-3/4"></div>
                 </div>
-                <div className="flex justify-between text-xs text-gray-500">
+                <div className="flex justify-between text-base text-gray-500">
                   <span>Week 2 of 3</span>
                   <span>75% Complete</span>
                 </div>
               </div>
               
-              <div className="bg-white rounded-lg p-4 shadow-sm">
-                <div className="flex items-center justify-between mb-3">
-                  <div className="flex items-center gap-2">
-                    <div className="w-8 h-8 bg-blue-100 rounded-full flex items-center justify-center">
-                      <div className="w-4 h-4 bg-blue-500 rounded-full"></div>
+              <div className="bg-white rounded-lg p-6 shadow-md">
+                <div className="flex items-center justify-between mb-4">
+                  <div className="flex items-center gap-4">
+                    <div className="w-12 h-12 bg-blue-100 rounded-full flex items-center justify-center">
+                      <div className="w-6 h-6 bg-blue-500 rounded-full"></div>
                     </div>
-                    <span className="text-sm font-medium">Team Velocity</span>
+                    <span className="text-lg font-medium">Team Velocity</span>
                   </div>
                 </div>
-                <div className="flex items-center justify-center gap-3 mt-2">
-                  <div className="w-24 h-24 rounded-full border-8 border-blue-200 flex items-center justify-center">
-                    <div className="text-lg font-bold text-blue-500">92%</div>
+                <div className="flex items-center justify-center gap-5 mt-4">
+                  <div className="w-32 h-32 rounded-full border-8 border-blue-200 flex items-center justify-center">
+                    <div className="text-2xl font-bold text-blue-500">92%</div>
                   </div>
-                  <div className="text-sm">
-                    <div className="font-medium">Efficiency</div>
-                    <div className="text-gray-500 text-xs mt-1">Above target</div>
+                  <div className="text-base">
+                    <div className="font-medium text-lg">Efficiency</div>
+                    <div className="text-gray-500 text-base mt-1">Above target</div>
                   </div>
                 </div>
               </div>
@@ -625,13 +625,13 @@ const AdaptiveHiringWorkflow = () => {
         );
       default:
         return (
-          <div className="bg-blue-50 rounded-lg overflow-hidden p-8 flex items-center justify-center">
+          <div className="bg-blue-50 rounded-lg overflow-hidden p-12 flex items-center justify-center w-full">
             <div className="text-center">
-              <div className="w-16 h-16 mx-auto bg-blue-100 rounded-full flex items-center justify-center mb-3">
-                <div className="w-8 h-8 bg-blue-500 rounded-full"></div>
+              <div className="w-24 h-24 mx-auto bg-blue-100 rounded-full flex items-center justify-center mb-5">
+                <div className="w-12 h-12 bg-blue-500 rounded-full"></div>
               </div>
-              <h4 className="font-semibold text-lg text-gray-700">Adaptive Hiring</h4>
-              <p className="text-sm text-gray-500 mt-2">Scroll to explore our workflow</p>
+              <h4 className="font-semibold text-2xl text-gray-700 mb-2">Adaptive Hiring</h4>
+              <p className="text-lg text-gray-500 mt-3">Scroll to explore our workflow</p>
             </div>
           </div>
         );
@@ -691,8 +691,10 @@ const AdaptiveHiringWorkflow = () => {
                   : 'relative w-full'
               }`}
             >
-              <div className="w-full h-full flex items-center justify-center">
-                {getImageContent()}
+              <div className="w-full h-full flex items-center justify-center px-4 py-8">
+                <div className="w-full max-w-md">
+                  {getImageContent()}
+                </div>
               </div>
             </div>
           </div>
