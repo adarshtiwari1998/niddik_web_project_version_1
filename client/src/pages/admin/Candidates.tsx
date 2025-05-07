@@ -96,15 +96,21 @@ export default function Candidates() {
   // Create a mutation for updating application status
   const updateStatusMutation = useMutation({
     mutationFn: async ({ id, status }: { id: number; status: string }) => {
+      console.log(`Updating application ${id} to status: ${status}`);
       const res = await fetch(`/api/admin/job-applications/${id}/status`, {
         method: 'PUT',
         headers: {
           'Content-Type': 'application/json',
+          'Accept': 'application/json',
         },
         body: JSON.stringify({ status }),
       });
       
-      if (!res.ok) throw new Error("Failed to update application status");
+      if (!res.ok) {
+        const errorText = await res.text();
+        console.error("Status update error:", errorText);
+        throw new Error(`Failed to update application status: ${errorText}`);
+      }
       return res.json();
     },
     onSuccess: (data, variables) => {
