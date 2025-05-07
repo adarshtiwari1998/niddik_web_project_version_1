@@ -11,7 +11,8 @@ import {
   Database,
   Cloud,
   Code,
-  ChevronDown, 
+  ChevronDown,
+  ChevronUp,
   Clock,
   XCircle,
   PlusCircle
@@ -646,69 +647,170 @@ const AdaptiveHiring = () => {
           <div className="flex flex-col lg:flex-row gap-10">
             {/* Left column with accordion */}
             <div className="w-full lg:w-[45%] space-y-3">
-              <div className="rounded-md border border-gray-200 overflow-hidden bg-white shadow-sm">
-                <div className="w-full flex items-center justify-between px-5 py-4 text-left cursor-pointer select-text">
-                  <span className="font-semibold text-lg">Application Development</span>
-                  <span className="flex-shrink-0 ml-2">
-                    <ChevronUp className="w-5 h-5 text-gray-500" />
-                  </span>
-                </div>
+              {(() => {
+                // State for accordion management
+                const [activeTab, setActiveTab] = useState<number>(0);
+                
+                const tabs = [
+                  {
+                    title: "Application Development",
+                    content: (
+                      <>
+                        <ul className="space-y-3">
+                          <li className="flex items-start gap-3">
+                            <CheckCircle2 className="w-5 h-5 text-teal-600 flex-shrink-0 mt-0.5" />
+                            <span className="text-gray-600 select-text cursor-text">
+                              Scale development with qualified talent, on demand
+                            </span>
+                          </li>
+                          <li className="flex items-start gap-3">
+                            <CheckCircle2 className="w-5 h-5 text-teal-600 flex-shrink-0 mt-0.5" />
+                            <span className="text-gray-600 select-text cursor-text">
+                              Reduce complexity and enhance user experience
+                            </span>
+                          </li>
+                          <li className="flex items-start gap-3">
+                            <CheckCircle2 className="w-5 h-5 text-teal-600 flex-shrink-0 mt-0.5" />
+                            <span className="text-gray-600 select-text cursor-text">
+                              Get your critical projects done faster
+                            </span>
+                          </li>
+                        </ul>
+                        <div className="mt-4">
+                          <a href="#" className="inline-flex items-center text-teal-600 font-medium">
+                            Learn More <ArrowRight className="ml-1 w-4 h-4" />
+                          </a>
+                        </div>
+                      </>
+                    )
+                  },
+                  {
+                    title: "Data Science and Artificial Intelligence",
+                    content: (
+                      <>
+                        <ul className="space-y-3">
+                          <li className="flex items-start gap-3">
+                            <CheckCircle2 className="w-5 h-5 text-teal-600 flex-shrink-0 mt-0.5" />
+                            <span className="text-gray-600 select-text cursor-text">
+                              Build AI/ML models with specialized expertise
+                            </span>
+                          </li>
+                          <li className="flex items-start gap-3">
+                            <CheckCircle2 className="w-5 h-5 text-teal-600 flex-shrink-0 mt-0.5" />
+                            <span className="text-gray-600 select-text cursor-text">
+                              Deploy specialized data science teams on demand
+                            </span>
+                          </li>
+                          <li className="flex items-start gap-3">
+                            <CheckCircle2 className="w-5 h-5 text-teal-600 flex-shrink-0 mt-0.5" />
+                            <span className="text-gray-600 select-text cursor-text">
+                              Accelerate AI initiatives with top-tier talent
+                            </span>
+                          </li>
+                        </ul>
+                        <div className="mt-4">
+                          <a href="#" className="inline-flex items-center text-teal-600 font-medium">
+                            Learn More <ArrowRight className="ml-1 w-4 h-4" />
+                          </a>
+                        </div>
+                      </>
+                    )
+                  },
+                  {
+                    title: "Data Engineering and Analytics",
+                    content: (
+                      <>
+                        <ul className="space-y-3">
+                          <li className="flex items-start gap-3">
+                            <CheckCircle2 className="w-5 h-5 text-teal-600 flex-shrink-0 mt-0.5" />
+                            <span className="text-gray-600 select-text cursor-text">
+                              Build resilient data pipelines with specialized engineers
+                            </span>
+                          </li>
+                          <li className="flex items-start gap-3">
+                            <CheckCircle2 className="w-5 h-5 text-teal-600 flex-shrink-0 mt-0.5" />
+                            <span className="text-gray-600 select-text cursor-text">
+                              Transform raw data into actionable business insights
+                            </span>
+                          </li>
+                          <li className="flex items-start gap-3">
+                            <CheckCircle2 className="w-5 h-5 text-teal-600 flex-shrink-0 mt-0.5" />
+                            <span className="text-gray-600 select-text cursor-text">
+                              Implement modern data architecture with expert guidance
+                            </span>
+                          </li>
+                        </ul>
+                        <div className="mt-4">
+                          <a href="#" className="inline-flex items-center text-teal-600 font-medium">
+                            Learn More <ArrowRight className="ml-1 w-4 h-4" />
+                          </a>
+                        </div>
+                      </>
+                    )
+                  },
+                  {
+                    title: "Cloud and DevOps",
+                    content: (
+                      <>
+                        <ul className="space-y-3">
+                          <li className="flex items-start gap-3">
+                            <CheckCircle2 className="w-5 h-5 text-teal-600 flex-shrink-0 mt-0.5" />
+                            <span className="text-gray-600 select-text cursor-text">
+                              Accelerate cloud migration with specialized teams
+                            </span>
+                          </li>
+                          <li className="flex items-start gap-3">
+                            <CheckCircle2 className="w-5 h-5 text-teal-600 flex-shrink-0 mt-0.5" />
+                            <span className="text-gray-600 select-text cursor-text">
+                              Implement CI/CD pipelines with expert DevOps engineers
+                            </span>
+                          </li>
+                          <li className="flex items-start gap-3">
+                            <CheckCircle2 className="w-5 h-5 text-teal-600 flex-shrink-0 mt-0.5" />
+                            <span className="text-gray-600 select-text cursor-text">
+                              Optimize infrastructure costs with cloud-native architecture
+                            </span>
+                          </li>
+                        </ul>
+                        <div className="mt-4">
+                          <a href="#" className="inline-flex items-center text-teal-600 font-medium">
+                            Learn More <ArrowRight className="ml-1 w-4 h-4" />
+                          </a>
+                        </div>
+                      </>
+                    )
+                  }
+                ];
 
-                <div className="px-5 pb-5 pt-1">
-                  <ul className="space-y-3">
-                    <li className="flex items-start gap-3">
-                      <CheckCircle2 className="w-5 h-5 text-teal-600 flex-shrink-0 mt-0.5" />
-                      <span className="text-gray-600 select-text cursor-text">
-                        Scale development with qualified talent, on demand
+                return tabs.map((tab, index) => (
+                  <div 
+                    key={index} 
+                    className={`rounded-md border border-gray-200 overflow-hidden ${
+                      activeTab === index ? 'bg-white shadow-sm' : 'bg-white hover:bg-gray-50'
+                    }`}
+                  >
+                    <div 
+                      className="w-full flex items-center justify-between px-5 py-4 text-left cursor-pointer select-text"
+                      onClick={() => setActiveTab(index)}
+                    >
+                      <span className="font-semibold text-lg">{tab.title}</span>
+                      <span className="flex-shrink-0 ml-2">
+                        {activeTab === index ? (
+                          <ChevronDown className="w-5 h-5 text-gray-500" />
+                        ) : (
+                          <ChevronDown className="w-5 h-5 text-gray-500" />
+                        )}
                       </span>
-                    </li>
-                    <li className="flex items-start gap-3">
-                      <CheckCircle2 className="w-5 h-5 text-teal-600 flex-shrink-0 mt-0.5" />
-                      <span className="text-gray-600 select-text cursor-text">
-                        Reduce complexity and enhance user experience
-                      </span>
-                    </li>
-                    <li className="flex items-start gap-3">
-                      <CheckCircle2 className="w-5 h-5 text-teal-600 flex-shrink-0 mt-0.5" />
-                      <span className="text-gray-600 select-text cursor-text">
-                        Get your critical projects done faster
-                      </span>
-                    </li>
-                  </ul>
-                  <div className="mt-4">
-                    <a href="#" className="inline-flex items-center text-teal-600 font-medium">
-                      Learn More <ArrowRight className="ml-1 w-4 h-4" />
-                    </a>
+                    </div>
+
+                    {activeTab === index && (
+                      <div className="px-5 pb-5 pt-1">
+                        {tab.content}
+                      </div>
+                    )}
                   </div>
-                </div>
-              </div>
-
-              <div className="rounded-md border border-gray-200 overflow-hidden bg-white hover:bg-gray-50 cursor-pointer">
-                <div className="w-full flex items-center justify-between px-5 py-4 text-left select-text">
-                  <span className="font-semibold text-lg">Data Science and Artificial Intelligence</span>
-                  <span className="flex-shrink-0 ml-2">
-                    <ChevronDown className="w-5 h-5 text-gray-500" />
-                  </span>
-                </div>
-              </div>
-
-              <div className="rounded-md border border-gray-200 overflow-hidden bg-white hover:bg-gray-50 cursor-pointer">
-                <div className="w-full flex items-center justify-between px-5 py-4 text-left select-text">
-                  <span className="font-semibold text-lg">Data Engineering and Analytics</span>
-                  <span className="flex-shrink-0 ml-2">
-                    <ChevronDown className="w-5 h-5 text-gray-500" />
-                  </span>
-                </div>
-              </div>
-
-              <div className="rounded-md border border-gray-200 overflow-hidden bg-white hover:bg-gray-50 cursor-pointer">
-                <div className="w-full flex items-center justify-between px-5 py-4 text-left select-text">
-                  <span className="font-semibold text-lg">Cloud and DevOps</span>
-                  <span className="flex-shrink-0 ml-2">
-                    <ChevronDown className="w-5 h-5 text-gray-500" />
-                  </span>
-                </div>
-              </div>
+                ));
+              })()}
             </div>
 
             {/* Right column with dashboard-style cards */}
