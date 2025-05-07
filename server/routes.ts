@@ -449,6 +449,113 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
   
+  // API endpoint for uploading resume without authentication (for registration)
+  app.post('/api/upload-resume', resumeUpload.single('resume'), (req: Request, res: Response) => {
+    if (!req.file) {
+      return res.status(400).json({ success: false, message: 'No file uploaded' });
+    }
+    
+    // @ts-ignore - Cloudinary typings
+    const file = req.file;
+    return res.status(200).json({ 
+      success: true, 
+      url: file.path,
+      filename: file.originalname 
+    });
+  });
+  
+  // Get user's job applications with pagination and filtering
+  app.get('/api/my-applications', async (req: AuthenticatedRequest, res) => {
+    try {
+      // Check if user is authenticated
+      if (!req.isAuthenticated()) {
+        return res.status(401).json({ 
+          success: false, 
+          message: "You must be logged in to view your applications" 
+        });
+      }
+
+      const userId = req.user!.id;
+      const page = parseInt(req.query.page as string) || 1;
+      const limit = parseInt(req.query.limit as string) || 10;
+      const status = req.query.status as string;
+      
+      // Get user's job applications with detailed job info
+      const applications = await storage.getJobApplicationsForUser(userId);
+      
+      // Filter by status if provided
+      const filteredApplications = status && status !== 'all' 
+        ? applications.filter(app => app.status === status)
+        : applications;
+        
+      // Calculate pagination
+      const total = filteredApplications.length;
+      const startIndex = (page - 1) * limit;
+      const endIndex = page * limit;
+      const paginatedApplications = filteredApplications.slice(startIndex, endIndex);
+      
+      return res.status(200).json({ 
+        success: true, 
+        data: paginatedApplications,
+        meta: {
+          total,
+          page,
+          limit,
+          pages: Math.ceil(total / limit)
+        }
+      });
+    } catch (error) {
+      console.error('Error fetching job applications:', error);
+      return res.status(500).json({
+        success: false,
+        message: "Internal server error"
+      });
+    }
+  });
+  
+  // Withdraw job application
+  app.put('/api/my-applications/:id/withdraw', async (req: AuthenticatedRequest, res) => {
+    try {
+      if (!req.isAuthenticated()) {
+        return res.status(401).json({ 
+          success: false, 
+          message: "You must be logged in to withdraw applications" 
+        });
+      }
+      
+      const applicationId = parseInt(req.params.id);
+      const userId = req.user!.id;
+      
+      // Verify the application belongs to the user
+      const application = await storage.getJobApplicationById(applicationId);
+      if (!application) {
+        return res.status(404).json({ success: false, message: 'Application not found' });
+      }
+      
+      if (application.userId !== userId) {
+        return res.status(403).json({ success: false, message: 'Not authorized to withdraw this application' });
+      }
+      
+      // Only allow withdrawing if application is in 'new' or 'reviewing' status
+      if (application.status !== 'new' && application.status !== 'reviewing') {
+        return res.status(400).json({ 
+          success: false, 
+          message: 'Cannot withdraw application in current status' 
+        });
+      }
+      
+      const updatedApplication = await storage.updateJobApplicationStatus(applicationId, 'withdrawn');
+      
+      return res.status(200).json({
+        success: true,
+        data: updatedApplication
+      });
+    } catch (error) {
+      console.error('Error withdrawing application:', error);
+      return res.status(500).json({ success: false, message: 'Failed to withdraw application' });
+    }
+  });
+  
   // Admin API: Get all applications with pagination
   app.get('/api/admin/applications', async (req: AuthenticatedRequest, res) => {
     try {

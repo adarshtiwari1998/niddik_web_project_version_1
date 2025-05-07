@@ -1,150 +1,338 @@
-import { useQuery } from "@tanstack/react-query";
-import { useLocation } from "wouter";
-import { getQueryFn } from "@/lib/queryClient";
-import { useAuth } from "@/hooks/use-auth";
-import { JobApplication } from "@shared/schema";
-import { Button } from "@/components/ui/button";
-import { Card, CardContent, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
-import { Separator } from "@/components/ui/separator";
+import { useState } from "react";
+import { useQuery, useMutation } from "@tanstack/react-query";
+import { format } from "date-fns";
+import { FileText, ExternalLink, Clock, Calendar, Briefcase, MapPin, ChevronLeft, ChevronRight } from "lucide-react";
+import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
-import { Loader2, ArrowLeftIcon, Briefcase, Calendar, Clock, FileText } from "lucide-react";
+import { Button } from "@/components/ui/button";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { useAuth } from "@/hooks/use-auth";
+import { queryClient } from "@/lib/queryClient";
+import { Separator } from "@/components/ui/separator";
+import { Skeleton } from "@/components/ui/skeleton";
+import { JobApplication } from "@shared/schema";
+
+// Application with job details
+type ApplicationWithJob = JobApplication & {
+  job: {
+    id: number;
+    title: string;
+    company: string;
+    location: string;
+    jobType: string;
+    salary: string;
+    category: string;
+    experienceLevel: string;
+    postedDate: string;
+  };
+};
 
 export default function MyApplications() {
   const { user } = useAuth();
-  const [_, setLocation] = useLocation();
+  const [page, setPage] = useState(1);
+  const [activeTab, setActiveTab] = useState<string>("all");
+  const pageSize = 5;
 
-  // Fetch user's applications
-  const { data, isLoading, error } = useQuery<{ data: JobApplication[] }>({
-    queryKey: ['/api/my-applications'],
-    queryFn: getQueryFn({ on401: "throw" }),
-    enabled: !!user, // Only run query if user is logged in
+  // Fetch user's job applications
+  const { data, isLoading, error } = useQuery<{ 
+    success: boolean; 
+    data: ApplicationWithJob[];
+    meta: {
+      total: number;
+      pages: number;
+    }
+  }>({
+    queryKey: ['/api/my-applications', page, activeTab, user?.id],
+    queryFn: async () => {
+      if (!user) throw new Error("User not authenticated");
+      
+      const params = new URLSearchParams();
+      params.append("page", page.toString());
+      params.append("limit", pageSize.toString());
+      if (activeTab !== "all") params.append("status", activeTab);
+
+      const res = await fetch(`/api/my-applications?${params.toString()}`);
+      if (!res.ok) throw new Error("Failed to fetch applications");
+      return res.json();
+    },
+    enabled: !!user,
   });
 
-  const applications = data?.data || [];
-
-  // Function to get status badge styling
-  const getStatusBadge = (status: string) => {
-    const statusMap: Record<string, { color: string, text: string }> = {
-      pending: { color: "bg-yellow-500/80 hover:bg-yellow-500/90", text: "Pending Review" },
-      reviewed: { color: "bg-blue-500/80 hover:bg-blue-500/90", text: "Reviewed" },
-      interviewing: { color: "bg-purple-500/80 hover:bg-purple-500/90", text: "Interviewing" },
-      hired: { color: "bg-green-500/80 hover:bg-green-500/90", text: "Hired" },
-      rejected: { color: "bg-red-500/80 hover:bg-red-500/90", text: "Not Selected" },
-    };
-
-    return statusMap[status] || { color: "bg-gray-500/80 hover:bg-gray-500/90", text: status };
+  // Format date to a readable string
+  const formatDate = (dateString: string | Date) => {
+    if (!dateString) return "N/A";
+    const date = typeof dateString === 'string' ? new Date(dateString) : dateString;
+    return format(date, 'MMM dd, yyyy');
   };
 
-  if (isLoading) {
-    return (
-      <div className="flex justify-center items-center min-h-[calc(100vh-200px)]">
-        <Loader2 className="h-8 w-8 animate-spin text-primary" />
-      </div>
-    );
-  }
+  // Get appropriate badge variant based on status
+  const getStatusVariant = (status: string) => {
+    switch (status.toLowerCase()) {
+      case 'new':
+        return 'default';
+      case 'reviewing':
+        return 'secondary';
+      case 'interview':
+        return 'outline';
+      case 'hired':
+        return 'success';
+      case 'rejected':
+        return 'destructive';
+      default:
+        return 'default';
+    }
+  };
 
-  if (error) {
+  // Get human-readable status
+  const getStatusText = (status: string) => {
+    switch (status.toLowerCase()) {
+      case 'new':
+        return 'Application Submitted';
+      case 'reviewing':
+        return 'Under Review';
+      case 'interview':
+        return 'Interview Stage';
+      case 'hired':
+        return 'Hired';
+      case 'rejected':
+        return 'Not Selected';
+      default:
+        return status;
+    }
+  };
+
+  // Withdraw application mutation
+  const withdrawMutation = useMutation({
+    mutationFn: async (applicationId: number) => {
+      const res = await fetch(`/api/my-applications/${applicationId}/withdraw`, {
+        method: 'PUT',
+      });
+      if (!res.ok) throw new Error("Failed to withdraw application");
+      return res.json();
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['/api/my-applications'] });
+    },
+  });
+
+  // Handle application withdrawal
+  const handleWithdraw = (id: number) => {
+    if (window.confirm("Are you sure you want to withdraw this application?")) {
+      withdrawMutation.mutate(id);
+    }
+  };
+
+  if (!user) {
     return (
-      <div className="container mx-auto py-12 px-4 md:px-6 text-center">
-        <h1 className="text-2xl font-bold mb-4">Error Loading Applications</h1>
-        <p className="text-muted-foreground mb-6">We couldn't load your applications. Please try again later.</p>
-        <Button onClick={() => setLocation("/careers")}>Browse Jobs</Button>
+      <div className="container mx-auto px-4 py-8">
+        <Card>
+          <CardContent className="py-10 text-center">
+            <p>Please sign in to view your applications.</p>
+            <Button className="mt-4" onClick={() => window.location.href = "/auth"}>
+              Sign In
+            </Button>
+          </CardContent>
+        </Card>
       </div>
     );
   }
 
   return (
-    <div className="container mx-auto py-12 px-4 md:px-6">
-      {/* Header */}
-      <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 mb-8">
-        <div>
-          <h1 className="text-3xl font-bold mb-2">My Applications</h1>
-          <p className="text-muted-foreground">Track the status of your job applications</p>
-        </div>
-        <Button 
-          variant="outline" 
-          onClick={() => setLocation("/careers")} 
-          className="flex items-center gap-2"
-        >
-          <ArrowLeftIcon size={16} />
-          Browse More Jobs
-        </Button>
+    <div className="container mx-auto px-4 py-8">
+      <div className="mb-8">
+        <h1 className="text-3xl font-bold">My Applications</h1>
+        <p className="text-muted-foreground mt-2">
+          Track and manage all your job applications
+        </p>
       </div>
 
-      {/* Applications List */}
-      {applications.length === 0 ? (
-        <div className="text-center py-16 border border-dashed rounded-lg">
-          <FileText className="h-12 w-12 mx-auto text-muted-foreground opacity-20 mb-4" />
-          <h2 className="text-xl font-medium mb-2">No applications yet</h2>
-          <p className="text-muted-foreground mb-6">You haven't applied to any jobs yet.</p>
-          <Button onClick={() => setLocation("/careers")}>Browse Open Positions</Button>
-        </div>
-      ) : (
-        <div className="space-y-6">
-          {applications.map((application) => (
-            <Card key={application.id} className="overflow-hidden">
-              <CardHeader className="pb-4">
-                <div className="flex flex-col md:flex-row justify-between md:items-center gap-4">
-                  <div>
-                    <CardTitle className="text-xl">Job Application #{application.id}</CardTitle>
-                    <p className="text-muted-foreground">Job ID: {application.jobId}</p>
-                  </div>
-                  <Badge className={getStatusBadge(application.status).color}>
-                    {getStatusBadge(application.status).text}
-                  </Badge>
-                </div>
-              </CardHeader>
-              <CardContent className="pb-0">
-                <div className="flex flex-wrap gap-4 text-sm">
-                  <div className="flex items-center">
-                    <Calendar className="h-4 w-4 mr-2 text-muted-foreground" />
-                    <span>
-                      Applied on {new Date(application.appliedDate || new Date()).toLocaleDateString('en-US', {
-                        month: 'short',
-                        day: 'numeric',
-                        year: 'numeric'
-                      })}
-                    </span>
-                  </div>
-                  <div className="flex items-center">
-                    <Briefcase className="h-4 w-4 mr-2 text-muted-foreground" />
-                    <span>Job ID: {application.jobId}</span>
-                  </div>
-                </div>
+      <div className="mb-6">
+        <Tabs 
+          value={activeTab} 
+          onValueChange={setActiveTab}
+          className="w-full"
+        >
+          <TabsList className="grid grid-cols-5 w-full max-w-2xl">
+            <TabsTrigger value="all">All</TabsTrigger>
+            <TabsTrigger value="new">New</TabsTrigger>
+            <TabsTrigger value="reviewing">Under Review</TabsTrigger>
+            <TabsTrigger value="interview">Interview</TabsTrigger>
+            <TabsTrigger value="hired">Hired</TabsTrigger>
+          </TabsList>
+        </Tabs>
+      </div>
 
-                {application.coverLetter && (
-                  <div className="mt-4">
-                    <p className="font-medium mb-2">Your Cover Letter:</p>
-                    <div className="bg-muted/50 p-3 rounded-md text-sm">
-                      <p className="line-clamp-3">{application.coverLetter}</p>
-                    </div>
-                  </div>
-                )}
-              </CardContent>
-              <CardFooter className="flex justify-between items-center mt-4">
-                <div>
-                  {application.resumeUrl && (
-                    <a 
-                      href={application.resumeUrl} 
-                      target="_blank" 
-                      rel="noopener noreferrer"
-                      className="text-primary hover:underline text-sm flex items-center"
-                    >
-                      <FileText className="h-4 w-4 mr-1" /> View Uploaded Resume
-                    </a>
-                  )}
+      {isLoading ? (
+        <div className="space-y-4">
+          {[...Array(3)].map((_, i) => (
+            <Card key={i}>
+              <CardHeader>
+                <Skeleton className="h-6 w-2/3" />
+                <Skeleton className="h-4 w-1/3 mt-2" />
+              </CardHeader>
+              <CardContent>
+                <div className="flex flex-col gap-2">
+                  <Skeleton className="h-4 w-full" />
+                  <Skeleton className="h-4 w-full" />
+                  <Skeleton className="h-4 w-1/2" />
                 </div>
-                <Button 
-                  variant="outline" 
-                  size="sm"
-                  onClick={() => setLocation(`/jobs/${application.jobId}`)}
-                >
-                  View Job
-                </Button>
-              </CardFooter>
+              </CardContent>
             </Card>
           ))}
         </div>
+      ) : error ? (
+        <Card>
+          <CardContent className="py-10 text-center">
+            <p className="text-red-500">Error loading applications. Please try again.</p>
+            <Button variant="outline" className="mt-4" onClick={() => queryClient.invalidateQueries({ queryKey: ['/api/my-applications'] })}>
+              Retry
+            </Button>
+          </CardContent>
+        </Card>
+      ) : data?.data.length === 0 ? (
+        <Card>
+          <CardContent className="py-10 text-center">
+            <p>You haven't applied to any jobs yet.</p>
+            <Button className="mt-4" onClick={() => window.location.href = "/jobs"}>
+              Browse Jobs
+            </Button>
+          </CardContent>
+        </Card>
+      ) : (
+        <>
+          <div className="space-y-4">
+            {data?.data.map((application) => (
+              <Card key={application.id} className="overflow-hidden">
+                <CardHeader className="pb-0">
+                  <div className="flex justify-between items-start">
+                    <div>
+                      <CardTitle className="text-xl">{application.job.title}</CardTitle>
+                      <CardDescription className="flex flex-wrap gap-2 items-center mt-1">
+                        <span>{application.job.company}</span>
+                        <span>•</span>
+                        <div className="flex items-center gap-1">
+                          <MapPin className="h-3 w-3" />
+                          <span>{application.job.location}</span>
+                        </div>
+                      </CardDescription>
+                    </div>
+                    <Badge variant={getStatusVariant(application.status)}>
+                      {getStatusText(application.status)}
+                    </Badge>
+                  </div>
+                </CardHeader>
+                <CardContent className="pt-4">
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
+                    <div className="flex flex-col space-y-2">
+                      <div className="flex items-center gap-2 text-sm">
+                        <Briefcase className="h-4 w-4 text-muted-foreground" />
+                        <span className="text-muted-foreground">Job Type:</span>
+                        <span>{application.job.jobType}</span>
+                      </div>
+                      <div className="flex items-center gap-2 text-sm">
+                        <Calendar className="h-4 w-4 text-muted-foreground" />
+                        <span className="text-muted-foreground">Applied On:</span>
+                        <span>{formatDate(application.appliedDate)}</span>
+                      </div>
+                    </div>
+                    <div className="flex flex-col space-y-2">
+                      <div className="flex items-center gap-2 text-sm">
+                        <Clock className="h-4 w-4 text-muted-foreground" />
+                        <span className="text-muted-foreground">Last Updated:</span>
+                        <span>{formatDate(application.lastUpdated)}</span>
+                      </div>
+                      <div className="flex items-center gap-2 text-sm">
+                        <FileText className="h-4 w-4 text-muted-foreground" />
+                        <span className="text-muted-foreground">Resume:</span>
+                        <a 
+                          href={application.resumeUrl} 
+                          target="_blank" 
+                          rel="noopener noreferrer"
+                          className="text-primary hover:underline flex items-center gap-1"
+                        >
+                          View <ExternalLink className="h-3 w-3" />
+                        </a>
+                      </div>
+                    </div>
+                  </div>
+                  
+                  <Separator className="my-4" />
+                  
+                  <div className="flex justify-between items-center">
+                    <div className="flex items-center gap-2">
+                      <span className="text-sm text-muted-foreground">Status Timeline:</span>
+                      <div className="flex items-center gap-1">
+                        <span className={`inline-block h-2 w-2 rounded-full ${application.status === 'new' || application.status === 'reviewing' || application.status === 'interview' || application.status === 'hired' ? 'bg-green-500' : 'bg-gray-300'}`}></span>
+                        <span className="text-xs">Submitted</span>
+                      </div>
+                      <span>→</span>
+                      <div className="flex items-center gap-1">
+                        <span className={`inline-block h-2 w-2 rounded-full ${application.status === 'reviewing' || application.status === 'interview' || application.status === 'hired' ? 'bg-green-500' : 'bg-gray-300'}`}></span>
+                        <span className="text-xs">Review</span>
+                      </div>
+                      <span>→</span>
+                      <div className="flex items-center gap-1">
+                        <span className={`inline-block h-2 w-2 rounded-full ${application.status === 'interview' || application.status === 'hired' ? 'bg-green-500' : 'bg-gray-300'}`}></span>
+                        <span className="text-xs">Interview</span>
+                      </div>
+                      <span>→</span>
+                      <div className="flex items-center gap-1">
+                        <span className={`inline-block h-2 w-2 rounded-full ${application.status === 'hired' ? 'bg-green-500' : 'bg-gray-300'}`}></span>
+                        <span className="text-xs">Hired</span>
+                      </div>
+                    </div>
+                    
+                    <div className="flex gap-2">
+                      <Button 
+                        variant="outline" 
+                        size="sm" 
+                        onClick={() => window.location.href = `/jobs/${application.job.id}`}
+                      >
+                        View Job
+                      </Button>
+                      {(application.status === 'new' || application.status === 'reviewing') && (
+                        <Button 
+                          variant="destructive" 
+                          size="sm" 
+                          onClick={() => handleWithdraw(application.id)}
+                          disabled={withdrawMutation.isPending}
+                        >
+                          {withdrawMutation.isPending ? 'Processing...' : 'Withdraw'}
+                        </Button>
+                      )}
+                    </div>
+                  </div>
+                </CardContent>
+              </Card>
+            ))}
+          </div>
+          
+          {data?.meta && data.meta.pages > 1 && (
+            <div className="flex justify-between items-center mt-8">
+              <p className="text-sm text-muted-foreground">
+                Showing {((page - 1) * pageSize) + 1} to {Math.min(page * pageSize, data.meta.total)} of {data.meta.total} applications
+              </p>
+              <div className="flex gap-2">
+                <Button
+                  variant="outline"
+                  size="sm"
+                  onClick={() => setPage(p => Math.max(1, p - 1))}
+                  disabled={page === 1}
+                >
+                  <ChevronLeft className="h-4 w-4 mr-1" /> Previous
+                </Button>
+                <Button
+                  variant="outline"
+                  size="sm"
+                  onClick={() => setPage(p => Math.min(data.meta.pages, p + 1))}
+                  disabled={page >= data.meta.pages}
+                >
+                  Next <ChevronRight className="h-4 w-4 ml-1" />
+                </Button>
+              </div>
+            </div>
+          )}
+        </>
       )}
     </div>
   );
