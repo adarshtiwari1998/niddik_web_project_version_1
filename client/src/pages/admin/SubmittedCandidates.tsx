@@ -80,7 +80,7 @@ const candidateFormSchema = z.object({
   expectedCtc: z.string().min(1, "Expected CTC is required"),
   billRate: z.string().optional(),
   payRate: z.string().optional(),
-  status: z.string().min(2, "Status is required"),
+  status: z.string().min(2, "Status is required and can include detailed information"),
   salaryInLacs: z.string().optional(),
 });
 
