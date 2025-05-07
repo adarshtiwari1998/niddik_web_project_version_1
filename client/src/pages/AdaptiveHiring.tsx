@@ -639,7 +639,7 @@ const AdaptiveHiringWorkflow = () => {
   };
 
   return (
-    <div id="how-adaptive-hiring-works" className="relative pb-16" ref={componentRef}>
+    <div id="how-adaptive-hiring-works" className="relative pb-4" ref={componentRef}>
       {/* Top sentinel element to detect when section enters viewport */}
       <div ref={topSentinelRef} className="absolute top-0 h-1 w-full" />
       
@@ -662,7 +662,7 @@ const AdaptiveHiringWorkflow = () => {
               <div 
                 key={section.id}
                 ref={el => sectionRefs.current[index] = el}
-                className="scroll-mt-40 mb-96" // Large margin bottom for better section detection
+                className={`scroll-mt-40 ${index < sections.length - 1 ? 'mb-96' : 'mb-16'}`} // Smaller margin for last item
               >
                 <div className="flex items-center gap-2 text-sm font-semibold text-blue-600 mb-4">
                   <div className="flex items-center bg-blue-100 p-1.5 rounded-full">
@@ -964,9 +964,9 @@ const AdaptiveHiring = () => {
       </section>
 
       {/* How Adaptive Hiring Works Section */}
-      <section className="py-20 bg-gray-50 relative">
+      <section className="py-20 pb-0 bg-gray-50 relative">
         <Container>
-          <div className="relative py-10">
+          <div className="relative py-10 pb-0">
             <AdaptiveHiringWorkflow />
           </div>
         </Container>
