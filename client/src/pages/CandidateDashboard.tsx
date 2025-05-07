@@ -104,19 +104,19 @@ export default function CandidateDashboard() {
                 <span>Dashboard</span>
               </div>
             </Link>
-            <Link href="/my-applications">
+            <Link href="/candidate/applications">
               <div className="flex items-center space-x-2 p-2 rounded-md hover:bg-muted transition-colors">
                 <Briefcase className="h-4 w-4" />
                 <span>My Applications</span>
               </div>
             </Link>
-            <Link href="/careers">
+            <Link href="/candidate/jobs">
               <div className="flex items-center space-x-2 p-2 rounded-md hover:bg-muted transition-colors">
                 <FileText className="h-4 w-4" />
                 <span>Job Listings</span>
               </div>
             </Link>
-            <Link href="/profile">
+            <Link href="/candidate/profile">
               <div className={`flex items-center space-x-2 p-2 rounded-md hover:bg-muted transition-colors ${activeTab === 'profile' ? 'bg-muted font-medium' : ''}`}>
                 <User className="h-4 w-4" />
                 <span>My Profile</span>
@@ -168,7 +168,7 @@ export default function CandidateDashboard() {
                   </div>
                 </CardContent>
                 <CardFooter className="pt-0 border-t">
-                  <Link href="/my-applications" className="flex items-center text-xs text-primary hover:underline">
+                  <Link href="/candidate/applications" className="flex items-center text-xs text-primary hover:underline">
                     View all applications
                     <ExternalLink className="h-3 w-3 ml-1" />
                   </Link>
@@ -189,7 +189,7 @@ export default function CandidateDashboard() {
                   </div>
                 </CardContent>
                 <CardFooter className="pt-0 border-t">
-                  <Link href="/my-applications" className="flex items-center text-xs text-primary hover:underline">
+                  <Link href="/candidate/applications" className="flex items-center text-xs text-primary hover:underline">
                     Check status
                     <ExternalLink className="h-3 w-3 ml-1" />
                   </Link>
@@ -210,7 +210,7 @@ export default function CandidateDashboard() {
                   </div>
                 </CardContent>
                 <CardFooter className="pt-0 border-t">
-                  <Link href="/my-applications" className="flex items-center text-xs text-primary hover:underline">
+                  <Link href="/candidate/applications" className="flex items-center text-xs text-primary hover:underline">
                     Check interviews
                     <ExternalLink className="h-3 w-3 ml-1" />
                   </Link>
@@ -231,7 +231,7 @@ export default function CandidateDashboard() {
                   </div>
                 </CardContent>
                 <CardFooter className="pt-0 border-t">
-                  <Link href="/my-applications" className="flex items-center text-xs text-primary hover:underline">
+                  <Link href="/candidate/applications" className="flex items-center text-xs text-primary hover:underline">
                     View offers
                     <ExternalLink className="h-3 w-3 ml-1" />
                   </Link>
@@ -246,7 +246,7 @@ export default function CandidateDashboard() {
                 <CardHeader>
                   <CardTitle className="flex items-center justify-between">
                     <span>Recent Job Listings</span>
-                    <Link href="/careers">
+                    <Link href="/candidate/jobs">
                       <Button variant="link" className="p-0 h-auto">View All</Button>
                     </Link>
                   </CardTitle>
@@ -284,7 +284,7 @@ export default function CandidateDashboard() {
                   )}
                 </CardContent>
                 <CardFooter className="border-t pt-4">
-                  <Link href="/careers">
+                  <Link href="/candidate/jobs">
                     <Button variant="outline" className="w-full">Browse All Jobs</Button>
                   </Link>
                 </CardFooter>
@@ -295,7 +295,7 @@ export default function CandidateDashboard() {
                 <CardHeader>
                   <CardTitle className="flex items-center justify-between">
                     <span>Recent Applications</span>
-                    <Link href="/my-applications">
+                    <Link href="/candidate/applications">
                       <Button variant="link" className="p-0 h-auto">View All</Button>
                     </Link>
                   </CardTitle>
@@ -311,7 +311,7 @@ export default function CandidateDashboard() {
                       {applicationsData.data.slice(0, 5).map((application) => (
                         <div key={application.id} className="border rounded-lg p-4">
                           <div className="flex justify-between mb-2">
-                            <Link href={`/jobs/${application.jobId}`}>
+                            <Link href={`/candidate/jobs/${application.jobId}`}>
                               <h3 className="font-medium hover:text-primary cursor-pointer">{application.job.title}</h3>
                             </Link>
                             <Badge className={
@@ -352,7 +352,7 @@ export default function CandidateDashboard() {
                   )}
                 </CardContent>
                 <CardFooter className="border-t pt-4">
-                  <Link href="/my-applications">
+                  <Link href="/candidate/applications">
                     <Button variant="outline" className="w-full">View All Applications</Button>
                   </Link>
                 </CardFooter>
@@ -373,7 +373,7 @@ export default function CandidateDashboard() {
                 ) : !applicationsData?.data || applicationsData.data.length === 0 ? (
                   <div className="text-center py-6">
                     <p className="mb-4">You haven't applied to any jobs yet</p>
-                    <Link href="/careers">
+                    <Link href="/candidate/jobs">
                       <Button>Browse Jobs</Button>
                     </Link>
                   </div>
@@ -383,7 +383,7 @@ export default function CandidateDashboard() {
                       <div key={application.id} className="border rounded-lg p-4">
                         <div className="flex flex-col md:flex-row md:justify-between md:items-start gap-4 mb-3">
                           <div>
-                            <Link href={`/jobs/${application.jobId}`}>
+                            <Link href={`/candidate/jobs/${application.jobId}`}>
                               <h3 className="text-xl font-medium hover:text-primary cursor-pointer">{application.job.title}</h3>
                             </Link>
                             <div className="flex flex-wrap gap-y-2 gap-x-3 text-sm text-muted-foreground mt-2">
@@ -452,7 +452,7 @@ export default function CandidateDashboard() {
                           )}
                           
                           <Button size="sm" variant="outline" asChild>
-                            <Link href={`/jobs/${application.jobId}`}>
+                            <Link href={`/candidate/jobs/${application.jobId}`}>
                               View Job
                             </Link>
                           </Button>
@@ -536,7 +536,7 @@ export default function CandidateDashboard() {
                 </div>
 
                 <div className="flex justify-end mt-4">
-                  <Link href="/profile">
+                  <Link href="/candidate/profile">
                     <Button>Edit Profile</Button>
                   </Link>
                 </div>
