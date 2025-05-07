@@ -43,7 +43,7 @@ const navItems: NavItem[] = [
   {
     label: "Technologists",
     dropdown: [
-      { label: "Apply to Niddik", href: "/career" },
+      { label: "Apply to Niddik", href: "/careers" },
       { label: "Learning Community", href: "#" },
       { label: "Expert Network", href: "#" }
     ]
