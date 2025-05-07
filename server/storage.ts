@@ -589,5 +589,11 @@ export const storage = {
       .returning();
     
     return updatedRequest;
+  },
+  
+  async deleteDemoRequest(id: number): Promise<void> {
+    await db
+      .delete(demoRequests)
+      .where(eq(demoRequests.id, id));
   }
 };

@@ -1463,6 +1463,51 @@ export async function registerRoutes(app: Express): Promise<Server> {
       });
     }
   });
+  
+  // Delete demo request (admin only)
+  app.delete('/api/admin/demo-requests/:id', async (req: AuthenticatedRequest, res) => {
+    try {
+      if (!req.isAuthenticated() || req.user?.role !== 'admin') {
+        return res.status(403).json({
+          success: false,
+          message: "Unauthorized"
+        });
+      }
+      
+      const id = parseInt(req.params.id);
+      
+      if (isNaN(id)) {
+        return res.status(400).json({
+          success: false,
+          message: "Invalid ID"
+        });
+      }
+      
+      // Check if the demo request exists
+      const existingRequest = await storage.getDemoRequestById(id);
+      
+      if (!existingRequest) {
+        return res.status(404).json({
+          success: false,
+          message: "Demo request not found"
+        });
+      }
+      
+      // Delete the demo request
+      await storage.deleteDemoRequest(id);
+      
+      return res.status(200).json({
+        success: true,
+        message: "Demo request deleted successfully"
+      });
+    } catch (error) {
+      console.error('Error deleting demo request:', error);
+      return res.status(500).json({
+        success: false,
+        message: "Internal server error"
+      });
+    }
+  });
 
   const httpServer = createServer(app);
   return httpServer;
