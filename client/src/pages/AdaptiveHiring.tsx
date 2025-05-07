@@ -338,32 +338,31 @@ const AdaptiveHiringWorkflow = () => {
     }
   ];
 
-  // Track if the component is in viewport to control fixed positioning
+  // Track if the component is in viewport and when it exits to control fixed positioning
   useEffect(() => {
-    // Target the first content section instead of the entire component
-    // This ensures fixed positioning only triggers when user scrolls to actual content
-    const firstSectionRef = sectionRefs.current[0];
+    const sectionElement = componentRef.current;
+    if (!sectionElement) return;
     
+    // Create options for detecting when section is entered and exited
     const options = {
       root: null,
-      rootMargin: '-100px 0px 0px 0px', // Only activate when content is 100px into the viewport
-      threshold: 0.2 // Needs more visibility before triggering
+      rootMargin: '-100px 0px -100px 0px', // Adjust threshold for entry/exit
+      threshold: [0.1, 0.9] // Multiple thresholds to detect entering and leaving
     };
 
+    // Observer to track when section is in viewport
     const observer = new IntersectionObserver((entries) => {
       entries.forEach(entry => {
+        // The isIntersecting determines if we're in the section
         setIsInViewport(entry.isIntersecting);
       });
     }, options);
     
-    if (firstSectionRef) {
-      observer.observe(firstSectionRef);
-    }
+    // Observe the entire component section
+    observer.observe(sectionElement);
 
     return () => {
-      if (firstSectionRef) {
-        observer.unobserve(firstSectionRef);
-      }
+      observer.unobserve(sectionElement);
     };
   }, []);
 
@@ -598,9 +597,15 @@ const AdaptiveHiringWorkflow = () => {
             ))}
           </div>
           
-          {/* Right Column - Normal image that scrolls with content, no fixed positioning */}
-          <div className="hidden lg:block">
-            <div className="w-full pt-8 pr-12">
+          {/* Right Column - Image with fixed positioning when section is in viewport */}
+          <div className="hidden lg:block relative">
+            <div 
+              className={`w-full pt-8 pr-12 ${
+                isInViewport 
+                  ? 'sticky top-24' // Fixed to the top when in viewport
+                  : ''
+              }`}
+            >
               {getImageContent()}
             </div>
           </div>
