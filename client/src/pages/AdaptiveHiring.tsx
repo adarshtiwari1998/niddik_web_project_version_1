@@ -382,45 +382,50 @@ const AdaptiveHiringWorkflow = () => {
 
   // For tracking which content section is active
   useEffect(() => {
-    const observerOptions = {
-      root: null,
-      rootMargin: '-40% 0px -40% 0px', // More centered in the viewport
-      threshold: [0.1, 0.2, 0.3, 0.4, 0.5] // Multiple thresholds for better detection
-    };
-
-    const observerCallback: IntersectionObserverCallback = (entries) => {
-      // Sort entries by their intersection ratio (most visible first)
-      const visibleEntries = entries
-        .filter(entry => entry.isIntersecting)
-        .sort((a, b) => b.intersectionRatio - a.intersectionRatio);
+    // Using a simple scroll-based approach instead of IntersectionObserver
+    const handleScroll = () => {
+      const scrollPosition = window.scrollY + window.innerHeight / 2; // Center point of the viewport
       
-      // Use the most visible entry
-      if (visibleEntries.length > 0) {
-        const mostVisibleEntry = visibleEntries[0];
-        const index = sectionRefs.current.findIndex(section => section === mostVisibleEntry.target);
-        if (index !== -1) {
-          console.log("Active section changed to:", index);
-          setActiveSection(index);
+      // Find which section is at the center of the viewport
+      let closestSection = -1;
+      let closestDistance = Infinity;
+      
+      sectionRefs.current.forEach((section, index) => {
+        if (!section) return;
+        
+        const rect = section.getBoundingClientRect();
+        const absoluteTop = rect.top + window.scrollY;
+        const absoluteBottom = rect.bottom + window.scrollY;
+        const sectionCenter = (absoluteTop + absoluteBottom) / 2;
+        
+        const distance = Math.abs(scrollPosition - sectionCenter);
+        if (distance < closestDistance) {
+          closestDistance = distance;
+          closestSection = index;
         }
+      });
+      
+      if (closestSection !== -1 && closestSection !== activeSection) {
+        console.log("Active section changed to:", closestSection);
+        setActiveSection(closestSection);
       }
     };
-
-    const observer = new IntersectionObserver(observerCallback, observerOptions);
     
-    // Observe all content sections
-    sectionRefs.current.forEach(section => {
-      if (section) observer.observe(section);
-    });
-
+    // Add scroll listener
+    window.addEventListener('scroll', handleScroll);
+    
+    // Initialize on mount
+    handleScroll();
+    
     return () => {
-      sectionRefs.current.forEach(section => {
-        if (section) observer.unobserve(section);
-      });
+      window.removeEventListener('scroll', handleScroll);
     };
-  }, []);
+  }, [activeSection]); // Depend on activeSection to avoid unnecessary re-calculations
 
   // Image content based on active section
   const getImageContent = () => {
+    console.log("Active section:", activeSection); // Debug active section
+    
     switch(activeSection) {
       case 0: // PROJECTS
         return (
@@ -652,12 +657,12 @@ const AdaptiveHiringWorkflow = () => {
         {/* Content container */}
         <div className="relative grid grid-cols-1 lg:grid-cols-2 gap-0">
           {/* Left Column - Content */}
-          <div className="py-8 pr-8 space-y-64"> {/* Increased vertical spacing between sections for better detection */}
+          <div className="py-8 pr-8"> {/* Don't use space-y, we'll add individual margins */}
             {sections.map((section, index) => (
               <div 
                 key={section.id}
                 ref={el => sectionRefs.current[index] = el}
-                className="scroll-mt-40" 
+                className="scroll-mt-40 mb-96" // Large margin bottom for better section detection
               >
                 <div className="flex items-center gap-2 text-sm font-semibold text-blue-600 mb-4">
                   <div className="flex items-center bg-blue-100 p-1.5 rounded-full">
