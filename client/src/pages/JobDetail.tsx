@@ -18,6 +18,8 @@ import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, Di
 import { Form, FormControl, FormDescription, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
 import { Loader2, MapPin, Calendar, Briefcase, Clock, Building, Award, ArrowLeftIcon, FileText, ExternalLink, CheckCircle } from "lucide-react";
 import { format } from "date-fns";
+import CareersHeader from "@/components/careers/CareersHeader";
+import CareersFooter from "@/components/careers/CareersFooter";
 
 // Define simplified application form schema for inline application
 const applicationSchema = z.object({
@@ -173,274 +175,280 @@ export default function JobDetail() {
   }
 
   return (
-    <div className="container mx-auto py-12 px-4 md:px-6">
-      {/* Back button */}
-      <Button 
-        variant="ghost" 
-        onClick={goBack} 
-        className="mb-6 flex items-center gap-2 hover:bg-transparent hover:text-primary"
-      >
-        <ArrowLeftIcon size={16} />
-        Back to Jobs
-      </Button>
+    <div className="flex flex-col min-h-screen">
+      <CareersHeader />
+      <main className="flex-grow">
+        <div className="container mx-auto py-12 px-4 md:px-6">
+          {/* Back button */}
+          <Button 
+            variant="ghost" 
+            onClick={goBack} 
+            className="mb-6 flex items-center gap-2 hover:bg-transparent hover:text-primary"
+          >
+            <ArrowLeftIcon size={16} />
+            Back to Jobs
+          </Button>
 
-      {/* Job Header */}
-      <div className="flex flex-col md:flex-row justify-between gap-6 mb-8">
-        <div>
-          <h1 className="text-3xl font-bold mb-2">{job.title}</h1>
-          <div className="flex flex-wrap items-center gap-2 text-muted-foreground">
-            <div className="flex items-center">
-              <Building className="h-4 w-4 mr-1" />
-              <span>{job.company}</span>
-            </div>
-            <span>•</span>
-            <div className="flex items-center">
-              <MapPin className="h-4 w-4 mr-1" />
-              <span>{job.location}</span>
-            </div>
-            <span>•</span>
-            <div className="flex items-center">
-              <Briefcase className="h-4 w-4 mr-1" />
-              <span className="capitalize">{job.jobType}</span>
-            </div>
-            {job.featured && (
-              <>
-                <span>•</span>
-                <Badge className="bg-amber-500 hover:bg-amber-600">Featured</Badge>
-              </>
-            )}
-          </div>
-        </div>
-        <div className="flex items-start">
-          {hasApplied ? (
-            <Button disabled variant="outline" size="lg" className="gap-2">
-              <CheckCircle className="h-4 w-4" />
-              Applied {applicationDate ? `on ${applicationDate}` : ''}
-            </Button>
-          ) : (
-            <Button onClick={handleApply} size="lg">Apply Now</Button>
-          )}
-        </div>
-      </div>
-
-      {/* Main Content */}
-      <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
-        {/* Left Column: Job Details */}
-        <div className="lg:col-span-2 space-y-8">
-          {/* Job Description */}
-          <Card>
-            <CardHeader>
-              <CardTitle>Job Description</CardTitle>
-            </CardHeader>
-            <CardContent>
-              <div className="prose dark:prose-invert max-w-none">
-                <p>{job.description}</p>
-              </div>
-            </CardContent>
-          </Card>
-
-          {/* Requirements */}
-          <Card>
-            <CardHeader>
-              <CardTitle>Requirements</CardTitle>
-            </CardHeader>
-            <CardContent>
-              <div className="prose dark:prose-invert max-w-none">
-                <p>{job.requirements}</p>
-              </div>
-            </CardContent>
-          </Card>
-
-          {/* Benefits */}
-          {job.benefits && (
-            <Card>
-              <CardHeader>
-                <CardTitle>Benefits</CardTitle>
-              </CardHeader>
-              <CardContent>
-                <div className="prose dark:prose-invert max-w-none">
-                  <p>{job.benefits}</p>
+          {/* Job Header */}
+          <div className="flex flex-col md:flex-row justify-between gap-6 mb-8">
+            <div>
+              <h1 className="text-3xl font-bold mb-2">{job.title}</h1>
+              <div className="flex flex-wrap items-center gap-2 text-muted-foreground">
+                <div className="flex items-center">
+                  <Building className="h-4 w-4 mr-1" />
+                  <span>{job.company}</span>
                 </div>
-              </CardContent>
-            </Card>
-          )}
-        </div>
-
-        {/* Right Column: Job Summary */}
-        <div className="space-y-6">
-          <Card>
-            <CardHeader>
-              <CardTitle>Job Summary</CardTitle>
-            </CardHeader>
-            <CardContent className="space-y-4">
-              <div>
-                <p className="text-sm font-medium mb-1">Location</p>
-                <div className="flex items-center text-muted-foreground">
-                  <MapPin className="h-4 w-4 mr-2" />
+                <span>•</span>
+                <div className="flex items-center">
+                  <MapPin className="h-4 w-4 mr-1" />
                   <span>{job.location}</span>
                 </div>
-              </div>
-              
-              <div>
-                <p className="text-sm font-medium mb-1">Job Type</p>
-                <div className="flex items-center text-muted-foreground">
-                  <Briefcase className="h-4 w-4 mr-2" />
+                <span>•</span>
+                <div className="flex items-center">
+                  <Briefcase className="h-4 w-4 mr-1" />
                   <span className="capitalize">{job.jobType}</span>
                 </div>
+                {job.featured && (
+                  <>
+                    <span>•</span>
+                    <Badge className="bg-amber-500 hover:bg-amber-600">Featured</Badge>
+                  </>
+                )}
               </div>
-              
-              <div>
-                <p className="text-sm font-medium mb-1">Experience Level</p>
-                <div className="flex items-center text-muted-foreground">
-                  <Award className="h-4 w-4 mr-2" />
-                  <span className="capitalize">{job.experienceLevel}</span>
-                </div>
-              </div>
-              
-              <div>
-                <p className="text-sm font-medium mb-1">Salary Range</p>
-                <div className="flex items-center text-muted-foreground">
-                  <span>{job.salary || "Competitive"}</span>
-                </div>
-              </div>
-              
-              <div>
-                <p className="text-sm font-medium mb-1">Category</p>
-                <div className="flex items-center text-muted-foreground">
-                  <span className="capitalize">{job.category}</span>
-                </div>
-              </div>
-              
-              <div>
-                <p className="text-sm font-medium mb-1">Posted On</p>
-                <div className="flex items-center text-muted-foreground">
-                  <Calendar className="h-4 w-4 mr-2" />
-                  <span>Recently</span>
-                </div>
-              </div>
-            </CardContent>
-            <CardFooter>
+            </div>
+            <div className="flex items-start">
               {hasApplied ? (
-                <Button disabled variant="outline" className="w-full gap-2">
+                <Button disabled variant="outline" size="lg" className="gap-2">
                   <CheckCircle className="h-4 w-4" />
                   Applied {applicationDate ? `on ${applicationDate}` : ''}
                 </Button>
               ) : (
-                <Button onClick={handleApply} className="w-full">Apply for this position</Button>
+                <Button onClick={handleApply} size="lg">Apply Now</Button>
               )}
-            </CardFooter>
-          </Card>
+            </div>
+          </div>
 
-          {/* Skills */}
-          {job.skills && (
-            <Card>
-              <CardHeader>
-                <CardTitle>Skills</CardTitle>
-              </CardHeader>
-              <CardContent>
-                <div className="flex flex-wrap gap-2">
-                  {job.skills.split(',').map((skill, index) => (
-                    <Badge key={index} variant="outline" className="bg-primary/5">
-                      {skill.trim()}
-                    </Badge>
-                  ))}
-                </div>
-              </CardContent>
-            </Card>
-          )}
-        </div>
-      </div>
+          {/* Main Content */}
+          <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
+            {/* Left Column: Job Details */}
+            <div className="lg:col-span-2 space-y-8">
+              {/* Job Description */}
+              <Card>
+                <CardHeader>
+                  <CardTitle>Job Description</CardTitle>
+                </CardHeader>
+                <CardContent>
+                  <div className="prose dark:prose-invert max-w-none">
+                    <p>{job.description}</p>
+                  </div>
+                </CardContent>
+              </Card>
 
-      {/* Application Dialog */}
-      <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
-        <DialogContent className="sm:max-w-[500px]">
-          <DialogHeader>
-            <DialogTitle>Easy Apply - {job.title}</DialogTitle>
-            <DialogDescription>
-              Apply quickly using your profile information.
-            </DialogDescription>
-          </DialogHeader>
-          
-          <div className="space-y-4 my-2">
-            {/* User Information */}
-            <div className="grid grid-cols-2 gap-4">
-              <div>
-                <label className="text-sm font-medium mb-1 block">Name</label>
-                <Input 
-                  value={user?.fullName || user?.username || ""}
-                  disabled
-                  className="bg-muted/50"
-                />
-              </div>
-              <div>
-                <label className="text-sm font-medium mb-1 block">Email</label>
-                <Input 
-                  value={user?.email || ""}
-                  disabled
-                  className="bg-muted/50"
-                />
-              </div>
+              {/* Requirements */}
+              <Card>
+                <CardHeader>
+                  <CardTitle>Requirements</CardTitle>
+                </CardHeader>
+                <CardContent>
+                  <div className="prose dark:prose-invert max-w-none">
+                    <p>{job.requirements}</p>
+                  </div>
+                </CardContent>
+              </Card>
+
+              {/* Benefits */}
+              {job.benefits && (
+                <Card>
+                  <CardHeader>
+                    <CardTitle>Benefits</CardTitle>
+                  </CardHeader>
+                  <CardContent>
+                    <div className="prose dark:prose-invert max-w-none">
+                      <p>{job.benefits}</p>
+                    </div>
+                  </CardContent>
+                </Card>
+              )}
             </div>
 
-            {/* Resume Link */}
-            {user?.resumeUrl && (
-              <div>
-                <label className="text-sm font-medium mb-1 block">Resume</label>
-                <div className="flex items-center gap-2 p-2 border rounded-md bg-muted/20">
-                  <FileText className="h-4 w-4 text-primary" />
-                  <span className="text-sm truncate flex-1">{user.resumeUrl.split('/').pop()}</span>
-                  <Button variant="outline" size="sm" asChild>
-                    <a href={user.resumeUrl} target="_blank" rel="noopener noreferrer" className="flex items-center gap-1">
-                      <ExternalLink className="h-3 w-3" />
-                      View
-                    </a>
-                  </Button>
-                </div>
-              </div>
-            )}
-
-            {/* Application Form */}
-            <Form {...form}>
-              <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
-                <FormField
-                  control={form.control}
-                  name="note"
-                  render={({ field }) => (
-                    <FormItem>
-                      <FormLabel>Cover Letter / Note *</FormLabel>
-                      <FormControl>
-                        <Textarea 
-                          {...field} 
-                          placeholder="Tell us why you're interested in this position and how your experience makes you a great fit."
-                          className="min-h-[120px]"
-                        />
-                      </FormControl>
-                      <FormMessage />
-                    </FormItem>
+            {/* Right Column: Job Summary */}
+            <div className="space-y-6">
+              <Card>
+                <CardHeader>
+                  <CardTitle>Job Summary</CardTitle>
+                </CardHeader>
+                <CardContent className="space-y-4">
+                  <div>
+                    <p className="text-sm font-medium mb-1">Location</p>
+                    <div className="flex items-center text-muted-foreground">
+                      <MapPin className="h-4 w-4 mr-2" />
+                      <span>{job.location}</span>
+                    </div>
+                  </div>
+                  
+                  <div>
+                    <p className="text-sm font-medium mb-1">Job Type</p>
+                    <div className="flex items-center text-muted-foreground">
+                      <Briefcase className="h-4 w-4 mr-2" />
+                      <span className="capitalize">{job.jobType}</span>
+                    </div>
+                  </div>
+                  
+                  <div>
+                    <p className="text-sm font-medium mb-1">Experience Level</p>
+                    <div className="flex items-center text-muted-foreground">
+                      <Award className="h-4 w-4 mr-2" />
+                      <span className="capitalize">{job.experienceLevel}</span>
+                    </div>
+                  </div>
+                  
+                  <div>
+                    <p className="text-sm font-medium mb-1">Salary Range</p>
+                    <div className="flex items-center text-muted-foreground">
+                      <span>{job.salary || "Competitive"}</span>
+                    </div>
+                  </div>
+                  
+                  <div>
+                    <p className="text-sm font-medium mb-1">Category</p>
+                    <div className="flex items-center text-muted-foreground">
+                      <span className="capitalize">{job.category}</span>
+                    </div>
+                  </div>
+                  
+                  <div>
+                    <p className="text-sm font-medium mb-1">Posted On</p>
+                    <div className="flex items-center text-muted-foreground">
+                      <Calendar className="h-4 w-4 mr-2" />
+                      <span>Recently</span>
+                    </div>
+                  </div>
+                </CardContent>
+                <CardFooter>
+                  {hasApplied ? (
+                    <Button disabled variant="outline" className="w-full gap-2">
+                      <CheckCircle className="h-4 w-4" />
+                      Applied {applicationDate ? `on ${applicationDate}` : ''}
+                    </Button>
+                  ) : (
+                    <Button onClick={handleApply} className="w-full">Apply for this position</Button>
                   )}
-                />
-                
-                <div className="flex justify-end gap-2 pt-2">
-                  <DialogClose asChild>
-                    <Button type="button" variant="outline">Cancel</Button>
-                  </DialogClose>
-                  <Button 
-                    type="submit" 
-                    disabled={applyMutation.isPending}
-                  >
-                    {applyMutation.isPending ? (
-                      <>
-                        <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                        Submitting...
-                      </>
-                    ) : "Submit Application"}
-                  </Button>
-                </div>
-              </form>
-            </Form>
+                </CardFooter>
+              </Card>
+
+              {/* Skills */}
+              {job.skills && (
+                <Card>
+                  <CardHeader>
+                    <CardTitle>Skills</CardTitle>
+                  </CardHeader>
+                  <CardContent>
+                    <div className="flex flex-wrap gap-2">
+                      {job.skills.split(',').map((skill, index) => (
+                        <Badge key={index} variant="outline" className="bg-primary/5">
+                          {skill.trim()}
+                        </Badge>
+                      ))}
+                    </div>
+                  </CardContent>
+                </Card>
+              )}
+            </div>
           </div>
-        </DialogContent>
-      </Dialog>
+
+          {/* Application Dialog */}
+          <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
+            <DialogContent className="sm:max-w-[500px]">
+              <DialogHeader>
+                <DialogTitle>Easy Apply - {job.title}</DialogTitle>
+                <DialogDescription>
+                  Apply quickly using your profile information.
+                </DialogDescription>
+              </DialogHeader>
+              
+              <div className="space-y-4 my-2">
+                {/* User Information */}
+                <div className="grid grid-cols-2 gap-4">
+                  <div>
+                    <label className="text-sm font-medium mb-1 block">Name</label>
+                    <Input 
+                      value={user?.fullName || user?.username || ""}
+                      disabled
+                      className="bg-muted/50"
+                    />
+                  </div>
+                  <div>
+                    <label className="text-sm font-medium mb-1 block">Email</label>
+                    <Input 
+                      value={user?.email || ""}
+                      disabled
+                      className="bg-muted/50"
+                    />
+                  </div>
+                </div>
+
+                {/* Resume Link */}
+                {user?.resumeUrl && (
+                  <div>
+                    <label className="text-sm font-medium mb-1 block">Resume</label>
+                    <div className="flex items-center gap-2 p-2 border rounded-md bg-muted/20">
+                      <FileText className="h-4 w-4 text-primary" />
+                      <span className="text-sm truncate flex-1">{user.resumeUrl.split('/').pop()}</span>
+                      <Button variant="outline" size="sm" asChild>
+                        <a href={user.resumeUrl} target="_blank" rel="noopener noreferrer" className="flex items-center gap-1">
+                          <ExternalLink className="h-3 w-3" />
+                          View
+                        </a>
+                      </Button>
+                    </div>
+                  </div>
+                )}
+
+                {/* Application Form */}
+                <Form {...form}>
+                  <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
+                    <FormField
+                      control={form.control}
+                      name="note"
+                      render={({ field }) => (
+                        <FormItem>
+                          <FormLabel>Cover Letter / Note *</FormLabel>
+                          <FormControl>
+                            <Textarea 
+                              {...field} 
+                              placeholder="Tell us why you're interested in this position and how your experience makes you a great fit."
+                              className="min-h-[120px]"
+                            />
+                          </FormControl>
+                          <FormMessage />
+                        </FormItem>
+                      )}
+                    />
+                    
+                    <div className="flex justify-end gap-2 pt-2">
+                      <DialogClose asChild>
+                        <Button type="button" variant="outline">Cancel</Button>
+                      </DialogClose>
+                      <Button 
+                        type="submit" 
+                        disabled={applyMutation.isPending}
+                      >
+                        {applyMutation.isPending ? (
+                          <>
+                            <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                            Submitting...
+                          </>
+                        ) : "Submit Application"}
+                      </Button>
+                    </div>
+                  </form>
+                </Form>
+              </div>
+            </DialogContent>
+          </Dialog>
+        </div>
+      </main>
+      <CareersFooter />
     </div>
   );
 }
