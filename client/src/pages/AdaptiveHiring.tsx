@@ -1190,12 +1190,12 @@ const AdaptiveHiring = () => {
                       onClick={() => setActiveTab(index)}
                       className={`flex items-center gap-2 px-6 py-3 rounded-full transition-colors ${
                         activeTab === index 
-                          ? 'bg-green-900 text-white' 
-                          : 'bg-white text-green-800 border border-green-200 hover:bg-green-50'
+                          ? 'bg-[#2C5F2C] text-white' 
+                          : 'bg-white text-[#2C5F2C] border border-[#2C5F2C]/20 hover:bg-[#2C5F2C]/5'
                       }`}
                     >
-                      <div className={activeTab === index ? 'bg-white/20 p-1.5 rounded-full' : 'bg-green-100 p-1.5 rounded-full'}>
-                        <div className={`h-4 w-4 ${activeTab === index ? 'text-white' : 'text-green-800'}`}>
+                      <div className={activeTab === index ? 'bg-white/20 p-1.5 rounded-full' : 'bg-[#2C5F2C]/10 p-1.5 rounded-full'}>
+                        <div className={`h-4 w-4 ${activeTab === index ? 'text-white' : 'text-[#2C5F2C]'}`}>
                           {tab.icon}
                         </div>
                       </div>
@@ -1208,7 +1208,7 @@ const AdaptiveHiring = () => {
                 <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
                   {/* Left Column - Interactive Map */}
                   <div className="relative">
-                    <div className="rounded-lg overflow-hidden bg-green-100">
+                    <div className="rounded-lg overflow-hidden bg-[#2C5F2C]/5">
                       <div className="relative pt-[75%]"> {/* 4:3 Aspect Ratio */}
                         <div className="absolute inset-0 bg-[url('/world-dots-map.svg')] bg-no-repeat bg-center bg-contain p-8">
                           
@@ -1289,8 +1289,8 @@ const AdaptiveHiring = () => {
                     <div className="space-y-4">
                       {tabContents[activeTab].benefits.map((benefit, index) => (
                         <div key={index} className="flex items-start gap-3">
-                          <div className="h-6 w-6 bg-green-100 rounded-full flex items-center justify-center mt-1">
-                            <CheckCircle2 className="h-4 w-4 text-green-600" />
+                          <div className="h-6 w-6 bg-[#2C5F2C]/10 rounded-full flex items-center justify-center mt-1">
+                            <CheckCircle2 className="h-4 w-4 text-[#2C5F2C]" />
                           </div>
                           <p className="text-andela-gray">{benefit}</p>
                         </div>
