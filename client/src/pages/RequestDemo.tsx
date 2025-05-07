@@ -197,7 +197,7 @@ export default function RequestDemo() {
                 </p>
               )}
               <p className="text-sm mt-2">
-                Request submitted on {format(new Date(request.createdAt), "PPP")}
+                Request submitted on {request.createdAt ? format(new Date(request.createdAt), "PPP") : ""}
               </p>
             </AlertDescription>
           </Alert>
