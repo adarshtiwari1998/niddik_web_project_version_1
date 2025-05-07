@@ -62,14 +62,13 @@ export default function CandidateLayout({ children, activeTab = "" }: CandidateL
         <div className="container flex h-16 items-center justify-between py-4">
           <div className="flex items-center gap-4">
             <Link href="/" className="flex flex-col items-start">
-              <div className="flex flex-col">
+              <div>
                 <img 
                   src="/images/niddik_logo.png" 
-                  alt="Niddik Logo" 
-                  className="h-14 w-auto mb-1" 
-                  style={{ objectFit: "contain" }}
+                  alt="NiDDiK Logo" 
+                  className="h-10" 
                 />
-                <span className="text-[10px] text-muted-foreground">Connecting People, Changing Lives</span>
+                <div className="text-[10px] text-muted-foreground mt-1">Connecting People, Changing Lives</div>
               </div>
             </Link>
             <span className="text-sm text-muted-foreground border-l pl-4">Candidate Portal</span>
@@ -124,14 +123,13 @@ export default function CandidateLayout({ children, activeTab = "" }: CandidateL
                 <div className="flex flex-col h-full">
                   <div className="px-2 py-4 border-b">
                     <div className="flex flex-col mb-4">
-                      <div className="flex flex-col">
+                      <div className="mx-auto">
                         <img 
                           src="/images/niddik_logo.png" 
-                          alt="Niddik Logo" 
-                          className="h-10 w-auto mb-1 mx-auto" 
-                          style={{ objectFit: "contain" }}
+                          alt="NiDDiK Logo" 
+                          className="h-10" 
                         />
-                        <span className="text-[9px] text-muted-foreground text-center">Connecting People, Changing Lives</span>
+                        <div className="text-[10px] text-muted-foreground mt-1 text-center">Connecting People, Changing Lives</div>
                       </div>
                     </div>
                     <div className="flex items-center gap-3">
@@ -245,7 +243,7 @@ export default function CandidateLayout({ children, activeTab = "" }: CandidateL
       <footer className="border-t py-6 bg-background">
         <div className="container flex flex-col md:flex-row items-center justify-between gap-4">
           <div className="text-sm text-muted-foreground">
-            © 2025 Niddik. All rights reserved.
+            © 2025 NiDDiK. All rights reserved.
           </div>
           <div className="flex items-center gap-4">
             <Link href="/terms">
