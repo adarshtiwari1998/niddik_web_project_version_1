@@ -641,56 +641,9 @@ const AdaptiveHiring = () => {
             Common use cases for Adaptive Hiring
           </h2>
 
-          <div className="flex flex-col lg:flex-row gap-10">
-            {/* Left column with accordion */}
-            <div className="w-full lg:w-[45%]">
-              <BasicAccordion />
-            </div>
-
-            {/* Right column with dashboard-style cards */}
-            <div className="w-full lg:w-[55%]">
-              <div className="h-full flex flex-col justify-center">
-                {/* First card - Sprint progress */}
-                <div className="bg-white rounded-xl shadow-sm p-6 mb-6">
-                  <div className="flex items-center justify-between mb-4">
-                    <div className="flex items-center">
-                      <div className="w-6 h-6 rounded-full bg-green-500 mr-3"></div>
-                      <h3 className="text-lg font-medium">Current Sprint</h3>
-                    </div>
-                    <span className="bg-green-100 text-green-700 px-3 py-1 rounded-full text-sm font-medium">
-                      Active
-                    </span>
-                  </div>
-                  
-                  <div className="w-full h-2 bg-gray-100 rounded-full mb-3">
-                    <div className="h-2 bg-green-500 rounded-full" style={{ width: "75%" }}></div>
-                  </div>
-                  
-                  <div className="flex justify-between text-gray-600">
-                    <span>Week 2 of 3</span>
-                    <span>75% Complete</span>
-                  </div>
-                </div>
-
-                {/* Second card - Team velocity */}
-                <div className="bg-white rounded-xl shadow-sm p-6">
-                  <div className="flex items-center mb-5">
-                    <div className="w-6 h-6 rounded-full bg-blue-500 mr-3"></div>
-                    <h3 className="text-lg font-medium">Team Velocity</h3>
-                  </div>
-                  
-                  <div className="flex items-center">
-                    <div className="w-32 h-32 rounded-full border-[15px] border-blue-100 flex items-center justify-center">
-                      <span className="text-3xl font-bold text-blue-500">92%</span>
-                    </div>
-                    <div className="ml-6">
-                      <h4 className="text-lg font-medium">Efficiency</h4>
-                      <p className="text-gray-500">Above target</p>
-                    </div>
-                  </div>
-                </div>
-              </div>
-            </div>
+          {/* Accordion with integrated graphics for each tab */}
+          <div className="w-full max-w-4xl mx-auto">
+            <BasicAccordion />
           </div>
         </Container>
       </section>
