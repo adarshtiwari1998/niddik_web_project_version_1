@@ -86,11 +86,11 @@ const Navbar: React.FC<NavbarProps> = ({ hasAnnouncementAbove = true }) => {
         <div className="flex justify-between items-center py-4">
           {/* Logo with slogan */}
           <div className="flex-shrink-0">
-            <div className="text-center">
+            <div>
               <Link href="/" className="block">
                 <Logo className="h-10" />
               </Link>
-              <p className="text-gray-500 mt-1" style={{fontSize: "11px"}}>Connecting People, Changing Lives</p>
+              <p className="text-gray-500 mt-1" style={{fontSize: "11px", marginTop: "1px"}}>Connecting People, Changing Lives</p>
             </div>
           </div>
 
@@ -158,11 +158,11 @@ const Navbar: React.FC<NavbarProps> = ({ hasAnnouncementAbove = true }) => {
       )}>
         <div className="flex justify-between items-center mb-8">
           <div className="flex flex-col">
-            <div className="text-center">
+            <div>
               <Link href="/" onClick={() => setIsMobileMenuOpen(false)}>
                 <Logo className="h-8" />
               </Link>
-              <p className="text-gray-500 mt-1" style={{fontSize: "11px"}}>Connecting People, Changing Lives</p>
+              <p className="text-gray-500 mt-1" style={{fontSize: "11px", marginTop: "1px"}}>Connecting People, Changing Lives</p>
             </div>
           </div>
           <button 
