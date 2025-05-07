@@ -85,6 +85,7 @@ export default function JobDetail() {
           jobId: jobId,
           coverLetter: data.note,
           resumeUrl: user.resumeUrl,
+          skills: user.skills || job.skills || '', // Use user skills if available, otherwise job skills or empty string
         };
         
         const response = await apiRequest("POST", "/api/job-applications", applicationData);
