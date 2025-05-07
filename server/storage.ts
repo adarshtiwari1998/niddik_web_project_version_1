@@ -92,15 +92,15 @@ export const storage = {
       );
     }
 
-    if (category) {
+    if (category && category !== 'all_categories') {
       whereConditions.push(eq(jobListings.category, category));
     }
 
-    if (experienceLevel) {
+    if (experienceLevel && experienceLevel !== 'all_levels') {
       whereConditions.push(eq(jobListings.experienceLevel, experienceLevel));
     }
 
-    if (jobType) {
+    if (jobType && jobType !== 'all_types') {
       whereConditions.push(eq(jobListings.jobType, jobType));
     }
 

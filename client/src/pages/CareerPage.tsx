@@ -178,11 +178,7 @@ export default function CareerPage() {
                   <div className="flex items-center">
                     <Clock className="h-4 w-4 mr-2" />
                     <span>
-                      {job.createdAt ? new Date(job.createdAt).toLocaleDateString('en-US', {
-                        month: 'short',
-                        day: 'numeric',
-                        year: 'numeric'
-                      }) : 'Recently added'}
+                      Recently added
                     </span>
                   </div>
                 </div>

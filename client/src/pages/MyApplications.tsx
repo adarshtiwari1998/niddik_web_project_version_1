@@ -99,7 +99,7 @@ export default function MyApplications() {
                   <div className="flex items-center">
                     <Calendar className="h-4 w-4 mr-2 text-muted-foreground" />
                     <span>
-                      Applied on {new Date(application.appliedDate).toLocaleDateString('en-US', {
+                      Applied on {new Date(application.appliedDate || new Date()).toLocaleDateString('en-US', {
                         month: 'short',
                         day: 'numeric',
                         year: 'numeric'
