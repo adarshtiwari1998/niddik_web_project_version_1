@@ -143,9 +143,9 @@ const Navbar: React.FC<NavbarProps> = ({ hasAnnouncementAbove = true }) => {
               </div>
               <div className="absolute left-0 mt-2 w-52 rounded-lg shadow-xl bg-white p-4 opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-300 transform origin-top-left z-50">
                 <div className="block py-2 hover:text-andela-green transition-colors">
-                  <a href="/admin">
+                  <Link href="/admin">
                     Sign in as Admin/Member
-                  </a>
+                  </Link>
                 </div>
                 <div className="block py-2 hover:text-andela-green transition-colors">
                   <Link href="/auth">
@@ -269,12 +269,13 @@ const Navbar: React.FC<NavbarProps> = ({ hasAnnouncementAbove = true }) => {
               {mobileDropdown === 99 && (
                 <div className="ml-4 space-y-2 py-2">
                   <div className="py-1">
-                    <a 
+                    <Link 
                       href="/admin"
                       className="text-andela-gray hover:text-andela-green transition-colors"
+                      onClick={() => setIsMobileMenuOpen(false)}
                     >
                       Sign in as Admin/Member
-                    </a>
+                    </Link>
                   </div>
                   <div className="py-1">
                     <Link 
