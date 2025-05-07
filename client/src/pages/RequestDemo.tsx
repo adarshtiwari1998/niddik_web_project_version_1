@@ -35,14 +35,14 @@ import Navbar from "@/components/layout/Navbar";
 import Footer from "@/components/layout/Footer";
 import AnnouncementBar from "@/components/layout/AnnouncementBar";
 
-// Client-side validation schema
+// Client-side validation schema matching server schema
 const formSchema = z.object({
   workEmail: z.string().email("Please enter a valid work email"),
   phoneNumber: z.string().min(5, "Phone number is required"),
   message: z.string().optional(),
-  companyName: z.string().min(1, "Company name is required"),
-  fullName: z.string().min(1, "Full name is required"),
-  jobTitle: z.string().min(1, "Job title is required"),
+  companyName: z.string().optional(),
+  fullName: z.string().optional(),
+  jobTitle: z.string().optional(),
   acceptedTerms: z.boolean().refine(val => val === true, {
     message: "You must accept the terms and conditions"
   }),
