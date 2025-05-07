@@ -18,6 +18,7 @@ import JobDetail from "@/pages/JobDetail";
 import MyApplications from "@/pages/MyApplications";
 
 // Admin Pages
+import AdminLogin from "@/pages/admin/AdminLogin";
 import AdminDashboard from "@/pages/admin/AdminDashboard";
 import JobListings from "@/pages/admin/JobListings";
 import JobForm from "@/pages/admin/JobForm";
@@ -51,12 +52,13 @@ function Router() {
       
       {/* Auth Routes */}
       <Route path="/auth" component={AuthPage} />
+      <Route path="/admin/login" component={AdminLogin} />
       
-      {/* Admin Routes */}
-      <ProtectedRoute path="/admin" component={AdminDashboard} />
-      <ProtectedRoute path="/admin/jobs" component={JobListings} />
-      <ProtectedRoute path="/admin/jobs/new" component={JobForm} />
-      <ProtectedRoute path="/admin/jobs/:id/edit" component={JobForm} />
+      {/* Admin Routes - Require admin role */}
+      <ProtectedRoute path="/admin" component={AdminDashboard} requiredRole="admin" />
+      <ProtectedRoute path="/admin/jobs" component={JobListings} requiredRole="admin" />
+      <ProtectedRoute path="/admin/jobs/new" component={JobForm} requiredRole="admin" />
+      <ProtectedRoute path="/admin/jobs/:id/edit" component={JobForm} requiredRole="admin" />
       
       {/* 404 - Not Found */}
       <Route component={NotFound} />
