@@ -225,24 +225,24 @@ export default function RequestDemo() {
       
       {/* Add minimal padding to account for fixed elements */}
       <div className={`${isAnnouncementVisible ? 'pt-28' : 'pt-20'} transition-all duration-300`}>
-        <main className="py-12 bg-gray-50">
+        <main className="py-16" style={{ backgroundColor: "#e0f0eb", backgroundImage: "url('data:image/svg+xml,%3Csvg width='100%25' height='100%25' xmlns='http://www.w3.org/2000/svg'%3E%3Cdefs%3E%3Cpattern id='circles' width='40' height='40' patternUnits='userSpaceOnUse' patternTransform='rotate(45)'%3E%3Ccircle cx='20' cy='20' r='15' fill='none' stroke='%23ccecde' stroke-width='1'/%3E%3C/pattern%3E%3C/defs%3E%3Crect width='100%25' height='100%25' fill='%23e0f0eb'/%3E%3Crect width='100%25' height='100%25' fill='url(%23circles)'/%3E%3C/svg%3E')" }}>
           <Container>
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-10 items-start">
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-16 items-start">
               {/* Left Column - Content and Stats */}
-              <div className="pr-6">
+              <div className="pl-4 pr-10 py-6">
                 <h1 className="text-4xl font-bold mb-6">Request A Demo</h1>
                 <p className="text-lg text-gray-600 mb-8">
                   Experience the future of global tech hiring with a personalized demo of Niddik Talent Cloud. Our AI-powered platform streamlines everything from sourcing to payouts, helping you build high-performing, borderless tech teams with ease.
                 </p>
                 
-                <div className="grid grid-cols-1 md:grid-cols-3 gap-4 my-10">
+                <div className="grid grid-cols-1 md:grid-cols-3 gap-8 my-14">
                   <StatBox value="150K" label="Top rated," sublabel="highly skilled global talent" />
                   <StatBox value="33%" label="Faster project" sublabel="delivery" />
                   <StatBox value="66%" label="Faster time" sublabel="to hire" />
                 </div>
                 
-                <div className="mt-12 flex items-center space-x-4">
-                  <img src="/images/g2_badges.png" alt="Award Badges" className="h-24" 
+                <div className="mt-16 flex flex-wrap justify-center md:justify-start gap-4">
+                  <img src="/images/g2_badges.png" alt="Award Badges" className="h-20" 
                        onError={(e) => {
                          e.currentTarget.onerror = null;
                          e.currentTarget.style.display = 'none';
@@ -250,14 +250,26 @@ export default function RequestDemo() {
                          if (container) {
                            container.innerHTML = `
                              <div class="flex space-x-4">
-                               <div class="p-4 bg-white rounded-full shadow-md">
-                                 <Award className="h-10 w-10 text-red-500" />
+                               <div class="flex flex-col items-center">
+                                 <div class="p-3 bg-white rounded-full shadow-md">
+                                   <Award className="h-8 w-8 text-red-500" />
+                                 </div>
+                                 <div class="text-xs font-semibold mt-1">Leader</div>
+                                 <div class="text-[10px] text-gray-500">FALL 2023</div>
                                </div>
-                               <div class="p-4 bg-white rounded-full shadow-md">
-                                 <Award className="h-10 w-10 text-purple-500" />
+                               <div class="flex flex-col items-center">
+                                 <div class="p-3 bg-white rounded-full shadow-md">
+                                   <Award className="h-8 w-8 text-purple-500" />
+                                 </div>
+                                 <div class="text-xs font-semibold mt-1">Leader</div>
+                                 <div class="text-[10px] text-gray-500">FALL 2023</div>
                                </div>
-                               <div class="p-4 bg-white rounded-full shadow-md">
-                                 <Award className="h-10 w-10 text-orange-500" />
+                               <div class="flex flex-col items-center">
+                                 <div class="p-3 bg-white rounded-full shadow-md">
+                                   <Award className="h-8 w-8 text-orange-500" />
+                                 </div>
+                                 <div class="text-xs font-semibold mt-1">Leader</div>
+                                 <div class="text-[10px] text-gray-500">2024</div>
                                </div>
                              </div>
                            `;
@@ -269,102 +281,58 @@ export default function RequestDemo() {
               </div>
               
               {/* Right Column - Form */}
-              <div>
+              <div className="md:pl-10">
                 {(checkEmail && existingRequest) ? (
                   renderRequestStatus()
                 ) : (
-                  <Card className="w-full border shadow-lg">
-                    <CardHeader>
-                      <CardTitle>Request Demo</CardTitle>
-                      <CardDescription>
-                        Fill out the form below to request a personalized demo
-                      </CardDescription>
-                    </CardHeader>
-                    <CardContent>
+                  <Card className="w-full border shadow-xl bg-white">
+                    <CardContent className="pt-8 px-8">
                       <Form {...form}>
                         <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-5">
-                          <div className="grid grid-cols-1 sm:grid-cols-2 gap-5">
-                            <FormField
-                              control={form.control}
-                              name="fullName"
-                              render={({ field }) => (
-                                <FormItem>
-                                  <FormLabel>Full Name</FormLabel>
-                                  <FormControl>
-                                    <Input placeholder="John Smith" {...field} />
-                                  </FormControl>
-                                  <FormMessage />
-                                </FormItem>
-                              )}
-                            />
-                            <FormField
-                              control={form.control}
-                              name="jobTitle"
-                              render={({ field }) => (
-                                <FormItem>
-                                  <FormLabel>Job Title</FormLabel>
-                                  <FormControl>
-                                    <Input placeholder="HR Manager" {...field} />
-                                  </FormControl>
-                                  <FormMessage />
-                                </FormItem>
-                              )}
-                            />
-                          </div>
-
                           <FormField
                             control={form.control}
-                            name="companyName"
+                            name="workEmail"
                             render={({ field }) => (
                               <FormItem>
-                                <FormLabel>Company Name</FormLabel>
+                                <FormLabel className="flex gap-1 text-sm font-medium">
+                                  WORK EMAIL: <span className="text-red-500">*</span>
+                                </FormLabel>
                                 <FormControl>
-                                  <Input placeholder="Acme Inc." {...field} />
+                                  <Input placeholder="john@company.com" {...field} />
                                 </FormControl>
                                 <FormMessage />
                               </FormItem>
                             )}
                           />
 
-                          <div className="grid grid-cols-1 sm:grid-cols-2 gap-5">
-                            <FormField
-                              control={form.control}
-                              name="workEmail"
-                              render={({ field }) => (
-                                <FormItem>
-                                  <FormLabel>Work Email</FormLabel>
-                                  <FormControl>
-                                    <Input placeholder="john@company.com" {...field} />
-                                  </FormControl>
-                                  <FormMessage />
-                                </FormItem>
-                              )}
-                            />
-                            <FormField
-                              control={form.control}
-                              name="phoneNumber"
-                              render={({ field }) => (
-                                <FormItem>
-                                  <FormLabel>Phone Number</FormLabel>
-                                  <FormControl>
-                                    <Input placeholder="+1 (555) 000-0000" {...field} />
-                                  </FormControl>
-                                  <FormMessage />
-                                </FormItem>
-                              )}
-                            />
-                          </div>
+                          <FormField
+                            control={form.control}
+                            name="phoneNumber"
+                            render={({ field }) => (
+                              <FormItem>
+                                <FormLabel className="flex gap-1 text-sm font-medium">
+                                  PHONE NUMBER: <span className="text-red-500">*</span>
+                                </FormLabel>
+                                <FormControl>
+                                  <Input placeholder="+1 (555) 000-0000" {...field} />
+                                </FormControl>
+                                <FormMessage />
+                              </FormItem>
+                            )}
+                          />
 
                           <FormField
                             control={form.control}
                             name="message"
                             render={({ field }) => (
                               <FormItem>
-                                <FormLabel>Message</FormLabel>
+                                <FormLabel className="flex gap-1 text-sm font-medium">
+                                  MESSAGE: <span className="text-red-500">*</span>
+                                </FormLabel>
                                 <FormControl>
                                   <Textarea
                                     placeholder="Do you have a specific goal for the Niddik demo? If there's an area you'd like us to cover, please include those details here so we can be prepared."
-                                    className="resize-none min-h-[100px]"
+                                    className="resize-none min-h-[120px]"
                                     {...field}
                                   />
                                 </FormControl>
@@ -377,7 +345,7 @@ export default function RequestDemo() {
                             control={form.control}
                             name="acceptedTerms"
                             render={({ field }) => (
-                              <FormItem className="flex flex-row items-start space-x-3 space-y-0 p-2">
+                              <FormItem className="flex flex-row items-start space-x-3 space-y-0 pt-4">
                                 <FormControl>
                                   <Checkbox
                                     checked={field.value}
@@ -385,7 +353,7 @@ export default function RequestDemo() {
                                   />
                                 </FormControl>
                                 <div className="space-y-1 leading-none">
-                                  <FormLabel>
+                                  <FormLabel className="text-xs font-normal leading-snug">
                                     I UNDERSTAND THAT NIDDIK WILL PROCESS MY INFORMATION IN ACCORDANCE WITH THEIR <a href="/terms" className="text-blue-600 underline">TERMS OF USE</a>. I MAY WITHDRAW MY CONSENT THROUGH UNSUBSCRIBE LINKS AT ANY TIME.
                                   </FormLabel>
                                 </div>
@@ -396,11 +364,48 @@ export default function RequestDemo() {
 
                           <Button
                             type="submit"
-                            className="w-full bg-green-500 hover:bg-green-600"
+                            className="w-full bg-green-500 hover:bg-green-600 text-white font-medium mt-4"
                             disabled={isPending || checkingRequest}
                           >
                             {isPending ? "Submitting..." : "Submit"}
                           </Button>
+                          
+                          {/* Hidden fields that are still validated but not shown in this form layout */}
+                          <div className="hidden">
+                            <FormField
+                              control={form.control}
+                              name="fullName"
+                              render={({ field }) => (
+                                <FormItem>
+                                  <FormControl>
+                                    <Input {...field} defaultValue="Hidden Full Name" />
+                                  </FormControl>
+                                </FormItem>
+                              )}
+                            />
+                            <FormField
+                              control={form.control}
+                              name="jobTitle"
+                              render={({ field }) => (
+                                <FormItem>
+                                  <FormControl>
+                                    <Input {...field} defaultValue="Hidden Job Title" />
+                                  </FormControl>
+                                </FormItem>
+                              )}
+                            />
+                            <FormField
+                              control={form.control}
+                              name="companyName"
+                              render={({ field }) => (
+                                <FormItem>
+                                  <FormControl>
+                                    <Input {...field} defaultValue="Hidden Company" />
+                                  </FormControl>
+                                </FormItem>
+                              )}
+                            />
+                          </div>
                         </form>
                       </Form>
                     </CardContent>
