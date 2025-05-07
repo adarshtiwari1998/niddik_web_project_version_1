@@ -230,10 +230,10 @@ const UsesCasesWithStickyImage = () => {
   };
 
   return (
-    <div className="relative" id="use-cases-container" style={{ minHeight: '1200px' }}>
+    <div>
       <h2 className="text-4xl font-bold mb-6 text-andela-dark">Common use cases for Adaptive Hiring</h2>
       
-      <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 mt-10 relative">
+      <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 mt-10">
         {/* Left side content - 6 columns wide */}
         <div className="lg:col-span-6">
           {useCases.map((useCase, index) => (
@@ -279,10 +279,10 @@ const UsesCasesWithStickyImage = () => {
           ))}
         </div>
         
-        {/* Right side sticky image - 6 columns wide with vertical center alignment */}
-        <div className="lg:col-span-6 relative">
-          <div className="lg:sticky lg:top-24 w-full h-[500px] flex items-center justify-center">
-            <div className="aspect-video w-full relative rounded-xl overflow-hidden border border-gray-200 shadow-md">
+        {/* Right side fixed image - 6 columns wide */}
+        <div className="lg:col-span-6 relative h-full">
+          <div className="lg:fixed lg:w-[calc(33.333%-2rem)] lg:top-24">
+            <div className="aspect-video relative rounded-xl overflow-hidden border border-gray-200 shadow-md">
               {renderImage()}
             </div>
           </div>
@@ -360,12 +360,12 @@ const AdaptiveHiringWorkflow = () => {
   }, []);
 
   return (
-    <div className="relative" id="adaptive-hiring-workflow">
+    <div>
       <h2 className="text-4xl font-bold mb-3 text-andela-dark">
         How Adaptive Hiring works: Bringing agile principles to tech hiring
       </h2>
       
-      <div className="relative overflow-hidden" style={{ minHeight: '1800px' }}>
+      <div className="relative">
         {/* Background container with two-column layout */}
         <div className="absolute inset-0 grid grid-cols-1 lg:grid-cols-2">
           <div className="hidden lg:block"></div> {/* Left column spacer */}
@@ -400,9 +400,9 @@ const AdaptiveHiringWorkflow = () => {
             ))}
           </div>
           
-          {/* Right Column - Fixed Visualization with containment */}
-          <div className="relative">
-            <div className="lg:sticky lg:top-24 w-full h-[500px] flex items-center justify-center pt-6 lg:pt-8 lg:pl-6">
+          {/* Right Column - Fixed Visualization */}
+          <div className="relative h-full">
+            <div className="lg:fixed lg:w-[calc(50%-3rem)] pt-6 lg:pt-8 lg:pl-6 lg:top-24">
               {/* Skills Assessment Card for Section 1 */}
               {activeSection === 1 && (
                 <div className="bg-blue-50 rounded-lg overflow-hidden pt-10 pb-10 px-8">
