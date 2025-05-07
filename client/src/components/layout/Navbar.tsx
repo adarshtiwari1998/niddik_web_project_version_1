@@ -137,13 +137,13 @@ const Navbar: React.FC<NavbarProps> = ({ hasAnnouncementAbove = true }) => {
           {/* CTA Buttons */}
           <div className="hidden lg:flex items-center space-x-4">
             <div className="hover:text-andela-green font-medium transition-colors">
-              <a href="#">Sign In</a>
+              <a href="/auth">Sign In</a>
             </div>
             <div className="bg-andela-green hover:bg-opacity-90 transition-colors text-white px-6 py-2 rounded-md font-medium">
               <a href="#" className="text-white">Hire Talent</a>
             </div>
             <div className="border border-andela-green text-andela-green hover:bg-andela-green hover:text-white transition-colors px-6 py-2 rounded-md font-medium">
-              <a href="#" className="text-andela-green hover:text-white">Apply as Talent</a>
+              <a href="/careers" className="text-andela-green hover:text-white">Apply as Talent</a>
             </div>
           </div>
 
@@ -226,13 +226,13 @@ const Navbar: React.FC<NavbarProps> = ({ hasAnnouncementAbove = true }) => {
 
           <div className="pt-4 flex flex-col space-y-3">
             <div className="font-medium">
-              <a href="#">Sign In</a>
+              <a href="/auth">Sign In</a>
             </div>
             <div className="bg-andela-green text-white px-4 py-2 rounded-md font-medium text-center">
               <a href="#" className="text-white">Hire Talent</a>
             </div>
             <div className="border border-andela-green text-andela-green px-4 py-2 rounded-md font-medium text-center">
-              <a href="#" className="text-andela-green">Apply as Talent</a>
+              <a href="/careers" className="text-andela-green">Apply as Talent</a>
             </div>
           </div>
         </nav>
