@@ -345,63 +345,31 @@ const AdaptiveHiringWorkflow = () => {
   
   // Track when component enters and exits viewport to control fixed positioning
   useEffect(() => {
-    // Options for detecting section entry at the top
-    const options = {
-      root: null,
-      rootMargin: '-80px 0px -70% 0px', // Adjust to trigger when header becomes visible
-      threshold: [0.1, 0.2, 0.3] // Multiple thresholds for better detection
+    // Simply set fixed position when scrolling past a certain point from the top
+    const handleScroll = () => {
+      const sectionElement = componentRef.current;
+      if (!sectionElement) return;
+      
+      const scrollPosition = window.scrollY;
+      const sectionStart = sectionElement.getBoundingClientRect().top + window.scrollY - 100; // Buffer
+      const sectionEnd = sectionElement.getBoundingClientRect().bottom + window.scrollY - window.innerHeight;
+      
+      // If we're scrolled past the start point but not past the end
+      if (scrollPosition >= sectionStart && scrollPosition <= sectionEnd) {
+        setIsInViewport(true);
+      } else {
+        setIsInViewport(false);
+      }
     };
     
-    // Options for detecting when we should exit fixed positioning
-    const bottomOptions = {
-      root: null, 
-      rootMargin: '0px 0px 0px 0px',
-      threshold: 0.8
-    };
-
-    // Function to handle intersection updates for the top trigger
-    const handleTopIntersection = (entries: IntersectionObserverEntry[]) => {
-      entries.forEach(entry => {
-        // If the header is intersecting, we want to fix the image
-        if (entry.target === sectionHeaderRef.current) {
-          console.log("Section header visibility:", entry.isIntersecting);
-          setIsInViewport(entry.isIntersecting);
-        }
-      });
-    };
+    // Add scroll listener
+    window.addEventListener('scroll', handleScroll);
     
-    // Function to handle intersection for bottom sentinel
-    const handleBottomIntersection = (entries: IntersectionObserverEntry[]) => {
-      entries.forEach(entry => {
-        // When bottom sentinel enters viewport, unfix the image
-        if (entry.isIntersecting) {
-          console.log("Exiting section - reaching bottom");
-          setIsInViewport(false);
-        }
-      });
-    };
-
-    // Create observers
-    const topObserver = new IntersectionObserver(handleTopIntersection, options);
-    const bottomObserver = new IntersectionObserver(handleBottomIntersection, bottomOptions);
+    // Initialize on component mount
+    handleScroll();
     
-    // Observe the section header to trigger fixed positioning
-    if (sectionHeaderRef.current) {
-      topObserver.observe(sectionHeaderRef.current);
-    }
-    
-    // Observe bottom sentinel to know when to release fixed positioning
-    if (bottomSentinelRef.current) {
-      bottomObserver.observe(bottomSentinelRef.current);
-    }
-
     return () => {
-      if (sectionHeaderRef.current) {
-        topObserver.unobserve(sectionHeaderRef.current);
-      }
-      if (bottomSentinelRef.current) {
-        bottomObserver.unobserve(bottomSentinelRef.current);
-      }
+      window.removeEventListener('scroll', handleScroll);
     };
   }, []);
 
@@ -409,23 +377,30 @@ const AdaptiveHiringWorkflow = () => {
   useEffect(() => {
     const observerOptions = {
       root: null,
-      rootMargin: '-5% 0px -30% 0px',
-      threshold: 0.2
+      rootMargin: '-40% 0px -40% 0px', // More centered in the viewport
+      threshold: [0.1, 0.2, 0.3, 0.4, 0.5] // Multiple thresholds for better detection
     };
 
     const observerCallback: IntersectionObserverCallback = (entries) => {
-      entries.forEach(entry => {
-        if (entry.isIntersecting) {
-          const index = sectionRefs.current.findIndex(section => section === entry.target);
-          if (index !== -1) {
-            setActiveSection(index);
-          }
+      // Sort entries by their intersection ratio (most visible first)
+      const visibleEntries = entries
+        .filter(entry => entry.isIntersecting)
+        .sort((a, b) => b.intersectionRatio - a.intersectionRatio);
+      
+      // Use the most visible entry
+      if (visibleEntries.length > 0) {
+        const mostVisibleEntry = visibleEntries[0];
+        const index = sectionRefs.current.findIndex(section => section === mostVisibleEntry.target);
+        if (index !== -1) {
+          console.log("Active section changed to:", index);
+          setActiveSection(index);
         }
-      });
+      }
     };
 
     const observer = new IntersectionObserver(observerCallback, observerOptions);
     
+    // Observe all content sections
     sectionRefs.current.forEach(section => {
       if (section) observer.observe(section);
     });
@@ -670,7 +645,7 @@ const AdaptiveHiringWorkflow = () => {
         {/* Content container */}
         <div className="relative grid grid-cols-1 lg:grid-cols-2 gap-0">
           {/* Left Column - Content */}
-          <div className="py-8 pr-8 space-y-40"> {/* Increased vertical spacing between sections */}
+          <div className="py-8 pr-8 space-y-64"> {/* Increased vertical spacing between sections for better detection */}
             {sections.map((section, index) => (
               <div 
                 key={section.id}
