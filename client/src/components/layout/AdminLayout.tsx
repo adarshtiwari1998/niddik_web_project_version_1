@@ -3,7 +3,7 @@ import { Link, useLocation } from "wouter";
 import { useAuth } from "@/hooks/use-auth";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { User, FileText, Settings, ChevronRight, LogOut, Shield, Loader2 } from "lucide-react";
+import { User, FileText, Settings, ChevronRight, LogOut, Shield, Loader2, CalendarClock } from "lucide-react";
 import { LoadingScreen } from "@/components/ui/loading-screen";
 
 interface AdminLayoutProps {
@@ -135,6 +135,17 @@ export default function AdminLayout({ children, title, description }: AdminLayou
                     }`}>
                       <FileText className="h-4 w-4 mr-3 text-primary" />
                       <span>Submitted Candidates</span>
+                      <ChevronRight className="h-4 w-4 ml-auto" />
+                    </div>
+                  </Link>
+                  <Link href="/admin/demo-requests">
+                    <div className={`flex items-center px-4 py-3 transition-colors cursor-pointer ${
+                      location === "/admin/demo-requests" 
+                        ? "bg-gray-100 dark:bg-gray-700" 
+                        : "hover:bg-gray-100 dark:hover:bg-gray-700"
+                    }`}>
+                      <CalendarClock className="h-4 w-4 mr-3 text-primary" />
+                      <span>Demo Requests</span>
                       <ChevronRight className="h-4 w-4 ml-auto" />
                     </div>
                   </Link>

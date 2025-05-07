@@ -139,8 +139,23 @@ const Navbar: React.FC<NavbarProps> = ({ hasAnnouncementAbove = true }) => {
             <div className="hover:text-andela-green font-medium transition-colors">
               <Link href="/auth">Sign In</Link>
             </div>
-            <div className="bg-andela-green hover:bg-opacity-90 transition-colors text-white px-6 py-2 rounded-md font-medium">
-              <Link href="#" className="text-white">Hire Talent</Link>
+            <div className="relative group">
+              <div className="bg-andela-green hover:bg-opacity-90 transition-colors text-white px-6 py-2 rounded-md font-medium flex items-center">
+                <Link href="#" className="text-white">Hire Talent</Link>
+                <ChevronDown className="ml-1 w-4 h-4 text-white" />
+              </div>
+              <div className="absolute right-0 mt-2 w-48 rounded-lg shadow-xl bg-white p-4 opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-300 transform origin-top-right z-50">
+                <div className="block py-2 hover:text-andela-green transition-colors">
+                  <Link href="/request-demo">
+                    Request Demo
+                  </Link>
+                </div>
+                <div className="block py-2 hover:text-andela-green transition-colors">
+                  <Link href="#">
+                    Contact Sales
+                  </Link>
+                </div>
+              </div>
             </div>
             <div className="border border-andela-green text-andela-green hover:bg-andela-green hover:text-white transition-colors px-6 py-2 rounded-md font-medium">
               <Link href="/careers" className="text-andela-green hover:text-white">Apply as Talent</Link>
@@ -229,7 +244,22 @@ const Navbar: React.FC<NavbarProps> = ({ hasAnnouncementAbove = true }) => {
               <Link href="/auth" onClick={() => setIsMobileMenuOpen(false)}>Sign In</Link>
             </div>
             <div className="bg-andela-green text-white px-4 py-2 rounded-md font-medium text-center">
-              <Link href="#" className="text-white" onClick={() => setIsMobileMenuOpen(false)}>Hire Talent</Link>
+              <div className="flex items-center justify-center">
+                <span>Hire Talent</span>
+                <ChevronDown className="ml-1 w-4 h-4 text-white" />
+              </div>
+              <div className="mt-2 space-y-2 bg-white rounded-md p-2">
+                <div className="text-andela-dark hover:text-andela-green transition-colors text-center">
+                  <Link href="/request-demo" onClick={() => setIsMobileMenuOpen(false)}>
+                    Request Demo
+                  </Link>
+                </div>
+                <div className="text-andela-dark hover:text-andela-green transition-colors text-center">
+                  <Link href="#" onClick={() => setIsMobileMenuOpen(false)}>
+                    Contact Sales
+                  </Link>
+                </div>
+              </div>
             </div>
             <div className="border border-andela-green text-andela-green px-4 py-2 rounded-md font-medium text-center">
               <Link href="/careers" className="text-andela-green" onClick={() => setIsMobileMenuOpen(false)}>Apply as Talent</Link>
