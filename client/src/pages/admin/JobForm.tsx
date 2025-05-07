@@ -214,13 +214,13 @@ export default function JobForm() {
         </Button>
       </div>
 
-        {isEditMode && isLoadingJob ? (
-          <div className="flex items-center justify-center min-h-[300px]">
-            <Loader2 className="h-8 w-8 animate-spin text-primary" />
-          </div>
-        ) : (
-          <Form {...form}>
-            <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8">
+      {isEditMode && isLoadingJob ? (
+        <div className="flex items-center justify-center min-h-[300px]">
+          <Loader2 className="h-8 w-8 animate-spin text-primary" />
+        </div>
+      ) : (
+        <Form {...form}>
+          <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8">
               <div className="grid grid-cols-1 gap-8 md:grid-cols-2">
                 <Card>
                   <CardHeader>
@@ -577,6 +577,6 @@ export default function JobForm() {
             </form>
           </Form>
         )}
-      </AdminLayout>
+    </AdminLayout>
   );
 }
