@@ -23,7 +23,7 @@ import Navbar from "@/components/layout/Navbar";
 import Footer from "@/components/layout/Footer";
 import AnnouncementBar from "@/components/layout/AnnouncementBar";
 import BusinessChallengesSection from "@/components/sections/BusinessChallengesSection";
-import SimpleAccordion from "@/components/sections/SimpleAccordion";
+import BasicAccordion from "@/components/sections/BasicAccordion";
 // UseCasesSection now implemented directly in this file
 
 // Data for sections in the scrolling component
@@ -648,7 +648,7 @@ const AdaptiveHiring = () => {
           <div className="flex flex-col lg:flex-row gap-10">
             {/* Left column with accordion */}
             <div className="w-full lg:w-[45%]">
-              <SimpleAccordion />
+              <BasicAccordion />
             </div>
 
             {/* Right column with dashboard-style cards */}
