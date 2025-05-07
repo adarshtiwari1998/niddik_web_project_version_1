@@ -1,184 +1,120 @@
 import React, { useState } from 'react';
-import { CheckCircle2, ArrowRight, ChevronDown, ChevronUp } from 'lucide-react';
+import { ChevronRight, CheckCircle } from 'lucide-react';
 
-// Define the tab structure for reuse
-type TabItem = {
+interface TabData {
+  id: string;
   title: string;
-  content: React.ReactNode;
-};
+  items: string[];
+  imageSrc: string;
+}
 
-// Main component for the use cases tabs
 const UseCasesTabs: React.FC = () => {
-  // State to track which tab is active
-  const [activeTab, setActiveTab] = useState<number>(0);
+  const [activeTab, setActiveTab] = useState('app-dev');
 
-  // Toggle function to open/close tabs
-  const toggleTab = (index: number) => {
-    setActiveTab(index === activeTab ? -1 : index);
-  };
-
-  // Define all our tab content
-  const tabs: TabItem[] = [
+  // Tab data with images
+  const tabs: TabData[] = [
     {
-      title: "Application Development",
-      content: (
-        <>
-          <ul className="space-y-3">
-            <li className="flex items-start gap-3">
-              <CheckCircle2 className="w-5 h-5 text-teal-600 flex-shrink-0 mt-0.5" />
-              <span className="text-gray-600 select-text cursor-text">
-                Scale development with qualified talent, on demand
-              </span>
-            </li>
-            <li className="flex items-start gap-3">
-              <CheckCircle2 className="w-5 h-5 text-teal-600 flex-shrink-0 mt-0.5" />
-              <span className="text-gray-600 select-text cursor-text">
-                Reduce complexity and enhance user experience
-              </span>
-            </li>
-            <li className="flex items-start gap-3">
-              <CheckCircle2 className="w-5 h-5 text-teal-600 flex-shrink-0 mt-0.5" />
-              <span className="text-gray-600 select-text cursor-text">
-                Get your critical projects done faster
-              </span>
-            </li>
-          </ul>
-          <div className="mt-4">
-            <a href="#" className="inline-flex items-center text-teal-600 font-medium">
-              Learn More <ArrowRight className="ml-1 w-4 h-4" />
-            </a>
-          </div>
-        </>
-      )
+      id: 'app-dev',
+      title: 'Application Development',
+      items: [
+        'Scale development with qualified talent, on demand',
+        'Reduce complexity and enhance user experience',
+        'Get your critical projects done faster'
+      ],
+      imageSrc: 'https://images.unsplash.com/photo-1573495627361-d9b87960b12d?q=80&w=2069&auto=format&fit=crop'
     },
     {
-      title: "Data Science and Artificial Intelligence",
-      content: (
-        <>
-          <ul className="space-y-3">
-            <li className="flex items-start gap-3">
-              <CheckCircle2 className="w-5 h-5 text-teal-600 flex-shrink-0 mt-0.5" />
-              <span className="text-gray-600 select-text cursor-text">
-                Build AI/ML models with specialized expertise
-              </span>
-            </li>
-            <li className="flex items-start gap-3">
-              <CheckCircle2 className="w-5 h-5 text-teal-600 flex-shrink-0 mt-0.5" />
-              <span className="text-gray-600 select-text cursor-text">
-                Deploy specialized data science teams on demand
-              </span>
-            </li>
-            <li className="flex items-start gap-3">
-              <CheckCircle2 className="w-5 h-5 text-teal-600 flex-shrink-0 mt-0.5" />
-              <span className="text-gray-600 select-text cursor-text">
-                Accelerate AI initiatives with top-tier talent
-              </span>
-            </li>
-          </ul>
-          <div className="mt-4">
-            <a href="#" className="inline-flex items-center text-teal-600 font-medium">
-              Learn More <ArrowRight className="ml-1 w-4 h-4" />
-            </a>
-          </div>
-        </>
-      )
+      id: 'data-science',
+      title: 'Data Science and Artificial Intelligence',
+      items: [
+        'Build AI/ML models with specialized expertise',
+        'Deploy specialized data science teams on demand',
+        'Accelerate AI initiatives with top-tier talent'
+      ],
+      imageSrc: 'https://images.unsplash.com/photo-1591453089816-0fbb971b454c?q=80&w=2070&auto=format&fit=crop'
     },
     {
-      title: "Data Engineering and Analytics",
-      content: (
-        <>
-          <ul className="space-y-3">
-            <li className="flex items-start gap-3">
-              <CheckCircle2 className="w-5 h-5 text-teal-600 flex-shrink-0 mt-0.5" />
-              <span className="text-gray-600 select-text cursor-text">
-                Build resilient data pipelines with specialized engineers
-              </span>
-            </li>
-            <li className="flex items-start gap-3">
-              <CheckCircle2 className="w-5 h-5 text-teal-600 flex-shrink-0 mt-0.5" />
-              <span className="text-gray-600 select-text cursor-text">
-                Transform raw data into actionable business insights
-              </span>
-            </li>
-            <li className="flex items-start gap-3">
-              <CheckCircle2 className="w-5 h-5 text-teal-600 flex-shrink-0 mt-0.5" />
-              <span className="text-gray-600 select-text cursor-text">
-                Implement modern data architecture with expert guidance
-              </span>
-            </li>
-          </ul>
-          <div className="mt-4">
-            <a href="#" className="inline-flex items-center text-teal-600 font-medium">
-              Learn More <ArrowRight className="ml-1 w-4 h-4" />
-            </a>
-          </div>
-        </>
-      )
+      id: 'data-eng',
+      title: 'Data Engineering and Analytics',
+      items: [
+        'Build resilient data pipelines with specialized engineers',
+        'Transform raw data into actionable business insights',
+        'Implement modern data architecture with expert guidance'
+      ],
+      imageSrc: 'https://images.unsplash.com/photo-1551288049-bebda4e38f71?q=80&w=2070&auto=format&fit=crop'
     },
     {
-      title: "Cloud and DevOps",
-      content: (
-        <>
-          <ul className="space-y-3">
-            <li className="flex items-start gap-3">
-              <CheckCircle2 className="w-5 h-5 text-teal-600 flex-shrink-0 mt-0.5" />
-              <span className="text-gray-600 select-text cursor-text">
-                Accelerate cloud migration with specialized teams
-              </span>
-            </li>
-            <li className="flex items-start gap-3">
-              <CheckCircle2 className="w-5 h-5 text-teal-600 flex-shrink-0 mt-0.5" />
-              <span className="text-gray-600 select-text cursor-text">
-                Implement CI/CD pipelines with expert DevOps engineers
-              </span>
-            </li>
-            <li className="flex items-start gap-3">
-              <CheckCircle2 className="w-5 h-5 text-teal-600 flex-shrink-0 mt-0.5" />
-              <span className="text-gray-600 select-text cursor-text">
-                Optimize infrastructure costs with cloud-native architecture
-              </span>
-            </li>
-          </ul>
-          <div className="mt-4">
-            <a href="#" className="inline-flex items-center text-teal-600 font-medium">
-              Learn More <ArrowRight className="ml-1 w-4 h-4" />
-            </a>
-          </div>
-        </>
-      )
+      id: 'cloud-devops',
+      title: 'Cloud and DevOps',
+      items: [
+        'Accelerate cloud migration with specialized teams',
+        'Implement CI/CD pipelines with expert DevOps engineers',
+        'Optimize infrastructure costs with cloud-native architecture'
+      ],
+      imageSrc: 'https://images.unsplash.com/photo-1573164574572-cb89e39749b4?q=80&w=2069&auto=format&fit=crop'
     }
   ];
 
-  return (
-    <div className="w-full space-y-3">
-      {tabs.map((tab, index) => (
-        <div 
-          key={index} 
-          className={`rounded-md border border-gray-200 overflow-hidden ${
-            activeTab === index ? 'bg-white shadow-md' : 'bg-white hover:bg-gray-50'
-          }`}
-        >
-          <div 
-            className="w-full flex items-center justify-between px-5 py-4 text-left cursor-pointer select-text"
-            onClick={() => toggleTab(index)}
-          >
-            <span className="font-semibold text-lg">{tab.title}</span>
-            <span className="flex-shrink-0 ml-2">
-              {activeTab === index ? (
-                <ChevronUp className="w-5 h-5 text-gray-500" />
-              ) : (
-                <ChevronDown className="w-5 h-5 text-gray-500" />
-              )}
-            </span>
-          </div>
+  const activeTabData = tabs.find(tab => tab.id === activeTab) || tabs[0];
 
-          {activeTab === index && (
-            <div className="px-5 pb-5 pt-1">
-              {tab.content}
-            </div>
-          )}
+  return (
+    <div className="flex flex-col lg:flex-row gap-8">
+      {/* Left column with tabs */}
+      <div className="w-full lg:w-[45%]">
+        {/* Tab buttons */}
+        <div className="space-y-3">
+          {tabs.map(tab => (
+            <button
+              key={tab.id}
+              onClick={() => setActiveTab(tab.id)}
+              className={`w-full text-left rounded-md px-5 py-5 border transition-all ${
+                activeTab === tab.id
+                  ? 'border-teal-500 bg-white shadow-sm'
+                  : 'border-gray-200 bg-gray-50 hover:bg-gray-100'
+              }`}
+            >
+              <div className="flex justify-between items-center">
+                <span className="font-semibold text-lg">{tab.title}</span>
+                {activeTab === tab.id && (
+                  <ChevronRight className="h-5 w-5 text-teal-500" />
+                )}
+              </div>
+            </button>
+          ))}
         </div>
-      ))}
+
+        {/* Content of active tab */}
+        <div className="mt-6">
+          <ul className="space-y-4">
+            {activeTabData.items.map((item, index) => (
+              <li key={index} className="flex gap-3 items-start">
+                <CheckCircle className="w-5 h-5 text-teal-600 flex-shrink-0 mt-0.5" />
+                <span className="text-gray-600">{item}</span>
+              </li>
+            ))}
+          </ul>
+          <div className="mt-6">
+            <button 
+              className="text-teal-600 font-medium flex items-center hover:underline cursor-pointer group"
+              onClick={() => alert(`Learn more about ${activeTabData.title}`)}
+            >
+              Learn More 
+              <ChevronRight className="ml-1 w-4 h-4 transition-transform group-hover:translate-x-1" />
+            </button>
+          </div>
+        </div>
+      </div>
+
+      {/* Right column with image */}
+      <div className="w-full lg:w-[55%]">
+        <div className="rounded-lg overflow-hidden h-full">
+          <img 
+            src={activeTabData.imageSrc} 
+            alt={activeTabData.title}
+            className="w-full h-full object-cover"
+          />
+        </div>
+      </div>
     </div>
   );
 };

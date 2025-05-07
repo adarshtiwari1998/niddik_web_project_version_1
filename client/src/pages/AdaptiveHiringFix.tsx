@@ -23,7 +23,7 @@ import Navbar from "@/components/layout/Navbar";
 import Footer from "@/components/layout/Footer";
 import AnnouncementBar from "@/components/layout/AnnouncementBar";
 import BusinessChallengesSection from "@/components/sections/BusinessChallengesSection";
-import BasicAccordion from "@/components/sections/BasicAccordion";
+import UseCasesTabs from "@/components/sections/UseCasesTabs";
 // UseCasesSection now implemented directly in this file
 
 // Data for sections in the scrolling component
@@ -641,9 +641,9 @@ const AdaptiveHiring = () => {
             Common use cases for Adaptive Hiring
           </h2>
 
-          {/* Accordion with integrated graphics for each tab */}
+          {/* Tab-based layout with images on the right side */}
           <div className="w-full max-w-5xl mx-auto">
-            <BasicAccordion />
+            <UseCasesTabs />
           </div>
         </Container>
       </section>
