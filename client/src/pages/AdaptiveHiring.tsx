@@ -429,30 +429,30 @@ const AdaptiveHiringWorkflow = () => {
     switch(activeSection) {
       case 0: // PROJECTS
         return (
-          <div className="bg-blue-50 rounded-lg overflow-hidden p-8">
-            <div className="flex justify-center mb-4">
-              <h4 className="font-semibold text-lg text-gray-700">Development team</h4>
+          <div className="bg-blue-50 rounded-lg overflow-hidden p-8 w-full">
+            <div className="flex justify-center mb-6">
+              <h4 className="font-semibold text-xl text-gray-700">Development team</h4>
             </div>
-            <div className="flex justify-center mb-5">
-              <div className="flex items-center gap-2">
-                <div className="w-8 h-8 rounded-full bg-blue-400"></div>
-                <div className="w-8 h-8 rounded-full bg-green-400"></div>
-                <div className="w-8 h-8 rounded-full bg-indigo-400"></div>
-                <div className="w-8 h-8 rounded-full bg-yellow-400"></div>
+            <div className="flex justify-center mb-8">
+              <div className="flex items-center gap-4">
+                <div className="w-12 h-12 rounded-full bg-blue-400"></div>
+                <div className="w-12 h-12 rounded-full bg-green-400"></div>
+                <div className="w-12 h-12 rounded-full bg-indigo-400"></div>
+                <div className="w-12 h-12 rounded-full bg-yellow-400"></div>
               </div>
             </div>
-            <div className="bg-white rounded-lg shadow-sm p-5 mx-auto max-w-sm">
+            <div className="bg-white rounded-lg shadow-md p-6 mx-auto">
               <div className="flex justify-between items-center">
-                <div className="flex items-center gap-3">
-                  <div className="w-10 h-10 bg-blue-100 rounded-full flex items-center justify-center">
-                    <div className="w-5 h-5 bg-blue-500 rounded-full"></div>
+                <div className="flex items-center gap-4">
+                  <div className="w-16 h-16 bg-blue-100 rounded-full flex items-center justify-center">
+                    <div className="w-8 h-8 bg-blue-500 rounded-full"></div>
                   </div>
                   <div>
-                    <div className="text-xs text-gray-500">Project Lead</div>
-                    <div className="text-sm font-medium">Alex M.</div>
+                    <div className="text-sm text-gray-500">Project Lead</div>
+                    <div className="text-lg font-medium">Alex M.</div>
                   </div>
                 </div>
-                <div className="w-6 h-6 bg-green-500 rounded-full flex items-center justify-center text-white text-xs font-bold">
+                <div className="w-10 h-10 bg-green-500 rounded-full flex items-center justify-center text-white text-sm font-bold">
                   ✓
                 </div>
               </div>
@@ -461,34 +461,34 @@ const AdaptiveHiringWorkflow = () => {
         );
       case 1: // SKILLS
         return (
-          <div className="bg-blue-50 rounded-lg overflow-hidden p-8">
-            <div className="mb-3">
-              <h4 className="font-semibold text-sm text-blue-600">SKILLS ASSESSMENT</h4>
+          <div className="bg-blue-50 rounded-lg overflow-hidden p-8 w-full">
+            <div className="mb-6">
+              <h4 className="font-semibold text-xl text-blue-600">SKILLS ASSESSMENT</h4>
             </div>
             
-            <div className="space-y-6">
-              <div className="flex items-center gap-3">
-                <div className="w-5 h-5 bg-blue-500 rounded-full flex-shrink-0"></div>
-                <div className="flex-1 h-6 bg-blue-200/50 rounded-full relative">
+            <div className="space-y-8">
+              <div className="flex items-center gap-4">
+                <div className="w-8 h-8 bg-blue-500 rounded-full flex-shrink-0"></div>
+                <div className="flex-1 h-8 bg-blue-200/50 rounded-full relative">
                   <div className="absolute inset-y-0 left-0 bg-blue-200 w-[80%] rounded-full"></div>
                 </div>
-                <span className="text-sm font-medium text-gray-700 w-16 text-right">React</span>
+                <span className="text-base font-medium text-gray-700 w-20 text-right">React</span>
               </div>
               
-              <div className="flex items-center gap-3">
-                <div className="w-5 h-5 bg-green-500 rounded-full flex-shrink-0"></div>
-                <div className="flex-1 h-6 bg-green-200/50 rounded-full relative">
+              <div className="flex items-center gap-4">
+                <div className="w-8 h-8 bg-green-500 rounded-full flex-shrink-0"></div>
+                <div className="flex-1 h-8 bg-green-200/50 rounded-full relative">
                   <div className="absolute inset-y-0 left-0 bg-green-200 w-[65%] rounded-full"></div>
                 </div>
-                <span className="text-sm font-medium text-gray-700 w-16 text-right">Node.js</span>
+                <span className="text-base font-medium text-gray-700 w-20 text-right">Node.js</span>
               </div>
               
-              <div className="flex items-center gap-3">
-                <div className="w-5 h-5 bg-yellow-500 rounded-full flex-shrink-0"></div>
-                <div className="flex-1 h-6 bg-yellow-200/50 rounded-full relative">
+              <div className="flex items-center gap-4">
+                <div className="w-8 h-8 bg-yellow-500 rounded-full flex-shrink-0"></div>
+                <div className="flex-1 h-8 bg-yellow-200/50 rounded-full relative">
                   <div className="absolute inset-y-0 left-0 bg-yellow-200 w-[70%] rounded-full"></div>
                 </div>
-                <span className="text-sm font-medium text-gray-700 w-16 text-right">UX/UI</span>
+                <span className="text-base font-medium text-gray-700 w-20 text-right">UX/UI</span>
               </div>
             </div>
           </div>
@@ -685,13 +685,13 @@ const AdaptiveHiringWorkflow = () => {
           {/* Right Column - Image with fixed positioning when section is in viewport */}
           <div className="hidden lg:block">
             <div 
-              className={`w-full pr-12 ${
+              className={`${
                 isInViewport 
-                  ? 'fixed top-1/2 transform -translate-y-1/2 w-[calc(50%-3rem)]' // Fixed at 50% vertical
-                  : 'relative'
+                  ? 'fixed top-1/2 transform -translate-y-1/2 w-[calc(50%-2rem)] pr-8' // Fixed at 50% vertical with less padding
+                  : 'relative w-full'
               }`}
             >
-              <div className="w-full max-w-md mx-auto">
+              <div className="w-full h-full flex items-center justify-center">
                 {getImageContent()}
               </div>
             </div>
