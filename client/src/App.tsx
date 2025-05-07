@@ -18,6 +18,7 @@ import JobDetail from "@/pages/JobDetail";
 import MyApplications from "@/pages/MyApplications";
 import ProfilePage from "@/pages/ProfilePage";
 import JobApplication from "@/pages/JobApplication";
+import CandidateDashboard from "@/pages/CandidateDashboard";
 
 // Admin Pages
 import AdminLogin from "@/pages/admin/AdminLogin";
@@ -51,6 +52,7 @@ function Router() {
       {/* Careers & Jobs */}
       <Route path="/careers" component={CareerPage} />
       <Route path="/jobs/:id" component={JobDetail} />
+      <ProtectedRoute path="/dashboard" component={CandidateDashboard} />
       <ProtectedRoute path="/my-applications" component={MyApplications} />
       <ProtectedRoute path="/profile" component={ProfilePage} />
       <ProtectedRoute path="/apply/:id" component={JobApplication} />
