@@ -53,7 +53,16 @@ export default function Candidates() {
   };
 
   // Fetch job applications data
-  const { data, isLoading, error } = useQuery<{ data: ApplicationWithDetails[], meta: { total: number, pages: number } }>({
+  const { data, isLoading, error } = useQuery<{ 
+    success: boolean; 
+    data: ApplicationWithDetails[];
+    meta: { 
+      total: number;
+      page: number;
+      limit: number;
+      pages: number;
+    }
+  }>({
     queryKey: ['/api/admin/applications', page, search, statusFilter],
     queryFn: async () => {
       const res = await fetch(`/api/admin/applications?${buildQueryParams()}`);
@@ -84,8 +93,8 @@ export default function Candidates() {
   // Handler for updating application status
   const handleUpdateStatus = async (id: number, status: string) => {
     try {
-      const res = await fetch(`/api/admin/applications/${id}/status`, {
-        method: 'PATCH',
+      const res = await fetch(`/api/admin/job-applications/${id}/status`, {
+        method: 'PUT',
         headers: {
           'Content-Type': 'application/json',
         },
@@ -95,9 +104,11 @@ export default function Candidates() {
       if (!res.ok) throw new Error("Failed to update application status");
       
       // Invalidate queries to refresh data
-      // Note: We would typically use queryClient.invalidateQueries here,
-      // but for simplicity, we'll just alert success
       alert(`Application status updated to ${status}`);
+      // Refresh the data
+      setTimeout(() => {
+        window.location.reload();
+      }, 1000);
     } catch (error) {
       console.error("Error updating status:", error);
       alert("Failed to update application status");
