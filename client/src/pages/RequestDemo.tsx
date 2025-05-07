@@ -241,43 +241,7 @@ export default function RequestDemo() {
                   <StatBox value="66%" label="Faster time" sublabel="to hire" />
                 </div>
                 
-                <div className="mt-16 flex flex-wrap justify-center md:justify-start gap-4">
-                  <img src="/images/g2_badges.png" alt="Award Badges" className="h-20" 
-                       onError={(e) => {
-                         e.currentTarget.onerror = null;
-                         e.currentTarget.style.display = 'none';
-                         const container = document.getElementById('badges-container');
-                         if (container) {
-                           container.innerHTML = `
-                             <div class="flex space-x-4">
-                               <div class="flex flex-col items-center">
-                                 <div class="p-3 bg-white rounded-full shadow-md">
-                                   <Award className="h-8 w-8 text-red-500" />
-                                 </div>
-                                 <div class="text-xs font-semibold mt-1">Leader</div>
-                                 <div class="text-[10px] text-gray-500">FALL 2023</div>
-                               </div>
-                               <div class="flex flex-col items-center">
-                                 <div class="p-3 bg-white rounded-full shadow-md">
-                                   <Award className="h-8 w-8 text-purple-500" />
-                                 </div>
-                                 <div class="text-xs font-semibold mt-1">Leader</div>
-                                 <div class="text-[10px] text-gray-500">FALL 2023</div>
-                               </div>
-                               <div class="flex flex-col items-center">
-                                 <div class="p-3 bg-white rounded-full shadow-md">
-                                   <Award className="h-8 w-8 text-orange-500" />
-                                 </div>
-                                 <div class="text-xs font-semibold mt-1">Leader</div>
-                                 <div class="text-[10px] text-gray-500">2024</div>
-                               </div>
-                             </div>
-                           `;
-                         }
-                       }}
-                  />
-                  <div id="badges-container"></div>
-                </div>
+
               </div>
               
               {/* Right Column - Form */}
