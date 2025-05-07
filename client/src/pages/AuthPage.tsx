@@ -3,7 +3,7 @@ import { useLocation } from "wouter";
 import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
-import { Loader2, User, Mail, Lock, Upload, ArrowLeft, ArrowRight, CheckCircle2 } from "lucide-react";
+import { Loader2, User, Mail, Lock, Upload, ArrowLeft, ArrowRight, CheckCircle2, Clock } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
@@ -14,6 +14,7 @@ import { useAuth } from "@/hooks/use-auth";
 import { useToast } from "@/hooks/use-toast";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Separator } from "@/components/ui/separator";
+import { format } from "date-fns";
 
 // Step 1: Basic registration schema (account details)
 const registerStep1Schema = z.object({
@@ -70,8 +71,28 @@ export default function AuthPage() {
   const [isUploading, setIsUploading] = useState(false);
   const [resumeFile, setResumeFile] = useState<File | null>(null);
   const [formData, setFormData] = useState<Partial<RegisterFormValues>>({});
+  const [lastLogoutTime, setLastLogoutTime] = useState<string | null>(null);
   const { user, loginMutation, registerMutation } = useAuth();
   const { toast } = useToast();
+  
+  // Fetch last logout time
+  useEffect(() => {
+    const fetchLastLogout = async () => {
+      try {
+        const response = await fetch('/api/last-logout');
+        if (response.ok) {
+          const data = await response.json();
+          if (data.lastLogout) {
+            setLastLogoutTime(data.lastLogout);
+          }
+        }
+      } catch (error) {
+        console.error('Error fetching last logout time:', error);
+      }
+    };
+    
+    fetchLastLogout();
+  }, []);
 
   // Form for login
   const loginForm = useForm<LoginFormValues>({
@@ -211,15 +232,12 @@ export default function AuthPage() {
       <header className="border-b bg-background">
         <div className="container flex h-16 items-center justify-between">
           <div className="flex items-center gap-6">
-            <a href="/" className="flex flex-col items-start">
+            <a href="/" className="flex flex-col items-start pt-4 pb-2">
               <div className="flex flex-col">
-                <img 
-                  src="/images/niddik_logo.png" 
-                  alt="NiDDiK Logo" 
-                  className="h-14 w-auto mb-1" 
-                  style={{ objectFit: "contain" }}
-                />
-                <span className="text-[10px] text-muted-foreground">Connecting People, Changing Lives</span>
+                <div className="bg-green-600 px-2 py-1 inline-block">
+                  <span className="text-white font-bold text-2xl">NiDDiK</span>
+                </div>
+                <span className="text-[10px] text-muted-foreground mt-1">Connecting People, Changing Lives</span>
               </div>
             </a>
             <nav className="hidden md:flex gap-6">
@@ -233,7 +251,13 @@ export default function AuthPage() {
           </div>
           
           <div className="flex items-center gap-4">
-            <div className="bg-primary/10 text-primary rounded-md px-3 py-1 text-xs font-medium">
+            {lastLogoutTime && (
+              <div className="flex items-center gap-1 text-muted-foreground text-xs mr-2">
+                <Clock className="h-3 w-3" />
+                <span>Last seen: {format(new Date(lastLogoutTime), "MMM d, yyyy h:mm a")}</span>
+              </div>
+            )}
+            <div className="bg-green-600 text-white rounded-md px-3 py-1 text-xs font-medium">
               A workforce partner
             </div>
           </div>
@@ -771,16 +795,16 @@ export default function AuthPage() {
         </div>
         
         {/* Right side - Hero section */}
-        <div className="hidden md:block md:w-1/2 bg-gradient-to-br from-primary-foreground to-background p-12">
+        <div className="hidden md:block md:w-1/2 bg-gray-50 p-12">
           <div className="h-full flex flex-col justify-center max-w-md mx-auto">
             <h2 className="text-3xl font-bold tracking-tight mb-6">
-              Unlock Your Career Potential with NiDDiK
+              Unlock Your Career Potential with <span className="bg-green-600 text-white px-1">NiDDiK</span>
             </h2>
             
             <div className="space-y-8">
               <div className="flex items-start space-x-3">
-                <div className="rounded-full bg-primary/10 p-2">
-                  <CheckCircle2 className="h-5 w-5 text-primary" />
+                <div className="rounded-full bg-green-100 p-2">
+                  <CheckCircle2 className="h-5 w-5 text-green-600" />
                 </div>
                 <div>
                   <h3 className="font-medium">Discover Opportunities</h3>
@@ -791,8 +815,8 @@ export default function AuthPage() {
               </div>
               
               <div className="flex items-start space-x-3">
-                <div className="rounded-full bg-primary/10 p-2">
-                  <CheckCircle2 className="h-5 w-5 text-primary" />
+                <div className="rounded-full bg-green-100 p-2">
+                  <CheckCircle2 className="h-5 w-5 text-green-600" />
                 </div>
                 <div>
                   <h3 className="font-medium">Streamlined Applications</h3>
@@ -803,8 +827,8 @@ export default function AuthPage() {
               </div>
               
               <div className="flex items-start space-x-3">
-                <div className="rounded-full bg-primary/10 p-2">
-                  <CheckCircle2 className="h-5 w-5 text-primary" />
+                <div className="rounded-full bg-green-100 p-2">
+                  <CheckCircle2 className="h-5 w-5 text-green-600" />
                 </div>
                 <div>
                   <h3 className="font-medium">Status Tracking</h3>
@@ -815,8 +839,8 @@ export default function AuthPage() {
               </div>
               
               <div className="flex items-start space-x-3">
-                <div className="rounded-full bg-primary/10 p-2">
-                  <CheckCircle2 className="h-5 w-5 text-primary" />
+                <div className="rounded-full bg-green-100 p-2">
+                  <CheckCircle2 className="h-5 w-5 text-green-600" />
                 </div>
                 <div>
                   <h3 className="font-medium">Talent Matching</h3>
