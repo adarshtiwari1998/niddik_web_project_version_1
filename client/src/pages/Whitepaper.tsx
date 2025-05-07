@@ -803,7 +803,7 @@ const WhitepaperPage = () => {
                 <Download className="h-5 w-5" />
                 Download Whitepaper
               </Button>
-              <Button size="lg" variant="outline" className="border-white text-white hover:bg-white hover:text-blue-900">
+              <Button size="lg" variant="outline" className="border-white text-white hover:bg-white hover:text-blue-900 bg-transparent">
                 Contact Sales
               </Button>
             </div>
