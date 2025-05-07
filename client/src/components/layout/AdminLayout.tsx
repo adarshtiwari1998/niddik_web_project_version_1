@@ -1,9 +1,10 @@
-import { ReactNode } from "react";
+import { ReactNode, useState } from "react";
 import { Link, useLocation } from "wouter";
 import { useAuth } from "@/hooks/use-auth";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { User, FileText, Settings, ChevronRight, LogOut, Shield } from "lucide-react";
+import { User, FileText, Settings, ChevronRight, LogOut, Shield, Loader2 } from "lucide-react";
+import { LoadingScreen } from "@/components/ui/loading-screen";
 
 interface AdminLayoutProps {
   children: ReactNode;
@@ -15,11 +16,18 @@ export default function AdminLayout({ children, title, description }: AdminLayou
   const { user, logoutMutation } = useAuth();
   const [_, setLocation] = useLocation();
   const location = _; // Current path
+  const [isLoggingOut, setIsLoggingOut] = useState(false);
 
   const handleLogout = () => {
+    setIsLoggingOut(true);
     logoutMutation.mutate(undefined, {
       onSuccess: () => {
-        setLocation("/admin/login");
+        setTimeout(() => {
+          window.location.href = "/admin/login";
+        }, 500);
+      },
+      onError: () => {
+        setIsLoggingOut(false);
       }
     });
   };
@@ -31,6 +39,7 @@ export default function AdminLayout({ children, title, description }: AdminLayou
 
   return (
     <div className="min-h-screen bg-gray-50 dark:bg-gray-900">
+      {isLoggingOut && <LoadingScreen message="Logging out..." />}
       {/* Admin Header */}
       <header className="bg-white dark:bg-gray-800 shadow-sm border-b">
         <div className="container mx-auto px-4 py-4 flex justify-between items-center">

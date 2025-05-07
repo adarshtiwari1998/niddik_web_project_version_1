@@ -1,4 +1,4 @@
-import { ReactNode } from "react";
+import { ReactNode, useState } from "react";
 import { Link } from "wouter";
 import { useAuth } from "@/hooks/use-auth";
 import { 
@@ -8,8 +8,10 @@ import {
   User, 
   LogOut,
   ChevronDown,
-  Menu
+  Menu,
+  Loader2
 } from "lucide-react";
+import { LoadingScreen } from "@/components/ui/loading-screen";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
 import {

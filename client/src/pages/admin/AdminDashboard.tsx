@@ -15,6 +15,20 @@ export default function AdminDashboard() {
   const [activeTab, setActiveTab] = useState("overview");
   const [initialLoading, setInitialLoading] = useState(true);
   
+  // Show loading screen as soon as component mounts
+  useEffect(() => {
+    document.title = "Admin Dashboard | NiDDiK";
+    
+    // Check if we're coming from login (which sets this flag)
+    const isComingFromLogin = sessionStorage.getItem('admin_dashboard_loading') === 'true';
+    if (isComingFromLogin) {
+      // Keep loading state true
+      setInitialLoading(true);
+      // Clear the flag
+      sessionStorage.removeItem('admin_dashboard_loading');
+    }
+  }, []);
+  
   // Fetch job statistics
   const { data: jobsData, isLoading: isLoadingJobs } = useQuery<{ data: JobListing[] }>({
     queryKey: ['/api/job-listings'],
@@ -56,10 +70,10 @@ export default function AdminDashboard() {
   useEffect(() => {
     // Check if data has loaded
     if (!isLoadingJobs && !isLoadingApplications) {
-      // Add a small delay to ensure smooth transition
+      // Shorter delay to ensure smooth transition
       const timer = setTimeout(() => {
         setInitialLoading(false);
-      }, 800);
+      }, 200);
       
       return () => clearTimeout(timer);
     }

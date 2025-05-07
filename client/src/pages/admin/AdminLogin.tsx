@@ -72,6 +72,9 @@ export default function AdminLogin() {
             const urlParams = new URLSearchParams(window.location.search);
             const redirectUrl = urlParams.get("redirect");
             
+            // Store a loading flag in sessionStorage that the dashboard will check
+            sessionStorage.setItem('admin_dashboard_loading', 'true');
+            
             // Navigate immediately to admin dashboard or specified redirect URL
             setTimeout(() => {
               if (redirectUrl) {
