@@ -284,7 +284,7 @@ export default function JobForm() {
                             <FormLabel>Job Type</FormLabel>
                             <Select
                               onValueChange={field.onChange}
-                              defaultValue={field.value}
+                              value={field.value}
                             >
                               <FormControl>
                                 <SelectTrigger>
@@ -312,7 +312,7 @@ export default function JobForm() {
                             <FormLabel>Experience Level</FormLabel>
                             <Select
                               onValueChange={field.onChange}
-                              defaultValue={field.value}
+                              value={field.value}
                             >
                               <FormControl>
                                 <SelectTrigger>
@@ -395,7 +395,7 @@ export default function JobForm() {
                           <FormLabel>Category</FormLabel>
                           <Select
                             onValueChange={field.onChange}
-                            defaultValue={field.value}
+                            value={field.value}
                           >
                             <FormControl>
                               <SelectTrigger>
@@ -516,7 +516,7 @@ export default function JobForm() {
                           <FormLabel>Status</FormLabel>
                           <Select
                             onValueChange={field.onChange}
-                            defaultValue={field.value}
+                            value={field.value}
                           >
                             <FormControl>
                               <SelectTrigger>
