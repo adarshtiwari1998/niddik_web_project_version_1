@@ -20,7 +20,51 @@ interface UseCase {
   isOpen?: boolean;
 }
 
-const developerImage = "https://images.unsplash.com/photo-1573496359142-b8d87734a5a2?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80";
+const SprintProgressCard = () => (
+  <div className="bg-white rounded-2xl shadow-sm p-8 mb-4">
+    <div className="flex items-center justify-between mb-5">
+      <div className="flex items-center">
+        <div className="w-10 h-10 rounded-full bg-green-100 flex items-center justify-center mr-4">
+          <div className="w-5 h-5 rounded-full bg-green-500"></div>
+        </div>
+        <h3 className="text-xl font-medium">Current Sprint</h3>
+      </div>
+      <span className="bg-green-100 text-green-700 px-5 py-1.5 rounded-full text-sm font-medium">
+        Active
+      </span>
+    </div>
+    
+    <div className="w-full h-3 bg-gray-100 rounded-full mb-3">
+      <div className="h-3 bg-green-500 rounded-full" style={{ width: "75%" }}></div>
+    </div>
+    
+    <div className="flex justify-between text-gray-600 text-lg">
+      <span>Week 2 of 3</span>
+      <span>75% Complete</span>
+    </div>
+  </div>
+);
+
+const TeamVelocityCard = () => (
+  <div className="bg-white rounded-2xl shadow-sm p-8">
+    <div className="flex items-center mb-8">
+      <div className="w-10 h-10 rounded-full bg-blue-100 flex items-center justify-center mr-4">
+        <div className="w-5 h-5 rounded-full bg-blue-500"></div>
+      </div>
+      <h3 className="text-xl font-medium">Team Velocity</h3>
+    </div>
+    
+    <div className="flex items-center">
+      <div className="w-36 h-36 rounded-full border-[16px] border-blue-100 flex items-center justify-center">
+        <span className="text-4xl font-bold text-blue-500">92%</span>
+      </div>
+      <div className="ml-8">
+        <h4 className="text-xl font-medium">Efficiency</h4>
+        <p className="text-gray-500 text-lg">Above target</p>
+      </div>
+    </div>
+  </div>
+);
 
 const UseCasesSection = () => {
   const [useCases, setUseCases] = useState<UseCase[]>([
@@ -71,17 +115,16 @@ const UseCasesSection = () => {
   ]);
 
   const toggleUseCase = (id: string) => {
-    setUseCases(
-      useCases.map(useCase => 
-        useCase.id === id 
-          ? { ...useCase, isOpen: !useCase.isOpen } 
-          : { ...useCase, isOpen: false }
-      )
+    setUseCases(prevUseCases => 
+      prevUseCases.map(useCase => ({
+        ...useCase,
+        isOpen: useCase.id === id ? !useCase.isOpen : false
+      }))
     );
   };
 
   return (
-    <section className="py-20 bg-[#fbfbfb] relative overflow-hidden">
+    <section className="py-20 bg-[#f0f7fb] relative overflow-hidden">
       {/* Background decorative pattern */}
       <div className="absolute inset-0 opacity-5 overflow-hidden">
         <svg width="100%" height="100%" xmlns="http://www.w3.org/2000/svg" className="absolute right-0 top-0">
@@ -146,14 +189,11 @@ const UseCasesSection = () => {
             ))}
           </div>
 
-          {/* Right column with developer image */}
+          {/* Right column with dashboard-style cards */}
           <div className="w-full lg:w-[55%]">
-            <div className="rounded-lg overflow-hidden shadow-md h-full">
-              <img 
-                src={developerImage} 
-                alt="Developer working on code" 
-                className="w-full h-full object-cover"
-              />
+            <div className="h-full flex flex-col justify-center">
+              <SprintProgressCard />
+              <TeamVelocityCard />
             </div>
           </div>
         </div>
