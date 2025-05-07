@@ -76,14 +76,25 @@ export default function JobListings() {
     if (!confirm("Are you sure you want to delete this job listing?")) return;
     
     try {
+      // Get the JWT token from localStorage
+      const token = localStorage.getItem('niddik_auth_token');
+      const headers: HeadersInit = {};
+      
+      if (token) {
+        headers['Authorization'] = `Bearer ${token}`;
+      }
+      
       const res = await fetch(`/api/job-listings/${id}`, {
         method: 'DELETE',
+        headers,
+        credentials: 'include'
       });
       
       if (!res.ok) throw new Error("Failed to delete job listing");
       
-      // Refetch the data
-      window.location.reload();
+      // Invalidate query cache instead of refreshing the page
+      queryClient.invalidateQueries({ queryKey: ['/api/job-listings'] });
+      
     } catch (error) {
       console.error("Error deleting job:", error);
       alert("Failed to delete job listing. Please try again.");
@@ -100,10 +111,12 @@ export default function JobListings() {
       {/* Admin Header */}
       <header className="bg-white dark:bg-gray-800 shadow-sm border-b">
         <div className="container mx-auto px-4 py-4 flex justify-between items-center">
-          <div className="flex items-center">
-            <Shield className="h-8 w-8 text-primary mr-2" />
-            <h1 className="text-xl font-bold">Niddik Admin</h1>
-          </div>
+          <Link href="/admin/dashboard">
+            <div className="flex items-center cursor-pointer">
+              <Shield className="h-8 w-8 text-primary mr-2" />
+              <h1 className="text-xl font-bold">Niddik Admin</h1>
+            </div>
+          </Link>
           <Button variant="ghost" onClick={handleLogout}>
             <LogOut className="h-4 w-4 mr-2" />
             Sign Out
@@ -117,10 +130,12 @@ export default function JobListings() {
             <h1 className="text-2xl font-bold">Manage Job Listings</h1>
             <p className="text-muted-foreground">Create, edit, and delete job listings</p>
           </div>
-          <Button onClick={() => setLocation("/admin/jobs/new")}>
-            <Plus className="h-4 w-4 mr-2" />
-            Add New Job
-          </Button>
+          <Link href="/admin/jobs/new">
+            <Button>
+              <Plus className="h-4 w-4 mr-2" />
+              Add New Job
+            </Button>
+          </Link>
         </div>
 
         <Card className="mb-6">
@@ -250,14 +265,15 @@ export default function JobListings() {
                         </TableCell>
                         <TableCell className="text-right">
                           <div className="flex justify-end gap-2">
-                            <Button
-                              variant="outline"
-                              size="sm"
-                              onClick={() => setLocation(`/admin/jobs/${job.id}/edit`)}
-                            >
-                              <Edit className="h-4 w-4" />
-                              <span className="sr-only">Edit</span>
-                            </Button>
+                            <Link href={`/admin/jobs/${job.id}/edit`}>
+                              <Button
+                                variant="outline"
+                                size="sm"
+                              >
+                                <Edit className="h-4 w-4" />
+                                <span className="sr-only">Edit</span>
+                              </Button>
+                            </Link>
                             <Button
                               variant="destructive"
                               size="sm"

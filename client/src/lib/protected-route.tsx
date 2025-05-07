@@ -15,32 +15,27 @@ export function ProtectedRoute({
 }: ProtectedRouteProps) {
   const { user, isLoading } = useAuth();
 
-  if (isLoading) {
-    return (
-      <Route path={path}>
+  // Create a wrapper component that incorporates all our protection logic
+  const ProtectedComponent = () => {
+    if (isLoading) {
+      return (
         <div className="flex items-center justify-center min-h-screen">
           <Loader2 className="h-8 w-8 animate-spin text-border" />
         </div>
-      </Route>
-    );
-  }
+      );
+    }
 
-  if (!user) {
-    return (
-      <Route path={path}>
-        <Redirect to={path.startsWith("/admin") ? "/admin/login" : "/auth"} />
-      </Route>
-    );
-  }
+    if (!user) {
+      return <Redirect to={path.startsWith("/admin") ? "/admin/login" : "/auth"} />;
+    }
 
-  // Check for role-based access if requiredRole is specified
-  if (requiredRole && user.role !== requiredRole) {
-    return (
-      <Route path={path}>
-        <Redirect to={user.role === "admin" ? "/admin" : "/"} />
-      </Route>
-    );
-  }
+    // Check for role-based access if requiredRole is specified
+    if (requiredRole && user.role !== requiredRole) {
+      return <Redirect to={user.role === "admin" ? "/admin" : "/"} />;
+    }
 
-  return <Route path={path} component={Component} />;
+    return <Component />;
+  };
+
+  return <Route path={path} component={ProtectedComponent} />;
 }
