@@ -280,8 +280,8 @@ const UsesCasesWithStickyImage = () => {
         </div>
         
         {/* Right side sticky image - 6 columns wide */}
-        <div className="lg:col-span-6 relative">
-          <div className="lg:sticky lg:top-40">
+        <div className="lg:col-span-6 relative h-full">
+          <div className="sticky top-20">
             <div className="aspect-video relative rounded-xl overflow-hidden border border-gray-200 shadow-md">
               {renderImage()}
             </div>
@@ -401,8 +401,8 @@ const AdaptiveHiringWorkflow = () => {
           </div>
           
           {/* Right Column - Sticky Visualization */}
-          <div className="relative">
-            <div className="lg:sticky lg:top-28 pt-6 lg:pt-8 h-full lg:pl-6">
+          <div className="relative h-full">
+            <div className="sticky top-20 pt-6 lg:pt-8 lg:pl-6">
               {/* Skills Assessment Card for Section 1 */}
               {activeSection === 1 && (
                 <div className="bg-blue-50 rounded-lg overflow-hidden pt-10 pb-10 px-8">
