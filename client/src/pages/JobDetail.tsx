@@ -320,7 +320,14 @@ export default function JobDetail() {
               </div>
             </CardContent>
             <CardFooter>
-              <Button onClick={handleApply} className="w-full">Apply for this position</Button>
+              {hasApplied ? (
+                <Button disabled variant="outline" className="w-full gap-2">
+                  <CheckCircle className="h-4 w-4" />
+                  Applied {applicationDate ? `on ${applicationDate}` : ''}
+                </Button>
+              ) : (
+                <Button onClick={handleApply} className="w-full">Apply for this position</Button>
+              )}
             </CardFooter>
           </Card>
 
@@ -343,6 +350,97 @@ export default function JobDetail() {
           )}
         </div>
       </div>
+
+      {/* Application Dialog */}
+      <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
+        <DialogContent className="sm:max-w-[500px]">
+          <DialogHeader>
+            <DialogTitle>Easy Apply - {job.title}</DialogTitle>
+            <DialogDescription>
+              Apply quickly using your profile information.
+            </DialogDescription>
+          </DialogHeader>
+          
+          <div className="space-y-4 my-2">
+            {/* User Information */}
+            <div className="grid grid-cols-2 gap-4">
+              <div>
+                <label className="text-sm font-medium mb-1 block">Name</label>
+                <Input 
+                  value={user?.fullName || user?.username || ""}
+                  disabled
+                  className="bg-muted/50"
+                />
+              </div>
+              <div>
+                <label className="text-sm font-medium mb-1 block">Email</label>
+                <Input 
+                  value={user?.email || ""}
+                  disabled
+                  className="bg-muted/50"
+                />
+              </div>
+            </div>
+
+            {/* Resume Link */}
+            {user?.resumeUrl && (
+              <div>
+                <label className="text-sm font-medium mb-1 block">Resume</label>
+                <div className="flex items-center gap-2 p-2 border rounded-md bg-muted/20">
+                  <FileText className="h-4 w-4 text-primary" />
+                  <span className="text-sm truncate flex-1">{user.resumeUrl.split('/').pop()}</span>
+                  <Button variant="outline" size="sm" asChild>
+                    <a href={user.resumeUrl} target="_blank" rel="noopener noreferrer" className="flex items-center gap-1">
+                      <ExternalLink className="h-3 w-3" />
+                      View
+                    </a>
+                  </Button>
+                </div>
+              </div>
+            )}
+
+            {/* Application Form */}
+            <Form {...form}>
+              <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
+                <FormField
+                  control={form.control}
+                  name="note"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>Cover Letter / Note *</FormLabel>
+                      <FormControl>
+                        <Textarea 
+                          {...field} 
+                          placeholder="Tell us why you're interested in this position and how your experience makes you a great fit."
+                          className="min-h-[120px]"
+                        />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+                
+                <div className="flex justify-end gap-2 pt-2">
+                  <DialogClose asChild>
+                    <Button type="button" variant="outline">Cancel</Button>
+                  </DialogClose>
+                  <Button 
+                    type="submit" 
+                    disabled={applyMutation.isPending}
+                  >
+                    {applyMutation.isPending ? (
+                      <>
+                        <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                        Submitting...
+                      </>
+                    ) : "Submit Application"}
+                  </Button>
+                </div>
+              </form>
+            </Form>
+          </div>
+        </DialogContent>
+      </Dialog>
     </div>
   );
 }
