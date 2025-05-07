@@ -66,9 +66,10 @@ export default function CandidateLayout({ children, activeTab = "" }: CandidateL
                 <img 
                   src="/images/niddik_logo.png" 
                   alt="Niddik Logo" 
-                  className="h-12 mb-1" 
+                  className="h-14 w-auto mb-1" 
+                  style={{ objectFit: "contain" }}
                 />
-                <span className="text-xs text-muted-foreground">Connecting People, Changing Lives</span>
+                <span className="text-[10px] text-muted-foreground">Connecting People, Changing Lives</span>
               </div>
             </Link>
             <span className="text-sm text-muted-foreground border-l pl-4">Candidate Portal</span>
@@ -127,9 +128,10 @@ export default function CandidateLayout({ children, activeTab = "" }: CandidateL
                         <img 
                           src="/images/niddik_logo.png" 
                           alt="Niddik Logo" 
-                          className="h-8 mb-1 mx-auto" 
+                          className="h-10 w-auto mb-1 mx-auto" 
+                          style={{ objectFit: "contain" }}
                         />
-                        <span className="text-xs text-muted-foreground text-center">Connecting People, Changing Lives</span>
+                        <span className="text-[9px] text-muted-foreground text-center">Connecting People, Changing Lives</span>
                       </div>
                     </div>
                     <div className="flex items-center gap-3">

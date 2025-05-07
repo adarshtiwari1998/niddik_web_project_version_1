@@ -77,9 +77,10 @@ export default function CareersHeader() {
                 <img 
                   src="/images/niddik_logo.png" 
                   alt="Niddik Logo" 
-                  className="h-12 mb-1" 
+                  className="h-14 w-auto mb-1" 
+                  style={{ objectFit: "contain" }}
                 />
-                <span className="text-xs text-muted-foreground">Connecting People, Changing Lives</span>
+                <span className="text-[10px] text-muted-foreground">Connecting People, Changing Lives</span>
               </div>
             </Link>
             <nav className="hidden md:flex gap-6">
@@ -177,9 +178,10 @@ export default function CareersHeader() {
                         <img 
                           src="/images/niddik_logo.png" 
                           alt="Niddik Logo" 
-                          className="h-8 mb-1" 
+                          className="h-10 w-auto mb-1" 
+                          style={{ objectFit: "contain" }}
                         />
-                        <span className="text-[10px] text-muted-foreground">Connecting People, Changing Lives</span>
+                        <span className="text-[9px] text-muted-foreground">Connecting People, Changing Lives</span>
                       </div>
                     </Link>
                     <SheetClose className="rounded-sm opacity-70 ring-offset-background transition-opacity hover:opacity-100 focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2">
