@@ -290,7 +290,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
 
   // Job Application API Endpoints
   
-  // Apply for a job (requires authentication and file upload)
+  // Apply for a job (requires authentication, handles both file upload and existing resume URL)
   app.post('/api/job-applications', resumeUpload.single('resume'), async (req, res) => {
     try {
       // Check if user is authenticated
@@ -303,16 +303,23 @@ export async function registerRoutes(app: Express): Promise<Server> {
 
       const userId = req.user!.id;
       
-      // Check if file was uploaded successfully
-      if (!req.file) {
+      let resumeUrl = '';
+      
+      // If resume is uploaded through form, use the file
+      if (req.file) {
+        resumeUrl = req.file.path || '';
+      } 
+      // If resume URL is provided in the JSON body, use that
+      else if (req.body.resumeUrl) {
+        resumeUrl = req.body.resumeUrl;
+      } 
+      // No resume provided
+      else {
         return res.status(400).json({
           success: false,
-          message: "Resume file is required"
+          message: "Resume is required (either upload a file or provide an existing URL)"
         });
       }
-
-      // Get file path from Cloudinary or fallback to a local path
-      const resumeUrl = req.file.path || '';
       
       // Parse and validate the job application data
       const applicationData = {
@@ -323,6 +330,23 @@ export async function registerRoutes(app: Express): Promise<Server> {
       };
       
       const validatedData = jobApplicationSchema.parse(applicationData);
+      
+      // Check if user has already applied to this job
+      const existingApplication = await db
+        .select()
+        .from(jobApplications)
+        .where(and(
+          eq(jobApplications.userId, userId),
+          eq(jobApplications.jobId, validatedData.jobId)
+        ))
+        .limit(1);
+      
+      if (existingApplication.length > 0) {
+        return res.status(400).json({
+          success: false,
+          message: "You have already applied to this job"
+        });
+      }
       
       // Create the job application
       const application = await storage.createJobApplication(validatedData);
