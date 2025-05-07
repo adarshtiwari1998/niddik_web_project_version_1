@@ -365,189 +365,193 @@ const AdaptiveHiringWorkflow = () => {
         How Adaptive Hiring works: Bringing agile principles to tech hiring
       </h2>
       
-      <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 mt-12">
-        {/* Left Column - Content (7 columns on lg screens) */}
-        <div className="lg:col-span-7 space-y-24"> {/* Increased spacing between sections */}
-          {sections.map((section, index) => (
-            <div 
-              key={section.id}
-              ref={el => sectionRefs.current[index] = el}
-              className="scroll-mt-36" 
-            >
-              <div className="flex items-center gap-2 text-sm font-semibold text-blue-600 tracking-wider mb-4">
-                <div className="bg-blue-100 p-1.5 rounded-full">
-                  {section.icon}
-                </div>
-                <span>{section.label}</span>
-              </div>
-              
-              <h3 className="text-2xl font-bold mb-4 text-gray-800">
-                {section.title}
-              </h3>
-              
-              <p className="text-gray-600 leading-relaxed mb-8 text-lg">
-                {section.description}
-              </p>
-            </div>
-          ))}
+      <div className="relative">
+        {/* Background container with two-column layout */}
+        <div className="absolute inset-0 grid grid-cols-1 lg:grid-cols-2">
+          <div className="hidden lg:block"></div> {/* Left column spacer */}
+          <div className="hidden lg:block bg-blue-50/30"></div> {/* Right column background */}
         </div>
         
-        {/* Right Column - Sticky Visualization (5 columns on lg screens) */}
-        <div className="lg:col-span-5 relative">
-          <div className="lg:sticky lg:top-40"> {/* Increased the top value for better positioning */}
-            <div className="bg-blue-50/50 rounded-xl overflow-hidden">
-              {activeSection === 0 && (
-                <div className="aspect-video relative">
-                  <div className="absolute inset-0 flex items-center justify-center">
-                    <div className="bg-white/90 rounded-lg p-5 shadow-sm w-4/5 max-w-md">
-                      <div className="text-center mb-4">
-                        <h4 className="font-semibold text-lg text-blue-800">Development team</h4>
-                      </div>
-                      <div className="flex flex-wrap justify-center gap-6">
-                        <div className="relative">
-                          <div className="w-12 h-12 bg-blue-400 rounded-full flex items-center justify-center text-white font-bold">
-                            JD
-                          </div>
-                          <div className="h-1 w-20 absolute top-1/2 -right-20 bg-gray-200"></div>
-                        </div>
-                        <div className="relative">
-                          <div className="w-12 h-12 bg-green-400 rounded-full flex items-center justify-center text-white font-bold">
-                            KL
-                          </div>
-                          <div className="h-20 w-1 absolute -bottom-20 left-1/2 bg-gray-200"></div>
-                        </div>
-                        <div className="relative">
-                          <div className="w-12 h-12 bg-purple-400 rounded-full flex items-center justify-center text-white font-bold">
-                            AR
-                          </div>
-                          <div className="h-1 w-20 absolute top-1/2 -left-20 bg-gray-200"></div>
-                        </div>
-                      </div>
-                    </div>
+        {/* Content container */}
+        <div className="relative grid grid-cols-1 lg:grid-cols-2 gap-0">
+          {/* Left Column - Content */}
+          <div className="py-8 pr-8 space-y-32"> {/* Increased vertical spacing between sections */}
+            {sections.map((section, index) => (
+              <div 
+                key={section.id}
+                ref={el => sectionRefs.current[index] = el}
+                className="scroll-mt-40" 
+              >
+                <div className="flex items-center gap-2 text-sm font-semibold text-blue-600 mb-4">
+                  <div className="flex items-center bg-blue-100 p-1.5 rounded-full">
+                    {section.icon}
                   </div>
+                  <span className="uppercase">{section.label}</span>
                 </div>
-              )}
-              
+                
+                <h3 className="text-2xl font-bold mb-5 text-gray-800">
+                  {section.title}
+                </h3>
+                
+                <p className="text-gray-600 leading-relaxed text-lg">
+                  {section.description}
+                </p>
+              </div>
+            ))}
+          </div>
+          
+          {/* Right Column - Sticky Visualization */}
+          <div className="relative">
+            <div className="lg:sticky lg:top-28 pt-6 lg:pt-8 h-full lg:pl-6">
+              {/* Skills Assessment Card for Section 1 */}
               {activeSection === 1 && (
-                <div className="aspect-video relative">
-                  <div className="absolute inset-0 flex items-center justify-center">
-                    <div className="bg-white/90 rounded-lg p-6 shadow-sm w-4/5">
-                      <h4 className="font-semibold text-sm text-blue-600 mb-3">SKILLS ASSESSMENT</h4>
-                      <div className="space-y-4">
-                        <div className="flex items-center gap-3">
-                          <div className="w-6 h-6 bg-blue-500 rounded-full"></div>
-                          <div className="flex-1 h-6 bg-gray-100 rounded-md relative">
-                            <div className="absolute inset-y-0 left-0 bg-blue-200 w-4/5 rounded-md"></div>
-                          </div>
-                          <span className="text-sm font-medium">React</span>
+                <div className="bg-blue-50 rounded-lg overflow-hidden pt-10 pb-10 px-8">
+                  <div className="mb-3">
+                    <h4 className="font-semibold text-sm text-blue-600">SKILLS ASSESSMENT</h4>
+                  </div>
+                  
+                  <div className="space-y-6">
+                    <div className="flex items-center gap-3">
+                      <div className="w-5 h-5 bg-blue-500 rounded-full flex-shrink-0"></div>
+                      <div className="flex-1 h-6 bg-blue-200/50 rounded-full relative">
+                        <div className="absolute inset-y-0 left-0 bg-blue-200 w-[80%] rounded-full"></div>
+                      </div>
+                      <span className="text-sm font-medium text-gray-700 w-16 text-right">React</span>
+                    </div>
+                    
+                    <div className="flex items-center gap-3">
+                      <div className="w-5 h-5 bg-green-500 rounded-full flex-shrink-0"></div>
+                      <div className="flex-1 h-6 bg-green-200/50 rounded-full relative">
+                        <div className="absolute inset-y-0 left-0 bg-green-200 w-[65%] rounded-full"></div>
+                      </div>
+                      <span className="text-sm font-medium text-gray-700 w-16 text-right">Node.js</span>
+                    </div>
+                    
+                    <div className="flex items-center gap-3">
+                      <div className="w-5 h-5 bg-yellow-500 rounded-full flex-shrink-0"></div>
+                      <div className="flex-1 h-6 bg-yellow-200/50 rounded-full relative">
+                        <div className="absolute inset-y-0 left-0 bg-yellow-200 w-[70%] rounded-full"></div>
+                      </div>
+                      <span className="text-sm font-medium text-gray-700 w-16 text-right">UX/UI</span>
+                    </div>
+                  </div>
+                </div>
+              )}
+
+              {/* Team Visualization for Section 0 */}
+              {activeSection === 0 && (
+                <div className="bg-blue-50 rounded-lg overflow-hidden pt-10 pb-10 px-8">
+                  <div className="flex justify-center mb-4">
+                    <h4 className="font-semibold text-lg text-gray-700">Development team</h4>
+                  </div>
+                  <div className="flex justify-center mb-5">
+                    <div className="flex items-center gap-2">
+                      <div className="w-8 h-8 rounded-full bg-blue-400"></div>
+                      <div className="w-8 h-8 rounded-full bg-green-400"></div>
+                      <div className="w-8 h-8 rounded-full bg-indigo-400"></div>
+                      <div className="w-8 h-8 rounded-full bg-yellow-400"></div>
+                    </div>
+                  </div>
+                  <div className="bg-white rounded-lg shadow-sm p-5 mx-auto max-w-sm">
+                    <div className="flex justify-between items-center">
+                      <div className="flex items-center gap-3">
+                        <div className="w-10 h-10 bg-blue-100 rounded-full flex items-center justify-center">
+                          <div className="w-5 h-5 bg-blue-500 rounded-full"></div>
                         </div>
-                        <div className="flex items-center gap-3">
-                          <div className="w-6 h-6 bg-green-500 rounded-full"></div>
-                          <div className="flex-1 h-6 bg-gray-100 rounded-md relative">
-                            <div className="absolute inset-y-0 left-0 bg-green-200 w-3/5 rounded-md"></div>
-                          </div>
-                          <span className="text-sm font-medium">Node.js</span>
+                        <div>
+                          <div className="text-xs text-gray-500">Project Lead</div>
+                          <div className="text-sm font-medium">Alex M.</div>
                         </div>
-                        <div className="flex items-center gap-3">
-                          <div className="w-6 h-6 bg-yellow-500 rounded-full"></div>
-                          <div className="flex-1 h-6 bg-gray-100 rounded-md relative">
-                            <div className="absolute inset-y-0 left-0 bg-yellow-200 w-2/3 rounded-md"></div>
-                          </div>
-                          <span className="text-sm font-medium">UX/UI</span>
-                        </div>
+                      </div>
+                      <div className="w-6 h-6 bg-green-500 rounded-full flex items-center justify-center text-white text-xs font-bold">
+                        ✓
                       </div>
                     </div>
                   </div>
                 </div>
               )}
-              
+
+              {/* Talent Matching for Section 2 */}
               {activeSection === 2 && (
-                <div className="aspect-video relative">
-                  <div className="absolute inset-0 flex items-center justify-center">
-                    <div className="bg-white/90 rounded-lg p-5 shadow-sm w-11/12 max-w-md">
-                      <div className="flex justify-between items-center mb-4">
-                        <h4 className="font-semibold text-sm text-blue-600">TALENT MATCHING</h4>
-                        <span className="text-xs text-gray-500">4 matches found</span>
+                <div className="bg-blue-50 rounded-lg overflow-hidden pt-10 pb-10 px-8">
+                  <div className="flex justify-between items-center mb-5">
+                    <h4 className="font-semibold text-sm text-blue-600">TALENT MATCHING</h4>
+                    <span className="text-xs text-gray-500 bg-white px-2 py-1 rounded-full">4 matches found</span>
+                  </div>
+                  <div className="grid grid-cols-2 gap-3">
+                    <div className="bg-white p-3 rounded-md shadow-sm flex items-center gap-2">
+                      <div className="w-9 h-9 bg-blue-400 rounded-full flex items-center justify-center text-white font-bold text-xs">
+                        JS
                       </div>
-                      <div className="grid grid-cols-2 gap-3">
-                        <div className="bg-blue-50 p-3 rounded-md shadow-sm flex items-center gap-2">
-                          <div className="w-10 h-10 bg-blue-400 rounded-full flex items-center justify-center text-white font-bold text-xs">
-                            JS
-                          </div>
-                          <div>
-                            <div className="text-xs font-semibold">Jason S.</div>
-                            <div className="text-xs text-gray-500">React Expert</div>
-                          </div>
-                        </div>
-                        <div className="bg-blue-50 p-3 rounded-md shadow-sm flex items-center gap-2">
-                          <div className="w-10 h-10 bg-green-400 rounded-full flex items-center justify-center text-white font-bold text-xs">
-                            AT
-                          </div>
-                          <div>
-                            <div className="text-xs font-semibold">Amy T.</div>
-                            <div className="text-xs text-gray-500">Full Stack</div>
-                          </div>
-                        </div>
-                        <div className="bg-blue-50 p-3 rounded-md shadow-sm flex items-center gap-2">
-                          <div className="w-10 h-10 bg-purple-400 rounded-full flex items-center justify-center text-white font-bold text-xs">
-                            RK
-                          </div>
-                          <div>
-                            <div className="text-xs font-semibold">Raj K.</div>
-                            <div className="text-xs text-gray-500">Node.js Dev</div>
-                          </div>
-                        </div>
-                        <div className="bg-blue-50 p-3 rounded-md shadow-sm flex items-center gap-2">
-                          <div className="w-10 h-10 bg-yellow-400 rounded-full flex items-center justify-center text-white font-bold text-xs">
-                            ML
-                          </div>
-                          <div>
-                            <div className="text-xs font-semibold">Maria L.</div>
-                            <div className="text-xs text-gray-500">UI Designer</div>
-                          </div>
-                        </div>
+                      <div>
+                        <div className="text-xs font-semibold">Jason S.</div>
+                        <div className="text-xs text-gray-500">React Expert</div>
+                      </div>
+                    </div>
+                    <div className="bg-white p-3 rounded-md shadow-sm flex items-center gap-2">
+                      <div className="w-9 h-9 bg-green-400 rounded-full flex items-center justify-center text-white font-bold text-xs">
+                        AT
+                      </div>
+                      <div>
+                        <div className="text-xs font-semibold">Amy T.</div>
+                        <div className="text-xs text-gray-500">Full Stack</div>
+                      </div>
+                    </div>
+                    <div className="bg-white p-3 rounded-md shadow-sm flex items-center gap-2">
+                      <div className="w-9 h-9 bg-purple-400 rounded-full flex items-center justify-center text-white font-bold text-xs">
+                        RK
+                      </div>
+                      <div>
+                        <div className="text-xs font-semibold">Raj K.</div>
+                        <div className="text-xs text-gray-500">Node.js Dev</div>
+                      </div>
+                    </div>
+                    <div className="bg-white p-3 rounded-md shadow-sm flex items-center gap-2">
+                      <div className="w-9 h-9 bg-yellow-400 rounded-full flex items-center justify-center text-white font-bold text-xs">
+                        ML
+                      </div>
+                      <div>
+                        <div className="text-xs font-semibold">Maria L.</div>
+                        <div className="text-xs text-gray-500">UI Designer</div>
                       </div>
                     </div>
                   </div>
                 </div>
               )}
               
+              {/* Team Scaling for Section 3 */}
               {activeSection === 3 && (
-                <div className="aspect-video relative">
-                  <div className="absolute inset-0 flex items-center justify-center">
-                    <div className="bg-white/90 rounded-lg p-5 shadow-sm w-4/5 max-w-md">
-                      <h4 className="font-semibold text-sm text-blue-600 mb-3">TEAM SCALING</h4>
-                      <div className="space-y-3">
-                        <div className="flex justify-between items-center">
-                          <span className="text-sm font-medium">Team Size</span>
-                          <div className="flex items-center">
-                            <span className="text-sm font-medium mr-2">+2</span>
-                            <div className="flex -space-x-2">
-                              <div className="w-8 h-8 bg-blue-400 rounded-full border-2 border-white z-30"></div>
-                              <div className="w-8 h-8 bg-green-400 rounded-full border-2 border-white z-20"></div>
-                              <div className="w-8 h-8 bg-yellow-400 rounded-full border-2 border-white z-10"></div>
-                            </div>
-                          </div>
-                        </div>
-                        <div className="h-1 bg-gray-200 rounded-full w-full">
-                          <div className="h-1 bg-blue-500 rounded-full w-2/3"></div>
-                        </div>
-                        <div className="flex justify-between text-xs text-gray-600">
-                          <span>Current: 3</span>
-                          <span>Target: 5</span>
-                        </div>
-                        <div className="mt-4 flex justify-between items-center">
-                          <span className="text-sm font-medium">Duration</span>
-                          <span className="text-sm font-semibold">3 months</span>
-                        </div>
-                        <div className="h-1 bg-gray-200 rounded-full w-full">
-                          <div className="h-1 bg-green-500 rounded-full w-1/4"></div>
-                        </div>
-                        <div className="flex justify-between text-xs text-gray-600">
-                          <span>Flexible</span>
-                          <span>Extendable</span>
+                <div className="bg-blue-50 rounded-lg overflow-hidden pt-10 pb-10 px-8">
+                  <h4 className="font-semibold text-sm text-blue-600 mb-5">TEAM SCALING</h4>
+                  <div className="space-y-5">
+                    <div className="flex justify-between items-center">
+                      <span className="text-sm font-medium">Team Size</span>
+                      <div className="flex items-center">
+                        <span className="text-sm font-medium mr-2">+2</span>
+                        <div className="flex -space-x-2">
+                          <div className="w-8 h-8 bg-blue-400 rounded-full border-2 border-white z-30"></div>
+                          <div className="w-8 h-8 bg-green-400 rounded-full border-2 border-white z-20"></div>
+                          <div className="w-8 h-8 bg-yellow-400 rounded-full border-2 border-white z-10"></div>
                         </div>
                       </div>
+                    </div>
+                    <div className="h-2 bg-gray-200 rounded-full w-full">
+                      <div className="h-2 bg-blue-500 rounded-full w-2/3"></div>
+                    </div>
+                    <div className="flex justify-between text-xs text-gray-600">
+                      <span>Current: 3</span>
+                      <span>Target: 5</span>
+                    </div>
+                    <div className="mt-4 flex justify-between items-center">
+                      <span className="text-sm font-medium">Duration</span>
+                      <span className="text-sm font-semibold">3 months</span>
+                    </div>
+                    <div className="h-2 bg-gray-200 rounded-full w-full">
+                      <div className="h-2 bg-green-500 rounded-full w-1/4"></div>
+                    </div>
+                    <div className="flex justify-between text-xs text-gray-600">
+                      <span>Flexible</span>
+                      <span>Extendable</span>
                     </div>
                   </div>
                 </div>
