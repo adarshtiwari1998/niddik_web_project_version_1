@@ -137,13 +137,13 @@ const Navbar: React.FC<NavbarProps> = ({ hasAnnouncementAbove = true }) => {
           {/* CTA Buttons */}
           <div className="hidden lg:flex items-center space-x-4">
             <div className="hover:text-andela-green font-medium transition-colors">
-              <a href="/auth">Sign In</a>
+              <Link href="/auth">Sign In</Link>
             </div>
             <div className="bg-andela-green hover:bg-opacity-90 transition-colors text-white px-6 py-2 rounded-md font-medium">
-              <a href="#" className="text-white">Hire Talent</a>
+              <Link href="#" className="text-white">Hire Talent</Link>
             </div>
             <div className="border border-andela-green text-andela-green hover:bg-andela-green hover:text-white transition-colors px-6 py-2 rounded-md font-medium">
-              <a href="/careers" className="text-andela-green hover:text-white">Apply as Talent</a>
+              <Link href="/careers" className="text-andela-green hover:text-white">Apply as Talent</Link>
             </div>
           </div>
 
@@ -226,13 +226,13 @@ const Navbar: React.FC<NavbarProps> = ({ hasAnnouncementAbove = true }) => {
 
           <div className="pt-4 flex flex-col space-y-3">
             <div className="font-medium">
-              <a href="/auth">Sign In</a>
+              <Link href="/auth" onClick={() => setIsMobileMenuOpen(false)}>Sign In</Link>
             </div>
             <div className="bg-andela-green text-white px-4 py-2 rounded-md font-medium text-center">
-              <a href="#" className="text-white">Hire Talent</a>
+              <Link href="#" className="text-white" onClick={() => setIsMobileMenuOpen(false)}>Hire Talent</Link>
             </div>
             <div className="border border-andela-green text-andela-green px-4 py-2 rounded-md font-medium text-center">
-              <a href="/careers" className="text-andela-green">Apply as Talent</a>
+              <Link href="/careers" className="text-andela-green" onClick={() => setIsMobileMenuOpen(false)}>Apply as Talent</Link>
             </div>
           </div>
         </nav>
