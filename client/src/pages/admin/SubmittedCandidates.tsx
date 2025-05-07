@@ -427,6 +427,74 @@ export default function SubmittedCandidates() {
     });
   };
   
+  // Query for job applicants
+  const { data: applicantsData, isLoading: isLoadingApplicants } = useQuery({
+    queryKey: ['/api/submitted-candidates/job-applicants'],
+    queryFn: async () => {
+      const res = await apiRequest("GET", `/api/submitted-candidates/job-applicants`);
+      if (!res.ok) throw new Error("Failed to fetch job applicants");
+      return await res.json();
+    },
+    enabled: false // Don't load automatically, only when requested
+  });
+  
+  // State for inline editing
+  const [isAddingInline, setIsAddingInline] = useState(false);
+  const [newCandidateData, setNewCandidateData] = useState<Partial<CandidateFormValues>>({
+    submissionDate: new Date().toISOString().split('T')[0],
+    status: 'new'
+  });
+  
+  // Handle inline editing field change
+  const handleInlineFieldChange = (field: keyof CandidateFormValues, value: string) => {
+    setNewCandidateData(prev => {
+      const updated = { ...prev, [field]: value };
+      
+      // Auto-calculate margin and profit if bill rate or pay rate changes
+      if (field === 'billRate' || field === 'payRate') {
+        const bill = parseFloat(updated.billRate || '0');
+        const pay = parseFloat(updated.payRate || '0');
+        
+        if (!isNaN(bill) && !isNaN(pay)) {
+          updated.marginPerHour = (bill - pay).toFixed(2);
+          updated.profitPerMonth = ((bill - pay) * 160).toFixed(2);
+        }
+      }
+      
+      return updated;
+    });
+  };
+  
+  // Add candidate inline
+  const handleAddInline = () => {
+    // Validate required fields
+    const requiredFields = ['candidateName', 'client', 'poc', 'emailId', 'sourcedBy'];
+    const missingFields = requiredFields.filter(field => !newCandidateData[field as keyof CandidateFormValues]);
+    
+    if (missingFields.length > 0) {
+      toast({
+        title: "Missing required fields",
+        description: `Please fill in: ${missingFields.join(', ')}`,
+        variant: "destructive"
+      });
+      return;
+    }
+    
+    createMutation.mutate(newCandidateData as CandidateFormValues);
+    setIsAddingInline(false);
+    setNewCandidateData({
+      submissionDate: new Date().toISOString().split('T')[0],
+      status: 'new'
+    });
+  };
+  
+  // Import from existing applicants
+  const handleImportFromApplicants = () => {
+    queryClient.resetQueries({ queryKey: ['/api/submitted-candidates/job-applicants'] });
+    queryClient.prefetchQuery({ queryKey: ['/api/submitted-candidates/job-applicants'] });
+    setIsImportDialogOpen(true);
+  };
+  
   // Form submit handlers
   const onSubmitAdd: SubmitHandler<CandidateFormValues> = (data) => {
     createMutation.mutate(data);

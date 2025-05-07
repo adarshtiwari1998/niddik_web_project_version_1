@@ -293,6 +293,47 @@ export async function registerRoutes(app: Express): Promise<Server> {
   setupAuth(app);
   
   // Submitted Candidates API Endpoints
+  
+  // Get job applicants for use in submitted candidates
+  app.get('/api/submitted-candidates/job-applicants', async (req: AuthenticatedRequest, res: Response) => {
+    try {
+      if (!req.user) {
+        return res.status(401).json({ success: false, message: 'Not authenticated' });
+      }
+      
+      // Get all job applications with user and job details
+      const applications = await storage.getAllApplicationsWithPagination({
+        page: 1,
+        limit: 100, // Get a reasonable number of recent applications
+        includeUser: true,
+        includeJob: true
+      });
+      
+      // Transform to match the submitted candidates format
+      const formattedApplicants = applications.data.map(app => ({
+        candidateName: app.user?.username || '',
+        emailId: app.user?.email || '',
+        location: app.user?.profileData?.location || '',
+        experience: app.user?.profileData?.experience || '',
+        skills: app.user?.profileData?.skills || '',
+        noticePeriod: app.user?.profileData?.noticePeriod || '',
+        currentCtc: app.user?.profileData?.currentCtc || '',
+        expectedCtc: app.user?.profileData?.expectedCtc || '',
+        contactNo: app.user?.profileData?.phone || '',
+        // Default values for required fields
+        client: app.jobListing?.companyName || '',
+        poc: '',
+        status: 'new',
+        applicationId: app.id // Use application ID to link back to the original application
+      }));
+      
+      res.json({ success: true, data: formattedApplicants });
+    } catch (error) {
+      console.error('Error fetching applicants for import:', error);
+      res.status(500).json({ success: false, message: 'Failed to fetch applicants for import' });
+    }
+  });
+  
   app.get('/api/submitted-candidates', async (req: AuthenticatedRequest, res: Response) => {
     try {
       // Check if user is authenticated and is an admin
