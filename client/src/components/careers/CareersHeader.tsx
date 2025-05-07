@@ -30,22 +30,9 @@ import { useToast } from "@/hooks/use-toast";
 export default function CareersHeader() {
   const { user, logoutMutation } = useAuth();
   const { toast } = useToast();
-  const [lastLogout, setLastLogout] = useState<string | null>(null);
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
 
-  // Load last logout time from localStorage when component mounts
-  useEffect(() => {
-    const storedLogoutTime = localStorage.getItem('lastLogout');
-    if (storedLogoutTime) {
-      setLastLogout(storedLogoutTime);
-    }
-  }, []);
-
   const handleLogout = () => {
-    // Store current time as last logout time
-    const now = new Date().toISOString();
-    localStorage.setItem('lastLogout', now);
-    
     logoutMutation.mutate(undefined, {
       onSuccess: () => {
         toast({
@@ -101,10 +88,10 @@ export default function CareersHeader() {
           <div className="flex items-center gap-4">
             {user ? (
               <>
-                {lastLogout && (
+                {user.lastLogout && (
                   <div className="hidden md:flex items-center text-sm text-muted-foreground">
                     <Clock className="h-3.5 w-3.5 mr-1" />
-                    <span>Last logout: {formatLastLogout(lastLogout)}</span>
+                    <span>Last logout: {formatLastLogout(user.lastLogout.toString())}</span>
                   </div>
                 )}
                 <Link href="/candidate/dashboard">

@@ -188,11 +188,24 @@ export function setupAuth(app: Express) {
   });
 
   // Logout API route
-  app.post("/api/logout", (req, res, next) => {
-    req.logout((err) => {
-      if (err) return next(err);
-      res.sendStatus(200);
-    });
+  app.post("/api/logout", async (req, res, next) => {
+    try {
+      // Update last logout time if user is authenticated
+      if (req.isAuthenticated() && req.user && req.user.id) {
+        await storage.updateLastLogout(req.user.id);
+      }
+      
+      req.logout((err) => {
+        if (err) return next(err);
+        res.sendStatus(200);
+      });
+    } catch (error) {
+      console.error("Logout error:", error);
+      req.logout((err) => {
+        if (err) return next(err);
+        res.sendStatus(200);
+      });
+    }
   });
 
   // Current user API route (supports both session and JWT)

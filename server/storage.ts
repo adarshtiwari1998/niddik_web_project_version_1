@@ -225,6 +225,20 @@ export const storage = {
     return updatedUser;
   },
 
+  async updateLastLogout(id: number): Promise<User | undefined> {
+    try {
+      const [updatedUser] = await db
+        .update(users)
+        .set({ lastLogout: new Date() })
+        .where(eq(users.id, id))
+        .returning();
+      return updatedUser;
+    } catch (error) {
+      console.error('Error updating last logout time:', error);
+      return undefined;
+    }
+  },
+
   // Job Applications
   async createJobApplication(data: InsertJobApplication): Promise<JobApplication> {
     const [application] = await db.insert(jobApplications).values(data).returning();
