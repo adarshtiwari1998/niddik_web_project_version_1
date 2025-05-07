@@ -49,33 +49,59 @@ export default function AdminLogin() {
       return;
     }
 
-    loginMutation.mutate(
-      { username, password },
-      {
-        onSuccess: (userData: any) => {
-          if (userData.role !== 'admin') {
+    try {
+      loginMutation.mutate(
+        { username, password },
+        {
+          onSuccess: (userData: any) => {
+            if (userData.role !== 'admin') {
+              toast({
+                title: "Access denied",
+                description: "You do not have administrator privileges",
+                variant: "destructive"
+              });
+              return;
+            }
+            
+            // Store JWT token if available
+            if (userData.token) {
+              setAuthToken(userData.token);
+            }
+            
+            // Get redirect URL from query parameters if it exists
+            const urlParams = new URLSearchParams(window.location.search);
+            const redirectUrl = urlParams.get("redirect");
+            
+            // Navigate to admin dashboard or specified redirect URL
+            if (redirectUrl) {
+              setLocation(redirectUrl);
+            } else {
+              setLocation("/admin/dashboard");
+            }
+            
             toast({
-              title: "Access denied",
-              description: "You do not have administrator privileges",
+              title: "Welcome back",
+              description: "You have successfully logged in to the admin panel",
+            });
+          },
+          onError: (error) => {
+            console.error("Login error:", error);
+            toast({
+              title: "Login failed",
+              description: error.message || "Invalid credentials. Please try again.",
               variant: "destructive"
             });
-            return;
           }
-          
-          // Store JWT token if available
-          if (userData.token) {
-            setAuthToken(userData.token);
-          }
-          
-          // Navigate to admin dashboard
-          setLocation("/admin/dashboard");
-          toast({
-            title: "Welcome back",
-            description: "You have successfully logged in to the admin panel",
-          });
         }
-      }
-    );
+      );
+    } catch (error) {
+      console.error("Login error:", error);
+      toast({
+        title: "Login failed",
+        description: error instanceof Error ? error.message : "An unexpected error occurred",
+        variant: "destructive"
+      });
+    }
   };
 
   return (
