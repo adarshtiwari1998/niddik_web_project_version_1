@@ -289,53 +289,94 @@ export default function RequestDemo() {
                     <CardContent className="pt-8 px-8">
                       <Form {...form}>
                         <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-5">
+                          <div className="grid grid-cols-1 sm:grid-cols-2 gap-5">
+                            <FormField
+                              control={form.control}
+                              name="fullName"
+                              render={({ field }) => (
+                                <FormItem>
+                                  <FormLabel>Full Name</FormLabel>
+                                  <FormControl>
+                                    <Input placeholder="John Smith" {...field} />
+                                  </FormControl>
+                                  <FormMessage />
+                                </FormItem>
+                              )}
+                            />
+                            <FormField
+                              control={form.control}
+                              name="jobTitle"
+                              render={({ field }) => (
+                                <FormItem>
+                                  <FormLabel>Job Title</FormLabel>
+                                  <FormControl>
+                                    <Input placeholder="HR Manager" {...field} />
+                                  </FormControl>
+                                  <FormMessage />
+                                </FormItem>
+                              )}
+                            />
+                          </div>
+
                           <FormField
                             control={form.control}
-                            name="workEmail"
+                            name="companyName"
                             render={({ field }) => (
                               <FormItem>
-                                <FormLabel className="flex gap-1 text-sm font-medium">
-                                  WORK EMAIL: <span className="text-red-500">*</span>
-                                </FormLabel>
+                                <FormLabel>Company Name</FormLabel>
                                 <FormControl>
-                                  <Input placeholder="john@company.com" {...field} />
+                                  <Input placeholder="Acme Inc." {...field} />
                                 </FormControl>
                                 <FormMessage />
                               </FormItem>
                             )}
                           />
 
-                          <FormField
-                            control={form.control}
-                            name="phoneNumber"
-                            render={({ field }) => (
-                              <FormItem>
-                                <FormLabel className="flex gap-1 text-sm font-medium">
-                                  PHONE NUMBER: <span className="text-red-500">*</span>
-                                </FormLabel>
-                                <FormControl>
-                                  <Input placeholder="+1 (555) 000-0000" {...field} />
-                                </FormControl>
-                                <FormMessage />
-                              </FormItem>
-                            )}
-                          />
+                          <div className="grid grid-cols-1 sm:grid-cols-2 gap-5">
+                            <FormField
+                              control={form.control}
+                              name="workEmail"
+                              render={({ field }) => (
+                                <FormItem>
+                                  <FormLabel>Work Email</FormLabel>
+                                  <FormControl>
+                                    <Input placeholder="john@company.com" {...field} />
+                                  </FormControl>
+                                  <FormMessage />
+                                </FormItem>
+                              )}
+                            />
+                            <FormField
+                              control={form.control}
+                              name="phoneNumber"
+                              render={({ field }) => (
+                                <FormItem>
+                                  <FormLabel>Phone Number</FormLabel>
+                                  <FormControl>
+                                    <Input placeholder="+1 (555) 000-0000" {...field} />
+                                  </FormControl>
+                                  <FormMessage />
+                                </FormItem>
+                              )}
+                            />
+                          </div>
 
                           <FormField
                             control={form.control}
                             name="message"
                             render={({ field }) => (
                               <FormItem>
-                                <FormLabel className="flex gap-1 text-sm font-medium">
-                                  MESSAGE: <span className="text-red-500">*</span>
-                                </FormLabel>
+                                <FormLabel>Additional Information</FormLabel>
                                 <FormControl>
                                   <Textarea
-                                    placeholder="Do you have a specific goal for the Niddik demo? If there's an area you'd like us to cover, please include those details here so we can be prepared."
-                                    className="resize-none min-h-[120px]"
+                                    placeholder="Tell us about your specific needs or questions"
+                                    className="resize-none min-h-[100px]"
                                     {...field}
                                   />
                                 </FormControl>
+                                <FormDescription>
+                                  Optional - Share any specific areas you'd like us to focus on during the demo
+                                </FormDescription>
                                 <FormMessage />
                               </FormItem>
                             )}
@@ -345,7 +386,7 @@ export default function RequestDemo() {
                             control={form.control}
                             name="acceptedTerms"
                             render={({ field }) => (
-                              <FormItem className="flex flex-row items-start space-x-3 space-y-0 pt-4">
+                              <FormItem className="flex flex-row items-start space-x-3 space-y-0 rounded-md border p-4">
                                 <FormControl>
                                   <Checkbox
                                     checked={field.value}
@@ -353,9 +394,12 @@ export default function RequestDemo() {
                                   />
                                 </FormControl>
                                 <div className="space-y-1 leading-none">
-                                  <FormLabel className="text-xs font-normal leading-snug">
-                                    I UNDERSTAND THAT NIDDIK WILL PROCESS MY INFORMATION IN ACCORDANCE WITH THEIR <a href="/terms" className="text-blue-600 underline">TERMS OF USE</a>. I MAY WITHDRAW MY CONSENT THROUGH UNSUBSCRIBE LINKS AT ANY TIME.
+                                  <FormLabel>
+                                    I agree to Niddik's terms of service and privacy policy
                                   </FormLabel>
+                                  <FormDescription>
+                                    We'll use this information to schedule and customize your demo experience.
+                                  </FormDescription>
                                 </div>
                                 <FormMessage />
                               </FormItem>
@@ -364,48 +408,11 @@ export default function RequestDemo() {
 
                           <Button
                             type="submit"
-                            className="w-full bg-green-500 hover:bg-green-600 text-white font-medium mt-4"
+                            className="w-full bg-green-500 hover:bg-green-600"
                             disabled={isPending || checkingRequest}
                           >
-                            {isPending ? "Submitting..." : "Submit"}
+                            {isPending ? "Submitting..." : "Request Demo"}
                           </Button>
-                          
-                          {/* Hidden fields that are still validated but not shown in this form layout */}
-                          <div className="hidden">
-                            <FormField
-                              control={form.control}
-                              name="fullName"
-                              render={({ field }) => (
-                                <FormItem>
-                                  <FormControl>
-                                    <Input {...field} defaultValue="Hidden Full Name" />
-                                  </FormControl>
-                                </FormItem>
-                              )}
-                            />
-                            <FormField
-                              control={form.control}
-                              name="jobTitle"
-                              render={({ field }) => (
-                                <FormItem>
-                                  <FormControl>
-                                    <Input {...field} defaultValue="Hidden Job Title" />
-                                  </FormControl>
-                                </FormItem>
-                              )}
-                            />
-                            <FormField
-                              control={form.control}
-                              name="companyName"
-                              render={({ field }) => (
-                                <FormItem>
-                                  <FormControl>
-                                    <Input {...field} defaultValue="Hidden Company" />
-                                  </FormControl>
-                                </FormItem>
-                              )}
-                            />
-                          </div>
                         </form>
                       </Form>
                     </CardContent>
