@@ -70,33 +70,11 @@ const UsesCasesWithStickyImage = () => {
     }
   ];
 
-  // Track if the use cases section is in the viewport
+  // For the Use Cases section, we'll have the image fixed immediately
+  // This matches the requirement to keep it fixed at all times
   useEffect(() => {
-    // Target the first tab reference instead of the entire section
-    // This ensures fixed positioning only triggers when actual content is visible
-    const firstTabRef = tabsRef.current[0];
-    
-    const options = {
-      root: null,
-      rootMargin: '-120px 0px 0px 0px', // Only activate after scrolling down past heading
-      threshold: 0.3 // Need more visibility before triggering
-    };
-
-    const observer = new IntersectionObserver((entries) => {
-      entries.forEach(entry => {
-        setIsInViewport(entry.isIntersecting);
-      });
-    }, options);
-    
-    if (firstTabRef) {
-      observer.observe(firstTabRef);
-    }
-
-    return () => {
-      if (firstTabRef) {
-        observer.unobserve(firstTabRef);
-      }
-    };
+    // Set image to fixed position immediately since this section should be different
+    setIsInViewport(true);
   }, []);
 
   useEffect(() => {
