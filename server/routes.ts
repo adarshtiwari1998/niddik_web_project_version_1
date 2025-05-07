@@ -9,6 +9,28 @@ import {
 import { z } from "zod";
 import { setupAuth } from "./auth";
 import { resumeUpload } from "./cloudinary";
+import { scrypt, randomBytes, timingSafeEqual } from "crypto";
+import { promisify } from "util";
+
+const scryptAsync = promisify(scrypt);
+
+async function hashPassword(password: string) {
+  const salt = randomBytes(16).toString("hex");
+  const buf = (await scryptAsync(password, salt, 64)) as Buffer;
+  return `${buf.toString("hex")}.${salt}`;
+}
+
+async function comparePasswords(supplied: string, stored: string) {
+  const [hashed, salt] = stored.split(".");
+  const hashedBuf = Buffer.from(hashed, "hex");
+  const suppliedBuf = (await scryptAsync(supplied, salt, 64)) as Buffer;
+  return timingSafeEqual(hashedBuf, suppliedBuf);
+}
+
+// Type for authenticated requests
+interface AuthenticatedRequest extends Request {
+  user?: any;
+}
 
 export async function registerRoutes(app: Express): Promise<Server> {
   // API endpoint for contact form submissions
@@ -454,6 +476,69 @@ export async function registerRoutes(app: Express): Promise<Server> {
       });
     } catch (error) {
       console.error('Error fetching job applications:', error);
+      return res.status(500).json({
+        success: false,
+        message: "Internal server error"
+      });
+    }
+  });
+
+  // Admin routes for password change
+  app.post('/api/admin/change-password', async (req: AuthenticatedRequest, res) => {
+    try {
+      if (!req.isAuthenticated() || req.user.role !== 'admin') {
+        return res.status(403).json({ 
+          success: false, 
+          message: "Not authorized" 
+        });
+      }
+
+      const { currentPassword, newPassword } = req.body;
+      
+      if (!currentPassword || !newPassword) {
+        return res.status(400).json({
+          success: false,
+          message: "Current password and new password are required"
+        });
+      }
+
+      // Get the admin user
+      const adminUser = await storage.getUserById(req.user.id);
+      if (!adminUser) {
+        return res.status(404).json({
+          success: false,
+          message: "User not found"
+        });
+      }
+
+      // Verify current password
+      const isPasswordValid = await comparePasswords(currentPassword, adminUser.password);
+      if (!isPasswordValid) {
+        return res.status(401).json({
+          success: false,
+          message: "Current password is incorrect"
+        });
+      }
+
+      // Hash the new password
+      const hashedPassword = await hashPassword(newPassword);
+      
+      // Update the admin's password
+      const updatedUser = await storage.updateUserPassword(adminUser.id, hashedPassword);
+      
+      if (!updatedUser) {
+        return res.status(500).json({
+          success: false,
+          message: "Failed to update password"
+        });
+      }
+
+      return res.status(200).json({
+        success: true,
+        message: "Password changed successfully"
+      });
+    } catch (error) {
+      console.error('Error changing admin password:', error);
       return res.status(500).json({
         success: false,
         message: "Internal server error"
