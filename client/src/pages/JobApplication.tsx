@@ -237,9 +237,10 @@ export default function JobApplication() {
                       <div>
                         <label className="text-sm font-medium">Full Name</label>
                         <Input 
-                          value={user.fullName || ""} 
+                          value={user.fullName || user.username || ""} 
                           disabled 
                           className="bg-muted/50"
+                          placeholder="Your full name"
                         />
                         <p className="text-xs text-muted-foreground mt-1">
                           Your name from your profile
@@ -251,6 +252,7 @@ export default function JobApplication() {
                           value={user.email || ""} 
                           disabled 
                           className="bg-muted/50"
+                          placeholder="Your email address"
                         />
                         <p className="text-xs text-muted-foreground mt-1">
                           Your email from your profile
