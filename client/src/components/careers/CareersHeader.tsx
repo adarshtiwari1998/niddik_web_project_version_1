@@ -50,8 +50,13 @@ export default function CareersHeader() {
     });
   };
 
-  const formatLastLogout = (isoDate: string) => {
-    const date = new Date(isoDate);
+  const formatLastLogout = (dateValue: string | Date | null) => {
+    if (!dateValue) return '';
+    
+    const date = typeof dateValue === 'string' 
+      ? new Date(dateValue) 
+      : dateValue;
+      
     return new Intl.DateTimeFormat('en-US', {
       month: 'short',
       day: 'numeric',
@@ -88,10 +93,10 @@ export default function CareersHeader() {
           <div className="flex items-center gap-4">
             {user ? (
               <>
-                {user.lastLogout && (
+                {user && user.lastLogout && (
                   <div className="hidden md:flex items-center text-sm text-muted-foreground">
                     <Clock className="h-3.5 w-3.5 mr-1" />
-                    <span>Last logout: {formatLastLogout(user.lastLogout.toString())}</span>
+                    <span>Last logout: {formatLastLogout(user.lastLogout)}</span>
                   </div>
                 )}
                 <Link href="/candidate/dashboard">
@@ -211,10 +216,10 @@ export default function CareersHeader() {
                     )}
                   </nav>
 
-                  {lastLogout && user && (
+                  {user && user.lastLogout && (
                     <div className="flex items-center text-sm text-muted-foreground mt-2 px-2">
                       <Clock className="h-3.5 w-3.5 mr-1" />
-                      <span>Last logout: {formatLastLogout(lastLogout)}</span>
+                      <span>Last logout: {formatLastLogout(user.lastLogout)}</span>
                     </div>
                   )}
                   
