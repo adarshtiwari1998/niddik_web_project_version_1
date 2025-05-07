@@ -84,15 +84,15 @@ const Navbar: React.FC<NavbarProps> = ({ hasAnnouncementAbove = true }) => {
     )}>
       <Container>
         <div className="flex justify-between items-center py-4">
-          {/* Logo with slogan - centered on desktop */}
-          <div className="flex-shrink-0 lg:absolute lg:left-1/2 lg:transform lg:-translate-x-1/2 flex flex-col items-center">
+          {/* Logo with slogan */}
+          <div className="flex-shrink-0">
             <Link href="/" className="block">
               <Logo className="h-10" />
             </Link>
             <p className="text-xs text-gray-500 mt-1">Connecting People, Changing Lives</p>
           </div>
 
-          {/* Desktop Navigation - pushed to left */}
+          {/* Desktop Navigation */}
           <nav className="hidden lg:flex items-center space-x-8">
             {navItems.map((item, index) => (
               item.dropdown ? (
