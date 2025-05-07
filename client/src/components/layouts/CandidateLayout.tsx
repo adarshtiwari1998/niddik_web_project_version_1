@@ -62,13 +62,13 @@ export default function CandidateLayout({ children, activeTab = "" }: CandidateL
         <div className="container flex h-16 items-center justify-between py-4">
           <div className="flex items-center gap-4">
             <Link href="/" className="flex flex-col items-start">
-              <div>
+              <div className="flex flex-col items-center">
                 <img 
                   src="/images/niddik_logo.png" 
                   alt="NiDDiK Logo" 
                   className="h-10" 
                 />
-                <div className="text-[10px] text-gray-500 mt-0.5 ml-0.5">Connecting People, Changing Lives</div>
+                <div className="text-[10px] text-gray-500 mt-0.5">Connecting People, Changing Lives</div>
               </div>
             </Link>
             <span className="text-sm text-muted-foreground border-l pl-4">Candidate Portal</span>
@@ -123,13 +123,13 @@ export default function CandidateLayout({ children, activeTab = "" }: CandidateL
                 <div className="flex flex-col h-full">
                   <div className="px-2 py-4 border-b">
                     <div className="flex flex-col mb-4">
-                      <div className="mx-auto">
+                      <div className="flex flex-col items-center">
                         <img 
                           src="/images/niddik_logo.png" 
                           alt="NiDDiK Logo" 
                           className="h-10" 
                         />
-                        <div className="text-[10px] text-gray-500 mt-0.5 ml-0.5 text-center">Connecting People, Changing Lives</div>
+                        <div className="text-[10px] text-gray-500 mt-0.5">Connecting People, Changing Lives</div>
                       </div>
                     </div>
                     <div className="flex items-center gap-3">

@@ -233,13 +233,13 @@ export default function AuthPage() {
         <div className="container flex h-16 items-center justify-between">
           <div className="flex items-center gap-6">
             <a href="/" className="flex flex-col items-start pt-2 pb-2">
-              <div>
+              <div className="flex flex-col items-center">
                 <img 
                   src="/images/niddik_logo.png" 
                   alt="NiDDiK Logo" 
                   className="h-10"
                 />
-                <div className="text-[10px] text-gray-500 mt-0.5 ml-0.5">Connecting People, Changing Lives</div>
+                <div className="text-[10px] text-gray-500 mt-0.5">Connecting People, Changing Lives</div>
               </div>
             </a>
             <nav className="hidden md:flex gap-6">

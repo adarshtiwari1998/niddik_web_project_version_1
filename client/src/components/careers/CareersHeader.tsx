@@ -73,13 +73,13 @@ export default function CareersHeader() {
         <div className="flex items-center justify-between w-full">
           <div className="flex items-center gap-6">
             <Link href="/" className="flex flex-col items-start">
-              <div>
+              <div className="flex flex-col items-center">
                 <img 
                   src="/images/niddik_logo.png" 
                   alt="NiDDiK Logo" 
                   className="h-10" 
                 />
-                <div className="text-[10px] text-gray-500 mt-0.5 ml-0.5">Connecting People, Changing Lives</div>
+                <div className="text-[10px] text-gray-500 mt-0.5">Connecting People, Changing Lives</div>
               </div>
             </Link>
             <nav className="hidden md:flex gap-6">
@@ -173,13 +173,13 @@ export default function CareersHeader() {
                 <div className="flex flex-col h-full">
                   <div className="flex items-center justify-between pb-4 border-b">
                     <Link href="/" className="flex flex-col items-start" onClick={() => setMobileMenuOpen(false)}>
-                      <div>
+                      <div className="flex flex-col items-center">
                         <img 
                           src="/images/niddik_logo.png" 
                           alt="NiDDiK Logo" 
                           className="h-10" 
                         />
-                        <div className="text-[10px] text-gray-500 mt-0.5 ml-0.5">Connecting People, Changing Lives</div>
+                        <div className="text-[10px] text-gray-500 mt-0.5">Connecting People, Changing Lives</div>
                       </div>
                     </Link>
                     <SheetClose className="rounded-sm opacity-70 ring-offset-background transition-opacity hover:opacity-100 focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2">
