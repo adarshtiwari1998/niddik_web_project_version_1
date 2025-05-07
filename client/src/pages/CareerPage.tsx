@@ -16,6 +16,7 @@ import { getQueryFn } from "@/lib/queryClient";
 import { JobListing } from "@shared/schema";
 import { Briefcase, Clock, MapPin, Search, Filter, Loader2 } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
+import CareersLayout from "@/components/careers/CareersLayout";
 
 export default function CareerPage() {
   const [search, setSearch] = useState("");
@@ -41,14 +42,15 @@ export default function CareerPage() {
   };
 
   return (
-    <div className="container mx-auto py-12 px-4 md:px-6">
-      {/* Hero Section */}
-      <div className="text-center mb-12">
-        <h1 className="text-4xl font-bold mb-4">Join Our Team</h1>
-        <p className="text-xl text-muted-foreground max-w-2xl mx-auto">
-          Discover opportunities to grow your career with Niddik. We're looking for talented individuals to help us build the future of talent acquisition.
-        </p>
-      </div>
+    <CareersLayout>
+      <div className="container mx-auto py-12 px-4 md:px-6">
+        {/* Hero Section */}
+        <div className="text-center mb-12">
+          <h1 className="text-4xl font-bold mb-4">Join Our Team</h1>
+          <p className="text-xl text-muted-foreground max-w-2xl mx-auto">
+            Discover opportunities to grow your career with Niddik. We're looking for talented individuals to help us build the future of talent acquisition.
+          </p>
+        </div>
 
       {/* Search and Filters */}
       <Card className="mb-8">
@@ -196,6 +198,7 @@ export default function CareerPage() {
 
         {/* Pagination can be added here later */}
       </div>
-    </div>
+      </div>
+    </CareersLayout>
   );
 }
