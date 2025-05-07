@@ -993,8 +993,7 @@ const AdaptiveHiring = () => {
             </p>
           </div>
           <div className="relative py-10">
-            {/* Import the new section with proper scroll behavior */}
-            <div className="import-section-here"></div>
+            <AdaptiveHiringWorkflow />
           </div>
         </Container>
       </section>

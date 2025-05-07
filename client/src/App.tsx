@@ -10,7 +10,7 @@ import WebAppSolutions from "@/pages/WebAppSolutions";
 import AboutUs from "@/pages/AboutUs";
 import WhyUs from "@/pages/WhyUs";
 import LandingPage from "@/pages/LandingPage";
-import AdaptiveHiring from "@/pages/AdaptiveHiring";
+import AdaptiveHiring from "@/pages/AdaptiveHiringFix";
 import { default as Whitepaper } from "@/pages/Whitepaper";
 
 // Admin Pages
