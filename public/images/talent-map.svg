@@ -1,0 +1,108 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg width="800" height="600" viewBox="0 0 800 600" xmlns="http://www.w3.org/2000/svg">
+  <!-- Mint green background -->
+  <rect width="800" height="600" fill="#a8e6cf" />
+  
+  <!-- World map dots pattern -->
+  <g fill="#2c5f2c" opacity="0.15">
+    <!-- Africa & Europe Region -->
+    <circle cx="400" cy="250" r="2" />
+    <circle cx="410" cy="240" r="2" />
+    <circle cx="420" cy="230" r="2" />
+    <circle cx="380" cy="240" r="2" />
+    <circle cx="390" cy="250" r="2" />
+    <circle cx="400" cy="260" r="2" />
+    <circle cx="370" cy="270" r="2" />
+    <circle cx="380" cy="280" r="2" />
+    <circle cx="390" cy="290" r="2" />
+    <circle cx="430" cy="240" r="2" />
+    <circle cx="440" cy="250" r="2" />
+    <circle cx="450" cy="260" r="2" />
+    <circle cx="460" cy="270" r="2" />
+    <circle cx="370" cy="260" r="2" />
+    <circle cx="380" cy="270" r="2" />
+    <circle cx="390" cy="280" r="2" />
+    <circle cx="400" cy="290" r="2" />
+    <circle cx="410" cy="300" r="2" />
+    
+    <!-- Americas Region -->
+    <circle cx="200" cy="200" r="2" />
+    <circle cx="210" cy="210" r="2" />
+    <circle cx="220" cy="220" r="2" />
+    <circle cx="190" cy="230" r="2" />
+    <circle cx="200" cy="240" r="2" />
+    <circle cx="210" cy="250" r="2" />
+    <circle cx="220" cy="260" r="2" />
+    <circle cx="230" cy="270" r="2" />
+    <circle cx="240" cy="280" r="2" />
+    <circle cx="180" cy="290" r="2" />
+    <circle cx="190" cy="300" r="2" />
+    <circle cx="200" cy="310" r="2" />
+    <circle cx="210" cy="320" r="2" />
+    <circle cx="220" cy="330" r="2" />
+    <circle cx="230" cy="340" r="2" />
+    
+    <!-- Asia & Australia Region -->
+    <circle cx="550" cy="220" r="2" />
+    <circle cx="560" cy="230" r="2" />
+    <circle cx="570" cy="240" r="2" />
+    <circle cx="580" cy="250" r="2" />
+    <circle cx="590" cy="260" r="2" />
+    <circle cx="600" cy="270" r="2" />
+    <circle cx="550" cy="280" r="2" />
+    <circle cx="560" cy="290" r="2" />
+    <circle cx="570" cy="300" r="2" />
+    <circle cx="580" cy="310" r="2" />
+    <circle cx="590" cy="320" r="2" />
+    <circle cx="600" cy="330" r="2" />
+    <circle cx="610" cy="340" r="2" />
+    <circle cx="620" cy="350" r="2" />
+    <circle cx="630" cy="360" r="2" />
+  </g>
+  
+  <!-- Decorative stars -->
+  <g fill="#0e4d4d">
+    <path d="M200,150 L205,160 L195,160 Z" />
+    <path d="M600,160 L605,170 L595,170 Z" />
+    <path d="M400,120 L405,130 L395,130 Z" />
+    <path d="M300,350 L305,360 L295,360 Z" />
+    <path d="M500,340 L505,350 L495,350 Z" />
+  </g>
+  
+  <!-- Profile cards -->
+  <g>
+    <!-- Profile 1 -->
+    <rect x="150" y="200" width="120" height="100" rx="8" fill="white" stroke="#e0e0e0" stroke-width="1" />
+    <circle cx="180" cy="230" r="20" fill="#4299e1" />
+    <text x="210" y="225" font-family="Arial" font-size="14" font-weight="bold" fill="#333">Rizwan M.</text>
+    <text x="210" y="245" font-family="Arial" font-size="10" fill="#666">Frontend Developer</text>
+    <circle cx="215" cy="200" r="10" fill="#38b2ac" stroke="white" stroke-width="2" />
+    <text x="215" cy="204" font-family="Arial" font-size="10" font-weight="bold" fill="white" text-anchor="middle">+</text>
+    
+    <!-- Profile 2 -->
+    <rect x="400" y="300" width="120" height="100" rx="8" fill="white" stroke="#e0e0e0" stroke-width="1" />
+    <circle cx="430" cy="330" r="20" fill="#9f7aea" />
+    <text x="460" y="325" font-family="Arial" font-size="14" font-weight="bold" fill="#333">Ebiere O.</text>
+    <text x="460" y="345" font-family="Arial" font-size="10" fill="#666">Cloud Specialist</text>
+    <circle cx="465" cy="300" r="10" fill="#38b2ac" stroke="white" stroke-width="2" />
+    <text x="465" cy="304" font-family="Arial" font-size="10" font-weight="bold" fill="white" text-anchor="middle">+</text>
+  </g>
+  
+  <!-- Profile circles -->
+  <g>
+    <circle cx="300" cy="180" r="15" fill="white" stroke="#e0e0e0" stroke-width="1" />
+    <circle cx="300" cy="180" r="10" fill="#ed8936" />
+    
+    <circle cx="500" cy="200" r="15" fill="white" stroke="#e0e0e0" stroke-width="1" />
+    <circle cx="500" cy="200" r="10" fill="#667eea" />
+    
+    <circle cx="360" cy="290" r="15" fill="white" stroke="#e0e0e0" stroke-width="1" />
+    <circle cx="360" cy="290" r="10" fill="#f56565" />
+    
+    <circle cx="520" cy="340" r="15" fill="white" stroke="#e0e0e0" stroke-width="1" />
+    <circle cx="520" cy="340" r="10" fill="#48bb78" />
+    
+    <circle cx="200" cy="350" r="15" fill="white" stroke="#e0e0e0" stroke-width="1" />
+    <circle cx="200" cy="350" r="10" fill="#4299e1" />
+  </g>
+</svg>

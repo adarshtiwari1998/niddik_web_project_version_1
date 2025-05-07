@@ -24,6 +24,7 @@ import Footer from "@/components/layout/Footer";
 import AnnouncementBar from "@/components/layout/AnnouncementBar";
 import BusinessChallengesSection from "@/components/sections/BusinessChallengesSection";
 import UseCasesTabs from "@/components/sections/UseCasesTabs";
+import AdaptiveHiringTabs from "@/components/sections/AdaptiveHiringTabs";
 // UseCasesSection now implemented directly in this file
 
 // Data for sections in the scrolling component
@@ -806,25 +807,15 @@ const AdaptiveHiring = () => {
             </p>
           </motion.div>
           
-          {/* Features Grid */}
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8 mt-12">
-            {features.map((feature, index) => (
-              <motion.div
-                key={index}
-                className="bg-white rounded-lg shadow-sm border border-gray-100 p-6 hover:shadow-md transition-shadow duration-300"
-                initial={{ opacity: 0, y: 20 }}
-                whileInView={{ opacity: 1, y: 0 }}
-                viewport={{ once: true }}
-                transition={{ duration: 0.5, delay: index * 0.1 }}
-              >
-                <div className="mb-4">
-                  {feature.icon}
-                </div>
-                <h3 className="text-xl font-bold mb-2">{feature.title}</h3>
-                <p className="text-gray-600">{feature.description}</p>
-              </motion.div>
-            ))}
-          </div>
+          {/* Interactive tabs with images */}
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true }}
+            transition={{ duration: 0.5 }}
+          >
+            <AdaptiveHiringTabs />
+          </motion.div>
         </Container>
       </section>
       
