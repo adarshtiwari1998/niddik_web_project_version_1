@@ -655,7 +655,7 @@ const AdaptiveHiringWorkflow = () => {
         {/* Content container */}
         <div className="relative grid grid-cols-1 lg:grid-cols-2 gap-0">
           {/* Left Column - Content */}
-          <div className="py-8 pr-8"> {/* Don't use space-y, we'll add individual margins */}
+          <div className="py-8 px-6 lg:px-8"> {/* Added padding for both sides */}
             {sections.map((section, index) => (
               <div 
                 key={section.id}
