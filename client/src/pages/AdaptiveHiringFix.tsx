@@ -18,6 +18,9 @@ import {
 } from "lucide-react";
 import Container from "@/components/ui/container";
 import { Link } from "wouter";
+import Navbar from "@/components/layout/Navbar";
+import Footer from "@/components/layout/Footer";
+import AnnouncementBar from "@/components/layout/AnnouncementBar";
 
 // Data for sections in the scrolling component
 const sections = [
