@@ -13,6 +13,7 @@ import { motion } from "framer-motion";
 import { Link } from "wouter";
 import Navbar from "@/components/layout/Navbar";
 import Footer from "@/components/layout/Footer";
+import AnnouncementBar from "@/components/layout/AnnouncementBar";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -23,6 +24,11 @@ const WhitepaperPage = () => {
   const [email, setEmail] = useState("");
   const [name, setName] = useState("");
   const [company, setCompany] = useState("");
+  const [isAnnouncementVisible, setIsAnnouncementVisible] = useState(true);
+
+  const handleAnnouncementVisibilityChange = (isVisible: boolean) => {
+    setIsAnnouncementVisible(isVisible);
+  };
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
@@ -51,10 +57,20 @@ const WhitepaperPage = () => {
   };
 
   return (
-    <div className="min-h-screen overflow-x-hidden">
-      <Navbar />
+    <div className="min-h-screen overflow-x-hidden pt-0">
+      {/* Fixed header components */}
+      <AnnouncementBar 
+        text="Download our new whitepaper on scaling tech teams effectively."
+        linkText="Get it now"
+        linkUrl="/whitepaper"
+        bgColor="bg-green-600" 
+        textColor="text-white"
+        onVisibilityChange={handleAnnouncementVisibilityChange}
+      />
+      <Navbar hasAnnouncementAbove={isAnnouncementVisible} />
       
-      <main className="pt-24">
+      <div className={`${isAnnouncementVisible ? 'pt-[80px]' : 'pt-[40px]'} transition-all duration-300`}>
+      <main>
         {/* Hero Section */}
         <section className="bg-gradient-to-br from-blue-900 to-slate-900 text-white py-20 relative overflow-hidden">
           <div className="absolute top-0 right-0 w-1/2 h-full opacity-10">
@@ -157,14 +173,88 @@ const WhitepaperPage = () => {
           </div>
         </section>
         
-        {/* Key Insights Section */}
-        <section className="py-20 bg-white">
-          <div className="container mx-auto px-4">
+        {/* Key Insights Section - Modern AI Animation */}
+        <section className="py-20 relative overflow-hidden bg-gradient-to-r from-slate-900 to-blue-900">
+          {/* AI Animation Elements */}
+          <div className="absolute inset-0 opacity-20">
+            <div className="absolute top-10 left-10 w-60 h-60 bg-blue-500 rounded-full mix-blend-multiply filter blur-3xl animate-pulse"></div>
+            <div className="absolute top-40 right-20 w-80 h-80 bg-purple-500 rounded-full mix-blend-multiply filter blur-3xl animate-pulse animation-delay-2000"></div>
+            <div className="absolute bottom-10 left-1/3 w-40 h-40 bg-green-500 rounded-full mix-blend-multiply filter blur-3xl animate-pulse animation-delay-1000"></div>
+            <div className="absolute bottom-40 right-1/4 w-60 h-60 bg-pink-500 rounded-full mix-blend-multiply filter blur-3xl animate-pulse animation-delay-3000"></div>
+            
+            {/* Abstract Code Lines */}
+            <div className="absolute top-0 left-0 w-full h-full opacity-20">
+              <svg className="w-full h-full" viewBox="0 0 1000 1000">
+                <motion.g
+                  initial={{ opacity: 0 }}
+                  animate={{ opacity: 1 }}
+                  transition={{ duration: 2, repeat: Infinity, repeatType: "reverse" }}
+                >
+                  {Array.from({ length: 20 }).map((_, i) => (
+                    <motion.line
+                      key={i}
+                      x1={Math.random() * 1000}
+                      y1={Math.random() * 1000}
+                      x2={Math.random() * 1000}
+                      y2={Math.random() * 1000}
+                      stroke="white"
+                      strokeWidth="0.5"
+                      initial={{ pathLength: 0 }}
+                      animate={{ pathLength: 1 }}
+                      transition={{ duration: 2 + Math.random() * 3, repeat: Infinity, repeatType: "loop" }}
+                    />
+                  ))}
+                </motion.g>
+              </svg>
+            </div>
+            
+            {/* Digital Particles */}
+            <div className="absolute inset-0 opacity-30">
+              {Array.from({ length: 40 }).map((_, i) => (
+                <motion.div
+                  key={i}
+                  className="absolute w-1 h-1 bg-blue-400 rounded-full"
+                  initial={{ 
+                    x: Math.random() * 100 + "%", 
+                    y: Math.random() * 100 + "%",
+                    opacity: Math.random() * 0.5 + 0.3
+                  }}
+                  animate={{ 
+                    x: Math.random() * 100 + "%", 
+                    y: Math.random() * 100 + "%",
+                    opacity: [0.3, 0.8, 0.3] 
+                  }}
+                  transition={{ 
+                    duration: 5 + Math.random() * 10, 
+                    repeat: Infinity, 
+                    repeatType: "reverse" 
+                  }}
+                />
+              ))}
+            </div>
+          </div>
+          
+          {/* Content with Overlay */}
+          <div className="container mx-auto px-4 relative z-10">
             <div className="text-center mb-16">
-              <h2 className="text-3xl lg:text-4xl font-bold mb-4 text-gray-900">Key Insights From The Whitepaper</h2>
-              <p className="text-xl text-gray-600 max-w-3xl mx-auto">
+              <motion.h2 
+                className="text-3xl lg:text-5xl font-bold mb-4 text-white"
+                initial={{ opacity: 0, y: 20 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                viewport={{ once: true }}
+                transition={{ duration: 0.7 }}
+              >
+                Key Insights From The Whitepaper
+              </motion.h2>
+              <motion.p 
+                className="text-xl text-blue-200 max-w-3xl mx-auto"
+                initial={{ opacity: 0, y: 20 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                viewport={{ once: true }}
+                transition={{ duration: 0.7, delay: 0.2 }}
+              >
                 Discover how our AI-driven talent sourcing approach is transforming traditional recruitment
-              </p>
+              </motion.p>
             </div>
             
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
@@ -172,56 +262,75 @@ const WhitepaperPage = () => {
                 {
                   title: "Data-Driven Recruitment",
                   description: "Learn how data analytics can reduce hiring time by 60% while increasing quality of hires.",
-                  icon: <BarChart3 className="h-10 w-10 text-red-500" />,
-                  color: "bg-red-100",
-                  iconColor: "text-red-500"
+                  icon: <BarChart3 className="h-10 w-10 text-white" />,
+                  bgColor: "from-red-500 to-red-700",
+                  borderColor: "border-red-400"
                 },
                 {
                   title: "AI for Recruitment",
                   description: "Discover how AI-powered matching improves response rates by 40% compared to traditional methods.",
-                  icon: <Zap className="h-10 w-10 text-yellow-500" />,
-                  color: "bg-yellow-100",
-                  iconColor: "text-yellow-500"
+                  icon: <Zap className="h-10 w-10 text-white" />,
+                  bgColor: "from-yellow-500 to-yellow-700",
+                  borderColor: "border-yellow-400"
                 },
                 {
                   title: "Social Media Recruiting",
                   description: "Explore strategies that decrease time-to-submit by 50% through optimized social channels.",
-                  icon: <Users className="h-10 w-10 text-green-500" />,
-                  color: "bg-green-100",
-                  iconColor: "text-green-500"
+                  icon: <Users className="h-10 w-10 text-white" />,
+                  bgColor: "from-green-500 to-green-700",
+                  borderColor: "border-green-400"
                 },
                 {
                   title: "Video Interview Technology",
                   description: "See how video interviews reduce screening time while maintaining comprehensive evaluation.",
-                  icon: <Zap className="h-10 w-10 text-blue-500" />,
-                  color: "bg-blue-100",
-                  iconColor: "text-blue-500"
+                  icon: <Zap className="h-10 w-10 text-white" />,
+                  bgColor: "from-blue-500 to-blue-700",
+                  borderColor: "border-blue-400"
                 },
                 {
                   title: "Improved Candidate Experience",
                   description: "Understand how a better recruitment experience increases talent quality by up to 70%.",
-                  icon: <Users className="h-10 w-10 text-purple-500" />,
-                  color: "bg-purple-100",
-                  iconColor: "text-purple-500"
+                  icon: <Users className="h-10 w-10 text-white" />,
+                  bgColor: "from-purple-500 to-purple-700",
+                  borderColor: "border-purple-400"
                 },
                 {
                   title: "Recruitment Technology Solutions",
                   description: "Learn about integrated tools that optimize recruiting spend by 30% while improving outcomes.",
-                  icon: <PieChart className="h-10 w-10 text-indigo-500" />,
-                  color: "bg-indigo-100",
-                  iconColor: "text-indigo-500"
+                  icon: <PieChart className="h-10 w-10 text-white" />,
+                  bgColor: "from-indigo-500 to-indigo-700",
+                  borderColor: "border-indigo-400"
                 }
               ].map((item, index) => (
                 <motion.div
                   key={index}
-                  whileHover={{ y: -5 }}
-                  className="bg-white rounded-xl p-6 shadow-md border border-gray-100"
+                  initial={{ opacity: 0, y: 20 }}
+                  whileInView={{ opacity: 1, y: 0 }}
+                  viewport={{ once: true }}
+                  transition={{ duration: 0.5, delay: index * 0.1 }}
+                  whileHover={{ 
+                    y: -10, 
+                    boxShadow: "0 10px 25px -5px rgba(0, 0, 0, 0.2), 0 10px 10px -5px rgba(0, 0, 0, 0.1)" 
+                  }}
+                  className={`rounded-xl p-6 bg-gradient-to-br ${item.bgColor} backdrop-blur-lg bg-opacity-20 border border-opacity-20 ${item.borderColor} shadow-lg relative overflow-hidden group text-white`}
                 >
-                  <div className={`${item.color} p-4 rounded-lg inline-block mb-4`}>
-                    {item.icon}
+                  {/* Animated background */}
+                  <div className="absolute inset-0 opacity-30 group-hover:opacity-50 transition-opacity">
+                    <motion.div 
+                      className="absolute inset-0 bg-gradient-to-r from-transparent via-white to-transparent opacity-10"
+                      initial={{ left: '-100%' }}
+                      animate={{ left: '100%' }}
+                      transition={{ repeat: Infinity, duration: 3, ease: "linear", repeatDelay: 1 }}
+                    />
                   </div>
-                  <h3 className="text-xl font-bold mb-3 text-gray-900">{item.title}</h3>
-                  <p className="text-gray-600">{item.description}</p>
+                  
+                  <div className="relative z-10">
+                    <div className="p-3 rounded-full bg-white bg-opacity-20 inline-flex mb-4">
+                      {item.icon}
+                    </div>
+                    <h3 className="text-xl font-bold mb-3 text-white">{item.title}</h3>
+                    <p className="text-blue-100">{item.description}</p>
+                  </div>
                 </motion.div>
               ))}
             </div>
@@ -494,8 +603,10 @@ const WhitepaperPage = () => {
       </main>
       
       <Footer />
+      </div>
     </div>
   );
 };
 
-export default WhitepaperPage;
+const Whitepaper = WhitepaperPage;
+export default Whitepaper;
