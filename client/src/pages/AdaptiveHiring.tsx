@@ -598,17 +598,11 @@ const AdaptiveHiringWorkflow = () => {
             ))}
           </div>
           
-          {/* Right Column - Image that's only fixed when component is in viewport */}
+          {/* Right Column - Normal image that scrolls with content, no fixed positioning */}
           <div className="hidden lg:block">
-            {isInViewport ? (
-              <div className="fixed right-0 top-40 w-[40%] max-w-lg pr-12 z-10">
-                {getImageContent()}
-              </div>
-            ) : (
-              <div className="w-full pt-8 pr-12">
-                {getImageContent()}
-              </div>
-            )}
+            <div className="w-full pt-8 pr-12">
+              {getImageContent()}
+            </div>
           </div>
         </div>
       </div>
