@@ -56,6 +56,7 @@ function Router() {
       
       {/* Admin Routes - Require admin role */}
       <ProtectedRoute path="/admin" component={AdminDashboard} requiredRole="admin" />
+      <ProtectedRoute path="/admin/dashboard" component={AdminDashboard} requiredRole="admin" />
       <ProtectedRoute path="/admin/jobs" component={JobListings} requiredRole="admin" />
       <ProtectedRoute path="/admin/jobs/new" component={JobForm} requiredRole="admin" />
       <ProtectedRoute path="/admin/jobs/:id/edit" component={JobForm} requiredRole="admin" />

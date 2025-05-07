@@ -1,7 +1,7 @@
 import { useState } from "react";
-import { useLocation } from "wouter";
+import { useLocation, Link } from "wouter";
 import { useAuth } from "@/hooks/use-auth";
-import { useQuery } from "@tanstack/react-query";
+import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -42,6 +42,7 @@ export default function JobListings() {
   const [search, setSearch] = useState("");
   const [statusFilter, setStatusFilter] = useState<string>("all_statuses");
   const [categoryFilter, setCategoryFilter] = useState<string>("all_categories");
+  const queryClient = useQueryClient();
 
   const buildQueryParams = () => {
     const params = new URLSearchParams();

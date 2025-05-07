@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { useLocation } from "wouter";
+import { useLocation, Link } from "wouter";
 import { useAuth } from "@/hooks/use-auth";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -51,28 +51,25 @@ export default function AdminDashboard() {
               </CardHeader>
               <CardContent className="p-0">
                 <nav className="flex flex-col">
-                  <a 
-                    className="flex items-center px-4 py-3 hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors" 
-                    href="/admin"
-                  >
-                    <User className="h-4 w-4 mr-3 text-primary" />
-                    <span>Dashboard</span>
-                  </a>
-                  <a 
-                    className="flex items-center px-4 py-3 hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors" 
-                    href="/admin/jobs"
-                  >
-                    <FileText className="h-4 w-4 mr-3 text-primary" />
-                    <span>Manage Job Listings</span>
-                    <ChevronRight className="h-4 w-4 ml-auto" />
-                  </a>
-                  <a 
-                    className="flex items-center px-4 py-3 bg-gray-100 dark:bg-gray-700" 
-                    href="/admin"
-                  >
-                    <Settings className="h-4 w-4 mr-3 text-primary" />
-                    <span>Account Settings</span>
-                  </a>
+                  <Link href="/admin/dashboard">
+                    <div className="flex items-center px-4 py-3 hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors cursor-pointer">
+                      <User className="h-4 w-4 mr-3 text-primary" />
+                      <span>Dashboard</span>
+                    </div>
+                  </Link>
+                  <Link href="/admin/jobs">
+                    <div className="flex items-center px-4 py-3 hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors cursor-pointer">
+                      <FileText className="h-4 w-4 mr-3 text-primary" />
+                      <span>Manage Job Listings</span>
+                      <ChevronRight className="h-4 w-4 ml-auto" />
+                    </div>
+                  </Link>
+                  <Link href="/admin/dashboard">
+                    <div className="flex items-center px-4 py-3 bg-gray-100 dark:bg-gray-700 cursor-pointer">
+                      <Settings className="h-4 w-4 mr-3 text-primary" />
+                      <span>Account Settings</span>
+                    </div>
+                  </Link>
                 </nav>
               </CardContent>
             </Card>
