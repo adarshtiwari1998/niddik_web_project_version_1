@@ -23,6 +23,7 @@ import Navbar from "@/components/layout/Navbar";
 import Footer from "@/components/layout/Footer";
 import AnnouncementBar from "@/components/layout/AnnouncementBar";
 import BusinessChallengesSection from "@/components/sections/BusinessChallengesSection";
+import UseCasesTabs from "@/components/sections/UseCasesTabs";
 // UseCasesSection now implemented directly in this file
 
 // Data for sections in the scrolling component
@@ -475,9 +476,8 @@ const AdaptiveHiringWorkflow = () => {
 };
 
 const AdaptiveHiring = () => {
-  // State for announcement bar and active tab
+  // State for announcement bar
   const [isAnnouncementVisible, setIsAnnouncementVisible] = useState(true);
-  const [activeUseCaseTab, setActiveUseCaseTab] = useState(0);
 
   const handleAnnouncementVisibilityChange = (isVisible: boolean) => {
     setIsAnnouncementVisible(isVisible);
@@ -647,191 +647,8 @@ const AdaptiveHiring = () => {
 
           <div className="flex flex-col lg:flex-row gap-10">
             {/* Left column with accordion */}
-            <div className="w-full lg:w-[45%] space-y-3">
-              {/* Use Cases tabs */}
-              <div 
-                className={`rounded-md border border-gray-200 overflow-hidden ${
-                  activeUseCaseTab === 0 ? 'bg-white shadow-sm' : 'bg-white hover:bg-gray-50'
-                }`}
-              >
-                <div 
-                  className="w-full flex items-center justify-between px-5 py-4 text-left cursor-pointer select-text"
-                  onClick={() => setActiveUseCaseTab(0)}
-                >
-                  <span className="font-semibold text-lg">Application Development</span>
-                  <span className="flex-shrink-0 ml-2">
-                    <ChevronDown className="w-5 h-5 text-gray-500" />
-                  </span>
-                </div>
-
-                {activeUseCaseTab === 0 && (
-                  <div className="px-5 pb-5 pt-1">
-                    <ul className="space-y-3">
-                      <li className="flex items-start gap-3">
-                        <CheckCircle2 className="w-5 h-5 text-teal-600 flex-shrink-0 mt-0.5" />
-                        <span className="text-gray-600 select-text cursor-text">
-                          Scale development with qualified talent, on demand
-                        </span>
-                      </li>
-                      <li className="flex items-start gap-3">
-                        <CheckCircle2 className="w-5 h-5 text-teal-600 flex-shrink-0 mt-0.5" />
-                        <span className="text-gray-600 select-text cursor-text">
-                          Reduce complexity and enhance user experience
-                        </span>
-                      </li>
-                      <li className="flex items-start gap-3">
-                        <CheckCircle2 className="w-5 h-5 text-teal-600 flex-shrink-0 mt-0.5" />
-                        <span className="text-gray-600 select-text cursor-text">
-                          Get your critical projects done faster
-                        </span>
-                      </li>
-                    </ul>
-                    <div className="mt-4">
-                      <a href="#" className="inline-flex items-center text-teal-600 font-medium">
-                        Learn More <ArrowRight className="ml-1 w-4 h-4" />
-                      </a>
-                    </div>
-                  </div>
-                )}
-              </div>
-
-              <div 
-                className={`rounded-md border border-gray-200 overflow-hidden ${
-                  activeUseCaseTab === 1 ? 'bg-white shadow-sm' : 'bg-white hover:bg-gray-50'
-                }`}
-              >
-                <div 
-                  className="w-full flex items-center justify-between px-5 py-4 text-left cursor-pointer select-text"
-                  onClick={() => setActiveUseCaseTab(1)}
-                >
-                  <span className="font-semibold text-lg">Data Science and Artificial Intelligence</span>
-                  <span className="flex-shrink-0 ml-2">
-                    <ChevronDown className="w-5 h-5 text-gray-500" />
-                  </span>
-                </div>
-
-                {activeUseCaseTab === 1 && (
-                  <div className="px-5 pb-5 pt-1">
-                    <ul className="space-y-3">
-                      <li className="flex items-start gap-3">
-                        <CheckCircle2 className="w-5 h-5 text-teal-600 flex-shrink-0 mt-0.5" />
-                        <span className="text-gray-600 select-text cursor-text">
-                          Build AI/ML models with specialized expertise
-                        </span>
-                      </li>
-                      <li className="flex items-start gap-3">
-                        <CheckCircle2 className="w-5 h-5 text-teal-600 flex-shrink-0 mt-0.5" />
-                        <span className="text-gray-600 select-text cursor-text">
-                          Deploy specialized data science teams on demand
-                        </span>
-                      </li>
-                      <li className="flex items-start gap-3">
-                        <CheckCircle2 className="w-5 h-5 text-teal-600 flex-shrink-0 mt-0.5" />
-                        <span className="text-gray-600 select-text cursor-text">
-                          Accelerate AI initiatives with top-tier talent
-                        </span>
-                      </li>
-                    </ul>
-                    <div className="mt-4">
-                      <a href="#" className="inline-flex items-center text-teal-600 font-medium">
-                        Learn More <ArrowRight className="ml-1 w-4 h-4" />
-                      </a>
-                    </div>
-                  </div>
-                )}
-              </div>
-
-              <div 
-                className={`rounded-md border border-gray-200 overflow-hidden ${
-                  activeUseCaseTab === 2 ? 'bg-white shadow-sm' : 'bg-white hover:bg-gray-50'
-                }`}
-              >
-                <div 
-                  className="w-full flex items-center justify-between px-5 py-4 text-left cursor-pointer select-text"
-                  onClick={() => setActiveUseCaseTab(2)}
-                >
-                  <span className="font-semibold text-lg">Data Engineering and Analytics</span>
-                  <span className="flex-shrink-0 ml-2">
-                    <ChevronDown className="w-5 h-5 text-gray-500" />
-                  </span>
-                </div>
-
-                {activeUseCaseTab === 2 && (
-                  <div className="px-5 pb-5 pt-1">
-                    <ul className="space-y-3">
-                      <li className="flex items-start gap-3">
-                        <CheckCircle2 className="w-5 h-5 text-teal-600 flex-shrink-0 mt-0.5" />
-                        <span className="text-gray-600 select-text cursor-text">
-                          Build resilient data pipelines with specialized engineers
-                        </span>
-                      </li>
-                      <li className="flex items-start gap-3">
-                        <CheckCircle2 className="w-5 h-5 text-teal-600 flex-shrink-0 mt-0.5" />
-                        <span className="text-gray-600 select-text cursor-text">
-                          Transform raw data into actionable business insights
-                        </span>
-                      </li>
-                      <li className="flex items-start gap-3">
-                        <CheckCircle2 className="w-5 h-5 text-teal-600 flex-shrink-0 mt-0.5" />
-                        <span className="text-gray-600 select-text cursor-text">
-                          Implement modern data architecture with expert guidance
-                        </span>
-                      </li>
-                    </ul>
-                    <div className="mt-4">
-                      <a href="#" className="inline-flex items-center text-teal-600 font-medium">
-                        Learn More <ArrowRight className="ml-1 w-4 h-4" />
-                      </a>
-                    </div>
-                  </div>
-                )}
-              </div>
-
-              <div 
-                className={`rounded-md border border-gray-200 overflow-hidden ${
-                  activeUseCaseTab === 3 ? 'bg-white shadow-sm' : 'bg-white hover:bg-gray-50'
-                }`}
-              >
-                <div 
-                  className="w-full flex items-center justify-between px-5 py-4 text-left cursor-pointer select-text"
-                  onClick={() => setActiveUseCaseTab(3)}
-                >
-                  <span className="font-semibold text-lg">Cloud and DevOps</span>
-                  <span className="flex-shrink-0 ml-2">
-                    <ChevronDown className="w-5 h-5 text-gray-500" />
-                  </span>
-                </div>
-
-                {activeUseCaseTab === 3 && (
-                  <div className="px-5 pb-5 pt-1">
-                    <ul className="space-y-3">
-                      <li className="flex items-start gap-3">
-                        <CheckCircle2 className="w-5 h-5 text-teal-600 flex-shrink-0 mt-0.5" />
-                        <span className="text-gray-600 select-text cursor-text">
-                          Accelerate cloud migration with specialized teams
-                        </span>
-                      </li>
-                      <li className="flex items-start gap-3">
-                        <CheckCircle2 className="w-5 h-5 text-teal-600 flex-shrink-0 mt-0.5" />
-                        <span className="text-gray-600 select-text cursor-text">
-                          Implement CI/CD pipelines with expert DevOps engineers
-                        </span>
-                      </li>
-                      <li className="flex items-start gap-3">
-                        <CheckCircle2 className="w-5 h-5 text-teal-600 flex-shrink-0 mt-0.5" />
-                        <span className="text-gray-600 select-text cursor-text">
-                          Optimize infrastructure costs with cloud-native architecture
-                        </span>
-                      </li>
-                    </ul>
-                    <div className="mt-4">
-                      <a href="#" className="inline-flex items-center text-teal-600 font-medium">
-                        Learn More <ArrowRight className="ml-1 w-4 h-4" />
-                      </a>
-                    </div>
-                  </div>
-                )}
-              </div>
+            <div className="w-full lg:w-[45%]">
+              <UseCasesTabs />
             </div>
 
             {/* Right column with dashboard-style cards */}
