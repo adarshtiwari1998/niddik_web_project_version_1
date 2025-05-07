@@ -6,7 +6,9 @@ import {
   jobListingSchema, 
   jobApplicationSchema,
   jobApplications,
-  submittedCandidateSchema
+  submittedCandidateSchema,
+  demoRequestSchema,
+  demoRequests
 } from "@shared/schema";
 import { db } from "../db";
 import { and, eq, count } from "drizzle-orm";

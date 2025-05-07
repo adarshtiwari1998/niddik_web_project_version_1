@@ -228,3 +228,35 @@ export const submittedCandidateSchema = createInsertSchema(submittedCandidates, 
 
 export type SubmittedCandidate = typeof submittedCandidates.$inferSelect;
 export type InsertSubmittedCandidate = z.infer<typeof submittedCandidateSchema>;
+
+// Demo Requests schema
+export const demoRequests = pgTable("demo_requests", {
+  id: serial("id").primaryKey(),
+  workEmail: text("work_email").notNull().unique(),
+  phoneNumber: text("phone_number").notNull(),
+  message: text("message"),
+  companyName: text("company_name"),
+  fullName: text("full_name"),
+  jobTitle: text("job_title"),
+  status: text("status").notNull().default("pending"), // pending, scheduled, completed, rejected
+  acceptedTerms: boolean("accepted_terms").notNull().default(false),
+  createdAt: timestamp("created_at").defaultNow().notNull(),
+  updatedAt: timestamp("updated_at").defaultNow().notNull(),
+  scheduledDate: timestamp("scheduled_date"),
+  adminNotes: text("admin_notes"),
+});
+
+export const demoRequestSchema = createInsertSchema(demoRequests, {
+  workEmail: (schema) => schema.email("Please enter a valid work email"),
+  phoneNumber: (schema) => schema.min(5, "Phone number is required"),
+  message: (schema) => schema.optional(),
+  companyName: (schema) => schema.optional(),
+  fullName: (schema) => schema.optional(),
+  jobTitle: (schema) => schema.optional(),
+  acceptedTerms: (schema) => schema.refine(val => val === true, {
+    message: "You must accept the terms and conditions"
+  }),
+});
+
+export type DemoRequest = typeof demoRequests.$inferSelect;
+export type InsertDemoRequest = z.infer<typeof demoRequestSchema>;
