@@ -21,6 +21,7 @@ import { Link } from "wouter";
 import Navbar from "@/components/layout/Navbar";
 import Footer from "@/components/layout/Footer";
 import AnnouncementBar from "@/components/layout/AnnouncementBar";
+import BusinessChallengesSection from "@/components/sections/BusinessChallengesSection";
 
 // Data for sections in the scrolling component
 const sections = [
@@ -617,7 +618,10 @@ const AdaptiveHiring = () => {
         </Container>
       </section>
       
-      {/* Comparison Section - Now right after the Adaptive Hiring Workflow */}
+      {/* Business Challenges Section - Shows common challenges that Niddik solves using AI */}
+      <BusinessChallengesSection />
+      
+      {/* Comparison Section - Now right after the Business Challenges Section */}
       <section className="py-20 bg-gray-50 relative">
         <Container>
           <motion.div
