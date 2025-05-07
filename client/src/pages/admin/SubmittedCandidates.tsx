@@ -105,10 +105,13 @@ const StatusBadge = ({ status }: { status: string }) => {
     variant = "default";
   }
   
+  // Get the display text - show only first 15 chars in badge if longer
+  const displayText = status.length > 15 ? `${status.substring(0, 15)}...` : status;
+  
   return (
-    <div className="max-w-[150px]">
+    <div className="max-w-[200px]">
       <Badge variant={variant} className="whitespace-nowrap overflow-hidden text-ellipsis">
-        {status}
+        {displayText}
       </Badge>
       {status.length > 15 && (
         <div className="text-xs text-muted-foreground mt-1 whitespace-normal">
