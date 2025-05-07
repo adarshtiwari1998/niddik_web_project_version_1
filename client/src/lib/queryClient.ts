@@ -1,5 +1,39 @@
 import { QueryClient, QueryFunction } from "@tanstack/react-query";
 
+// Token storage key
+export const TOKEN_KEY = 'niddik_auth_token';
+
+// Function to get the stored JWT token
+export const getAuthToken = (): string | null => {
+  return localStorage.getItem(TOKEN_KEY);
+};
+
+// Function to set the JWT token
+export const setAuthToken = (token: string): void => {
+  localStorage.setItem(TOKEN_KEY, token);
+};
+
+// Function to remove the JWT token
+export const removeAuthToken = (): void => {
+  localStorage.removeItem(TOKEN_KEY);
+};
+
+// Function to add auth headers to requests
+const getAuthHeaders = (hasContent: boolean = false): HeadersInit => {
+  const headers: HeadersInit = {};
+  
+  if (hasContent) {
+    headers['Content-Type'] = 'application/json';
+  }
+  
+  const token = getAuthToken();
+  if (token) {
+    headers['Authorization'] = `Bearer ${token}`;
+  }
+  
+  return headers;
+};
+
 async function throwIfResNotOk(res: Response) {
   if (!res.ok) {
     const text = (await res.text()) || res.statusText;
@@ -14,9 +48,9 @@ export async function apiRequest(
 ): Promise<Response> {
   const res = await fetch(url, {
     method,
-    headers: data ? { "Content-Type": "application/json" } : {},
+    headers: getAuthHeaders(!!data),
     body: data ? JSON.stringify(data) : undefined,
-    credentials: "include",
+    credentials: "include", // Keep for session-based auth as fallback
   });
 
   await throwIfResNotOk(res);

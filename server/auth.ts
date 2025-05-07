@@ -1,13 +1,49 @@
 import passport from "passport";
 import { Strategy as LocalStrategy } from "passport-local";
-import { Express } from "express";
+import { Express, Request, Response, NextFunction } from "express";
 import session from "express-session";
 import { scrypt, randomBytes, timingSafeEqual } from "crypto";
 import { promisify } from "util";
+import jwt from 'jsonwebtoken';
 import { storage } from "./storage";
 import { User, InsertUser } from "@shared/schema";
 import connectPg from "connect-pg-simple";
 import { pool } from "@db";
+
+// JWT Secret key
+const JWT_SECRET = process.env.JWT_SECRET || 'niddik-jwt-secret';
+
+// Function to generate JWT token for a user
+const generateToken = (user: User) => {
+  const { password, ...userWithoutPassword } = user;
+  return jwt.sign(
+    { user: userWithoutPassword },
+    JWT_SECRET,
+    { expiresIn: '7d' }
+  );
+};
+
+// JWT token validation middleware
+const validateJWT = (req: Request, res: Response, next: NextFunction) => {
+  const authHeader = req.headers.authorization;
+  const token = authHeader && authHeader.split(' ')[1]; // Bearer TOKEN format
+  
+  if (!token) {
+    return next(); // No token, proceed with session auth
+  }
+  
+  try {
+    const decoded = jwt.verify(token, JWT_SECRET) as { user: User };
+    if (decoded.user) {
+      // Set user if token is valid
+      req.user = decoded.user;
+    }
+    next();
+  } catch (error) {
+    // Invalid token, but we'll still proceed with session auth
+    next();
+  }
+};
 
 const PostgresSessionStore = connectPg(session);
 
@@ -51,6 +87,9 @@ export function setupAuth(app: Express) {
   app.use(session(sessionSettings));
   app.use(passport.initialize());
   app.use(passport.session());
+  
+  // Apply JWT validation middleware
+  app.use(validateJWT);
 
   passport.use(
     new LocalStrategy(async (username, password, done) => {
@@ -109,9 +148,16 @@ export function setupAuth(app: Express) {
       // Log the user in after registration
       req.login(user, (err) => {
         if (err) return next(err);
-        // Return user without password
+        
+        // Generate JWT token
+        const token = generateToken(user);
+        
+        // Return user without password, and include token
         const { password, ...userWithoutPassword } = user;
-        res.status(201).json(userWithoutPassword);
+        res.status(201).json({
+          ...userWithoutPassword,
+          token
+        });
       });
     } catch (error) {
       console.error("Registration error:", error);
@@ -127,9 +173,16 @@ export function setupAuth(app: Express) {
       
       req.login(user, (err) => {
         if (err) return next(err);
-        // Return user without password
+        
+        // Generate JWT token
+        const token = generateToken(user);
+        
+        // Return user without password, and include token
         const { password, ...userWithoutPassword } = user;
-        res.status(200).json(userWithoutPassword);
+        res.status(200).json({
+          ...userWithoutPassword,
+          token
+        });
       });
     })(req, res, next);
   });
