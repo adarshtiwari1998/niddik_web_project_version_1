@@ -17,6 +17,7 @@ import { Form, FormControl, FormDescription, FormField, FormItem, FormLabel, For
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { useToast } from "@/hooks/use-toast";
 import { jobListingSchema, type JobListing, type InsertJobListing } from "@shared/schema";
+import AdminLayout from "@/components/layout/AdminLayout";
 
 // Form schema for job form
 const formSchema = z.object({
@@ -202,32 +203,16 @@ export default function JobForm() {
   const isPending = createJobMutation.isPending || updateJobMutation.isPending;
 
   return (
-    <div className="min-h-screen bg-gray-50 dark:bg-gray-900">
-      {/* Admin Header */}
-      <header className="bg-white dark:bg-gray-800 shadow-sm border-b">
-        <div className="container mx-auto px-4 py-4 flex justify-between items-center">
-          <div className="flex items-center">
-            <Shield className="h-8 w-8 text-primary mr-2" />
-            <h1 className="text-xl font-bold">Niddik Admin</h1>
-          </div>
-          <Button variant="ghost" onClick={handleLogout}>
-            <LogOut className="h-4 w-4 mr-2" />
-            Sign Out
-          </Button>
-        </div>
-      </header>
-
-      <div className="container mx-auto px-4 py-8">
-        <div className="flex items-center mb-6">
-          <Button variant="ghost" onClick={() => setLocation("/admin/jobs")} className="mr-4">
-            <ArrowLeft className="h-4 w-4 mr-2" />
-            Back to Jobs
-          </Button>
-          <div>
-            <h1 className="text-2xl font-bold">{isEditMode ? "Edit Job Listing" : "Create New Job Listing"}</h1>
-            <p className="text-muted-foreground">{isEditMode ? "Update the details of an existing job listing" : "Add a new job opportunity to your careers page"}</p>
-          </div>
-        </div>
+    <AdminLayout 
+      title={isEditMode ? "Edit Job Listing" : "Create New Job Listing"}
+      description={isEditMode ? "Update the details of an existing job listing" : "Add a new job opportunity to your careers page"}
+    >
+      <div className="flex items-center mb-6">
+        <Button variant="ghost" onClick={() => setLocation("/admin/jobs")} className="mr-4">
+          <ArrowLeft className="h-4 w-4 mr-2" />
+          Back to Jobs
+        </Button>
+      </div>
 
         {isEditMode && isLoadingJob ? (
           <div className="flex items-center justify-center min-h-[300px]">
@@ -592,7 +577,6 @@ export default function JobForm() {
             </form>
           </Form>
         )}
-      </div>
-    </div>
+      </AdminLayout>
   );
 }

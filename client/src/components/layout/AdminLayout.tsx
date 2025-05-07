@@ -1,100 +1,111 @@
+import { ReactNode } from "react";
 import { Link, useLocation } from "wouter";
+import { useAuth } from "@/hooks/use-auth";
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { Separator } from "@/components/ui/separator";
-import { 
-  LayoutDashboard, 
-  Briefcase, 
-  MessageCircle, 
-  Building2, 
-  UserCircle, 
-  Settings 
-} from "lucide-react";
+import { User, FileText, Settings, ChevronRight, LogOut, Shield } from "lucide-react";
 
 interface AdminLayoutProps {
-  children: React.ReactNode;
+  children: ReactNode;
+  title: string;
+  description?: string;
 }
 
-export function AdminLayout({ children }: AdminLayoutProps) {
-  const [location] = useLocation();
+export default function AdminLayout({ children, title, description }: AdminLayoutProps) {
+  const { user, logoutMutation } = useAuth();
+  const [_, setLocation] = useLocation();
+  const location = _; // Current path
 
-  const navItems = [
-    { href: "/admin", label: "Dashboard", icon: <LayoutDashboard className="w-4 h-4 mr-2" /> },
-    { href: "/admin/jobs", label: "Job Listings", icon: <Briefcase className="w-4 h-4 mr-2" /> },
-    { href: "/admin/contacts", label: "Contact Inquiries", icon: <MessageCircle className="w-4 h-4 mr-2" /> },
-    { href: "/admin/clients", label: "Clients", icon: <Building2 className="w-4 h-4 mr-2" /> },
-    { href: "/admin/testimonials", label: "Testimonials", icon: <UserCircle className="w-4 h-4 mr-2" /> },
-    { href: "/admin/settings", label: "Settings", icon: <Settings className="w-4 h-4 mr-2" /> },
-  ];
+  const handleLogout = () => {
+    logoutMutation.mutate(undefined, {
+      onSuccess: () => {
+        setLocation("/admin/login");
+      }
+    });
+  };
+
+  // Redirect to login if not authenticated or not an admin
+  if (!user || user.role !== "admin") {
+    return null; // The ProtectedRoute component will handle redirection
+  }
 
   return (
-    <div className="flex min-h-screen">
-      {/* Sidebar */}
-      <aside className="w-64 border-r bg-gray-50 dark:bg-gray-900 hidden md:flex flex-col">
-        <div className="p-4 border-b">
-          <Link href="/" className="flex items-center space-x-2 font-bold text-xl">
-            <span className="text-primary">Admin Dashboard</span>
-          </Link>
-        </div>
-        <nav className="flex-1 p-4 space-y-1">
-          {navItems.map((item) => (
-            <Link key={item.href} href={item.href}>
-              <Button
-                variant={location === item.href ? "default" : "ghost"}
-                className="w-full justify-start"
-              >
-                {item.icon}
-                {item.label}
-              </Button>
-            </Link>
-          ))}
-        </nav>
-        <div className="p-4 border-t">
-          <div className="flex items-center space-x-2">
-            <div className="w-8 h-8 rounded-full bg-gray-200 flex items-center justify-center dark:bg-gray-700">
-              <UserCircle className="w-5 h-5 text-gray-500 dark:text-gray-400" />
+    <div className="min-h-screen bg-gray-50 dark:bg-gray-900">
+      {/* Admin Header */}
+      <header className="bg-white dark:bg-gray-800 shadow-sm border-b">
+        <div className="container mx-auto px-4 py-4 flex justify-between items-center">
+          <Link href="/admin/dashboard">
+            <div className="flex items-center cursor-pointer">
+              <Shield className="h-8 w-8 text-primary mr-2" />
+              <h1 className="text-xl font-bold">Niddik Admin</h1>
             </div>
-            <div>
-              <p className="text-sm font-medium">Admin User</p>
-              <p className="text-xs text-gray-500 dark:text-gray-400">admin@example.com</p>
-            </div>
-          </div>
-        </div>
-      </aside>
-
-      {/* Mobile navbar */}
-      <div className="md:hidden w-full border-b bg-white dark:bg-gray-950 p-4 sticky top-0 z-10">
-        <div className="flex items-center justify-between">
-          <Link href="/" className="font-bold text-xl">
-            <span className="text-primary">Admin</span>
           </Link>
-          <Button variant="outline" size="icon">
-            <span className="sr-only">Toggle menu</span>
-            <svg
-              xmlns="http://www.w3.org/2000/svg"
-              width="24"
-              height="24"
-              viewBox="0 0 24 24"
-              fill="none"
-              stroke="currentColor"
-              strokeWidth="2"
-              strokeLinecap="round"
-              strokeLinejoin="round"
-              className="h-6 w-6"
-            >
-              <line x1="4" x2="20" y1="12" y2="12" />
-              <line x1="4" x2="20" y1="6" y2="6" />
-              <line x1="4" x2="20" y1="18" y2="18" />
-            </svg>
+          <Button variant="ghost" onClick={handleLogout}>
+            <LogOut className="h-4 w-4 mr-2" />
+            Sign Out
           </Button>
         </div>
-      </div>
+      </header>
 
-      {/* Main content */}
-      <main className="flex-1 overflow-auto">
-        <div className="container mx-auto p-6">
-          {children}
+      <div className="container mx-auto px-4 py-8">
+        <div className="grid grid-cols-1 md:grid-cols-4 gap-6">
+          {/* Sidebar */}
+          <div className="md:col-span-1">
+            <Card>
+              <CardHeader className="pb-3">
+                <CardTitle>Admin Menu</CardTitle>
+                <CardDescription>Manage your talent platform</CardDescription>
+              </CardHeader>
+              <CardContent className="p-0">
+                <nav className="flex flex-col">
+                  <Link href="/admin/dashboard">
+                    <div className={`flex items-center px-4 py-3 transition-colors cursor-pointer ${
+                      location === "/admin/dashboard" 
+                        ? "bg-gray-100 dark:bg-gray-700" 
+                        : "hover:bg-gray-100 dark:hover:bg-gray-700"
+                    }`}>
+                      <User className="h-4 w-4 mr-3 text-primary" />
+                      <span>Dashboard</span>
+                    </div>
+                  </Link>
+                  <Link href="/admin/jobs">
+                    <div className={`flex items-center px-4 py-3 transition-colors cursor-pointer ${
+                      location === "/admin/jobs" 
+                        ? "bg-gray-100 dark:bg-gray-700" 
+                        : "hover:bg-gray-100 dark:hover:bg-gray-700"
+                    }`}>
+                      <FileText className="h-4 w-4 mr-3 text-primary" />
+                      <span>Manage Job Listings</span>
+                      <ChevronRight className="h-4 w-4 ml-auto" />
+                    </div>
+                  </Link>
+                  <Link href="/admin/dashboard">
+                    <div className={`flex items-center px-4 py-3 transition-colors cursor-pointer ${
+                      false // Account settings is part of dashboard tabs
+                        ? "bg-gray-100 dark:bg-gray-700" 
+                        : "hover:bg-gray-100 dark:hover:bg-gray-700"
+                    }`}>
+                      <Settings className="h-4 w-4 mr-3 text-primary" />
+                      <span>Account Settings</span>
+                    </div>
+                  </Link>
+                </nav>
+              </CardContent>
+            </Card>
+          </div>
+
+          {/* Main Content */}
+          <div className="md:col-span-3">
+            <div className="flex justify-between items-center mb-6">
+              <div>
+                <h1 className="text-2xl font-bold">{title}</h1>
+                {description && <p className="text-muted-foreground">{description}</p>}
+              </div>
+            </div>
+            {children}
+          </div>
         </div>
-      </main>
+      </div>
     </div>
   );
 }
