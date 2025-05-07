@@ -232,10 +232,14 @@ export default function AuthPage() {
       <header className="border-b bg-background">
         <div className="container flex h-16 items-center justify-between">
           <div className="flex items-center gap-6">
-            <a href="/" className="flex flex-col items-start pt-4 pb-2">
+            <a href="/" className="flex flex-col items-start pt-2 pb-2">
               <div className="flex flex-col">
-                <div className="bg-green-600 px-2 py-1 inline-block">
-                  <span className="text-white font-bold text-2xl">NiDDiK</span>
+                <div className="h-8">
+                  <img 
+                    src="/images/niddik_logo.png" 
+                    alt="NiDDiK Logo" 
+                    className="h-full"
+                  />
                 </div>
                 <span className="text-[10px] text-muted-foreground mt-1">Connecting People, Changing Lives</span>
               </div>

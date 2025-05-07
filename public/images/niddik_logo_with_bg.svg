@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 112 32" width="112" height="32">
+  <!-- Green background rectangle -->
+  <rect x="0" y="0" width="112" height="24" fill="#10B981" />
+  
+  <!-- NiDDiK text -->
+  <text x="5" y="18" font-family="Arial, sans-serif" font-size="16" font-weight="bold" fill="white">NiDDiK</text>
+  
+  <!-- "Connecting People, Changing Lives" tagline -->
+  <text x="2" y="30" font-family="Arial, sans-serif" font-size="6" fill="#6B7280">Connecting People, Changing Lives</text>
+</svg>
