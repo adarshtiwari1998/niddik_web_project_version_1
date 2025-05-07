@@ -26,6 +26,7 @@ import AdminDashboard from "@/pages/admin/AdminDashboard";
 import JobListings from "@/pages/admin/JobListings";
 import JobForm from "@/pages/admin/JobForm";
 import Candidates from "@/pages/admin/Candidates";
+import SubmittedCandidates from "@/pages/admin/SubmittedCandidates";
 
 // Auth Provider
 import { AuthProvider } from "@/hooks/use-auth";
@@ -76,6 +77,7 @@ function Router() {
       <ProtectedRoute path="/admin/jobs/new" component={JobForm} requiredRole="admin" />
       <ProtectedRoute path="/admin/jobs/:id/edit" component={JobForm} requiredRole="admin" />
       <ProtectedRoute path="/admin/candidates" component={Candidates} requiredRole="admin" />
+      <ProtectedRoute path="/admin/submitted-candidates" component={SubmittedCandidates} requiredRole="admin" />
       
       {/* 404 - Not Found */}
       <Route component={NotFound} />

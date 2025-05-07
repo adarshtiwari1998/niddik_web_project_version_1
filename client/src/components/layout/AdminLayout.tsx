@@ -114,6 +114,17 @@ export default function AdminLayout({ children, title, description }: AdminLayou
                       <ChevronRight className="h-4 w-4 ml-auto" />
                     </div>
                   </Link>
+                  <Link href="/admin/submitted-candidates">
+                    <div className={`flex items-center px-4 py-3 transition-colors cursor-pointer ${
+                      location === "/admin/submitted-candidates" 
+                        ? "bg-gray-100 dark:bg-gray-700" 
+                        : "hover:bg-gray-100 dark:hover:bg-gray-700"
+                    }`}>
+                      <FileText className="h-4 w-4 mr-3 text-primary" />
+                      <span>Submitted Candidates</span>
+                      <ChevronRight className="h-4 w-4 ml-auto" />
+                    </div>
+                  </Link>
                   <Link href="/admin/dashboard">
                     <div className={`flex items-center px-4 py-3 transition-colors cursor-pointer ${
                       false // Account settings is part of dashboard tabs
