@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useMemo } from "react";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { useToast } from "@/hooks/use-toast";
 import AdminLayout from "@/components/layout/AdminLayout";
@@ -179,6 +179,8 @@ export default function SubmittedCandidates() {
   const [isImportDialogOpen, setIsImportDialogOpen] = useState(false);
   const [importData, setImportData] = useState<any[]>([]);
   const [isPreviewMode, setIsPreviewMode] = useState(false);
+  const [applicantSearch, setApplicantSearch] = useState("");
+  const [isApplicantsDialogOpen, setIsApplicantsDialogOpen] = useState(false);
   
   // Calculate margin and profit based on bill rate and pay rate
   const calculateMarginAndProfit = (billRate: string, payRate: string) => {
@@ -481,8 +483,18 @@ export default function SubmittedCandidates() {
     });
   };
   
-  // State for job applicants dialog
-  const [isApplicantsDialogOpen, setIsApplicantsDialogOpen] = useState(false);
+  // Function to filter applicants based on search term
+  const filteredApplicants = useMemo(() => {
+    if (!applicantsData?.data || !applicantSearch) return applicantsData?.data;
+    
+    const searchLower = applicantSearch.toLowerCase();
+    return applicantsData.data.filter((applicant: any) => 
+      applicant.candidateName?.toLowerCase().includes(searchLower) ||
+      applicant.emailId?.toLowerCase().includes(searchLower) ||
+      applicant.skills?.toLowerCase().includes(searchLower) ||
+      applicant.location?.toLowerCase().includes(searchLower)
+    );
+  }, [applicantsData?.data, applicantSearch]);
   
   // Add candidate inline
   const handleAddInline = () => {
@@ -826,20 +838,26 @@ export default function SubmittedCandidates() {
           
           <Card>
             <CardContent className="p-0">
-              <Table>
-                <TableHeader>
-                  <TableRow>
-                    <TableHead>Candidate</TableHead>
-                    <TableHead>Client</TableHead>
-                    <TableHead>Skills</TableHead>
-                    <TableHead>Exp/NP</TableHead>
-                    <TableHead>Bill ($)</TableHead>
-                    <TableHead>Pay/hr</TableHead>
-                    <TableHead>Margin/hr</TableHead>
-                    <TableHead>Status</TableHead>
-                    <TableHead className="text-right">Actions</TableHead>
-                  </TableRow>
-                </TableHeader>
+              <div className="relative overflow-x-auto">
+                <Table className="min-w-[1200px]">
+                  <TableHeader>
+                    <TableRow>
+                      <TableHead className="sticky left-0 bg-background z-20 min-w-[200px]">Candidate</TableHead>
+                      <TableHead className="min-w-[150px]">Client</TableHead>
+                      <TableHead className="min-w-[150px]">Sourced By</TableHead>
+                      <TableHead className="min-w-[180px]">Skills</TableHead>
+                      <TableHead className="min-w-[120px]">Experience</TableHead>
+                      <TableHead className="min-w-[120px]">Location</TableHead>
+                      <TableHead className="min-w-[120px]">Notice Period</TableHead>
+                      <TableHead className="min-w-[120px]">Current CTC</TableHead>
+                      <TableHead className="min-w-[120px]">Expected CTC</TableHead>
+                      <TableHead className="min-w-[100px]">Bill Rate</TableHead>
+                      <TableHead className="min-w-[100px]">Pay Rate</TableHead>
+                      <TableHead className="min-w-[150px]">Margin/Profit</TableHead>
+                      <TableHead className="min-w-[150px]">Status</TableHead>
+                      <TableHead className="sticky right-0 bg-background z-20 min-w-[100px] text-right">Actions</TableHead>
+                    </TableRow>
+                  </TableHeader>
                 <TableBody>
                   {/* Inline add candidate row */}
                   {isAddingInline && (
@@ -993,23 +1011,26 @@ export default function SubmittedCandidates() {
                   ) : (
                     candidatesData?.data?.map((candidate: SubmittedCandidate) => (
                       <TableRow key={candidate.id}>
-                        <TableCell>
+                        <TableCell className="sticky left-0 bg-background z-20">
                           <div className="font-medium">{candidate.candidateName}</div>
                           <div className="text-xs text-muted-foreground">{candidate.emailId}</div>
+                          <div className="text-xs text-muted-foreground">{candidate.contactNo}</div>
                         </TableCell>
                         <TableCell>
                           <div>{candidate.client}</div>
                           <div className="text-xs text-muted-foreground">POC: {candidate.poc}</div>
                         </TableCell>
+                        <TableCell>{candidate.sourcedBy || '-'}</TableCell>
                         <TableCell>
                           <div className="max-w-[150px] truncate" title={candidate.skills}>
                             {candidate.skills}
                           </div>
                         </TableCell>
-                        <TableCell>
-                          <div>{candidate.experience} years</div>
-                          <div className="text-xs text-muted-foreground">{candidate.noticePeriod}</div>
-                        </TableCell>
+                        <TableCell>{candidate.experience} years</TableCell>
+                        <TableCell>{candidate.location || '-'}</TableCell>
+                        <TableCell>{candidate.noticePeriod || '-'}</TableCell>
+                        <TableCell>{candidate.currentCtc || '-'}</TableCell>
+                        <TableCell>{candidate.expectedCtc || '-'}</TableCell>
                         <TableCell>${candidate.billRate || '-'}</TableCell>
                         <TableCell>${candidate.payRate || '-'}</TableCell>
                         <TableCell>
@@ -1023,7 +1044,7 @@ export default function SubmittedCandidates() {
                         <TableCell>
                           <StatusBadge status={candidate.status} />
                         </TableCell>
-                        <TableCell className="text-right">
+                        <TableCell className="sticky right-0 bg-background z-20 text-right">
                           <div className="flex justify-end gap-2">
                             <Button 
                               variant="ghost" 
@@ -1072,6 +1093,7 @@ export default function SubmittedCandidates() {
                   )}
                 </TableBody>
               </Table>
+              </div>
             </CardContent>
             <CardFooter className="flex items-center justify-between px-6 py-4 border-t">
               <div className="text-sm text-muted-foreground">
