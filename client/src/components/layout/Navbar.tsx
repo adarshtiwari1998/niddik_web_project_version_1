@@ -41,15 +41,21 @@ const navItems: NavItem[] = [
     ]
   },
   {
-    label: "For Technologists",
+    label: "Technologists",
     dropdown: [
-      { label: "Apply to Niddik", href: "#" },
+      { label: "Apply to Niddik", href: "/career" },
       { label: "Learning Community", href: "#" },
       { label: "Expert Network", href: "#" }
     ]
   },
   { label: "Adaptive Hiring", href: "/adaptive-hiring" },
-  { label: "Resources", href: "#" },
+  { 
+    label: "Resources", 
+    href: "#",
+    dropdown: [
+      { label: "Whitepaper", href: "/whitepaper" }
+    ]
+  },
   {
     label: "Company",
     dropdown: [
