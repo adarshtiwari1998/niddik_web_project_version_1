@@ -45,16 +45,16 @@ const ChallengeCard = ({
 }) => (
   <motion.div
     variants={itemVariants}
-    className="pl-0"
+    className="pl-0 relative border-l border-gray-200"
   >
-    <div className="flex flex-col">
+    <div className="flex flex-col pl-6">
       <div className="w-14 h-14 bg-teal-600 rounded-md flex items-center justify-center mb-3">
         <div className="text-white">
           {icon}
         </div>
       </div>
       <h3 className="text-base font-medium mb-1">{title}</h3>
-      <p className="text-gray-600 text-sm">{description}</p>
+      <p className="text-gray-600 text-sm max-w-[90%]">{description}</p>
     </div>
   </motion.div>
 );
