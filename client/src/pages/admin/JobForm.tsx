@@ -2,6 +2,7 @@ import { useState, useEffect } from "react";
 import { useLocation, useParams } from "wouter";
 import { useAuth } from "@/hooks/use-auth";
 import { useQuery, useMutation } from "@tanstack/react-query";
+import { queryClient } from "@/lib/queryClient";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
@@ -163,7 +164,11 @@ export default function JobForm() {
       
       return response.json();
     },
-    onSuccess: () => {
+    onSuccess: (data) => {
+      // Invalidate queries to refresh the job listings data
+      queryClient.invalidateQueries({ queryKey: ['/api/job-listings'] });
+      queryClient.invalidateQueries({ queryKey: [`/api/job-listings/${jobId}`] });
+      
       toast({
         title: "Job updated",
         description: "The job listing has been updated successfully",

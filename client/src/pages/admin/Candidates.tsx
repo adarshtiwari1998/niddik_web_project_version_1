@@ -1,5 +1,6 @@
 import { useState } from "react";
-import { useQuery } from "@tanstack/react-query";
+import { useQuery, useMutation } from "@tanstack/react-query";
+import { queryClient } from "@/lib/queryClient";
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { Badge } from "@/components/ui/badge";
@@ -17,6 +18,7 @@ import {
 } from "lucide-react";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { useAuth } from "@/hooks/use-auth";
+import { useToast } from "@/hooks/use-toast";
 import { JobApplication } from "@shared/schema";
 import AdminLayout from "@/components/layout/AdminLayout";
 
@@ -35,6 +37,7 @@ type ApplicationWithDetails = JobApplication & {
 
 export default function Candidates() {
   const { user } = useAuth();
+  const { toast } = useToast();
   const [page, setPage] = useState(1);
   const [search, setSearch] = useState("");
   const [statusFilter, setStatusFilter] = useState<string>("all_statuses");
@@ -90,9 +93,9 @@ export default function Candidates() {
     }
   };
 
-  // Handler for updating application status
-  const handleUpdateStatus = async (id: number, status: string) => {
-    try {
+  // Create a mutation for updating application status
+  const updateStatusMutation = useMutation({
+    mutationFn: async ({ id, status }: { id: number; status: string }) => {
       const res = await fetch(`/api/admin/job-applications/${id}/status`, {
         method: 'PUT',
         headers: {
@@ -102,17 +105,30 @@ export default function Candidates() {
       });
       
       if (!res.ok) throw new Error("Failed to update application status");
+      return res.json();
+    },
+    onSuccess: (data, variables) => {
+      // Invalidate the applications query to refresh data
+      queryClient.invalidateQueries({ queryKey: ['/api/admin/applications'] });
       
-      // Invalidate queries to refresh data
-      alert(`Application status updated to ${status}`);
-      // Refresh the data
-      setTimeout(() => {
-        window.location.reload();
-      }, 1000);
-    } catch (error) {
+      toast({
+        title: "Status updated",
+        description: `Application status changed to ${variables.status}`,
+      });
+    },
+    onError: (error) => {
       console.error("Error updating status:", error);
-      alert("Failed to update application status");
-    }
+      toast({
+        title: "Update failed",
+        description: "Failed to update application status",
+        variant: "destructive",
+      });
+    },
+  });
+  
+  // Handler for updating application status
+  const handleUpdateStatus = (id: number, status: string) => {
+    updateStatusMutation.mutate({ id, status });
   };
 
   // Redirect to login if not authenticated or not an admin
