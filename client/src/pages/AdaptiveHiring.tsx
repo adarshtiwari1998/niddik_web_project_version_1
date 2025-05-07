@@ -240,7 +240,7 @@ const UsesCasesWithStickyImage = () => {
             <div 
               key={useCase.id}
               ref={el => tabsRef.current[index] = el}
-              className={`mb-10 rounded-lg transition-all duration-300 ${activeIndex === index ? 'bg-white shadow-md' : 'bg-gray-50'}`}
+              className={`mb-4 rounded-lg transition-all duration-300 ${activeIndex === index ? 'bg-white shadow-md' : 'bg-gray-50'}`}
             >
               <div 
                 className="p-4 cursor-pointer"
@@ -279,9 +279,9 @@ const UsesCasesWithStickyImage = () => {
           ))}
         </div>
         
-        {/* Right side fixed image - 6 columns wide */}
+        {/* Right side sticky image - 6 columns wide */}
         <div className="lg:col-span-6 relative h-full">
-          <div className="lg:fixed lg:w-[calc(33.333%-2rem)] lg:top-24">
+          <div className="sticky top-20">
             <div className="aspect-video relative rounded-xl overflow-hidden border border-gray-200 shadow-md">
               {renderImage()}
             </div>
@@ -375,7 +375,7 @@ const AdaptiveHiringWorkflow = () => {
         {/* Content container */}
         <div className="relative grid grid-cols-1 lg:grid-cols-2 gap-0">
           {/* Left Column - Content */}
-          <div className="py-8 pr-8 space-y-40"> {/* Further increased vertical spacing between sections */}
+          <div className="py-8 pr-8 space-y-32"> {/* Increased vertical spacing between sections */}
             {sections.map((section, index) => (
               <div 
                 key={section.id}
@@ -400,9 +400,9 @@ const AdaptiveHiringWorkflow = () => {
             ))}
           </div>
           
-          {/* Right Column - Fixed Visualization */}
+          {/* Right Column - Sticky Visualization */}
           <div className="relative h-full">
-            <div className="lg:fixed lg:w-[calc(50%-3rem)] pt-6 lg:pt-8 lg:pl-6 lg:top-24">
+            <div className="sticky top-20 pt-6 lg:pt-8 lg:pl-6">
               {/* Skills Assessment Card for Section 1 */}
               {activeSection === 1 && (
                 <div className="bg-blue-50 rounded-lg overflow-hidden pt-10 pb-10 px-8">
