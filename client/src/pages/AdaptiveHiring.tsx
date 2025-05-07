@@ -645,10 +645,6 @@ const AdaptiveHiringWorkflow = () => {
       {/* Top sentinel element to detect when section enters viewport */}
       <div ref={topSentinelRef} className="absolute top-0 h-1 w-full" />
       
-      <h2 ref={sectionHeaderRef} className="text-4xl font-bold mb-6 text-andela-dark">
-        How Adaptive Hiring works: Bringing agile principles to tech hiring
-      </h2>
-      
       <div className="relative">
         {/* Background container with two-column layout */}
         <div className="absolute inset-0 grid grid-cols-1 lg:grid-cols-2">
