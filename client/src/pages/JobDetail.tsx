@@ -1,22 +1,37 @@
 import React, { useState } from "react";
 import { useParams, useLocation } from "wouter";
-import { useQuery } from "@tanstack/react-query";
-import { getQueryFn } from "@/lib/queryClient";
+import { useQuery, useMutation } from "@tanstack/react-query";
+import { z } from "zod";
+import { useForm } from "react-hook-form";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { apiRequest, getQueryFn, queryClient } from "@/lib/queryClient";
 import { JobListing } from "@shared/schema";
 import { useAuth } from "@/hooks/use-auth";
 import { useToast } from "@/hooks/use-toast";
 import { Button } from "@/components/ui/button";
 import { Separator } from "@/components/ui/separator";
 import { Badge } from "@/components/ui/badge";
+import { Input } from "@/components/ui/input";
+import { Textarea } from "@/components/ui/textarea";
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
-import { Loader2, MapPin, Calendar, Briefcase, Clock, Building, Award, ArrowLeftIcon } from "lucide-react";
+import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, DialogTrigger, DialogClose } from "@/components/ui/dialog";
+import { Form, FormControl, FormDescription, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
+import { Loader2, MapPin, Calendar, Briefcase, Clock, Building, Award, ArrowLeftIcon, FileText, ExternalLink, CheckCircle } from "lucide-react";
 import { format } from "date-fns";
+
+// Define simplified application form schema for inline application
+const applicationSchema = z.object({
+  note: z.string().min(1, "Cover letter/note is required"),
+});
+
+type ApplicationFormValues = z.infer<typeof applicationSchema>;
 
 export default function JobDetail() {
   const params = useParams<{ id: string }>();
   const [_, setLocation] = useLocation();
   const { user } = useAuth();
   const { toast } = useToast();
+  const [isDialogOpen, setIsDialogOpen] = useState(false);
 
   const jobId = parseInt(params.id);
 
@@ -49,6 +64,63 @@ export default function JobDetail() {
     return application ? new Date(application.appliedDate).toLocaleDateString() : null;
   }, [userApplicationsData, jobId, hasApplied]);
 
+  // Form initialization
+  const form = useForm<ApplicationFormValues>({
+    resolver: zodResolver(applicationSchema),
+    defaultValues: {
+      note: "",
+    },
+  });
+
+  // Apply mutation
+  const applyMutation = useMutation({
+    mutationFn: async (data: ApplicationFormValues) => {
+      if (!user) throw new Error("User not authenticated");
+      
+      try {
+        // Prepare application data - simplified for direct submission
+        const applicationData = {
+          jobId: jobId,
+          coverLetter: data.note,
+          resumeUrl: user.resumeUrl,
+        };
+        
+        const response = await apiRequest("POST", "/api/job-applications", applicationData);
+        
+        if (!response.ok) {
+          const errorData = await response.json();
+          throw new Error(errorData.message || "Failed to submit application");
+        }
+        
+        return response.json();
+      } catch (error) {
+        console.error("Application error:", error);
+        throw error;
+      }
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['/api/my-applications'] });
+      toast({
+        title: "Application submitted",
+        description: "Your application has been submitted successfully",
+      });
+      setIsDialogOpen(false);
+      setLocation("/candidate/dashboard");
+    },
+    onError: (error) => {
+      console.error("Application error:", error);
+      toast({
+        title: "Application failed",
+        description: error instanceof Error ? error.message : "Failed to submit application",
+        variant: "destructive",
+      });
+    }
+  });
+
+  const onSubmit = (data: ApplicationFormValues) => {
+    applyMutation.mutate(data);
+  };
+
   // Apply for job function
   const handleApply = () => {
     // If user has already applied, don't do anything
@@ -72,8 +144,8 @@ export default function JobDetail() {
       return;
     }
 
-    // Navigate to application page
-    setLocation(`/apply/${jobId}`);
+    // If user is logged in, open the application dialog
+    setIsDialogOpen(true);
   };
 
   // Back button handler
@@ -140,7 +212,14 @@ export default function JobDetail() {
           </div>
         </div>
         <div className="flex items-start">
-          <Button onClick={handleApply} size="lg">Apply Now</Button>
+          {hasApplied ? (
+            <Button disabled variant="outline" size="lg" className="gap-2">
+              <CheckCircle className="h-4 w-4" />
+              Applied {applicationDate ? `on ${applicationDate}` : ''}
+            </Button>
+          ) : (
+            <Button onClick={handleApply} size="lg">Apply Now</Button>
+          )}
         </div>
       </div>
 
