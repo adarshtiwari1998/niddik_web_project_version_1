@@ -11,6 +11,7 @@ import { queryClient } from "@/lib/queryClient";
 import { Separator } from "@/components/ui/separator";
 import { Skeleton } from "@/components/ui/skeleton";
 import { JobApplication } from "@shared/schema";
+import CandidateLayout from "@/components/layouts/CandidateLayout";
 
 // Application with job details
 type ApplicationWithJob = JobApplication & {
@@ -128,7 +129,7 @@ export default function MyApplications() {
         <Card>
           <CardContent className="py-10 text-center">
             <p>Please sign in to view your applications.</p>
-            <Button className="mt-4" onClick={() => window.location.href = "/auth"}>
+            <Button className="mt-4" onClick={() => window.location.href = "/candidate/auth"}>
               Sign In
             </Button>
           </CardContent>
@@ -138,7 +139,7 @@ export default function MyApplications() {
   }
 
   return (
-    <div className="container mx-auto px-4 py-8">
+    <CandidateLayout activeTab="applications">
       <div className="flex flex-col sm:flex-row sm:justify-between sm:items-center gap-4 mb-8">
         <div>
           <h1 className="text-3xl font-bold">My Applications</h1>
@@ -148,7 +149,7 @@ export default function MyApplications() {
         </div>
         <Button 
           variant="outline" 
-          onClick={() => window.location.href = "/profile"}
+          onClick={() => window.location.href = "/candidate/profile"}
         >
           View My Profile
         </Button>
@@ -342,6 +343,6 @@ export default function MyApplications() {
           )}
         </>
       )}
-    </div>
+    </CandidateLayout>
   );
 }

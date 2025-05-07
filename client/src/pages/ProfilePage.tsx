@@ -17,6 +17,7 @@ import { useAuth } from "@/hooks/use-auth";
 import { useToast } from "@/hooks/use-toast";
 import { queryClient } from "@/lib/queryClient";
 import { User as UserType } from "@shared/schema";
+import CandidateLayout from "@/components/layouts/CandidateLayout";
 
 const profileSchema = z.object({
   fullName: z.string().min(2, "Full name must be at least 2 characters"),
@@ -258,7 +259,7 @@ export default function ProfilePage() {
   }
 
   return (
-    <div className="container mx-auto px-4 py-8">
+    <CandidateLayout activeTab="profile">
       <div className="flex flex-col gap-8">
         <div className="flex flex-col sm:flex-row sm:justify-between sm:items-center gap-4">
           <div>
@@ -269,7 +270,7 @@ export default function ProfilePage() {
           </div>
           <Button 
             variant="outline" 
-            onClick={() => window.location.href = "/my-applications"}
+            onClick={() => window.location.href = "/candidate/applications"}
           >
             View My Applications
           </Button>
@@ -758,6 +759,6 @@ export default function ProfilePage() {
           </TabsContent>
         </Tabs>
       </div>
-    </div>
+    </CandidateLayout>
   );
 }
