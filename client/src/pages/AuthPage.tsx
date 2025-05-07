@@ -127,7 +127,7 @@ export default function AuthPage() {
       } else if (user.role === "admin") {
         setLocation("/admin/dashboard");
       } else {
-        setLocation("/dashboard");
+        setLocation("/candidate/dashboard");
       }
     }
   }, [user, setLocation, redirectUrl]);

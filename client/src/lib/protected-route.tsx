@@ -26,7 +26,16 @@ export function ProtectedRoute({
     }
 
     if (!user) {
-      return <Redirect to={path.startsWith("/admin") ? "/admin/login" : "/auth"} />;
+      // Create redirect URL with the current path for after login
+      const redirectParam = `?redirect=${encodeURIComponent(path)}`;
+      
+      if (path.startsWith("/admin")) {
+        return <Redirect to={`/admin/login${redirectParam}`} />;
+      } else if (path.startsWith("/candidate")) {
+        return <Redirect to={`/auth${redirectParam}`} />;
+      } else {
+        return <Redirect to={`/auth${redirectParam}`} />;
+      }
     }
 
     // Check for role-based access if requiredRole is specified
