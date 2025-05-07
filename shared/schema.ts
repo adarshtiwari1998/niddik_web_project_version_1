@@ -21,6 +21,7 @@ export const users = pgTable("users", {
   country: text("country"),
   zipCode: text("zip_code"),
   resumeUrl: text("resume_url"),
+  lastLogout: timestamp("last_logout"),
   createdAt: timestamp("created_at").defaultNow().notNull(),
 });
 
