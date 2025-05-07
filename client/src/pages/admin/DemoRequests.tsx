@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { useQuery, useMutation } from "@tanstack/react-query";
-import { CalendarIcon, CheckCircle, ClockIcon, X } from "lucide-react";
+import { CalendarIcon, CheckCircle, ChevronLeft, ChevronRight, ClockIcon, X } from "lucide-react";
 import { apiRequest, queryClient } from "@/lib/queryClient";
 import AdminLayout from "@/components/layout/AdminLayout";
 import { Button } from "@/components/ui/button";
@@ -95,7 +95,7 @@ export default function DemoRequests() {
   const [isDialogOpen, setIsDialogOpen] = useState(false);
 
   // Fetch demo requests with pagination and filtering
-  const { data, isLoading, refetch } = useQuery({
+  const { data: responseData, isLoading, refetch } = useQuery({
     queryKey: ['/api/admin/demo-requests', page, statusFilter],
     queryFn: async () => {
       const params = new URLSearchParams({
@@ -111,6 +111,10 @@ export default function DemoRequests() {
       return result;
     },
   });
+  
+  // Extract data and meta from response
+  const data = responseData?.data || [];
+  const meta = responseData?.meta || { total: 0, pages: 1, page: 1, limit: 10 };
 
   // Update demo request mutation
   const { mutate, isPending } = useMutation({
@@ -211,7 +215,7 @@ export default function DemoRequests() {
 
           {isLoading ? (
             <p className="text-center py-4">Loading demo requests...</p>
-          ) : data?.data && data.data.length > 0 ? (
+          ) : data && data.length > 0 ? (
             <>
               <div className="rounded-md border">
                 <Table>
@@ -226,7 +230,7 @@ export default function DemoRequests() {
                     </TableRow>
                   </TableHeader>
                   <TableBody>
-                    {data.data.map((request: any) => (
+                    {data.map((request: any) => (
                       <TableRow key={request.id}>
                         <TableCell>
                           <div className="font-medium">{request.companyName || "N/A"}</div>
@@ -266,32 +270,43 @@ export default function DemoRequests() {
                 </Table>
               </div>
 
-              {data.meta && data.meta.pages > 1 && (
+              {meta.pages > 1 && (
                 <Pagination className="mt-4">
                   <PaginationContent>
                     <PaginationItem>
-                      <PaginationPrevious 
+                      <Button
+                        variant="outline"
+                        size="sm"
                         onClick={() => setPage(prev => Math.max(prev - 1, 1))}
                         disabled={page === 1}
-                      />
+                      >
+                        <ChevronLeft className="h-4 w-4" />
+                        Previous
+                      </Button>
                     </PaginationItem>
                     
-                    {Array.from({ length: data.meta.pages }, (_, i) => i + 1).map((p) => (
+                    {Array.from({ length: meta.pages }, (_, i) => i + 1).map((p) => (
                       <PaginationItem key={p}>
-                        <PaginationLink 
-                          isActive={page === p}
+                        <Button
+                          variant={page === p ? "default" : "outline"}
+                          size="sm"
                           onClick={() => setPage(p)}
                         >
                           {p}
-                        </PaginationLink>
+                        </Button>
                       </PaginationItem>
                     ))}
                     
                     <PaginationItem>
-                      <PaginationNext 
-                        onClick={() => setPage(prev => Math.min(prev + 1, data.meta.pages))}
-                        disabled={page === data.meta.pages}
-                      />
+                      <Button
+                        variant="outline"
+                        size="sm"
+                        onClick={() => setPage(prev => Math.min(prev + 1, meta.pages))}
+                        disabled={page === meta.pages}
+                      >
+                        Next
+                        <ChevronRight className="h-4 w-4" />
+                      </Button>
                     </PaginationItem>
                   </PaginationContent>
                 </Pagination>

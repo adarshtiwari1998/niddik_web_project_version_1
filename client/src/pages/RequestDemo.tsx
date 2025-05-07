@@ -73,7 +73,10 @@ export default function RequestDemo() {
     queryFn: async () => {
       try {
         const response = await apiRequest(`/api/demo-requests/check?email=${encodeURIComponent(checkEmail || "")}`);
-        return response.data;
+        if (response.success) {
+          return response.data;
+        }
+        return null;
       } catch (error) {
         return null;
       }
@@ -84,11 +87,10 @@ export default function RequestDemo() {
   // Submit mutation
   const { mutate, isPending } = useMutation({
     mutationFn: async (data: FormValues) => {
-      const response = await apiRequest("/api/demo-requests", {
+      return await apiRequest("/api/demo-requests", {
         method: "POST",
         data,
       });
-      return response;
     },
     onSuccess: (response) => {
       toast({
