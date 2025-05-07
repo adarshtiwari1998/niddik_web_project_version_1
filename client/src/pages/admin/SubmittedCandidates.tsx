@@ -1,4 +1,4 @@
-import { useState, useMemo } from "react";
+import { useState, useMemo, useEffect } from "react";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { useToast } from "@/hooks/use-toast";
 import AdminLayout from "@/components/layout/AdminLayout";
@@ -440,7 +440,11 @@ export default function SubmittedCandidates() {
   };
   
   // Query for job applicants
-  const { data: applicantsData, isLoading: isLoadingApplicants } = useQuery({
+  const { 
+    data: applicantsData, 
+    isLoading: isLoadingApplicants,
+    refetch: refetchApplicants 
+  } = useQuery({
     queryKey: ['/api/submitted-candidates/job-applicants'],
     queryFn: async () => {
       const res = await apiRequest("GET", `/api/submitted-candidates/job-applicants`);
@@ -532,8 +536,12 @@ export default function SubmittedCandidates() {
   
   // Import from existing applicants
   const handleImportFromApplicants = () => {
-    queryClient.resetQueries({ queryKey: ['/api/submitted-candidates/job-applicants'] });
-    queryClient.prefetchQuery({ queryKey: ['/api/submitted-candidates/job-applicants'] });
+    // Reset applicant search when opening dialog
+    setApplicantSearch("");
+    
+    // Enable the query and fetch the data
+    refetchApplicants();
+    
     setIsApplicantsDialogOpen(true);
   };
   
@@ -630,7 +638,24 @@ export default function SubmittedCandidates() {
                     </DialogDescription>
                   </DialogHeader>
                   
-                  <div className="py-4 max-h-[500px] overflow-auto">
+                  <div className="my-4">
+                    <div className="relative">
+                      <Search className="absolute left-2.5 top-2.5 h-4 w-4 text-muted-foreground" />
+                      <Input
+                        placeholder="Search by name, email, or skills..."
+                        className="pl-8"
+                        value={applicantSearch}
+                        onChange={(e) => setApplicantSearch(e.target.value)}
+                      />
+                    </div>
+                    {applicantSearch && filteredApplicants && (
+                      <p className="text-xs text-muted-foreground mt-2">
+                        Found {filteredApplicants.length} matching applicants
+                      </p>
+                    )}
+                  </div>
+                  
+                  <div className="max-h-[400px] overflow-auto">
                     {isLoadingApplicants ? (
                       <div className="flex flex-col items-center justify-center py-8">
                         <Loader2 className="h-8 w-8 animate-spin text-primary mb-2" />
@@ -639,6 +664,10 @@ export default function SubmittedCandidates() {
                     ) : applicantsData?.data?.length === 0 ? (
                       <div className="text-center py-8">
                         <p className="text-muted-foreground">No applicants found</p>
+                      </div>
+                    ) : filteredApplicants && filteredApplicants.length === 0 ? (
+                      <div className="text-center py-8">
+                        <p className="text-muted-foreground">No matching applicants found</p>
                       </div>
                     ) : (
                       <Table>
@@ -653,7 +682,7 @@ export default function SubmittedCandidates() {
                           </TableRow>
                         </TableHeader>
                         <TableBody>
-                          {applicantsData?.data?.map((applicant: any, index: number) => (
+                          {(filteredApplicants || []).map((applicant: any, index: number) => (
                             <TableRow key={`applicant-${index}`}>
                               <TableCell>{applicant.candidateName}</TableCell>
                               <TableCell>{applicant.emailId}</TableCell>
