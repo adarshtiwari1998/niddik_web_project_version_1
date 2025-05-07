@@ -250,9 +250,11 @@ export default function ProfilePage() {
         <Card>
           <CardContent className="py-10 text-center">
             <p>Please sign in to view your profile.</p>
-            <Button className="mt-4" onClick={() => window.location.href = "/auth"}>
-              Sign In
-            </Button>
+            <Link href="/auth">
+              <Button className="mt-4">
+                Sign In
+              </Button>
+            </Link>
           </CardContent>
         </Card>
       </div>

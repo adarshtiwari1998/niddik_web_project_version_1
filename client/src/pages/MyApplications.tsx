@@ -130,9 +130,11 @@ export default function MyApplications() {
         <Card>
           <CardContent className="py-10 text-center">
             <p>Please sign in to view your applications.</p>
-            <Button className="mt-4" onClick={() => window.location.href = "/candidate/auth"}>
-              Sign In
-            </Button>
+            <Link href="/candidate/auth">
+              <Button className="mt-4">
+                Sign In
+              </Button>
+            </Link>
           </CardContent>
         </Card>
       </div>
@@ -294,13 +296,11 @@ export default function MyApplications() {
                     </div>
                     
                     <div className="flex gap-2">
-                      <Button 
-                        variant="outline" 
-                        size="sm" 
-                        onClick={() => window.location.href = `/candidate/jobs/${application.job.id}`}
-                      >
-                        View Job
-                      </Button>
+                      <Link href={`/candidate/jobs/${application.job.id}`}>
+                        <Button variant="outline" size="sm">
+                          View Job
+                        </Button>
+                      </Link>
                       {(application.status === 'new' || application.status === 'reviewing') && (
                         <Button 
                           variant="destructive" 
