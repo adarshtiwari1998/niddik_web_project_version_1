@@ -29,8 +29,11 @@ import {
   CardTitle,
 } from "@/components/ui/card";
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
-import { InfoIcon, CheckCircleIcon, ClockIcon, CalendarIcon } from "lucide-react";
+import { InfoIcon, CheckCircleIcon, ClockIcon, CalendarIcon, Award } from "lucide-react";
 import { format } from "date-fns";
+import Navbar from "@/components/layout/Navbar";
+import Footer from "@/components/layout/Footer";
+import AnnouncementBar from "@/components/layout/AnnouncementBar";
 
 // Client-side validation schema
 const formSchema = z.object({
@@ -51,6 +54,11 @@ export default function RequestDemo() {
   const { toast } = useToast();
   const [submitted, setSubmitted] = useState(false);
   const [checkEmail, setCheckEmail] = useState<string | null>(null);
+  const [isAnnouncementVisible, setIsAnnouncementVisible] = useState(true);
+
+  const handleAnnouncementVisibilityChange = (isVisible: boolean) => {
+    setIsAnnouncementVisible(isVisible);
+  };
   
   // Define form
   const form = useForm<FormValues>({
@@ -193,160 +201,217 @@ export default function RequestDemo() {
     );
   };
 
+  // Stats boxes for the left side of the layout
+  const StatBox = ({ value, label, sublabel }: { value: string, label: string, sublabel: string }) => (
+    <div className="border-l border-gray-200 pl-6 py-2">
+      <div className="text-3xl font-bold text-gray-800">{value}</div>
+      <div className="text-sm text-gray-600">{label}</div>
+      <div className="text-xs text-gray-500">{sublabel}</div>
+    </div>
+  );
+
   return (
-    <Container className="py-12">
-      <div className="flex flex-col items-center text-center mb-8">
-        <h1 className="text-3xl md:text-4xl font-bold tracking-tight mb-4">
-          Request a Demo
-        </h1>
-        <p className="text-lg text-muted-foreground max-w-3xl">
-          Experience how our platform can transform your talent acquisition process.
-          Our team will guide you through our solutions tailored to your needs.
-        </p>
+    <div className="min-h-screen overflow-x-hidden">
+      {/* Fixed header components */}
+      <AnnouncementBar 
+        text="Download our new whitepaper on scaling tech teams effectively."
+        linkText="Get it now"
+        linkUrl="/whitepaper"
+        bgColor="bg-green-600" 
+        textColor="text-white"
+        onVisibilityChange={handleAnnouncementVisibilityChange}
+      />
+      <Navbar hasAnnouncementAbove={isAnnouncementVisible} />
+      
+      {/* Add minimal padding to account for fixed elements */}
+      <div className={`${isAnnouncementVisible ? 'pt-28' : 'pt-20'} transition-all duration-300`}>
+        <main className="py-12 bg-gray-50">
+          <Container>
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-10 items-start">
+              {/* Left Column - Content and Stats */}
+              <div className="pr-6">
+                <h1 className="text-4xl font-bold mb-6">Request A Demo</h1>
+                <p className="text-lg text-gray-600 mb-8">
+                  Experience the future of global tech hiring with a personalized demo of Niddik Talent Cloud. Our AI-powered platform streamlines everything from sourcing to payouts, helping you build high-performing, borderless tech teams with ease.
+                </p>
+                
+                <div className="grid grid-cols-1 md:grid-cols-3 gap-4 my-10">
+                  <StatBox value="150K" label="Top rated," sublabel="highly skilled global talent" />
+                  <StatBox value="33%" label="Faster project" sublabel="delivery" />
+                  <StatBox value="66%" label="Faster time" sublabel="to hire" />
+                </div>
+                
+                <div className="mt-12 flex items-center space-x-4">
+                  <img src="/images/g2_badges.png" alt="Award Badges" className="h-24" 
+                       onError={(e) => {
+                         e.currentTarget.onerror = null;
+                         e.currentTarget.style.display = 'none';
+                         const container = document.getElementById('badges-container');
+                         if (container) {
+                           container.innerHTML = `
+                             <div class="flex space-x-4">
+                               <div class="p-4 bg-white rounded-full shadow-md">
+                                 <Award className="h-10 w-10 text-red-500" />
+                               </div>
+                               <div class="p-4 bg-white rounded-full shadow-md">
+                                 <Award className="h-10 w-10 text-purple-500" />
+                               </div>
+                               <div class="p-4 bg-white rounded-full shadow-md">
+                                 <Award className="h-10 w-10 text-orange-500" />
+                               </div>
+                             </div>
+                           `;
+                         }
+                       }}
+                  />
+                  <div id="badges-container"></div>
+                </div>
+              </div>
+              
+              {/* Right Column - Form */}
+              <div>
+                {(checkEmail && existingRequest) ? (
+                  renderRequestStatus()
+                ) : (
+                  <Card className="w-full border shadow-lg">
+                    <CardHeader>
+                      <CardTitle>Request Demo</CardTitle>
+                      <CardDescription>
+                        Fill out the form below to request a personalized demo
+                      </CardDescription>
+                    </CardHeader>
+                    <CardContent>
+                      <Form {...form}>
+                        <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-5">
+                          <div className="grid grid-cols-1 sm:grid-cols-2 gap-5">
+                            <FormField
+                              control={form.control}
+                              name="fullName"
+                              render={({ field }) => (
+                                <FormItem>
+                                  <FormLabel>Full Name</FormLabel>
+                                  <FormControl>
+                                    <Input placeholder="John Smith" {...field} />
+                                  </FormControl>
+                                  <FormMessage />
+                                </FormItem>
+                              )}
+                            />
+                            <FormField
+                              control={form.control}
+                              name="jobTitle"
+                              render={({ field }) => (
+                                <FormItem>
+                                  <FormLabel>Job Title</FormLabel>
+                                  <FormControl>
+                                    <Input placeholder="HR Manager" {...field} />
+                                  </FormControl>
+                                  <FormMessage />
+                                </FormItem>
+                              )}
+                            />
+                          </div>
+
+                          <FormField
+                            control={form.control}
+                            name="companyName"
+                            render={({ field }) => (
+                              <FormItem>
+                                <FormLabel>Company Name</FormLabel>
+                                <FormControl>
+                                  <Input placeholder="Acme Inc." {...field} />
+                                </FormControl>
+                                <FormMessage />
+                              </FormItem>
+                            )}
+                          />
+
+                          <div className="grid grid-cols-1 sm:grid-cols-2 gap-5">
+                            <FormField
+                              control={form.control}
+                              name="workEmail"
+                              render={({ field }) => (
+                                <FormItem>
+                                  <FormLabel>Work Email</FormLabel>
+                                  <FormControl>
+                                    <Input placeholder="john@company.com" {...field} />
+                                  </FormControl>
+                                  <FormMessage />
+                                </FormItem>
+                              )}
+                            />
+                            <FormField
+                              control={form.control}
+                              name="phoneNumber"
+                              render={({ field }) => (
+                                <FormItem>
+                                  <FormLabel>Phone Number</FormLabel>
+                                  <FormControl>
+                                    <Input placeholder="+1 (555) 000-0000" {...field} />
+                                  </FormControl>
+                                  <FormMessage />
+                                </FormItem>
+                              )}
+                            />
+                          </div>
+
+                          <FormField
+                            control={form.control}
+                            name="message"
+                            render={({ field }) => (
+                              <FormItem>
+                                <FormLabel>Message</FormLabel>
+                                <FormControl>
+                                  <Textarea
+                                    placeholder="Do you have a specific goal for the Niddik demo? If there's an area you'd like us to cover, please include those details here so we can be prepared."
+                                    className="resize-none min-h-[100px]"
+                                    {...field}
+                                  />
+                                </FormControl>
+                                <FormMessage />
+                              </FormItem>
+                            )}
+                          />
+
+                          <FormField
+                            control={form.control}
+                            name="acceptedTerms"
+                            render={({ field }) => (
+                              <FormItem className="flex flex-row items-start space-x-3 space-y-0 p-2">
+                                <FormControl>
+                                  <Checkbox
+                                    checked={field.value}
+                                    onCheckedChange={field.onChange}
+                                  />
+                                </FormControl>
+                                <div className="space-y-1 leading-none">
+                                  <FormLabel>
+                                    I UNDERSTAND THAT NIDDIK WILL PROCESS MY INFORMATION IN ACCORDANCE WITH THEIR <a href="/terms" className="text-blue-600 underline">TERMS OF USE</a>. I MAY WITHDRAW MY CONSENT THROUGH UNSUBSCRIBE LINKS AT ANY TIME.
+                                  </FormLabel>
+                                </div>
+                                <FormMessage />
+                              </FormItem>
+                            )}
+                          />
+
+                          <Button
+                            type="submit"
+                            className="w-full bg-green-500 hover:bg-green-600"
+                            disabled={isPending || checkingRequest}
+                          >
+                            {isPending ? "Submitting..." : "Submit"}
+                          </Button>
+                        </form>
+                      </Form>
+                    </CardContent>
+                  </Card>
+                )}
+              </div>
+            </div>
+          </Container>
+        </main>
+        <Footer />
       </div>
-
-      {(checkEmail && existingRequest) ? (
-        renderRequestStatus()
-      ) : (
-        <Card className="w-full max-w-lg mx-auto">
-          <CardHeader>
-            <CardTitle>Request Demo</CardTitle>
-            <CardDescription>
-              Fill out the form below to request a personalized demo
-            </CardDescription>
-          </CardHeader>
-          <CardContent>
-            <Form {...form}>
-              <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-5">
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
-                  <FormField
-                    control={form.control}
-                    name="fullName"
-                    render={({ field }) => (
-                      <FormItem>
-                        <FormLabel>Full Name</FormLabel>
-                        <FormControl>
-                          <Input placeholder="John Smith" {...field} />
-                        </FormControl>
-                        <FormMessage />
-                      </FormItem>
-                    )}
-                  />
-                  <FormField
-                    control={form.control}
-                    name="jobTitle"
-                    render={({ field }) => (
-                      <FormItem>
-                        <FormLabel>Job Title</FormLabel>
-                        <FormControl>
-                          <Input placeholder="HR Manager" {...field} />
-                        </FormControl>
-                        <FormMessage />
-                      </FormItem>
-                    )}
-                  />
-                </div>
-
-                <FormField
-                  control={form.control}
-                  name="companyName"
-                  render={({ field }) => (
-                    <FormItem>
-                      <FormLabel>Company Name</FormLabel>
-                      <FormControl>
-                        <Input placeholder="Acme Inc." {...field} />
-                      </FormControl>
-                      <FormMessage />
-                    </FormItem>
-                  )}
-                />
-
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
-                  <FormField
-                    control={form.control}
-                    name="workEmail"
-                    render={({ field }) => (
-                      <FormItem>
-                        <FormLabel>Work Email</FormLabel>
-                        <FormControl>
-                          <Input placeholder="john@company.com" {...field} />
-                        </FormControl>
-                        <FormMessage />
-                      </FormItem>
-                    )}
-                  />
-                  <FormField
-                    control={form.control}
-                    name="phoneNumber"
-                    render={({ field }) => (
-                      <FormItem>
-                        <FormLabel>Phone Number</FormLabel>
-                        <FormControl>
-                          <Input placeholder="+1 (555) 000-0000" {...field} />
-                        </FormControl>
-                        <FormMessage />
-                      </FormItem>
-                    )}
-                  />
-                </div>
-
-                <FormField
-                  control={form.control}
-                  name="message"
-                  render={({ field }) => (
-                    <FormItem>
-                      <FormLabel>Additional Information</FormLabel>
-                      <FormControl>
-                        <Textarea
-                          placeholder="Tell us about your specific needs or questions"
-                          className="resize-none min-h-[100px]"
-                          {...field}
-                        />
-                      </FormControl>
-                      <FormDescription>
-                        Optional - Share any specific areas you'd like us to focus on during the demo
-                      </FormDescription>
-                      <FormMessage />
-                    </FormItem>
-                  )}
-                />
-
-                <FormField
-                  control={form.control}
-                  name="acceptedTerms"
-                  render={({ field }) => (
-                    <FormItem className="flex flex-row items-start space-x-3 space-y-0 rounded-md border p-4">
-                      <FormControl>
-                        <Checkbox
-                          checked={field.value}
-                          onCheckedChange={field.onChange}
-                        />
-                      </FormControl>
-                      <div className="space-y-1 leading-none">
-                        <FormLabel>
-                          I agree to Niddik's terms of service and privacy policy
-                        </FormLabel>
-                        <FormDescription>
-                          We'll use this information to schedule and customize your demo experience.
-                        </FormDescription>
-                      </div>
-                      <FormMessage />
-                    </FormItem>
-                  )}
-                />
-
-                <Button
-                  type="submit"
-                  className="w-full"
-                  disabled={isPending || checkingRequest}
-                >
-                  {isPending ? "Submitting..." : "Request Demo"}
-                </Button>
-              </form>
-            </Form>
-          </CardContent>
-        </Card>
-      )}
-    </Container>
+    </div>
   );
 }
