@@ -174,63 +174,116 @@ const WhitepaperPage = () => {
         </section>
         
         {/* Key Insights Section - Modern AI Animation */}
-        <section className="py-20 relative overflow-hidden bg-gradient-to-r from-slate-900 to-blue-900">
-          {/* AI Animation Elements */}
-          <div className="absolute inset-0 opacity-20">
-            <div className="absolute top-10 left-10 w-60 h-60 bg-blue-500 rounded-full mix-blend-multiply filter blur-3xl animate-pulse-slow"></div>
-            <div className="absolute top-40 right-20 w-80 h-80 bg-purple-500 rounded-full mix-blend-multiply filter blur-3xl animate-pulse-slow animation-delay-2000"></div>
-            <div className="absolute bottom-10 left-1/3 w-40 h-40 bg-green-500 rounded-full mix-blend-multiply filter blur-3xl animate-pulse-slow animation-delay-1000"></div>
-            <div className="absolute bottom-40 right-1/4 w-60 h-60 bg-pink-500 rounded-full mix-blend-multiply filter blur-3xl animate-pulse-slow animation-delay-3000"></div>
+        <section className="py-20 relative overflow-hidden bg-[#0d2340]">
+          {/* Technology AI Background with Animation */}
+          <div className="absolute inset-0 z-0">
+            {/* Background with tech circuit patterns */}
+            <div className="absolute inset-0 bg-[url('/circuit-board-pattern.svg')] bg-repeat opacity-10"></div>
             
-            {/* Abstract Code Lines */}
-            <div className="absolute top-0 left-0 w-full h-full opacity-20">
-              <svg className="w-full h-full" viewBox="0 0 1000 1000">
-                <motion.g
-                  initial={{ opacity: 0 }}
-                  animate={{ opacity: 1 }}
-                  transition={{ duration: 2, repeat: Infinity, repeatType: "reverse" }}
+            {/* Binary code streams */}
+            <div className="absolute inset-0">
+              {Array.from({ length: 15 }).map((_, i) => (
+                <motion.div
+                  key={i}
+                  className="absolute text-[8px] font-mono text-cyan-500 opacity-20 whitespace-nowrap overflow-hidden"
+                  style={{ 
+                    top: `${Math.random() * 100}%`, 
+                    left: `${Math.random() * 100}%`,
+                    width: `${30 + Math.random() * 200}px`,
+                  }}
+                  initial={{ opacity: 0.1 }}
+                  animate={{ 
+                    opacity: [0.1, 0.3, 0.1],
+                    x: [`${-300 - Math.random() * 200}px`, `${100 + Math.random() * 300}px`]
+                  }}
+                  transition={{ 
+                    duration: 10 + Math.random() * 15, 
+                    repeat: Infinity, 
+                    ease: "linear" 
+                  }}
                 >
+                  {"10101001010101010010101010110101001010101001010101101010".split('').map((char, idx) => (
+                    <span key={idx} style={{ animationDelay: `${idx * 0.1}s` }}>{char}</span>
+                  ))}
+                </motion.div>
+              ))}
+            </div>
+            
+            {/* Glowing orbs representing technology nodes */}
+            <motion.div className="absolute top-1/4 left-1/4 w-32 h-32 bg-blue-500 rounded-full filter blur-3xl opacity-20 animate-pulse-slow"></motion.div>
+            <motion.div className="absolute top-3/4 right-1/4 w-48 h-48 bg-purple-500 rounded-full filter blur-3xl opacity-15 animate-pulse-slow animation-delay-2000"></motion.div>
+            <motion.div className="absolute bottom-1/3 right-1/3 w-40 h-40 bg-emerald-500 rounded-full filter blur-3xl opacity-20 animate-pulse-slow animation-delay-1000"></motion.div>
+            
+            {/* Animated data flow lines */}
+            <div className="absolute inset-0">
+              <svg className="w-full h-full overflow-visible" viewBox="0 0 1000 500">
+                <motion.g opacity="0.2">
+                  {/* Horizontal tech grid lines */}
+                  {Array.from({ length: 10 }).map((_, i) => (
+                    <motion.line
+                      key={`h-${i}`}
+                      x1="0"
+                      y1={50 + i * 50}
+                      x2="1000"
+                      y2={50 + i * 50}
+                      stroke="#4fd1c5"
+                      strokeWidth="1"
+                      strokeDasharray="5,10"
+                      initial={{ strokeDashoffset: 1000 }}
+                      animate={{ strokeDashoffset: 0 }}
+                      transition={{ 
+                        duration: 30, 
+                        repeat: Infinity, 
+                        ease: "linear"
+                      }}
+                    />
+                  ))}
+                  
+                  {/* Vertical tech grid lines */}
                   {Array.from({ length: 20 }).map((_, i) => (
                     <motion.line
-                      key={i}
-                      x1={Math.random() * 1000}
-                      y1={Math.random() * 1000}
-                      x2={Math.random() * 1000}
-                      y2={Math.random() * 1000}
-                      stroke="white"
-                      strokeWidth="0.5"
-                      initial={{ pathLength: 0 }}
-                      animate={{ pathLength: 1 }}
-                      transition={{ duration: 2 + Math.random() * 3, repeat: Infinity, repeatType: "loop" }}
+                      key={`v-${i}`}
+                      x1={50 + i * 50}
+                      y1="0"
+                      x2={50 + i * 50}
+                      y2="500"
+                      stroke="#4fd1c5"
+                      strokeWidth="1"
+                      strokeDasharray="5,15"
+                      initial={{ strokeDashoffset: 500 }}
+                      animate={{ strokeDashoffset: 0 }}
+                      transition={{ 
+                        duration: 20, 
+                        repeat: Infinity, 
+                        ease: "linear",
+                        delay: i * 0.1
+                      }}
+                    />
+                  ))}
+                  
+                  {/* Data flow connecting lines */}
+                  {Array.from({ length: 8 }).map((_, i) => (
+                    <motion.path
+                      key={`path-${i}`}
+                      d={`M${100 + i * 120},50 C${150 + i * 120},${100 + i * 30} ${200 + i * 100},${200 - i * 20} ${250 + i * 90},${300 + i * 10}`}
+                      stroke="#60a5fa"
+                      strokeWidth="2"
+                      fill="none"
+                      initial={{ pathLength: 0, opacity: 0 }}
+                      animate={{ 
+                        pathLength: 1, 
+                        opacity: [0, 0.5, 0]
+                      }}
+                      transition={{ 
+                        duration: 4 + i, 
+                        repeat: Infinity, 
+                        repeatType: "loop",
+                        delay: i * 0.5
+                      }}
                     />
                   ))}
                 </motion.g>
               </svg>
-            </div>
-            
-            {/* Digital Particles */}
-            <div className="absolute inset-0 opacity-30">
-              {Array.from({ length: 40 }).map((_, i) => (
-                <motion.div
-                  key={i}
-                  className="absolute w-1 h-1 bg-blue-400 rounded-full"
-                  initial={{ 
-                    x: Math.random() * 100 + "%", 
-                    y: Math.random() * 100 + "%",
-                    opacity: Math.random() * 0.5 + 0.3
-                  }}
-                  animate={{ 
-                    x: Math.random() * 100 + "%", 
-                    y: Math.random() * 100 + "%",
-                    opacity: [0.3, 0.8, 0.3] 
-                  }}
-                  transition={{ 
-                    duration: 5 + Math.random() * 10, 
-                    repeat: Infinity, 
-                    repeatType: "reverse" 
-                  }}
-                />
-              ))}
             </div>
           </div>
           
@@ -263,43 +316,49 @@ const WhitepaperPage = () => {
                   title: "Data-Driven Recruitment",
                   description: "Learn how data analytics can reduce hiring time by 60% while increasing quality of hires.",
                   icon: <BarChart3 className="h-10 w-10 text-white" />,
-                  bgColor: "from-red-500 to-red-700",
-                  borderColor: "border-red-400"
+                  bgColor: "bg-[#e53e3e]",
+                  borderColor: "border-[#f56565]",
+                  iconBg: "bg-[#fc8181] bg-opacity-30"
                 },
                 {
                   title: "AI for Recruitment",
                   description: "Discover how AI-powered matching improves response rates by 40% compared to traditional methods.",
                   icon: <Zap className="h-10 w-10 text-white" />,
-                  bgColor: "from-yellow-500 to-yellow-700",
-                  borderColor: "border-yellow-400"
+                  bgColor: "bg-[#d69e2e]",
+                  borderColor: "border-[#f6ad55]",
+                  iconBg: "bg-[#fbd38d] bg-opacity-30"
                 },
                 {
                   title: "Social Media Recruiting",
                   description: "Explore strategies that decrease time-to-submit by 50% through optimized social channels.",
                   icon: <Users className="h-10 w-10 text-white" />,
-                  bgColor: "from-green-500 to-green-700",
-                  borderColor: "border-green-400"
+                  bgColor: "bg-[#38a169]",
+                  borderColor: "border-[#68d391]",
+                  iconBg: "bg-[#9ae6b4] bg-opacity-30"
                 },
                 {
                   title: "Video Interview Technology",
                   description: "See how video interviews reduce screening time while maintaining comprehensive evaluation.",
                   icon: <Zap className="h-10 w-10 text-white" />,
-                  bgColor: "from-blue-500 to-blue-700",
-                  borderColor: "border-blue-400"
+                  bgColor: "bg-[#3182ce]",
+                  borderColor: "border-[#63b3ed]",
+                  iconBg: "bg-[#90cdf4] bg-opacity-30"
                 },
                 {
                   title: "Improved Candidate Experience",
                   description: "Understand how a better recruitment experience increases talent quality by up to 70%.",
                   icon: <Users className="h-10 w-10 text-white" />,
-                  bgColor: "from-purple-500 to-purple-700",
-                  borderColor: "border-purple-400"
+                  bgColor: "bg-[#805ad5]",
+                  borderColor: "border-[#b794f4]",
+                  iconBg: "bg-[#d6bcfa] bg-opacity-30"
                 },
                 {
                   title: "Recruitment Technology Solutions",
                   description: "Learn about integrated tools that optimize recruiting spend by 30% while improving outcomes.",
                   icon: <PieChart className="h-10 w-10 text-white" />,
-                  bgColor: "from-indigo-500 to-indigo-700",
-                  borderColor: "border-indigo-400"
+                  bgColor: "bg-[#4299e1]",
+                  borderColor: "border-[#90cdf4]",
+                  iconBg: "bg-[#bee3f8] bg-opacity-30"
                 }
               ].map((item, index) => (
                 <motion.div
@@ -312,7 +371,7 @@ const WhitepaperPage = () => {
                     y: -10, 
                     boxShadow: "0 10px 25px -5px rgba(0, 0, 0, 0.2), 0 10px 10px -5px rgba(0, 0, 0, 0.1)" 
                   }}
-                  className={`rounded-xl p-6 bg-gradient-to-br ${item.bgColor} backdrop-blur-lg bg-opacity-20 border border-opacity-20 ${item.borderColor} shadow-lg relative overflow-hidden group text-white animate-gradient`}
+                  className={`rounded-xl p-6 ${item.bgColor} backdrop-blur-lg border ${item.borderColor} shadow-lg relative overflow-hidden group text-white`}
                 >
                   {/* Animated background */}
                   <div className="absolute inset-0 opacity-30 group-hover:opacity-50 transition-opacity">
@@ -325,7 +384,7 @@ const WhitepaperPage = () => {
                   </div>
                   
                   <div className="relative z-10">
-                    <div className="p-3 rounded-full bg-white bg-opacity-20 inline-flex mb-4 shimmer overflow-hidden">
+                    <div className={`p-3 rounded-full ${item.iconBg || 'bg-white bg-opacity-20'} inline-flex mb-4 shimmer overflow-hidden`}>
                       {item.icon}
                     </div>
                     <h3 className="text-xl font-bold mb-3 text-white">{item.title}</h3>
