@@ -11,6 +11,7 @@ import AboutUs from "@/pages/AboutUs";
 import WhyUs from "@/pages/WhyUs";
 import LandingPage from "@/pages/LandingPage";
 import AdaptiveHiring from "@/pages/AdaptiveHiring";
+import Whitepaper from "@/pages/Whitepaper";
 
 // Admin Pages
 import AdminDashboard from "@/pages/admin/AdminDashboard";
@@ -29,6 +30,7 @@ function Router() {
       <Route path="/services/:serviceSlug" component={ServiceDetail} />
       <Route path="/web-app-solutions" component={WebAppSolutions} />
       <Route path="/adaptive-hiring" component={AdaptiveHiring} />
+      <Route path="/whitepaper" component={Whitepaper} />
       
       {/* Company Routes */}
       <Route path="/about-us" component={AboutUs} />

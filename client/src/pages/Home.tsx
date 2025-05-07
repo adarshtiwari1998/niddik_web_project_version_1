@@ -25,9 +25,9 @@ const Home = () => {
     <div className="min-h-screen overflow-x-hidden pt-0"> {/* Removed padding-top */}
       {/* Fixed header components */}
       <AnnouncementBar 
-        text="Join our upcoming webinar on scaling tech teams effectively."
-        linkText="Register now"
-        linkUrl="#"
+        text="Download our new whitepaper on scaling tech teams effectively."
+        linkText="Get it now"
+        linkUrl="/whitepaper"
         bgColor="bg-green-600" 
         textColor="text-white"
         onVisibilityChange={handleAnnouncementVisibilityChange}
