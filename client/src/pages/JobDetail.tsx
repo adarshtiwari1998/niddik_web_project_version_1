@@ -201,21 +201,13 @@ export default function JobDetail() {
                 </div>
               </div>
               
-              {job.createdAt && (
-                <div>
-                  <p className="text-sm font-medium mb-1">Posted On</p>
-                  <div className="flex items-center text-muted-foreground">
-                    <Calendar className="h-4 w-4 mr-2" />
-                    <span>
-                      {new Date(job.createdAt).toLocaleDateString('en-US', {
-                        month: 'long',
-                        day: 'numeric',
-                        year: 'numeric'
-                      })}
-                    </span>
-                  </div>
+              <div>
+                <p className="text-sm font-medium mb-1">Posted On</p>
+                <div className="flex items-center text-muted-foreground">
+                  <Calendar className="h-4 w-4 mr-2" />
+                  <span>Recently</span>
                 </div>
-              )}
+              </div>
             </CardContent>
             <CardFooter>
               <Button onClick={handleApply} className="w-full">Apply for this position</Button>

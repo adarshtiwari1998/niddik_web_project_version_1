@@ -57,7 +57,7 @@ export default function AuthPage() {
       username,
       password,
       email,
-      full_name: fullName,
+      fullName,
       phone: phone || undefined,
       role: "user", // Default role for self-registration
     });

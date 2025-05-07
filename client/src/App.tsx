@@ -15,6 +15,7 @@ import { default as Whitepaper } from "@/pages/Whitepaper";
 import AuthPage from "@/pages/AuthPage";
 import CareerPage from "@/pages/CareerPage";
 import JobDetail from "@/pages/JobDetail";
+import MyApplications from "@/pages/MyApplications";
 
 // Admin Pages
 import AdminDashboard from "@/pages/admin/AdminDashboard";
@@ -45,6 +46,8 @@ function Router() {
       
       {/* Careers & Jobs */}
       <Route path="/careers" component={CareerPage} />
+      <Route path="/jobs/:id" component={JobDetail} />
+      <ProtectedRoute path="/my-applications" component={MyApplications} />
       
       {/* Auth Routes */}
       <Route path="/auth" component={AuthPage} />
