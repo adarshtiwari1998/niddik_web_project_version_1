@@ -72,12 +72,14 @@ export default function AdminLogin() {
             const urlParams = new URLSearchParams(window.location.search);
             const redirectUrl = urlParams.get("redirect");
             
-            // Navigate to admin dashboard or specified redirect URL
-            if (redirectUrl) {
-              setLocation(redirectUrl);
-            } else {
-              setLocation("/admin/dashboard");
-            }
+            // Navigate immediately to admin dashboard or specified redirect URL
+            setTimeout(() => {
+              if (redirectUrl) {
+                window.location.href = redirectUrl; // Force immediate navigation
+              } else {
+                window.location.href = "/admin/dashboard"; // Force immediate navigation
+              }
+            }, 100); // Tiny delay to ensure navigation happens
             
             toast({
               title: "Welcome back",
@@ -167,6 +169,9 @@ export default function AdminLogin() {
                   value={username}
                   onChange={(e) => setUsername(e.target.value)}
                   required
+                  autoComplete="off"
+                  data-lpignore="true"
+                  data-form-type="other"
                 />
               </div>
               <div className="space-y-2">
@@ -179,6 +184,9 @@ export default function AdminLogin() {
                     value={password}
                     onChange={(e) => setPassword(e.target.value)}
                     required
+                    autoComplete="new-password"
+                    data-lpignore="true"
+                    data-form-type="other"
                   />
                   <Lock className="absolute right-3 top-2.5 h-4 w-4 text-muted-foreground" />
                 </div>
