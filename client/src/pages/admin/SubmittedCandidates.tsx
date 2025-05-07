@@ -637,8 +637,8 @@ export default function SubmittedCandidates() {
               </SelectTrigger>
               <SelectContent>
                 <SelectItem value="all_clients">All Clients</SelectItem>
-                {clients?.map((client: string) => (
-                  <SelectItem key={`client-${client}`} value={client}>
+                {clients.map((client: string, index: number) => (
+                  <SelectItem key={`client-${index}-${client}`} value={client}>
                     {client}
                   </SelectItem>
                 ))}
