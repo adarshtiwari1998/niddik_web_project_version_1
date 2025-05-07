@@ -19,9 +19,9 @@ import { Badge } from "@/components/ui/badge";
 
 export default function CareerPage() {
   const [search, setSearch] = useState("");
-  const [category, setCategory] = useState("");
-  const [jobType, setJobType] = useState("");
-  const [experienceLevel, setExperienceLevel] = useState("");
+  const [category, setCategory] = useState("all_categories");
+  const [jobType, setJobType] = useState("all_types");
+  const [experienceLevel, setExperienceLevel] = useState("all_levels");
 
   const { data, isLoading, error } = useQuery<{ data: JobListing[], meta: { total: number, pages: number } }>({
     queryKey: ['/api/job-listings', { search, category, jobType, experienceLevel, status: 'active' }],
@@ -35,9 +35,9 @@ export default function CareerPage() {
 
   const clearFilters = () => {
     setSearch("");
-    setCategory("");
-    setJobType("");
-    setExperienceLevel("");
+    setCategory("all_categories");
+    setJobType("all_types");
+    setExperienceLevel("all_levels");
   };
 
   return (
@@ -70,7 +70,7 @@ export default function CareerPage() {
                     <SelectValue placeholder="Job Category" />
                   </SelectTrigger>
                   <SelectContent>
-                    <SelectItem value="">All Categories</SelectItem>
+                    <SelectItem value="all_categories">All Categories</SelectItem>
                     <SelectItem value="engineering">Engineering</SelectItem>
                     <SelectItem value="design">Design</SelectItem>
                     <SelectItem value="product">Product</SelectItem>
@@ -85,7 +85,7 @@ export default function CareerPage() {
                     <SelectValue placeholder="Job Type" />
                   </SelectTrigger>
                   <SelectContent>
-                    <SelectItem value="">All Types</SelectItem>
+                    <SelectItem value="all_types">All Types</SelectItem>
                     <SelectItem value="full-time">Full-time</SelectItem>
                     <SelectItem value="part-time">Part-time</SelectItem>
                     <SelectItem value="contract">Contract</SelectItem>
@@ -98,7 +98,7 @@ export default function CareerPage() {
                     <SelectValue placeholder="Experience Level" />
                   </SelectTrigger>
                   <SelectContent>
-                    <SelectItem value="">All Levels</SelectItem>
+                    <SelectItem value="all_levels">All Levels</SelectItem>
                     <SelectItem value="entry">Entry Level</SelectItem>
                     <SelectItem value="mid">Mid Level</SelectItem>
                     <SelectItem value="senior">Senior Level</SelectItem>
