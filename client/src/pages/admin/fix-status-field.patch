@@ -1,0 +1,65 @@
+diff --git a/client/src/pages/admin/SubmittedCandidates.tsx b/client/src/pages/admin/SubmittedCandidates.tsx
+index xxxxxxx..yyyyyyy 100644
+--- a/client/src/pages/admin/SubmittedCandidates.tsx
++++ b/client/src/pages/admin/SubmittedCandidates.tsx
+@@ -1359,18 +1359,13 @@ export default function SubmittedCandidates() {
+                       <FormLabel>Status *</FormLabel>
+-                      <Select 
+-                        onValueChange={field.onChange} 
+-                        defaultValue={field.value}
+-                      >
+-                        <FormControl>
+-                          <SelectTrigger>
+-                            <SelectValue placeholder="Select status" />
+-                          </SelectTrigger>
+-                        </FormControl>
+-                        <SelectContent>
+-                          <SelectItem value="new">New</SelectItem>
+-                          <SelectItem value="submitted to client">Submitted to Client</SelectItem>
+-                          <SelectItem value="scheduled for interview">Scheduled for Interview</SelectItem>
+-                          <SelectItem value="rejected">Rejected</SelectItem>
+-                          <SelectItem value="selected">Selected</SelectItem>
+-                        </SelectContent>
+-                      </Select>
++                      <FormControl>
++                        <Textarea
++                          placeholder="Enter detailed status information"
++                          rows={3}
++                          {...field}
++                        />
++                      </FormControl>
++                      <FormDescription>
++                        Enter the current status of this candidate's application (e.g., "Scheduled for interview on 5/10", "Rejected - experience mismatch", etc.)
++                      </FormDescription>
+                       <FormMessage />
+ 
+@@ -1676,18 +1676,13 @@ export default function SubmittedCandidates() {
+                       <FormLabel>Status *</FormLabel>
+-                      <Select 
+-                        onValueChange={field.onChange} 
+-                        defaultValue={field.value}
+-                      >
+-                        <FormControl>
+-                          <SelectTrigger>
+-                            <SelectValue placeholder="Select status" />
+-                          </SelectTrigger>
+-                        </FormControl>
+-                        <SelectContent>
+-                          <SelectItem value="new">New</SelectItem>
+-                          <SelectItem value="submitted to client">Submitted to Client</SelectItem>
+-                          <SelectItem value="scheduled for interview">Scheduled for Interview</SelectItem>
+-                          <SelectItem value="rejected">Rejected</SelectItem>
+-                          <SelectItem value="selected">Selected</SelectItem>
+-                        </SelectContent>
+-                      </Select>
++                      <FormControl>
++                        <Textarea
++                          placeholder="Enter detailed status information"
++                          rows={3}
++                          {...field}
++                        />
++                      </FormControl>
++                      <FormDescription>
++                        Enter the current status of this candidate's application (e.g., "Scheduled for interview on 5/10", "Rejected - experience mismatch", etc.)
++                      </FormDescription>
+                       <FormMessage />
