@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useLocation, Link } from "wouter";
 import { useQuery } from "@tanstack/react-query";
 import { useAuth } from "@/hooks/use-auth";
@@ -7,11 +7,13 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Shield, Briefcase, Users, Calendar, Activity, Clock, ChevronRight, CreditCard, Box } from "lucide-react";
 import AdminPasswordChange from "@/components/admin/AdminPasswordChange";
 import AdminLayout from "@/components/layout/AdminLayout";
+import { LoadingScreen } from "@/components/ui/loading-screen";
 import { JobListing, JobApplication } from "@shared/schema";
 
 export default function AdminDashboard() {
   const { user } = useAuth();
   const [activeTab, setActiveTab] = useState("overview");
+  const [initialLoading, setInitialLoading] = useState(true);
   
   // Fetch job statistics
   const { data: jobsData, isLoading: isLoadingJobs } = useQuery<{ data: JobListing[] }>({
@@ -50,6 +52,19 @@ export default function AdminDashboard() {
   // Fetch recent applications for the dashboard
   const recentApplications = applicationsData?.data?.slice(0, 5) || [];
   
+  // Effect to manage loading state
+  useEffect(() => {
+    // Check if data has loaded
+    if (!isLoadingJobs && !isLoadingApplications) {
+      // Add a small delay to ensure smooth transition
+      const timer = setTimeout(() => {
+        setInitialLoading(false);
+      }, 800);
+      
+      return () => clearTimeout(timer);
+    }
+  }, [isLoadingJobs, isLoadingApplications]);
+  
   // Format date
   const formatDate = (dateString: string | Date) => {
     const date = typeof dateString === 'string' ? new Date(dateString) : dateString;
@@ -67,6 +82,7 @@ export default function AdminDashboard() {
 
   return (
     <AdminLayout title="Dashboard" description="Overview and insights">
+      {initialLoading && <LoadingScreen message="Loading admin dashboard..." />}
       <Tabs defaultValue="overview" onValueChange={setActiveTab}>
         <TabsList className="mb-6">
           <TabsTrigger value="overview">Dashboard Overview</TabsTrigger>
