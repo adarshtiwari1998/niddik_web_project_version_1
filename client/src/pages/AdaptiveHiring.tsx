@@ -352,21 +352,21 @@ const AdaptiveHiringWorkflow = () => {
   
   // Track when component enters and exits viewport to control fixed positioning
   useEffect(() => {
-    // Simply set fixed position when scrolling past a certain point from the top
     const handleScroll = () => {
       const sectionElement = componentRef.current;
-      if (!sectionElement) return;
+      const bottomSentinel = bottomSentinelRef.current;
+      if (!sectionElement || !bottomSentinel) return;
       
       const scrollPosition = window.scrollY;
-      const sectionStart = sectionElement.getBoundingClientRect().top + window.scrollY - 100; // Buffer
-      const sectionEnd = sectionElement.getBoundingClientRect().bottom + window.scrollY - window.innerHeight;
+      const sectionTop = sectionElement.getBoundingClientRect().top + window.scrollY - 100; // Buffer for top
+      const sectionBottom = bottomSentinel.getBoundingClientRect().top + window.scrollY - window.innerHeight;
       
-      // If we're scrolled past the start point but not past the end
-      if (scrollPosition >= sectionStart && scrollPosition <= sectionEnd) {
-        setIsInViewport(true);
-      } else {
-        setIsInViewport(false);
-      }
+      // Keep image fixed from section start until the bottom sentinel
+      // Add a limit to avoid having the fixed image all the way to the footer
+      const pastSectionTop = scrollPosition >= sectionTop;
+      const beforeFooter = scrollPosition <= (sectionBottom + 300); // Add 300px buffer for last section
+      
+      setIsInViewport(pastSectionTop && beforeFooter);
     };
     
     // Add scroll listener
@@ -685,13 +685,15 @@ const AdaptiveHiringWorkflow = () => {
           {/* Right Column - Image with fixed positioning when section is in viewport */}
           <div className="hidden lg:block">
             <div 
-              className={`w-full pt-8 pr-12 ${
+              className={`w-full pr-12 ${
                 isInViewport 
-                  ? 'fixed top-24 w-[calc(50%-3rem)]' // Fixed to the top when in viewport
+                  ? 'fixed top-1/2 transform -translate-y-1/2 w-[calc(50%-3rem)]' // Fixed at 50% vertical
                   : 'relative'
               }`}
             >
-              {getImageContent()}
+              <div className="w-full max-w-md mx-auto">
+                {getImageContent()}
+              </div>
             </div>
           </div>
         </div>
