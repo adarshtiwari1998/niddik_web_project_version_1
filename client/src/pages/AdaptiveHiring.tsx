@@ -1,4 +1,5 @@
 import { motion } from "framer-motion";
+import { useState, useEffect, useRef } from "react";
 import { 
   Award, 
   Briefcase, 
@@ -6,13 +7,355 @@ import {
   Target, 
   BarChart3, 
   CheckCircle2,
-  ArrowRight
+  ArrowRight,
+  Database,
+  Cloud,
+  Code,
+  ChevronDown, 
+  ArrowRight as ArrowRightIcon
 } from "lucide-react";
 import Container from "@/components/ui/container";
 import { Link } from "wouter";
 import Navbar from "@/components/layout/Navbar";
 import AnnouncementBar from "@/components/layout/AnnouncementBar";
 import Footer from "@/components/layout/Footer";
+
+// Use Cases with Sticky Image Component
+const UsesCasesWithStickyImage = () => {
+  const [activeIndex, setActiveIndex] = useState(0);
+  const tabsRef = useRef<(HTMLDivElement | null)[]>([]);
+  
+  const useCases = [
+    {
+      id: "application-development",
+      title: "Application Development",
+      items: [
+        "Scale development with qualified talent, on demand",
+        "Reduce complexity and enhance user experience",
+        "Get your critical projects done faster"
+      ],
+      image: "/images/dev-team.jpg", // Replace with your image
+      icon: <Code />
+    },
+    {
+      id: "data-science",
+      title: "Data Science and Artificial Intelligence",
+      items: [
+        "Find specialized data scientists for your unique needs",
+        "Implement ML/AI solutions with experienced professionals",
+        "Transform raw data into actionable business insights"
+      ],
+      image: "/images/data-science.jpg", // Replace with your image
+      icon: <Database />
+    },
+    {
+      id: "data-engineering",
+      title: "Data Engineering and Analytics",
+      items: [
+        "Build scalable data pipelines with skilled engineers",
+        "Integrate disparate data sources efficiently",
+        "Develop dashboards and reporting solutions"
+      ],
+      image: "/images/data-engineering.jpg", // Replace with your image
+      icon: <BarChart3 />
+    },
+    {
+      id: "cloud-devops",
+      title: "Cloud and DevOps",
+      items: [
+        "Accelerate cloud migration with specialized talent",
+        "Implement CI/CD pipelines and automation",
+        "Optimize infrastructure for performance and cost"
+      ],
+      image: "/images/cloud-devops.jpg", // Replace with your image
+      icon: <Cloud />
+    }
+  ];
+
+  // Default to a developer image if no image is available
+  const activeImage = useCases[activeIndex]?.image || "/images/dev-team.jpg";
+
+  useEffect(() => {
+    const observerOptions = {
+      root: null,
+      rootMargin: '-20% 0px -30% 0px',
+      threshold: 0
+    };
+
+    const observerCallback: IntersectionObserverCallback = (entries) => {
+      entries.forEach(entry => {
+        if (entry.isIntersecting) {
+          const index = tabsRef.current.findIndex(tab => tab === entry.target);
+          if (index !== -1) {
+            setActiveIndex(index);
+          }
+        }
+      });
+    };
+
+    const observer = new IntersectionObserver(observerCallback, observerOptions);
+    
+    tabsRef.current.forEach(tab => {
+      if (tab) observer.observe(tab);
+    });
+
+    return () => {
+      tabsRef.current.forEach(tab => {
+        if (tab) observer.unobserve(tab);
+      });
+    };
+  }, []);
+
+  return (
+    <div>
+      <h2 className="text-3xl md:text-4xl font-bold mb-6 text-andela-dark">Common use cases for Adaptive Hiring</h2>
+      
+      <div className="flex flex-col lg:flex-row gap-10 mt-10">
+        {/* Left side content */}
+        <div className="lg:w-1/2">
+          {useCases.map((useCase, index) => (
+            <div 
+              key={useCase.id}
+              ref={el => tabsRef.current[index] = el}
+              className={`mb-4 rounded-lg transition-all duration-300 ${activeIndex === index ? 'bg-white shadow-md' : 'bg-gray-50'}`}
+            >
+              <div 
+                className="p-5 cursor-pointer"
+                onClick={() => setActiveIndex(index)}
+              >
+                <div className="flex items-center justify-between">
+                  <div className="flex items-center gap-3">
+                    <div className={`p-2 rounded-lg ${activeIndex === index ? 'bg-blue-100 text-blue-600' : 'bg-gray-100 text-gray-500'}`}>
+                      {useCase.icon}
+                    </div>
+                    <h3 className="font-semibold text-lg">{useCase.title}</h3>
+                  </div>
+                  <ChevronDown className={`w-5 h-5 transition-transform ${activeIndex === index ? 'rotate-180' : ''}`} />
+                </div>
+                
+                {activeIndex === index && (
+                  <div className="mt-4 pl-10">
+                    <ul className="space-y-2">
+                      {useCase.items.map((item, i) => (
+                        <li key={i} className="flex items-start gap-2">
+                          <CheckCircle2 className="w-5 h-5 text-green-500 flex-shrink-0 mt-0.5" />
+                          <span className="text-gray-700">{item}</span>
+                        </li>
+                      ))}
+                    </ul>
+                    <div className="mt-4 pl-1">
+                      <Link href="#" className="text-blue-600 inline-flex items-center group">
+                        Learn More 
+                        <ArrowRightIcon className="ml-1 w-4 h-4 group-hover:translate-x-1 transition-transform" />
+                      </Link>
+                    </div>
+                  </div>
+                )}
+              </div>
+            </div>
+          ))}
+        </div>
+        
+        {/* Right side sticky image */}
+        <div className="lg:w-1/2 relative">
+          <div className="lg:sticky lg:top-32">
+            <div className="aspect-video relative rounded-xl overflow-hidden shadow-xl border border-gray-200">
+              {/* Replace this with an actual image */}
+              <div className="absolute inset-0 bg-gradient-to-br from-blue-500/30 to-green-500/30 z-10 rounded-xl"></div>
+              <div 
+                className="w-full h-full bg-cover bg-center" 
+                style={{ 
+                  backgroundImage: activeImage ? `url(${activeImage})` : 'none',
+                  backgroundColor: '#123456' // Fallback color if image not available
+                }}
+              >
+                {/* Fallback content when no image */}
+                {!activeImage && (
+                  <div className="flex items-center justify-center h-full">
+                    <div className="text-white text-lg">Developer working on code</div>
+                  </div>
+                )}
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+};
+
+// How Adaptive Hiring Works Component
+const AdaptiveHiringWorkflow = () => {
+  const [activeSection, setActiveSection] = useState(0);
+  const sectionRefs = useRef<(HTMLDivElement | null)[]>([]);
+  
+  const sections = [
+    {
+      id: "identify-projects",
+      icon: <Target className="w-5 h-5" />,
+      label: "PROJECTS",
+      title: "Identify deprioritized projects due to gaps on your teams",
+      description: "Updating systems, modernizing legacy code, and refreshing outdated employee-facing apps can turn into enterprise backlog — and a loss of productivity. Niddik provides talent and teams so your top developers can focus on new business while we take care of backlog behind the scenes."
+    },
+    {
+      id: "determine-skills",
+      icon: <Users className="w-5 h-5" />,
+      label: "SKILLS",
+      title: "Determine what skills you need and for how long",
+      description: "When critical and fast-moving technology initiatives require more talent than you have on board, Niddik can help identify the skills gaps and timelines. Then, we'll provide the technologists you need, for however long you need them."
+    },
+    {
+      id: "match-talent",
+      icon: <Briefcase className="w-5 h-5" />,
+      label: "FIND TALENT",
+      title: "Match needs to talent skill sets, costs, and duration",
+      description: "Our AI-driven matching system identifies the perfect candidates based on technical skills, experience, domain knowledge, and team compatibility. We provide a curated selection of pre-vetted professionals ready to integrate seamlessly with your existing teams."
+    }
+  ];
+
+  useEffect(() => {
+    const observerOptions = {
+      root: null,
+      rootMargin: '-10% 0px -40% 0px',
+      threshold: 0.1
+    };
+
+    const observerCallback: IntersectionObserverCallback = (entries) => {
+      entries.forEach(entry => {
+        if (entry.isIntersecting) {
+          const index = sectionRefs.current.findIndex(section => section === entry.target);
+          if (index !== -1) {
+            setActiveSection(index);
+          }
+        }
+      });
+    };
+
+    const observer = new IntersectionObserver(observerCallback, observerOptions);
+    
+    sectionRefs.current.forEach(section => {
+      if (section) observer.observe(section);
+    });
+
+    return () => {
+      sectionRefs.current.forEach(section => {
+        if (section) observer.unobserve(section);
+      });
+    };
+  }, []);
+
+  // Images to display for each section
+  const images = [
+    // Replace with your actual image paths
+    "/images/workflow-diagram-1.jpg",
+    "/images/workflow-diagram-2.jpg",
+    "/images/workflow-diagram-3.jpg"
+  ];
+
+  return (
+    <div>
+      <h2 className="text-3xl md:text-4xl font-bold mb-3 text-andela-dark">
+        How Adaptive Hiring works: Bringing agile principles to tech hiring
+      </h2>
+      
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 mt-16">
+        {/* Left Column - Content */}
+        <div className="space-y-16">
+          {sections.map((section, index) => (
+            <div 
+              key={section.id}
+              ref={el => sectionRefs.current[index] = el}
+              className="scroll-mt-24"
+            >
+              <div className="flex items-center gap-2 text-sm font-semibold text-blue-600 tracking-wider mb-4">
+                <div className="bg-blue-100 p-1 rounded-md">
+                  {section.icon}
+                </div>
+                <span>{section.label}</span>
+              </div>
+              
+              <h3 className="text-2xl font-bold mb-4 text-andela-dark">
+                {section.title}
+              </h3>
+              
+              <p className="text-gray-600 leading-relaxed">
+                {section.description}
+              </p>
+            </div>
+          ))}
+        </div>
+        
+        {/* Right Column - Sticky Visualization */}
+        <div className="relative">
+          <div className="lg:sticky lg:top-32">
+            <div className="bg-blue-50 rounded-xl p-5 border border-blue-100 shadow-sm">
+              {activeSection === 0 && (
+                <div className="aspect-video bg-white rounded-lg p-5 overflow-hidden">
+                  {/* Replace with actual image or visualization */}
+                  <div className="bg-green-50 h-full rounded-lg flex items-center justify-center">
+                    <div className="text-center">
+                      <h4 className="font-semibold text-lg mb-2">Development team</h4>
+                      <div className="flex justify-center gap-2">
+                        <div className="w-8 h-8 bg-blue-400 rounded-full"></div>
+                        <div className="w-8 h-8 bg-green-400 rounded-full"></div>
+                        <div className="w-8 h-8 bg-purple-400 rounded-full"></div>
+                        <div className="w-8 h-8 bg-yellow-400 rounded-full"></div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              )}
+              
+              {activeSection === 1 && (
+                <div className="aspect-video bg-white rounded-lg p-5 overflow-hidden">
+                  {/* Replace with actual image or visualization */}
+                  <div className="bg-blue-50 h-full rounded-lg flex flex-col gap-3 p-5">
+                    <div className="flex items-center gap-3">
+                      <div className="w-6 h-6 bg-blue-500 rounded-full"></div>
+                      <div className="flex-1 h-8 bg-gray-100 rounded-md"></div>
+                    </div>
+                    <div className="flex items-center gap-3">
+                      <div className="w-6 h-6 bg-green-500 rounded-full"></div>
+                      <div className="flex-1 h-8 bg-gray-100 rounded-md"></div>
+                    </div>
+                    <div className="flex items-center gap-3">
+                      <div className="w-6 h-6 bg-yellow-500 rounded-full"></div>
+                      <div className="flex-1 h-8 bg-gray-100 rounded-md"></div>
+                    </div>
+                  </div>
+                </div>
+              )}
+              
+              {activeSection === 2 && (
+                <div className="aspect-video bg-white rounded-lg p-5 overflow-hidden">
+                  {/* Replace with actual image or visualization */}
+                  <div className="bg-green-50 h-full rounded-lg grid grid-cols-2 gap-4 p-5">
+                    <div className="bg-white p-3 rounded-md shadow-sm flex items-center gap-2">
+                      <div className="w-8 h-8 bg-blue-400 rounded-full"></div>
+                      <div className="flex-1 h-4 bg-gray-100 rounded-md"></div>
+                    </div>
+                    <div className="bg-white p-3 rounded-md shadow-sm flex items-center gap-2">
+                      <div className="w-8 h-8 bg-green-400 rounded-full"></div>
+                      <div className="flex-1 h-4 bg-gray-100 rounded-md"></div>
+                    </div>
+                    <div className="bg-white p-3 rounded-md shadow-sm flex items-center gap-2">
+                      <div className="w-8 h-8 bg-red-400 rounded-full"></div>
+                      <div className="flex-1 h-4 bg-gray-100 rounded-md"></div>
+                    </div>
+                    <div className="bg-white p-3 rounded-md shadow-sm flex items-center gap-2">
+                      <div className="w-8 h-8 bg-yellow-400 rounded-full"></div>
+                      <div className="flex-1 h-4 bg-gray-100 rounded-md"></div>
+                    </div>
+                  </div>
+                </div>
+              )}
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+};
 
 const AdaptiveHiring = () => {
   const features = [
@@ -261,6 +604,24 @@ const AdaptiveHiring = () => {
                 </div>
               </motion.div>
             ))}
+          </div>
+        </Container>
+      </section>
+
+      {/* Use Cases Section with Sticky Image */}
+      <section className="py-20 bg-white relative">
+        <Container>
+          <div className="relative py-10">
+            <UsesCasesWithStickyImage />
+          </div>
+        </Container>
+      </section>
+
+      {/* How Adaptive Hiring Works Section */}
+      <section className="py-20 bg-gray-50 relative">
+        <Container>
+          <div className="relative py-10">
+            <AdaptiveHiringWorkflow />
           </div>
         </Container>
       </section>
