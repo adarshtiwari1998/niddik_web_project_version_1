@@ -12,7 +12,9 @@ import {
   Cloud,
   Code,
   ChevronDown, 
-  ArrowRight as ArrowRightIcon
+  ArrowRight as ArrowRightIcon,
+  XCircle,
+  PlusCircle
 } from "lucide-react";
 import Container from "@/components/ui/container";
 import { Link } from "wouter";
@@ -967,8 +969,148 @@ const AdaptiveHiring = () => {
         </Container>
       </section>
 
-      {/* How Adaptive Hiring Works Section */}
+      {/* Comparison Section */}
       <section className="py-20 bg-gray-50 relative">
+        <Container>
+          <motion.div
+            className="text-center mb-16"
+            initial={{ opacity: 0, y: 20 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true }}
+            transition={{ duration: 0.5 }}
+          >
+            <h2 className="text-3xl md:text-4xl font-bold mb-4 text-andela-dark">
+              Why you need a new kind of partner to deliver Adaptive Hiring
+            </h2>
+            <p className="text-xl text-andela-gray max-w-3xl mx-auto">
+              Traditional hiring approaches can't keep up with today's rapidly evolving tech landscape.
+            </p>
+          </motion.div>
+          
+          <div className="bg-white rounded-lg shadow-md overflow-hidden">
+            <div className="grid grid-cols-1 md:grid-cols-12">
+              {/* Left column - Categories */}
+              <div className="md:col-span-3 bg-gray-50 py-4">
+                {/* Category Headers */}
+                <div className="h-20 flex items-center px-8 font-medium text-lg border-b border-gray-100">
+                  Location
+                </div>
+                <div className="h-20 flex items-center px-8 font-medium text-lg border-b border-gray-100">
+                  Hiring Time
+                </div>
+                <div className="h-20 flex items-center px-8 font-medium text-lg border-b border-gray-100">
+                  Deployment
+                </div>
+                <div className="h-20 flex items-center px-8 font-medium text-lg border-b border-gray-100">
+                  Scalability
+                </div>
+                <div className="h-20 flex items-center px-8 font-medium text-lg">
+                  Turnover
+                </div>
+              </div>
+              
+              {/* Middle column - Traditional Hiring */}
+              <div className="md:col-span-4 border-r border-gray-200">
+                <div className="h-16 bg-blue-50 flex items-center justify-center font-semibold text-lg">
+                  Traditional Hiring
+                </div>
+                
+                {/* Traditional Hiring Sections */}
+                <div className="border-b border-gray-100 p-4 h-20">
+                  <div className="flex items-center text-red-500 mb-1">
+                    <XCircle className="h-5 w-5 mr-2" />
+                    <span className="font-medium text-sm uppercase">Mostly Local</span>
+                  </div>
+                  <p className="text-sm text-gray-600">Limits hiring pool and diversity of ideas</p>
+                </div>
+                
+                <div className="border-b border-gray-100 p-4 h-20">
+                  <div className="flex items-center text-red-500 mb-1">
+                    <XCircle className="h-5 w-5 mr-2" />
+                    <span className="font-medium text-sm uppercase">12+ Weeks</span>
+                  </div>
+                  <p className="text-sm text-gray-600">Lack of global network and matching tech</p>
+                </div>
+                
+                <div className="border-b border-gray-100 p-4 h-20">
+                  <div className="flex items-center text-red-500 mb-1">
+                    <XCircle className="h-5 w-5 mr-2" />
+                    <span className="font-medium text-sm uppercase">Lagging ROI</span>
+                  </div>
+                  <p className="text-sm text-gray-600">Slow onboarding periods for new talent</p>
+                </div>
+                
+                <div className="border-b border-gray-100 p-4 h-20">
+                  <div className="flex items-center text-red-500 mb-1">
+                    <XCircle className="h-5 w-5 mr-2" />
+                    <span className="font-medium text-sm uppercase">Limited Scalability</span>
+                  </div>
+                  <p className="text-sm text-gray-600">MSA limits ability to scale up and down</p>
+                </div>
+                
+                <div className="p-4 h-20">
+                  <div className="flex items-center text-red-500 mb-1">
+                    <XCircle className="h-5 w-5 mr-2" />
+                    <span className="font-medium text-sm uppercase">High Turnover</span>
+                  </div>
+                  <p className="text-sm text-gray-600">Highly-skilled talent turnover up by 50%</p>
+                </div>
+              </div>
+              
+              {/* Right column - Adaptive Hiring */}
+              <div className="md:col-span-5 bg-green-900 text-white">
+                <div className="h-16 flex items-center justify-center font-semibold text-lg">
+                  Adaptive Hiring
+                </div>
+                
+                {/* Adaptive Hiring Sections */}
+                <div className="border-b border-green-800 p-4 h-20">
+                  <div className="flex items-center text-green-300 mb-1">
+                    <PlusCircle className="h-5 w-5 mr-2" />
+                    <span className="font-medium text-sm uppercase">Borderless</span>
+                  </div>
+                  <p className="text-sm text-green-100">Larger hiring pool and more diversity</p>
+                </div>
+                
+                <div className="border-b border-green-800 p-4 h-20">
+                  <div className="flex items-center text-green-300 mb-1">
+                    <PlusCircle className="h-5 w-5 mr-2" />
+                    <span className="font-medium text-sm uppercase">48 Hours</span>
+                  </div>
+                  <p className="text-sm text-green-100">Global network & tech powers fast hiring</p>
+                </div>
+                
+                <div className="border-b border-green-800 p-4 h-20">
+                  <div className="flex items-center text-green-300 mb-1">
+                    <PlusCircle className="h-5 w-5 mr-2" />
+                    <span className="font-medium text-sm uppercase">Quick ROI</span>
+                  </div>
+                  <p className="text-sm text-green-100">Talent onboards in days, not months</p>
+                </div>
+                
+                <div className="border-b border-green-800 p-4 h-20">
+                  <div className="flex items-center text-green-300 mb-1">
+                    <PlusCircle className="h-5 w-5 mr-2" />
+                    <span className="font-medium text-sm uppercase">Maximum Scalability</span>
+                  </div>
+                  <p className="text-sm text-green-100">Scale up & down with business demands</p>
+                </div>
+                
+                <div className="p-4 h-20">
+                  <div className="flex items-center text-green-300 mb-1">
+                    <PlusCircle className="h-5 w-5 mr-2" />
+                    <span className="font-medium text-sm uppercase">Low Turnover</span>
+                  </div>
+                  <p className="text-sm text-green-100">Talent retention is 25% higher</p>
+                </div>
+              </div>
+            </div>
+          </div>
+        </Container>
+      </section>
+
+      {/* How Adaptive Hiring Works Section */}
+      <section className="py-20 bg-white relative">
         <Container>
           <div className="relative py-10">
             <AdaptiveHiringWorkflow />
