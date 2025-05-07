@@ -6,6 +6,7 @@ import {
   jobListings,
   jobApplications,
   users,
+  submittedCandidates,
   InsertContactSubmission,
   ContactSubmission,
   Testimonial,
@@ -15,7 +16,9 @@ import {
   JobApplication,
   InsertJobApplication,
   User,
-  InsertUser
+  InsertUser,
+  SubmittedCandidate,
+  InsertSubmittedCandidate
 } from "@shared/schema";
 import { eq, desc, and, like, or, asc } from "drizzle-orm";
 
@@ -362,5 +365,145 @@ export const storage = {
       applications: applicationsResult,
       total: totalCount
     };
+  },
+
+  // Submitted Candidates
+  async createSubmittedCandidate(data: InsertSubmittedCandidate): Promise<SubmittedCandidate> {
+    const [candidate] = await db.insert(submittedCandidates).values(data).returning();
+    return candidate;
+  },
+
+  async getSubmittedCandidateById(id: number): Promise<SubmittedCandidate | undefined> {
+    return await db.query.submittedCandidates.findFirst({
+      where: eq(submittedCandidates.id, id)
+    });
+  },
+
+  async getAllSubmittedCandidates(
+    options: {
+      page?: number;
+      limit?: number;
+      status?: string;
+      search?: string;
+      client?: string;
+    } = {}
+  ): Promise<{ candidates: SubmittedCandidate[]; total: number }> {
+    const { 
+      page = 1, 
+      limit = 10, 
+      status,
+      search = "",
+      client
+    } = options;
+
+    // Build the where conditions
+    let whereConditions = [];
+    
+    if (status && status !== 'all_statuses') {
+      whereConditions.push(eq(submittedCandidates.status, status));
+    }
+
+    if (client && client !== 'all_clients') {
+      whereConditions.push(eq(submittedCandidates.client, client));
+    }
+
+    if (search) {
+      whereConditions.push(
+        or(
+          like(submittedCandidates.candidateName, `%${search}%`),
+          like(submittedCandidates.emailId, `%${search}%`),
+          like(submittedCandidates.skills, `%${search}%`),
+          like(submittedCandidates.client, `%${search}%`)
+        )
+      );
+    }
+
+    // Create the where condition
+    const whereCondition = whereConditions.length > 0
+      ? and(...whereConditions)
+      : undefined;
+
+    // Count total matching records for pagination
+    const result = await db.query.submittedCandidates.findMany({
+      where: whereCondition,
+    });
+    const totalCount = result.length;
+
+    // Get paginated candidates
+    const candidatesResult = await db.query.submittedCandidates.findMany({
+      where: whereCondition,
+      orderBy: [desc(submittedCandidates.submissionDate)],
+      limit,
+      offset: (page - 1) * limit
+    });
+
+    return {
+      candidates: candidatesResult,
+      total: totalCount
+    };
+  },
+
+  async updateSubmittedCandidate(id: number, data: Partial<InsertSubmittedCandidate>): Promise<SubmittedCandidate | undefined> {
+    // Update the updatedAt timestamp
+    const updatedData = {
+      ...data,
+      updatedAt: new Date()
+    };
+
+    const [updatedCandidate] = await db
+      .update(submittedCandidates)
+      .set(updatedData)
+      .where(eq(submittedCandidates.id, id))
+      .returning();
+    
+    return updatedCandidate;
+  },
+
+  async deleteSubmittedCandidate(id: number): Promise<void> {
+    await db.delete(submittedCandidates).where(eq(submittedCandidates.id, id));
+  },
+
+  async getSubmittedCandidateAnalytics(): Promise<{ 
+    totalCandidates: number; 
+    uniqueClients: number;
+    statusCounts: Record<string, number>;
+  }> {
+    // Get total count
+    const totalCount = await db
+      .select({ count: db.fn.count() })
+      .from(submittedCandidates)
+      .then(result => Number(result[0].count));
+
+    // Get unique clients count
+    const clientsResult = await db
+      .selectDistinct({ client: submittedCandidates.client })
+      .from(submittedCandidates);
+    const uniqueClientsCount = clientsResult.length;
+
+    // Get status counts
+    const statusResults = await db
+      .select({
+        status: submittedCandidates.status,
+        count: db.fn.count()
+      })
+      .from(submittedCandidates)
+      .groupBy(submittedCandidates.status);
+    
+    const statusCounts: Record<string, number> = {};
+    statusResults.forEach(item => {
+      statusCounts[item.status] = Number(item.count);
+    });
+
+    return {
+      totalCandidates: totalCount,
+      uniqueClients: uniqueClientsCount,
+      statusCounts
+    };
+  },
+
+  async bulkCreateSubmittedCandidates(candidates: InsertSubmittedCandidate[]): Promise<SubmittedCandidate[]> {
+    if (candidates.length === 0) return [];
+    const result = await db.insert(submittedCandidates).values(candidates).returning();
+    return result;
   }
 };

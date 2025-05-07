@@ -1,4 +1,4 @@
-import { pgTable, text, serial, integer, boolean, timestamp, varchar, decimal } from "drizzle-orm/pg-core";
+import { pgTable, text, serial, integer, boolean, timestamp, varchar, decimal, date } from "drizzle-orm/pg-core";
 import { createInsertSchema } from "drizzle-zod";
 import { z } from "zod";
 import { relations } from "drizzle-orm";
@@ -177,3 +177,54 @@ export const jobApplicationSchema = createInsertSchema(jobApplications, {
 
 export type JobApplication = typeof jobApplications.$inferSelect;
 export type InsertJobApplication = z.infer<typeof jobApplicationSchema>;
+
+// Submitted Candidates schema
+export const submittedCandidates = pgTable("submitted_candidates", {
+  id: serial("id").primaryKey(),
+  submissionDate: date("submission_date").defaultNow().notNull(),
+  sourcedBy: text("sourced_by").notNull(),
+  client: text("client").notNull(),
+  poc: text("poc").notNull(),
+  skills: text("skills").notNull(),
+  candidateName: text("candidate_name").notNull(),
+  contactNo: text("contact_no").notNull(),
+  emailId: text("email_id").notNull(),
+  experience: text("experience").notNull(),
+  noticePeriod: text("notice_period").notNull(),
+  location: text("location").notNull(),
+  currentCtc: text("current_ctc").notNull(),
+  expectedCtc: text("expected_ctc").notNull(),
+  billRate: decimal("bill_rate", { precision: 10, scale: 2 }),
+  payRate: decimal("pay_rate", { precision: 10, scale: 2 }),
+  marginPerHour: decimal("margin_per_hour", { precision: 10, scale: 2 }),
+  profitPerMonth: decimal("profit_per_month", { precision: 10, scale: 2 }),
+  status: text("status").notNull().default("new"),
+  salaryInLacs: decimal("salary_in_lacs", { precision: 10, scale: 2 }),
+  createdAt: timestamp("created_at").defaultNow().notNull(),
+  updatedAt: timestamp("updated_at").defaultNow().notNull()
+});
+
+export const submittedCandidateSchema = createInsertSchema(submittedCandidates, {
+  submissionDate: (schema) => schema.optional(),
+  sourcedBy: (schema) => schema.min(2, "Sourced by is required"),
+  client: (schema) => schema.min(2, "Client name is required"),
+  poc: (schema) => schema.min(2, "POC is required"),
+  skills: (schema) => schema.min(2, "Skills are required"),
+  candidateName: (schema) => schema.min(2, "Candidate name is required"),
+  contactNo: (schema) => schema.min(5, "Contact number is required"),
+  emailId: (schema) => schema.email("Valid email is required"),
+  experience: (schema) => schema.min(1, "Experience is required"),
+  noticePeriod: (schema) => schema.min(1, "Notice period is required"),
+  location: (schema) => schema.min(2, "Location is required"),
+  currentCtc: (schema) => schema.min(1, "Current CTC is required"),
+  expectedCtc: (schema) => schema.min(1, "Expected CTC is required"),
+  billRate: (schema) => schema.optional(),
+  payRate: (schema) => schema.optional(),
+  marginPerHour: (schema) => schema.optional(),
+  profitPerMonth: (schema) => schema.optional(),
+  status: (schema) => schema.min(2, "Status is required"),
+  salaryInLacs: (schema) => schema.optional()
+});
+
+export type SubmittedCandidate = typeof submittedCandidates.$inferSelect;
+export type InsertSubmittedCandidate = z.infer<typeof submittedCandidateSchema>;
