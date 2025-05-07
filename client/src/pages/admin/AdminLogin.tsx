@@ -16,10 +16,31 @@ export default function AdminLogin() {
   const [password, setPassword] = useState("");
   const [isRedirecting, setIsRedirecting] = useState(false);
   const [isComingFromLogout, setIsComingFromLogout] = useState(false);
-  const { loginMutation } = useAuth();
+  const [showRedirectMessage, setShowRedirectMessage] = useState(false);
+  const { user, loginMutation } = useAuth();
   const { toast } = useToast();
   const [_, setLocation] = useLocation();
   const [lastLogoutTime, setLastLogoutTime] = useState<string | null>(null);
+  
+  // Check if a user is already logged in as candidate
+  useEffect(() => {
+    if (user && user.role === "user") {
+      // Show a message before redirecting
+      toast({
+        title: "Already logged in",
+        description: "You are already logged in as a candidate. Please log out first.",
+        variant: "default",
+      });
+      setShowRedirectMessage(true);
+      
+      // Set a short timeout to allow the toast to be seen
+      const timer = setTimeout(() => {
+        window.location.href = "/candidate/dashboard";
+      }, 1500);
+      
+      return () => clearTimeout(timer);
+    }
+  }, [user, toast]);
   
   // Check if we're coming from logout and fetch last logout time
   useEffect(() => {

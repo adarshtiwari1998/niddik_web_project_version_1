@@ -72,8 +72,29 @@ export default function AuthPage() {
   const [resumeFile, setResumeFile] = useState<File | null>(null);
   const [formData, setFormData] = useState<Partial<RegisterFormValues>>({});
   const [lastLogoutTime, setLastLogoutTime] = useState<string | null>(null);
+  const [showRedirectMessage, setShowRedirectMessage] = useState(false);
   const { user, loginMutation, registerMutation } = useAuth();
   const { toast } = useToast();
+  
+  // Redirect admin users to their dashboard
+  useEffect(() => {
+    if (user && user.role === "admin") {
+      // Show a message before redirecting
+      toast({
+        title: "Already logged in",
+        description: "You are already logged in as an administrator.",
+        variant: "default",
+      });
+      setShowRedirectMessage(true);
+      
+      // Set a short timeout to allow the toast to be seen
+      const timer = setTimeout(() => {
+        window.location.href = "/admin/dashboard";
+      }, 1500);
+      
+      return () => clearTimeout(timer);
+    }
+  }, [user, toast]);
   
   // Fetch last logout time
   useEffect(() => {
