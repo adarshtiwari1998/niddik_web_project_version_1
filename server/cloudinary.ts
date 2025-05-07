@@ -13,11 +13,14 @@ cloudinary.config({
 const resumeStorage = new CloudinaryStorage({
   cloudinary: cloudinary,
   params: {
-    folder: 'resumes',
+    folder: 'cv_upload',
     resource_type: 'auto',
     allowed_formats: ['pdf', 'doc', 'docx'],
-    transformation: [{ quality: 'auto' }]
-  }
+    transformation: [{ quality: 'auto' }],
+    // Make files publicly accessible
+    public_id: (req, file) => `cv_${Date.now()}`,
+    access_mode: 'public'
+  } as any
 });
 
 // Create the multer upload instance for CVs

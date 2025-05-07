@@ -28,6 +28,7 @@ const registerStep2Schema = z.object({
   noticePeriod: z.string(),
   currentCtc: z.string().optional(),
   expectedCtc: z.string().optional(),
+  skills: z.string().min(3, "Please list at least a few skills"),
   location: z.string().min(2, "Please enter your location"),
   city: z.string().optional(),
   state: z.string().optional(),
@@ -99,6 +100,7 @@ export default function AuthPage() {
       noticePeriod: formData.noticePeriod || "Immediately",
       currentCtc: formData.currentCtc || "",
       expectedCtc: formData.expectedCtc || "",
+      skills: formData.skills || "",
       location: formData.location || "",
       city: formData.city || "",
       state: formData.state || "",
@@ -492,6 +494,27 @@ export default function AuthPage() {
                             )}
                           />
                         </div>
+
+                        <FormField
+                          control={registerStep2Form.control}
+                          name="skills"
+                          render={({ field }) => (
+                            <FormItem>
+                              <FormLabel>Skills</FormLabel>
+                              <FormControl>
+                                <Textarea 
+                                  placeholder="List your skills, separated by commas (e.g. React, JavaScript, Project Management)" 
+                                  className="min-h-[80px]"
+                                  {...field} 
+                                />
+                              </FormControl>
+                              <FormDescription>
+                                List skills relevant to your profession, separated by commas
+                              </FormDescription>
+                              <FormMessage />
+                            </FormItem>
+                          )}
+                        />
 
                         <Separator className="my-2" />
                         <h3 className="text-sm font-medium pt-2">Location Information</h3>
