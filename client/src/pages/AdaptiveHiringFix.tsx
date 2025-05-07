@@ -626,19 +626,15 @@ const AdaptiveHiring = () => {
       
       {/* Use Cases Section - Shows use cases for adaptive hiring with SVG illustration */}
       <section className="py-20 bg-[#f0f7fb] relative overflow-hidden">
-        {/* Background decorative pattern */}
-        <div className="absolute inset-0 opacity-5 overflow-hidden">
-          <svg width="100%" height="100%" xmlns="http://www.w3.org/2000/svg" className="absolute right-0 top-0">
-            <pattern id="circles" x="0" y="0" width="180" height="180" patternUnits="userSpaceOnUse">
-              <circle cx="90" cy="90" r="60" fill="none" stroke="#36b37e" strokeWidth="0.5" />
-              <circle cx="180" cy="180" r="60" fill="none" stroke="#36b37e" strokeWidth="0.5" />
-              <circle cx="0" cy="180" r="60" fill="none" stroke="#36b37e" strokeWidth="0.5" />
-              <circle cx="180" cy="0" r="60" fill="none" stroke="#36b37e" strokeWidth="0.5" />
-              <circle cx="0" cy="0" r="60" fill="none" stroke="#36b37e" strokeWidth="0.5" />
-            </pattern>
-            <rect width="100%" height="100%" fill="url(#circles)" />
-          </svg>
-        </div>
+        {/* Background decorative pattern - Using CSS background pattern instead of SVG overlay */}
+        <div 
+          className="absolute inset-0 opacity-5" 
+          style={{
+            backgroundImage: `url("data:image/svg+xml,%3Csvg width='180' height='180' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' stroke='%2336b37e' stroke-width='0.5'%3E%3Ccircle cx='90' cy='90' r='60' /%3E%3Ccircle cx='180' cy='180' r='60' /%3E%3Ccircle cx='0' cy='180' r='60' /%3E%3Ccircle cx='180' cy='0' r='60' /%3E%3Ccircle cx='0' cy='0' r='60' /%3E%3C/g%3E%3C/svg%3E")`,
+            backgroundRepeat: 'repeat',
+            pointerEvents: 'none' // Explicitly disable pointer events
+          }}
+        ></div>
 
         <Container className="px-6 md:px-10">
           <h2 className="text-3xl font-bold text-gray-900 mb-10">
