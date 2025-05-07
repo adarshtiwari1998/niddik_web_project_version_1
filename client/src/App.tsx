@@ -12,6 +12,9 @@ import WhyUs from "@/pages/WhyUs";
 import LandingPage from "@/pages/LandingPage";
 import AdaptiveHiring from "@/pages/AdaptiveHiringFix";
 import { default as Whitepaper } from "@/pages/Whitepaper";
+import AuthPage from "@/pages/AuthPage";
+import CareerPage from "@/pages/CareerPage";
+import JobDetail from "@/pages/JobDetail";
 
 // Admin Pages
 import AdminDashboard from "@/pages/admin/AdminDashboard";
@@ -40,11 +43,17 @@ function Router() {
       <Route path="/about-us" component={AboutUs} />
       <Route path="/why-us" component={WhyUs} />
       
+      {/* Careers & Jobs */}
+      <Route path="/careers" component={CareerPage} />
+      
+      {/* Auth Routes */}
+      <Route path="/auth" component={AuthPage} />
+      
       {/* Admin Routes */}
-      <Route path="/admin" component={AdminDashboard} />
-      <Route path="/admin/jobs" component={JobListings} />
-      <Route path="/admin/jobs/new" component={JobForm} />
-      <Route path="/admin/jobs/:id/edit" component={JobForm} />
+      <ProtectedRoute path="/admin" component={AdminDashboard} />
+      <ProtectedRoute path="/admin/jobs" component={JobListings} />
+      <ProtectedRoute path="/admin/jobs/new" component={JobForm} />
+      <ProtectedRoute path="/admin/jobs/:id/edit" component={JobForm} />
       
       {/* 404 - Not Found */}
       <Route component={NotFound} />
