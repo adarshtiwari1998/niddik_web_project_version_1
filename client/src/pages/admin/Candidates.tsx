@@ -14,7 +14,9 @@ import {
   Download, 
   Mail, 
   Phone,
-  FileText 
+  FileText,
+  Calendar,
+  DollarSign
 } from "lucide-react";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { useAuth } from "@/hooks/use-auth";
@@ -23,10 +25,20 @@ import { JobApplication } from "@shared/schema";
 import AdminLayout from "@/components/layout/AdminLayout";
 
 type ApplicationWithDetails = JobApplication & {
+  billRate?: string;
+  payRate?: string;
   user: {
     fullName: string;
     email: string;
     phone: string;
+    experience: string;
+    noticePeriod: string;
+    currentCtc: string;
+    expectedCtc: string;
+    location: string;
+    city: string;
+    country: string;
+    zipCode: string;
   };
   job: {
     title: string;
@@ -217,11 +229,19 @@ export default function Candidates() {
               <Table>
                 <TableHeader>
                   <TableRow>
-                    <TableHead>Candidate</TableHead>
-                    <TableHead>Job Position</TableHead>
-                    <TableHead>Applied On</TableHead>
+                    <TableHead>Candidate Name</TableHead>
+                    <TableHead>Contact No.</TableHead>
+                    <TableHead>Email ID</TableHead>
+                    <TableHead>Exp.</TableHead>
+                    <TableHead>Notice Period</TableHead>
+                    <TableHead>Location</TableHead>
+                    <TableHead>CTC</TableHead>
+                    <TableHead>Expected CTC</TableHead>
+                    <TableHead>Bill Rate</TableHead>
+                    <TableHead>Pay Rate</TableHead>
+                    <TableHead>Margin/Profit</TableHead>
                     <TableHead>Status</TableHead>
-                    <TableHead className="text-right">Actions</TableHead>
+                    <TableHead>Actions</TableHead>
                   </TableRow>
                 </TableHeader>
                 <TableBody>
@@ -229,26 +249,54 @@ export default function Candidates() {
                     <TableRow key={application.id}>
                       <TableCell>
                         <div className="font-medium">{application.user.fullName}</div>
-                        <div className="flex items-center text-xs text-muted-foreground mt-1">
+                        <div className="text-xs text-muted-foreground">{application.job.title}</div>
+                      </TableCell>
+                      <TableCell>
+                        <div className="flex items-center">
+                          <Phone className="h-3 w-3 mr-1" />
+                          {application.user.phone || "-"}
+                        </div>
+                      </TableCell>
+                      <TableCell>
+                        <div className="flex items-center">
                           <Mail className="h-3 w-3 mr-1" />
                           {application.user.email}
                         </div>
-                        {application.user.phone && (
-                          <div className="flex items-center text-xs text-muted-foreground mt-1">
-                            <Phone className="h-3 w-3 mr-1" />
-                            {application.user.phone}
-                          </div>
-                        )}
+                      </TableCell>
+                      <TableCell>{application.user.experience || "-"}</TableCell>
+                      <TableCell>
+                        <div className="flex items-center">
+                          <Calendar className="h-3 w-3 mr-1" />
+                          {application.user.noticePeriod || "Immediately"}
+                        </div>
+                      </TableCell>
+                      <TableCell>{application.user.location || application.job.location || "-"}</TableCell>
+                      <TableCell>
+                        <div className="flex items-center">
+                          <DollarSign className="h-3 w-3 mr-1" />
+                          {application.user.currentCtc || "-"}
+                        </div>
                       </TableCell>
                       <TableCell>
-                        <div>{application.job.title}</div>
-                        <div className="text-xs text-muted-foreground">{application.job.company}</div>
-                        <div className="text-xs text-muted-foreground">{application.job.location}</div>
+                        <div className="flex items-center">
+                          <DollarSign className="h-3 w-3 mr-1" />
+                          {application.user.expectedCtc || "-"}
+                        </div>
                       </TableCell>
-                      <TableCell>{formatDate(application.appliedDate)}</TableCell>
+                      <TableCell>
+                        {application.billRate ? `$${application.billRate}` : "-"}
+                      </TableCell>
+                      <TableCell>
+                        {application.payRate ? `$${application.payRate}` : "-"}
+                      </TableCell>
+                      <TableCell>
+                        {application.billRate && application.payRate 
+                          ? `$${(parseFloat(application.billRate) - parseFloat(application.payRate)).toFixed(2)}` 
+                          : "-"}
+                      </TableCell>
                       <TableCell>
                         <Select
-                          defaultValue={application.status}
+                          value={application.status}
                           onValueChange={(value) => handleUpdateStatus(application.id, value)}
                         >
                           <SelectTrigger className="w-[130px]">
@@ -273,8 +321,8 @@ export default function Candidates() {
                           </SelectContent>
                         </Select>
                       </TableCell>
-                      <TableCell className="text-right">
-                        <div className="flex justify-end gap-2">
+                      <TableCell>
+                        <div className="flex gap-1">
                           <Button
                             variant="outline"
                             size="sm"
