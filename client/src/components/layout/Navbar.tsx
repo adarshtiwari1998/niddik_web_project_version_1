@@ -37,7 +37,8 @@ const navItems: NavItem[] = [
       { label: "On-Demand", href: "/services/on-demand" },
       { label: "Hybrid RPO", href: "/services/hybrid-rpo" },
       { label: "Contingent", href: "/services/contingent" },
-      { label: "Web App Solutions", href: "/web-app-solutions" }
+      { label: "Web App Solutions", href: "/web-app-solutions" },
+      { label: "Adaptive Hiring", href: "/adaptive-hiring" }
     ]
   },
   {

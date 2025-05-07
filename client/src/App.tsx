@@ -10,6 +10,7 @@ import WebAppSolutions from "@/pages/WebAppSolutions";
 import AboutUs from "@/pages/AboutUs";
 import WhyUs from "@/pages/WhyUs";
 import LandingPage from "@/pages/LandingPage";
+import AdaptiveHiring from "@/pages/AdaptiveHiring";
 
 // Admin Pages
 import AdminDashboard from "@/pages/admin/AdminDashboard";
@@ -27,6 +28,7 @@ function Router() {
       <Route path="/services" component={ServicesOverview} />
       <Route path="/services/:serviceSlug" component={ServiceDetail} />
       <Route path="/web-app-solutions" component={WebAppSolutions} />
+      <Route path="/adaptive-hiring" component={AdaptiveHiring} />
       
       {/* Company Routes */}
       <Route path="/about-us" component={AboutUs} />
