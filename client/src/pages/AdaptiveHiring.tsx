@@ -335,6 +335,13 @@ const AdaptiveHiringWorkflow = () => {
       label: "ADAPT QUICKLY",
       title: "Adjust easily, as your priorities change",
       description: "Rapidly changing business requires an agile approach to staffing. This variable cost model allows you to change as quickly as your priorities do. Niddik talent is available on demand, so you can fill critical skill or capacity gaps quickly while remaining cost-efficient."
+    },
+    {
+      id: "change-quickly",
+      icon: <BarChart3 className="w-5 h-5" />,
+      label: "CHANGE QUICKLY",
+      title: "Scale your business with agile talent solutions",
+      description: "As your business evolves, so do your talent needs. Our adaptive hiring model provides the flexibility to scale up or down based on project demands, helping you maintain optimal team efficiency while controlling costs. Keep your competitive edge with access to the right talent at the right time."
     }
   ];
 
