@@ -1267,6 +1267,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
   });
   
   // Get demo request by email (for checking status)
+  // Demo Request Check endpoint  
   app.get('/api/demo-requests/check', async (req, res) => {
     try {
       const email = req.query.email as string;
@@ -1274,7 +1275,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
       if (!email) {
         return res.status(400).json({
           success: false,
-          message: "Email is required"
+          message: "Email parameter is required"
         });
       }
       
@@ -1289,6 +1290,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
       
       return res.status(200).json({
         success: true,
+        message: "Demo request found",
         data: demoRequest
       });
     } catch (error) {
@@ -1364,40 +1366,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
   
-  // Check if a user has already submitted a demo request
-  app.get('/api/demo-requests/check', async (req: Request, res: Response) => {
-    try {
-      const email = req.query.email as string;
-      
-      if (!email) {
-        return res.status(400).json({
-          success: false,
-          message: "Email parameter is required"
-        });
-      }
-      
-      const existingRequest = await storage.getDemoRequestByEmail(email);
-      
-      if (!existingRequest) {
-        return res.status(404).json({
-          success: false,
-          message: "No demo request found for this email"
-        });
-      }
-      
-      return res.status(200).json({
-        success: true,
-        message: "Demo request found",
-        data: existingRequest
-      });
-    } catch (error) {
-      console.error('Error checking demo request:', error);
-      return res.status(500).json({
-        success: false,
-        message: "Internal server error"
-      });
-    }
-  });
+  // This route definition was moved above to avoid duplication
   
   // Admin endpoints for demo requests
   
