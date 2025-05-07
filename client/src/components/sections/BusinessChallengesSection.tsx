@@ -48,7 +48,7 @@ const ChallengeCard = ({
     className="pl-0 relative border-l border-gray-200"
   >
     <div className="flex flex-col pl-6">
-      <div className="w-14 h-14 bg-teal-600 rounded-md flex items-center justify-center mb-3">
+      <div className="w-14 h-14 rounded-md flex items-center justify-center mb-3" style={{ backgroundColor: "#00A651" }}>
         <div className="text-white">
           {icon}
         </div>
@@ -99,17 +99,17 @@ const BusinessChallengesSection = () => {
       <div className="absolute inset-0 opacity-5">
         <svg width="100%" height="100%" xmlns="http://www.w3.org/2000/svg" className="absolute inset-0">
           <pattern id="network" x="0" y="0" width="120" height="120" patternUnits="userSpaceOnUse">
-            <circle cx="60" cy="60" r="1" fill="#36b37e" />
-            <circle cx="0" cy="0" r="1" fill="#36b37e" />
-            <circle cx="0" cy="120" r="1" fill="#36b37e" />
-            <circle cx="120" cy="0" r="1" fill="#36b37e" />
-            <circle cx="120" cy="120" r="1" fill="#36b37e" />
-            <line x1="60" y1="60" x2="0" y2="0" stroke="#36b37e" strokeWidth="0.2" />
-            <line x1="60" y1="60" x2="0" y2="120" stroke="#36b37e" strokeWidth="0.2" />
-            <line x1="60" y1="60" x2="120" y2="0" stroke="#36b37e" strokeWidth="0.2" />
-            <line x1="60" y1="60" x2="120" y2="120" stroke="#36b37e" strokeWidth="0.2" />
+            <circle cx="60" cy="60" r="1" fill="#00A651" />
+            <circle cx="0" cy="0" r="1" fill="#00A651" />
+            <circle cx="0" cy="120" r="1" fill="#00A651" />
+            <circle cx="120" cy="0" r="1" fill="#00A651" />
+            <circle cx="120" cy="120" r="1" fill="#00A651" />
+            <line x1="60" y1="60" x2="0" y2="0" stroke="#00A651" strokeWidth="0.2" />
+            <line x1="60" y1="60" x2="0" y2="120" stroke="#00A651" strokeWidth="0.2" />
+            <line x1="60" y1="60" x2="120" y2="0" stroke="#00A651" strokeWidth="0.2" />
+            <line x1="60" y1="60" x2="120" y2="120" stroke="#00A651" strokeWidth="0.2" />
           </pattern>
-          <rect width="100%" height="100%" fill="url(#network)" />
+          {/* Removed rect element to fix text selection issue */}
         </svg>
       </div>
       
