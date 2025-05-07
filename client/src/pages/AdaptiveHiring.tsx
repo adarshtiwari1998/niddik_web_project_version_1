@@ -963,6 +963,12 @@ const AdaptiveHiring = () => {
       {/* How Adaptive Hiring Works Section */}
       <section className="py-20 bg-white relative">
         <Container>
+          <div className="mb-20 space-y-6 text-center">
+            <h2 className="text-4xl font-bold text-center text-andela-dark">How Adaptive Hiring works: Bringing agile principles to tech hiring</h2>
+            <p className="text-xl text-center text-andela-gray max-w-3xl mx-auto">
+              Our innovative approach streamlines the hiring process for technical roles, making it more efficient, effective, and aligned with modern business needs.
+            </p>
+          </div>
           <div className="relative py-10">
             <AdaptiveHiringWorkflow />
           </div>
