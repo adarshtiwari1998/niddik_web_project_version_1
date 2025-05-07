@@ -61,13 +61,15 @@ export default function CandidateLayout({ children, activeTab = "" }: CandidateL
       <header className="sticky top-0 z-30 w-full border-b bg-background">
         <div className="container flex h-16 items-center justify-between py-4">
           <div className="flex items-center gap-4">
-            <Link href="/" className="flex flex-col items-center">
-              <img 
-                src="/images/niddik_logo.png" 
-                alt="Niddik Logo" 
-                className="h-10" 
-              />
-              <span className="text-xs text-muted-foreground mt-0.5">Connecting People, Changing Lives</span>
+            <Link href="/" className="flex flex-col items-start">
+              <div className="flex flex-col">
+                <img 
+                  src="/images/niddik_logo.png" 
+                  alt="Niddik Logo" 
+                  className="h-12 mb-1" 
+                />
+                <span className="text-xs text-muted-foreground">Connecting People, Changing Lives</span>
+              </div>
             </Link>
             <span className="text-sm text-muted-foreground border-l pl-4">Candidate Portal</span>
           </div>
@@ -121,12 +123,14 @@ export default function CandidateLayout({ children, activeTab = "" }: CandidateL
                 <div className="flex flex-col h-full">
                   <div className="px-2 py-4 border-b">
                     <div className="flex flex-col mb-4">
-                      <img 
-                        src="/images/niddik_logo.png" 
-                        alt="Niddik Logo" 
-                        className="h-8 mx-auto" 
-                      />
-                      <span className="text-xs text-muted-foreground text-center mt-1">Connecting People, Changing Lives</span>
+                      <div className="flex flex-col">
+                        <img 
+                          src="/images/niddik_logo.png" 
+                          alt="Niddik Logo" 
+                          className="h-8 mb-1 mx-auto" 
+                        />
+                        <span className="text-xs text-muted-foreground text-center">Connecting People, Changing Lives</span>
+                      </div>
                     </div>
                     <div className="flex items-center gap-3">
                       <Avatar className="h-10 w-10">
