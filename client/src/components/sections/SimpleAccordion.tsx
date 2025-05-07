@@ -15,19 +15,21 @@ const AccordionItem: React.FC<AccordionItemProps> = ({
   children,
 }) => {
   return (
-    <div className="border rounded-md mb-2 overflow-hidden">
+    <div className="border rounded-md mb-3 overflow-hidden">
       <button
         onClick={onClick}
-        className="w-full px-4 py-3 text-left flex justify-between items-center bg-white hover:bg-gray-50"
+        className="w-full px-5 py-4 text-left flex justify-between items-center bg-white hover:bg-gray-50 cursor-pointer"
+        type="button"
+        aria-expanded={isOpen}
       >
-        <span className="font-semibold">{title}</span>
+        <span className="font-semibold text-lg">{title}</span>
         {isOpen ? (
           <ChevronUp className="h-5 w-5 text-gray-500" />
         ) : (
           <ChevronDown className="h-5 w-5 text-gray-500" />
         )}
       </button>
-      {isOpen && <div className="p-4 bg-white">{children}</div>}
+      {isOpen && <div className="px-5 pb-5 pt-1 bg-white">{children}</div>}
     </div>
   );
 };
@@ -50,7 +52,7 @@ const SimpleAccordion: React.FC = () => {
         ))}
       </ul>
       <div className="mt-4">
-        <a href="#" className="inline-flex items-center text-teal-600 font-medium">
+        <a href="#" className="inline-flex items-center text-teal-600 font-medium cursor-pointer hover:underline">
           Learn More <ArrowRight className="ml-1 w-4 h-4" />
         </a>
       </div>
