@@ -18,6 +18,10 @@ import AdminDashboard from "@/pages/admin/AdminDashboard";
 import JobListings from "@/pages/admin/JobListings";
 import JobForm from "@/pages/admin/JobForm";
 
+// Auth Provider
+import { AuthProvider } from "@/hooks/use-auth";
+import { ProtectedRoute } from "@/lib/protected-route";
+
 function Router() {
   return (
     <Switch>
@@ -51,8 +55,10 @@ function Router() {
 function App() {
   return (
     <QueryClientProvider client={queryClient}>
-      <Router />
-      <Toaster />
+      <AuthProvider>
+        <Router />
+        <Toaster />
+      </AuthProvider>
     </QueryClientProvider>
   );
 }
