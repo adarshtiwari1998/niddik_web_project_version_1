@@ -254,9 +254,9 @@ export default function AuthPage() {
           
           <div className="flex items-center gap-4">
             {lastLogoutTime && (
-              <div className="hidden lg:flex items-center gap-1 text-muted-foreground text-xs mr-2">
+              <div className="flex items-center gap-1 text-muted-foreground text-xs mr-2">
                 <Clock className="h-3 w-3" />
-                <span>Last login: {format(new Date(lastLogoutTime), "MMM d, yyyy h:mm a")}</span>
+                <span>Last seen: {format(new Date(lastLogoutTime), "MMM d, yyyy h:mm a")}</span>
               </div>
             )}
             <div className="bg-green-600 text-white rounded-md px-3 py-1 text-xs font-medium">
@@ -278,12 +278,6 @@ export default function AuthPage() {
                   ? "Sign in to your account to continue" 
                   : "Create an account to get started"}
               </p>
-              {lastLogoutTime && (
-                <div className="flex items-center justify-center gap-1 text-muted-foreground text-xs mt-2">
-                  <Clock className="h-3.5 w-3.5 mr-1" />
-                  <span>Last login: {format(new Date(lastLogoutTime), "MMM d, yyyy h:mm a")}</span>
-                </div>
-              )}
             </div>
           
             <Tabs 
