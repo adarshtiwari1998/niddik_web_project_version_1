@@ -180,29 +180,34 @@ const BasicAccordion = () => {
           
           {activeIndex === index && (
             <div className="p-5 pt-0 bg-white">
-              <ul className="space-y-3 mt-3">
-                {tab.items.map((item, itemIndex) => (
-                  <li key={itemIndex} className="flex gap-3 items-start">
-                    <CheckCircle2 className="w-5 h-5 text-teal-600 flex-shrink-0 mt-0.5" />
-                    <span className="text-gray-600">{item}</span>
-                  </li>
-                ))}
-              </ul>
-              <div className="mt-4 mb-5">
-                <button 
-                  className="text-teal-600 font-medium flex items-center hover:underline cursor-pointer"
-                  onClick={(e) => {
-                    e.stopPropagation();
-                    alert('Learn More clicked');
-                  }}
-                >
-                  Learn More <ArrowRight className="ml-1 w-4 h-4" />
-                </button>
-              </div>
-              
-              {/* Graphics specific to each tab */}
-              <div className="mt-3">
-                {tab.graphic()}
+              <div className="flex flex-col lg:flex-row gap-6">
+                {/* Left column with checklist */}
+                <div className="lg:w-[45%]">
+                  <ul className="space-y-3 mt-3">
+                    {tab.items.map((item, itemIndex) => (
+                      <li key={itemIndex} className="flex gap-3 items-start">
+                        <CheckCircle2 className="w-5 h-5 text-teal-600 flex-shrink-0 mt-0.5" />
+                        <span className="text-gray-600">{item}</span>
+                      </li>
+                    ))}
+                  </ul>
+                  <div className="mt-4">
+                    <button 
+                      className="text-teal-600 font-medium flex items-center hover:underline cursor-pointer"
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        alert('Learn More clicked');
+                      }}
+                    >
+                      Learn More <ArrowRight className="ml-1 w-4 h-4" />
+                    </button>
+                  </div>
+                </div>
+                
+                {/* Right column with graphics */}
+                <div className="lg:w-[55%]">
+                  {tab.graphic()}
+                </div>
               </div>
             </div>
           )}

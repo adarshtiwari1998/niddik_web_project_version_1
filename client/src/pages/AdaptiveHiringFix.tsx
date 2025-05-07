@@ -642,7 +642,7 @@ const AdaptiveHiring = () => {
           </h2>
 
           {/* Accordion with integrated graphics for each tab */}
-          <div className="w-full max-w-4xl mx-auto">
+          <div className="w-full max-w-5xl mx-auto">
             <BasicAccordion />
           </div>
         </Container>
