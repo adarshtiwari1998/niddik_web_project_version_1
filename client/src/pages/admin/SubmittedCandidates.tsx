@@ -453,8 +453,8 @@ export default function SubmittedCandidates() {
   };
   
   // Get unique client names from candidates data for filter
-  const clients = candidatesData?.data ? 
-    Array.from(new Set(candidatesData.data.map((c: SubmittedCandidate) => c.client))).filter(Boolean) : 
+  const clients: string[] = candidatesData?.data ? 
+    Array.from(new Set(candidatesData.data.map((c: SubmittedCandidate) => c.client))).filter(Boolean) as string[] : 
     [];
   
   // Pagination controls
@@ -637,8 +637,8 @@ export default function SubmittedCandidates() {
               </SelectTrigger>
               <SelectContent>
                 <SelectItem value="all_clients">All Clients</SelectItem>
-                {clients.map((client) => (
-                  <SelectItem key={client} value={client}>
+                {clients?.map((client: string) => (
+                  <SelectItem key={`client-${client}`} value={client}>
                     {client}
                   </SelectItem>
                 ))}
@@ -820,12 +820,12 @@ export default function SubmittedCandidates() {
                   <CardContent>
                     <div className="space-y-4">
                       {Object.entries(analyticsData.data.statusCounts).map(([status, count]) => (
-                        <div key={status} className="flex items-center justify-between">
+                        <div key={`status-${status}`} className="flex items-center justify-between">
                           <div className="flex items-center gap-2">
                             <StatusBadge status={status} />
                             <span>{status}</span>
                           </div>
-                          <div className="text-sm font-medium">{count}</div>
+                          <div className="text-sm font-medium">{count as number}</div>
                         </div>
                       ))}
                     </div>
