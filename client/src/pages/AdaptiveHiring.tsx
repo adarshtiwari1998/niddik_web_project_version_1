@@ -1109,8 +1109,174 @@ const AdaptiveHiring = () => {
         </Container>
       </section>
       
-      {/* Use Cases Section with Sticky Image */}
+      {/* Andela Makes Adaptive Hiring Easier Section */}
       <section className="py-20 bg-white relative">
+        <Container>
+          <motion.div
+            className="text-center mb-16"
+            initial={{ opacity: 0, y: 20 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true }}
+            transition={{ duration: 0.5 }}
+          >
+            <h2 className="text-3xl md:text-4xl font-bold mb-4 text-andela-dark">
+              Niddik makes Adaptive Hiring easier
+            </h2>
+            <p className="text-xl text-andela-gray max-w-3xl mx-auto">
+              We provide the tools, technology, and talent network to make adaptive hiring work for your organization.
+            </p>
+          </motion.div>
+          
+          {/* Tab Controls */}
+          <div className="flex flex-wrap gap-4 justify-center mb-12">
+            <button 
+              className="flex items-center gap-2 px-6 py-3 bg-green-900 text-white rounded-full hover:bg-green-800 transition-colors"
+            >
+              <div className="bg-white/20 p-1.5 rounded-full">
+                <Users className="h-4 w-4 text-white" />
+              </div>
+              <span className="font-medium">Quality Global Talent</span>
+            </button>
+            
+            <button 
+              className="flex items-center gap-2 px-6 py-3 bg-white text-green-800 border border-green-200 rounded-full hover:bg-green-50 transition-colors"
+            >
+              <div className="bg-green-100 p-1.5 rounded-full">
+                <BarChart3 className="h-4 w-4 text-green-800" />
+              </div>
+              <span className="font-medium">Cost Optimization</span>
+            </button>
+            
+            <button 
+              className="flex items-center gap-2 px-6 py-3 bg-white text-green-800 border border-green-200 rounded-full hover:bg-green-50 transition-colors"
+            >
+              <div className="bg-green-100 p-1.5 rounded-full">
+                <Briefcase className="h-4 w-4 text-green-800" />
+              </div>
+              <span className="font-medium">Agile Deployment</span>
+            </button>
+            
+            <button 
+              className="flex items-center gap-2 px-6 py-3 bg-white text-green-800 border border-green-200 rounded-full hover:bg-green-50 transition-colors"
+            >
+              <div className="bg-green-100 p-1.5 rounded-full">
+                <Target className="h-4 w-4 text-green-800" />
+              </div>
+              <span className="font-medium">Rapid Scalability</span>
+            </button>
+          </div>
+          
+          {/* Content Display */}
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
+            {/* Left Column - Interactive Map */}
+            <div className="relative">
+              <div className="rounded-lg overflow-hidden bg-green-100">
+                <div className="relative pt-[75%]"> {/* 4:3 Aspect Ratio */}
+                  <div className="absolute inset-0 bg-[url('/world-dots-map.svg')] bg-no-repeat bg-center bg-contain p-8">
+                    
+                    {/* Profile Cards */}
+                    <div className="absolute top-[20%] left-[35%] transform -translate-x-1/2 -translate-y-1/2 bg-white p-3 rounded-lg shadow-md">
+                      <div className="flex items-center gap-3">
+                        <div className="w-12 h-12 rounded-full bg-green-200 flex items-center justify-center overflow-hidden border-2 border-green-400">
+                          <span className="font-semibold text-green-800">RM</span>
+                        </div>
+                        <div className="text-left">
+                          <div className="font-semibold">Rizwan M.</div>
+                          <div className="text-xs text-gray-500">Senior Frontend Developer</div>
+                        </div>
+                      </div>
+                    </div>
+                    
+                    <div className="absolute bottom-[30%] right-[20%] transform -translate-x-1/2 -translate-y-1/2 bg-white p-3 rounded-lg shadow-md">
+                      <div className="flex items-center gap-3">
+                        <div className="w-12 h-12 rounded-full bg-blue-200 flex items-center justify-center overflow-hidden border-2 border-blue-400">
+                          <span className="font-semibold text-blue-800">EO</span>
+                        </div>
+                        <div className="text-left">
+                          <div className="font-semibold">Ebiere O.</div>
+                          <div className="text-xs text-gray-500">Cloud Developer</div>
+                        </div>
+                      </div>
+                    </div>
+                    
+                    {/* Mini Profile Icons */}
+                    <div className="absolute top-[35%] right-[30%]">
+                      <div className="w-10 h-10 rounded-full bg-white p-1 shadow-md">
+                        <div className="w-full h-full rounded-full bg-purple-200 flex items-center justify-center">
+                          <span className="text-xs font-semibold text-purple-800">JL</span>
+                        </div>
+                      </div>
+                    </div>
+                    
+                    <div className="absolute top-[60%] left-[25%]">
+                      <div className="w-10 h-10 rounded-full bg-white p-1 shadow-md">
+                        <div className="w-full h-full rounded-full bg-yellow-200 flex items-center justify-center">
+                          <span className="text-xs font-semibold text-yellow-800">AT</span>
+                        </div>
+                      </div>
+                    </div>
+                    
+                    <div className="absolute top-[25%] right-[40%]">
+                      <div className="w-10 h-10 rounded-full bg-white p-1 shadow-md">
+                        <div className="w-full h-full rounded-full bg-red-200 flex items-center justify-center">
+                          <span className="text-xs font-semibold text-red-800">MS</span>
+                        </div>
+                      </div>
+                    </div>
+                    
+                    <div className="absolute bottom-[40%] left-[40%]">
+                      <div className="w-10 h-10 rounded-full bg-white p-1 shadow-md">
+                        <div className="w-full h-full rounded-full bg-green-200 flex items-center justify-center">
+                          <span className="text-xs font-semibold text-green-800">KP</span>
+                        </div>
+                      </div>
+                    </div>
+                    
+                    {/* Decorative Elements */}
+                    <div className="absolute top-[15%] right-[25%] w-6 h-6 transform rotate-45 bg-green-900/10"></div>
+                    <div className="absolute bottom-[25%] right-[45%] w-4 h-4 rounded-full bg-green-900/10"></div>
+                    <div className="absolute top-[45%] left-[15%] w-3 h-3 rounded-full bg-green-900/10"></div>
+                  </div>
+                </div>
+              </div>
+            </div>
+            
+            {/* Right Column - Description */}
+            <div>
+              <h3 className="text-2xl font-bold mb-6 text-andela-dark">Quality, global talent</h3>
+              <p className="text-lg text-andela-gray mb-6 leading-relaxed">
+                Unlock a vast pool of untapped global talent, with 60% from emerging tech hubs in Africa and LATAM. Niddik's borderless marketplace spans 135 countries, connecting you with the right skills to drive innovation, regardless of location.
+              </p>
+              
+              <div className="space-y-4">
+                <div className="flex items-start gap-3">
+                  <div className="h-6 w-6 bg-green-100 rounded-full flex items-center justify-center mt-1">
+                    <CheckCircle2 className="h-4 w-4 text-green-600" />
+                  </div>
+                  <p className="text-andela-gray">Access to over 150,000 vetted tech professionals globally</p>
+                </div>
+                
+                <div className="flex items-start gap-3">
+                  <div className="h-6 w-6 bg-green-100 rounded-full flex items-center justify-center mt-1">
+                    <CheckCircle2 className="h-4 w-4 text-green-600" />
+                  </div>
+                  <p className="text-andela-gray">Rigorous assessment to ensure only top 1% of talent</p>
+                </div>
+                
+                <div className="flex items-start gap-3">
+                  <div className="h-6 w-6 bg-green-100 rounded-full flex items-center justify-center mt-1">
+                    <CheckCircle2 className="h-4 w-4 text-green-600" />
+                  </div>
+                  <p className="text-andela-gray">Diversity of backgrounds and perspectives to drive innovation</p>
+                </div>
+              </div>
+            </div>
+          </div>
+        </Container>
+      </section>
+      
+      {/* Use Cases Section with Sticky Image */}
+      <section className="py-20 bg-gray-50 relative">
         <Container>
           <div className="relative py-10">
             <UsesCasesWithStickyImage />

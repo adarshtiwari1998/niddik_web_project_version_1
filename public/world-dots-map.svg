@@ -1,0 +1,155 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg width="800px" height="500px" viewBox="0 0 800 500" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+    <title>World Dots Map</title>
+    <g id="World-Map-Dots" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
+        <!-- North America -->
+        <circle fill="#0E5C46" cx="180" cy="130" r="3"></circle>
+        <circle fill="#0E5C46" cx="170" cy="140" r="3"></circle>
+        <circle fill="#0E5C46" cx="160" cy="150" r="3"></circle>
+        <circle fill="#0E5C46" cx="150" cy="160" r="3"></circle>
+        <circle fill="#0E5C46" cx="140" cy="150" r="3"></circle>
+        <circle fill="#0E5C46" cx="130" cy="140" r="3"></circle>
+        <circle fill="#0E5C46" cx="120" cy="130" r="3"></circle>
+        <circle fill="#0E5C46" cx="110" cy="140" r="3"></circle>
+        <circle fill="#0E5C46" cx="100" cy="150" r="3"></circle>
+        <circle fill="#0E5C46" cx="190" cy="120" r="3"></circle>
+        <circle fill="#0E5C46" cx="200" cy="130" r="3"></circle>
+        <circle fill="#0E5C46" cx="210" cy="140" r="3"></circle>
+        <circle fill="#0E5C46" cx="220" cy="150" r="3"></circle>
+        <circle fill="#0E5C46" cx="190" cy="150" r="3"></circle>
+        <circle fill="#0E5C46" cx="180" cy="160" r="3"></circle>
+        <circle fill="#0E5C46" cx="170" cy="170" r="3"></circle>
+        <circle fill="#0E5C46" cx="160" cy="180" r="3"></circle>
+        <circle fill="#0E5C46" cx="150" cy="190" r="3"></circle>
+        <circle fill="#0E5C46" cx="140" cy="180" r="3"></circle>
+        <circle fill="#0E5C46" cx="130" cy="170" r="3"></circle>
+        
+        <!-- Central America -->
+        <circle fill="#0E5C46" cx="170" cy="200" r="3"></circle>
+        <circle fill="#0E5C46" cx="160" cy="210" r="3"></circle>
+        <circle fill="#0E5C46" cx="150" cy="220" r="3"></circle>
+        <circle fill="#0E5C46" cx="140" cy="230" r="3"></circle>
+        
+        <!-- South America -->
+        <circle fill="#0E5C46" cx="190" cy="250" r="3"></circle>
+        <circle fill="#0E5C46" cx="200" cy="260" r="3"></circle>
+        <circle fill="#0E5C46" cx="210" cy="270" r="3"></circle>
+        <circle fill="#0E5C46" cx="220" cy="280" r="3"></circle>
+        <circle fill="#0E5C46" cx="230" cy="290" r="3"></circle>
+        <circle fill="#0E5C46" cx="240" cy="300" r="3"></circle>
+        <circle fill="#0E5C46" cx="230" cy="310" r="3"></circle>
+        <circle fill="#0E5C46" cx="220" cy="320" r="3"></circle>
+        <circle fill="#0E5C46" cx="210" cy="330" r="3"></circle>
+        <circle fill="#0E5C46" cx="200" cy="320" r="3"></circle>
+        <circle fill="#0E5C46" cx="190" cy="310" r="3"></circle>
+        <circle fill="#0E5C46" cx="180" cy="300" r="3"></circle>
+        <circle fill="#0E5C46" cx="190" cy="290" r="3"></circle>
+        <circle fill="#0E5C46" cx="200" cy="280" r="3"></circle>
+        <circle fill="#0E5C46" cx="210" cy="290" r="3"></circle>
+        <circle fill="#0E5C46" cx="220" cy="300" r="3"></circle>
+        
+        <!-- Europe -->
+        <circle fill="#0E5C46" cx="380" cy="120" r="3"></circle>
+        <circle fill="#0E5C46" cx="390" cy="130" r="3"></circle>
+        <circle fill="#0E5C46" cx="400" cy="140" r="3"></circle>
+        <circle fill="#0E5C46" cx="410" cy="130" r="3"></circle>
+        <circle fill="#0E5C46" cx="420" cy="120" r="3"></circle>
+        <circle fill="#0E5C46" cx="430" cy="130" r="3"></circle>
+        <circle fill="#0E5C46" cx="440" cy="140" r="3"></circle>
+        <circle fill="#0E5C46" cx="430" cy="150" r="3"></circle>
+        <circle fill="#0E5C46" cx="420" cy="160" r="3"></circle>
+        <circle fill="#0E5C46" cx="410" cy="150" r="3"></circle>
+        <circle fill="#0E5C46" cx="400" cy="160" r="3"></circle>
+        <circle fill="#0E5C46" cx="390" cy="170" r="3"></circle>
+        <circle fill="#0E5C46" cx="380" cy="160" r="3"></circle>
+        <circle fill="#0E5C46" cx="370" cy="150" r="3"></circle>
+        <circle fill="#0E5C46" cx="360" cy="140" r="3"></circle>
+        <circle fill="#0E5C46" cx="350" cy="130" r="3"></circle>
+        
+        <!-- Africa -->
+        <circle fill="#0E5C46" cx="390" cy="200" r="3"></circle>
+        <circle fill="#0E5C46" cx="400" cy="210" r="3"></circle>
+        <circle fill="#0E5C46" cx="410" cy="220" r="3"></circle>
+        <circle fill="#0E5C46" cx="420" cy="230" r="3"></circle>
+        <circle fill="#0E5C46" cx="430" cy="240" r="3"></circle>
+        <circle fill="#0E5C46" cx="440" cy="250" r="3"></circle>
+        <circle fill="#0E5C46" cx="430" cy="260" r="3"></circle>
+        <circle fill="#0E5C46" cx="420" cy="270" r="3"></circle>
+        <circle fill="#0E5C46" cx="410" cy="280" r="3"></circle>
+        <circle fill="#0E5C46" cx="400" cy="290" r="3"></circle>
+        <circle fill="#0E5C46" cx="390" cy="280" r="3"></circle>
+        <circle fill="#0E5C46" cx="380" cy="270" r="3"></circle>
+        <circle fill="#0E5C46" cx="370" cy="260" r="3"></circle>
+        <circle fill="#0E5C46" cx="360" cy="250" r="3"></circle>
+        <circle fill="#0E5C46" cx="370" cy="240" r="3"></circle>
+        <circle fill="#0E5C46" cx="380" cy="230" r="3"></circle>
+        <circle fill="#0E5C46" cx="390" cy="220" r="3"></circle>
+        <circle fill="#0E5C46" cx="390" cy="240" r="3"></circle>
+        <circle fill="#0E5C46" cx="400" cy="250" r="3"></circle>
+        <circle fill="#0E5C46" cx="410" cy="240" r="3"></circle>
+        <circle fill="#0E5C46" cx="420" cy="250" r="3"></circle>
+        
+        <!-- Asia -->
+        <circle fill="#0E5C46" cx="480" cy="120" r="3"></circle>
+        <circle fill="#0E5C46" cx="490" cy="130" r="3"></circle>
+        <circle fill="#0E5C46" cx="500" cy="140" r="3"></circle>
+        <circle fill="#0E5C46" cx="510" cy="150" r="3"></circle>
+        <circle fill="#0E5C46" cx="520" cy="160" r="3"></circle>
+        <circle fill="#0E5C46" cx="530" cy="170" r="3"></circle>
+        <circle fill="#0E5C46" cx="540" cy="160" r="3"></circle>
+        <circle fill="#0E5C46" cx="550" cy="150" r="3"></circle>
+        <circle fill="#0E5C46" cx="560" cy="160" r="3"></circle>
+        <circle fill="#0E5C46" cx="570" cy="170" r="3"></circle>
+        <circle fill="#0E5C46" cx="580" cy="180" r="3"></circle>
+        <circle fill="#0E5C46" cx="590" cy="170" r="3"></circle>
+        <circle fill="#0E5C46" cx="600" cy="160" r="3"></circle>
+        <circle fill="#0E5C46" cx="610" cy="150" r="3"></circle>
+        <circle fill="#0E5C46" cx="620" cy="140" r="3"></circle>
+        <circle fill="#0E5C46" cx="630" cy="150" r="3"></circle>
+        <circle fill="#0E5C46" cx="640" cy="160" r="3"></circle>
+        <circle fill="#0E5C46" cx="650" cy="170" r="3"></circle>
+        <circle fill="#0E5C46" cx="660" cy="180" r="3"></circle>
+        <circle fill="#0E5C46" cx="650" cy="190" r="3"></circle>
+        <circle fill="#0E5C46" cx="640" cy="200" r="3"></circle>
+        <circle fill="#0E5C46" cx="630" cy="210" r="3"></circle>
+        <circle fill="#0E5C46" cx="620" cy="220" r="3"></circle>
+        <circle fill="#0E5C46" cx="610" cy="210" r="3"></circle>
+        <circle fill="#0E5C46" cx="600" cy="200" r="3"></circle>
+        <circle fill="#0E5C46" cx="590" cy="190" r="3"></circle>
+        <circle fill="#0E5C46" cx="580" cy="200" r="3"></circle>
+        <circle fill="#0E5C46" cx="570" cy="210" r="3"></circle>
+        <circle fill="#0E5C46" cx="560" cy="200" r="3"></circle>
+        <circle fill="#0E5C46" cx="550" cy="190" r="3"></circle>
+        <circle fill="#0E5C46" cx="540" cy="200" r="3"></circle>
+        <circle fill="#0E5C46" cx="530" cy="210" r="3"></circle>
+        <circle fill="#0E5C46" cx="520" cy="200" r="3"></circle>
+        <circle fill="#0E5C46" cx="510" cy="190" r="3"></circle>
+        <circle fill="#0E5C46" cx="500" cy="180" r="3"></circle>
+        <circle fill="#0E5C46" cx="490" cy="170" r="3"></circle>
+        <circle fill="#0E5C46" cx="480" cy="160" r="3"></circle>
+        <circle fill="#0E5C46" cx="470" cy="150" r="3"></circle>
+        <circle fill="#0E5C46" cx="460" cy="140" r="3"></circle>
+        <circle fill="#0E5C46" cx="470" cy="130" r="3"></circle>
+        
+        <!-- Australia and Oceania -->
+        <circle fill="#0E5C46" cx="650" cy="280" r="3"></circle>
+        <circle fill="#0E5C46" cx="660" cy="290" r="3"></circle>
+        <circle fill="#0E5C46" cx="670" cy="300" r="3"></circle>
+        <circle fill="#0E5C46" cx="680" cy="310" r="3"></circle>
+        <circle fill="#0E5C46" cx="690" cy="300" r="3"></circle>
+        <circle fill="#0E5C46" cx="700" cy="290" r="3"></circle>
+        <circle fill="#0E5C46" cx="690" cy="280" r="3"></circle>
+        <circle fill="#0E5C46" cx="680" cy="270" r="3"></circle>
+        <circle fill="#0E5C46" cx="670" cy="280" r="3"></circle>
+        <circle fill="#0E5C46" cx="660" cy="270" r="3"></circle>
+        
+        <!-- Additional islands -->
+        <circle fill="#0E5C46" cx="730" cy="230" r="3"></circle>
+        <circle fill="#0E5C46" cx="720" cy="240" r="3"></circle>
+        <circle fill="#0E5C46" cx="710" cy="250" r="3"></circle>
+        
+        <circle fill="#0E5C46" cx="300" cy="320" r="3"></circle>
+        <circle fill="#0E5C46" cx="310" cy="310" r="3"></circle>
+        <circle fill="#0E5C46" cx="320" cy="300" r="3"></circle>
+    </g>
+</svg>
