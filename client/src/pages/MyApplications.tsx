@@ -202,7 +202,7 @@ export default function MyApplications() {
         <Card>
           <CardContent className="py-10 text-center">
             <p>You haven't applied to any jobs yet.</p>
-            <Button className="mt-4" onClick={() => window.location.href = "/jobs"}>
+            <Button className="mt-4" onClick={() => window.location.href = "/candidate/jobs"}>
               Browse Jobs
             </Button>
           </CardContent>
@@ -295,7 +295,7 @@ export default function MyApplications() {
                       <Button 
                         variant="outline" 
                         size="sm" 
-                        onClick={() => window.location.href = `/jobs/${application.job.id}`}
+                        onClick={() => window.location.href = `/candidate/jobs/${application.job.id}`}
                       >
                         View Job
                       </Button>
