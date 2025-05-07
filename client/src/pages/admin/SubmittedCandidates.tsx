@@ -896,9 +896,10 @@ export default function SubmittedCandidates() {
                   {/* Inline add candidate row */}
                   {isAddingInline && (
                     <TableRow className="bg-muted/30">
-                      {/* Sourced By */}
+                      {/* Sourced By (Date Picker) */}
                       <TableCell>
                         <Input 
+                          type="date"
                           placeholder="Sourced By"
                           className="w-full"
                           value={newCandidateData.sourcedBy || ''}
