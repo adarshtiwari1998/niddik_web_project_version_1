@@ -107,8 +107,8 @@ export default function DemoRequests() {
         params.append("status", statusFilter);
       }
       
-      const result = await apiRequest(`/api/admin/demo-requests?${params.toString()}`);
-      return result;
+      const response = await apiRequest("GET", `/api/admin/demo-requests?${params.toString()}`);
+      return await response.json();
     },
   });
   
@@ -119,11 +119,8 @@ export default function DemoRequests() {
   // Update demo request mutation
   const { mutate, isPending } = useMutation({
     mutationFn: async ({ id, data }: { id: number; data: FormValues }) => {
-      const response = await apiRequest(`/api/admin/demo-requests/${id}`, {
-        method: "PATCH",
-        data,
-      });
-      return response;
+      const response = await apiRequest("PATCH", `/api/admin/demo-requests/${id}`, data);
+      return await response.json();
     },
     onSuccess: () => {
       toast({
