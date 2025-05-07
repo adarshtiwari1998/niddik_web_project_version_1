@@ -1,11 +1,18 @@
-import { createContext, ReactNode, useContext } from "react";
+import { createContext, ReactNode, useContext, useEffect } from "react";
 import {
   useQuery,
   useMutation,
   UseMutationResult,
 } from "@tanstack/react-query";
 import { User, InsertUser } from "@shared/schema";
-import { getQueryFn, apiRequest, queryClient } from "../lib/queryClient";
+import { 
+  getQueryFn, 
+  apiRequest, 
+  queryClient, 
+  setAuthToken, 
+  removeAuthToken, 
+  getAuthToken 
+} from "../lib/queryClient";
 import { useToast } from "@/hooks/use-toast";
 
 type AuthContextType = {
@@ -36,8 +43,15 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       const res = await apiRequest("POST", "/api/login", credentials);
       return await res.json();
     },
-    onSuccess: (user: User) => {
-      queryClient.setQueryData(["/api/user"], user);
+    onSuccess: (userData: any) => {
+      // Store JWT token if available
+      if (userData.token) {
+        setAuthToken(userData.token);
+      }
+      
+      // Store user data without token in the query cache
+      const { token, ...userWithoutToken } = userData;
+      queryClient.setQueryData(["/api/user"], userWithoutToken);
     },
     onError: (error: Error) => {
       toast({
@@ -53,8 +67,15 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       const res = await apiRequest("POST", "/api/register", credentials);
       return await res.json();
     },
-    onSuccess: (user: User) => {
-      queryClient.setQueryData(["/api/user"], user);
+    onSuccess: (userData: any) => {
+      // Store JWT token if available
+      if (userData.token) {
+        setAuthToken(userData.token);
+      }
+      
+      // Store user data without token in the query cache
+      const { token, ...userWithoutToken } = userData;
+      queryClient.setQueryData(["/api/user"], userWithoutToken);
     },
     onError: (error: Error) => {
       toast({
@@ -70,6 +91,10 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       await apiRequest("POST", "/api/logout");
     },
     onSuccess: () => {
+      // Remove JWT token from localStorage
+      removeAuthToken();
+      
+      // Clear user data from query cache
       queryClient.setQueryData(["/api/user"], null);
     },
     onError: (error: Error) => {

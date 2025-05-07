@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useLocation } from "wouter";
 import { useAuth } from "@/hooks/use-auth";
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
@@ -7,6 +7,7 @@ import { Button } from "@/components/ui/button";
 import { Label } from "@/components/ui/label";
 import { Loader2, Lock, Shield } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
+import { setAuthToken } from "@/lib/queryClient";
 
 export default function AdminLogin() {
   const [username, setUsername] = useState("");
@@ -30,8 +31,8 @@ export default function AdminLogin() {
     loginMutation.mutate(
       { username, password },
       {
-        onSuccess: (user) => {
-          if (user.role !== 'admin') {
+        onSuccess: (userData: any) => {
+          if (userData.role !== 'admin') {
             toast({
               title: "Access denied",
               description: "You do not have administrator privileges",
@@ -40,7 +41,13 @@ export default function AdminLogin() {
             return;
           }
           
-          setLocation("/admin");
+          // Store JWT token if available
+          if (userData.token) {
+            setAuthToken(userData.token);
+          }
+          
+          // Navigate to admin dashboard
+          setLocation("/admin/dashboard");
           toast({
             title: "Welcome back",
             description: "You have successfully logged in to the admin panel",

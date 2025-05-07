@@ -195,16 +195,66 @@ export function setupAuth(app: Express) {
     });
   });
 
-  // Current user API route
+  // Current user API route (supports both session and JWT)
   app.get("/api/user", (req, res) => {
-    if (!req.isAuthenticated()) return res.status(401).json({ error: "Not authenticated" });
+    // First check for JWT token
+    const authHeader = req.headers.authorization;
+    
+    if (authHeader && authHeader.startsWith('Bearer ')) {
+      // Extract token
+      const token = authHeader.substring(7);
+      
+      try {
+        // Verify token
+        const decoded = jwt.verify(token, JWT_SECRET) as { user: User };
+        
+        // Return user without password
+        const { password, ...userWithoutPassword } = decoded.user;
+        return res.json(userWithoutPassword);
+      } catch (error) {
+        // If JWT verification fails, continue to session check
+        console.log("JWT verification failed, falling back to session check");
+      }
+    }
+    
+    // If no token or token verification failed, check session authentication
+    if (!req.isAuthenticated()) {
+      return res.status(401).json({ error: "Not authenticated" });
+    }
+    
     // Return user without password
     const { password, ...userWithoutPassword } = req.user as User;
     res.json(userWithoutPassword);
   });
 
-  // Middleware to check if user is authenticated
+  // Middleware to check if user is authenticated (supports both session and JWT)
   app.use("/api/admin", (req, res, next) => {
+    // First check for JWT token
+    const authHeader = req.headers.authorization;
+    
+    if (authHeader && authHeader.startsWith('Bearer ')) {
+      // Extract token
+      const token = authHeader.substring(7);
+      
+      try {
+        // Verify token
+        const decoded = jwt.verify(token, JWT_SECRET) as { user: User };
+        
+        // Check if user is admin
+        if (decoded.user.role !== "admin") {
+          return res.status(403).json({ error: "Not authorized" });
+        }
+        
+        // Attach user to request
+        req.user = decoded.user;
+        return next();
+      } catch (error) {
+        // If JWT verification fails, continue to session check
+        console.log("JWT verification failed, falling back to session check");
+      }
+    }
+    
+    // If no token or token verification failed, check session authentication
     if (!req.isAuthenticated()) {
       return res.status(401).json({ error: "Not authenticated" });
     }
