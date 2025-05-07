@@ -136,8 +136,23 @@ const Navbar: React.FC<NavbarProps> = ({ hasAnnouncementAbove = true }) => {
 
           {/* CTA Buttons */}
           <div className="hidden lg:flex items-center space-x-4">
-            <div className="hover:text-andela-green font-medium transition-colors">
-              <Link href="/auth">Sign In</Link>
+            <div className="relative group">
+              <div className="hover:text-andela-green font-medium transition-colors flex items-center">
+                <span>Sign In</span>
+                <ChevronDown className="ml-1 w-4 h-4" />
+              </div>
+              <div className="absolute left-0 mt-2 w-52 rounded-lg shadow-xl bg-white p-4 opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-300 transform origin-top-left z-50">
+                <div className="block py-2 hover:text-andela-green transition-colors">
+                  <a href="/admin">
+                    Sign in as Admin/Member
+                  </a>
+                </div>
+                <div className="block py-2 hover:text-andela-green transition-colors">
+                  <Link href="/auth">
+                    Sign in as Candidate
+                  </Link>
+                </div>
+              </div>
             </div>
             <div className="relative group">
               <div className="bg-andela-green hover:bg-opacity-90 transition-colors text-white px-6 py-2 rounded-md font-medium flex items-center">
@@ -240,8 +255,38 @@ const Navbar: React.FC<NavbarProps> = ({ hasAnnouncementAbove = true }) => {
           ))}
 
           <div className="pt-4 flex flex-col space-y-3">
-            <div className="font-medium">
-              <Link href="/auth" onClick={() => setIsMobileMenuOpen(false)}>Sign In</Link>
+            <div>
+              <div className="flex items-center justify-between w-full mb-2">
+                <div className="font-medium">Sign In</div>
+                <button
+                  onClick={() => setMobileDropdown(mobileDropdown === 99 ? -1 : 99)}
+                  className="ml-2"
+                >
+                  <ChevronDown className={`w-4 h-4 transition-transform ${mobileDropdown === 99 ? 'rotate-180' : ''}`} />
+                </button>
+              </div>
+              
+              {mobileDropdown === 99 && (
+                <div className="ml-4 space-y-2 py-2">
+                  <div className="py-1">
+                    <a 
+                      href="/admin"
+                      className="text-andela-gray hover:text-andela-green transition-colors"
+                    >
+                      Sign in as Admin/Member
+                    </a>
+                  </div>
+                  <div className="py-1">
+                    <Link 
+                      href="/auth"
+                      className="text-andela-gray hover:text-andela-green transition-colors"
+                      onClick={() => setIsMobileMenuOpen(false)}
+                    >
+                      Sign in as Candidate
+                    </Link>
+                  </div>
+                </div>
+              )}
             </div>
             <div className="bg-andela-green text-white px-4 py-2 rounded-md font-medium text-center">
               <div className="flex items-center justify-center">
