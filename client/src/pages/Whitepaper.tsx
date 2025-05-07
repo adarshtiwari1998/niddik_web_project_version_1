@@ -310,88 +310,238 @@ const WhitepaperPage = () => {
               </motion.p>
             </div>
             
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-              {[
-                {
-                  title: "Data-Driven Recruitment",
-                  description: "Learn how data analytics can reduce hiring time by 60% while increasing quality of hires.",
-                  icon: <BarChart3 className="h-10 w-10 text-white" />,
-                  bgColor: "bg-[#e53e3e]",
-                  borderColor: "border-[#f56565]",
-                  iconBg: "bg-[#fc8181] bg-opacity-30"
-                },
-                {
-                  title: "AI for Recruitment",
-                  description: "Discover how AI-powered matching improves response rates by 40% compared to traditional methods.",
-                  icon: <Zap className="h-10 w-10 text-white" />,
-                  bgColor: "bg-[#d69e2e]",
-                  borderColor: "border-[#f6ad55]",
-                  iconBg: "bg-[#fbd38d] bg-opacity-30"
-                },
-                {
-                  title: "Social Media Recruiting",
-                  description: "Explore strategies that decrease time-to-submit by 50% through optimized social channels.",
-                  icon: <Users className="h-10 w-10 text-white" />,
-                  bgColor: "bg-[#38a169]",
-                  borderColor: "border-[#68d391]",
-                  iconBg: "bg-[#9ae6b4] bg-opacity-30"
-                },
-                {
-                  title: "Video Interview Technology",
-                  description: "See how video interviews reduce screening time while maintaining comprehensive evaluation.",
-                  icon: <Zap className="h-10 w-10 text-white" />,
-                  bgColor: "bg-[#3182ce]",
-                  borderColor: "border-[#63b3ed]",
-                  iconBg: "bg-[#90cdf4] bg-opacity-30"
-                },
-                {
-                  title: "Improved Candidate Experience",
-                  description: "Understand how a better recruitment experience increases talent quality by up to 70%.",
-                  icon: <Users className="h-10 w-10 text-white" />,
-                  bgColor: "bg-[#805ad5]",
-                  borderColor: "border-[#b794f4]",
-                  iconBg: "bg-[#d6bcfa] bg-opacity-30"
-                },
-                {
-                  title: "Recruitment Technology Solutions",
-                  description: "Learn about integrated tools that optimize recruiting spend by 30% while improving outcomes.",
-                  icon: <PieChart className="h-10 w-10 text-white" />,
-                  bgColor: "bg-[#4299e1]",
-                  borderColor: "border-[#90cdf4]",
-                  iconBg: "bg-[#bee3f8] bg-opacity-30"
-                }
-              ].map((item, index) => (
-                <motion.div
-                  key={index}
-                  initial={{ opacity: 0, y: 20 }}
-                  whileInView={{ opacity: 1, y: 0 }}
-                  viewport={{ once: true }}
-                  transition={{ duration: 0.5, delay: index * 0.1 }}
-                  whileHover={{ 
-                    y: -10, 
-                    boxShadow: "0 10px 25px -5px rgba(0, 0, 0, 0.2), 0 10px 10px -5px rgba(0, 0, 0, 0.1)" 
-                  }}
-                  className={`rounded-xl p-6 ${item.bgColor} backdrop-blur-lg border ${item.borderColor} shadow-lg relative overflow-hidden group text-white`}
-                >
-                  {/* Animated background */}
-                  <div className="absolute inset-0 opacity-30 group-hover:opacity-50 transition-opacity">
+            {/* Split Layout with AI visualization on left, cards on right */}
+            <div className="flex flex-col lg:flex-row gap-8 items-center">
+              {/* Left Side - AI Visualization */}
+              <div className="w-full lg:w-2/5 relative h-[600px] rounded-xl overflow-hidden">
+                {/* Tech-themed animated visualization */}
+                <div className="absolute inset-0 bg-gradient-to-br from-blue-900 to-indigo-900 rounded-xl overflow-hidden">
+                  {/* Abstract connections */}
+                  <svg className="w-full h-full" viewBox="0 0 800 800">
+                    <defs>
+                      <radialGradient id="grad1" cx="50%" cy="50%" r="50%" fx="50%" fy="50%">
+                        <stop offset="0%" stopColor="#4338ca" stopOpacity="0.3" />
+                        <stop offset="100%" stopColor="#1e40af" stopOpacity="0" />
+                      </radialGradient>
+                    </defs>
+                    <circle cx="400" cy="400" r="300" fill="url(#grad1)" />
+                    
+                    <motion.g opacity="0.7">
+                      {/* Animated data flow lines */}
+                      {Array.from({ length: 15 }).map((_, i) => (
+                        <motion.path
+                          key={`path-${i}`}
+                          d={`M${300 + Math.random() * 200},${200 + Math.random() * 100} 
+                              C${350 + Math.random() * 100},${300 + Math.random() * 100} 
+                              ${400 + Math.random() * 100},${400 + Math.random() * 100} 
+                              ${450 + Math.random() * 100},${500 + Math.random() * 100}`}
+                          stroke="#60a5fa"
+                          strokeWidth="1.5"
+                          fill="none"
+                          initial={{ pathLength: 0, opacity: 0 }}
+                          animate={{ 
+                            pathLength: 1, 
+                            opacity: [0, 0.7, 0]
+                          }}
+                          transition={{ 
+                            duration: 4 + Math.random() * 3, 
+                            repeat: Infinity, 
+                            repeatType: "loop",
+                            delay: i * 0.3
+                          }}
+                        />
+                      ))}
+                      
+                      {/* Data nodes */}
+                      {Array.from({ length: 20 }).map((_, i) => (
+                        <motion.circle
+                          key={`node-${i}`}
+                          cx={200 + Math.random() * 400}
+                          cy={200 + Math.random() * 400}
+                          r={2 + Math.random() * 4}
+                          fill="#93c5fd"
+                          initial={{ opacity: 0.3, scale: 0.8 }}
+                          animate={{ 
+                            opacity: [0.3, 0.8, 0.3],
+                            scale: [0.8, 1.2, 0.8] 
+                          }}
+                          transition={{ 
+                            duration: 2 + Math.random() * 2,
+                            repeat: Infinity,
+                            delay: i * 0.2
+                          }}
+                        />
+                      ))}
+                    </motion.g>
+                  </svg>
+                  
+                  {/* Technology overlay elements */}
+                  <div className="absolute inset-0 flex items-center justify-center">
                     <motion.div 
-                      className="absolute inset-0 bg-gradient-to-r from-transparent via-white to-transparent opacity-10"
-                      initial={{ left: '-100%' }}
-                      animate={{ left: '100%' }}
-                      transition={{ repeat: Infinity, duration: 3, ease: "linear", repeatDelay: 1 }}
+                      className="w-64 h-64 rounded-full bg-gradient-to-r from-cyan-500 to-blue-500 opacity-40 filter blur-xl"
+                      animate={{ 
+                        scale: [1, 1.1, 1],
+                        opacity: [0.4, 0.5, 0.4] 
+                      }}
+                      transition={{ 
+                        duration: 5,
+                        repeat: Infinity,
+                        ease: "easeInOut"
+                      }}
                     />
                   </div>
                   
-                  <div className="relative z-10">
-                    <div className={`p-3 rounded-full ${item.iconBg || 'bg-white bg-opacity-20'} inline-flex mb-4 shimmer overflow-hidden`}>
-                      {item.icon}
-                    </div>
-                    <h3 className="text-xl font-bold mb-3 text-white">{item.title}</h3>
-                    <p className="text-blue-100">{item.description}</p>
+                  {/* Animated grid overlay */}
+                  <div className="absolute inset-0">
+                    <svg className="w-full h-full" viewBox="0 0 800 800" xmlns="http://www.w3.org/2000/svg">
+                      <pattern id="smallGrid" width="20" height="20" patternUnits="userSpaceOnUse">
+                        <path d="M 20 0 L 0 0 0 20" fill="none" stroke="#3b82f6" strokeWidth="0.5" opacity="0.3" />
+                      </pattern>
+                      <rect width="100%" height="100%" fill="url(#smallGrid)" />
+                      
+                      <motion.g
+                        initial={{ opacity: 0 }}
+                        animate={{ opacity: 1 }}
+                        transition={{ duration: 2 }}
+                      >
+                        {Array.from({ length: 10 }).map((_, i) => (
+                          <motion.line
+                            key={`grid-h-${i}`}
+                            x1="0"
+                            y1={80 * i}
+                            x2="800"
+                            y2={80 * i}
+                            stroke="#3b82f6"
+                            strokeWidth="1"
+                            strokeDasharray="5,15"
+                            initial={{ strokeDashoffset: 800 }}
+                            animate={{ strokeDashoffset: 0 }}
+                            transition={{ 
+                              duration: 30, 
+                              repeat: Infinity, 
+                              ease: "linear"
+                            }}
+                          />
+                        ))}
+                      </motion.g>
+                    </svg>
                   </div>
-                </motion.div>
-              ))}
+                  
+                  {/* AI Recruitment-related imagery */}
+                  <div className="absolute inset-0 flex flex-col items-center justify-center text-center p-8">
+                    <motion.div
+                      initial={{ opacity: 0, y: 20 }}
+                      animate={{ opacity: 1, y: 0 }}
+                      transition={{ duration: 0.7, delay: 0.5 }}
+                      className="bg-black bg-opacity-30 backdrop-blur-sm p-6 rounded-xl"
+                    >
+                      <h3 className="text-2xl font-bold text-white mb-2">AI-Driven Sourcing</h3>
+                      <p className="text-blue-200 mb-4">Transforming traditional hiring approaches</p>
+                      <div className="flex justify-center space-x-4">
+                        <div className="flex flex-col items-center">
+                          <div className="text-3xl font-bold text-cyan-400">40%</div>
+                          <div className="text-sm text-blue-200">Response Rate</div>
+                        </div>
+                        <div className="flex flex-col items-center">
+                          <div className="text-3xl font-bold text-green-400">50%</div>
+                          <div className="text-sm text-blue-200">Faster Submissions</div>
+                        </div>
+                        <div className="flex flex-col items-center">
+                          <div className="text-3xl font-bold text-yellow-400">70%</div>
+                          <div className="text-sm text-blue-200">Quality Increase</div>
+                        </div>
+                      </div>
+                    </motion.div>
+                  </div>
+                </div>
+              </div>
+              
+              {/* Right Side - Cards Grid */}
+              <div className="w-full lg:w-3/5">
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                  {[
+                    {
+                      title: "Data-Driven Recruitment",
+                      description: "Learn how data analytics can reduce hiring time by 60% while increasing quality of hires.",
+                      icon: <BarChart3 className="h-10 w-10 text-white" />,
+                      bgColor: "bg-[#ff5252]",
+                      borderColor: "border-[#ff8585]",
+                      iconBg: "bg-[#ffadad] bg-opacity-30"
+                    },
+                    {
+                      title: "AI for Recruitment",
+                      description: "Discover how AI-powered matching improves response rates by 40% compared to traditional methods.",
+                      icon: <Zap className="h-10 w-10 text-white" />,
+                      bgColor: "bg-[#ffc107]",
+                      borderColor: "border-[#ffdb58]",
+                      iconBg: "bg-[#fff0ad] bg-opacity-30"
+                    },
+                    {
+                      title: "Social Media Recruiting",
+                      description: "Explore strategies that decrease time-to-submit by 50% through optimized social channels.",
+                      icon: <Users className="h-10 w-10 text-white" />,
+                      bgColor: "bg-[#4caf50]",
+                      borderColor: "border-[#82d985]",
+                      iconBg: "bg-[#b9eabc] bg-opacity-30"
+                    },
+                    {
+                      title: "Video Interview Technology",
+                      description: "See how video interviews reduce screening time while maintaining comprehensive evaluation.",
+                      icon: <Zap className="h-10 w-10 text-white" />,
+                      bgColor: "bg-[#2196f3]",
+                      borderColor: "border-[#64b5f6]",
+                      iconBg: "bg-[#bbdefb] bg-opacity-30"
+                    },
+                    {
+                      title: "Improved Candidate Experience",
+                      description: "Understand how a better recruitment experience increases talent quality by up to 70%.",
+                      icon: <Users className="h-10 w-10 text-white" />,
+                      bgColor: "bg-[#9c27b0]",
+                      borderColor: "border-[#ce93d8]",
+                      iconBg: "bg-[#e1bee7] bg-opacity-30"
+                    },
+                    {
+                      title: "Recruitment Technology Solutions",
+                      description: "Learn about integrated tools that optimize recruiting spend by 30% while improving outcomes.",
+                      icon: <PieChart className="h-10 w-10 text-white" />,
+                      bgColor: "bg-[#03a9f4]",
+                      borderColor: "border-[#81d4fa]",
+                      iconBg: "bg-[#b3e5fc] bg-opacity-30"
+                    }
+                  ].map((item, index) => (
+                    <motion.div
+                      key={index}
+                      initial={{ opacity: 0, y: 20 }}
+                      whileInView={{ opacity: 1, y: 0 }}
+                      viewport={{ once: true }}
+                      transition={{ duration: 0.5, delay: index * 0.1 }}
+                      whileHover={{ 
+                        y: -5, 
+                        boxShadow: "0 10px 25px -5px rgba(0, 0, 0, 0.2), 0 10px 10px -5px rgba(0, 0, 0, 0.1)" 
+                      }}
+                      className={`rounded-xl p-6 ${item.bgColor} backdrop-blur-lg border ${item.borderColor} shadow-lg relative overflow-hidden group text-white`}
+                    >
+                      {/* Animated background */}
+                      <div className="absolute inset-0 opacity-30 group-hover:opacity-50 transition-opacity">
+                        <motion.div 
+                          className="absolute inset-0 bg-gradient-to-r from-transparent via-white to-transparent opacity-10"
+                          initial={{ left: '-100%' }}
+                          animate={{ left: '100%' }}
+                          transition={{ repeat: Infinity, duration: 3, ease: "linear", repeatDelay: 1 }}
+                        />
+                      </div>
+                      
+                      <div className="relative z-10">
+                        <div className={`p-3 rounded-full ${item.iconBg || 'bg-white bg-opacity-20'} inline-flex mb-4 shimmer overflow-hidden`}>
+                          {item.icon}
+                        </div>
+                        <h3 className="text-xl font-bold mb-3 text-white">{item.title}</h3>
+                        <p className="text-white">{item.description}</p>
+                      </div>
+                    </motion.div>
+                  ))}
+                </div>
+              </div>
             </div>
           </div>
         </section>
