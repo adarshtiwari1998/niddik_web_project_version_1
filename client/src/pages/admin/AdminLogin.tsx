@@ -100,12 +100,14 @@ export default function AdminLogin() {
               description: "You have successfully logged in to the admin panel",
             });
             
-            // Navigate immediately to admin dashboard or specified redirect URL
+            // Navigate to admin dashboard using client-side routing
             setTimeout(() => {
               if (redirectUrl) {
-                window.location.replace(redirectUrl); // Use replace to avoid a history entry
+                // For a redirect URL, use setLocation for client-side navigation
+                setLocation(redirectUrl);
               } else {
-                window.location.replace("/admin/dashboard"); // Use replace to avoid a history entry
+                // For the default admin dashboard path
+                setLocation("/admin/dashboard");
               }
             }, 100); // Small delay to ensure loading screen shows properly
           },

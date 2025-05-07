@@ -27,11 +27,15 @@ export default function AdminLayout({ children, title, description }: AdminLayou
     
     logoutMutation.mutate(undefined, {
       onSuccess: () => {
-        // Ensure loading screen stays up for enough time to be visible
-        // but not so long that it delays the user experience
+        // We're still using the setTimeout to ensure the loading screen
+        // is visible for a moment before redirecting
         setTimeout(() => {
-          // Use window.location.replace instead of href to avoid creating a history entry
-          window.location.replace("/admin/login");
+          // This will redirect without a page reload
+          setLocation("/admin/login");
+          
+          // Set a flag that the login page will check on mount
+          // The loading screen will stay visible until the login page mounts
+          sessionStorage.setItem('admin_login_after_logout', 'true');
         }, 800);
       },
       onError: (error) => {
