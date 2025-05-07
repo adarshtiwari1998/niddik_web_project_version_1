@@ -70,11 +70,10 @@ const UsesCasesWithStickyImage = () => {
     }
   ];
 
-  // For the Use Cases section, we'll have the image fixed immediately
-  // This matches the requirement to keep it fixed at all times
+  // For the Use Cases section, we'll ensure the image is never fixed
   useEffect(() => {
-    // Set image to fixed position immediately since this section should be different
-    setIsInViewport(true);
+    // Always set isInViewport to false to prevent fixed positioning
+    setIsInViewport(false);
   }, []);
 
   useEffect(() => {
@@ -288,21 +287,13 @@ const UsesCasesWithStickyImage = () => {
           ))}
         </div>
         
-        {/* Right side image container - fixed only when this section is in view */}
+        {/* Right side image container - NEVER fixed for Common Use Cases section */}
         <div className="lg:col-span-6 relative">
-          {isInViewport ? (
-            <div className="fixed right-0 top-40 w-[40%] max-w-lg pr-12 z-10">
-              <div className="aspect-video relative rounded-xl overflow-hidden border border-gray-200 shadow-md">
-                {renderImage()}
-              </div>
+          <div className="pt-8 pr-12">
+            <div className="aspect-video relative rounded-xl overflow-hidden border border-gray-200 shadow-md">
+              {renderImage()}
             </div>
-          ) : (
-            <div className="pt-8 pr-12">
-              <div className="aspect-video relative rounded-xl overflow-hidden border border-gray-200 shadow-md">
-                {renderImage()}
-              </div>
-            </div>
-          )}
+          </div>
         </div>
       </div>
     </div>
