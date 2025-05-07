@@ -153,40 +153,74 @@ const UseCasesSection = () => {
             ))}
           </div>
 
-          {/* Right column with illustration */}
-          <div className="w-full lg:w-1/2 rounded-lg overflow-hidden shadow-md">
-            <div className="bg-gradient-to-br from-blue-50 to-teal-50 p-8 h-full flex items-center justify-center">
-              <svg 
-                width="400" 
-                height="300" 
-                viewBox="0 0 400 300" 
-                fill="none" 
-                xmlns="http://www.w3.org/2000/svg"
-                className="w-full h-auto"
-              >
-                {/* Developer illustration - SVG graphic instead of photo */}
-                <rect x="40" y="40" width="320" height="220" rx="10" fill="#F9FAFB" stroke="#E5E7EB" />
+          {/* Right column with dashboard-style UI elements */}
+          <div className="w-full lg:w-1/2">
+            <div className="bg-gradient-to-br from-blue-50 to-teal-50 p-8 h-full rounded-lg">
+              <div className="space-y-8">
+                {/* Sprint Progress Card */}
+                <div className="bg-white rounded-xl shadow-sm p-6">
+                  <div className="flex items-center justify-between mb-4">
+                    <div className="flex items-center gap-3">
+                      <div className="w-10 h-10 rounded-full bg-green-100 flex items-center justify-center">
+                        <div className="w-5 h-5 rounded-full bg-green-500"></div>
+                      </div>
+                      <h3 className="text-lg font-medium">Current Sprint</h3>
+                    </div>
+                    <div className="bg-green-100 text-green-700 px-3 py-1 rounded-full text-sm font-medium">
+                      Active
+                    </div>
+                  </div>
+                  
+                  <div className="w-full h-2 bg-gray-100 rounded-full mb-2">
+                    <div className="h-2 bg-green-500 rounded-full" style={{ width: "75%" }}></div>
+                  </div>
+                  
+                  <div className="flex justify-between text-gray-500">
+                    <span>Week 2 of 3</span>
+                    <span>75% Complete</span>
+                  </div>
+                </div>
                 
-                {/* Monitor screen */}
-                <rect x="60" y="60" width="180" height="120" rx="4" fill="#1F2937" />
-                <rect x="70" y="70" width="160" height="10" rx="2" fill="#4B5563" />
-                <rect x="70" y="90" width="60" height="6" rx="1" fill="#9CA3AF" />
-                <rect x="70" y="110" width="80" height="6" rx="1" fill="#9CA3AF" />
-                <rect x="70" y="130" width="40" height="6" rx="1" fill="#9CA3AF" />
-                <rect x="70" y="150" width="70" height="6" rx="1" fill="#9CA3AF" />
+                {/* Team Velocity Card */}
+                <div className="bg-white rounded-xl shadow-sm p-6">
+                  <div className="flex items-center gap-3 mb-6">
+                    <div className="w-10 h-10 rounded-full bg-blue-100 flex items-center justify-center">
+                      <div className="w-5 h-5 rounded-full bg-blue-500"></div>
+                    </div>
+                    <h3 className="text-lg font-medium">Team Velocity</h3>
+                  </div>
+                  
+                  <div className="flex items-center">
+                    <div className="w-24 h-24 rounded-full border-8 border-blue-100 flex items-center justify-center">
+                      <span className="text-2xl font-bold text-blue-500">92%</span>
+                    </div>
+                    <div className="ml-6">
+                      <h4 className="text-lg font-medium">Efficiency</h4>
+                      <p className="text-gray-500">Above target</p>
+                    </div>
+                  </div>
+                </div>
                 
-                {/* Person silhouette */}
-                <rect x="280" y="80" width="40" height="40" rx="20" fill="#4B5563" />
-                <rect x="280" y="130" width="40" height="60" rx="4" fill="#6B7280" />
-                
-                {/* Table surface */}
-                <rect x="40" y="200" width="320" height="10" rx="2" fill="#E5E7EB" />
-                
-                {/* Headphones */}
-                <path d="M280 80 C280 60, 320 60, 320 80" stroke="#4B5563" strokeWidth="4" fill="none" />
-                <rect x="270" y="80" width="10" height="20" rx="4" fill="#4B5563" />
-                <rect x="320" y="80" width="10" height="20" rx="4" fill="#4B5563" />
-              </svg>
+                {/* Task Completion Card */}
+                <div className="bg-white rounded-xl shadow-sm p-6">
+                  <div className="flex items-center justify-between mb-4">
+                    <div className="flex items-center gap-3">
+                      <div className="w-10 h-10 rounded-full bg-purple-100 flex items-center justify-center">
+                        <div className="w-5 h-5 rounded-full bg-purple-500"></div>
+                      </div>
+                      <h3 className="text-lg font-medium">Delivery Rate</h3>
+                    </div>
+                    <div className="bg-purple-100 text-purple-700 px-3 py-1 rounded-full text-sm font-medium">
+                      Excellent
+                    </div>
+                  </div>
+                  
+                  <div className="flex justify-between font-medium">
+                    <span>Completed tasks:</span>
+                    <span className="text-purple-600">24/25</span>
+                  </div>
+                </div>
+              </div>
             </div>
           </div>
         </div>
