@@ -34,8 +34,7 @@ const UsesCasesWithStickyImage = () => {
         "Reduce complexity and enhance user experience",
         "Get your critical projects done faster"
       ],
-      image: "/images/dev-team.jpg", // Replace with your image
-      icon: <Code />
+      icon: <Code className="w-5 h-5" />
     },
     {
       id: "data-science",
@@ -45,8 +44,7 @@ const UsesCasesWithStickyImage = () => {
         "Implement ML/AI solutions with experienced professionals",
         "Transform raw data into actionable business insights"
       ],
-      image: "/images/data-science.jpg", // Replace with your image
-      icon: <Database />
+      icon: <Database className="w-5 h-5" />
     },
     {
       id: "data-engineering",
@@ -56,8 +54,7 @@ const UsesCasesWithStickyImage = () => {
         "Integrate disparate data sources efficiently",
         "Develop dashboards and reporting solutions"
       ],
-      image: "/images/data-engineering.jpg", // Replace with your image
-      icon: <BarChart3 />
+      icon: <BarChart3 className="w-5 h-5" />
     },
     {
       id: "cloud-devops",
@@ -67,19 +64,20 @@ const UsesCasesWithStickyImage = () => {
         "Implement CI/CD pipelines and automation",
         "Optimize infrastructure for performance and cost"
       ],
-      image: "/images/cloud-devops.jpg", // Replace with your image
-      icon: <Cloud />
+      icon: <Cloud className="w-5 h-5" />
     }
   ];
 
-  // Default to a developer image if no image is available
-  const activeImage = useCases[activeIndex]?.image || "/images/dev-team.jpg";
-
   useEffect(() => {
+    // Programmatically click on first use case to make sure it's open
+    setTimeout(() => {
+      setActiveIndex(0);
+    }, 100);
+
     const observerOptions = {
       root: null,
-      rootMargin: '-20% 0px -30% 0px',
-      threshold: 0
+      rootMargin: '-10% 0px -40% 0px',
+      threshold: 0.1
     };
 
     const observerCallback: IntersectionObserverCallback = (entries) => {
@@ -106,13 +104,138 @@ const UsesCasesWithStickyImage = () => {
     };
   }, []);
 
+  // Images to display for each use case (static for this example)
+  const renderImage = () => {
+    switch(activeIndex) {
+      case 0:
+        return (
+          <div className="relative h-full w-full">
+            <div className="absolute inset-0 flex items-center justify-center">
+              <div className="w-full h-full" style={{ backgroundColor: '#f0f7ff' }}>
+                <div className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2">
+                  <div className="relative">
+                    <div className="w-24 h-24 rounded-lg bg-white shadow-md p-3 flex items-center justify-center">
+                      <div className="w-10 h-10 bg-blue-500 rounded flex items-center justify-center text-white">
+                        <Code className="w-6 h-6" />
+                      </div>
+                    </div>
+                    <div className="absolute w-20 h-0.5 bg-gray-200 -right-20 top-1/2"></div>
+                    <div className="absolute w-16 h-16 rounded-lg bg-white shadow-md p-3 flex items-center justify-center -right-32 -top-6">
+                      <div className="w-8 h-8 bg-gray-700 rounded flex items-center justify-center text-white text-xs">
+                        JS
+                      </div>
+                    </div>
+                    <div className="absolute w-16 h-16 rounded-lg bg-white shadow-md p-3 flex items-center justify-center -right-36 top-8">
+                      <div className="w-8 h-8 bg-green-500 rounded flex items-center justify-center text-white text-xs">
+                        UI
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        );
+      case 1:
+        return (
+          <div className="relative h-full w-full">
+            <div className="absolute inset-0 flex items-center justify-center">
+              <div className="w-full h-full" style={{ backgroundColor: '#f0fff4' }}>
+                <div className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-3/4">
+                  <div className="bg-white p-6 rounded-lg shadow-md">
+                    <div className="flex items-center gap-3 mb-4">
+                      <Database className="text-blue-500 w-6 h-6" />
+                      <h4 className="font-bold">Data Analysis</h4>
+                    </div>
+                    <div className="space-y-2">
+                      <div className="h-2 bg-blue-100 rounded-full w-full relative">
+                        <div className="absolute inset-y-0 left-0 bg-blue-500 rounded-full w-3/4"></div>
+                      </div>
+                      <div className="h-2 bg-green-100 rounded-full w-full relative">
+                        <div className="absolute inset-y-0 left-0 bg-green-500 rounded-full w-1/2"></div>
+                      </div>
+                      <div className="h-2 bg-purple-100 rounded-full w-full relative">
+                        <div className="absolute inset-y-0 left-0 bg-purple-500 rounded-full w-5/6"></div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        );
+      case 2:
+        return (
+          <div className="relative h-full w-full">
+            <div className="absolute inset-0 flex items-center justify-center">
+              <div className="w-full h-full" style={{ backgroundColor: '#f5f0ff' }}>
+                <div className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2">
+                  <div className="bg-white rounded-lg shadow-md p-4 w-64">
+                    <div className="flex items-center gap-2 mb-2">
+                      <div className="w-8 h-8 bg-blue-100 rounded-full flex items-center justify-center">
+                        <BarChart3 className="w-4 h-4 text-blue-600" />
+                      </div>
+                      <h4 className="font-semibold text-sm">Analytics Pipeline</h4>
+                    </div>
+                    <div className="flex items-center mb-1">
+                      <div className="w-12 h-6 bg-blue-500 rounded-l flex items-center justify-center text-white text-xs">
+                        ETL
+                      </div>
+                      <div className="w-12 h-6 bg-green-500 flex items-center justify-center text-white text-xs">
+                        DW
+                      </div>
+                      <div className="w-12 h-6 bg-purple-500 rounded-r flex items-center justify-center text-white text-xs">
+                        BI
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        );
+      case 3:
+        return (
+          <div className="relative h-full w-full">
+            <div className="absolute inset-0 flex items-center justify-center">
+              <div className="w-full h-full" style={{ backgroundColor: '#fff0f0' }}>
+                <div className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2">
+                  <div className="bg-white rounded-lg shadow-md p-4 w-64">
+                    <div className="flex items-center gap-2 mb-4">
+                      <div className="w-8 h-8 bg-blue-100 rounded-full flex items-center justify-center">
+                        <Cloud className="w-4 h-4 text-blue-600" />
+                      </div>
+                      <h4 className="font-semibold text-sm">Cloud Services</h4>
+                    </div>
+                    <div className="grid grid-cols-3 gap-2">
+                      <div className="h-8 bg-blue-100 rounded flex items-center justify-center">
+                        <div className="text-xs font-medium text-blue-800">API</div>
+                      </div>
+                      <div className="h-8 bg-green-100 rounded flex items-center justify-center">
+                        <div className="text-xs font-medium text-green-800">DB</div>
+                      </div>
+                      <div className="h-8 bg-purple-100 rounded flex items-center justify-center">
+                        <div className="text-xs font-medium text-purple-800">Auth</div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        );
+      default:
+        return null;
+    }
+  };
+
   return (
     <div>
-      <h2 className="text-3xl md:text-4xl font-bold mb-6 text-andela-dark">Common use cases for Adaptive Hiring</h2>
+      <h2 className="text-4xl font-bold mb-6 text-andela-dark">Common use cases for Adaptive Hiring</h2>
       
-      <div className="flex flex-col lg:flex-row gap-10 mt-10">
-        {/* Left side content */}
-        <div className="lg:w-1/2">
+      <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 mt-10">
+        {/* Left side content - 6 columns wide */}
+        <div className="lg:col-span-6">
           {useCases.map((useCase, index) => (
             <div 
               key={useCase.id}
@@ -120,7 +243,7 @@ const UsesCasesWithStickyImage = () => {
               className={`mb-4 rounded-lg transition-all duration-300 ${activeIndex === index ? 'bg-white shadow-md' : 'bg-gray-50'}`}
             >
               <div 
-                className="p-5 cursor-pointer"
+                className="p-4 cursor-pointer"
                 onClick={() => setActiveIndex(index)}
               >
                 <div className="flex items-center justify-between">
@@ -156,26 +279,11 @@ const UsesCasesWithStickyImage = () => {
           ))}
         </div>
         
-        {/* Right side sticky image */}
-        <div className="lg:w-1/2 relative">
-          <div className="lg:sticky lg:top-32">
-            <div className="aspect-video relative rounded-xl overflow-hidden shadow-xl border border-gray-200">
-              {/* Replace this with an actual image */}
-              <div className="absolute inset-0 bg-gradient-to-br from-blue-500/30 to-green-500/30 z-10 rounded-xl"></div>
-              <div 
-                className="w-full h-full bg-cover bg-center" 
-                style={{ 
-                  backgroundImage: activeImage ? `url(${activeImage})` : 'none',
-                  backgroundColor: '#123456' // Fallback color if image not available
-                }}
-              >
-                {/* Fallback content when no image */}
-                {!activeImage && (
-                  <div className="flex items-center justify-center h-full">
-                    <div className="text-white text-lg">Developer working on code</div>
-                  </div>
-                )}
-              </div>
+        {/* Right side sticky image - 6 columns wide */}
+        <div className="lg:col-span-6 relative">
+          <div className="lg:sticky lg:top-40">
+            <div className="aspect-video relative rounded-xl overflow-hidden border border-gray-200 shadow-md">
+              {renderImage()}
             </div>
           </div>
         </div>
@@ -210,14 +318,21 @@ const AdaptiveHiringWorkflow = () => {
       label: "FIND TALENT",
       title: "Match needs to talent skill sets, costs, and duration",
       description: "Our AI-driven matching system identifies the perfect candidates based on technical skills, experience, domain knowledge, and team compatibility. We provide a curated selection of pre-vetted professionals ready to integrate seamlessly with your existing teams."
+    },
+    {
+      id: "adapt-quickly",
+      icon: <ArrowRightIcon className="w-5 h-5" />,
+      label: "ADAPT QUICKLY",
+      title: "Adjust easily, as your priorities change",
+      description: "Rapidly changing business requires an agile approach to staffing. This variable cost model allows you to change as quickly as your priorities do. Niddik talent is available on demand, so you can fill critical skill or capacity gaps quickly while remaining cost-efficient."
     }
   ];
 
   useEffect(() => {
     const observerOptions = {
       root: null,
-      rootMargin: '-10% 0px -40% 0px',
-      threshold: 0.1
+      rootMargin: '-5% 0px -30% 0px', // Adjusted for better observation
+      threshold: 0.2
     };
 
     const observerCallback: IntersectionObserverCallback = (entries) => {
@@ -244,62 +359,69 @@ const AdaptiveHiringWorkflow = () => {
     };
   }, []);
 
-  // Images to display for each section
-  const images = [
-    // Replace with your actual image paths
-    "/images/workflow-diagram-1.jpg",
-    "/images/workflow-diagram-2.jpg",
-    "/images/workflow-diagram-3.jpg"
-  ];
-
   return (
     <div>
-      <h2 className="text-3xl md:text-4xl font-bold mb-3 text-andela-dark">
+      <h2 className="text-4xl font-bold mb-3 text-andela-dark">
         How Adaptive Hiring works: Bringing agile principles to tech hiring
       </h2>
       
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 mt-16">
-        {/* Left Column - Content */}
-        <div className="space-y-16">
+      <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 mt-12">
+        {/* Left Column - Content (7 columns on lg screens) */}
+        <div className="lg:col-span-7 space-y-24"> {/* Increased spacing between sections */}
           {sections.map((section, index) => (
             <div 
               key={section.id}
               ref={el => sectionRefs.current[index] = el}
-              className="scroll-mt-24"
+              className="scroll-mt-36" 
             >
               <div className="flex items-center gap-2 text-sm font-semibold text-blue-600 tracking-wider mb-4">
-                <div className="bg-blue-100 p-1 rounded-md">
+                <div className="bg-blue-100 p-1.5 rounded-full">
                   {section.icon}
                 </div>
                 <span>{section.label}</span>
               </div>
               
-              <h3 className="text-2xl font-bold mb-4 text-andela-dark">
+              <h3 className="text-2xl font-bold mb-4 text-gray-800">
                 {section.title}
               </h3>
               
-              <p className="text-gray-600 leading-relaxed">
+              <p className="text-gray-600 leading-relaxed mb-8 text-lg">
                 {section.description}
               </p>
             </div>
           ))}
         </div>
         
-        {/* Right Column - Sticky Visualization */}
-        <div className="relative">
-          <div className="lg:sticky lg:top-32">
-            <div className="bg-blue-50 rounded-xl p-5 border border-blue-100 shadow-sm">
+        {/* Right Column - Sticky Visualization (5 columns on lg screens) */}
+        <div className="lg:col-span-5 relative">
+          <div className="lg:sticky lg:top-40"> {/* Increased the top value for better positioning */}
+            <div className="bg-blue-50/50 rounded-xl overflow-hidden">
               {activeSection === 0 && (
-                <div className="aspect-video bg-white rounded-lg p-5 overflow-hidden">
-                  {/* Replace with actual image or visualization */}
-                  <div className="bg-green-50 h-full rounded-lg flex items-center justify-center">
-                    <div className="text-center">
-                      <h4 className="font-semibold text-lg mb-2">Development team</h4>
-                      <div className="flex justify-center gap-2">
-                        <div className="w-8 h-8 bg-blue-400 rounded-full"></div>
-                        <div className="w-8 h-8 bg-green-400 rounded-full"></div>
-                        <div className="w-8 h-8 bg-purple-400 rounded-full"></div>
-                        <div className="w-8 h-8 bg-yellow-400 rounded-full"></div>
+                <div className="aspect-video relative">
+                  <div className="absolute inset-0 flex items-center justify-center">
+                    <div className="bg-white/90 rounded-lg p-5 shadow-sm w-4/5 max-w-md">
+                      <div className="text-center mb-4">
+                        <h4 className="font-semibold text-lg text-blue-800">Development team</h4>
+                      </div>
+                      <div className="flex flex-wrap justify-center gap-6">
+                        <div className="relative">
+                          <div className="w-12 h-12 bg-blue-400 rounded-full flex items-center justify-center text-white font-bold">
+                            JD
+                          </div>
+                          <div className="h-1 w-20 absolute top-1/2 -right-20 bg-gray-200"></div>
+                        </div>
+                        <div className="relative">
+                          <div className="w-12 h-12 bg-green-400 rounded-full flex items-center justify-center text-white font-bold">
+                            KL
+                          </div>
+                          <div className="h-20 w-1 absolute -bottom-20 left-1/2 bg-gray-200"></div>
+                        </div>
+                        <div className="relative">
+                          <div className="w-12 h-12 bg-purple-400 rounded-full flex items-center justify-center text-white font-bold">
+                            AR
+                          </div>
+                          <div className="h-1 w-20 absolute top-1/2 -left-20 bg-gray-200"></div>
+                        </div>
                       </div>
                     </div>
                   </div>
@@ -307,44 +429,125 @@ const AdaptiveHiringWorkflow = () => {
               )}
               
               {activeSection === 1 && (
-                <div className="aspect-video bg-white rounded-lg p-5 overflow-hidden">
-                  {/* Replace with actual image or visualization */}
-                  <div className="bg-blue-50 h-full rounded-lg flex flex-col gap-3 p-5">
-                    <div className="flex items-center gap-3">
-                      <div className="w-6 h-6 bg-blue-500 rounded-full"></div>
-                      <div className="flex-1 h-8 bg-gray-100 rounded-md"></div>
-                    </div>
-                    <div className="flex items-center gap-3">
-                      <div className="w-6 h-6 bg-green-500 rounded-full"></div>
-                      <div className="flex-1 h-8 bg-gray-100 rounded-md"></div>
-                    </div>
-                    <div className="flex items-center gap-3">
-                      <div className="w-6 h-6 bg-yellow-500 rounded-full"></div>
-                      <div className="flex-1 h-8 bg-gray-100 rounded-md"></div>
+                <div className="aspect-video relative">
+                  <div className="absolute inset-0 flex items-center justify-center">
+                    <div className="bg-white/90 rounded-lg p-6 shadow-sm w-4/5">
+                      <h4 className="font-semibold text-sm text-blue-600 mb-3">SKILLS ASSESSMENT</h4>
+                      <div className="space-y-4">
+                        <div className="flex items-center gap-3">
+                          <div className="w-6 h-6 bg-blue-500 rounded-full"></div>
+                          <div className="flex-1 h-6 bg-gray-100 rounded-md relative">
+                            <div className="absolute inset-y-0 left-0 bg-blue-200 w-4/5 rounded-md"></div>
+                          </div>
+                          <span className="text-sm font-medium">React</span>
+                        </div>
+                        <div className="flex items-center gap-3">
+                          <div className="w-6 h-6 bg-green-500 rounded-full"></div>
+                          <div className="flex-1 h-6 bg-gray-100 rounded-md relative">
+                            <div className="absolute inset-y-0 left-0 bg-green-200 w-3/5 rounded-md"></div>
+                          </div>
+                          <span className="text-sm font-medium">Node.js</span>
+                        </div>
+                        <div className="flex items-center gap-3">
+                          <div className="w-6 h-6 bg-yellow-500 rounded-full"></div>
+                          <div className="flex-1 h-6 bg-gray-100 rounded-md relative">
+                            <div className="absolute inset-y-0 left-0 bg-yellow-200 w-2/3 rounded-md"></div>
+                          </div>
+                          <span className="text-sm font-medium">UX/UI</span>
+                        </div>
+                      </div>
                     </div>
                   </div>
                 </div>
               )}
               
               {activeSection === 2 && (
-                <div className="aspect-video bg-white rounded-lg p-5 overflow-hidden">
-                  {/* Replace with actual image or visualization */}
-                  <div className="bg-green-50 h-full rounded-lg grid grid-cols-2 gap-4 p-5">
-                    <div className="bg-white p-3 rounded-md shadow-sm flex items-center gap-2">
-                      <div className="w-8 h-8 bg-blue-400 rounded-full"></div>
-                      <div className="flex-1 h-4 bg-gray-100 rounded-md"></div>
+                <div className="aspect-video relative">
+                  <div className="absolute inset-0 flex items-center justify-center">
+                    <div className="bg-white/90 rounded-lg p-5 shadow-sm w-11/12 max-w-md">
+                      <div className="flex justify-between items-center mb-4">
+                        <h4 className="font-semibold text-sm text-blue-600">TALENT MATCHING</h4>
+                        <span className="text-xs text-gray-500">4 matches found</span>
+                      </div>
+                      <div className="grid grid-cols-2 gap-3">
+                        <div className="bg-blue-50 p-3 rounded-md shadow-sm flex items-center gap-2">
+                          <div className="w-10 h-10 bg-blue-400 rounded-full flex items-center justify-center text-white font-bold text-xs">
+                            JS
+                          </div>
+                          <div>
+                            <div className="text-xs font-semibold">Jason S.</div>
+                            <div className="text-xs text-gray-500">React Expert</div>
+                          </div>
+                        </div>
+                        <div className="bg-blue-50 p-3 rounded-md shadow-sm flex items-center gap-2">
+                          <div className="w-10 h-10 bg-green-400 rounded-full flex items-center justify-center text-white font-bold text-xs">
+                            AT
+                          </div>
+                          <div>
+                            <div className="text-xs font-semibold">Amy T.</div>
+                            <div className="text-xs text-gray-500">Full Stack</div>
+                          </div>
+                        </div>
+                        <div className="bg-blue-50 p-3 rounded-md shadow-sm flex items-center gap-2">
+                          <div className="w-10 h-10 bg-purple-400 rounded-full flex items-center justify-center text-white font-bold text-xs">
+                            RK
+                          </div>
+                          <div>
+                            <div className="text-xs font-semibold">Raj K.</div>
+                            <div className="text-xs text-gray-500">Node.js Dev</div>
+                          </div>
+                        </div>
+                        <div className="bg-blue-50 p-3 rounded-md shadow-sm flex items-center gap-2">
+                          <div className="w-10 h-10 bg-yellow-400 rounded-full flex items-center justify-center text-white font-bold text-xs">
+                            ML
+                          </div>
+                          <div>
+                            <div className="text-xs font-semibold">Maria L.</div>
+                            <div className="text-xs text-gray-500">UI Designer</div>
+                          </div>
+                        </div>
+                      </div>
                     </div>
-                    <div className="bg-white p-3 rounded-md shadow-sm flex items-center gap-2">
-                      <div className="w-8 h-8 bg-green-400 rounded-full"></div>
-                      <div className="flex-1 h-4 bg-gray-100 rounded-md"></div>
-                    </div>
-                    <div className="bg-white p-3 rounded-md shadow-sm flex items-center gap-2">
-                      <div className="w-8 h-8 bg-red-400 rounded-full"></div>
-                      <div className="flex-1 h-4 bg-gray-100 rounded-md"></div>
-                    </div>
-                    <div className="bg-white p-3 rounded-md shadow-sm flex items-center gap-2">
-                      <div className="w-8 h-8 bg-yellow-400 rounded-full"></div>
-                      <div className="flex-1 h-4 bg-gray-100 rounded-md"></div>
+                  </div>
+                </div>
+              )}
+              
+              {activeSection === 3 && (
+                <div className="aspect-video relative">
+                  <div className="absolute inset-0 flex items-center justify-center">
+                    <div className="bg-white/90 rounded-lg p-5 shadow-sm w-4/5 max-w-md">
+                      <h4 className="font-semibold text-sm text-blue-600 mb-3">TEAM SCALING</h4>
+                      <div className="space-y-3">
+                        <div className="flex justify-between items-center">
+                          <span className="text-sm font-medium">Team Size</span>
+                          <div className="flex items-center">
+                            <span className="text-sm font-medium mr-2">+2</span>
+                            <div className="flex -space-x-2">
+                              <div className="w-8 h-8 bg-blue-400 rounded-full border-2 border-white z-30"></div>
+                              <div className="w-8 h-8 bg-green-400 rounded-full border-2 border-white z-20"></div>
+                              <div className="w-8 h-8 bg-yellow-400 rounded-full border-2 border-white z-10"></div>
+                            </div>
+                          </div>
+                        </div>
+                        <div className="h-1 bg-gray-200 rounded-full w-full">
+                          <div className="h-1 bg-blue-500 rounded-full w-2/3"></div>
+                        </div>
+                        <div className="flex justify-between text-xs text-gray-600">
+                          <span>Current: 3</span>
+                          <span>Target: 5</span>
+                        </div>
+                        <div className="mt-4 flex justify-between items-center">
+                          <span className="text-sm font-medium">Duration</span>
+                          <span className="text-sm font-semibold">3 months</span>
+                        </div>
+                        <div className="h-1 bg-gray-200 rounded-full w-full">
+                          <div className="h-1 bg-green-500 rounded-full w-1/4"></div>
+                        </div>
+                        <div className="flex justify-between text-xs text-gray-600">
+                          <span>Flexible</span>
+                          <span>Extendable</span>
+                        </div>
+                      </div>
                     </div>
                   </div>
                 </div>
