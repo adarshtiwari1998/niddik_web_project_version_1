@@ -60,11 +60,16 @@ export default function CandidateLayout({ children, activeTab = "" }: CandidateL
       {/* Header */}
       <header className="sticky top-0 z-30 w-full border-b bg-background">
         <div className="container flex h-16 items-center justify-between py-4">
-          <div className="flex items-center gap-2">
-            <Link href="/">
-              <span className="text-xl font-bold text-primary cursor-pointer">Niddik</span>
+          <div className="flex items-center gap-4">
+            <Link href="/" className="flex flex-col items-center">
+              <img 
+                src="/images/niddik_logo.png" 
+                alt="Niddik Logo" 
+                className="h-10" 
+              />
+              <span className="text-xs text-muted-foreground mt-0.5">Connecting People, Changing Lives</span>
             </Link>
-            <span className="text-sm text-muted-foreground">Candidate Portal</span>
+            <span className="text-sm text-muted-foreground border-l pl-4">Candidate Portal</span>
           </div>
           
           <div className="hidden md:flex items-center gap-4">
@@ -115,6 +120,14 @@ export default function CandidateLayout({ children, activeTab = "" }: CandidateL
               <SheetContent side="right" className="w-[280px] sm:w-[300px]">
                 <div className="flex flex-col h-full">
                   <div className="px-2 py-4 border-b">
+                    <div className="flex flex-col mb-4">
+                      <img 
+                        src="/images/niddik_logo.png" 
+                        alt="Niddik Logo" 
+                        className="h-8 mx-auto" 
+                      />
+                      <span className="text-xs text-muted-foreground text-center mt-1">Connecting People, Changing Lives</span>
+                    </div>
                     <div className="flex items-center gap-3">
                       <Avatar className="h-10 w-10">
                         <AvatarImage src={user.resumeUrl || ""} alt={user.fullName || user.username} />
