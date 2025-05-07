@@ -53,7 +53,10 @@ type FormValues = z.infer<typeof formSchema>;
 export default function RequestDemo() {
   const { toast } = useToast();
   const [submitted, setSubmitted] = useState(false);
-  const [checkEmail, setCheckEmail] = useState<string | null>(null);
+  const [checkEmail, setCheckEmail] = useState<string | null>(() => {
+    // Check localStorage on component mount for any previously submitted email
+    return localStorage.getItem('demoRequestEmail');
+  });
   const [isAnnouncementVisible, setIsAnnouncementVisible] = useState(true);
 
   const handleAnnouncementVisibilityChange = (isVisible: boolean) => {
@@ -102,7 +105,10 @@ export default function RequestDemo() {
         description: "Your demo request has been submitted. We'll be in touch soon.",
       });
       setSubmitted(true);
-      setCheckEmail(form.getValues().workEmail);
+      const email = form.getValues().workEmail;
+      setCheckEmail(email);
+      // Store email in localStorage to remember demo request status across visits
+      localStorage.setItem('demoRequestEmail', email);
       queryClient.invalidateQueries({ queryKey: ['/api/demo-requests/check'] });
     },
     onError: (error: any) => {
@@ -112,7 +118,9 @@ export default function RequestDemo() {
         
         if (errorData.existingRequest) {
           // If user already has a request, just check its status
-          setCheckEmail(form.getValues().workEmail);
+          const email = form.getValues().workEmail;
+          setCheckEmail(email);
+          localStorage.setItem('demoRequestEmail', email);
         } else {
           toast({
             title: "Error",
