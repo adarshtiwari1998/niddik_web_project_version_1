@@ -79,7 +79,7 @@ export default function CareersHeader() {
                   alt="NiDDiK Logo" 
                   className="h-10" 
                 />
-                <div className="text-[10px] text-muted-foreground mt-1">Connecting People, Changing Lives</div>
+                <div className="text-[10px] text-gray-500 mt-0.5 ml-0.5">Connecting People, Changing Lives</div>
               </div>
             </Link>
             <nav className="hidden md:flex gap-6">
@@ -179,7 +179,7 @@ export default function CareersHeader() {
                           alt="NiDDiK Logo" 
                           className="h-10" 
                         />
-                        <div className="text-[10px] text-muted-foreground mt-1">Connecting People, Changing Lives</div>
+                        <div className="text-[10px] text-gray-500 mt-0.5 ml-0.5">Connecting People, Changing Lives</div>
                       </div>
                     </Link>
                     <SheetClose className="rounded-sm opacity-70 ring-offset-background transition-opacity hover:opacity-100 focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2">

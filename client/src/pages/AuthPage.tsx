@@ -239,7 +239,7 @@ export default function AuthPage() {
                   alt="NiDDiK Logo" 
                   className="h-10"
                 />
-                <div className="text-[10px] text-muted-foreground mt-1">Connecting People, Changing Lives</div>
+                <div className="text-[10px] text-gray-500 mt-0.5 ml-0.5">Connecting People, Changing Lives</div>
               </div>
             </a>
             <nav className="hidden md:flex gap-6">
