@@ -37,8 +37,7 @@ const navItems: NavItem[] = [
       { label: "On-Demand", href: "/services/on-demand" },
       { label: "Hybrid RPO", href: "/services/hybrid-rpo" },
       { label: "Contingent", href: "/services/contingent" },
-      { label: "Web App Solutions", href: "/web-app-solutions" },
-      { label: "Adaptive Hiring", href: "/adaptive-hiring" }
+      { label: "Web App Solutions", href: "/web-app-solutions" }
     ]
   },
   {
@@ -49,7 +48,7 @@ const navItems: NavItem[] = [
       { label: "Expert Network", href: "#" }
     ]
   },
-  { label: "Enterprise", href: "#" },
+  { label: "Adaptive Hiring", href: "/adaptive-hiring" },
   { label: "Resources", href: "#" },
   {
     label: "Company",
