@@ -301,31 +301,41 @@ export async function registerRoutes(app: Express): Promise<Server> {
         return res.status(401).json({ success: false, message: 'Not authenticated' });
       }
       
-      // Get all job applications with user and job details
-      const applications = await storage.getAllApplicationsWithPagination({
+      // Get all job applications with user details
+      const result = await storage.getAllApplicationsWithPagination({
         page: 1,
         limit: 100, // Get a reasonable number of recent applications
-        includeUser: true,
-        includeJob: true
       });
       
-      // Transform to match the submitted candidates format
-      const formattedApplicants = applications.data.map(app => ({
-        candidateName: app.user?.username || '',
-        emailId: app.user?.email || '',
-        location: app.user?.profileData?.location || '',
-        experience: app.user?.profileData?.experience || '',
-        skills: app.user?.profileData?.skills || '',
-        noticePeriod: app.user?.profileData?.noticePeriod || '',
-        currentCtc: app.user?.profileData?.currentCtc || '',
-        expectedCtc: app.user?.profileData?.expectedCtc || '',
-        contactNo: app.user?.profileData?.phone || '',
-        // Default values for required fields
-        client: app.jobListing?.companyName || '',
-        poc: '',
-        status: 'new',
-        applicationId: app.id // Use application ID to link back to the original application
-      }));
+      // Get application user details
+      const applications = result.applications;
+      const formattedApplicants = [];
+      
+      // Process each application
+      for (const app of applications) {
+        // Get user details for this application
+        const user = await storage.getUserById(app.userId);
+        const jobListing = await storage.getJobListingById(app.jobId);
+        
+        if (user) {
+          formattedApplicants.push({
+            candidateName: user.username || '',
+            emailId: user.email || '',
+            location: user.profileData?.location || '',
+            experience: user.profileData?.experience || '',
+            skills: user.profileData?.skills || app.skills || '',
+            noticePeriod: user.profileData?.noticePeriod || '',
+            currentCtc: user.profileData?.currentCtc || '',
+            expectedCtc: user.profileData?.expectedCtc || '',
+            contactNo: user.profileData?.phone || '',
+            // Default values for required fields
+            client: jobListing?.companyName || '',
+            poc: '',
+            status: 'new',
+            applicationId: app.id // Use application ID to link back to the original application
+          });
+        }
+      }
       
       res.json({ success: true, data: formattedApplicants });
     } catch (error) {

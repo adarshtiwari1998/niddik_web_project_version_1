@@ -12,7 +12,7 @@ import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, D
 import { Badge } from "@/components/ui/badge";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle, AlertDialogTrigger } from "@/components/ui/alert-dialog";
-import { Loader2, Edit, Trash2, Info, Plus, Download, Upload, Filter, Search, FileSpreadsheet } from "lucide-react";
+import { Loader2, Edit, Trash2, Info, Plus, Download, Upload, Filter, Search, FileSpreadsheet, Check, X } from "lucide-react";
 import { formatDistanceToNow } from "date-fns";
 import { apiRequest } from "@/lib/queryClient";
 import { useForm, SubmitHandler } from "react-hook-form";
@@ -438,17 +438,23 @@ export default function SubmittedCandidates() {
     enabled: false // Don't load automatically, only when requested
   });
   
+  // Extended form type with margin calculations
+  type ExtendedCandidateFormValues = CandidateFormValues & {
+    marginPerHour?: string;
+    profitPerMonth?: string;
+  };
+  
   // State for inline editing
   const [isAddingInline, setIsAddingInline] = useState(false);
-  const [newCandidateData, setNewCandidateData] = useState<Partial<CandidateFormValues>>({
+  const [newCandidateData, setNewCandidateData] = useState<Partial<ExtendedCandidateFormValues>>({
     submissionDate: new Date().toISOString().split('T')[0],
     status: 'new'
   });
   
   // Handle inline editing field change
-  const handleInlineFieldChange = (field: keyof CandidateFormValues, value: string) => {
+  const handleInlineFieldChange = (field: keyof ExtendedCandidateFormValues, value: string) => {
     setNewCandidateData(prev => {
-      const updated = { ...prev, [field]: value };
+      const updated = { ...prev, [field]: value } as Partial<ExtendedCandidateFormValues>;
       
       // Auto-calculate margin and profit if bill rate or pay rate changes
       if (field === 'billRate' || field === 'payRate') {
@@ -465,11 +471,14 @@ export default function SubmittedCandidates() {
     });
   };
   
+  // State for job applicants dialog
+  const [isApplicantsDialogOpen, setIsApplicantsDialogOpen] = useState(false);
+  
   // Add candidate inline
   const handleAddInline = () => {
     // Validate required fields
     const requiredFields = ['candidateName', 'client', 'poc', 'emailId', 'sourcedBy'];
-    const missingFields = requiredFields.filter(field => !newCandidateData[field as keyof CandidateFormValues]);
+    const missingFields = requiredFields.filter(field => !newCandidateData[field as keyof ExtendedCandidateFormValues]);
     
     if (missingFields.length > 0) {
       toast({
@@ -480,7 +489,18 @@ export default function SubmittedCandidates() {
       return;
     }
     
-    createMutation.mutate(newCandidateData as CandidateFormValues);
+    // Add margin calculations
+    const billRate = newCandidateData.billRate || "0";
+    const payRate = newCandidateData.payRate || "0";
+    const { marginPerHour, profitPerMonth } = calculateMarginAndProfit(billRate, payRate);
+    
+    const dataToSubmit = {
+      ...newCandidateData,
+      marginPerHour,
+      profitPerMonth
+    };
+    
+    createMutation.mutate(dataToSubmit as unknown as CandidateFormValues);
     setIsAddingInline(false);
     setNewCandidateData({
       submissionDate: new Date().toISOString().split('T')[0],
@@ -492,7 +512,19 @@ export default function SubmittedCandidates() {
   const handleImportFromApplicants = () => {
     queryClient.resetQueries({ queryKey: ['/api/submitted-candidates/job-applicants'] });
     queryClient.prefetchQuery({ queryKey: ['/api/submitted-candidates/job-applicants'] });
-    setIsImportDialogOpen(true);
+    setIsApplicantsDialogOpen(true);
+  };
+  
+  // Handle selecting an applicant to import
+  const handleSelectApplicant = (applicant: any) => {
+    setNewCandidateData({
+      ...applicant,
+      submissionDate: new Date().toISOString().split('T')[0],
+      sourcedBy: 'Job Application',
+      status: 'new'
+    });
+    setIsApplicantsDialogOpen(false);
+    setIsAddingInline(true);
   };
   
   // Form submit handlers
@@ -552,15 +584,83 @@ export default function SubmittedCandidates() {
           <div className="flex flex-col md:flex-row justify-between items-center gap-4 mb-6">
             <div className="flex flex-wrap gap-2">
               <Button 
-                onClick={() => {
-                  form.reset();
-                  setIsAddDialogOpen(true);
-                }}
+                onClick={() => setIsAddingInline(true)}
                 className="bg-primary text-white"
               >
                 <Plus className="h-4 w-4 mr-2" />
                 Add Candidate
               </Button>
+              
+              <Button 
+                variant="outline" 
+                onClick={handleImportFromApplicants}
+              >
+                <Download className="h-4 w-4 mr-2" />
+                Import from Applications
+              </Button>
+              
+              <Dialog open={isApplicantsDialogOpen} onOpenChange={setIsApplicantsDialogOpen}>
+                <DialogContent className="max-w-4xl">
+                  <DialogHeader>
+                    <DialogTitle>Import from Job Applications</DialogTitle>
+                    <DialogDescription>
+                      Select an applicant to import as a submitted candidate
+                    </DialogDescription>
+                  </DialogHeader>
+                  
+                  <div className="py-4 max-h-[500px] overflow-auto">
+                    {isLoadingApplicants ? (
+                      <div className="flex flex-col items-center justify-center py-8">
+                        <Loader2 className="h-8 w-8 animate-spin text-primary mb-2" />
+                        <p className="text-sm text-muted-foreground">Loading applicants...</p>
+                      </div>
+                    ) : applicantsData?.data?.length === 0 ? (
+                      <div className="text-center py-8">
+                        <p className="text-muted-foreground">No applicants found</p>
+                      </div>
+                    ) : (
+                      <Table>
+                        <TableHeader>
+                          <TableRow>
+                            <TableHead>Name</TableHead>
+                            <TableHead>Email</TableHead>
+                            <TableHead>Skills</TableHead>
+                            <TableHead>Experience</TableHead>
+                            <TableHead>Location</TableHead>
+                            <TableHead className="text-right">Actions</TableHead>
+                          </TableRow>
+                        </TableHeader>
+                        <TableBody>
+                          {applicantsData?.data?.map((applicant: any, index: number) => (
+                            <TableRow key={`applicant-${index}`}>
+                              <TableCell>{applicant.candidateName}</TableCell>
+                              <TableCell>{applicant.emailId}</TableCell>
+                              <TableCell className="max-w-[200px] truncate">{applicant.skills}</TableCell>
+                              <TableCell>{applicant.experience}</TableCell>
+                              <TableCell>{applicant.location}</TableCell>
+                              <TableCell className="text-right">
+                                <Button
+                                  onClick={() => handleSelectApplicant(applicant)}
+                                  size="sm"
+                                  variant="outline"
+                                >
+                                  Select
+                                </Button>
+                              </TableCell>
+                            </TableRow>
+                          ))}
+                        </TableBody>
+                      </Table>
+                    )}
+                  </div>
+                  
+                  <DialogFooter>
+                    <Button variant="outline" onClick={() => setIsApplicantsDialogOpen(false)}>
+                      Cancel
+                    </Button>
+                  </DialogFooter>
+                </DialogContent>
+              </Dialog>
               
               <Dialog open={isImportDialogOpen} onOpenChange={setIsImportDialogOpen}>
                 <DialogTrigger asChild>
@@ -731,6 +831,129 @@ export default function SubmittedCandidates() {
                   </TableRow>
                 </TableHeader>
                 <TableBody>
+                  {/* Inline add candidate row */}
+                  {isAddingInline && (
+                    <TableRow className="bg-muted/30">
+                      <TableCell>
+                        <div className="space-y-1">
+                          <Input 
+                            placeholder="Candidate name"
+                            className="w-full"
+                            value={newCandidateData.candidateName || ''}
+                            onChange={(e) => handleInlineFieldChange('candidateName', e.target.value)}
+                          />
+                          <Input 
+                            placeholder="Email address"
+                            className="w-full"
+                            value={newCandidateData.emailId || ''}
+                            onChange={(e) => handleInlineFieldChange('emailId', e.target.value)}
+                          />
+                        </div>
+                      </TableCell>
+                      <TableCell>
+                        <div className="space-y-1">
+                          <Input 
+                            placeholder="Client"
+                            className="w-full"
+                            value={newCandidateData.client || ''}
+                            onChange={(e) => handleInlineFieldChange('client', e.target.value)}
+                          />
+                          <Input 
+                            placeholder="POC"
+                            className="w-full"
+                            value={newCandidateData.poc || ''}
+                            onChange={(e) => handleInlineFieldChange('poc', e.target.value)}
+                          />
+                        </div>
+                      </TableCell>
+                      <TableCell>
+                        <Input
+                          placeholder="Skills (comma-separated)"
+                          className="w-full"
+                          value={newCandidateData.skills || ''}
+                          onChange={(e) => handleInlineFieldChange('skills', e.target.value)}
+                        />
+                      </TableCell>
+                      <TableCell>
+                        <div className="space-y-1">
+                          <Input 
+                            placeholder="Experience (years)"
+                            className="w-full"
+                            value={newCandidateData.experience || ''}
+                            onChange={(e) => handleInlineFieldChange('experience', e.target.value)}
+                          />
+                          <Input 
+                            placeholder="Notice period"
+                            className="w-full"
+                            value={newCandidateData.noticePeriod || ''}
+                            onChange={(e) => handleInlineFieldChange('noticePeriod', e.target.value)}
+                          />
+                        </div>
+                      </TableCell>
+                      <TableCell>
+                        <Input 
+                          placeholder="Bill rate"
+                          className="w-full"
+                          type="number"
+                          value={newCandidateData.billRate || ''}
+                          onChange={(e) => handleInlineFieldChange('billRate', e.target.value)}
+                        />
+                      </TableCell>
+                      <TableCell>
+                        <Input 
+                          placeholder="Pay rate"
+                          className="w-full"
+                          type="number"
+                          value={newCandidateData.payRate || ''}
+                          onChange={(e) => handleInlineFieldChange('payRate', e.target.value)}
+                        />
+                      </TableCell>
+                      <TableCell>
+                        {newCandidateData.marginPerHour ? (
+                          <div>
+                            <div>${newCandidateData.marginPerHour}</div>
+                            <div className="text-xs text-muted-foreground">
+                              ${newCandidateData.profitPerMonth}/mo
+                            </div>
+                          </div>
+                        ) : (
+                          <div className="text-muted-foreground text-sm">Auto-calculated</div>
+                        )}
+                      </TableCell>
+                      <TableCell>
+                        <Input 
+                          placeholder="Status"
+                          className="w-full"
+                          value={newCandidateData.status || ''}
+                          onChange={(e) => handleInlineFieldChange('status', e.target.value)}
+                        />
+                      </TableCell>
+                      <TableCell className="text-right">
+                        <div className="flex justify-end gap-2">
+                          <Button
+                            onClick={handleAddInline}
+                            variant="ghost"
+                            size="icon"
+                            disabled={createMutation.isPending}
+                          >
+                            {createMutation.isPending ? (
+                              <Loader2 className="h-4 w-4 animate-spin" />
+                            ) : (
+                              <Check className="h-4 w-4 text-green-500" />
+                            )}
+                          </Button>
+                          <Button
+                            onClick={() => setIsAddingInline(false)}
+                            variant="ghost"
+                            size="icon"
+                          >
+                            <X className="h-4 w-4 text-red-500" />
+                          </Button>
+                        </div>
+                      </TableCell>
+                    </TableRow>
+                  )}
+
                   {isLoadingCandidates ? (
                     <TableRow>
                       <TableCell colSpan={9} className="h-24 text-center">
