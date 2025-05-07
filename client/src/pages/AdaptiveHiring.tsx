@@ -23,6 +23,7 @@ import Footer from "@/components/layout/Footer";
 // Use Cases with Sticky Image Component
 const UsesCasesWithStickyImage = () => {
   const [activeIndex, setActiveIndex] = useState(0);
+  const [isInViewport, setIsInViewport] = useState(false);
   const tabsRef = useRef<(HTMLDivElement | null)[]>([]);
   const useCasesRef = useRef<HTMLDivElement>(null);
   
@@ -68,6 +69,31 @@ const UsesCasesWithStickyImage = () => {
       icon: <Cloud className="w-5 h-5" />
     }
   ];
+
+  // Track if the use cases section is in the viewport
+  useEffect(() => {
+    const options = {
+      root: null,
+      rootMargin: '0px',
+      threshold: 0.1 // Trigger when at least 10% of the component is visible
+    };
+
+    const observer = new IntersectionObserver((entries) => {
+      entries.forEach(entry => {
+        setIsInViewport(entry.isIntersecting);
+      });
+    }, options);
+    
+    if (useCasesRef.current) {
+      observer.observe(useCasesRef.current);
+    }
+
+    return () => {
+      if (useCasesRef.current) {
+        observer.unobserve(useCasesRef.current);
+      }
+    };
+  }, []);
 
   useEffect(() => {
     // Programmatically click on first use case to make sure it's open
@@ -280,13 +306,21 @@ const UsesCasesWithStickyImage = () => {
           ))}
         </div>
         
-        {/* Right side image container */}
+        {/* Right side image container - fixed only when this section is in view */}
         <div className="lg:col-span-6 relative">
-          <div className="fixed top-1/4 right-0 transform -translate-y-1/4 max-w-lg w-full pr-12">
-            <div className="aspect-video relative rounded-xl overflow-hidden border border-gray-200 shadow-md">
-              {renderImage()}
+          {isInViewport ? (
+            <div className="fixed right-0 top-40 w-[40%] max-w-lg pr-12 z-10">
+              <div className="aspect-video relative rounded-xl overflow-hidden border border-gray-200 shadow-md">
+                {renderImage()}
+              </div>
             </div>
-          </div>
+          ) : (
+            <div className="pt-8 pr-12">
+              <div className="aspect-video relative rounded-xl overflow-hidden border border-gray-200 shadow-md">
+                {renderImage()}
+              </div>
+            </div>
+          )}
         </div>
       </div>
     </div>
@@ -296,9 +330,9 @@ const UsesCasesWithStickyImage = () => {
 // How Adaptive Hiring Works Component
 const AdaptiveHiringWorkflow = () => {
   const [activeSection, setActiveSection] = useState(0);
+  const [isInViewport, setIsInViewport] = useState(false);
   const sectionRefs = useRef<(HTMLDivElement | null)[]>([]);
-  const imageContainerRef = useRef<HTMLDivElement>(null);
-  const [imageContainerWidth, setImageContainerWidth] = useState(0);
+  const componentRef = useRef<HTMLDivElement>(null);
   
   const sections = [
     {
@@ -331,27 +365,33 @@ const AdaptiveHiringWorkflow = () => {
     }
   ];
 
-  // Calculate initial viewport height for positioning
+  // Track if the component is in viewport to control fixed positioning
   useEffect(() => {
-    // Calculate the width of the image container for proper positioning
-    if (imageContainerRef.current) {
-      setImageContainerWidth(imageContainerRef.current.clientWidth);
-    }
-
-    const handleResize = () => {
-      if (imageContainerRef.current) {
-        setImageContainerWidth(imageContainerRef.current.clientWidth);
-      }
+    const options = {
+      root: null,
+      rootMargin: '0px',
+      threshold: 0.1 // Trigger when at least 10% of the component is visible
     };
 
-    window.addEventListener('resize', handleResize);
+    const observer = new IntersectionObserver((entries) => {
+      entries.forEach(entry => {
+        setIsInViewport(entry.isIntersecting);
+      });
+    }, options);
+    
+    if (componentRef.current) {
+      observer.observe(componentRef.current);
+    }
+
     return () => {
-      window.removeEventListener('resize', handleResize);
+      if (componentRef.current) {
+        observer.unobserve(componentRef.current);
+      }
     };
   }, []);
 
+  // For tracking which content section is active
   useEffect(() => {
-    // For intersection observer to detect scroll position in content sections
     const observerOptions = {
       root: null,
       rootMargin: '-5% 0px -30% 0px',
@@ -541,7 +581,7 @@ const AdaptiveHiringWorkflow = () => {
   };
 
   return (
-    <div id="how-adaptive-hiring-works" className="relative pb-16">
+    <div id="how-adaptive-hiring-works" className="relative pb-16" ref={componentRef}>
       <h2 className="text-4xl font-bold mb-6 text-andela-dark">
         How Adaptive Hiring works: Bringing agile principles to tech hiring
       </h2>
@@ -581,11 +621,17 @@ const AdaptiveHiringWorkflow = () => {
             ))}
           </div>
           
-          {/* Right Column - Fixed position image that stays in view */}
-          <div ref={imageContainerRef} className="hidden lg:block">
-            <div className="fixed right-0 top-40 w-[40%] max-w-lg pr-12 z-10">
-              {getImageContent()}
-            </div>
+          {/* Right Column - Image that's only fixed when component is in viewport */}
+          <div className="hidden lg:block">
+            {isInViewport ? (
+              <div className="fixed right-0 top-40 w-[40%] max-w-lg pr-12 z-10">
+                {getImageContent()}
+              </div>
+            ) : (
+              <div className="w-full pt-8 pr-12">
+                {getImageContent()}
+              </div>
+            )}
           </div>
         </div>
       </div>
