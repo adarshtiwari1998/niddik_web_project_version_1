@@ -113,10 +113,10 @@ const BusinessChallengesSection = () => {
         </svg>
       </div>
       
-      <Container>
+      <Container className="px-6 md:px-10">
         <div className="flex flex-col lg:flex-row">
           {/* Left column with heading and description - exact width and layout as in image */}
-          <div className="w-full lg:w-1/3 mb-12 lg:mb-0 pr-0 lg:pr-12">
+          <div className="w-full lg:w-1/3 mb-12 lg:mb-0 pr-0 lg:pr-16">
             <motion.div
               initial={{ opacity: 0, y: 20 }}
               whileInView={{ opacity: 1, y: 0 }}
@@ -137,10 +137,10 @@ const BusinessChallengesSection = () => {
             </motion.div>
           </div>
           
-          {/* Right column with challenge cards - exact grid layout as in image */}
+          {/* Right column with challenge cards - showing only 2 in a row */}
           <div className="w-full lg:w-2/3">
             <motion.div 
-              className="grid grid-cols-2 lg:grid-cols-3 gap-x-6 gap-y-12"
+              className="grid grid-cols-1 sm:grid-cols-2 gap-x-10 gap-y-12"
               variants={containerVariants}
               initial="hidden"
               whileInView="visible"
