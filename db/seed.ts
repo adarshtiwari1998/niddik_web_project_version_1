@@ -1,5 +1,17 @@
 import { db } from "./index";
-import { testimonials, clients, jobListings } from "@shared/schema";
+import { testimonials, clients, jobListings, users } from "@shared/schema";
+import { scrypt, randomBytes } from "crypto";
+import { promisify } from "util";
+
+// For hashing the admin password
+const scryptAsync = promisify(scrypt);
+
+// Hash passwords function
+async function hashPassword(password: string) {
+  const salt = randomBytes(16).toString("hex");
+  const buf = (await scryptAsync(password, salt, 64)) as Buffer;
+  return `${buf.toString("hex")}.${salt}`;
+}
 
 async function seed() {
   try {
@@ -169,6 +181,30 @@ async function seed() {
       console.log(`Added ${jobListingsData.length} job listings`);
     } else {
       console.log("Job listings already exist, skipping seeding");
+    }
+
+    // Seed admin user
+    console.log("Seeding admin user...");
+    const adminPassword = "admin123"; // Default admin password
+    const hashedPassword = await hashPassword(adminPassword);
+    
+    // Check if admin user exists
+    const existingAdmin = await db.query.users.findFirst({
+      where: (fields, { eq }) => eq(fields.username, "admin")
+    });
+    
+    if (!existingAdmin) {
+      await db.insert(users).values({
+        username: "admin",
+        password: hashedPassword,
+        email: "admin@niddik.com",
+        fullName: "Niddik Admin",
+        role: "admin",
+      });
+      console.log(`Added admin user with username: admin and password: ${adminPassword}`);
+      console.log("IMPORTANT: Change this password after first login for security!");
+    } else {
+      console.log("Admin user already exists, skipping seeding");
     }
 
     console.log("Seeding completed successfully!");
