@@ -338,55 +338,69 @@ const AdaptiveHiringWorkflow = () => {
     }
   ];
 
-  // Create separate refs for entry and exit detection
+  // Create refs for detecting when the workflow section is in view
   const topSentinelRef = useRef<HTMLDivElement>(null);
   const bottomSentinelRef = useRef<HTMLDivElement>(null);
-  const firstContentRef = useRef<HTMLDivElement>(null); // First content block to trigger fixed position
-
+  const sectionHeaderRef = useRef<HTMLHeadingElement>(null); // Reference to the section header
+  
   // Track when component enters and exits viewport to control fixed positioning
   useEffect(() => {
-    // Track the first content section to trigger fixed positioning
+    // Options for detecting section entry at the top
     const options = {
       root: null,
-      rootMargin: '-100px 0px -50% 0px', // Adjust to trigger when first content is visible
-      threshold: 0.1
+      rootMargin: '-80px 0px -70% 0px', // Adjust to trigger when header becomes visible
+      threshold: [0.1, 0.2, 0.3] // Multiple thresholds for better detection
+    };
+    
+    // Options for detecting when we should exit fixed positioning
+    const bottomOptions = {
+      root: null, 
+      rootMargin: '0px 0px 0px 0px',
+      threshold: 0.8
     };
 
-    // Function to handle intersection updates
-    const handleIntersection = (entries: IntersectionObserverEntry[]) => {
+    // Function to handle intersection updates for the top trigger
+    const handleTopIntersection = (entries: IntersectionObserverEntry[]) => {
       entries.forEach(entry => {
-        // If the first content block is intersecting, we want to fix the image
-        if (entry.target === firstContentRef.current) {
-          console.log("Content block visibility:", entry.isIntersecting);
+        // If the header is intersecting, we want to fix the image
+        if (entry.target === sectionHeaderRef.current) {
+          console.log("Section header visibility:", entry.isIntersecting);
           setIsInViewport(entry.isIntersecting);
         }
-        
-        // Bottom sentinel logic to unfix when reaching the end
-        if (entry.target === bottomSentinelRef.current && entry.isIntersecting) {
-          console.log("Exiting section - releasing image");
+      });
+    };
+    
+    // Function to handle intersection for bottom sentinel
+    const handleBottomIntersection = (entries: IntersectionObserverEntry[]) => {
+      entries.forEach(entry => {
+        // When bottom sentinel enters viewport, unfix the image
+        if (entry.isIntersecting) {
+          console.log("Exiting section - reaching bottom");
           setIsInViewport(false);
         }
       });
     };
 
-    const observer = new IntersectionObserver(handleIntersection, options);
+    // Create observers
+    const topObserver = new IntersectionObserver(handleTopIntersection, options);
+    const bottomObserver = new IntersectionObserver(handleBottomIntersection, bottomOptions);
     
-    // Observe the first content section to trigger fixed positioning
-    if (firstContentRef.current) {
-      observer.observe(firstContentRef.current);
+    // Observe the section header to trigger fixed positioning
+    if (sectionHeaderRef.current) {
+      topObserver.observe(sectionHeaderRef.current);
     }
     
     // Observe bottom sentinel to know when to release fixed positioning
     if (bottomSentinelRef.current) {
-      observer.observe(bottomSentinelRef.current);
+      bottomObserver.observe(bottomSentinelRef.current);
     }
 
     return () => {
-      if (firstContentRef.current) {
-        observer.unobserve(firstContentRef.current);
+      if (sectionHeaderRef.current) {
+        topObserver.unobserve(sectionHeaderRef.current);
       }
       if (bottomSentinelRef.current) {
-        observer.unobserve(bottomSentinelRef.current);
+        bottomObserver.unobserve(bottomSentinelRef.current);
       }
     };
   }, []);
@@ -576,8 +590,64 @@ const AdaptiveHiringWorkflow = () => {
             </div>
           </div>
         );
+      case 4: // CHANGE QUICKLY
+        return (
+          <div className="bg-blue-50 rounded-lg overflow-hidden p-8">
+            <h4 className="font-semibold text-sm text-blue-600 mb-5">BUSINESS AGILITY</h4>
+            <div className="space-y-5">
+              <div className="bg-white rounded-lg p-4 shadow-sm">
+                <div className="flex items-center justify-between mb-3">
+                  <div className="flex items-center gap-2">
+                    <div className="w-8 h-8 bg-green-100 rounded-full flex items-center justify-center">
+                      <div className="w-4 h-4 bg-green-500 rounded-full"></div>
+                    </div>
+                    <span className="text-sm font-medium">Current Sprint</span>
+                  </div>
+                  <span className="text-xs bg-green-100 text-green-700 px-2 py-1 rounded-full">Active</span>
+                </div>
+                <div className="h-2 bg-gray-100 rounded-full w-full mb-2">
+                  <div className="h-2 bg-green-500 rounded-full w-3/4"></div>
+                </div>
+                <div className="flex justify-between text-xs text-gray-500">
+                  <span>Week 2 of 3</span>
+                  <span>75% Complete</span>
+                </div>
+              </div>
+              
+              <div className="bg-white rounded-lg p-4 shadow-sm">
+                <div className="flex items-center justify-between mb-3">
+                  <div className="flex items-center gap-2">
+                    <div className="w-8 h-8 bg-blue-100 rounded-full flex items-center justify-center">
+                      <div className="w-4 h-4 bg-blue-500 rounded-full"></div>
+                    </div>
+                    <span className="text-sm font-medium">Team Velocity</span>
+                  </div>
+                </div>
+                <div className="flex items-center justify-center gap-3 mt-2">
+                  <div className="w-24 h-24 rounded-full border-8 border-blue-200 flex items-center justify-center">
+                    <div className="text-lg font-bold text-blue-500">92%</div>
+                  </div>
+                  <div className="text-sm">
+                    <div className="font-medium">Efficiency</div>
+                    <div className="text-gray-500 text-xs mt-1">Above target</div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        );
       default:
-        return null;
+        return (
+          <div className="bg-blue-50 rounded-lg overflow-hidden p-8 flex items-center justify-center">
+            <div className="text-center">
+              <div className="w-16 h-16 mx-auto bg-blue-100 rounded-full flex items-center justify-center mb-3">
+                <div className="w-8 h-8 bg-blue-500 rounded-full"></div>
+              </div>
+              <h4 className="font-semibold text-lg text-gray-700">Adaptive Hiring</h4>
+              <p className="text-sm text-gray-500 mt-2">Scroll to explore our workflow</p>
+            </div>
+          </div>
+        );
     }
   };
 
@@ -586,7 +656,7 @@ const AdaptiveHiringWorkflow = () => {
       {/* Top sentinel element to detect when section enters viewport */}
       <div ref={topSentinelRef} className="absolute top-0 h-1 w-full" />
       
-      <h2 className="text-4xl font-bold mb-6 text-andela-dark">
+      <h2 ref={sectionHeaderRef} className="text-4xl font-bold mb-6 text-andela-dark">
         How Adaptive Hiring works: Bringing agile principles to tech hiring
       </h2>
       
@@ -604,15 +674,7 @@ const AdaptiveHiringWorkflow = () => {
             {sections.map((section, index) => (
               <div 
                 key={section.id}
-                ref={el => {
-                  // Store in section refs array for active section tracking
-                  sectionRefs.current[index] = el;
-                  
-                  // Also set as firstContentRef if this is the first section
-                  if (index === 0 && el) {
-                    firstContentRef.current = el;
-                  }
-                }}
+                ref={el => sectionRefs.current[index] = el}
                 className="scroll-mt-40" 
               >
                 <div className="flex items-center gap-2 text-sm font-semibold text-blue-600 mb-4">
