@@ -89,27 +89,33 @@ type CandidateFormValues = z.infer<typeof candidateFormSchema>;
 const StatusBadge = ({ status }: { status: string }) => {
   let variant: "outline" | "default" | "secondary" | "destructive" = "outline";
   
-  switch (status.toLowerCase()) {
-    case "new":
-      variant = "default";
-      break;
-    case "submitted to client":
-      variant = "secondary";
-      break;
-    case "scheduled for interview":
-      variant = "secondary";
-      break;
-    case "rejected":
-      variant = "destructive";
-      break;
-    case "selected":
-      variant = "default";
-      break;
-    default:
-      variant = "outline";
+  // Support partial matching for common statuses
+  const statusLower = status.toLowerCase();
+  
+  if (statusLower.includes("new")) {
+    variant = "default";
+  } else if (statusLower.includes("submit")) {
+    variant = "secondary";
+  } else if (statusLower.includes("interview") || statusLower.includes("schedul")) {
+    variant = "secondary";
+  } else if (statusLower.includes("reject") || statusLower.includes("declin")) {
+    variant = "destructive";
+  } else if (statusLower.includes("select") || statusLower.includes("accept") || statusLower.includes("offer")) {
+    variant = "default";
   }
   
-  return <Badge variant={variant}>{status}</Badge>;
+  return (
+    <div className="max-w-[150px]">
+      <Badge variant={variant} className="whitespace-nowrap overflow-hidden text-ellipsis">
+        {status}
+      </Badge>
+      {status.length > 15 && (
+        <div className="text-xs text-muted-foreground mt-1 whitespace-normal">
+          {status}
+        </div>
+      )}
+    </div>
+  );
 };
 
 // Analytics Card Component
@@ -921,9 +927,10 @@ export default function SubmittedCandidates() {
                         )}
                       </TableCell>
                       <TableCell>
-                        <Input 
+                        <textarea 
                           placeholder="Status"
-                          className="w-full"
+                          className="w-full px-3 py-2 border rounded-md border-input bg-background text-sm ring-offset-background"
+                          rows={2}
                           value={newCandidateData.status || ''}
                           onChange={(e) => handleInlineFieldChange('status', e.target.value)}
                         />
