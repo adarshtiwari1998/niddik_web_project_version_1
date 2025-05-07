@@ -32,23 +32,31 @@ interface CandidateLayoutProps {
 export default function CandidateLayout({ children, activeTab = "" }: CandidateLayoutProps) {
   const { user, logoutMutation } = useAuth();
   const { toast } = useToast();
+  const [isLoggingOut, setIsLoggingOut] = useState(false);
 
   if (!user) return null;
 
-  const handleLogout = async () => {
-    try {
-      await logoutMutation.mutateAsync();
-      toast({
-        title: "Logged out successfully",
-        description: "You have been logged out of your account",
-      });
-    } catch (error) {
-      toast({
-        title: "Logout failed",
-        description: "An error occurred during logout",
-        variant: "destructive",
-      });
-    }
+  const handleLogout = () => {
+    setIsLoggingOut(true);
+    logoutMutation.mutate(undefined, {
+      onSuccess: () => {
+        toast({
+          title: "Logged out successfully",
+          description: "You have been logged out of your account",
+        });
+        setTimeout(() => {
+          window.location.href = "/";
+        }, 500);
+      },
+      onError: (error) => {
+        setIsLoggingOut(false);
+        toast({
+          title: "Logout failed",
+          description: "An error occurred during logout",
+          variant: "destructive",
+        });
+      }
+    });
   };
 
   // First letter of user's name or username for avatar fallback
@@ -59,6 +67,7 @@ export default function CandidateLayout({ children, activeTab = "" }: CandidateL
 
   return (
     <div className="flex flex-col min-h-screen bg-background">
+      {isLoggingOut && <LoadingScreen message="Logging out..." />}
       {/* Header */}
       <header className="sticky top-0 z-30 w-full border-b bg-background">
         <div className="container flex h-16 items-center justify-between py-4">

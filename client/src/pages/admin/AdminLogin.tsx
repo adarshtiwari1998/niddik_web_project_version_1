@@ -6,6 +6,7 @@ import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { Label } from "@/components/ui/label";
 import { Loader2, Lock, Shield, Clock } from "lucide-react";
+import { LoadingScreen } from "@/components/ui/loading-screen";
 import { useToast } from "@/hooks/use-toast";
 import { setAuthToken } from "@/lib/queryClient";
 import { format } from "date-fns";
@@ -13,6 +14,7 @@ import { format } from "date-fns";
 export default function AdminLogin() {
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
+  const [isRedirecting, setIsRedirecting] = useState(false);
   const { loginMutation } = useAuth();
   const { toast } = useToast();
   const [_, setLocation] = useLocation();
@@ -68,12 +70,21 @@ export default function AdminLogin() {
               setAuthToken(userData.token);
             }
             
+            // Set redirecting state to show loading screen immediately
+            setIsRedirecting(true);
+            
             // Get redirect URL from query parameters if it exists
             const urlParams = new URLSearchParams(window.location.search);
             const redirectUrl = urlParams.get("redirect");
             
             // Store a loading flag in sessionStorage that the dashboard will check
             sessionStorage.setItem('admin_dashboard_loading', 'true');
+            
+            // Show success toast
+            toast({
+              title: "Welcome back",
+              description: "You have successfully logged in to the admin panel",
+            });
             
             // Navigate immediately to admin dashboard or specified redirect URL
             setTimeout(() => {
@@ -82,12 +93,7 @@ export default function AdminLogin() {
               } else {
                 window.location.href = "/admin/dashboard"; // Force immediate navigation
               }
-            }, 100); // Tiny delay to ensure navigation happens
-            
-            toast({
-              title: "Welcome back",
-              description: "You have successfully logged in to the admin panel",
-            });
+            }, 0); // No delay needed - loading screen is already showing
           },
           onError: (error) => {
             console.error("Login error:", error);
@@ -111,6 +117,7 @@ export default function AdminLogin() {
 
   return (
     <div className="flex flex-col min-h-screen bg-gray-50 dark:bg-gray-900">
+      {isRedirecting && <LoadingScreen message="Logging in..." />}
       {/* Header */}
       <header className="border-b bg-background">
         <div className="container flex h-16 items-center justify-between">
