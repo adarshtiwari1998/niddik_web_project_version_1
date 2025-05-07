@@ -52,7 +52,8 @@ function Router() {
       {/* Careers & Jobs */}
       <Route path="/careers" component={CareerPage} />
       <Route path="/jobs/:id" component={JobDetail} />
-      <ProtectedRoute path="/dashboard" component={CandidateDashboard} />
+      <ProtectedRoute path="/candidate/dashboard" component={CandidateDashboard} />
+      <ProtectedRoute path="/dashboard" component={CandidateDashboard} /> {/* Keep for backward compatibility */}
       <ProtectedRoute path="/my-applications" component={MyApplications} />
       <ProtectedRoute path="/profile" component={ProfilePage} />
       <ProtectedRoute path="/apply/:id" component={JobApplication} />
