@@ -960,16 +960,16 @@ const AdaptiveHiring = () => {
         </Container>
       </section>
 
-      {/* Use Cases Section with Sticky Image */}
+      {/* How Adaptive Hiring Works Section */}
       <section className="py-20 bg-white relative">
         <Container>
           <div className="relative py-10">
-            <UsesCasesWithStickyImage />
+            <AdaptiveHiringWorkflow />
           </div>
         </Container>
       </section>
-
-      {/* Comparison Section */}
+      
+      {/* Comparison Section - Now right after the Adaptive Hiring Workflow */}
       <section className="py-20 bg-gray-50 relative">
         <Container>
           <motion.div
@@ -1108,12 +1108,12 @@ const AdaptiveHiring = () => {
           </div>
         </Container>
       </section>
-
-      {/* How Adaptive Hiring Works Section */}
+      
+      {/* Use Cases Section with Sticky Image */}
       <section className="py-20 bg-white relative">
         <Container>
           <div className="relative py-10">
-            <AdaptiveHiringWorkflow />
+            <UsesCasesWithStickyImage />
           </div>
         </Container>
       </section>
