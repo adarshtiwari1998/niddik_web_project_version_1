@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import { useLocation } from "wouter";
+import { useLocation, Link } from "wouter";
 import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
@@ -232,7 +232,7 @@ export default function AuthPage() {
       <header className="border-b bg-background">
         <div className="container flex h-16 items-center justify-between">
           <div className="flex items-center gap-6">
-            <a href="/" className="flex flex-col items-start pt-2 pb-2">
+            <Link href="/" className="flex flex-col items-start pt-2 pb-2">
               <div className="flex flex-col items-center">
                 <img 
                   src="/images/niddik_logo.png" 
@@ -241,14 +241,14 @@ export default function AuthPage() {
                 />
                 <div className="text-[10px] text-gray-500 mt-0.5">Connecting People, Changing Lives</div>
               </div>
-            </a>
+            </Link>
             <nav className="hidden md:flex gap-6">
-              <a href="/careers" className="text-sm font-medium hover:text-primary">
+              <Link href="/careers" className="text-sm font-medium hover:text-primary">
                 Browse Jobs
-              </a>
-              <a href="/about-us" className="text-sm font-medium hover:text-primary">
+              </Link>
+              <Link href="/about-us" className="text-sm font-medium hover:text-primary">
                 About Us
-              </a>
+              </Link>
             </nav>
           </div>
           
