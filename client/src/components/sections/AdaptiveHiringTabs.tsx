@@ -82,8 +82,8 @@ const AdaptiveHiringTabs: React.FC = () => {
 
   const activeTabData = tabs.find(tab => tab.id === activeTab) || tabs[0];
 
-  // Define primary teal color based on the reference
-  const primaryColor = '#0E8A7B'; // Teal color from the provided image
+  // Define primary brand color based on the reference
+  const primaryColor = '#00A651'; // Brand green color from the provided image
 
   return (
     <div className="flex flex-col gap-8">
@@ -142,7 +142,7 @@ const AdaptiveHiringTabs: React.FC = () => {
             className="bg-[#f8faff] rounded-lg p-8 shadow-sm"
           >
             <div className="mb-6">
-              <h3 className="text-[#0E8A7B] text-xl font-bold uppercase" style={{ color: primaryColor }}>
+              <h3 className="text-xl font-bold uppercase" style={{ color: primaryColor }}>
                 {activeTabData.title.toUpperCase()}
               </h3>
             </div>
@@ -181,7 +181,7 @@ const AdaptiveHiringTabs: React.FC = () => {
                   className="h-3 rounded-full" 
                   style={{ 
                     width: `${activeTabData.metrics.progress2}%`,
-                    backgroundColor: '#36B37E' // Secondary color (green)
+                    backgroundColor: primaryColor // Use primary brand color
                   }}
                 ></div>
               </div>
@@ -192,7 +192,7 @@ const AdaptiveHiringTabs: React.FC = () => {
               {activeTab === 'scale' && (
                 <div className="flex">
                   <div className="w-12 h-12 rounded-full bg-[#4794FF]"></div>
-                  <div className="w-12 h-12 rounded-full bg-[#36B37E] -ml-2"></div>
+                  <div className="w-12 h-12 rounded-full -ml-2" style={{ backgroundColor: primaryColor }}></div>
                   <div className="w-12 h-12 rounded-full bg-[#FFAB00] -ml-2"></div>
                   <div className="flex items-center justify-center ml-2 font-bold">
                     +2
@@ -203,9 +203,9 @@ const AdaptiveHiringTabs: React.FC = () => {
               {activeTab === 'quality' && (
                 <div className="grid grid-cols-3 gap-2">
                   <div className="w-8 h-8 rounded-full bg-[#4794FF]"></div>
-                  <div className="w-8 h-8 rounded-full bg-[#36B37E]"></div>
+                  <div className="w-8 h-8 rounded-full" style={{ backgroundColor: primaryColor }}></div>
                   <div className="w-8 h-8 rounded-full bg-[#FFAB00]"></div>
-                  <div className="w-8 h-8 rounded-full bg-[#0E8A7B]"></div>
+                  <div className="w-8 h-8 rounded-full bg-[#4794FF]/70"></div>
                   <div className="w-8 h-8 rounded-full bg-[#6554C0]"></div>
                   <div className="w-8 h-8 rounded-full bg-[#FF5630]"></div>
                 </div>
@@ -213,10 +213,10 @@ const AdaptiveHiringTabs: React.FC = () => {
               
               {activeTab === 'cost' && (
                 <div className="flex items-center">
-                  <div className="w-16 h-16 flex items-center justify-center bg-[#f0f7ff] rounded-full text-[#0E8A7B] font-bold text-xl" style={{ color: primaryColor }}>
+                  <div className="w-16 h-16 flex items-center justify-center bg-[#f0f7ff] rounded-full font-bold text-xl" style={{ color: primaryColor }}>
                     50%
                   </div>
-                  <div className="w-12 h-12 flex items-center justify-center bg-[#f0fff7] rounded-full text-[#36B37E] font-bold text-lg ml-4">
+                  <div className="w-12 h-12 flex items-center justify-center bg-[#f0fff7] rounded-full font-bold text-lg ml-4" style={{ color: primaryColor }}>
                     -$
                   </div>
                 </div>
@@ -224,10 +224,10 @@ const AdaptiveHiringTabs: React.FC = () => {
               
               {activeTab === 'agile' && (
                 <div className="flex items-center">
-                  <div className="h-10 px-4 flex items-center justify-center bg-[#f0f7ff] rounded-full text-[#4794FF] font-bold">
+                  <div className="h-10 px-4 flex items-center justify-center bg-[#f0f7ff] rounded-full font-bold" style={{ color: primaryColor }}>
                     48hrs
                   </div>
-                  <div className="h-10 px-4 flex items-center justify-center bg-[#f0fff7] rounded-full text-[#36B37E] font-bold ml-4">
+                  <div className="h-10 px-4 flex items-center justify-center bg-[#f0fff7] rounded-full font-bold ml-4" style={{ color: primaryColor }}>
                     24hrs
                   </div>
                 </div>
