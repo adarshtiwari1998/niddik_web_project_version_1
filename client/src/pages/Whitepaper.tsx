@@ -13,7 +13,6 @@ import { motion } from "framer-motion";
 import { Link } from "wouter";
 import Navbar from "@/components/layout/Navbar";
 import Footer from "@/components/layout/Footer";
-import AnnouncementBar from "@/components/layout/AnnouncementBar";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -51,23 +50,9 @@ const WhitepaperPage = () => {
     setCompany("");
   };
 
-  const [isAnnouncementVisible, setIsAnnouncementVisible] = useState(true);
-
-  const handleAnnouncementVisibilityChange = (isVisible: boolean) => {
-    setIsAnnouncementVisible(isVisible);
-  };
-
   return (
-    <div className="min-h-screen overflow-x-hidden pt-0">
-      <AnnouncementBar 
-        text="Download our new whitepaper on scaling tech teams effectively."
-        linkText="Get it now"
-        linkUrl="/whitepaper"
-        bgColor="bg-green-600" 
-        textColor="text-white"
-        onVisibilityChange={handleAnnouncementVisibilityChange}
-      />
-      <Navbar hasAnnouncementAbove={isAnnouncementVisible} />
+    <div className="min-h-screen overflow-x-hidden">
+      <Navbar />
       
       <main className="pt-24">
         {/* Hero Section */}
@@ -172,110 +157,31 @@ const WhitepaperPage = () => {
           </div>
         </section>
         
-        {/* Key Insights Section - with animated AI background */}
-        <section className="py-20 relative overflow-hidden bg-gradient-to-br from-sky-50 to-blue-50">
-          {/* Animated AI background elements */}
-          <div className="absolute inset-0 w-full h-full overflow-hidden opacity-10">
-            <motion.div 
-              className="absolute top-[10%] left-[10%] w-64 h-64 bg-blue-400 rounded-full blur-3xl"
-              animate={{ 
-                x: [0, 30, 0], 
-                y: [0, 20, 0],
-                scale: [1, 1.1, 1]
-              }}
-              transition={{ 
-                duration: 8, 
-                repeat: Infinity, 
-                ease: "easeInOut" 
-              }}
-            />
-            <motion.div 
-              className="absolute top-[40%] right-[20%] w-48 h-48 bg-indigo-400 rounded-full blur-3xl"
-              animate={{ 
-                x: [0, -20, 0], 
-                y: [0, 20, 0],
-                scale: [1, 1.2, 1]
-              }}
-              transition={{ 
-                duration: 10, 
-                repeat: Infinity, 
-                ease: "easeInOut",
-                delay: 1
-              }}
-            />
-            <motion.div 
-              className="absolute bottom-[20%] left-[30%] w-56 h-56 bg-green-400 rounded-full blur-3xl"
-              animate={{ 
-                x: [0, 20, 0], 
-                y: [0, -30, 0],
-                scale: [1, 1.1, 1]
-              }}
-              transition={{ 
-                duration: 12, 
-                repeat: Infinity, 
-                ease: "easeInOut",
-                delay: 2
-              }}
-            />
-            
-            {/* AI connections */}
-            <svg className="absolute inset-0 w-full h-full">
-              <motion.line 
-                x1="20%" y1="20%" x2="70%" y2="30%" 
-                stroke="rgba(99, 102, 241, 0.2)" 
-                strokeWidth="1"
-                initial={{ pathLength: 0, opacity: 0 }}
-                animate={{ pathLength: 1, opacity: 1 }}
-                transition={{ duration: 2, repeat: Infinity, repeatType: "reverse", ease: "easeInOut" }}
-              />
-              <motion.line 
-                x1="80%" y1="40%" x2="30%" y2="60%" 
-                stroke="rgba(99, 102, 241, 0.2)" 
-                strokeWidth="1"
-                initial={{ pathLength: 0, opacity: 0 }}
-                animate={{ pathLength: 1, opacity: 1 }}
-                transition={{ duration: 3, repeat: Infinity, repeatType: "reverse", ease: "easeInOut", delay: 0.5 }}
-              />
-              <motion.line 
-                x1="20%" y1="80%" x2="70%" y2="60%" 
-                stroke="rgba(99, 102, 241, 0.2)" 
-                strokeWidth="1"
-                initial={{ pathLength: 0, opacity: 0 }}
-                animate={{ pathLength: 1, opacity: 1 }}
-                transition={{ duration: 4, repeat: Infinity, repeatType: "reverse", ease: "easeInOut", delay: 1 }}
-              />
-            </svg>
-          </div>
-          
-          <div className="container mx-auto px-4 relative z-10">
-            <motion.div 
-              className="text-center mb-16"
-              initial={{ opacity: 0, y: 30 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              viewport={{ once: true }}
-              transition={{ duration: 0.7 }}
-            >
-              <h2 className="text-3xl lg:text-4xl font-bold mb-4 text-blue-900">Key Insights From The Whitepaper</h2>
-              <p className="text-xl text-blue-700 max-w-3xl mx-auto">
+        {/* Key Insights Section */}
+        <section className="py-20 bg-white">
+          <div className="container mx-auto px-4">
+            <div className="text-center mb-16">
+              <h2 className="text-3xl lg:text-4xl font-bold mb-4 text-gray-900">Key Insights From The Whitepaper</h2>
+              <p className="text-xl text-gray-600 max-w-3xl mx-auto">
                 Discover how our AI-driven talent sourcing approach is transforming traditional recruitment
               </p>
-            </motion.div>
+            </div>
             
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
               {[
                 {
                   title: "Data-Driven Recruitment",
                   description: "Learn how data analytics can reduce hiring time by 60% while increasing quality of hires.",
-                  icon: <BarChart3 className="h-10 w-10 text-pink-500" />,
-                  color: "bg-pink-100",
-                  iconColor: "text-pink-500"
+                  icon: <BarChart3 className="h-10 w-10 text-red-500" />,
+                  color: "bg-red-100",
+                  iconColor: "text-red-500"
                 },
                 {
                   title: "AI for Recruitment",
                   description: "Discover how AI-powered matching improves response rates by 40% compared to traditional methods.",
-                  icon: <Zap className="h-10 w-10 text-amber-500" />,
-                  color: "bg-amber-100",
-                  iconColor: "text-amber-500"
+                  icon: <Zap className="h-10 w-10 text-yellow-500" />,
+                  color: "bg-yellow-100",
+                  iconColor: "text-yellow-500"
                 },
                 {
                   title: "Social Media Recruiting",
@@ -287,16 +193,16 @@ const WhitepaperPage = () => {
                 {
                   title: "Video Interview Technology",
                   description: "See how video interviews reduce screening time while maintaining comprehensive evaluation.",
-                  icon: <Zap className="h-10 w-10 text-sky-500" />,
-                  color: "bg-sky-100",
-                  iconColor: "text-sky-500"
+                  icon: <Zap className="h-10 w-10 text-blue-500" />,
+                  color: "bg-blue-100",
+                  iconColor: "text-blue-500"
                 },
                 {
                   title: "Improved Candidate Experience",
                   description: "Understand how a better recruitment experience increases talent quality by up to 70%.",
-                  icon: <Users className="h-10 w-10 text-violet-500" />,
-                  color: "bg-violet-100",
-                  iconColor: "text-violet-500"
+                  icon: <Users className="h-10 w-10 text-purple-500" />,
+                  color: "bg-purple-100",
+                  iconColor: "text-purple-500"
                 },
                 {
                   title: "Recruitment Technology Solutions",
@@ -308,25 +214,14 @@ const WhitepaperPage = () => {
               ].map((item, index) => (
                 <motion.div
                   key={index}
-                  initial={{ opacity: 0, y: 20 }}
-                  whileInView={{ opacity: 1, y: 0 }}
-                  viewport={{ once: true }}
-                  transition={{ duration: 0.5, delay: index * 0.1 }}
-                  whileHover={{ 
-                    y: -10,
-                    boxShadow: "0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04)"
-                  }}
-                  className="bg-white/80 backdrop-blur-sm rounded-xl p-6 shadow-lg border border-blue-50"
+                  whileHover={{ y: -5 }}
+                  className="bg-white rounded-xl p-6 shadow-md border border-gray-100"
                 >
-                  <motion.div 
-                    className={`${item.color} p-4 rounded-lg inline-block mb-4`}
-                    whileHover={{ rotate: [0, -10, 10, -10, 10, 0] }}
-                    transition={{ duration: 0.5 }}
-                  >
+                  <div className={`${item.color} p-4 rounded-lg inline-block mb-4`}>
                     {item.icon}
-                  </motion.div>
-                  <h3 className="text-xl font-bold mb-3 text-blue-900">{item.title}</h3>
-                  <p className="text-blue-700">{item.description}</p>
+                  </div>
+                  <h3 className="text-xl font-bold mb-3 text-gray-900">{item.title}</h3>
+                  <p className="text-gray-600">{item.description}</p>
                 </motion.div>
               ))}
             </div>
@@ -334,101 +229,60 @@ const WhitepaperPage = () => {
         </section>
         
         {/* Business Impact Section */}
-        <section className="py-20 bg-gradient-to-br from-indigo-50 to-pink-50">
+        <section className="py-20 bg-gray-50">
           <div className="container mx-auto px-4">
-            <motion.div 
-              className="text-center mb-16"
-              initial={{ opacity: 0, y: 30 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              viewport={{ once: true }}
-              transition={{ duration: 0.7 }}
-            >
-              <h2 className="text-3xl lg:text-4xl font-bold mb-4 text-indigo-900">Business Impact</h2>
-              <p className="text-xl text-indigo-700 max-w-3xl mx-auto">
+            <div className="text-center mb-16">
+              <h2 className="text-3xl lg:text-4xl font-bold mb-4 text-gray-900">Business Impact</h2>
+              <p className="text-xl text-gray-600 max-w-3xl mx-auto">
                 Real metrics that demonstrate the effectiveness of our adaptive hiring approach
               </p>
-            </motion.div>
+            </div>
             
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
               {[
-                { label: "Empaneled Customers", value: "4", color: "bg-gradient-to-br from-blue-400 to-blue-500 text-white" },
-                { label: "Placements", value: "12+", color: "bg-gradient-to-br from-indigo-400 to-indigo-500 text-white" },
-                { label: "Communities", value: "10K+", color: "bg-gradient-to-br from-violet-400 to-violet-500 text-white" },
-                { label: "Talent Pools", value: "500K+", color: "bg-gradient-to-br from-purple-400 to-purple-500 text-white" }
+                { label: "Empaneled Customers", value: "4", color: "bg-blue-900 text-white" },
+                { label: "Placements", value: "12+", color: "bg-blue-800 text-white" },
+                { label: "Communities", value: "10K+", color: "bg-blue-700 text-white" },
+                { label: "Talent Pools", value: "500K+", color: "bg-blue-600 text-white" }
               ].map((stat, index) => (
-                <motion.div 
-                  key={index} 
-                  className={`${stat.color} rounded-lg p-8 text-center shadow-lg`}
-                  initial={{ opacity: 0, scale: 0.9 }}
-                  whileInView={{ opacity: 1, scale: 1 }}
-                  viewport={{ once: true }}
-                  transition={{ duration: 0.5, delay: index * 0.1 }}
-                  whileHover={{ y: -5, boxShadow: "0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04)" }}
-                >
-                  <motion.p 
-                    className="text-4xl lg:text-5xl font-bold mb-2"
-                    initial={{ opacity: 0, y: 20 }}
-                    whileInView={{ opacity: 1, y: 0 }}
-                    viewport={{ once: true }}
-                    transition={{ duration: 0.5, delay: 0.2 + index * 0.1 }}
-                  >
-                    {stat.value}
-                  </motion.p>
-                  <p className="text-xl opacity-90">{stat.label}</p>
-                </motion.div>
+                <div key={index} className={`${stat.color} rounded-lg p-8 text-center`}>
+                  <p className="text-4xl lg:text-5xl font-bold mb-2">{stat.value}</p>
+                  <p className="text-xl opacity-80">{stat.label}</p>
+                </div>
               ))}
             </div>
             
             <div className="mt-16 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 text-center">
               {[
-                { value: "30%", label: "Optimize Recruiting Spend", color: "from-red-400 to-pink-400" },
-                { value: "40%", label: "Improvement in Response %", color: "from-yellow-400 to-amber-400" },
-                { value: "50%", label: "Decrease in Time to Submit", color: "from-green-400 to-emerald-400" },
-                { value: "70%", label: "Increase in Talent Quality", color: "from-sky-400 to-cyan-400" }
+                { value: "30%", label: "Optimize Recruiting Spend" },
+                { value: "40%", label: "Improvement in Response %" },
+                { value: "50%", label: "Decrease in Time to Submit" },
+                { value: "70%", label: "Increase in Talent Quality" }
               ].map((stat, index) => (
-                <motion.div 
-                  key={index} 
-                  className="bg-white border border-blue-100 rounded-lg p-6 shadow-md"
-                  initial={{ opacity: 0, y: 20 }}
-                  whileInView={{ opacity: 1, y: 0 }}
-                  viewport={{ once: true }}
-                  transition={{ duration: 0.4, delay: 0.3 + index * 0.1 }}
-                  whileHover={{ y: -5, boxShadow: "0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04)" }}
-                >
-                  <p className={`text-3xl font-bold mb-2 bg-gradient-to-r ${stat.color} bg-clip-text text-transparent`}>
-                    {stat.value}
-                  </p>
-                  <p className="text-gray-700">{stat.label}</p>
-                </motion.div>
+                <div key={index} className="bg-white border border-gray-200 rounded-lg p-6 shadow-sm">
+                  <p className="text-3xl font-bold text-blue-600 mb-2">{stat.value}</p>
+                  <p className="text-gray-600">{stat.label}</p>
+                </div>
               ))}
             </div>
           </div>
         </section>
         
         {/* Capabilities Section */}
-        <section className="py-20 bg-gradient-to-br from-teal-50 to-emerald-50 text-emerald-900">
+        <section className="py-20 bg-teal-900 text-white">
           <div className="container mx-auto px-4">
-            <motion.div 
-              className="text-center mb-16"
-              initial={{ opacity: 0, y: 30 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              viewport={{ once: true }}
-              transition={{ duration: 0.7 }}
-            >
-              <h2 className="text-3xl lg:text-4xl font-bold mb-4 text-teal-900">Our Capabilities</h2>
-              <p className="text-xl text-teal-700 max-w-3xl mx-auto">
+            <div className="text-center mb-16">
+              <h2 className="text-3xl lg:text-4xl font-bold mb-4">Our Capabilities</h2>
+              <p className="text-xl opacity-80 max-w-3xl mx-auto">
                 A complete end-to-end recruitment solution designed to transform your hiring process
               </p>
-            </motion.div>
+            </div>
             
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
               {[
                 {
                   title: "Preparing",
-                  color: "bg-green-400",
-                  borderColor: "border-green-300",
-                  textColor: "text-green-900",
-                  iconBg: "bg-green-100",
+                  color: "bg-green-500",
                   number: "1",
                   items: [
                     "Analyze and define job requirements",
@@ -438,10 +292,7 @@ const WhitepaperPage = () => {
                 },
                 {
                   title: "Sourcing",
-                  color: "bg-rose-400",
-                  borderColor: "border-rose-300",
-                  textColor: "text-rose-900",
-                  iconBg: "bg-rose-100",
+                  color: "bg-red-600",
                   number: "2",
                   items: [
                     "Source candidates through various channels",
@@ -451,10 +302,7 @@ const WhitepaperPage = () => {
                 },
                 {
                   title: "Screening",
-                  color: "bg-amber-400",
-                  borderColor: "border-amber-300",
-                  textColor: "text-amber-900",
-                  iconBg: "bg-amber-100",
+                  color: "bg-yellow-500",
                   number: "3",
                   items: [
                     "Review resumes and cover letters",
@@ -464,10 +312,7 @@ const WhitepaperPage = () => {
                 },
                 {
                   title: "Selecting",
-                  color: "bg-violet-400",
-                  borderColor: "border-violet-300",
-                  textColor: "text-violet-900",
-                  iconBg: "bg-violet-100",
+                  color: "bg-purple-600",
                   number: "4",
                   items: [
                     "Conduct in-depth interviews",
@@ -477,10 +322,7 @@ const WhitepaperPage = () => {
                 },
                 {
                   title: "Hiring",
-                  color: "bg-cyan-400",
-                  borderColor: "border-cyan-300",
-                  textColor: "text-cyan-900",
-                  iconBg: "bg-cyan-100",
+                  color: "bg-cyan-500",
                   number: "5",
                   items: [
                     "Extend job offers to selected candidates",
@@ -490,10 +332,7 @@ const WhitepaperPage = () => {
                 },
                 {
                   title: "Onboarding",
-                  color: "bg-blue-400",
-                  borderColor: "border-blue-300",
-                  textColor: "text-blue-900",
-                  iconBg: "bg-blue-100",
+                  color: "bg-blue-500",
                   number: "6",
                   items: [
                     "Implement orientation sessions",
@@ -502,96 +341,34 @@ const WhitepaperPage = () => {
                   ]
                 }
               ].map((step, index) => (
-                <motion.div 
-                  key={index} 
-                  className={`bg-white rounded-lg p-6 relative shadow-md border ${step.borderColor}`}
-                  initial={{ opacity: 0, y: 20 }}
-                  whileInView={{ opacity: 1, y: 0 }}
-                  viewport={{ once: true }}
-                  transition={{ duration: 0.5, delay: index * 0.1 }}
-                  whileHover={{ y: -5, boxShadow: "0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04)" }}
-                >
-                  <motion.div 
-                    className={`${step.color} w-12 h-12 rounded-full flex items-center justify-center font-bold text-white absolute -top-4 -left-4 text-xl shadow-md`}
-                    whileHover={{ scale: 1.1 }}
-                    transition={{ type: "spring", stiffness: 400, damping: 10 }}
-                  >
+                <div key={index} className="bg-white/10 backdrop-blur-sm rounded-lg p-6 relative">
+                  <div className={`${step.color} w-12 h-12 rounded-full flex items-center justify-center font-bold text-white absolute -top-4 -left-4 text-xl`}>
                     {step.number}
-                  </motion.div>
-                  <h3 className={`text-xl font-bold mb-4 mt-2 ${step.textColor}`}>{step.title}</h3>
+                  </div>
+                  <h3 className="text-xl font-bold mb-4 mt-2 text-white">{step.title}</h3>
                   <ul className="space-y-2">
                     {step.items.map((item, i) => (
-                      <motion.li 
-                        key={i} 
-                        className="flex items-start gap-2"
-                        initial={{ opacity: 0, x: -10 }}
-                        whileInView={{ opacity: 1, x: 0 }}
-                        viewport={{ once: true }}
-                        transition={{ duration: 0.3, delay: 0.3 + i * 0.1 }}
-                      >
-                        <motion.div
-                          className={`${step.iconBg} h-5 w-5 rounded-full flex items-center justify-center flex-shrink-0 mt-0.5`}
-                          whileHover={{ rotate: 360 }}
-                          transition={{ duration: 0.5 }}
-                        >
-                          <ChevronRight className={`h-3 w-3 ${step.textColor}`} />
-                        </motion.div>
-                        <span className="text-gray-700">{item}</span>
-                      </motion.li>
+                      <li key={i} className="flex items-start gap-2">
+                        <ChevronRight className="h-5 w-5 text-green-400 flex-shrink-0 mt-0.5" />
+                        <span className="opacity-90">{item}</span>
+                      </li>
                     ))}
                   </ul>
-                </motion.div>
+                </div>
               ))}
             </div>
           </div>
         </section>
         
         {/* 6-Factors Model Section */}
-        <section className="py-20 bg-gradient-to-br from-purple-50 to-fuchsia-50 relative overflow-hidden">
-          {/* Animated AI elements */}
-          <div className="absolute inset-0 w-full h-full overflow-hidden opacity-10">
-            <motion.div 
-              className="absolute top-[15%] left-[15%] w-72 h-72 bg-purple-400 rounded-full blur-3xl"
-              animate={{ 
-                x: [0, 40, 0], 
-                y: [0, 30, 0],
-                scale: [1, 1.1, 1]
-              }}
-              transition={{ 
-                duration: 10, 
-                repeat: Infinity, 
-                ease: "easeInOut" 
-              }}
-            />
-            <motion.div 
-              className="absolute bottom-[20%] right-[10%] w-64 h-64 bg-fuchsia-400 rounded-full blur-3xl"
-              animate={{ 
-                x: [0, -30, 0], 
-                y: [0, -20, 0],
-                scale: [1, 1.15, 1]
-              }}
-              transition={{ 
-                duration: 12, 
-                repeat: Infinity, 
-                ease: "easeInOut",
-                delay: 1.5
-              }}
-            />
-          </div>
-          
-          <div className="container mx-auto px-4 relative z-10">
-            <motion.div 
-              className="text-center mb-16"
-              initial={{ opacity: 0, y: 30 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              viewport={{ once: true }}
-              transition={{ duration: 0.7 }}
-            >
-              <h2 className="text-3xl lg:text-4xl font-bold mb-4 text-purple-900">6-Factors Model</h2>
-              <p className="text-xl text-purple-700 max-w-3xl mx-auto">
+        <section className="py-20 bg-gray-900 text-white">
+          <div className="container mx-auto px-4">
+            <div className="text-center mb-16">
+              <h2 className="text-3xl lg:text-4xl font-bold mb-4">6-Factors Model</h2>
+              <p className="text-xl opacity-80 max-w-3xl mx-auto">
                 Our dynamic recruitment solutions blend innovation and expertise to match exceptional talents with your unique organizational needs
               </p>
-            </motion.div>
+            </div>
             
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
               {[
@@ -599,176 +376,93 @@ const WhitepaperPage = () => {
                   number: "01",
                   title: "People / Culture",
                   description: "Senior Leadership, Superiors, Coworkers",
-                  color: "from-red-400 to-red-500",
-                  borderColor: "border-red-200",
-                  bgColor: "bg-gradient-to-r from-red-50 to-rose-50"
+                  color: "bg-red-500"
                 },
                 {
                   number: "02",
                   title: "Compensation",
                   description: "Pay, Benefits",
-                  color: "from-orange-400 to-amber-500",
-                  borderColor: "border-orange-200",
-                  bgColor: "bg-gradient-to-r from-orange-50 to-amber-50"
+                  color: "bg-orange-500"
                 },
                 {
                   number: "03",
                   title: "Policies & Procedure",
                   description: "Policies, HR",
-                  color: "from-teal-400 to-emerald-500",
-                  borderColor: "border-teal-200",
-                  bgColor: "bg-gradient-to-r from-teal-50 to-emerald-50"
+                  color: "bg-teal-500"
                 },
                 {
                   number: "04",
                   title: "Work",
                   description: "Intrinsic Motivation, Influence, Work Tasks, Resources",
-                  color: "from-cyan-400 to-sky-500",
-                  borderColor: "border-cyan-200",
-                  bgColor: "bg-gradient-to-r from-cyan-50 to-sky-50"
+                  color: "bg-cyan-500"
                 },
                 {
                   number: "05",
                   title: "Opportunities",
                   description: "Exclusivity, Recognition",
-                  color: "from-violet-400 to-indigo-500",
-                  borderColor: "border-violet-200",
-                  bgColor: "bg-gradient-to-r from-violet-50 to-indigo-50"
+                  color: "bg-gray-500"
                 },
                 {
                   number: "06",
                   title: "Quality of Life",
                   description: "Work Life Balance, Work Environment",
-                  color: "from-pink-400 to-fuchsia-500",
-                  borderColor: "border-pink-200",
-                  bgColor: "bg-gradient-to-r from-pink-50 to-fuchsia-50"
+                  color: "bg-pink-500"
                 }
               ].map((factor, index) => (
-                <motion.div 
-                  key={index} 
-                  className={`${factor.bgColor} backdrop-blur-sm rounded-lg p-6 border ${factor.borderColor} shadow-md`}
-                  initial={{ opacity: 0, y: 20 }}
-                  whileInView={{ opacity: 1, y: 0 }}
-                  viewport={{ once: true }}
-                  transition={{ duration: 0.5, delay: index * 0.1 }}
-                  whileHover={{ 
-                    y: -10,
-                    boxShadow: "0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04)"
-                  }}
-                >
-                  <motion.div 
-                    className={`bg-gradient-to-r ${factor.color} inline-block px-4 py-2 rounded-lg text-white font-bold mb-4 shadow-md`}
-                    whileHover={{ scale: 1.05 }}
-                    transition={{ type: "spring", stiffness: 400, damping: 10 }}
-                  >
+                <div key={index} className="bg-white/10 backdrop-blur-sm rounded-lg p-6">
+                  <div className={`${factor.color} inline-block px-4 py-2 rounded-lg text-white font-bold mb-4`}>
                     {factor.number}
-                  </motion.div>
-                  <h3 className="text-xl font-bold mb-2 text-gray-900">{factor.title}</h3>
-                  <p className="text-gray-700">{factor.description}</p>
-                </motion.div>
+                  </div>
+                  <h3 className="text-xl font-bold mb-2">{factor.title}</h3>
+                  <p className="opacity-80">{factor.description}</p>
+                </div>
               ))}
             </div>
           </div>
         </section>
         
         {/* X-Factor Section */}
-        <section className="py-20 bg-gradient-to-br from-amber-50 to-yellow-50 relative overflow-hidden">
-          {/* Animated elements */}
-          <div className="absolute inset-0 w-full h-full overflow-hidden opacity-10">
-            <motion.div 
-              className="absolute top-[20%] right-[20%] w-64 h-64 bg-yellow-400 rounded-full blur-3xl"
-              animate={{ 
-                x: [0, -30, 0], 
-                y: [0, 25, 0],
-                scale: [1, 1.1, 1]
-              }}
-              transition={{ 
-                duration: 9, 
-                repeat: Infinity, 
-                ease: "easeInOut" 
-              }}
-            />
-            <motion.div 
-              className="absolute bottom-[25%] left-[15%] w-56 h-56 bg-amber-400 rounded-full blur-3xl"
-              animate={{ 
-                x: [0, 25, 0], 
-                y: [0, -20, 0],
-                scale: [1, 1.2, 1]
-              }}
-              transition={{ 
-                duration: 11, 
-                repeat: Infinity, 
-                ease: "easeInOut",
-                delay: 1
-              }}
-            />
-          </div>
-          
-          <div className="container mx-auto px-4 relative z-10">
-            <motion.div 
-              className="text-center mb-16"
-              initial={{ opacity: 0, y: 30 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              viewport={{ once: true }}
-              transition={{ duration: 0.7 }}
-            >
-              <h2 className="text-3xl lg:text-4xl font-bold mb-4 text-amber-900">Our X-Factor</h2>
-              <p className="text-xl text-amber-700 max-w-3xl mx-auto">
+        <section className="py-20 bg-teal-800 text-white">
+          <div className="container mx-auto px-4">
+            <div className="text-center mb-16">
+              <h2 className="text-3xl lg:text-4xl font-bold mb-4">Our X-Factor</h2>
+              <p className="text-xl opacity-80 max-w-3xl mx-auto">
                 What sets Niddik apart from traditional recruiting companies
               </p>
-            </motion.div>
+            </div>
             
             <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
               {[
                 {
                   title: "Scalable Solution",
-                  description: "Whether you are a startup or an established organization, our tailormade recruiting solutions will help propel your organization by achieving your people goals on time.",
-                  iconBg: "bg-gradient-to-r from-green-400 to-emerald-500",
-                  icon: <Users className="h-8 w-8 text-white" />
+                  description: "Whether you are a startup or an established organization, our tailormade recruiting solutions will help propel your organization by achieving your people goals on time."
                 },
                 {
                   title: "AI Driven Talent Sourcing",
-                  description: "Our sourcing team is not just limited to Job Boards, but they use our AI integrated ATS that revolutionize the hiring process. Talent sourcing to engage, and hire top talent faster and more efficiently.",
-                  iconBg: "bg-gradient-to-r from-blue-400 to-indigo-500",
-                  icon: <Zap className="h-8 w-8 text-white" />
+                  description: "Our sourcing team is not just limited to Job Boards, but they use our AI integrated ATS that revolutionize the hiring process. Talent sourcing to engage, and hire top talent faster and more efficiently."
                 },
                 {
                   title: "Diversity & Inclusion",
-                  description: "A diverse workforce brings a variety of talents, skills, and experience to help you achieve better ideas and reach full potential.",
-                  iconBg: "bg-gradient-to-r from-violet-400 to-purple-500",
-                  icon: <Users className="h-8 w-8 text-white" />
+                  description: "A diverse workforce brings a variety of talents, skills, and experience to help you achieve better ideas and reach full potential."
                 },
                 {
                   title: "Effective Delivery",
-                  description: "We treat each interaction with our clients, candidates & communities as an opportunity to build lasting relationships resulting in a great experience for our stakeholders.",
-                  iconBg: "bg-gradient-to-r from-amber-400 to-orange-500",
-                  icon: <Zap className="h-8 w-8 text-white" />
+                  description: "We treat each interaction with our clients, candidates & communities as an opportunity to build lasting relationships resulting in a great experience for our stakeholders."
                 }
               ].map((factor, index) => (
-                <motion.div 
-                  key={index} 
-                  className="flex gap-6 items-start"
-                  initial={{ opacity: 0, x: -20 }}
-                  whileInView={{ opacity: 1, x: 0 }}
-                  viewport={{ once: true }}
-                  transition={{ duration: 0.5, delay: index * 0.1 }}
-                >
-                  <motion.div 
-                    className={`w-16 h-16 rounded-full ${factor.iconBg} flex items-center justify-center flex-shrink-0 shadow-lg`}
-                    whileHover={{ 
-                      scale: 1.1,
-                      rotate: 10,
-                      boxShadow: "0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04)"
-                    }}
-                    transition={{ type: "spring", stiffness: 400, damping: 10 }}
-                  >
-                    {factor.icon}
-                  </motion.div>
-                  <div>
-                    <h3 className="text-xl font-bold mb-3 text-gray-900">{factor.title}</h3>
-                    <p className="text-gray-700">{factor.description}</p>
+                <div key={index} className="flex gap-6 items-start">
+                  <div className="w-16 h-16 rounded-full bg-yellow-400 flex items-center justify-center flex-shrink-0">
+                    {index % 2 === 0 ? (
+                      <Users className="h-8 w-8 text-teal-800" />
+                    ) : (
+                      <Zap className="h-8 w-8 text-teal-800" />
+                    )}
                   </div>
-                </motion.div>
+                  <div>
+                    <h3 className="text-xl font-bold mb-3">{factor.title}</h3>
+                    <p className="opacity-80">{factor.description}</p>
+                  </div>
+                </div>
               ))}
             </div>
           </div>
