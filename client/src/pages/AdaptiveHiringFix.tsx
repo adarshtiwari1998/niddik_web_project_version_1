@@ -472,6 +472,13 @@ const AdaptiveHiringWorkflow = () => {
 };
 
 const AdaptiveHiring = () => {
+  // State for announcement bar
+  const [isAnnouncementVisible, setIsAnnouncementVisible] = useState(true);
+
+  const handleAnnouncementVisibilityChange = (isVisible: boolean) => {
+    setIsAnnouncementVisible(isVisible);
+  };
+
   const features = [
     {
       icon: <Target className="h-12 w-12 text-blue-500" />,
@@ -517,7 +524,21 @@ const AdaptiveHiring = () => {
   ];
 
   return (
-    <div>
+    <div className="min-h-screen overflow-x-hidden pt-0">
+      {/* Fixed header components */}
+      <AnnouncementBar 
+        text="Download our new whitepaper on scaling tech teams effectively."
+        linkText="Get it now"
+        linkUrl="/whitepaper"
+        bgColor="bg-green-600" 
+        textColor="text-white"
+        onVisibilityChange={handleAnnouncementVisibilityChange}
+      />
+      <Navbar hasAnnouncementAbove={isAnnouncementVisible} />
+      
+      {/* Add minimal padding to account for fixed elements */}
+      <div className={`${isAnnouncementVisible ? 'pt-[80px]' : 'pt-[40px]'} transition-all duration-300`}>
+        <main>
       {/* Hero Section */}
       <section className="relative pt-20 pb-32 overflow-hidden bg-gradient-to-b from-blue-50 to-white">
         {/* Decorative elements */}
@@ -855,6 +876,9 @@ const AdaptiveHiring = () => {
           </div>
         </Container>
       </section>
+        </main>
+        <Footer />
+      </div>
     </div>
   );
 };
