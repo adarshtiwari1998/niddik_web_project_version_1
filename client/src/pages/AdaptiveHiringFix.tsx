@@ -22,7 +22,7 @@ import Navbar from "@/components/layout/Navbar";
 import Footer from "@/components/layout/Footer";
 import AnnouncementBar from "@/components/layout/AnnouncementBar";
 import BusinessChallengesSection from "@/components/sections/BusinessChallengesSection";
-import UseCasesSection from "@/components/sections/UseCasesSection";
+// UseCasesSection now implemented directly in this file
 
 // Data for sections in the scrolling component
 const sections = [
