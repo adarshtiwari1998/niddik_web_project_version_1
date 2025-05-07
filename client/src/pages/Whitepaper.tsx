@@ -177,10 +177,10 @@ const WhitepaperPage = () => {
         <section className="py-20 relative overflow-hidden bg-gradient-to-r from-slate-900 to-blue-900">
           {/* AI Animation Elements */}
           <div className="absolute inset-0 opacity-20">
-            <div className="absolute top-10 left-10 w-60 h-60 bg-blue-500 rounded-full mix-blend-multiply filter blur-3xl animate-pulse"></div>
-            <div className="absolute top-40 right-20 w-80 h-80 bg-purple-500 rounded-full mix-blend-multiply filter blur-3xl animate-pulse animation-delay-2000"></div>
-            <div className="absolute bottom-10 left-1/3 w-40 h-40 bg-green-500 rounded-full mix-blend-multiply filter blur-3xl animate-pulse animation-delay-1000"></div>
-            <div className="absolute bottom-40 right-1/4 w-60 h-60 bg-pink-500 rounded-full mix-blend-multiply filter blur-3xl animate-pulse animation-delay-3000"></div>
+            <div className="absolute top-10 left-10 w-60 h-60 bg-blue-500 rounded-full mix-blend-multiply filter blur-3xl animate-pulse-slow"></div>
+            <div className="absolute top-40 right-20 w-80 h-80 bg-purple-500 rounded-full mix-blend-multiply filter blur-3xl animate-pulse-slow animation-delay-2000"></div>
+            <div className="absolute bottom-10 left-1/3 w-40 h-40 bg-green-500 rounded-full mix-blend-multiply filter blur-3xl animate-pulse-slow animation-delay-1000"></div>
+            <div className="absolute bottom-40 right-1/4 w-60 h-60 bg-pink-500 rounded-full mix-blend-multiply filter blur-3xl animate-pulse-slow animation-delay-3000"></div>
             
             {/* Abstract Code Lines */}
             <div className="absolute top-0 left-0 w-full h-full opacity-20">
@@ -312,7 +312,7 @@ const WhitepaperPage = () => {
                     y: -10, 
                     boxShadow: "0 10px 25px -5px rgba(0, 0, 0, 0.2), 0 10px 10px -5px rgba(0, 0, 0, 0.1)" 
                   }}
-                  className={`rounded-xl p-6 bg-gradient-to-br ${item.bgColor} backdrop-blur-lg bg-opacity-20 border border-opacity-20 ${item.borderColor} shadow-lg relative overflow-hidden group text-white`}
+                  className={`rounded-xl p-6 bg-gradient-to-br ${item.bgColor} backdrop-blur-lg bg-opacity-20 border border-opacity-20 ${item.borderColor} shadow-lg relative overflow-hidden group text-white animate-gradient`}
                 >
                   {/* Animated background */}
                   <div className="absolute inset-0 opacity-30 group-hover:opacity-50 transition-opacity">
@@ -325,7 +325,7 @@ const WhitepaperPage = () => {
                   </div>
                   
                   <div className="relative z-10">
-                    <div className="p-3 rounded-full bg-white bg-opacity-20 inline-flex mb-4">
+                    <div className="p-3 rounded-full bg-white bg-opacity-20 inline-flex mb-4 shimmer overflow-hidden">
                       {item.icon}
                     </div>
                     <h3 className="text-xl font-bold mb-3 text-white">{item.title}</h3>
