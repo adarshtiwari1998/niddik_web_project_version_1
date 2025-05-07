@@ -173,7 +173,7 @@ export default function DemoRequests() {
   };
 
   return (
-    <AdminLayout>
+    <AdminLayout title="Demo Requests" description="Manage demonstration requests from potential clients">
       <Card className="mb-8">
         <CardHeader>
           <CardTitle>Demo Requests</CardTitle>

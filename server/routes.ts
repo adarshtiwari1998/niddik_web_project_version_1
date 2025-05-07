@@ -1300,6 +1300,105 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
   
+  // Demo Request Endpoints
+  
+  // Submit a new demo request
+  app.post('/api/demo-requests', async (req: Request, res: Response) => {
+    try {
+      const { workEmail, phoneNumber, message, companyName, fullName, jobTitle, acceptedTerms } = req.body;
+      
+      // Validate request data
+      try {
+        demoRequestSchema.parse({
+          workEmail,
+          phoneNumber,
+          message,
+          companyName,
+          fullName,
+          jobTitle,
+          acceptedTerms
+        });
+      } catch (validationError) {
+        if (validationError instanceof z.ZodError) {
+          return res.status(400).json({
+            success: false,
+            message: "Validation error",
+            errors: validationError.errors
+          });
+        }
+      }
+      
+      // Check if a demo request with this email already exists
+      const existingRequest = await storage.getDemoRequestByEmail(workEmail);
+      
+      if (existingRequest) {
+        return res.status(400).json({
+          success: false,
+          message: "A demo request with this email already exists",
+          existingRequest: true
+        });
+      }
+      
+      // Create new demo request
+      const demoRequest = await storage.createDemoRequest({
+        workEmail,
+        phoneNumber,
+        message: message || null,
+        companyName: companyName || null,
+        fullName: fullName || null,
+        jobTitle: jobTitle || null,
+        acceptedTerms: acceptedTerms === true
+      });
+      
+      return res.status(201).json({
+        success: true,
+        message: "Demo request submitted successfully",
+        data: demoRequest
+      });
+    } catch (error) {
+      console.error('Error submitting demo request:', error);
+      return res.status(500).json({
+        success: false,
+        message: "Internal server error"
+      });
+    }
+  });
+  
+  // Check if a user has already submitted a demo request
+  app.get('/api/demo-requests/check', async (req: Request, res: Response) => {
+    try {
+      const email = req.query.email as string;
+      
+      if (!email) {
+        return res.status(400).json({
+          success: false,
+          message: "Email parameter is required"
+        });
+      }
+      
+      const existingRequest = await storage.getDemoRequestByEmail(email);
+      
+      if (!existingRequest) {
+        return res.status(404).json({
+          success: false,
+          message: "No demo request found for this email"
+        });
+      }
+      
+      return res.status(200).json({
+        success: true,
+        message: "Demo request found",
+        data: existingRequest
+      });
+    } catch (error) {
+      console.error('Error checking demo request:', error);
+      return res.status(500).json({
+        success: false,
+        message: "Internal server error"
+      });
+    }
+  });
+  
   // Admin endpoints for demo requests
   
   // Get all demo requests (admin only)
