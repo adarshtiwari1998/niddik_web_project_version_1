@@ -78,19 +78,22 @@ export default function RequestDemo() {
   });
 
   // Check if user already has a demo request
-  const { data: existingRequest, isLoading: checkingRequest } = useQuery({
+  const { data: existingRequest, isLoading: checkingRequest, refetch } = useQuery({
     queryKey: ['/api/demo-requests/check', checkEmail],
     enabled: !!checkEmail,
     queryFn: async () => {
       try {
         const response = await apiRequest("GET", `/api/demo-requests/check?email=${encodeURIComponent(checkEmail || "")}`);
-        return await response.json();
+        const result = await response.json();
+        return result?.success ? result.data : null;
       } catch (error) {
         console.error("Error checking demo request:", error);
         return null;
       }
     },
-    staleTime: 60000, // 1 minute
+    staleTime: 10000, // 10 seconds to allow for more frequent updates
+    refetchInterval: 15000, // Auto-refresh every 15 seconds
+    refetchOnWindowFocus: true, // Refresh when tab gets focus
   });
 
   // Submit mutation
@@ -210,10 +213,19 @@ export default function RequestDemo() {
             </AlertDescription>
           </Alert>
         </CardContent>
-        <CardFooter>
+        <CardFooter className="flex flex-col gap-4">
           <p className="text-sm text-muted-foreground">
             If you have any questions, please contact our support team.
           </p>
+          <Button 
+            variant="outline" 
+            size="sm" 
+            className="self-start"
+            onClick={() => refetch()}
+            disabled={checkingRequest}
+          >
+            {checkingRequest ? "Refreshing..." : "Refresh Status"}
+          </Button>
         </CardFooter>
       </Card>
     );
