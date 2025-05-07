@@ -598,6 +598,152 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
+  // API for user profile update
+  app.put('/api/profile', async (req: AuthenticatedRequest, res) => {
+    try {
+      if (!req.isAuthenticated()) {
+        return res.status(401).json({ 
+          success: false, 
+          message: "You must be logged in to update your profile" 
+        });
+      }
+      
+      const userId = req.user!.id;
+      
+      // Validate the update data (excluding password)
+      const updateData = { ...req.body };
+      delete updateData.password; // Ensure password cannot be updated through this endpoint
+      
+      // Update the user profile
+      const updatedUser = await storage.updateUser(userId, updateData);
+      
+      if (!updatedUser) {
+        return res.status(500).json({
+          success: false,
+          message: "Failed to update profile"
+        });
+      }
+      
+      // Return the updated user without password
+      const { password, ...userWithoutPassword } = updatedUser;
+      return res.status(200).json({
+        success: true,
+        data: userWithoutPassword
+      });
+    } catch (error) {
+      console.error('Error updating profile:', error);
+      return res.status(500).json({
+        success: false,
+        message: "Internal server error"
+      });
+    }
+  });
+  
+  // API for user password change
+  app.post('/api/change-password', async (req: AuthenticatedRequest, res) => {
+    try {
+      if (!req.isAuthenticated()) {
+        return res.status(401).json({ 
+          success: false, 
+          message: "You must be logged in to change your password" 
+        });
+      }
+      
+      const userId = req.user!.id;
+      const { currentPassword, newPassword } = req.body;
+      
+      if (!currentPassword || !newPassword) {
+        return res.status(400).json({
+          success: false,
+          message: "Current password and new password are required"
+        });
+      }
+      
+      // Get the user
+      const user = await storage.getUserById(userId);
+      if (!user) {
+        return res.status(404).json({
+          success: false,
+          message: "User not found"
+        });
+      }
+      
+      // Verify current password
+      const isPasswordValid = await comparePasswords(currentPassword, user.password);
+      if (!isPasswordValid) {
+        return res.status(401).json({
+          success: false,
+          message: "Current password is incorrect"
+        });
+      }
+      
+      // Hash the new password
+      const hashedPassword = await hashPassword(newPassword);
+      
+      // Update the user's password
+      const updatedUser = await storage.updateUserPassword(userId, hashedPassword);
+      
+      if (!updatedUser) {
+        return res.status(500).json({
+          success: false,
+          message: "Failed to update password"
+        });
+      }
+      
+      return res.status(200).json({
+        success: true,
+        message: "Password changed successfully"
+      });
+    } catch (error) {
+      console.error('Error changing password:', error);
+      return res.status(500).json({
+        success: false,
+        message: "Internal server error"
+      });
+    }
+  });
+  
+  // API for application summary (count by status)
+  app.get('/api/my-applications/summary', async (req: AuthenticatedRequest, res) => {
+    try {
+      if (!req.isAuthenticated()) {
+        return res.status(401).json({ 
+          success: false, 
+          message: "You must be logged in to view your applications" 
+        });
+      }
+      
+      const userId = req.user!.id;
+      
+      // Get user's job applications
+      const applications = await storage.getJobApplicationsForUser(userId);
+      
+      // Count applications by status
+      const statusCounts: { status: string; count: number }[] = [];
+      const statusMap = new Map<string, number>();
+      
+      applications.forEach(app => {
+        const count = statusMap.get(app.status) || 0;
+        statusMap.set(app.status, count + 1);
+      });
+      
+      statusMap.forEach((count, status) => {
+        statusCounts.push({ status, count });
+      });
+      
+      return res.status(200).json({ 
+        success: true, 
+        data: statusCounts 
+      });
+    } catch (error) {
+      console.error('Error fetching application summary:', error);
+      return res.status(500).json({
+        success: false,
+        message: "Internal server error"
+      });
+    }
+  });
+
   // Admin routes for password change
   app.post('/api/admin/change-password', async (req: AuthenticatedRequest, res) => {
     try {

@@ -16,6 +16,7 @@ import AuthPage from "@/pages/AuthPage";
 import CareerPage from "@/pages/CareerPage";
 import JobDetail from "@/pages/JobDetail";
 import MyApplications from "@/pages/MyApplications";
+import ProfilePage from "@/pages/ProfilePage";
 
 // Admin Pages
 import AdminLogin from "@/pages/admin/AdminLogin";
@@ -50,6 +51,7 @@ function Router() {
       <Route path="/careers" component={CareerPage} />
       <Route path="/jobs/:id" component={JobDetail} />
       <ProtectedRoute path="/my-applications" component={MyApplications} />
+      <ProtectedRoute path="/profile" component={ProfilePage} />
       
       {/* Auth Routes */}
       <Route path="/auth" component={AuthPage} />

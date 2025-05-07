@@ -139,11 +139,19 @@ export default function MyApplications() {
 
   return (
     <div className="container mx-auto px-4 py-8">
-      <div className="mb-8">
-        <h1 className="text-3xl font-bold">My Applications</h1>
-        <p className="text-muted-foreground mt-2">
-          Track and manage all your job applications
-        </p>
+      <div className="flex flex-col sm:flex-row sm:justify-between sm:items-center gap-4 mb-8">
+        <div>
+          <h1 className="text-3xl font-bold">My Applications</h1>
+          <p className="text-muted-foreground mt-2">
+            Track and manage all your job applications
+          </p>
+        </div>
+        <Button 
+          variant="outline" 
+          onClick={() => window.location.href = "/profile"}
+        >
+          View My Profile
+        </Button>
       </div>
 
       <div className="mb-6">
