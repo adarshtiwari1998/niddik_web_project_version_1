@@ -27,6 +27,7 @@ const applicationSchema = z.object({
   expectedSalary: z.string().optional(),
   startDate: z.string().optional(),
   phoneNumber: z.string().min(1, "Phone number is required"),
+  skills: z.string().min(3, "Please list at least a few skills"),
   // Resume file will be handled separately
 });
 
@@ -68,11 +69,12 @@ export default function JobApplication() {
     resolver: zodResolver(applicationSchema),
     defaultValues: {
       coverLetter: "",
-      currentCompany: "",
-      currentRole: "",
-      expectedSalary: "",
-      startDate: "Immediately",
+      currentCompany: user?.currentCompany || "",
+      currentRole: user?.currentRole || "",
+      expectedSalary: user?.expectedSalary || "",
+      startDate: user?.noticePeriod || "Immediately",
       phoneNumber: user?.phone || "",
+      skills: user?.skills || "",
     },
   });
 
@@ -101,6 +103,7 @@ export default function JobApplication() {
           expectedSalary: data.expectedSalary || "",
           availableFrom: data.startDate || "Immediately",
           phoneNumber: data.phoneNumber,
+          skills: data.skills,
         };
         
         // If a new resume is being uploaded, use multipart form
@@ -342,6 +345,26 @@ export default function JobApplication() {
                                 <SelectItem value="3 months">3 months</SelectItem>
                               </SelectContent>
                             </Select>
+                            <FormMessage />
+                          </FormItem>
+                        )}
+                      />
+                      <FormField
+                        control={form.control}
+                        name="skills"
+                        render={({ field }) => (
+                          <FormItem className="col-span-1 md:col-span-2">
+                            <FormLabel>Skills *</FormLabel>
+                            <FormControl>
+                              <Textarea 
+                                {...field} 
+                                placeholder="List your relevant skills (e.g., React, Node.js, UX Design, Project Management)"
+                                className="min-h-[80px]"
+                              />
+                            </FormControl>
+                            <FormDescription>
+                              List skills relevant to this position, separated by commas
+                            </FormDescription>
                             <FormMessage />
                           </FormItem>
                         )}
