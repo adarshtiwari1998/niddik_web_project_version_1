@@ -231,7 +231,7 @@ const UsesCasesWithStickyImage = () => {
   };
 
   return (
-    <div id="common-use-cases" ref={useCasesRef} className="relative pb-16">
+    <div id="common-use-cases" ref={useCasesRef} className="relative pb-16 min-h-screen">
       <h2 className="text-4xl font-bold mb-6 text-andela-dark">Common use cases for Adaptive Hiring</h2>
       
       <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 mt-10">
@@ -241,7 +241,7 @@ const UsesCasesWithStickyImage = () => {
             <div 
               key={useCase.id}
               ref={el => tabsRef.current[index] = el}
-              className={`mb-6 rounded-lg transition-all duration-300 ${activeIndex === index ? 'bg-white shadow-md' : 'bg-gray-50'}`}
+              className={`mb-10 rounded-lg transition-all duration-300 ${activeIndex === index ? 'bg-white shadow-md' : 'bg-gray-50'}`}
             >
               <div 
                 className="p-5 cursor-pointer"
@@ -259,7 +259,7 @@ const UsesCasesWithStickyImage = () => {
                 
                 {activeIndex === index && (
                   <div className="mt-4 pl-10">
-                    <ul className="space-y-3">
+                    <ul className="space-y-4">
                       {useCase.items.map((item, i) => (
                         <li key={i} className="flex items-start gap-2">
                           <CheckCircle2 className="w-5 h-5 text-green-500 flex-shrink-0 mt-0.5" />
@@ -280,10 +280,10 @@ const UsesCasesWithStickyImage = () => {
           ))}
         </div>
         
-        {/* Right side sticky image - 6 columns wide */}
+        {/* Right side image container */}
         <div className="lg:col-span-6 relative">
-          <div className="sticky top-24 flex items-center justify-center">
-            <div className="w-full max-w-lg aspect-video relative rounded-xl overflow-hidden border border-gray-200 shadow-md">
+          <div className="fixed top-1/4 right-0 transform -translate-y-1/4 max-w-lg w-full pr-12">
+            <div className="aspect-video relative rounded-xl overflow-hidden border border-gray-200 shadow-md">
               {renderImage()}
             </div>
           </div>
@@ -297,7 +297,8 @@ const UsesCasesWithStickyImage = () => {
 const AdaptiveHiringWorkflow = () => {
   const [activeSection, setActiveSection] = useState(0);
   const sectionRefs = useRef<(HTMLDivElement | null)[]>([]);
-  const workflowRef = useRef<HTMLDivElement>(null);
+  const imageContainerRef = useRef<HTMLDivElement>(null);
+  const [imageContainerWidth, setImageContainerWidth] = useState(0);
   
   const sections = [
     {
@@ -329,6 +330,25 @@ const AdaptiveHiringWorkflow = () => {
       description: "Rapidly changing business requires an agile approach to staffing. This variable cost model allows you to change as quickly as your priorities do. Niddik talent is available on demand, so you can fill critical skill or capacity gaps quickly while remaining cost-efficient."
     }
   ];
+
+  // Calculate initial viewport height for positioning
+  useEffect(() => {
+    // Calculate the width of the image container for proper positioning
+    if (imageContainerRef.current) {
+      setImageContainerWidth(imageContainerRef.current.clientWidth);
+    }
+
+    const handleResize = () => {
+      if (imageContainerRef.current) {
+        setImageContainerWidth(imageContainerRef.current.clientWidth);
+      }
+    };
+
+    window.addEventListener('resize', handleResize);
+    return () => {
+      window.removeEventListener('resize', handleResize);
+    };
+  }, []);
 
   useEffect(() => {
     // For intersection observer to detect scroll position in content sections
@@ -362,8 +382,166 @@ const AdaptiveHiringWorkflow = () => {
     };
   }, []);
 
+  // Image content based on active section
+  const getImageContent = () => {
+    switch(activeSection) {
+      case 0: // PROJECTS
+        return (
+          <div className="bg-blue-50 rounded-lg overflow-hidden p-8">
+            <div className="flex justify-center mb-4">
+              <h4 className="font-semibold text-lg text-gray-700">Development team</h4>
+            </div>
+            <div className="flex justify-center mb-5">
+              <div className="flex items-center gap-2">
+                <div className="w-8 h-8 rounded-full bg-blue-400"></div>
+                <div className="w-8 h-8 rounded-full bg-green-400"></div>
+                <div className="w-8 h-8 rounded-full bg-indigo-400"></div>
+                <div className="w-8 h-8 rounded-full bg-yellow-400"></div>
+              </div>
+            </div>
+            <div className="bg-white rounded-lg shadow-sm p-5 mx-auto max-w-sm">
+              <div className="flex justify-between items-center">
+                <div className="flex items-center gap-3">
+                  <div className="w-10 h-10 bg-blue-100 rounded-full flex items-center justify-center">
+                    <div className="w-5 h-5 bg-blue-500 rounded-full"></div>
+                  </div>
+                  <div>
+                    <div className="text-xs text-gray-500">Project Lead</div>
+                    <div className="text-sm font-medium">Alex M.</div>
+                  </div>
+                </div>
+                <div className="w-6 h-6 bg-green-500 rounded-full flex items-center justify-center text-white text-xs font-bold">
+                  ✓
+                </div>
+              </div>
+            </div>
+          </div>
+        );
+      case 1: // SKILLS
+        return (
+          <div className="bg-blue-50 rounded-lg overflow-hidden p-8">
+            <div className="mb-3">
+              <h4 className="font-semibold text-sm text-blue-600">SKILLS ASSESSMENT</h4>
+            </div>
+            
+            <div className="space-y-6">
+              <div className="flex items-center gap-3">
+                <div className="w-5 h-5 bg-blue-500 rounded-full flex-shrink-0"></div>
+                <div className="flex-1 h-6 bg-blue-200/50 rounded-full relative">
+                  <div className="absolute inset-y-0 left-0 bg-blue-200 w-[80%] rounded-full"></div>
+                </div>
+                <span className="text-sm font-medium text-gray-700 w-16 text-right">React</span>
+              </div>
+              
+              <div className="flex items-center gap-3">
+                <div className="w-5 h-5 bg-green-500 rounded-full flex-shrink-0"></div>
+                <div className="flex-1 h-6 bg-green-200/50 rounded-full relative">
+                  <div className="absolute inset-y-0 left-0 bg-green-200 w-[65%] rounded-full"></div>
+                </div>
+                <span className="text-sm font-medium text-gray-700 w-16 text-right">Node.js</span>
+              </div>
+              
+              <div className="flex items-center gap-3">
+                <div className="w-5 h-5 bg-yellow-500 rounded-full flex-shrink-0"></div>
+                <div className="flex-1 h-6 bg-yellow-200/50 rounded-full relative">
+                  <div className="absolute inset-y-0 left-0 bg-yellow-200 w-[70%] rounded-full"></div>
+                </div>
+                <span className="text-sm font-medium text-gray-700 w-16 text-right">UX/UI</span>
+              </div>
+            </div>
+          </div>
+        );
+      case 2: // FIND TALENT
+        return (
+          <div className="bg-blue-50 rounded-lg overflow-hidden p-8">
+            <div className="flex justify-between items-center mb-5">
+              <h4 className="font-semibold text-sm text-blue-600">TALENT MATCHING</h4>
+              <span className="text-xs text-gray-500 bg-white px-2 py-1 rounded-full">4 matches found</span>
+            </div>
+            <div className="grid grid-cols-2 gap-3">
+              <div className="bg-white p-3 rounded-md shadow-sm flex items-center gap-2">
+                <div className="w-9 h-9 bg-blue-400 rounded-full flex items-center justify-center text-white font-bold text-xs">
+                  JS
+                </div>
+                <div>
+                  <div className="text-xs font-semibold">Jason S.</div>
+                  <div className="text-xs text-gray-500">React Expert</div>
+                </div>
+              </div>
+              <div className="bg-white p-3 rounded-md shadow-sm flex items-center gap-2">
+                <div className="w-9 h-9 bg-green-400 rounded-full flex items-center justify-center text-white font-bold text-xs">
+                  AT
+                </div>
+                <div>
+                  <div className="text-xs font-semibold">Amy T.</div>
+                  <div className="text-xs text-gray-500">Full Stack</div>
+                </div>
+              </div>
+              <div className="bg-white p-3 rounded-md shadow-sm flex items-center gap-2">
+                <div className="w-9 h-9 bg-purple-400 rounded-full flex items-center justify-center text-white font-bold text-xs">
+                  RK
+                </div>
+                <div>
+                  <div className="text-xs font-semibold">Raj K.</div>
+                  <div className="text-xs text-gray-500">Node.js Dev</div>
+                </div>
+              </div>
+              <div className="bg-white p-3 rounded-md shadow-sm flex items-center gap-2">
+                <div className="w-9 h-9 bg-yellow-400 rounded-full flex items-center justify-center text-white font-bold text-xs">
+                  ML
+                </div>
+                <div>
+                  <div className="text-xs font-semibold">Maria L.</div>
+                  <div className="text-xs text-gray-500">UI Designer</div>
+                </div>
+              </div>
+            </div>
+          </div>
+        );
+      case 3: // ADAPT QUICKLY
+        return (
+          <div className="bg-blue-50 rounded-lg overflow-hidden p-8">
+            <h4 className="font-semibold text-sm text-blue-600 mb-5">TEAM SCALING</h4>
+            <div className="space-y-5">
+              <div className="flex justify-between items-center">
+                <span className="text-sm font-medium">Team Size</span>
+                <div className="flex items-center">
+                  <span className="text-sm font-medium mr-2">+2</span>
+                  <div className="flex -space-x-2">
+                    <div className="w-8 h-8 bg-blue-400 rounded-full border-2 border-white z-30"></div>
+                    <div className="w-8 h-8 bg-green-400 rounded-full border-2 border-white z-20"></div>
+                    <div className="w-8 h-8 bg-yellow-400 rounded-full border-2 border-white z-10"></div>
+                  </div>
+                </div>
+              </div>
+              <div className="h-2 bg-gray-200 rounded-full w-full">
+                <div className="h-2 bg-blue-500 rounded-full w-2/3"></div>
+              </div>
+              <div className="flex justify-between text-xs text-gray-600">
+                <span>Current: 3</span>
+                <span>Target: 5</span>
+              </div>
+              <div className="mt-4 flex justify-between items-center">
+                <span className="text-sm font-medium">Duration</span>
+                <span className="text-sm font-semibold">3 months</span>
+              </div>
+              <div className="h-2 bg-gray-200 rounded-full w-full">
+                <div className="h-2 bg-green-500 rounded-full w-1/4"></div>
+              </div>
+              <div className="flex justify-between text-xs text-gray-600">
+                <span>Flexible</span>
+                <span>Extendable</span>
+              </div>
+            </div>
+          </div>
+        );
+      default:
+        return null;
+    }
+  };
+
   return (
-    <div ref={workflowRef} id="how-adaptive-hiring-works" className="relative pb-16">
+    <div id="how-adaptive-hiring-works" className="relative pb-16">
       <h2 className="text-4xl font-bold mb-6 text-andela-dark">
         How Adaptive Hiring works: Bringing agile principles to tech hiring
       </h2>
@@ -378,7 +556,7 @@ const AdaptiveHiringWorkflow = () => {
         {/* Content container */}
         <div className="relative grid grid-cols-1 lg:grid-cols-2 gap-0">
           {/* Left Column - Content */}
-          <div className="py-8 pr-8 space-y-32"> {/* Increased vertical spacing between sections */}
+          <div className="py-8 pr-8 space-y-40"> {/* Increased vertical spacing between sections */}
             {sections.map((section, index) => (
               <div 
                 key={section.id}
@@ -403,164 +581,10 @@ const AdaptiveHiringWorkflow = () => {
             ))}
           </div>
           
-          {/* Right Column - Sticky Visualization - Will be sticky only within this component */}
-          <div className="relative h-full">
-            <div className="sticky top-24 flex items-center justify-center">
-              <div className="w-full max-w-lg">
-                {/* Skills Assessment Card for Section 1 */}
-                {activeSection === 1 && (
-                  <div className="bg-blue-50 rounded-lg overflow-hidden pt-10 pb-10 px-8">
-                    <div className="mb-3">
-                      <h4 className="font-semibold text-sm text-blue-600">SKILLS ASSESSMENT</h4>
-                    </div>
-                    
-                    <div className="space-y-6">
-                      <div className="flex items-center gap-3">
-                        <div className="w-5 h-5 bg-blue-500 rounded-full flex-shrink-0"></div>
-                        <div className="flex-1 h-6 bg-blue-200/50 rounded-full relative">
-                          <div className="absolute inset-y-0 left-0 bg-blue-200 w-[80%] rounded-full"></div>
-                        </div>
-                        <span className="text-sm font-medium text-gray-700 w-16 text-right">React</span>
-                      </div>
-                      
-                      <div className="flex items-center gap-3">
-                        <div className="w-5 h-5 bg-green-500 rounded-full flex-shrink-0"></div>
-                        <div className="flex-1 h-6 bg-green-200/50 rounded-full relative">
-                          <div className="absolute inset-y-0 left-0 bg-green-200 w-[65%] rounded-full"></div>
-                        </div>
-                        <span className="text-sm font-medium text-gray-700 w-16 text-right">Node.js</span>
-                      </div>
-                      
-                      <div className="flex items-center gap-3">
-                        <div className="w-5 h-5 bg-yellow-500 rounded-full flex-shrink-0"></div>
-                        <div className="flex-1 h-6 bg-yellow-200/50 rounded-full relative">
-                          <div className="absolute inset-y-0 left-0 bg-yellow-200 w-[70%] rounded-full"></div>
-                        </div>
-                        <span className="text-sm font-medium text-gray-700 w-16 text-right">UX/UI</span>
-                      </div>
-                    </div>
-                  </div>
-                )}
-
-                {/* Team Visualization for Section 0 */}
-                {activeSection === 0 && (
-                  <div className="bg-blue-50 rounded-lg overflow-hidden pt-10 pb-10 px-8">
-                    <div className="flex justify-center mb-4">
-                      <h4 className="font-semibold text-lg text-gray-700">Development team</h4>
-                    </div>
-                    <div className="flex justify-center mb-5">
-                      <div className="flex items-center gap-2">
-                        <div className="w-8 h-8 rounded-full bg-blue-400"></div>
-                        <div className="w-8 h-8 rounded-full bg-green-400"></div>
-                        <div className="w-8 h-8 rounded-full bg-indigo-400"></div>
-                        <div className="w-8 h-8 rounded-full bg-yellow-400"></div>
-                      </div>
-                    </div>
-                    <div className="bg-white rounded-lg shadow-sm p-5 mx-auto max-w-sm">
-                      <div className="flex justify-between items-center">
-                        <div className="flex items-center gap-3">
-                          <div className="w-10 h-10 bg-blue-100 rounded-full flex items-center justify-center">
-                            <div className="w-5 h-5 bg-blue-500 rounded-full"></div>
-                          </div>
-                          <div>
-                            <div className="text-xs text-gray-500">Project Lead</div>
-                            <div className="text-sm font-medium">Alex M.</div>
-                          </div>
-                        </div>
-                        <div className="w-6 h-6 bg-green-500 rounded-full flex items-center justify-center text-white text-xs font-bold">
-                          ✓
-                        </div>
-                      </div>
-                    </div>
-                  </div>
-                )}
-
-                {/* Talent Matching for Section 2 */}
-                {activeSection === 2 && (
-                  <div className="bg-blue-50 rounded-lg overflow-hidden pt-10 pb-10 px-8">
-                    <div className="flex justify-between items-center mb-5">
-                      <h4 className="font-semibold text-sm text-blue-600">TALENT MATCHING</h4>
-                      <span className="text-xs text-gray-500 bg-white px-2 py-1 rounded-full">4 matches found</span>
-                    </div>
-                    <div className="grid grid-cols-2 gap-3">
-                      <div className="bg-white p-3 rounded-md shadow-sm flex items-center gap-2">
-                        <div className="w-9 h-9 bg-blue-400 rounded-full flex items-center justify-center text-white font-bold text-xs">
-                          JS
-                        </div>
-                        <div>
-                          <div className="text-xs font-semibold">Jason S.</div>
-                          <div className="text-xs text-gray-500">React Expert</div>
-                        </div>
-                      </div>
-                      <div className="bg-white p-3 rounded-md shadow-sm flex items-center gap-2">
-                        <div className="w-9 h-9 bg-green-400 rounded-full flex items-center justify-center text-white font-bold text-xs">
-                          AT
-                        </div>
-                        <div>
-                          <div className="text-xs font-semibold">Amy T.</div>
-                          <div className="text-xs text-gray-500">Full Stack</div>
-                        </div>
-                      </div>
-                      <div className="bg-white p-3 rounded-md shadow-sm flex items-center gap-2">
-                        <div className="w-9 h-9 bg-purple-400 rounded-full flex items-center justify-center text-white font-bold text-xs">
-                          RK
-                        </div>
-                        <div>
-                          <div className="text-xs font-semibold">Raj K.</div>
-                          <div className="text-xs text-gray-500">Node.js Dev</div>
-                        </div>
-                      </div>
-                      <div className="bg-white p-3 rounded-md shadow-sm flex items-center gap-2">
-                        <div className="w-9 h-9 bg-yellow-400 rounded-full flex items-center justify-center text-white font-bold text-xs">
-                          ML
-                        </div>
-                        <div>
-                          <div className="text-xs font-semibold">Maria L.</div>
-                          <div className="text-xs text-gray-500">UI Designer</div>
-                        </div>
-                      </div>
-                    </div>
-                  </div>
-                )}
-                
-                {/* Team Scaling for Section 3 */}
-                {activeSection === 3 && (
-                  <div className="bg-blue-50 rounded-lg overflow-hidden pt-10 pb-10 px-8">
-                    <h4 className="font-semibold text-sm text-blue-600 mb-5">TEAM SCALING</h4>
-                    <div className="space-y-5">
-                      <div className="flex justify-between items-center">
-                        <span className="text-sm font-medium">Team Size</span>
-                        <div className="flex items-center">
-                          <span className="text-sm font-medium mr-2">+2</span>
-                          <div className="flex -space-x-2">
-                            <div className="w-8 h-8 bg-blue-400 rounded-full border-2 border-white z-30"></div>
-                            <div className="w-8 h-8 bg-green-400 rounded-full border-2 border-white z-20"></div>
-                            <div className="w-8 h-8 bg-yellow-400 rounded-full border-2 border-white z-10"></div>
-                          </div>
-                        </div>
-                      </div>
-                      <div className="h-2 bg-gray-200 rounded-full w-full">
-                        <div className="h-2 bg-blue-500 rounded-full w-2/3"></div>
-                      </div>
-                      <div className="flex justify-between text-xs text-gray-600">
-                        <span>Current: 3</span>
-                        <span>Target: 5</span>
-                      </div>
-                      <div className="mt-4 flex justify-between items-center">
-                        <span className="text-sm font-medium">Duration</span>
-                        <span className="text-sm font-semibold">3 months</span>
-                      </div>
-                      <div className="h-2 bg-gray-200 rounded-full w-full">
-                        <div className="h-2 bg-green-500 rounded-full w-1/4"></div>
-                      </div>
-                      <div className="flex justify-between text-xs text-gray-600">
-                        <span>Flexible</span>
-                        <span>Extendable</span>
-                      </div>
-                    </div>
-                  </div>
-                )}
-              </div>
+          {/* Right Column - Fixed position image that stays in view */}
+          <div ref={imageContainerRef} className="hidden lg:block">
+            <div className="fixed right-0 top-40 w-[40%] max-w-lg pr-12 z-10">
+              {getImageContent()}
             </div>
           </div>
         </div>
