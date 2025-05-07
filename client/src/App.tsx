@@ -11,6 +11,7 @@ import AboutUs from "@/pages/AboutUs";
 import WhyUs from "@/pages/WhyUs";
 import LandingPage from "@/pages/LandingPage";
 import AdaptiveHiring from "@/pages/AdaptiveHiringFix";
+import AdaptiveHiringFixed from "@/pages/AdaptiveHiringFixed";
 import { default as Whitepaper } from "@/pages/Whitepaper";
 import AuthPage from "@/pages/AuthPage";
 import CareerPage from "@/pages/CareerPage";
@@ -44,6 +45,7 @@ function Router() {
       <Route path="/services/:serviceSlug" component={ServiceDetail} />
       <Route path="/web-app-solutions" component={WebAppSolutions} />
       <Route path="/adaptive-hiring" component={AdaptiveHiring} />
+      <Route path="/adaptive-hiring-fixed" component={AdaptiveHiringFixed} />
       <Route path="/whitepaper" component={Whitepaper} />
       
       {/* Company Routes */}
