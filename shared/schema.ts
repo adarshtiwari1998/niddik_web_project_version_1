@@ -7,11 +7,19 @@ export const users = pgTable("users", {
   id: serial("id").primaryKey(),
   username: text("username").notNull().unique(),
   password: text("password").notNull(),
+  email: text("email").notNull().unique(),
+  fullName: text("full_name").notNull(),
+  phone: text("phone"),
+  role: text("role").notNull().default("user"), // user, admin
+  createdAt: timestamp("created_at").defaultNow().notNull(),
 });
 
-export const insertUserSchema = createInsertSchema(users).pick({
-  username: true,
-  password: true,
+export const insertUserSchema = createInsertSchema(users, {
+  username: (schema) => schema.min(3, "Username must be at least 3 characters"),
+  password: (schema) => schema.min(6, "Password must be at least 6 characters"),
+  email: (schema) => schema.email("Please enter a valid email address"),
+  fullName: (schema) => schema.min(2, "Full name must be at least 2 characters"),
+  phone: (schema) => schema.optional(),
 });
 
 export type InsertUser = z.infer<typeof insertUserSchema>;
@@ -97,3 +105,50 @@ export const jobListingSchema = createInsertSchema(jobListings, {
 
 export type JobListing = typeof jobListings.$inferSelect;
 export type InsertJobListing = z.infer<typeof jobListingSchema>;
+
+// Job Applications schema
+export const jobApplications = pgTable("job_applications", {
+  id: serial("id").primaryKey(),
+  jobId: integer("job_id").notNull().references(() => jobListings.id),
+  userId: integer("user_id").notNull().references(() => users.id),
+  coverLetter: text("cover_letter"),
+  resumeUrl: text("resume_url").notNull(),
+  status: text("status").notNull().default("pending"), // pending, reviewed, interviewing, hired, rejected
+  experience: text("experience"),
+  skills: text("skills").notNull(),
+  education: text("education"),
+  additionalInfo: text("additional_info"),
+  appliedDate: timestamp("applied_date").defaultNow().notNull(),
+  lastUpdated: timestamp("last_updated").defaultNow().notNull(),
+});
+
+export const jobApplicationsRelations = relations(jobApplications, ({ one }) => ({
+  job: one(jobListings, {
+    fields: [jobApplications.jobId],
+    references: [jobListings.id],
+  }),
+  user: one(users, {
+    fields: [jobApplications.userId],
+    references: [users.id],
+  }),
+}));
+
+export const jobListingsRelations = relations(jobListings, ({ many }) => ({
+  applications: many(jobApplications),
+}));
+
+export const usersRelations = relations(users, ({ many }) => ({
+  applications: many(jobApplications),
+}));
+
+export const jobApplicationSchema = createInsertSchema(jobApplications, {
+  coverLetter: (schema) => schema.optional(),
+  resumeUrl: (schema) => schema.min(5, "Resume URL is required"),
+  skills: (schema) => schema.min(3, "Skills are required"),
+  experience: (schema) => schema.optional(),
+  education: (schema) => schema.optional(),
+  additionalInfo: (schema) => schema.optional(),
+});
+
+export type JobApplication = typeof jobApplications.$inferSelect;
+export type InsertJobApplication = z.infer<typeof jobApplicationSchema>;
