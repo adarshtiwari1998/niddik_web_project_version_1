@@ -57,10 +57,14 @@ export default function AdminLayout({ children, title, description }: AdminLayou
       {isLoggingOut && <LoadingScreen message="Logging out..." />}
       {/* Admin Header */}
       <header className="bg-white dark:bg-gray-800 shadow-sm border-b">
-        <div className="container mx-auto px-4 py-4 flex justify-between items-center">
+        <div className="container mx-auto px-4 py-3 flex justify-between items-center">
           <Link href="/admin/dashboard">
             <div className="flex items-center cursor-pointer">
-              <Shield className="h-8 w-8 text-primary mr-2" />
+              <img 
+                src="/images/niddik_logo.png" 
+                alt="Niddik Logo" 
+                className="h-10 mr-2" 
+              />
               <h1 className="text-xl font-bold">Niddik Admin</h1>
             </div>
           </Link>
@@ -70,6 +74,13 @@ export default function AdminLayout({ children, title, description }: AdminLayou
           </Button>
         </div>
       </header>
+      
+      {/* Admin Area Label */}
+      <div className="bg-green-800 text-white py-2">
+        <div className="container mx-auto px-4">
+          <p className="font-medium">Admin Area</p>
+        </div>
+      </div>
 
       <div className="container mx-auto px-4 py-8">
         <div className="grid grid-cols-1 md:grid-cols-4 gap-6">
