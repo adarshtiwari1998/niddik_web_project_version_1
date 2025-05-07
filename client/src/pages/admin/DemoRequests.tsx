@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { useQuery, useMutation } from "@tanstack/react-query";
-import { CalendarIcon, CheckCircle, ChevronLeft, ChevronRight, ClockIcon, X } from "lucide-react";
+import { CalendarIcon, CheckCircle, ChevronLeft, ChevronRight, ClockIcon, Trash2, X } from "lucide-react";
 import { apiRequest, queryClient } from "@/lib/queryClient";
 import AdminLayout from "@/components/layout/AdminLayout";
 import { Button } from "@/components/ui/button";
@@ -62,6 +62,16 @@ import {
   PaginationNext, 
   PaginationPrevious
 } from "@/components/ui/pagination";
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+} from "@/components/ui/alert-dialog";
 
 // Form schema for updating demo request
 const formSchema = z.object({
@@ -93,6 +103,8 @@ export default function DemoRequests() {
   const [statusFilter, setStatusFilter] = useState<string>("all_statuses");
   const [selectedRequest, setSelectedRequest] = useState<any>(null);
   const [isDialogOpen, setIsDialogOpen] = useState(false);
+  const [deleteRequestId, setDeleteRequestId] = useState<number | null>(null);
+  const [isDeleteDialogOpen, setIsDeleteDialogOpen] = useState(false);
 
   // Fetch demo requests with pagination and filtering
   const { data: responseData, isLoading, refetch } = useQuery({
@@ -117,7 +129,7 @@ export default function DemoRequests() {
   const meta = responseData?.meta || { total: 0, pages: 1, page: 1, limit: 10 };
 
   // Update demo request mutation
-  const { mutate, isPending } = useMutation({
+  const { mutate: updateMutate, isPending: isUpdatePending } = useMutation({
     mutationFn: async ({ id, data }: { id: number; data: FormValues }) => {
       const response = await apiRequest("PATCH", `/api/admin/demo-requests/${id}`, data);
       return await response.json();
@@ -134,6 +146,29 @@ export default function DemoRequests() {
       toast({
         title: "Error",
         description: error.response?.data?.message || "Failed to update request. Please try again.",
+        variant: "destructive",
+      });
+    },
+  });
+  
+  // Delete demo request mutation
+  const { mutate: deleteMutate, isPending: isDeletePending } = useMutation({
+    mutationFn: async (id: number) => {
+      const response = await apiRequest("DELETE", `/api/admin/demo-requests/${id}`);
+      return await response.json();
+    },
+    onSuccess: () => {
+      toast({
+        title: "Success",
+        description: "Demo request has been deleted",
+      });
+      setIsDeleteDialogOpen(false);
+      queryClient.invalidateQueries({ queryKey: ['/api/admin/demo-requests'] });
+    },
+    onError: (error: any) => {
+      toast({
+        title: "Error",
+        description: error.response?.data?.message || "Failed to delete request. Please try again.",
         variant: "destructive",
       });
     },
@@ -167,10 +202,23 @@ export default function DemoRequests() {
   const onSubmit = (values: FormValues) => {
     if (!selectedRequest) return;
     
-    mutate({
+    updateMutate({
       id: selectedRequest.id,
       data: values,
     });
+  };
+  
+  // Handle delete confirmation
+  const handleConfirmDelete = () => {
+    if (deleteRequestId) {
+      deleteMutate(deleteRequestId);
+    }
+  };
+  
+  // Open delete confirmation dialog
+  const handleDeleteClick = (id: number) => {
+    setDeleteRequestId(id);
+    setIsDeleteDialogOpen(true);
   };
 
   return (
@@ -253,13 +301,23 @@ export default function DemoRequests() {
                             : "Not scheduled"}
                         </TableCell>
                         <TableCell className="text-right">
-                          <Button 
-                            variant="outline" 
-                            size="sm"
-                            onClick={() => handleEditRequest(request)}
-                          >
-                            Manage
-                          </Button>
+                          <div className="flex justify-end gap-2">
+                            <Button 
+                              variant="outline" 
+                              size="sm"
+                              onClick={() => handleEditRequest(request)}
+                            >
+                              Manage
+                            </Button>
+                            <Button 
+                              variant="outline" 
+                              size="sm"
+                              className="text-red-500 hover:text-red-700"
+                              onClick={() => handleDeleteClick(request.id)}
+                            >
+                              <Trash2 className="h-4 w-4" />
+                            </Button>
+                          </div>
                         </TableCell>
                       </TableRow>
                     ))}
@@ -474,8 +532,8 @@ export default function DemoRequests() {
                     >
                       Cancel
                     </Button>
-                    <Button type="submit" disabled={isPending}>
-                      {isPending ? "Saving..." : "Save Changes"}
+                    <Button type="submit" disabled={isUpdatePending}>
+                      {isUpdatePending ? "Saving..." : "Save Changes"}
                     </Button>
                   </DialogFooter>
                 </form>
