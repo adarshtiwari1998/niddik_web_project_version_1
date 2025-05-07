@@ -2,19 +2,18 @@ import { useState } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { getQueryFn } from "@/lib/queryClient";
 import { useAuth } from "@/hooks/use-auth";
-import { useToast } from "@/hooks/use-toast";
 import { 
-  Building, Briefcase, MapPin, Calendar, FileCheck, Clock, UserRound, User, 
-  BarChart3, FileText, ExternalLink, LogOut, Mail, Phone
+  Building, Briefcase, MapPin, Calendar, FileCheck, Clock, BarChart3, 
+  FileText, ExternalLink, Mail, Phone
 } from "lucide-react";
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
-import { Separator } from "@/components/ui/separator";
 import { JobListing, JobApplication } from "@shared/schema";
 import { format } from "date-fns";
 import { Link } from "wouter";
+import CandidateLayout from "@/components/layouts/CandidateLayout";
 
 type ApplicationWithJob = JobApplication & {
   job: {
@@ -31,8 +30,7 @@ type ApplicationWithJob = JobApplication & {
 };
 
 export default function CandidateDashboard() {
-  const { user, logoutMutation } = useAuth();
-  const { toast } = useToast();
+  const { user } = useAuth();
   const [activeTab, setActiveTab] = useState("overview");
 
   // Fetch recent job listings
@@ -70,74 +68,10 @@ export default function CandidateDashboard() {
   if (!user) {
     return null; // The ProtectedRoute component will handle redirection
   }
-  
-  const handleLogout = () => {
-    if (confirm('Are you sure you want to logout?')) {
-      logoutMutation.mutate();
-    }
-  };
 
   return (
-    <div className="flex flex-col md:flex-row min-h-screen">
-      {/* Sidebar */}
-      <div className="w-full md:w-64 bg-card border-r border-border">
-        <div className="p-4 border-b border-border flex flex-col items-center md:items-start">
-          <h2 className="font-bold text-xl">Niddik</h2>
-          <p className="text-sm text-muted-foreground">Candidate Portal</p>
-        </div>
-        
-        <div className="p-4">
-          <div className="flex items-center space-x-3 mb-6">
-            <div className="h-10 w-10 rounded-full bg-primary flex items-center justify-center text-primary-foreground">
-              <UserRound className="h-6 w-6" />
-            </div>
-            <div>
-              <p className="font-medium">{user.fullName || user.username}</p>
-              <p className="text-xs text-muted-foreground">{user.email}</p>
-            </div>
-          </div>
-          
-          <nav className="space-y-1">
-            <Link href="/candidate/dashboard">
-              <div className={`flex items-center space-x-2 p-2 rounded-md hover:bg-muted transition-colors ${activeTab === 'overview' ? 'bg-muted font-medium' : ''}`}>
-                <BarChart3 className="h-4 w-4" />
-                <span>Dashboard</span>
-              </div>
-            </Link>
-            <Link href="/candidate/applications">
-              <div className="flex items-center space-x-2 p-2 rounded-md hover:bg-muted transition-colors">
-                <Briefcase className="h-4 w-4" />
-                <span>My Applications</span>
-              </div>
-            </Link>
-            <Link href="/candidate/jobs">
-              <div className="flex items-center space-x-2 p-2 rounded-md hover:bg-muted transition-colors">
-                <FileText className="h-4 w-4" />
-                <span>Job Listings</span>
-              </div>
-            </Link>
-            <Link href="/candidate/profile">
-              <div className={`flex items-center space-x-2 p-2 rounded-md hover:bg-muted transition-colors ${activeTab === 'profile' ? 'bg-muted font-medium' : ''}`}>
-                <User className="h-4 w-4" />
-                <span>My Profile</span>
-              </div>
-            </Link>
-          </nav>
-          
-          <div className="pt-6 mt-6 border-t border-border">
-            <button 
-              onClick={handleLogout}
-              className="flex w-full items-center space-x-2 p-2 text-sm text-red-500 hover:bg-red-50 hover:text-red-600 rounded-md transition-colors"
-            >
-              <LogOut className="h-4 w-4" />
-              <span>Logout</span>
-            </button>
-          </div>
-        </div>
-      </div>
-
-      {/* Main Content */}
-      <div className="flex-1 p-4 md:p-8 overflow-auto">
+    <CandidateLayout activeTab="dashboard">
+      <div>
         <h1 className="text-3xl font-bold mb-2">Hello, {user.fullName || user.username}</h1>
         <p className="text-muted-foreground mb-6">
           Welcome to your candidate dashboard. Track your applications and find new job opportunities.
@@ -261,7 +195,7 @@ export default function CandidateDashboard() {
                     <div className="space-y-4">
                       {recentJobs.data.slice(0, 5).map((job) => (
                         <div key={job.id} className="border rounded-lg p-4 hover:border-primary transition-colors">
-                          <Link href={`/jobs/${job.id}`}>
+                          <Link href={`/candidate/jobs/${job.id}`}>
                             <h3 className="font-medium mb-2 hover:text-primary cursor-pointer">{job.title}</h3>
                           </Link>
                           <div className="flex flex-wrap gap-y-2 gap-x-3 text-sm text-muted-foreground">
@@ -380,28 +314,20 @@ export default function CandidateDashboard() {
                 ) : (
                   <div className="space-y-4">
                     {applicationsData.data.map((application) => (
-                      <div key={application.id} className="border rounded-lg p-4">
-                        <div className="flex flex-col md:flex-row md:justify-between md:items-start gap-4 mb-3">
-                          <div>
-                            <Link href={`/candidate/jobs/${application.jobId}`}>
-                              <h3 className="text-xl font-medium hover:text-primary cursor-pointer">{application.job.title}</h3>
-                            </Link>
-                            <div className="flex flex-wrap gap-y-2 gap-x-3 text-sm text-muted-foreground mt-2">
-                              <div className="flex items-center">
-                                <Building className="h-3.5 w-3.5 mr-1" />
-                                <span>{application.job.company}</span>
-                              </div>
-                              <div className="flex items-center">
-                                <MapPin className="h-3.5 w-3.5 mr-1" />
-                                <span>{application.job.location}</span>
-                              </div>
-                              <div className="flex items-center">
-                                <Briefcase className="h-3.5 w-3.5 mr-1" />
-                                <span>{application.job.jobType}</span>
-                              </div>
-                            </div>
+                      <div key={application.id} className="flex justify-between items-center border-b pb-4">
+                        <div>
+                          <Link href={`/candidate/jobs/${application.jobId}`}>
+                            <h4 className="font-medium hover:text-primary cursor-pointer">{application.job.title}</h4>
+                          </Link>
+                          <div className="flex flex-wrap gap-2 text-sm text-muted-foreground mt-1">
+                            <span>{application.job.company}</span>
+                            <span>•</span>
+                            <span>{application.job.location}</span>
+                            <span>•</span>
+                            <span>Applied: {formatDate(application.appliedDate)}</span>
                           </div>
-
+                        </div>
+                        <div className="flex items-center gap-2">
                           <Badge className={
                             application.status === 'new' ? 'bg-blue-500' :
                             application.status === 'reviewing' ? 'bg-amber-500' :
@@ -420,48 +346,16 @@ export default function CandidateDashboard() {
                              application.status}
                           </Badge>
                         </div>
-
-                        <Separator className="my-3" />
-
-                        <div className="text-sm space-y-2">
-                          <div className="flex items-center justify-between">
-                            <div className="flex items-center text-muted-foreground">
-                              <Calendar className="h-3.5 w-3.5 mr-1.5" />
-                              <span>Applied on {formatDate(application.appliedDate)}</span>
-                            </div>
-                          </div>
-                        </div>
-
-                        <div className="flex flex-wrap gap-2 mt-4">
-                          {application.status !== 'withdrawn' && application.status !== 'rejected' && (
-                            <Button 
-                              size="sm" 
-                              variant="outline" 
-                              className="text-red-500 border-red-300 hover:bg-red-50"
-                            >
-                              Withdraw Application
-                            </Button>
-                          )}
-                          
-                          {application.resumeUrl && (
-                            <Button size="sm" variant="outline" asChild>
-                              <a href={application.resumeUrl} target="_blank" rel="noopener noreferrer">
-                                View Resume
-                              </a>
-                            </Button>
-                          )}
-                          
-                          <Button size="sm" variant="outline" asChild>
-                            <Link href={`/candidate/jobs/${application.jobId}`}>
-                              View Job
-                            </Link>
-                          </Button>
-                        </div>
                       </div>
                     ))}
                   </div>
                 )}
               </CardContent>
+              <CardFooter className="border-t pt-4">
+                <Link href="/candidate/applications">
+                  <Button>View All Applications</Button>
+                </Link>
+              </CardFooter>
             </Card>
           </TabsContent>
 
@@ -470,53 +364,11 @@ export default function CandidateDashboard() {
             <Card>
               <CardHeader>
                 <CardTitle>My Profile</CardTitle>
-                <CardDescription>Your personal and professional information</CardDescription>
+                <CardDescription>View and manage your profile information</CardDescription>
               </CardHeader>
-              <CardContent className="space-y-6">
-                {/* Personal Information */}
-                <div>
-                  <h3 className="text-lg font-medium mb-4">Personal Information</h3>
-                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                    <div className="flex items-start space-x-3">
-                      <User className="h-5 w-5 text-muted-foreground mt-0.5" />
-                      <div>
-                        <p className="text-sm text-muted-foreground">Full Name</p>
-                        <p className="font-medium">{user.fullName || "Not specified"}</p>
-                      </div>
-                    </div>
-                    
-                    <div className="flex items-start space-x-3">
-                      <MapPin className="h-5 w-5 text-muted-foreground mt-0.5" />
-                      <div>
-                        <p className="text-sm text-muted-foreground">Location</p>
-                        <p className="font-medium">{user.location || "Not specified"}</p>
-                      </div>
-                    </div>
-                    
-                    <div className="flex items-start space-x-3">
-                      <Briefcase className="h-5 w-5 text-muted-foreground mt-0.5" />
-                      <div>
-                        <p className="text-sm text-muted-foreground">Experience</p>
-                        <p className="font-medium">{user.experience || "Not specified"}</p>
-                      </div>
-                    </div>
-                    
-                    <div className="flex items-start space-x-3">
-                      <Clock className="h-5 w-5 text-muted-foreground mt-0.5" />
-                      <div>
-                        <p className="text-sm text-muted-foreground">Notice Period</p>
-                        <p className="font-medium">{user.noticePeriod || "Not specified"}</p>
-                      </div>
-                    </div>
-                  </div>
-                </div>
-                
-                <Separator />
-                
-                {/* Contact Information */}
-                <div>
-                  <h3 className="text-lg font-medium mb-4">Contact Information</h3>
-                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              <CardContent>
+                <div className="flex flex-col md:flex-row gap-8">
+                  <div className="space-y-4">
                     <div className="flex items-start space-x-3">
                       <Mail className="h-5 w-5 text-muted-foreground mt-0.5" />
                       <div>
@@ -545,6 +397,6 @@ export default function CandidateDashboard() {
           </TabsContent>
         </Tabs>
       </div>
-    </div>
+    </CandidateLayout>
   );
 }
