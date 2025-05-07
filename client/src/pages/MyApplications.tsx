@@ -12,6 +12,7 @@ import { Separator } from "@/components/ui/separator";
 import { Skeleton } from "@/components/ui/skeleton";
 import { JobApplication } from "@shared/schema";
 import CandidateLayout from "@/components/layouts/CandidateLayout";
+import { Link, useLocation } from "wouter";
 
 // Application with job details
 type ApplicationWithJob = JobApplication & {
@@ -147,12 +148,11 @@ export default function MyApplications() {
             Track and manage all your job applications
           </p>
         </div>
-        <Button 
-          variant="outline" 
-          onClick={() => window.location.href = "/candidate/profile"}
-        >
-          View My Profile
-        </Button>
+        <Link href="/candidate/profile">
+          <Button variant="outline">
+            View My Profile
+          </Button>
+        </Link>
       </div>
 
       <div className="mb-6">
@@ -202,9 +202,11 @@ export default function MyApplications() {
         <Card>
           <CardContent className="py-10 text-center">
             <p>You haven't applied to any jobs yet.</p>
-            <Button className="mt-4" onClick={() => window.location.href = "/candidate/jobs"}>
-              Browse Jobs
-            </Button>
+            <Link href="/candidate/jobs">
+              <Button className="mt-4">
+                Browse Jobs
+              </Button>
+            </Link>
           </CardContent>
         </Card>
       ) : (

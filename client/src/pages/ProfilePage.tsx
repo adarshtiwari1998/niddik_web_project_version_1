@@ -18,6 +18,7 @@ import { useToast } from "@/hooks/use-toast";
 import { queryClient } from "@/lib/queryClient";
 import { User as UserType } from "@shared/schema";
 import CandidateLayout from "@/components/layouts/CandidateLayout";
+import { Link, useLocation } from "wouter";
 
 const profileSchema = z.object({
   fullName: z.string().min(2, "Full name must be at least 2 characters"),
@@ -268,12 +269,11 @@ export default function ProfilePage() {
               Manage your account information and application settings
             </p>
           </div>
-          <Button 
-            variant="outline" 
-            onClick={() => window.location.href = "/candidate/applications"}
-          >
-            View My Applications
-          </Button>
+          <Link href="/candidate/applications">
+            <Button variant="outline">
+              View My Applications
+            </Button>
+          </Link>
         </div>
 
         {/* Application Statistics */}
