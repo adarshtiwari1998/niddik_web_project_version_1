@@ -291,6 +291,337 @@ export async function registerRoutes(app: Express): Promise<Server> {
 
   // Set up authentication
   setupAuth(app);
+  
+  // Submitted Candidates API Endpoints
+  app.get('/api/submitted-candidates', async (req: AuthenticatedRequest, res: Response) => {
+    try {
+      // Check if user is authenticated and is an admin
+      if (!req.isAuthenticated() || req.user?.role !== 'admin') {
+        return res.status(403).json({ 
+          success: false, 
+          message: "Unauthorized access" 
+        });
+      }
+      
+      const page = req.query.page ? parseInt(req.query.page as string) : 1;
+      const limit = req.query.limit ? parseInt(req.query.limit as string) : 10;
+      const search = req.query.search as string;
+      const status = req.query.status as string;
+      const client = req.query.client as string;
+      
+      const result = await storage.getAllSubmittedCandidates({
+        page,
+        limit,
+        search,
+        status,
+        client
+      });
+      
+      return res.status(200).json({ 
+        success: true, 
+        data: result.candidates,
+        meta: {
+          total: result.total,
+          page,
+          limit,
+          pages: Math.ceil(result.total / limit)
+        }
+      });
+    } catch (error) {
+      console.error('Error fetching submitted candidates:', error);
+      return res.status(500).json({ 
+        success: false, 
+        message: "Internal server error" 
+      });
+    }
+  });
+  
+  // Get submitted candidate by ID
+  app.get('/api/submitted-candidates/:id', async (req: AuthenticatedRequest, res: Response) => {
+    try {
+      // Check if user is authenticated and is an admin
+      if (!req.isAuthenticated() || req.user?.role !== 'admin') {
+        return res.status(403).json({ 
+          success: false, 
+          message: "Unauthorized access" 
+        });
+      }
+      
+      const id = parseInt(req.params.id);
+      if (isNaN(id)) {
+        return res.status(400).json({ 
+          success: false, 
+          message: "Invalid candidate ID" 
+        });
+      }
+      
+      const candidate = await storage.getSubmittedCandidateById(id);
+      if (!candidate) {
+        return res.status(404).json({ 
+          success: false, 
+          message: "Candidate not found" 
+        });
+      }
+      
+      return res.status(200).json({ success: true, data: candidate });
+    } catch (error) {
+      console.error('Error fetching submitted candidate:', error);
+      return res.status(500).json({ 
+        success: false, 
+        message: "Internal server error" 
+      });
+    }
+  });
+  
+  // Create a new submitted candidate
+  app.post('/api/submitted-candidates', async (req: AuthenticatedRequest, res: Response) => {
+    try {
+      // Check if user is authenticated and is an admin
+      if (!req.isAuthenticated() || req.user?.role !== 'admin') {
+        return res.status(403).json({ 
+          success: false, 
+          message: "Unauthorized access" 
+        });
+      }
+      
+      // Validate the submission data
+      const validatedData = submittedCandidateSchema.parse(req.body);
+      
+      // Calculate margin and profit if bill rate and pay rate are provided
+      if (validatedData.billRate && validatedData.payRate) {
+        const billRate = Number(validatedData.billRate);
+        const payRate = Number(validatedData.payRate);
+        
+        if (!isNaN(billRate) && !isNaN(payRate)) {
+          const margin = parseFloat((billRate - payRate).toFixed(2));
+          const profit = parseFloat(((billRate - payRate) * 160).toFixed(2));
+          
+          validatedData.marginPerHour = margin;
+          // Assuming 160 hours per month (40 hours per week * 4 weeks)
+          validatedData.profitPerMonth = profit;
+        }
+      }
+      
+      const candidate = await storage.createSubmittedCandidate(validatedData);
+      return res.status(201).json({ success: true, data: candidate });
+    } catch (error) {
+      if (error instanceof z.ZodError) {
+        return res.status(400).json({ 
+          success: false, 
+          message: "Validation error", 
+          errors: error.errors 
+        });
+      }
+      console.error('Error creating submitted candidate:', error);
+      return res.status(500).json({ 
+        success: false, 
+        message: "Internal server error" 
+      });
+    }
+  });
+  
+  // Update a submitted candidate
+  app.put('/api/submitted-candidates/:id', async (req: AuthenticatedRequest, res: Response) => {
+    try {
+      // Check if user is authenticated and is an admin
+      if (!req.isAuthenticated() || req.user?.role !== 'admin') {
+        return res.status(403).json({ 
+          success: false, 
+          message: "Unauthorized access" 
+        });
+      }
+      
+      const id = parseInt(req.params.id);
+      if (isNaN(id)) {
+        return res.status(400).json({ 
+          success: false, 
+          message: "Invalid candidate ID" 
+        });
+      }
+      
+      // Ensure the candidate exists
+      const existingCandidate = await storage.getSubmittedCandidateById(id);
+      if (!existingCandidate) {
+        return res.status(404).json({ 
+          success: false, 
+          message: "Candidate not found" 
+        });
+      }
+      
+      // Validate the update data
+      const validatedData = submittedCandidateSchema.partial().parse(req.body);
+      
+      // Calculate margin and profit if bill rate or pay rate are updated
+      if (validatedData.billRate !== undefined || validatedData.payRate !== undefined) {
+        const billRate = Number(validatedData.billRate !== undefined ? validatedData.billRate : existingCandidate.billRate);
+        const payRate = Number(validatedData.payRate !== undefined ? validatedData.payRate : existingCandidate.payRate);
+        
+        if (!isNaN(billRate) && !isNaN(payRate)) {
+          const margin = parseFloat((billRate - payRate).toFixed(2));
+          const profit = parseFloat(((billRate - payRate) * 160).toFixed(2));
+          
+          validatedData.marginPerHour = margin;
+          // Assuming 160 hours per month (40 hours per week * 4 weeks)
+          validatedData.profitPerMonth = profit;
+        }
+      }
+      
+      const updatedCandidate = await storage.updateSubmittedCandidate(id, validatedData);
+      return res.status(200).json({ success: true, data: updatedCandidate });
+    } catch (error) {
+      if (error instanceof z.ZodError) {
+        return res.status(400).json({ 
+          success: false, 
+          message: "Validation error", 
+          errors: error.errors 
+        });
+      }
+      console.error('Error updating submitted candidate:', error);
+      return res.status(500).json({ 
+        success: false, 
+        message: "Internal server error" 
+      });
+    }
+  });
+  
+  // Delete a submitted candidate
+  app.delete('/api/submitted-candidates/:id', async (req: AuthenticatedRequest, res: Response) => {
+    try {
+      // Check if user is authenticated and is an admin
+      if (!req.isAuthenticated() || req.user?.role !== 'admin') {
+        return res.status(403).json({ 
+          success: false, 
+          message: "Unauthorized access" 
+        });
+      }
+      
+      const id = parseInt(req.params.id);
+      if (isNaN(id)) {
+        return res.status(400).json({ 
+          success: false, 
+          message: "Invalid candidate ID" 
+        });
+      }
+      
+      // Ensure the candidate exists
+      const existingCandidate = await storage.getSubmittedCandidateById(id);
+      if (!existingCandidate) {
+        return res.status(404).json({ 
+          success: false, 
+          message: "Candidate not found" 
+        });
+      }
+      
+      await storage.deleteSubmittedCandidate(id);
+      return res.status(200).json({ 
+        success: true, 
+        message: "Candidate deleted successfully" 
+      });
+    } catch (error) {
+      console.error('Error deleting submitted candidate:', error);
+      return res.status(500).json({ 
+        success: false, 
+        message: "Internal server error" 
+      });
+    }
+  });
+  
+  // Get analytics for submitted candidates
+  app.get('/api/submitted-candidates/analytics/summary', async (req: AuthenticatedRequest, res: Response) => {
+    try {
+      // Check if user is authenticated and is an admin
+      if (!req.isAuthenticated() || req.user?.role !== 'admin') {
+        return res.status(403).json({ 
+          success: false, 
+          message: "Unauthorized access" 
+        });
+      }
+      
+      const analytics = await storage.getSubmittedCandidateAnalytics();
+      return res.status(200).json({ success: true, data: analytics });
+    } catch (error) {
+      console.error('Error fetching submitted candidates analytics:', error);
+      return res.status(500).json({ 
+        success: false, 
+        message: "Internal server error" 
+      });
+    }
+  });
+  
+  // Bulk create submitted candidates (for importing from sheets)
+  app.post('/api/submitted-candidates/bulk', async (req: AuthenticatedRequest, res: Response) => {
+    try {
+      // Check if user is authenticated and is an admin
+      if (!req.isAuthenticated() || req.user?.role !== 'admin') {
+        return res.status(403).json({ 
+          success: false, 
+          message: "Unauthorized access" 
+        });
+      }
+      
+      const { candidates } = req.body;
+      
+      if (!Array.isArray(candidates) || candidates.length === 0) {
+        return res.status(400).json({ 
+          success: false, 
+          message: "Invalid candidates data. Expected a non-empty array." 
+        });
+      }
+      
+      // Validate each candidate and calculate margins/profits
+      const validatedCandidates = [];
+      const errors = [];
+      
+      for (let i = 0; i < candidates.length; i++) {
+        try {
+          const candidate = candidates[i];
+          const validatedData = submittedCandidateSchema.parse(candidate);
+          
+          // Calculate margin and profit if bill rate and pay rate are provided
+          if (validatedData.billRate && validatedData.payRate) {
+            const billRate = Number(validatedData.billRate);
+            const payRate = Number(validatedData.payRate);
+            
+            if (!isNaN(billRate) && !isNaN(payRate)) {
+              const margin = parseFloat((billRate - payRate).toFixed(2));
+              const profit = parseFloat(((billRate - payRate) * 160).toFixed(2));
+              
+              validatedData.marginPerHour = margin;
+              validatedData.profitPerMonth = profit; // 160 hours per month
+            }
+          }
+          
+          validatedCandidates.push(validatedData);
+        } catch (validationError) {
+          errors.push({
+            index: i,
+            errors: validationError instanceof z.ZodError ? validationError.errors : [{ message: "Validation failed" }]
+          });
+        }
+      }
+      
+      if (errors.length > 0) {
+        return res.status(400).json({ 
+          success: false, 
+          message: "Validation errors in submitted candidates", 
+          errors 
+        });
+      }
+      
+      const createdCandidates = await storage.bulkCreateSubmittedCandidates(validatedCandidates);
+      return res.status(201).json({ 
+        success: true, 
+        data: createdCandidates,
+        count: createdCandidates.length
+      });
+    } catch (error) {
+      console.error('Error bulk creating submitted candidates:', error);
+      return res.status(500).json({ 
+        success: false, 
+        message: "Internal server error" 
+      });
+    }
+  });
 
   // Job Application API Endpoints
   

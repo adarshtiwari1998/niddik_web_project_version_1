@@ -468,30 +468,28 @@ export const storage = {
     uniqueClients: number;
     statusCounts: Record<string, number>;
   }> {
-    // Get total count
-    const totalCount = await db
-      .select({ count: db.fn.count() })
-      .from(submittedCandidates)
-      .then(result => Number(result[0].count));
+    // Get all candidates
+    const allCandidates = await db.query.submittedCandidates.findMany();
+    const totalCount = allCandidates.length;
 
-    // Get unique clients count
-    const clientsResult = await db
-      .selectDistinct({ client: submittedCandidates.client })
-      .from(submittedCandidates);
-    const uniqueClientsCount = clientsResult.length;
+    // Get unique clients
+    const uniqueClients = new Set<string>();
+    allCandidates.forEach(candidate => {
+      if (candidate.client) {
+        uniqueClients.add(candidate.client);
+      }
+    });
+    const uniqueClientsCount = uniqueClients.size;
 
     // Get status counts
-    const statusResults = await db
-      .select({
-        status: submittedCandidates.status,
-        count: db.fn.count()
-      })
-      .from(submittedCandidates)
-      .groupBy(submittedCandidates.status);
-    
     const statusCounts: Record<string, number> = {};
-    statusResults.forEach(item => {
-      statusCounts[item.status] = Number(item.count);
+    allCandidates.forEach(candidate => {
+      const status = candidate.status;
+      if (!statusCounts[status]) {
+        statusCounts[status] = 1;
+      } else {
+        statusCounts[status]++;
+      }
     });
 
     return {
