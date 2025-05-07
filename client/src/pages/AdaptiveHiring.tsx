@@ -230,7 +230,7 @@ const UsesCasesWithStickyImage = () => {
   };
 
   return (
-    <div>
+    <div className="relative">
       <h2 className="text-4xl font-bold mb-6 text-andela-dark">Common use cases for Adaptive Hiring</h2>
       
       <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 mt-10">
@@ -277,11 +277,13 @@ const UsesCasesWithStickyImage = () => {
               </div>
             </div>
           ))}
+          {/* Add additional spacer to match height of content */}
+          <div className="h-[800px] lg:block hidden"></div>
         </div>
         
-        {/* Right side fixed image - 6 columns wide */}
-        <div className="lg:col-span-6 relative h-full">
-          <div className="lg:fixed lg:w-[calc(33.333%-2rem)] lg:top-24">
+        {/* Right side positioned image - 6 columns wide */}
+        <div className="lg:col-span-6 relative">
+          <div className="lg:absolute lg:w-full lg:top-0">
             <div className="aspect-video relative rounded-xl overflow-hidden border border-gray-200 shadow-md">
               {renderImage()}
             </div>
@@ -360,7 +362,7 @@ const AdaptiveHiringWorkflow = () => {
   }, []);
 
   return (
-    <div>
+    <div className="relative">
       <h2 className="text-4xl font-bold mb-3 text-andela-dark">
         How Adaptive Hiring works: Bringing agile principles to tech hiring
       </h2>
@@ -398,11 +400,13 @@ const AdaptiveHiringWorkflow = () => {
                 </p>
               </div>
             ))}
+            {/* Add additional spacer to match height of content */}
+            <div className="h-[500px] lg:block hidden"></div>
           </div>
           
-          {/* Right Column - Fixed Visualization */}
-          <div className="relative h-full">
-            <div className="lg:fixed lg:w-[calc(50%-3rem)] pt-6 lg:pt-8 lg:pl-6 lg:top-24">
+          {/* Right Column - Positioned Visualization */}
+          <div className="relative">
+            <div className="lg:absolute lg:w-full pt-6 lg:pt-8 lg:pl-6 lg:top-0">
               {/* Skills Assessment Card for Section 1 */}
               {activeSection === 1 && (
                 <div className="bg-blue-50 rounded-lg overflow-hidden pt-10 pb-10 px-8">
