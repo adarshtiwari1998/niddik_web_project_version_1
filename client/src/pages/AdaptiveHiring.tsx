@@ -338,31 +338,54 @@ const AdaptiveHiringWorkflow = () => {
     }
   ];
 
-  // Track if the component is in viewport and when it exits to control fixed positioning
+  // Create separate refs for top and bottom elements to track entry and exit
+  const topSentinelRef = useRef<HTMLDivElement>(null);
+  const bottomSentinelRef = useRef<HTMLDivElement>(null);
+
+  // Track when component enters and exits viewport to control fixed positioning
   useEffect(() => {
-    const sectionElement = componentRef.current;
-    if (!sectionElement) return;
-    
-    // Create options for detecting when section is entered and exited
+    // Set up intersection observer for top sentinel
     const options = {
       root: null,
-      rootMargin: '-100px 0px -100px 0px', // Adjust threshold for entry/exit
-      threshold: [0.1, 0.9] // Multiple thresholds to detect entering and leaving
+      rootMargin: '0px',
+      threshold: 0.1
     };
 
-    // Observer to track when section is in viewport
-    const observer = new IntersectionObserver((entries) => {
+    // Function to handle intersection updates
+    const handleIntersection = (entries: IntersectionObserverEntry[]) => {
       entries.forEach(entry => {
-        // The isIntersecting determines if we're in the section
-        setIsInViewport(entry.isIntersecting);
+        // If the top sentinel is entering, we're starting the section
+        if (entry.target === topSentinelRef.current && entry.isIntersecting) {
+          console.log("Entering section - fixing image");
+          setIsInViewport(true);
+        }
+        
+        // If the bottom sentinel is entering, we're at the end of the section
+        if (entry.target === bottomSentinelRef.current && entry.isIntersecting) {
+          console.log("Exiting section - releasing image");
+          setIsInViewport(false);
+        }
       });
-    }, options);
+    };
+
+    const observer = new IntersectionObserver(handleIntersection, options);
     
-    // Observe the entire component section
-    observer.observe(sectionElement);
+    // Observe both sentinel elements
+    if (topSentinelRef.current) {
+      observer.observe(topSentinelRef.current);
+    }
+    
+    if (bottomSentinelRef.current) {
+      observer.observe(bottomSentinelRef.current);
+    }
 
     return () => {
-      observer.unobserve(sectionElement);
+      if (topSentinelRef.current) {
+        observer.unobserve(topSentinelRef.current);
+      }
+      if (bottomSentinelRef.current) {
+        observer.unobserve(bottomSentinelRef.current);
+      }
     };
   }, []);
 
@@ -558,6 +581,9 @@ const AdaptiveHiringWorkflow = () => {
 
   return (
     <div id="how-adaptive-hiring-works" className="relative pb-16" ref={componentRef}>
+      {/* Top sentinel element to detect when section enters viewport */}
+      <div ref={topSentinelRef} className="absolute top-0 h-1 w-full" />
+      
       <h2 className="text-4xl font-bold mb-6 text-andela-dark">
         How Adaptive Hiring works: Bringing agile principles to tech hiring
       </h2>
@@ -598,12 +624,12 @@ const AdaptiveHiringWorkflow = () => {
           </div>
           
           {/* Right Column - Image with fixed positioning when section is in viewport */}
-          <div className="hidden lg:block relative">
+          <div className="hidden lg:block">
             <div 
               className={`w-full pt-8 pr-12 ${
                 isInViewport 
-                  ? 'sticky top-24' // Fixed to the top when in viewport
-                  : ''
+                  ? 'fixed top-24 w-[calc(50%-3rem)]' // Fixed to the top when in viewport
+                  : 'relative'
               }`}
             >
               {getImageContent()}
@@ -611,6 +637,9 @@ const AdaptiveHiringWorkflow = () => {
           </div>
         </div>
       </div>
+      
+      {/* Bottom sentinel element to detect when section exits viewport */}
+      <div ref={bottomSentinelRef} className="absolute bottom-0 h-1 w-full" />
     </div>
   );
 };
