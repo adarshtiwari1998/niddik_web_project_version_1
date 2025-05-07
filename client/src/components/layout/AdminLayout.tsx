@@ -59,13 +59,16 @@ export default function AdminLayout({ children, title, description }: AdminLayou
       <header className="bg-white dark:bg-gray-800 shadow-sm border-b">
         <div className="container mx-auto px-4 py-3 flex justify-between items-center">
           <Link href="/admin/dashboard">
-            <div className="flex items-center cursor-pointer">
-              <img 
-                src="/images/niddik_logo.png" 
-                alt="Niddik Logo" 
-                className="h-10 mr-2" 
-              />
-              <h1 className="text-xl font-bold">Niddik Admin</h1>
+            <div className="flex flex-col cursor-pointer">
+              <div className="flex items-center">
+                <img 
+                  src="/images/niddik_logo.png" 
+                  alt="Niddik Logo" 
+                  className="h-10 mr-2" 
+                />
+                <h1 className="text-xl font-bold">Niddik Admin</h1>
+              </div>
+              <p className="text-sm text-gray-500 ml-1">Connecting People, Changing Lives</p>
             </div>
           </Link>
           <Button variant="ghost" onClick={handleLogout}>
@@ -76,9 +79,9 @@ export default function AdminLayout({ children, title, description }: AdminLayou
       </header>
       
       {/* Admin Area Label */}
-      <div className="bg-green-800 text-white py-2">
+      <div className="bg-green-600 text-white py-1">
         <div className="container mx-auto px-4">
-          <p className="font-medium">Admin Area</p>
+          <p className="text-sm">Admin Area</p>
         </div>
       </div>
 
