@@ -189,7 +189,6 @@ export default function AuthPage() {
         
         const { url } = await uploadRes.json();
         completeData.resume = url;
-        completeData.resumeUrl = url;
       }
       
       // Now register with the complete data
@@ -207,185 +206,88 @@ export default function AuthPage() {
   };
 
   return (
-    <div className="flex min-h-screen">
-      {/* Left side - Auth forms */}
-      <div className="flex flex-col justify-center w-full px-4 py-12 md:w-1/2 lg:px-12">
-        <div className="mx-auto w-full max-w-md">
-          <div className="flex flex-col space-y-2 text-center mb-8">
-            <h1 className="text-3xl font-bold tracking-tight">Welcome to Niddik</h1>
-            <p className="text-muted-foreground">
-              {activeTab === "login" 
-                ? "Sign in to your account to continue" 
-                : "Create an account to get started"}
-            </p>
+    <div className="flex flex-col min-h-screen">
+      {/* Header */}
+      <header className="border-b bg-background">
+        <div className="container flex h-16 items-center justify-between">
+          <div className="flex items-center gap-6">
+            <a href="/" className="flex flex-col items-start">
+              <div className="flex flex-col">
+                <img 
+                  src="/images/niddik_logo.png" 
+                  alt="NiDDiK Logo" 
+                  className="h-14 w-auto mb-1" 
+                  style={{ objectFit: "contain" }}
+                />
+                <span className="text-[10px] text-muted-foreground">Connecting People, Changing Lives</span>
+              </div>
+            </a>
+            <nav className="hidden md:flex gap-6">
+              <a href="/careers" className="text-sm font-medium hover:text-primary">
+                Browse Jobs
+              </a>
+              <a href="/about-us" className="text-sm font-medium hover:text-primary">
+                About Us
+              </a>
+            </nav>
           </div>
           
-          <Tabs 
-            defaultValue="login" 
-            value={activeTab}
-            onValueChange={setActiveTab}
-            className="w-full"
-          >
-            <TabsList className="grid w-full grid-cols-2 mb-6">
-              <TabsTrigger value="login">Login</TabsTrigger>
-              <TabsTrigger value="register">Register</TabsTrigger>
-            </TabsList>
-            
-            {/* Login Tab */}
-            <TabsContent value="login">
-              <Card>
-                <CardHeader>
-                  <CardTitle>Login</CardTitle>
-                  <CardDescription>
-                    Enter your credentials to access your account
-                  </CardDescription>
-                </CardHeader>
-                <CardContent>
-                  <Form {...loginForm}>
-                    <form onSubmit={loginForm.handleSubmit(onLoginSubmit)} className="space-y-4">
-                      <FormField
-                        control={loginForm.control}
-                        name="username"
-                        render={({ field }) => (
-                          <FormItem>
-                            <FormLabel>Username</FormLabel>
-                            <FormControl>
-                              <div className="relative">
-                                <User className="absolute left-3 top-3 h-4 w-4 text-muted-foreground" />
-                                <Input placeholder="Enter username" className="pl-10" {...field} />
-                              </div>
-                            </FormControl>
-                            <FormMessage />
-                          </FormItem>
-                        )}
-                      />
-                      
-                      <FormField
-                        control={loginForm.control}
-                        name="password"
-                        render={({ field }) => (
-                          <FormItem>
-                            <FormLabel>Password</FormLabel>
-                            <FormControl>
-                              <div className="relative">
-                                <Lock className="absolute left-3 top-3 h-4 w-4 text-muted-foreground" />
-                                <Input 
-                                  type="password" 
-                                  placeholder="Enter password" 
-                                  className="pl-10" 
-                                  {...field} 
-                                />
-                              </div>
-                            </FormControl>
-                            <FormMessage />
-                          </FormItem>
-                        )}
-                      />
+          <div className="flex items-center gap-4">
+            <div className="bg-primary/10 text-primary rounded-md px-3 py-1 text-xs font-medium">
+              A workforce partner
+            </div>
+          </div>
+        </div>
+      </header>
 
-                      <Button 
-                        type="submit" 
-                        className="w-full" 
-                        disabled={loginMutation.isPending}
-                      >
-                        {loginMutation.isPending ? (
-                          <>
-                            <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                            Signing in...
-                          </>
-                        ) : (
-                          "Sign In"
-                        )}
-                      </Button>
-                    </form>
-                  </Form>
-                </CardContent>
-                <CardFooter className="flex flex-col space-y-4">
-                  <div className="text-sm text-center text-muted-foreground">
-                    Don't have an account?{" "}
-                    <Button 
-                      variant="link" 
-                      className="p-0 h-auto" 
-                      onClick={() => setActiveTab("register")}
-                    >
-                      Register here
-                    </Button>
-                  </div>
-                </CardFooter>
-              </Card>
-            </TabsContent>
-            
-            {/* Register Tab */}
-            <TabsContent value="register">
-              <Card>
-                <CardHeader>
-                  <div className="flex justify-between items-center">
-                    <div>
-                      <CardTitle>Create an Account</CardTitle>
-                      <CardDescription>
-                        {registrationStep === 1 && "Step 1: Personal Information"}
-                        {registrationStep === 2 && "Step 2: Professional Details"}
-                        {registrationStep === 3 && "Step 3: Set Password & Upload Resume"}
-                      </CardDescription>
-                    </div>
-                    <div className="flex space-x-1">
-                      <div className={`h-2 w-8 rounded-full ${registrationStep >= 1 ? "bg-primary" : "bg-gray-200"}`}></div>
-                      <div className={`h-2 w-8 rounded-full ${registrationStep >= 2 ? "bg-primary" : "bg-gray-200"}`}></div>
-                      <div className={`h-2 w-8 rounded-full ${registrationStep >= 3 ? "bg-primary" : "bg-gray-200"}`}></div>
-                    </div>
-                  </div>
-                </CardHeader>
-                <CardContent>
-                  {/* Step 1: Basic Information */}
-                  {registrationStep === 1 && (
-                    <Form {...registerStep1Form}>
-                      <form onSubmit={registerStep1Form.handleSubmit(onStep1Submit)} className="space-y-4">
+      {/* Main Content */}
+      <div className="flex flex-grow">
+        {/* Left side - Auth forms */}
+        <div className="flex flex-col justify-center w-full px-4 py-12 md:w-1/2 lg:px-12">
+          <div className="mx-auto w-full max-w-md">
+            <div className="flex flex-col space-y-2 text-center mb-8">
+              <h1 className="text-3xl font-bold tracking-tight">Welcome to NiDDiK</h1>
+              <p className="text-muted-foreground">
+                {activeTab === "login" 
+                  ? "Sign in to your account to continue" 
+                  : "Create an account to get started"}
+              </p>
+            </div>
+          
+            <Tabs 
+              defaultValue="login" 
+              value={activeTab}
+              onValueChange={setActiveTab}
+              className="w-full"
+            >
+              <TabsList className="grid w-full grid-cols-2 mb-6">
+                <TabsTrigger value="login">Login</TabsTrigger>
+                <TabsTrigger value="register">Register</TabsTrigger>
+              </TabsList>
+              
+              {/* Login Tab */}
+              <TabsContent value="login">
+                <Card>
+                  <CardHeader>
+                    <CardTitle>Login</CardTitle>
+                    <CardDescription>
+                      Enter your credentials to access your account
+                    </CardDescription>
+                  </CardHeader>
+                  <CardContent>
+                    <Form {...loginForm}>
+                      <form onSubmit={loginForm.handleSubmit(onLoginSubmit)} className="space-y-4">
                         <FormField
-                          control={registerStep1Form.control}
-                          name="fullName"
-                          render={({ field }) => (
-                            <FormItem>
-                              <FormLabel>Full Name</FormLabel>
-                              <FormControl>
-                                <div className="relative">
-                                  <User className="absolute left-3 top-3 h-4 w-4 text-muted-foreground" />
-                                  <Input placeholder="Your full name" className="pl-10" {...field} />
-                                </div>
-                              </FormControl>
-                              <FormMessage />
-                            </FormItem>
-                          )}
-                        />
-                        
-                        <FormField
-                          control={registerStep1Form.control}
-                          name="email"
-                          render={({ field }) => (
-                            <FormItem>
-                              <FormLabel>Email</FormLabel>
-                              <FormControl>
-                                <div className="relative">
-                                  <Mail className="absolute left-3 top-3 h-4 w-4 text-muted-foreground" />
-                                  <Input 
-                                    type="email" 
-                                    placeholder="Your email address" 
-                                    className="pl-10" 
-                                    {...field} 
-                                  />
-                                </div>
-                              </FormControl>
-                              <FormMessage />
-                            </FormItem>
-                          )}
-                        />
-                        
-                        <FormField
-                          control={registerStep1Form.control}
+                          control={loginForm.control}
                           name="username"
                           render={({ field }) => (
                             <FormItem>
                               <FormLabel>Username</FormLabel>
                               <FormControl>
-                                <Input placeholder="Choose a username" {...field} />
+                                <div className="relative">
+                                  <User className="absolute left-3 top-3 h-4 w-4 text-muted-foreground" />
+                                  <Input placeholder="Enter username" className="pl-10" {...field} />
+                                </div>
                               </FormControl>
                               <FormMessage />
                             </FormItem>
@@ -393,229 +295,7 @@ export default function AuthPage() {
                         />
                         
                         <FormField
-                          control={registerStep1Form.control}
-                          name="phone"
-                          render={({ field }) => (
-                            <FormItem>
-                              <FormLabel>Contact Number</FormLabel>
-                              <FormControl>
-                                <Input placeholder="Your phone number" {...field} />
-                              </FormControl>
-                              <FormMessage />
-                            </FormItem>
-                          )}
-                        />
-
-                        <div className="flex justify-end">
-                          <Button 
-                            type="submit" 
-                            className="mt-4"
-                          >
-                            Next <ArrowRight className="ml-2 h-4 w-4" />
-                          </Button>
-                        </div>
-                      </form>
-                    </Form>
-                  )}
-
-                  {/* Step 2: Professional Details */}
-                  {registrationStep === 2 && (
-                    <Form {...registerStep2Form}>
-                      <form onSubmit={registerStep2Form.handleSubmit(onStep2Submit)} className="space-y-4">
-                        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                          <FormField
-                            control={registerStep2Form.control}
-                            name="experience"
-                            render={({ field }) => (
-                              <FormItem>
-                                <FormLabel>Experience (Years)</FormLabel>
-                                <FormControl>
-                                  <Input placeholder="Years of experience" {...field} />
-                                </FormControl>
-                                <FormMessage />
-                              </FormItem>
-                            )}
-                          />
-                          
-                          <FormField
-                            control={registerStep2Form.control}
-                            name="noticePeriod"
-                            render={({ field }) => (
-                              <FormItem>
-                                <FormLabel>Notice Period</FormLabel>
-                                <Select
-                                  onValueChange={field.onChange}
-                                  value={field.value}
-                                >
-                                  <FormControl>
-                                    <SelectTrigger>
-                                      <SelectValue placeholder="Select notice period" />
-                                    </SelectTrigger>
-                                  </FormControl>
-                                  <SelectContent>
-                                    <SelectItem value="Immediately">Immediately</SelectItem>
-                                    <SelectItem value="15 days">15 days</SelectItem>
-                                    <SelectItem value="1 month">1 month</SelectItem>
-                                    <SelectItem value="2 months">2 months</SelectItem>
-                                    <SelectItem value="3 months">3 months</SelectItem>
-                                  </SelectContent>
-                                </Select>
-                                <FormMessage />
-                              </FormItem>
-                            )}
-                          />
-                        </div>
-
-                        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                          <FormField
-                            control={registerStep2Form.control}
-                            name="currentCtc"
-                            render={({ field }) => (
-                              <FormItem>
-                                <FormLabel>Current CTC</FormLabel>
-                                <FormControl>
-                                  <Input placeholder="Current salary" {...field} />
-                                </FormControl>
-                                <FormMessage />
-                              </FormItem>
-                            )}
-                          />
-
-                          <FormField
-                            control={registerStep2Form.control}
-                            name="expectedCtc"
-                            render={({ field }) => (
-                              <FormItem>
-                                <FormLabel>Expected CTC</FormLabel>
-                                <FormControl>
-                                  <Input placeholder="Expected salary" {...field} />
-                                </FormControl>
-                                <FormMessage />
-                              </FormItem>
-                            )}
-                          />
-                        </div>
-
-                        <FormField
-                          control={registerStep2Form.control}
-                          name="skills"
-                          render={({ field }) => (
-                            <FormItem>
-                              <FormLabel>Skills</FormLabel>
-                              <FormControl>
-                                <Textarea 
-                                  placeholder="List your skills, separated by commas (e.g. React, JavaScript, Project Management)" 
-                                  className="min-h-[80px]"
-                                  {...field} 
-                                />
-                              </FormControl>
-                              <FormDescription>
-                                List skills relevant to your profession, separated by commas
-                              </FormDescription>
-                              <FormMessage />
-                            </FormItem>
-                          )}
-                        />
-
-                        <Separator className="my-2" />
-                        <h3 className="text-sm font-medium pt-2">Location Information</h3>
-
-                        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                          <FormField
-                            control={registerStep2Form.control}
-                            name="location"
-                            render={({ field }) => (
-                              <FormItem>
-                                <FormLabel>Location</FormLabel>
-                                <FormControl>
-                                  <Input placeholder="Your current location" {...field} />
-                                </FormControl>
-                                <FormMessage />
-                              </FormItem>
-                            )}
-                          />
-                          
-                          <FormField
-                            control={registerStep2Form.control}
-                            name="country"
-                            render={({ field }) => (
-                              <FormItem>
-                                <FormLabel>Country</FormLabel>
-                                <FormControl>
-                                  <Input placeholder="Country" {...field} />
-                                </FormControl>
-                                <FormMessage />
-                              </FormItem>
-                            )}
-                          />
-                        </div>
-
-                        <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-                          <FormField
-                            control={registerStep2Form.control}
-                            name="city"
-                            render={({ field }) => (
-                              <FormItem>
-                                <FormLabel>City</FormLabel>
-                                <FormControl>
-                                  <Input placeholder="City" {...field} />
-                                </FormControl>
-                                <FormMessage />
-                              </FormItem>
-                            )}
-                          />
-
-                          <FormField
-                            control={registerStep2Form.control}
-                            name="state"
-                            render={({ field }) => (
-                              <FormItem>
-                                <FormLabel>State</FormLabel>
-                                <FormControl>
-                                  <Input placeholder="State" {...field} />
-                                </FormControl>
-                                <FormMessage />
-                              </FormItem>
-                            )}
-                          />
-
-                          <FormField
-                            control={registerStep2Form.control}
-                            name="zipCode"
-                            render={({ field }) => (
-                              <FormItem>
-                                <FormLabel>Zip Code</FormLabel>
-                                <FormControl>
-                                  <Input placeholder="Zip code" {...field} />
-                                </FormControl>
-                                <FormMessage />
-                              </FormItem>
-                            )}
-                          />
-                        </div>
-
-                        <div className="flex justify-between">
-                          <Button 
-                            type="button" 
-                            variant="outline"
-                            onClick={() => setRegistrationStep(1)}
-                          >
-                            <ArrowLeft className="mr-2 h-4 w-4" /> Back
-                          </Button>
-                          <Button type="submit">
-                            Next <ArrowRight className="ml-2 h-4 w-4" />
-                          </Button>
-                        </div>
-                      </form>
-                    </Form>
-                  )}
-
-                  {/* Step 3: Password and Resume */}
-                  {registrationStep === 3 && (
-                    <Form {...registerStep3Form}>
-                      <form onSubmit={registerStep3Form.handleSubmit(onStep3Submit)} className="space-y-4">
-                        <FormField
-                          control={registerStep3Form.control}
+                          control={loginForm.control}
                           name="password"
                           render={({ field }) => (
                             <FormItem>
@@ -625,29 +305,7 @@ export default function AuthPage() {
                                   <Lock className="absolute left-3 top-3 h-4 w-4 text-muted-foreground" />
                                   <Input 
                                     type="password" 
-                                    placeholder="Create a password" 
-                                    className="pl-10" 
-                                    {...field} 
-                                  />
-                                </div>
-                              </FormControl>
-                              <FormMessage />
-                            </FormItem>
-                          )}
-                        />
-                        
-                        <FormField
-                          control={registerStep3Form.control}
-                          name="confirmPassword"
-                          render={({ field }) => (
-                            <FormItem>
-                              <FormLabel>Confirm Password</FormLabel>
-                              <FormControl>
-                                <div className="relative">
-                                  <Lock className="absolute left-3 top-3 h-4 w-4 text-muted-foreground" />
-                                  <Input 
-                                    type="password" 
-                                    placeholder="Confirm your password" 
+                                    placeholder="Enter password" 
                                     className="pl-10" 
                                     {...field} 
                                   />
@@ -658,74 +316,468 @@ export default function AuthPage() {
                           )}
                         />
 
-                        <div className="space-y-2">
-                          <FormLabel htmlFor="resume">Resume Upload (Optional)</FormLabel>
-                          <FormDescription>
-                            Upload your resume or CV (PDF, DOC, DOCX)
-                          </FormDescription>
-                          <Input
-                            id="resume"
-                            type="file"
-                            accept=".pdf,.doc,.docx"
-                            onChange={handleFileChange}
-                          />
-                          {resumeFile && (
-                            <p className="text-sm text-muted-foreground">
-                              Selected file: {resumeFile.name}
-                            </p>
+                        <Button 
+                          type="submit" 
+                          className="w-full" 
+                          disabled={loginMutation.isPending}
+                        >
+                          {loginMutation.isPending ? (
+                            <>
+                              <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                              Signing in...
+                            </>
+                          ) : (
+                            "Sign In"
                           )}
-                        </div>
-
-                        <div className="flex justify-between mt-6">
-                          <Button 
-                            type="button" 
-                            variant="outline"
-                            onClick={() => setRegistrationStep(2)}
-                          >
-                            <ArrowLeft className="mr-2 h-4 w-4" /> Back
-                          </Button>
-                          <Button 
-                            type="submit" 
-                            disabled={isUploading || registerMutation.isPending}
-                          >
-                            {isUploading || registerMutation.isPending ? (
-                              <>
-                                <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                                {isUploading ? "Uploading..." : "Creating Account..."}
-                              </>
-                            ) : (
-                              "Create Account"
-                            )}
-                          </Button>
-                        </div>
+                        </Button>
                       </form>
                     </Form>
-                  )}
-                </CardContent>
-                <CardFooter className="flex flex-col space-y-4">
-                  <div className="text-sm text-center text-muted-foreground">
-                    Already have an account?{" "}
-                    <Button 
-                      variant="link" 
-                      className="p-0 h-auto" 
-                      onClick={() => setActiveTab("login")}
-                    >
-                      Login here
-                    </Button>
-                  </div>
-                </CardFooter>
-              </Card>
-            </TabsContent>
-          </Tabs>
+                  </CardContent>
+                  <CardFooter className="flex flex-col space-y-4">
+                    <div className="text-sm text-center text-muted-foreground">
+                      Don't have an account?{" "}
+                      <Button 
+                        variant="link" 
+                        className="p-0 h-auto" 
+                        onClick={() => setActiveTab("register")}
+                      >
+                        Register here
+                      </Button>
+                    </div>
+                  </CardFooter>
+                </Card>
+              </TabsContent>
+              
+              {/* Register Tab */}
+              <TabsContent value="register">
+                <Card>
+                  <CardHeader>
+                    <div className="flex justify-between items-center">
+                      <div>
+                        <CardTitle>Create an Account</CardTitle>
+                        <CardDescription>
+                          {registrationStep === 1 && "Step 1: Personal Information"}
+                          {registrationStep === 2 && "Step 2: Professional Details"}
+                          {registrationStep === 3 && "Step 3: Set Password & Upload Resume"}
+                        </CardDescription>
+                      </div>
+                      <div className="flex space-x-1">
+                        <div className={`h-2 w-8 rounded-full ${registrationStep >= 1 ? "bg-primary" : "bg-gray-200"}`}></div>
+                        <div className={`h-2 w-8 rounded-full ${registrationStep >= 2 ? "bg-primary" : "bg-gray-200"}`}></div>
+                        <div className={`h-2 w-8 rounded-full ${registrationStep >= 3 ? "bg-primary" : "bg-gray-200"}`}></div>
+                      </div>
+                    </div>
+                  </CardHeader>
+                  <CardContent>
+                    {/* Step 1: Basic Information */}
+                    {registrationStep === 1 && (
+                      <Form {...registerStep1Form}>
+                        <form onSubmit={registerStep1Form.handleSubmit(onStep1Submit)} className="space-y-4">
+                          <FormField
+                            control={registerStep1Form.control}
+                            name="fullName"
+                            render={({ field }) => (
+                              <FormItem>
+                                <FormLabel>Full Name</FormLabel>
+                                <FormControl>
+                                  <div className="relative">
+                                    <User className="absolute left-3 top-3 h-4 w-4 text-muted-foreground" />
+                                    <Input placeholder="Your full name" className="pl-10" {...field} />
+                                  </div>
+                                </FormControl>
+                                <FormMessage />
+                              </FormItem>
+                            )}
+                          />
+                          
+                          <FormField
+                            control={registerStep1Form.control}
+                            name="email"
+                            render={({ field }) => (
+                              <FormItem>
+                                <FormLabel>Email</FormLabel>
+                                <FormControl>
+                                  <div className="relative">
+                                    <Mail className="absolute left-3 top-3 h-4 w-4 text-muted-foreground" />
+                                    <Input 
+                                      type="email" 
+                                      placeholder="Your email address" 
+                                      className="pl-10" 
+                                      {...field} 
+                                    />
+                                  </div>
+                                </FormControl>
+                                <FormMessage />
+                              </FormItem>
+                            )}
+                          />
+                          
+                          <FormField
+                            control={registerStep1Form.control}
+                            name="username"
+                            render={({ field }) => (
+                              <FormItem>
+                                <FormLabel>Username</FormLabel>
+                                <FormControl>
+                                  <Input placeholder="Choose a username" {...field} />
+                                </FormControl>
+                                <FormMessage />
+                              </FormItem>
+                            )}
+                          />
+                          
+                          <FormField
+                            control={registerStep1Form.control}
+                            name="phone"
+                            render={({ field }) => (
+                              <FormItem>
+                                <FormLabel>Contact Number</FormLabel>
+                                <FormControl>
+                                  <Input placeholder="Your phone number" {...field} />
+                                </FormControl>
+                                <FormMessage />
+                              </FormItem>
+                            )}
+                          />
+
+                          <div className="flex justify-end">
+                            <Button 
+                              type="submit" 
+                              className="mt-4"
+                            >
+                              Next <ArrowRight className="ml-2 h-4 w-4" />
+                            </Button>
+                          </div>
+                        </form>
+                      </Form>
+                    )}
+
+                    {/* Step 2: Professional Details */}
+                    {registrationStep === 2 && (
+                      <Form {...registerStep2Form}>
+                        <form onSubmit={registerStep2Form.handleSubmit(onStep2Submit)} className="space-y-4">
+                          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                            <FormField
+                              control={registerStep2Form.control}
+                              name="experience"
+                              render={({ field }) => (
+                                <FormItem>
+                                  <FormLabel>Experience (Years)</FormLabel>
+                                  <FormControl>
+                                    <Input placeholder="Years of experience" {...field} />
+                                  </FormControl>
+                                  <FormMessage />
+                                </FormItem>
+                              )}
+                            />
+                            
+                            <FormField
+                              control={registerStep2Form.control}
+                              name="noticePeriod"
+                              render={({ field }) => (
+                                <FormItem>
+                                  <FormLabel>Notice Period</FormLabel>
+                                  <Select
+                                    onValueChange={field.onChange}
+                                    value={field.value}
+                                  >
+                                    <FormControl>
+                                      <SelectTrigger>
+                                        <SelectValue placeholder="Select notice period" />
+                                      </SelectTrigger>
+                                    </FormControl>
+                                    <SelectContent>
+                                      <SelectItem value="Immediately">Immediately</SelectItem>
+                                      <SelectItem value="15 days">15 days</SelectItem>
+                                      <SelectItem value="1 month">1 month</SelectItem>
+                                      <SelectItem value="2 months">2 months</SelectItem>
+                                      <SelectItem value="3 months">3 months</SelectItem>
+                                    </SelectContent>
+                                  </Select>
+                                  <FormMessage />
+                                </FormItem>
+                              )}
+                            />
+                          </div>
+
+                          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                            <FormField
+                              control={registerStep2Form.control}
+                              name="currentCtc"
+                              render={({ field }) => (
+                                <FormItem>
+                                  <FormLabel>Current CTC</FormLabel>
+                                  <FormControl>
+                                    <Input placeholder="Current salary" {...field} />
+                                  </FormControl>
+                                  <FormMessage />
+                                </FormItem>
+                              )}
+                            />
+
+                            <FormField
+                              control={registerStep2Form.control}
+                              name="expectedCtc"
+                              render={({ field }) => (
+                                <FormItem>
+                                  <FormLabel>Expected CTC</FormLabel>
+                                  <FormControl>
+                                    <Input placeholder="Expected salary" {...field} />
+                                  </FormControl>
+                                  <FormMessage />
+                                </FormItem>
+                              )}
+                            />
+                          </div>
+
+                          <FormField
+                            control={registerStep2Form.control}
+                            name="skills"
+                            render={({ field }) => (
+                              <FormItem>
+                                <FormLabel>Skills</FormLabel>
+                                <FormControl>
+                                  <Textarea 
+                                    placeholder="List your skills, separated by commas (e.g. React, JavaScript, Project Management)" 
+                                    className="min-h-[80px]"
+                                    {...field} 
+                                  />
+                                </FormControl>
+                                <FormDescription>
+                                  List skills relevant to your profession, separated by commas
+                                </FormDescription>
+                                <FormMessage />
+                              </FormItem>
+                            )}
+                          />
+
+                          <Separator className="my-2" />
+                          <h3 className="text-sm font-medium">Location Information</h3>
+
+                          <FormField
+                            control={registerStep2Form.control}
+                            name="location"
+                            render={({ field }) => (
+                              <FormItem>
+                                <FormLabel>Current Location</FormLabel>
+                                <FormControl>
+                                  <Input placeholder="Your current location" {...field} />
+                                </FormControl>
+                                <FormMessage />
+                              </FormItem>
+                            )}
+                          />
+
+                          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                            <FormField
+                              control={registerStep2Form.control}
+                              name="city"
+                              render={({ field }) => (
+                                <FormItem>
+                                  <FormLabel>City</FormLabel>
+                                  <FormControl>
+                                    <Input placeholder="City" {...field} />
+                                  </FormControl>
+                                  <FormMessage />
+                                </FormItem>
+                              )}
+                            />
+
+                            <FormField
+                              control={registerStep2Form.control}
+                              name="state"
+                              render={({ field }) => (
+                                <FormItem>
+                                  <FormLabel>State</FormLabel>
+                                  <FormControl>
+                                    <Input placeholder="State" {...field} />
+                                  </FormControl>
+                                  <FormMessage />
+                                </FormItem>
+                              )}
+                            />
+                          </div>
+
+                          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                            <FormField
+                              control={registerStep2Form.control}
+                              name="country"
+                              render={({ field }) => (
+                                <FormItem>
+                                  <FormLabel>Country</FormLabel>
+                                  <FormControl>
+                                    <Input placeholder="Country" {...field} />
+                                  </FormControl>
+                                  <FormMessage />
+                                </FormItem>
+                              )}
+                            />
+
+                            <FormField
+                              control={registerStep2Form.control}
+                              name="zipCode"
+                              render={({ field }) => (
+                                <FormItem>
+                                  <FormLabel>ZIP Code</FormLabel>
+                                  <FormControl>
+                                    <Input placeholder="ZIP/Postal code" {...field} />
+                                  </FormControl>
+                                  <FormMessage />
+                                </FormItem>
+                              )}
+                            />
+                          </div>
+
+                          <div className="flex justify-between">
+                            <Button 
+                              type="button" 
+                              variant="outline"
+                              onClick={() => setRegistrationStep(1)}
+                            >
+                              <ArrowLeft className="mr-2 h-4 w-4" /> Back
+                            </Button>
+                            
+                            <Button type="submit">
+                              Next <ArrowRight className="ml-2 h-4 w-4" />
+                            </Button>
+                          </div>
+                        </form>
+                      </Form>
+                    )}
+
+                    {/* Step 3: Password & Resume */}
+                    {registrationStep === 3 && (
+                      <Form {...registerStep3Form}>
+                        <form onSubmit={registerStep3Form.handleSubmit(onStep3Submit)} className="space-y-4">
+                          <FormField
+                            control={registerStep3Form.control}
+                            name="password"
+                            render={({ field }) => (
+                              <FormItem>
+                                <FormLabel>Password</FormLabel>
+                                <FormControl>
+                                  <div className="relative">
+                                    <Lock className="absolute left-3 top-3 h-4 w-4 text-muted-foreground" />
+                                    <Input 
+                                      type="password" 
+                                      placeholder="Choose a password" 
+                                      className="pl-10"
+                                      {...field} 
+                                    />
+                                  </div>
+                                </FormControl>
+                                <FormMessage />
+                              </FormItem>
+                            )}
+                          />
+                          
+                          <FormField
+                            control={registerStep3Form.control}
+                            name="confirmPassword"
+                            render={({ field }) => (
+                              <FormItem>
+                                <FormLabel>Confirm Password</FormLabel>
+                                <FormControl>
+                                  <div className="relative">
+                                    <Lock className="absolute left-3 top-3 h-4 w-4 text-muted-foreground" />
+                                    <Input 
+                                      type="password" 
+                                      placeholder="Confirm your password" 
+                                      className="pl-10"
+                                      {...field} 
+                                    />
+                                  </div>
+                                </FormControl>
+                                <FormMessage />
+                              </FormItem>
+                            )}
+                          />
+                          
+                          <FormField
+                            control={registerStep3Form.control}
+                            name="resume"
+                            render={() => (
+                              <FormItem>
+                                <FormLabel>Upload Resume</FormLabel>
+                                <FormControl>
+                                  <div className="flex items-center justify-center w-full">
+                                    <label className="flex flex-col items-center justify-center w-full h-32 border-2 border-dashed rounded-lg cursor-pointer bg-gray-50 dark:hover:bg-bray-800 dark:bg-gray-700 hover:bg-gray-100 dark:border-gray-600 dark:hover:border-gray-500 dark:hover:bg-gray-600">
+                                      <div className="flex flex-col items-center justify-center pt-5 pb-6">
+                                        <Upload className="w-8 h-8 mb-3 text-gray-500 dark:text-gray-400" />
+                                        {resumeFile ? (
+                                          <p className="text-sm text-gray-500 dark:text-gray-400">
+                                            Selected: {resumeFile.name}
+                                          </p>
+                                        ) : (
+                                          <>
+                                            <p className="mb-2 text-sm text-gray-500 dark:text-gray-400">
+                                              <span className="font-semibold">Click to upload</span> or drag and drop
+                                            </p>
+                                            <p className="text-xs text-gray-500 dark:text-gray-400">
+                                              PDF, DOCX or DOC (MAX. 5MB)
+                                            </p>
+                                          </>
+                                        )}
+                                      </div>
+                                      <input 
+                                        id="dropzone-file" 
+                                        type="file" 
+                                        className="hidden" 
+                                        accept=".pdf,.doc,.docx"
+                                        onChange={handleFileChange}
+                                      />
+                                    </label>
+                                  </div>
+                                </FormControl>
+                                <FormDescription>
+                                  Upload your resume to help employers learn more about you
+                                </FormDescription>
+                                <FormMessage />
+                              </FormItem>
+                            )}
+                          />
+
+                          <div className="flex justify-between">
+                            <Button 
+                              type="button" 
+                              variant="outline"
+                              onClick={() => setRegistrationStep(2)}
+                            >
+                              <ArrowLeft className="mr-2 h-4 w-4" /> Back
+                            </Button>
+
+                            <Button 
+                              type="submit" 
+                              disabled={registerMutation.isPending || isUploading}
+                            >
+                              {(registerMutation.isPending || isUploading) ? (
+                                <>
+                                  <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                                  {isUploading ? "Uploading..." : "Creating Account..."}
+                                </>
+                              ) : (
+                                "Create Account"
+                              )}
+                            </Button>
+                          </div>
+                        </form>
+                      </Form>
+                    )}
+                  </CardContent>
+                </Card>
+              </TabsContent>
+            </Tabs>
+          </div>
         </div>
-      </div>
-      
-      {/* Right side - Hero section */}
-      <div className="hidden md:block md:w-1/2 bg-gray-100 dark:bg-gray-800">
-        <div className="flex flex-col items-center justify-center h-full p-8 space-y-6">
-          <div className="max-w-md">
-            <h1 className="text-3xl font-bold mb-6">Unlock Your Career Potential with Niddik</h1>
-            <div className="space-y-6">
+        
+        {/* Right side - Hero section */}
+        <div className="hidden md:block md:w-1/2 bg-gradient-to-br from-primary-foreground to-background p-12">
+          <div className="h-full flex flex-col justify-center max-w-md mx-auto">
+            <h2 className="text-3xl font-bold tracking-tight mb-6">
+              Unlock Your Career Potential with NiDDiK
+            </h2>
+            
+            <div className="space-y-8">
               <div className="flex items-start space-x-3">
                 <div className="rounded-full bg-primary/10 p-2">
                   <CheckCircle2 className="h-5 w-5 text-primary" />
