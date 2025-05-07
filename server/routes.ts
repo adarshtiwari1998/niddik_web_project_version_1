@@ -1219,6 +1219,190 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
+  // Demo Request API Endpoints
+  
+  // Submit a new demo request
+  app.post('/api/demo-requests', async (req, res) => {
+    try {
+      const validatedData = demoRequestSchema.parse(req.body);
+      
+      // Check if a request with this email already exists
+      const existingRequest = await storage.getDemoRequestByEmail(validatedData.workEmail);
+      
+      if (existingRequest) {
+        return res.status(400).json({
+          success: false,
+          message: "A demo request with this email already exists",
+          existingRequest: {
+            id: existingRequest.id,
+            status: existingRequest.status,
+            createdAt: existingRequest.createdAt,
+            scheduledDate: existingRequest.scheduledDate
+          }
+        });
+      }
+      
+      // Create the demo request
+      const newRequest = await storage.createDemoRequest(validatedData);
+      
+      return res.status(201).json({
+        success: true,
+        message: "Demo request submitted successfully",
+        data: newRequest
+      });
+    } catch (error) {
+      if (error instanceof z.ZodError) {
+        return res.status(400).json({
+          success: false,
+          message: "Validation error",
+          errors: error.errors
+        });
+      }
+      console.error('Error creating demo request:', error);
+      return res.status(500).json({
+        success: false,
+        message: "Internal server error"
+      });
+    }
+  });
+  
+  // Get demo request by email (for checking status)
+  app.get('/api/demo-requests/check', async (req, res) => {
+    try {
+      const email = req.query.email as string;
+      
+      if (!email) {
+        return res.status(400).json({
+          success: false,
+          message: "Email is required"
+        });
+      }
+      
+      const demoRequest = await storage.getDemoRequestByEmail(email);
+      
+      if (!demoRequest) {
+        return res.status(404).json({
+          success: false,
+          message: "No demo request found for this email"
+        });
+      }
+      
+      return res.status(200).json({
+        success: true,
+        data: demoRequest
+      });
+    } catch (error) {
+      console.error('Error checking demo request:', error);
+      return res.status(500).json({
+        success: false,
+        message: "Internal server error"
+      });
+    }
+  });
+  
+  // Admin endpoints for demo requests
+  
+  // Get all demo requests (admin only)
+  app.get('/api/admin/demo-requests', async (req: AuthenticatedRequest, res) => {
+    try {
+      if (!req.isAuthenticated() || req.user?.role !== 'admin') {
+        return res.status(403).json({
+          success: false,
+          message: "Unauthorized"
+        });
+      }
+      
+      const page = req.query.page ? parseInt(req.query.page as string) : 1;
+      const limit = req.query.limit ? parseInt(req.query.limit as string) : 10;
+      const status = req.query.status as string;
+      
+      // Get paginated results using storage method
+      const result = await storage.getAllDemoRequests({
+        page,
+        limit,
+        status
+      });
+      
+      return res.status(200).json({
+        success: true,
+        data: result.demoRequests,
+        meta: {
+          total: result.total,
+          page,
+          limit,
+          pages: Math.ceil(result.total / limit)
+        }
+      });
+    } catch (error) {
+      console.error('Error fetching demo requests:', error);
+      return res.status(500).json({
+        success: false,
+        message: "Internal server error"
+      });
+    }
+  });
+  
+  // Update demo request status (admin only)
+  app.patch('/api/admin/demo-requests/:id', async (req: AuthenticatedRequest, res) => {
+    try {
+      if (!req.isAuthenticated() || req.user?.role !== 'admin') {
+        return res.status(403).json({
+          success: false,
+          message: "Unauthorized"
+        });
+      }
+      
+      const id = parseInt(req.params.id);
+      
+      if (isNaN(id)) {
+        return res.status(400).json({
+          success: false,
+          message: "Invalid ID"
+        });
+      }
+      
+      // Check if the demo request exists
+      const existingRequest = await db.query.demoRequests.findFirst({
+        where: eq(demoRequests.id, id)
+      });
+      
+      if (!existingRequest) {
+        return res.status(404).json({
+          success: false,
+          message: "Demo request not found"
+        });
+      }
+      
+      // Validate and update
+      const { status, adminNotes, scheduledDate } = req.body;
+      
+      const updateData: any = {
+        updatedAt: new Date()
+      };
+      
+      if (status) updateData.status = status;
+      if (adminNotes !== undefined) updateData.adminNotes = adminNotes;
+      if (scheduledDate !== undefined) updateData.scheduledDate = scheduledDate ? new Date(scheduledDate) : null;
+      
+      const [updatedRequest] = await db.update(demoRequests)
+        .set(updateData)
+        .where(eq(demoRequests.id, id))
+        .returning();
+      
+      return res.status(200).json({
+        success: true,
+        message: "Demo request updated successfully",
+        data: updatedRequest
+      });
+    } catch (error) {
+      console.error('Error updating demo request:', error);
+      return res.status(500).json({
+        success: false,
+        message: "Internal server error"
+      });
+    }
+  });
+
   const httpServer = createServer(app);
   return httpServer;
 }

@@ -7,6 +7,7 @@ import {
   jobApplications,
   users,
   submittedCandidates,
+  demoRequests,
   InsertContactSubmission,
   ContactSubmission,
   Testimonial,
@@ -18,7 +19,9 @@ import {
   User,
   InsertUser,
   SubmittedCandidate,
-  InsertSubmittedCandidate
+  InsertSubmittedCandidate,
+  DemoRequest,
+  InsertDemoRequest
 } from "@shared/schema";
 import { eq, desc, and, like, or, asc } from "drizzle-orm";
 
@@ -503,5 +506,88 @@ export const storage = {
     if (candidates.length === 0) return [];
     const result = await db.insert(submittedCandidates).values(candidates).returning();
     return result;
+  },
+  
+  // Demo Requests
+  async createDemoRequest(data: InsertDemoRequest): Promise<DemoRequest> {
+    const [demoRequest] = await db.insert(demoRequests).values({
+      ...data,
+      createdAt: new Date(),
+      updatedAt: new Date()
+    }).returning();
+    return demoRequest;
+  },
+  
+  async getDemoRequestById(id: number): Promise<DemoRequest | undefined> {
+    return await db.query.demoRequests.findFirst({
+      where: eq(demoRequests.id, id)
+    });
+  },
+  
+  async getDemoRequestByEmail(email: string): Promise<DemoRequest | undefined> {
+    return await db.query.demoRequests.findFirst({
+      where: eq(demoRequests.workEmail, email)
+    });
+  },
+  
+  async getAllDemoRequests(
+    options: {
+      page?: number;
+      limit?: number;
+      status?: string;
+    } = {}
+  ): Promise<{ demoRequests: DemoRequest[]; total: number }> {
+    const { 
+      page = 1, 
+      limit = 10, 
+      status
+    } = options;
+
+    // Build the where conditions
+    let whereConditions = [];
+    
+    if (status && status !== 'all_statuses') {
+      whereConditions.push(eq(demoRequests.status, status));
+    }
+
+    // Create the where condition
+    const whereCondition = whereConditions.length > 0
+      ? and(...whereConditions)
+      : undefined;
+
+    // Count total matching records for pagination
+    const result = await db.query.demoRequests.findMany({
+      where: whereCondition
+    });
+    const totalCount = result.length;
+
+    // Get paginated demo requests
+    const demoRequestsResult = await db.query.demoRequests.findMany({
+      where: whereCondition,
+      orderBy: [desc(demoRequests.createdAt)],
+      limit,
+      offset: (page - 1) * limit
+    });
+
+    return {
+      demoRequests: demoRequestsResult,
+      total: totalCount
+    };
+  },
+  
+  async updateDemoRequest(id: number, data: Partial<DemoRequest>): Promise<DemoRequest | undefined> {
+    // Update the updatedAt timestamp
+    const updatedData = {
+      ...data,
+      updatedAt: new Date()
+    };
+
+    const [updatedRequest] = await db
+      .update(demoRequests)
+      .set(updatedData)
+      .where(eq(demoRequests.id, id))
+      .returning();
+    
+    return updatedRequest;
   }
 };
