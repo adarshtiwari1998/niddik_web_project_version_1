@@ -72,10 +72,14 @@ const UsesCasesWithStickyImage = () => {
 
   // Track if the use cases section is in the viewport
   useEffect(() => {
+    // Target the first tab reference instead of the entire section
+    // This ensures fixed positioning only triggers when actual content is visible
+    const firstTabRef = tabsRef.current[0];
+    
     const options = {
       root: null,
-      rootMargin: '0px',
-      threshold: 0.1 // Trigger when at least 10% of the component is visible
+      rootMargin: '-120px 0px 0px 0px', // Only activate after scrolling down past heading
+      threshold: 0.3 // Need more visibility before triggering
     };
 
     const observer = new IntersectionObserver((entries) => {
@@ -84,13 +88,13 @@ const UsesCasesWithStickyImage = () => {
       });
     }, options);
     
-    if (useCasesRef.current) {
-      observer.observe(useCasesRef.current);
+    if (firstTabRef) {
+      observer.observe(firstTabRef);
     }
 
     return () => {
-      if (useCasesRef.current) {
-        observer.unobserve(useCasesRef.current);
+      if (firstTabRef) {
+        observer.unobserve(firstTabRef);
       }
     };
   }, []);
@@ -367,10 +371,14 @@ const AdaptiveHiringWorkflow = () => {
 
   // Track if the component is in viewport to control fixed positioning
   useEffect(() => {
+    // Target the first content section instead of the entire component
+    // This ensures fixed positioning only triggers when user scrolls to actual content
+    const firstSectionRef = sectionRefs.current[0];
+    
     const options = {
       root: null,
-      rootMargin: '0px',
-      threshold: 0.1 // Trigger when at least 10% of the component is visible
+      rootMargin: '-100px 0px 0px 0px', // Only activate when content is 100px into the viewport
+      threshold: 0.2 // Needs more visibility before triggering
     };
 
     const observer = new IntersectionObserver((entries) => {
@@ -379,13 +387,13 @@ const AdaptiveHiringWorkflow = () => {
       });
     }, options);
     
-    if (componentRef.current) {
-      observer.observe(componentRef.current);
+    if (firstSectionRef) {
+      observer.observe(firstSectionRef);
     }
 
     return () => {
-      if (componentRef.current) {
-        observer.unobserve(componentRef.current);
+      if (firstSectionRef) {
+        observer.unobserve(firstSectionRef);
       }
     };
   }, []);
