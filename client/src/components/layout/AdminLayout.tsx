@@ -72,7 +72,10 @@ export default function AdminLayout({ children, title, description }: AdminLayou
             </div>
           </Link>
           <div className="flex items-center">
-            <span className="w-3 h-3 bg-green-600 rounded-full mr-2"></span>
+            <div className="flex items-center mr-4">
+              <span className="w-3 h-3 bg-green-600 rounded-full mr-2"></span>
+              <span className="text-sm font-medium">Admin Area</span>
+            </div>
             <Button variant="ghost" onClick={handleLogout}>
               <LogOut className="h-4 w-4 mr-2" />
               Sign Out
@@ -81,13 +84,6 @@ export default function AdminLayout({ children, title, description }: AdminLayou
         </div>
       </header>
       
-      {/* Admin Area Label */}
-      <div className="bg-green-600 text-white py-1">
-        <div className="container mx-auto px-4">
-          <p className="text-sm">Admin Area</p>
-        </div>
-      </div>
-
       <div className="container mx-auto px-4 py-8">
         <div className="grid grid-cols-1 md:grid-cols-4 gap-6">
           {/* Sidebar */}
