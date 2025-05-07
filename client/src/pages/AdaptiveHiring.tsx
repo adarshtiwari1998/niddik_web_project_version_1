@@ -338,29 +338,30 @@ const AdaptiveHiringWorkflow = () => {
     }
   ];
 
-  // Create separate refs for top and bottom elements to track entry and exit
+  // Create separate refs for entry and exit detection
   const topSentinelRef = useRef<HTMLDivElement>(null);
   const bottomSentinelRef = useRef<HTMLDivElement>(null);
+  const firstContentRef = useRef<HTMLDivElement>(null); // First content block to trigger fixed position
 
   // Track when component enters and exits viewport to control fixed positioning
   useEffect(() => {
-    // Set up intersection observer for top sentinel
+    // Track the first content section to trigger fixed positioning
     const options = {
       root: null,
-      rootMargin: '0px',
+      rootMargin: '-100px 0px -50% 0px', // Adjust to trigger when first content is visible
       threshold: 0.1
     };
 
     // Function to handle intersection updates
     const handleIntersection = (entries: IntersectionObserverEntry[]) => {
       entries.forEach(entry => {
-        // If the top sentinel is entering, we're starting the section
-        if (entry.target === topSentinelRef.current && entry.isIntersecting) {
-          console.log("Entering section - fixing image");
-          setIsInViewport(true);
+        // If the first content block is intersecting, we want to fix the image
+        if (entry.target === firstContentRef.current) {
+          console.log("Content block visibility:", entry.isIntersecting);
+          setIsInViewport(entry.isIntersecting);
         }
         
-        // If the bottom sentinel is entering, we're at the end of the section
+        // Bottom sentinel logic to unfix when reaching the end
         if (entry.target === bottomSentinelRef.current && entry.isIntersecting) {
           console.log("Exiting section - releasing image");
           setIsInViewport(false);
@@ -370,18 +371,19 @@ const AdaptiveHiringWorkflow = () => {
 
     const observer = new IntersectionObserver(handleIntersection, options);
     
-    // Observe both sentinel elements
-    if (topSentinelRef.current) {
-      observer.observe(topSentinelRef.current);
+    // Observe the first content section to trigger fixed positioning
+    if (firstContentRef.current) {
+      observer.observe(firstContentRef.current);
     }
     
+    // Observe bottom sentinel to know when to release fixed positioning
     if (bottomSentinelRef.current) {
       observer.observe(bottomSentinelRef.current);
     }
 
     return () => {
-      if (topSentinelRef.current) {
-        observer.unobserve(topSentinelRef.current);
+      if (firstContentRef.current) {
+        observer.unobserve(firstContentRef.current);
       }
       if (bottomSentinelRef.current) {
         observer.unobserve(bottomSentinelRef.current);
@@ -602,7 +604,15 @@ const AdaptiveHiringWorkflow = () => {
             {sections.map((section, index) => (
               <div 
                 key={section.id}
-                ref={el => sectionRefs.current[index] = el}
+                ref={el => {
+                  // Store in section refs array for active section tracking
+                  sectionRefs.current[index] = el;
+                  
+                  // Also set as firstContentRef if this is the first section
+                  if (index === 0 && el) {
+                    firstContentRef.current = el;
+                  }
+                }}
                 className="scroll-mt-40" 
               >
                 <div className="flex items-center gap-2 text-sm font-semibold text-blue-600 mb-4">
