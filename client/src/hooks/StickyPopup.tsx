@@ -143,13 +143,16 @@ const StickyPopup: React.FC<StickyPopupProps> = () => {
     };
 
     const getConfirmationContent = (choice: string): JSX.Element => {
+        const handleNavigation = () => {
+            setIsOpen(false); // Close popup before navigation
+          };
         switch (choice) {
             case 'hire':
                 return (
                     <div className="p-4">
                         <p className="text-lg font-semibold">Let's get in touch!</p>
                         <p>Get ready to hire talent 66% faster with NiDDik.</p>
-                        <Link href="/request-demo" className="inline-block mt-4 bg-green-500 text-white py-2 px-4 rounded hover:bg-green-700">
+                        <Link href="/request-demo" onClick={handleNavigation} className="inline-block mt-4 bg-green-500 text-white py-2 px-4 rounded hover:bg-green-700">
                             Request A Demo
                         </Link>
                     </div>
@@ -159,7 +162,7 @@ const StickyPopup: React.FC<StickyPopupProps> = () => {
                     <div className="p-4">
                         <p className="text-lg font-semibold">You're in the right place!</p>
                         <p>Learn more about how to join NiDDik as a certified technologist.</p>
-                        <Link href="/careers" className="inline-block mt-4 bg-green-500 text-white py-2 px-4 rounded hover:bg-green-700">
+                        <Link href="/careers"  onClick={handleNavigation} className="inline-block mt-4 bg-green-500 text-white py-2 px-4 rounded hover:bg-green-700">
                             Learn More about our process
                         </Link>
                     </div>
@@ -169,7 +172,7 @@ const StickyPopup: React.FC<StickyPopupProps> = () => {
                     <div className="p-4">
                         <p className="text-lg font-semibold">Great, thanks for being here.</p>
                         <p>We recommend you start with Why NiDDik. You'll find everything you need to know.</p>
-                        <Link href="/why-us" className="inline-block mt-4 bg-green-500 text-white py-2 px-4 rounded hover:bg-green-700">
+                        <Link href="/why-us" onClick={handleNavigation}  className="inline-block mt-4 bg-green-500 text-white py-2 px-4 rounded hover:bg-green-700">
                             Learn More
                         </Link>
                     </div>
