@@ -7,32 +7,36 @@
 // const __filename = fileURLToPath(import.meta.url);
 // const __dirname = path.dirname(__filename);
 
-// export default defineConfig({
-//   plugins: [
+// export default defineConfig(async () => {
+//   const plugins = [
 //     react(),
 //     runtimeErrorOverlay(),
-//     ...(process.env.NODE_ENV !== "production" &&
+//   ];
+
+//   if (
+//     process.env.NODE_ENV !== "production" &&
 //     process.env.REPL_ID !== undefined
-//       ? [
-//           await import("@replit/vite-plugin-cartographer").then((m) =>
-//             m.cartographer(),
-//           ),
-//         ]
-//       : []),
-//   ],
-//   resolve: {
-//     alias: {
-//       "@db": path.resolve(import.meta.dirname, "db"),
-//       "@": path.resolve(import.meta.dirname, "client", "src"),
-//       "@shared": path.resolve(import.meta.dirname, "shared"),
-//       "@assets": path.resolve(import.meta.dirname, "attached_assets"),
+//   ) {
+//     const { cartographer } = await import("@replit/vite-plugin-cartographer");
+//     plugins.push(cartographer());
+//   }
+
+//   return {
+//     root: path.resolve(__dirname, "client"),
+//     plugins,
+//     resolve: {
+//       alias: {
+//         "@db": path.resolve(__dirname, "db"),
+//         "@": path.resolve(__dirname, "client", "src"),
+//         "@shared": path.resolve(__dirname, "shared"),
+//         "@assets": path.resolve(__dirname, "attached_assets"),
+//       },
 //     },
-//   },
-//   root: path.resolve(import.meta.dirname, "client"),
-//   build: {
-//     outDir: path.resolve(import.meta.dirname, "dist/public"),
-//     emptyOutDir: true,
-//   },
+//     build: {
+//       outDir: path.resolve(__dirname, "dist/public"),
+//       emptyOutDir: true,
+//     },
+//   };
 // });
 
 import { defineConfig } from "vite";
@@ -50,13 +54,17 @@ export default defineConfig({
     port: 7000,
   },
   build: {
-    outDir: path.resolve(__dirname, "dist"),
+    outDir: path.resolve(__dirname, "dist/public"),
     emptyOutDir: true,
   },
   resolve: {
     alias: {
       "@": path.resolve(__dirname, "client/src"),
+      "@db": path.resolve(__dirname, "db"),
+      "@shared": path.resolve(__dirname, "shared"),
+      "@assets": path.resolve(__dirname, "attached_assets"),
     },
   },
 });
+
 
