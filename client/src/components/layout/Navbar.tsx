@@ -22,7 +22,7 @@ interface NavbarProps {
 
 const navItems: NavItem[] = [
   {
-    label: "For Business",
+    label: "Business",
     dropdown: [
       { label: "Enterprise", href: "#" },
       { label: "Hiring Solutions", href: "#" },
@@ -49,18 +49,19 @@ const navItems: NavItem[] = [
     ]
   },
   { label: "Adaptive Hiring", href: "/adaptive-hiring" },
-  { 
-    label: "Resources", 
-    href: "#",
-    dropdown: [
-      { label: "Whitepaper", href: "/whitepaper" }
-    ]
-  },
+  // { 
+  // 	label: "Resources", 
+  // 	href: "#",
+  // 	dropdown: [
+
+  // 	]
+  // },
   {
     label: "Company",
     dropdown: [
       { label: "About Us", href: "/about-us" },
-      { label: "Why Us", href: "/why-us" }
+      { label: "Why Us", href: "/why-us" },
+      { label: "Whitepaper", href: "/whitepaper" }
     ]
   }
 ];
@@ -76,14 +77,15 @@ const Navbar: React.FC<NavbarProps> = ({ hasAnnouncementAbove = true }) => {
     };
 
     handleScroll();
-    
+
     window.addEventListener("scroll", handleScroll);
     return () => window.removeEventListener("scroll", handleScroll);
   }, [hasAnnouncementAbove]);
 
   return (
     <header className={cn(
-      "fixed w-full bg-white z-40 transition-all duration-300 top-[40px]",
+      "fixed w-full bg-white z-40 transition-all duration-300",
+      hasAnnouncementAbove ? "top-[40px]" : "top-0",
       isScrolled ? "shadow-md" : "shadow-sm",
       "transition-all duration-300"
     )}>
@@ -96,9 +98,9 @@ const Navbar: React.FC<NavbarProps> = ({ hasAnnouncementAbove = true }) => {
                 <Logo className="h-12" />
               </Link>
               <div className="marquee-container overflow-hidden relative w-full">
-                <div className="marquee text-gray-500 mt-1 whitespace-nowrap" style={{fontSize: "11px", marginTop: "1px"}}>
+                {/* <div className="marquee text-gray-500 mt-1 whitespace-nowrap" style={{fontSize: "10px", marginTop: "1px"}}>
                   Connecting People, Changing Lives
-                </div>
+                </div> */}
               </div>
             </div>
           </div>
@@ -138,45 +140,45 @@ const Navbar: React.FC<NavbarProps> = ({ hasAnnouncementAbove = true }) => {
           </nav>
 
           {/* CTA Buttons */}
-          <div className="hidden lg:flex items-center space-x-4">
+          <div className="hidden lg:flex items-center space-x-4 text-nowrap">
+            {/* <div className="relative group">
+							<div className="hover:text-andela-green font-medium transition-colors flex items-center">
+								<span>Sign In</span>
+								<ChevronDown className="ml-1 w-4 h-4" />
+							</div>
+							<div className="absolute left-0 mt-2 w-52 rounded-lg shadow-xl bg-white p-4 opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-300 transform origin-top-left z-50">
+								<div className="block py-2 hover:text-andela-green transition-colors">
+									<Link href="/admin">
+										Sign in as Admin/Member
+									</Link>
+								</div>
+								<div className="block py-2 hover:text-andela-green transition-colors">
+									<Link href="/auth">
+										Sign in as Candidate
+									</Link>
+								</div>
+							</div>
+						</div> */}
             <div className="relative group">
-              <div className="hover:text-andela-green font-medium transition-colors flex items-center">
-                <span>Sign In</span>
-                <ChevronDown className="ml-1 w-4 h-4" />
-              </div>
-              <div className="absolute left-0 mt-2 w-52 rounded-lg shadow-xl bg-white p-4 opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-300 transform origin-top-left z-50">
-                <div className="block py-2 hover:text-andela-green transition-colors">
-                  <Link href="/admin">
-                    Sign in as Admin/Member
-                  </Link>
-                </div>
-                <div className="block py-2 hover:text-andela-green transition-colors">
-                  <Link href="/auth">
-                    Sign in as Candidate
-                  </Link>
-                </div>
-              </div>
-            </div>
-            <div className="relative group">
-              <div className="bg-andela-green hover:bg-opacity-90 transition-colors text-white px-6 py-2 rounded-md font-medium flex items-center">
-                <Link href="#" className="text-white">Hire Talent</Link>
+              <div className="bg-andela-green hover:bg-opacity-90 transition-colors text-white px-4 py-2 rounded-md font-medium flex items-center">
+                <Link href="#" className="text-white text-sm">Hire Talent</Link>
                 <ChevronDown className="ml-1 w-4 h-4 text-white" />
               </div>
               <div className="absolute right-0 mt-2 w-48 rounded-lg shadow-xl bg-white p-4 opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-300 transform origin-top-right z-50">
                 <div className="block py-2 hover:text-andela-green transition-colors">
-                  <Link href="/request-demo">
+                  <Link href="/request-demo" 	className="text-sm">
                     Request Demo
                   </Link>
                 </div>
                 <div className="block py-2 hover:text-andela-green transition-colors">
-                  <Link href="#">
+                  <Link href="#" 	className="text-sm">
                     Contact Sales
                   </Link>
                 </div>
               </div>
             </div>
-            <div className="border border-andela-green text-andela-green hover:bg-andela-green hover:text-white transition-colors px-6 py-2 rounded-md font-medium">
-              <Link href="/careers" className="text-andela-green hover:text-white">Apply as Talent</Link>
+            <div className="border border-andela-green text-andela-green hover:bg-andela-green hover:text-white transition-colors px-4 py-2 rounded-md font-medium">
+              <Link href="/careers" className="text-andela-green hover:text-white text-sm">Apply as Talent</Link>
             </div>
           </div>
 
@@ -192,19 +194,19 @@ const Navbar: React.FC<NavbarProps> = ({ hasAnnouncementAbove = true }) => {
 
       {/* Mobile Menu */}
       <div className={cn(
-        "fixed top-0 left-0 h-full w-4/5 bg-white shadow-xl z-50 p-6 overflow-y-auto mobile-menu",
+        "fixed top-0 left-0 h-full w-4/5 bg-white shadow-xl z-[9999] p-6 overflow-y-auto mobile-menu",
         isMobileMenuOpen && "open"
       )}>
         <div className="flex justify-between items-center mb-8">
           <div className="flex flex-col">
             <div className="flex flex-col items-center">
               <Link href="/" onClick={() => setIsMobileMenuOpen(false)}>
-                <Logo className="h-8" />
+                <Logo className="h-14" />
               </Link>
-              <div className="marquee-container overflow-hidden relative w-full">
-                <div id="marquee-container" className="marquee text-gray-500 mt-1 whitespace-nowrap" style={{fontSize: "11px", marginTop: "1px"}}>
+              <div 	id="marquee-container" className="marquee-container overflow-hidden relative w-full">
+                {/* <div className="marquee text-gray-500 mt-1 whitespace-nowrap" style={{fontSize: "11px", marginTop: "1px"}}>
                   Connecting People, Changing Lives
-                </div>
+                </div> */}
               </div>
             </div>
           </div>
@@ -236,7 +238,7 @@ const Navbar: React.FC<NavbarProps> = ({ hasAnnouncementAbove = true }) => {
                       <ChevronDown className={`w-4 h-4 transition-transform ${index === mobileDropdown ? 'rotate-180' : ''}`} />
                     </button>
                   </div>
-                  
+
                   {index === mobileDropdown && (
                     <div className="ml-4 space-y-2 py-2">
                       {item.dropdown?.map((dropdownItem, idx) => (
@@ -272,7 +274,7 @@ const Navbar: React.FC<NavbarProps> = ({ hasAnnouncementAbove = true }) => {
                   <ChevronDown className={`w-4 h-4 transition-transform ${mobileDropdown === 99 ? 'rotate-180' : ''}`} />
                 </button>
               </div>
-              
+
               {mobileDropdown === 99 && (
                 <div className="ml-4 space-y-2 py-2">
                   <div className="py-1">
@@ -320,28 +322,6 @@ const Navbar: React.FC<NavbarProps> = ({ hasAnnouncementAbove = true }) => {
           </div>
         </nav>
       </div>
-      <style>
-        {`
-          #marquee-container{
-            height: 20px; /* Adjust the height as needed */
-          }
-         #marquee-container {
-            animation: marqueeAnimation 20s linear infinite;
-          }
-
-          @keyframes marqueeAnimation {
-            0% { transform: translateX(100%); }
-            100% { transform: translateX(-100%); }
-          }
-          .mobile-menu.open {
-            transform: translateX(0);
-          }
-          .mobile-menu {
-            transition: transform 0.3s ease-in-out;
-            transform: translateX(-100%);
-          }
-        `}
-      </style>
     </header>
   );
 };
