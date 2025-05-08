@@ -22,11 +22,13 @@ interface NavbarProps {
 
 const navItems: NavItem[] = [
   {
-    label: "Business",
+    label: "Insights",
     dropdown: [
-      { label: "Enterprise", href: "#" },
+      { label: "Facts & Trends", href: "#" },
+      { label: "Whitepaper", href: "/whitepaper" },
       { label: "Hiring Advice", href: "#" },
-      { label: "Career Advice", href: "#" }
+      { label: "Career Advice", href: "#" },
+      { label: "Corporate Social Responsibilities", href: "#" }
     ]
   },
   {
@@ -178,10 +180,10 @@ const Navbar: React.FC<NavbarProps> = ({ hasAnnouncementAbove = true }) => {
 						</div> */}
             <div className="relative group">
               <div className="bg-andela-green hover:bg-opacity-90 transition-colors text-white px-4 py-2 rounded-md font-medium flex items-center">
-                <Link href="#" className="text-white text-sm">Hire Talent</Link>
-                <ChevronDown className="ml-1 w-4 h-4 text-white" />
+                <Link href="/request-demo" className="text-white text-sm">Hire Talent</Link>
+                {/* <ChevronDown className="ml-1 w-4 h-4 text-white" /> */}
               </div>
-              <div className="absolute right-0 mt-2 w-48 rounded-lg shadow-xl bg-white p-4 opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-300 transform origin-top-right z-50">
+              {/* <div className="absolute right-0 mt-2 w-48 rounded-lg shadow-xl bg-white p-4 opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-300 transform origin-top-right z-50">
                 <div className="block py-2 hover:text-andela-green transition-colors">
                   <Link href="/request-demo" 	className="text-sm">
                     Request Demo
@@ -192,9 +194,9 @@ const Navbar: React.FC<NavbarProps> = ({ hasAnnouncementAbove = true }) => {
                     Contact Sales
                   </Link>
                 </div>
-              </div>
+              </div> */}
             </div>
-            <div className="border border-andela-green text-andela-green hover:bg-andela-green hover:text-white transition-colors px-4 py-2 rounded-md font-medium">
+            <div className="border border-andela-green text-andela-green hover:bg-andela-green hover:text-white px-4 py-2 rounded-md font-medium flex items-center">
               <Link href="/careers" className="text-andela-green hover:text-white text-sm">Apply as Talent</Link>
             </div>
           </div>

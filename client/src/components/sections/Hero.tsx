@@ -121,19 +121,32 @@ const Hero = () => {
               >
                 <span className="text-white font-semibold">Connecting People, Changing Lives</span> - We empower businesses to scale with precision through our global network of exceptional talent.
               </motion.p>
-              <motion.div 
-                className="flex flex-col sm:flex-row gap-4"
-                initial={{ opacity: 0, y: 20 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ duration: 0.5, delay: 0.4 }}
+             <motion.div
+              className="flex flex-col sm:flex-row gap-4 items-center"
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.5, delay: 0.4 }}
+          >
+              <Link
+                  href="/request-demo"
+                  className="bg-andela-green hover:bg-opacity-90 transition-all duration-300 text-white px-8 py-4 rounded-md font-medium text-center transform hover:scale-105"
               >
-                <Link href="#" className="bg-andela-green hover:bg-opacity-90 transition-all duration-300 text-white px-8 py-4 rounded-md font-medium text-center transform hover:scale-105">
                   Hire Talent
-                </Link>
-                <Link href="#" className="bg-white text-andela-green hover:bg-gray-100 transition-all duration-300 px-8 py-4 rounded-md font-medium text-center transform hover:scale-105">
+              </Link>
+              <Link
+                  href="/careers"
+                  className="bg-white text-andela-green hover:bg-gray-100 transition-all duration-300 px-8 py-4 rounded-md font-medium text-center transform hover:scale-105"
+              >
                   Apply as Talent
-                </Link>
-              </motion.div>
+              </Link>
+              <Link
+                  href="/adaptive-hiring"
+                  className="text-white hover:underline transition-all duration-300 font-medium text-center"
+              >
+                  Adaptive Hiring
+              </Link>
+          </motion.div>
+
               
               {/* Social proof stats with horizontal dividers - only visible on desktop */}
               <motion.div 
