@@ -64,13 +64,6 @@ const navItems: NavItem[] = [
       { label: "Agile Approach Based Recruiting", href: "/agile-approach-based-recruiting" } 
     ]
   },
-  // { 
-  // 	label: "Resources", 
-  // 	href: "#",
-  // 	dropdown: [
-
-  // 	]
-  // },
   {
     label: "About us",
     dropdown: [
@@ -82,7 +75,11 @@ const navItems: NavItem[] = [
       // { label: "Whitepaper", href: "/whitepaper" }
       { label: "Apply to Niddik", href: "/careers" },
     ]
-  }
+  },
+  { 
+  	label: "Contact Us", 
+  	href: "#"
+  },
 ];
 
 const Navbar: React.FC<NavbarProps> = ({ hasAnnouncementAbove = true }) => {
