@@ -202,7 +202,7 @@ const Navbar: React.FC<NavbarProps> = ({ hasAnnouncementAbove = true }) => {
                 <Logo className="h-8" />
               </Link>
               <div className="marquee-container overflow-hidden relative w-full">
-                <div className="marquee text-gray-500 mt-1 whitespace-nowrap" style={{fontSize: "11px", marginTop: "1px"}}>
+                <div id="marquee-container" className="marquee text-gray-500 mt-1 whitespace-nowrap" style={{fontSize: "11px", marginTop: "1px"}}>
                   Connecting People, Changing Lives
                 </div>
               </div>
@@ -322,10 +322,10 @@ const Navbar: React.FC<NavbarProps> = ({ hasAnnouncementAbove = true }) => {
       </div>
       <style>
         {`
-          .marquee-container {
+          #marquee-container{
             height: 20px; /* Adjust the height as needed */
           }
-          .marquee {
+         #marquee-container {
             animation: marqueeAnimation 20s linear infinite;
           }
 
