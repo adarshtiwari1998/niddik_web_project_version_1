@@ -109,15 +109,15 @@ export default function CareersFooter() {
             <ul className="space-y-3">
               <li className="flex items-start">
                 <MapPin className="w-5 h-5 mr-2 text-muted-foreground" />
-                <span className="text-sm text-muted-foreground">123 Innovation Drive, Tech Valley, CA 94043</span>
+                <span className="text-sm text-muted-foreground">Platina Heights, Sector 59, Noida - 201301</span>
               </li>
               <li className="flex items-center">
                 <Phone className="w-5 h-5 mr-2 text-muted-foreground" />
-                <span className="text-sm text-muted-foreground">+1 (888) 123-4567</span>
+                <span className="text-sm text-muted-foreground">+91 9717312058 (INDIA), +1 (646) 889-9517 (USA)</span>
               </li>
               <li className="flex items-center">
                 <Mail className="w-5 h-5 mr-2 text-muted-foreground" />
-                <span className="text-sm text-muted-foreground">careers@niddik.com</span>
+                <span className="text-sm text-muted-foreground">info@niddik.com</span>
               </li>
             </ul>
           </div>
