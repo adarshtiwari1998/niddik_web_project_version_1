@@ -54,17 +54,13 @@ export default defineConfig({
     port: 7000,
   },
   build: {
-    outDir: path.resolve(__dirname, "dist/public"),
+    outDir: path.resolve(__dirname, "dist"),
     emptyOutDir: true,
   },
   resolve: {
     alias: {
       "@": path.resolve(__dirname, "client/src"),
-      "@db": path.resolve(__dirname, "db"),
-      "@shared": path.resolve(__dirname, "shared"),
-      "@assets": path.resolve(__dirname, "attached_assets"),
     },
   },
 });
-
 
