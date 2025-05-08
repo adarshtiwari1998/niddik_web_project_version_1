@@ -43,12 +43,13 @@ export default function AnnouncementBar({
                     className={`${bgColor} ${textColor} w-full text-center py-2 h-10 fixed top-0 left-0 right-0 z-50 overflow-hidden`}
                 >
                     <div className="container mx-auto px-4 flex justify-center items-center">
-                        <p className="text-sm md:text-base">
-                            {text}{' '}
-                            <Link href={linkUrl} className={`font-bold underline ${textColor} hover:opacity-80`}>
-                                {linkText}
-                            </Link>
-                        </p>
+                   <p className="text-[12px] leading-[1.2] md:text-base">
+                    {text}{' '}
+                    <Link href={linkUrl} className={`font-bold underline ${textColor} hover:opacity-80`}>
+                        {linkText}
+                    </Link>
+                    </p>
+
                         <button 
                             onClick={handleClose}
                             className="ml-4 p-1 rounded-full hover:bg-white/20 transition-colors"
