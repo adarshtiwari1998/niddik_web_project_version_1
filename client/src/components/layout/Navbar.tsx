@@ -24,11 +24,11 @@ const navItems: NavItem[] = [
   {
     label: "Insights",
     dropdown: [
-      { label: "Facts & Trends", href: "#" },
+      { label: "Facts & Trends", href: "/facts-and-trends" },
       { label: "Whitepaper", href: "/whitepaper" },
-      { label: "Hiring Advice", href: "#" },
-      { label: "Career Advice", href: "#" },
-      { label: "Corporate Social Responsibilities", href: "#" }
+      { label: "Hiring Advice", href: "/hiring-advice" },
+      { label: "Career Advice", href: "/career-advice" },
+      { label: "Corporate Social Responsibilities", href: "/corporate-social-responsibilities" }
     ]
   },
   {
@@ -60,8 +60,8 @@ const navItems: NavItem[] = [
     label: "Adaptive Hiring",
     dropdown: [
       { label: "AI Driven Recruiting", href: "/adaptive-hiring" },
-      { label: "6-Factor Recruiting Model", href: "#" },
-      { label: "Agile Approach Based Recruiting", href: "#" } 
+      { label: "6-Factor Recruiting Model", href: "/six-factor-recruiting-model" },
+      { label: "Agile Approach Based Recruiting", href: "/agile-approach-based-recruiting" } 
     ]
   },
   // { 
@@ -77,7 +77,7 @@ const navItems: NavItem[] = [
       { label: "Our Story", href: "/about-us" },
       { label: "Why NiDDik", href: "/why-us" },
       { label: "Leadership Team", href: "#" },
-      { label: "Community Involvement", href: "#" },
+      { label: "Community Involvement", href: "/community-involvement" },
       { label: "Contact Us", href: "#" },
       // { label: "Whitepaper", href: "/whitepaper" }
       { label: "Apply to Niddik", href: "/careers" },

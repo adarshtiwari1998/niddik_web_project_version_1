@@ -36,6 +36,13 @@ import DemoRequests from "@/pages/admin/DemoRequests";
 import { AuthProvider } from "@/hooks/use-auth";
 import { ProtectedRoute } from "@/lib/protected-route";
 import StickyPopup from '@/hooks/StickyPopup'; // Import the StickyPopup component
+import FactsAndTrends from './pages/FactsAndTrends';
+import HiringAdvice from './pages/HiringAdvice';
+import CorporateResponsibilities from './pages/CorporateResponsibilities';
+import CareerAdvice from './pages/CareerAdvice';
+import SixFactorModel from './pages/SixFactorModel';
+import AgileRecruiting from './pages/AgileRecruiting';
+import CommunityInvolvement from './pages/CommunityInvolvement';
 
 function Router() {
     return (
@@ -51,6 +58,13 @@ function Router() {
             <Route path="/adaptive-hiring" component={AdaptiveHiring} />
             <Route path="/adaptive-hiring-fixed" component={AdaptiveHiringFixed} />
             <Route path="/whitepaper" component={Whitepaper} />
+            <Route path="/facts-and-trends" component={FactsAndTrends} />
+            <Route path="/hiring-advice" component={HiringAdvice} />
+            <Route path="/corporate-social-responsibilities" component={CorporateResponsibilities} /> {/*Added Route*/}
+            <Route path="/career-advice" component={CareerAdvice} /> {/*Added Route*/}
+            <Route path="/six-factor-recruiting-model" component={SixFactorModel} />
+            <Route path="/agile-approach-based-recruiting" component={AgileRecruiting} />
+            <Route path="/community-involvement" component={CommunityInvolvement} />
             
             {/* Company Routes */}
             <Route path="/about-us" component={AboutUs} />
