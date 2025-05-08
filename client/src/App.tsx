@@ -1,3 +1,4 @@
+import React from 'react';
 import { Route, Switch } from "wouter";
 import { QueryClientProvider } from "@tanstack/react-query";
 import { queryClient } from "./lib/queryClient";
@@ -34,74 +35,76 @@ import DemoRequests from "@/pages/admin/DemoRequests";
 // Auth Provider
 import { AuthProvider } from "@/hooks/use-auth";
 import { ProtectedRoute } from "@/lib/protected-route";
+import StickyPopup from '@/hooks/StickyPopup'; // Import the StickyPopup component
 
 function Router() {
-  return (
-    <Switch>
-      {/* Public Routes */}
-      <Route path="/" component={Home} />
-      <Route path="/landing" component={LandingPage} />
-      
-      {/* Service Routes */}
-      <Route path="/services" component={ServicesOverview} />
-      <Route path="/services/:serviceSlug" component={ServiceDetail} />
-      <Route path="/web-app-solutions" component={WebAppSolutions} />
-      <Route path="/adaptive-hiring" component={AdaptiveHiring} />
-      <Route path="/adaptive-hiring-fixed" component={AdaptiveHiringFixed} />
-      <Route path="/whitepaper" component={Whitepaper} />
-      
-      {/* Company Routes */}
-      <Route path="/about-us" component={AboutUs} />
-      <Route path="/why-us" component={WhyUs} />
-      
-      {/* Careers & Jobs */}
-      <Route path="/careers" component={CareerPage} />
-      <Route path="/jobs/:id" component={JobDetail} />
-      <ProtectedRoute path="/candidate/jobs" component={CareerPage} />
-      
-      {/* Candidate Routes */}
-      <ProtectedRoute path="/candidate/dashboard" component={CandidateDashboard} />
-      <ProtectedRoute path="/dashboard" component={CandidateDashboard} /> {/* Keep for backward compatibility */}
-      <ProtectedRoute path="/candidate/applications" component={MyApplications} />
-      <ProtectedRoute path="/my-applications" component={MyApplications} /> {/* Keep for backward compatibility */}
-      <ProtectedRoute path="/candidate/profile" component={ProfilePage} />
-      <ProtectedRoute path="/profile" component={ProfilePage} /> {/* Keep for backward compatibility */}
-      <ProtectedRoute path="/candidate/jobs/:id" component={JobDetail} />
-      <ProtectedRoute path="/candidate/apply/:id" component={JobApplication} />
-      <ProtectedRoute path="/apply/:id" component={JobApplication} /> {/* Keep for backward compatibility */}
-      
-      {/* Auth Routes */}
-      <Route path="/auth" component={AuthPage} />
-      <Route path="/admin/login" component={AdminLogin} />
-      
-      {/* Admin Routes - Require admin role */}
-      <ProtectedRoute path="/admin" component={AdminDashboard} requiredRole="admin" />
-      <ProtectedRoute path="/admin/dashboard" component={AdminDashboard} requiredRole="admin" />
-      <ProtectedRoute path="/admin/jobs" component={JobListings} requiredRole="admin" />
-      <ProtectedRoute path="/admin/jobs/new" component={JobForm} requiredRole="admin" />
-      <ProtectedRoute path="/admin/jobs/:id/edit" component={JobForm} requiredRole="admin" />
-      <ProtectedRoute path="/admin/candidates" component={Candidates} requiredRole="admin" />
-      <ProtectedRoute path="/admin/submitted-candidates" component={SubmittedCandidates} requiredRole="admin" />
-      <ProtectedRoute path="/admin/demo-requests" component={DemoRequests} requiredRole="admin" />
-      
-      {/* Demo Request */}
-      <Route path="/request-demo" component={RequestDemo} />
-      
-      {/* 404 - Not Found */}
-      <Route component={NotFound} />
-    </Switch>
-  );
+    return (
+        <Switch>
+            {/* Public Routes */}
+            <Route path="/" component={Home} />
+            <Route path="/landing" component={LandingPage} />
+            
+            {/* Service Routes */}
+            <Route path="/services" component={ServicesOverview} />
+            <Route path="/services/:serviceSlug" component={ServiceDetail} />
+            <Route path="/web-app-solutions" component={WebAppSolutions} />
+            <Route path="/adaptive-hiring" component={AdaptiveHiring} />
+            <Route path="/adaptive-hiring-fixed" component={AdaptiveHiringFixed} />
+            <Route path="/whitepaper" component={Whitepaper} />
+            
+            {/* Company Routes */}
+            <Route path="/about-us" component={AboutUs} />
+            <Route path="/why-us" component={WhyUs} />
+            
+            {/* Careers & Jobs */}
+            <Route path="/careers" component={CareerPage} />
+            <Route path="/jobs/:id" component={JobDetail} />
+            <ProtectedRoute path="/candidate/jobs" component={CareerPage} />
+            
+            {/* Candidate Routes */}
+            <ProtectedRoute path="/candidate/dashboard" component={CandidateDashboard} />
+            <ProtectedRoute path="/dashboard" component={CandidateDashboard} /> {/* Keep for backward compatibility */}
+            <ProtectedRoute path="/candidate/applications" component={MyApplications} />
+            <ProtectedRoute path="/my-applications" component={MyApplications} /> {/* Keep for backward compatibility */}
+            <ProtectedRoute path="/candidate/profile" component={ProfilePage} />
+            <ProtectedRoute path="/profile" component={ProfilePage} /> {/* Keep for backward compatibility */}
+            <ProtectedRoute path="/candidate/jobs/:id" component={JobDetail} />
+            <ProtectedRoute path="/candidate/apply/:id" component={JobApplication} />
+            <ProtectedRoute path="/apply/:id" component={JobApplication} /> {/* Keep for backward compatibility */}
+            
+            {/* Auth Routes */}
+            <Route path="/auth" component={AuthPage} />
+            <Route path="/admin/login" component={AdminLogin} />
+            
+            {/* Admin Routes - Require admin role */}
+            <ProtectedRoute path="/admin" component={AdminDashboard} requiredRole="admin" />
+            <ProtectedRoute path="/admin/dashboard" component={AdminDashboard} requiredRole="admin" />
+            <ProtectedRoute path="/admin/jobs" component={JobListings} requiredRole="admin" />
+            <ProtectedRoute path="/admin/jobs/new" component={JobForm} requiredRole="admin" />
+            <ProtectedRoute path="/admin/jobs/:id/edit" component={JobForm} requiredRole="admin" />
+            <ProtectedRoute path="/admin/candidates" component={Candidates} requiredRole="admin" />
+            <ProtectedRoute path="/admin/submitted-candidates" component={SubmittedCandidates} requiredRole="admin" />
+            <ProtectedRoute path="/admin/demo-requests" component={DemoRequests} requiredRole="admin" />
+            
+            {/* Demo Request */}
+            <Route path="/request-demo" component={RequestDemo} />
+            
+            {/* 404 - Not Found */}
+            <Route component={NotFound} />
+        </Switch>
+    );
 }
 
 function App() {
-  return (
-    <QueryClientProvider client={queryClient}>
-      <AuthProvider>
-        <Router />
-        <Toaster />
-      </AuthProvider>
-    </QueryClientProvider>
-  );
+    return (
+        <QueryClientProvider client={queryClient}>
+            <AuthProvider>
+                <Router />
+                <StickyPopup /> {/* Add the StickyPopup component here */}
+                <Toaster />
+            </AuthProvider>
+        </QueryClientProvider>
+    );
 }
 
 export default App;

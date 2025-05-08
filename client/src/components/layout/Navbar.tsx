@@ -21,14 +21,14 @@ interface NavbarProps {
 }
 
 const navItems: NavItem[] = [
-  // {
-  //   label: "Business",
-  //   dropdown: [
-  //     { label: "Enterprise", href: "#" },
-  //     { label: "Hiring Solutions", href: "#" },
-  //     { label: "Case Studies", href: "#" }
-  //   ]
-  // },
+  {
+    label: "Business",
+    dropdown: [
+      { label: "Enterprise", href: "#" },
+      { label: "Hiring Advice", href: "#" },
+      { label: "Career Advice", href: "#" }
+    ]
+  },
   {
     label: "Services",
     href: "/services",
@@ -56,10 +56,10 @@ const navItems: NavItem[] = [
   // { label: "Adaptive Hiring", href: "/adaptive-hiring" },
   {
     label: "Adaptive Hiring",
-    href: "/adaptive-hiring", // Added href here
     dropdown: [
-      { label: "AI & Automation", href: "#" },
-      { label: "Agile Approach", href: "#" }
+      { label: "AI Driven Recruiting", href: "/adaptive-hiring" },
+      { label: "6-Factor Recruiting Model", href: "#" },
+      { label: "Agile Approach Based Recruiting", href: "#" } 
     ]
   },
   // { 
@@ -71,8 +71,8 @@ const navItems: NavItem[] = [
   // },
   {
     label: "About us",
-    href: "/about-us", // Added href here
     dropdown: [
+      { label: "Our Story", href: "/about-us" },
       { label: "Why NiDDik", href: "/why-us" },
       { label: "Leadership Team", href: "#" },
       { label: "Community Involvement", href: "#" },
