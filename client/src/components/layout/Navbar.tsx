@@ -75,7 +75,6 @@ const Navbar: React.FC<NavbarProps> = ({ hasAnnouncementAbove = true }) => {
       setIsScrolled(window.scrollY > 10);
     };
 
-    // Initial check
     handleScroll();
     
     window.addEventListener("scroll", handleScroll);
@@ -84,7 +83,7 @@ const Navbar: React.FC<NavbarProps> = ({ hasAnnouncementAbove = true }) => {
 
   return (
     <header className={cn(
-      "fixed w-full bg-white z-40 transition-all duration-300 top-[40px]", // Directly position navbar below announcement bar
+      "fixed w-full bg-white z-40 transition-all duration-300 top-[40px]",
       isScrolled ? "shadow-md" : "shadow-sm",
       "transition-all duration-300"
     )}>
@@ -94,9 +93,13 @@ const Navbar: React.FC<NavbarProps> = ({ hasAnnouncementAbove = true }) => {
           <div className="flex-shrink-0">
             <div className="flex flex-col items-center">
               <Link href="/" className="block">
-                <Logo className="h-10" />
+                <Logo className="h-12" />
               </Link>
-              <p className="text-gray-500 mt-1" style={{fontSize: "11px", marginTop: "1px"}}>Connecting People, Changing Lives</p>
+              <div className="marquee-container overflow-hidden relative w-full">
+                <div className="marquee text-gray-500 mt-1 whitespace-nowrap" style={{fontSize: "11px", marginTop: "1px"}}>
+                  Connecting People, Changing Lives
+                </div>
+              </div>
             </div>
           </div>
 
@@ -125,7 +128,7 @@ const Navbar: React.FC<NavbarProps> = ({ hasAnnouncementAbove = true }) => {
                   </div>
                 </div>
               ) : (
-                <div key={index} className="text-andela-dark hover:text-andela-green font-medium transition-colors">
+                <div key={index} className="text-andela-dark hover:text-andela-green font-medium transition-colors whitespace-nowrap">
                   <Link href={item.href || "#"}>
                     {item.label}
                   </Link>
@@ -198,7 +201,11 @@ const Navbar: React.FC<NavbarProps> = ({ hasAnnouncementAbove = true }) => {
               <Link href="/" onClick={() => setIsMobileMenuOpen(false)}>
                 <Logo className="h-8" />
               </Link>
-              <p className="text-gray-500 mt-1" style={{fontSize: "11px", marginTop: "1px"}}>Connecting People, Changing Lives</p>
+              <div className="marquee-container overflow-hidden relative w-full">
+                <div className="marquee text-gray-500 mt-1 whitespace-nowrap" style={{fontSize: "11px", marginTop: "1px"}}>
+                  Connecting People, Changing Lives
+                </div>
+              </div>
             </div>
           </div>
           <button 
@@ -313,6 +320,28 @@ const Navbar: React.FC<NavbarProps> = ({ hasAnnouncementAbove = true }) => {
           </div>
         </nav>
       </div>
+      <style>
+        {`
+          .marquee-container {
+            height: 20px; /* Adjust the height as needed */
+          }
+          .marquee {
+            animation: marqueeAnimation 20s linear infinite;
+          }
+
+          @keyframes marqueeAnimation {
+            0% { transform: translateX(100%); }
+            100% { transform: translateX(-100%); }
+          }
+          .mobile-menu.open {
+            transform: translateX(0);
+          }
+          .mobile-menu {
+            transition: transform 0.3s ease-in-out;
+            transform: translateX(-100%);
+          }
+        `}
+      </style>
     </header>
   );
 };
