@@ -56,7 +56,7 @@ export default function AnnouncementBar({
                animate={{ height: 'auto', opacity: 1 }}
                exit={{ height: 0, opacity: 0 }}
                transition={{ duration: 0.3 }}
-               className={`${bgColor} ${textColor} w-full text-center py-2 h-auto fixed top-0 left-0 right-0 z-30 overflow-hidden`}
+               className={`${bgColor} ${textColor} w-full text-center py-2 h-auto fixed top-0 left-0 right-0 z-40 overflow-hidden`}
            >
                <div className="container mx-auto px-4 flex flex-col md:flex-row justify-center md:justify-between items-center">
                    {/* Announcement Text (Centered) */}
