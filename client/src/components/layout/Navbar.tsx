@@ -21,14 +21,14 @@ interface NavbarProps {
 }
 
 const navItems: NavItem[] = [
-  {
-    label: "Business",
-    dropdown: [
-      { label: "Enterprise", href: "#" },
-      { label: "Hiring Solutions", href: "#" },
-      { label: "Case Studies", href: "#" }
-    ]
-  },
+  // {
+  //   label: "Business",
+  //   dropdown: [
+  //     { label: "Enterprise", href: "#" },
+  //     { label: "Hiring Solutions", href: "#" },
+  //     { label: "Case Studies", href: "#" }
+  //   ]
+  // },
   {
     label: "Services",
     href: "/services",
@@ -41,14 +41,27 @@ const navItems: NavItem[] = [
     ]
   },
   {
-    label: "Technologists",
+    label: "Partners",
     dropdown: [
-      { label: "Apply to Niddik", href: "/careers" },
-      { label: "Learning Community", href: "#" },
-      { label: "Expert Network", href: "#" }
+      { label: "IT", href: "#" },
+      { label: "Non-IT", href: "#" },
+      { label: "Healthcare", href: "#" },
+      { label: "Pharma", href: "#" },
+      { label: "Testimonials", href: "#" },
+      { label: "Case Studies", href: "#" },
+      // { label: "Learning Community", href: "#" },
+      // { label: "Expert Network", href: "#" }
     ]
   },
-  { label: "Adaptive Hiring", href: "/adaptive-hiring" },
+  // { label: "Adaptive Hiring", href: "/adaptive-hiring" },
+  {
+    label: "Adaptive Hiring",
+    href: "/adaptive-hiring", // Added href here
+    dropdown: [
+      { label: "AI & Automation", href: "#" },
+      { label: "Agile Approach", href: "#" }
+    ]
+  },
   // { 
   // 	label: "Resources", 
   // 	href: "#",
@@ -57,11 +70,15 @@ const navItems: NavItem[] = [
   // 	]
   // },
   {
-    label: "Company",
+    label: "About us",
+    href: "/about-us", // Added href here
     dropdown: [
-      { label: "About Us", href: "/about-us" },
-      { label: "Why Us", href: "/why-us" },
-      { label: "Whitepaper", href: "/whitepaper" }
+      { label: "Why NiDDik", href: "/why-us" },
+      { label: "Leadership Team", href: "#" },
+      { label: "Community Involvement", href: "#" },
+      { label: "Contact Us", href: "#" },
+      // { label: "Whitepaper", href: "/whitepaper" }
+      { label: "Apply to Niddik", href: "/careers" },
     ]
   }
 ];
