@@ -8,10 +8,9 @@ import AnnouncementBar from "@/components/layout/AnnouncementBar";
 
 const CommunityInvolvement = () => {
       const [isAnnouncementVisible, setIsAnnouncementVisible] = useState(true);
-                            
-                        const handleAnnouncementVisibilityChange = (isVisible: boolean) => {
-                                setIsAnnouncementVisible(isVisible);
-                        };
+       const handleAnnouncementVisibilityChange = (isVisible: boolean) => {
+      setIsAnnouncementVisible(isVisible);
+       };
   return (
     <div className="min-h-screen bg-gray-100">
      {/* Fixed header components */}

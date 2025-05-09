@@ -43,6 +43,9 @@ import CareerAdvice from './pages/CareerAdvice';
 import SixFactorModel from './pages/SixFactorModel';
 import AgileRecruiting from './pages/AgileRecruiting';
 import CommunityInvolvement from './pages/CommunityInvolvement';
+import ITPartners from './pages/ITPartners';
+import NonITPartners from './pages/NonITPartners';
+import HealthcarePartners from './pages/HealthcarePartners';
 
 function Router() {
     return (
@@ -65,6 +68,9 @@ function Router() {
             <Route path="/six-factor-recruiting-model" component={SixFactorModel} />
             <Route path="/agile-approach-based-recruiting" component={AgileRecruiting} />
             <Route path="/community-involvement" component={CommunityInvolvement} />
+            <Route path="/partners/it" component={ITPartners} />
+            <Route path="/partners/non-it" component={NonITPartners} />
+            <Route path="/partners/healthcare" component={HealthcarePartners} />
             
             {/* Company Routes */}
             <Route path="/about-us" component={AboutUs} />
