@@ -875,6 +875,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
       filename: file.originalname 
     });
   });
+
   
   // Get user's job applications with pagination and filtering
   app.get('/api/my-applications', async (req: AuthenticatedRequest, res) => {
@@ -1010,46 +1011,50 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
-  // API for user profile update
-  app.put('/api/profile', async (req: AuthenticatedRequest, res) => {
-    try {
+ // API for user profile update
+app.put('/api/profile', async (req: AuthenticatedRequest, res) => {
+  try {
       if (!req.isAuthenticated()) {
-        return res.status(401).json({ 
-          success: false, 
-          message: "You must be logged in to update your profile" 
-        });
+          return res.status(401).json({ 
+              success: false, 
+              message: "You must be logged in to update your profile" 
+          });
       }
-      
+
       const userId = req.user!.id;
-      
-      // Validate the update data (excluding password)
+
+      // Validate and extract the update data
       const updateData = { ...req.body };
-      delete updateData.password; // Ensure password cannot be updated through this endpoint
-      
+      delete updateData.password; // Prevent password updates through this endpoint
+
+      // Make sure to log the updateData for debugging
+      console.log("Update Data:", updateData);
+
       // Update the user profile
       const updatedUser = await storage.updateUser(userId, updateData);
-      
+
       if (!updatedUser) {
-        return res.status(500).json({
-          success: false,
-          message: "Failed to update profile"
-        });
+          return res.status(500).json({
+              success: false,
+              message: "Failed to update profile"
+          });
       }
-      
-      // Return the updated user without password
+
       const { password, ...userWithoutPassword } = updatedUser;
       return res.status(200).json({
-        success: true,
-        data: userWithoutPassword
+          success: true,
+          data: userWithoutPassword
       });
-    } catch (error) {
+
+  } catch (error) {
       console.error('Error updating profile:', error);
       return res.status(500).json({
-        success: false,
-        message: "Internal server error"
+          success: false,
+          message: "Internal server error"
       });
-    }
-  });
+  }
+});
+
   
   // API for user password change
   app.post('/api/change-password', async (req: AuthenticatedRequest, res) => {
@@ -1115,6 +1120,8 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
   
+
+
   // API for application summary (count by status)
   app.get('/api/my-applications/summary', async (req: AuthenticatedRequest, res) => {
     try {

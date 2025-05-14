@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect  } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { getQueryFn } from "@/lib/queryClient";
 import { useAuth } from "@/hooks/use-auth";
@@ -13,7 +13,7 @@ import { Badge } from "@/components/ui/badge";
 import { Separator } from "@/components/ui/separator";
 import { JobListing, JobApplication } from "@shared/schema";
 import { format } from "date-fns";
-import { Link } from "wouter";
+import { Link, useRouter } from "wouter"; // Import useRouter
 import CandidateLayout from "@/components/layouts/CandidateLayout";
 
 type ApplicationWithJob = JobApplication & {
@@ -33,6 +33,27 @@ type ApplicationWithJob = JobApplication & {
 export default function CandidateDashboard() {
   const { user } = useAuth();
   const [activeTab, setActiveTab] = useState("overview");
+  const {navigate} = useRouter(); // Initialize useRouter
+  useEffect(() => {
+    const checkSession = async () => {
+        try {
+            // Attempt to fetch user data from /api/user
+            const response = await fetch("/api/user");
+
+            if (response.status === 401) {
+                // Session is invalid, redirect to /auth
+                console.log("Session is invalid, redirecting to /auth");
+                navigate("/auth", { replace: true }); // Use navigate for redirection
+            }
+        } catch (error) {
+            console.error("Error checking session:", error);
+            // Handle error appropriately (e.g., redirect to an error page)
+            navigate("/auth", { replace: true });
+        }
+    };
+
+    checkSession();
+}, [navigate]); // Add navigate to the dependency array
 
   // Fetch recent job listings
   const { data: recentJobs, isLoading: isLoadingJobs } = useQuery<{ success: boolean; data: JobListing[] }>({

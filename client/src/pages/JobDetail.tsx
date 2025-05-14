@@ -16,7 +16,7 @@ import { Textarea } from "@/components/ui/textarea";
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
 import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, DialogTrigger, DialogClose } from "@/components/ui/dialog";
 import { Form, FormControl, FormDescription, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
-import { Loader2, MapPin, Calendar, Briefcase, Clock, Building, Award, ArrowLeftIcon, FileText, ExternalLink, CheckCircle } from "lucide-react";
+import { Loader2, MapPin, Calendar, Briefcase, Clock, Building, Award, ArrowLeftIcon, FileText, ExternalLink, CheckCircle, Trash } from "lucide-react";
 import { format } from "date-fns";
 import CareersHeader from "@/components/careers/CareersHeader";
 import CareersFooter from "@/components/careers/CareersFooter";
@@ -34,6 +34,10 @@ export default function JobDetail() {
   const { user } = useAuth();
   const { toast } = useToast();
   const [isDialogOpen, setIsDialogOpen] = useState(false);
+
+  const [resumeFile, setResumeFile] = useState<File | null>(null);
+  const [isUploading, setIsUploading] = useState(false);
+  const [isRemoving, setIsRemoving] = useState(false);
 
   const jobId = parseInt(params.id);
 
@@ -123,6 +127,84 @@ export default function JobDetail() {
   const onSubmit = (data: ApplicationFormValues) => {
     applyMutation.mutate(data);
   };
+
+
+   // Handle resume upload
+   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    if (e.target.files && e.target.files[0]) {
+      setResumeFile(e.target.files[0]);
+    }
+  };
+
+  const handleResumeUpload = async () => {
+    if (!resumeFile) return;
+
+    setIsUploading(true);
+
+    const formData = new FormData();
+    formData.append("resume", resumeFile);
+
+    try {
+      const response = await fetch("/api/upload-resume", {
+        method: "POST",
+        body: formData,
+      });
+
+      if (!response.ok) {
+        throw new Error("Unable to upload resume.");
+      }
+
+      toast({
+        title: "Resume uploaded",
+        description: "Your resume has been uploaded successfully.",
+      });
+
+      queryClient.invalidateQueries({ queryKey: ["/api/user"] }); // Refresh user data
+      setResumeFile(null);
+    } catch (error) {
+      toast({
+        title: "Upload failed",
+        description: "Unable to upload resume. Please try again.",
+        variant: "destructive",
+      });
+    } finally {
+      setIsUploading(false);
+    }
+  };
+
+  // Handle resume removal
+// Handle resume removal
+const handleResumeRemove = async () => {
+  setIsRemoving(true);
+
+  try {
+    const response = await apiRequest("DELETE", "/api/remove-resume");
+
+    if (!response.ok) {
+      throw new Error("Unable to remove resume.");
+    }
+
+    toast({
+      title: "Resume removed",
+      description: "Your resume has been removed successfully.",
+    });
+
+    // Invalidate the user cache to refresh the data
+    await queryClient.invalidateQueries({ queryKey: ["/api/user"] }); // Refresh user data
+
+    // Optionally, reset the resume file state explicitly if needed
+    setResumeFile(null); // Clear local resume file state if necessary
+  } catch (error) {
+    toast({
+      title: "Remove failed",
+      description: "Unable to remove resume. Please try again.",
+      variant: "destructive",
+    });
+  } finally {
+    setIsRemoving(false);
+  }
+};
+
 
   // Apply for job function
   const handleApply = () => {
@@ -386,24 +468,56 @@ export default function JobDetail() {
                       className="bg-muted/50"
                     />
                   </div>
+
                 </div>
 
                 {/* Resume Link */}
-                {user?.resumeUrl && (
-                  <div>
-                    <label className="text-sm font-medium mb-1 block">Resume</label>
-                    <div className="flex items-center gap-2 p-2 border rounded-md bg-muted/20">
-                      <FileText className="h-4 w-4 text-primary" />
-                      <span className="text-sm truncate flex-1">{user.resumeUrl.split('/').pop()}</span>
-                      <Button variant="outline" size="sm" asChild>
-                        <a href={user.resumeUrl} target="_blank" rel="noopener noreferrer" className="flex items-center gap-1">
-                          <ExternalLink className="h-3 w-3" />
-                          View
-                        </a>
-                      </Button>
-                    </div>
+                <div className="container mx-100 ">
+                {/* Resume Management */}
+            {user?.resumeUrl ? (
+              <div className="p-4 border rounded-md bg-muted/5">
+                <div className="flex items-center justify-between">
+                  <div className="flex items-center gap-2">
+                    <FileText className="h-4 w-4 text-primary" />
+                    <a href={user.resumeUrl} target="_blank" className="underline">
+                      View Resume
+                    </a>
                   </div>
+                  <Button
+                    variant="destructive"
+                    size="sm"
+                    onClick={handleResumeRemove}
+                    disabled={isRemoving}
+                  >
+                    {isRemoving ? (
+                      <Loader2 className="h-4 w-4 animate-spin" />
+                    ) : (
+                      <Trash className="h-4 w-4" />
+                    )}
+                    Remove
+                  </Button>
+                </div>
+              </div>
+            ) : (
+              <div>
+                <Input
+                  type="file"
+                  onChange={handleFileChange}
+                  placeholder="Upload resume"
+                />
+                {resumeFile && (
+                  <Button onClick={handleResumeUpload} disabled={isUploading}>
+                    {isUploading ? (
+                      <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                    ) : (
+                      "Upload Resume"
+                    )}
+                  </Button>
                 )}
+              </div>
+            )}
+
+        </div>
 
                 {/* Application Form */}
                 <Form {...form}>

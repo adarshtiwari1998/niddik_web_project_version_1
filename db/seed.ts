@@ -1,12 +1,12 @@
-import { db } from "./index";
-import { testimonials, clients, jobListings, users } from "@shared/schema";
+
+import { db, pool } from "./index";
+import { testimonials, clients, jobListings, users, adminUsers, contactSubmissions, jobApplications, submittedCandidates, demoRequests } from "@shared/schema";
 import { scrypt, randomBytes } from "crypto";
 import { promisify } from "util";
+import { sql } from "drizzle-orm";
 
-// For hashing the admin password
 const scryptAsync = promisify(scrypt);
 
-// Hash passwords function
 async function hashPassword(password: string) {
   const salt = randomBytes(16).toString("hex");
   const buf = (await scryptAsync(password, salt, 64)) as Buffer;
@@ -15,8 +15,152 @@ async function hashPassword(password: string) {
 
 async function seed() {
   try {
-    console.log("Seeding database...");
-    
+    console.log("Starting database seeding...");
+    await pool.query('SELECT 1'); // Test connection
+
+    // Create tables
+    console.log("Creating tables if they don't exist...");
+    await db.execute(sql`
+     CREATE TABLE IF NOT EXISTS admin_users (
+     id SERIAL PRIMARY KEY,
+     username TEXT NOT NULL UNIQUE,
+     password TEXT NOT NULL,
+     email TEXT NOT NULL UNIQUE,
+     full_name TEXT NOT NULL,
+     role TEXT NOT NULL DEFAULT 'admin',
+     created_at TIMESTAMP NOT NULL DEFAULT NOW()
+    );
+
+    CREATE TABLE IF NOT EXISTS admin_sessions (
+      id SERIAL PRIMARY KEY,
+      user_id INTEGER REFERENCES admin_users(id) NOT NULL,
+      session_id TEXT NOT NULL UNIQUE,
+      session_data TEXT NOT NULL,
+      created_at TIMESTAMP NOT NULL DEFAULT NOW(),
+      last_activity TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+      expires_at TIMESTAMP NOT NULL,
+      is_active BOOLEAN NOT NULL DEFAULT TRUE
+    );
+
+      CREATE TABLE IF NOT EXISTS users (
+        id SERIAL PRIMARY KEY,
+        username TEXT NOT NULL UNIQUE,
+        password TEXT NOT NULL,
+        email TEXT NOT NULL UNIQUE,
+        full_name TEXT NOT NULL,
+        phone TEXT,
+        role TEXT NOT NULL DEFAULT 'user',
+        experience TEXT,
+        notice_period TEXT,
+        current_ctc TEXT,
+        expected_ctc TEXT,
+        skills TEXT,
+        location TEXT,
+        city TEXT,
+        state TEXT,
+        country TEXT,
+        zip_code TEXT,
+        resume_url TEXT,
+        last_logout TIMESTAMP,
+        created_at TIMESTAMP NOT NULL DEFAULT NOW()
+      );
+
+      CREATE TABLE IF NOT EXISTS testimonials (
+        id SERIAL PRIMARY KEY,
+        name TEXT NOT NULL,
+        role TEXT NOT NULL,
+        company TEXT,
+        quote TEXT NOT NULL,
+        rating INTEGER NOT NULL,
+        image TEXT NOT NULL
+      );
+
+      CREATE TABLE IF NOT EXISTS clients (
+        id SERIAL PRIMARY KEY,
+        name TEXT NOT NULL,
+        logo TEXT NOT NULL
+      );
+
+      CREATE TABLE IF NOT EXISTS job_listings (
+        id SERIAL PRIMARY KEY,
+        title TEXT NOT NULL,
+        company TEXT NOT NULL,
+        location TEXT NOT NULL,
+        job_type TEXT NOT NULL,
+        experience_level TEXT NOT NULL,
+        salary TEXT NOT NULL,
+        description TEXT NOT NULL,
+        requirements TEXT NOT NULL,
+        benefits TEXT,
+        application_url TEXT,
+        contact_email TEXT,
+        status TEXT NOT NULL DEFAULT 'active',
+        featured BOOLEAN NOT NULL DEFAULT false,
+        posted_date TIMESTAMP NOT NULL DEFAULT NOW(),
+        expiry_date TIMESTAMP,
+        category TEXT NOT NULL,
+        skills TEXT NOT NULL
+      );
+
+      CREATE TABLE IF NOT EXISTS job_applications (
+        id SERIAL PRIMARY KEY,
+        job_id INTEGER NOT NULL REFERENCES job_listings(id),
+        user_id INTEGER NOT NULL REFERENCES users(id),
+        cover_letter TEXT,
+        resume_url TEXT NOT NULL,
+        status TEXT NOT NULL DEFAULT 'new',
+        experience TEXT,
+        skills TEXT NOT NULL,
+        education TEXT,
+        additional_info TEXT,
+        bill_rate TEXT,
+        pay_rate TEXT,
+        applied_date TIMESTAMP NOT NULL DEFAULT NOW(),
+        last_updated TIMESTAMP NOT NULL DEFAULT NOW()
+      );
+
+      CREATE TABLE IF NOT EXISTS submitted_candidates (
+        id SERIAL PRIMARY KEY,
+        submission_date DATE NOT NULL DEFAULT CURRENT_DATE,
+        sourced_by TEXT NOT NULL,
+        client TEXT NOT NULL,
+        poc TEXT NOT NULL,
+        skills TEXT NOT NULL,
+        candidate_name TEXT NOT NULL,
+        contact_no TEXT NOT NULL,
+        email_id TEXT NOT NULL,
+        experience TEXT NOT NULL,
+        notice_period TEXT NOT NULL,
+        location TEXT NOT NULL,
+        current_ctc TEXT NOT NULL,
+        expected_ctc TEXT NOT NULL,
+        bill_rate DECIMAL(10,2) NOT NULL DEFAULT 0,
+        pay_rate DECIMAL(10,2) NOT NULL DEFAULT 0,
+        margin_per_hour DECIMAL(10,2) NOT NULL DEFAULT 0,
+        profit_per_month DECIMAL(10,2) NOT NULL DEFAULT 0,
+        status TEXT NOT NULL DEFAULT 'new',
+        salary_in_lacs DECIMAL(10,2),
+        created_at TIMESTAMP NOT NULL DEFAULT NOW(),
+        updated_at TIMESTAMP NOT NULL DEFAULT NOW()
+      );
+
+      CREATE TABLE IF NOT EXISTS demo_requests (
+        id SERIAL PRIMARY KEY,
+        work_email TEXT NOT NULL UNIQUE,
+        phone_number TEXT NOT NULL,
+        message TEXT,
+        company_name TEXT,
+        full_name TEXT,
+        job_title TEXT,
+        status TEXT NOT NULL DEFAULT 'pending',
+        accepted_terms BOOLEAN NOT NULL DEFAULT FALSE,
+        created_at TIMESTAMP NOT NULL DEFAULT NOW(),
+        updated_at TIMESTAMP NOT NULL DEFAULT NOW(),
+        scheduled_date TIMESTAMP,
+        admin_notes TEXT
+      );
+    `);
+
     // Seed testimonials
     console.log("Seeding testimonials...");
     const testimonialsData = [
@@ -184,30 +328,52 @@ async function seed() {
     }
 
     // Seed admin user
-    console.log("Seeding admin user...");
-    const adminPassword = "admin123"; // Default admin password
-    const hashedPassword = await hashPassword(adminPassword);
-    
-    // Check if admin user exists
-    const existingAdmin = await db.query.users.findFirst({
-      where: (fields, { eq }) => eq(fields.username, "admin")
-    });
-    
-    if (!existingAdmin) {
-      await db.insert(users).values({
+// Seed admin user
+console.log("Seeding admin user...");
+
+const adminPassword = "admin123"; // Default admin password
+const hashedPassword = await hashPassword(adminPassword);
+
+// Check if admin user exists in users table
+const existingUser = await db.query.users.findFirst({
+    where: (fields, { eq }) => eq(fields.username, "admin")
+});
+
+// Check if admin user exists in admin_users table
+const existingAdmin = await db.query.adminUsers.findFirst({
+    where: (fields, { eq }) => eq(fields.username, "admin")
+});
+
+// Only insert if the admin user does not exist in either table
+if (!existingUser && !existingAdmin) {
+    await db.insert(adminUsers).values({
         username: "admin",
         password: hashedPassword,
         email: "admin@niddik.com",
         fullName: "Niddik Admin",
         role: "admin",
-      });
-      console.log(`Added admin user with username: admin and password: ${adminPassword}`);
-      console.log("IMPORTANT: Change this password after first login for security!");
-    } else {
-      console.log("Admin user already exists, skipping seeding");
-    }
+    });
 
-    console.log("Seeding completed successfully!");
+    await db.insert(users).values({
+        username: "admin",
+        password: hashedPassword, // Should ideally use a different password or handle roles differently
+        email: "admin@niddik.com",
+        fullName: "Niddik Admin",
+        role: "admin",
+    });
+
+    console.log(`Added admin user with username: admin and password: ${adminPassword}`);
+    console.log("IMPORTANT: Change this password after first login for security!");
+} else if (existingUser) {
+    console.log("Admin user already exists in users table, skipping seeding in users.");
+} else if (existingAdmin) {
+    console.log("Admin user already exists in admin_users table, skipping seeding in admin_users.");
+} else {
+    console.log("Admin user exists in both tables, skipping seeding.");
+}
+
+console.log("Seeding completed successfully!");
+
   } catch (error) {
     console.error("Error seeding database:", error);
   }

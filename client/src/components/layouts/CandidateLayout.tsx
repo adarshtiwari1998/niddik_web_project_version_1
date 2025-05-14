@@ -44,9 +44,7 @@ export default function CandidateLayout({ children, activeTab = "" }: CandidateL
           title: "Logged out successfully",
           description: "You have been logged out of your account",
         });
-        setTimeout(() => {
-          window.location.href = "/";
-        }, 500);
+        setIsLoggingOut(false);
       },
       onError: (error) => {
         setIsLoggingOut(false);

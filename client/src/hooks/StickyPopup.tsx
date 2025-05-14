@@ -1,5 +1,6 @@
 import React, { useState, useRef, useEffect } from 'react';
 import { Link } from 'wouter';
+import { X } from 'lucide-react';
 
 /* StickyPopup.css */
 
@@ -13,12 +14,11 @@ const styles = `
     pointer-events: none; /* Avoid interfering with clicks */
 }
 .arrow {
-    width: 0;
-    height: 0;
-    border-top: 10px solid transparent;
-    border-bottom: 10px solid transparent;
-    border-right: 10px solid white; /* Arrow color */
-    animation: flash 1s linear infinite;
+    width: 20px;
+    height: 20px;
+    background-image: url('data:image/svg+xml,%3Csvg width="20" height="20" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg"%3E%3Cpath d="M19.7998 0.200226C19.3198 -0.280774 18.5398 -0.0607744 18.0598 0.719226L0.719768 18.0593C0.239768 18.5393 0.459768 19.3193 1.23977 19.7993C2.01977 20.2793 2.79977 20.0593 3.27977 19.2793L19.7998 2.75923C20.2798 2.27923 20.0598 1.49923 19.7998 0.200226Z" fill="%234DD0E1"/%3E%3C/svg%3E');
+    background-size: cover;
+    transform: rotate(180deg);
 }
 @keyframes flash {
     0% { opacity: 1; }
@@ -32,8 +32,13 @@ styleSheet.type = "text/css";
 styleSheet.innerText = styles;
 document.head.appendChild(styleSheet);
 
-const StickyIcon = () => (
-  <div className="w-12 h-12 bg-blue-500 rounded-full flex items-center justify-center text-white text-2xl cursor-pointer">?</div>
+const StickyIcon = ({ isOpen, onClick }: { isOpen: boolean; onClick: () => void }) => (
+    <div
+        className="w-12 h-12 bg-blue-500 rounded-full flex items-center justify-center text-white text-2xl cursor-pointer"
+        onClick={onClick}
+    >
+        {isOpen ? <X size={24} /> : '?'}
+    </div>
 );
 
 interface StickyPopupProps {}
@@ -51,12 +56,12 @@ const StickyPopup: React.FC<StickyPopupProps> = () => {
 
     useEffect(() => {
         if (!choice) {
-            // Trigger bouncing and open the popup automatically for first-time users
+            // Trigger bouncing and THEN open the popup
             setIsBouncing(true);
             setTimeout(() => {
-                setIsBouncing(false);
-                setIsOpen(true);
-            }, 2000); // Bounce for 2 seconds, then stop and show popup
+                setIsBouncing(false); // Stop bouncing after 2 seconds
+                setIsOpen(true);       // Open the popup
+            }, 2000);
         }
     }, [choice]);
 
@@ -74,7 +79,7 @@ const StickyPopup: React.FC<StickyPopupProps> = () => {
         if (isOpen) {
             updateArrowPosition();
             setShowArrow(true);
-            const timer = setTimeout(() => setShowArrow(false), 3000); // Hide arrow after 3 seconds
+            const timer = setTimeout(() => setShowArrow(false), 3000);
             return () => clearTimeout(timer);
         }
         setShowArrow(false);
@@ -201,10 +206,9 @@ const StickyPopup: React.FC<StickyPopupProps> = () => {
         <div>
             <div
                 className={`fixed left-4 bottom-4 z-50 ${isBouncing ? 'animate-bounce' : ''}`}
-                onClick={() => setIsOpen(!isOpen)}
                 ref={iconRef}
             >
-                <StickyIcon />
+                <StickyIcon isOpen={isOpen} onClick={() => setIsOpen(!isOpen)} />
                 {showArrow && (
                     <div className="arrow-container" style={calculateArrowStyle()}>
                         <div className="arrow"></div>

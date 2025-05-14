@@ -172,7 +172,7 @@ export default function AuthPage() {
         setLocation("/candidate/dashboard");
       }
     }
-  }, [user, setLocation, redirectUrl]);
+  }, [user, setLocation, redirectUrl, location]);
 
   // Handle login submission
   const onLoginSubmit = (data: LoginFormValues) => {

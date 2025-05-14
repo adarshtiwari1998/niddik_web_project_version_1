@@ -15,6 +15,7 @@ export const users = pgTable("users", {
   noticePeriod: text("notice_period"),
   currentCtc: text("current_ctc"),
   expectedCtc: text("expected_ctc"),
+  skills: text("skills"),
   location: text("location"),
   city: text("city"),
   state: text("state"),
@@ -260,3 +261,42 @@ export const demoRequestSchema = createInsertSchema(demoRequests, {
 
 export type DemoRequest = typeof demoRequests.$inferSelect;
 export type InsertDemoRequest = z.infer<typeof demoRequestSchema>;
+
+
+// admi schema
+
+// Admin users table (in a separate admin schema)
+export const adminUsers = pgTable("admin_users", {
+  id: serial("id").primaryKey(),
+  username: text("username").notNull().unique(),
+  password: text("password").notNull(),
+  email: text("email").notNull().unique(),
+  fullName: text("full_name").notNull(),
+  role: text("role").notNull().default("admin"), // Always "admin"
+  createdAt: timestamp("created_at").defaultNow().notNull(),
+});
+
+export const insertAdminUserSchema = createInsertSchema(adminUsers, {
+  username: (schema) => schema.min(3, "Username must be at least 3 characters"),
+  password: (schema) => schema.min(6, "Password must be at least 6 characters"),
+  email: (schema) => schema.email("Please enter a valid email address"),
+  fullName: (schema) => schema.min(2, "Full name must be at least 2 characters"),
+});
+
+export type InsertAdminUser = z.infer<typeof insertAdminUserSchema>;
+export type AdminUser = typeof adminUsers.$inferSelect;
+
+export const adminSessions = pgTable("admin_sessions", {
+  id: serial("id").primaryKey(),
+  userId: integer("user_id").references(() => adminUsers.id).notNull(),
+  sessionId: text("session_id").notNull().unique(),
+  sessionData: text("session_data").notNull(),
+  createdAt: timestamp("created_at").defaultNow().notNull(),
+  lastActivity: timestamp("last_activity").defaultNow().notNull(),
+  expiresAt: timestamp("expires_at").notNull(),
+  isActive: boolean("is_active").notNull().default(true),
+});
+
+export type AdminSession = typeof adminSessions.$inferSelect;
+export type InsertAdminSession = typeof adminSessions.$inferInsert;
+
