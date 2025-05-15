@@ -9,7 +9,7 @@ import { storage } from "./storage"; // Adjust path as needed
 import { User, InsertUser, adminSessions, InsertAdminSession, users, AdminUser, adminUsers } from "@shared/schema"; // Adjust path as needed
 import connectPg from "connect-pg-simple";
 import { pool } from "@db"; // Adjust path as needed
-import { eq, and } from "drizzle-orm";
+import { eq, and, gt } from "drizzle-orm";
 import { db } from '@db'; // Adjust path as needed
 import { v4 as uuidv4 } from 'uuid';
 
@@ -78,10 +78,11 @@ export function setupAuth(app: Express) {
         saveUninitialized: false,
         store: new PostgresSessionStore({
             pool,
+            tableName: 'session',
             createTableIfMissing: true,
-           pruneSessionInterval: 60 // Prune expired sessions every 
+            pruneSessionInterval: 60
         }),
-        name: 'admin.sid', 
+        name: 'admin.sid',
         cookie: {
             secure: process.env.NODE_ENV === "production",
             maxAge: 30 * 24 * 60 * 60 * 1000, // 30 days
@@ -89,12 +90,12 @@ export function setupAuth(app: Express) {
             path: '/',
             sameSite: 'lax'
         },
-        // Add this to debug
         rolling: true,
         unset: 'destroy',
         genid: (req) => {
-            //console.log('Session ID generated');
-            return uuidv4(); // use UUIDs for session IDs
+            const sessionId = uuidv4();
+            console.log('New session ID generated:', sessionId);
+            return sessionId;
         }
     };
 
@@ -153,8 +154,50 @@ export function setupAuth(app: Express) {
                 });
             }
 
-            done(null, user);
+            if (!user) {
+                console.log('User not found during deserialization:', id);
+                return done(null, false);
+            }
+
+            // For admin users, verify session less frequently (every 5 minutes)
+            if (user.role === 'admin') {
+                const now = new Date();
+                const adminSession = await db.query.adminSessions.findFirst({
+                    where: and(
+                        eq(adminSessions.userId, user.id),
+                        eq(adminSessions.isActive, true),
+                        gt(adminSessions.expiresAt, now)
+                    )
+                });
+
+                if (!adminSession) {
+                    console.log('No valid admin session found for user:', user.id);
+                    // Clear invalid session
+                    await db.update(adminSessions)
+                        .set({ isActive: false })
+                        .where(eq(adminSessions.userId, user.id));
+                    return done(null, false);
+                }
+
+                // Only update session if last activity was more than 5 minutes ago
+                const fiveMinutesAgo = new Date(now.getTime() - (5 * 60 * 1000));
+                if (adminSession.lastActivity < fiveMinutesAgo) {
+                    const newExpiresAt = new Date(now.getTime() + (30 * 24 * 60 * 60 * 1000));
+                    await db.update(adminSessions)
+                        .set({ 
+                            lastActivity: now,
+                            expiresAt: newExpiresAt,
+                            isActive: true
+                        })
+                        .where(eq(adminSessions.id, adminSession.id));
+                }
+            }
+
+            // Remove password before sending to client
+            const { password, ...userWithoutPassword } = user;
+            done(null, userWithoutPassword);
         } catch (error) {
+            console.error('Error during user deserialization:', error);
             done(error);
         }
     });
@@ -218,7 +261,7 @@ export function setupAuth(app: Express) {
                     // Log the session ID
                     console.log("Admin session ID:", sessionId);
 
-                    // Create a new admin session entry with session data
+                    // Create session data
                     const sessionData = {
                         userId: user.id,
                         username: user.username,
@@ -226,6 +269,7 @@ export function setupAuth(app: Express) {
                         lastActivity: new Date()
                     };
 
+                    // Create admin session entry
                     const newAdminSession: InsertAdminSession = {
                         userId: user.id,
                         sessionId: sessionId,
@@ -234,8 +278,39 @@ export function setupAuth(app: Express) {
                     };
 
                     try {
+                        // Insert into admin_sessions table
                         await db.insert(adminSessions).values(newAdminSession).returning();
                         console.log("Admin session created successfully");
+
+                        // Update the session data to include admin role
+                        req.session.passport = {
+                            user: user.id
+                        };
+                        req.session.role = 'admin';
+                        req.session.adminSession = true;
+                        
+                        // Save session with proper data
+                        await new Promise((resolve, reject) => {
+                            req.session.save((err) => {
+                                if (err) {
+                                    console.error("Session save error:", err);
+                                    reject(err);
+                                }
+                                resolve(true);
+                            });
+                        });
+                        
+                        // Force session regeneration to ensure proper storage
+                        await new Promise((resolve, reject) => {
+                            req.session.regenerate((err) => {
+                                if (err) {
+                                    console.error("Session regeneration error:", err);
+                                    reject(err);
+                                }
+                                resolve(true);
+                            });
+                        });
+                        console.log("Regular session updated with admin role");
                     } catch (error: any) {
                         console.error("Error creating admin session:", error);
                         return res.status(500).json({ error: `Failed to create admin session: ${error.message}` });
@@ -280,7 +355,7 @@ export function setupAuth(app: Express) {
      app.delete('/api/remove-resume', async (req: Request, res: Response) => {
         try {
           let userId: number | null = null;
-      
+
           // First check for JWT token
           const authHeader = req.headers.authorization;
           if (authHeader && authHeader.startsWith('Bearer ')) {
@@ -292,33 +367,33 @@ export function setupAuth(app: Express) {
               console.log("JWT verification failed, falling back to session check");
             }
           }
-      
+
           // If no valid JWT, check session authentication
           if (!userId && req.isAuthenticated()) {
             userId = (req.user as User).id;
           }
-      
+
           if (!userId) {
             return res.status(401).json({ error: "Not authenticated" });
           }
-      
+
           // Find the user in the database
           const user = await storage.getUserById(userId);
           if (!user) {
             return res.status(404).json({ error: "User not found" });
           }
-      
+
           // Remove the resumeUrl
           user.resumeUrl = null; // Set resumeUrl to null or use delete operator
           await user.save(); // Save changes to the database
-      
+
           return res.status(200).json({ success: true, message: "Resume URL deleted successfully" });
         } catch (error) {
           console.error('Error removing resume URL:', error);
           return res.status(500).json({ error: "Internal server error" });
         }
       });
-      
+
     // Current user API route (supports both session and JWT)
 // Current user API route (supports both session and JWT)
 app.get("/api/user", async (req: Request, res: Response) => {
@@ -363,65 +438,50 @@ app.get("/api/user", async (req: Request, res: Response) => {
 
     // Middleware to check if user is authenticated (supports both session and JWT)
     app.use("/api/admin", async (req: Request, res: Response, next: NextFunction) => {
-        // First check for JWT token
-        const authHeader = req.headers.authorization;
+        try {
+            // First check session authentication
+            if (req.isAuthenticated() && req.user) {
+                const userId = (req.user as User).id;
 
-        let userId: number | undefined; // To store the user ID for later use
-
-        if (authHeader && authHeader.startsWith('Bearer ')) {
-            // Extract token
-            const token = authHeader.substring(7);
-
-            try {
-                // Verify token
-                const decoded = jwt.verify(token, JWT_SECRET) as { user: User | AdminUser }; // Updated type
-
-                // Store user ID from the decoded token
-                userId = decoded.user.id;
-
-                // Attach user to request
-                req.user = decoded.user;
-            } catch (error) {
-                // If JWT verification fails, continue to session check
-                console.log("JWT verification failed, falling back to session check");
-            }
-        }
-
-        // If JWT authentication was successful, userId will be set.
-        // Otherwise, check for session authentication.
-        if (!userId) {
-            // If no token or token verification failed, check session authentication
-            if (!req.isAuthenticated()) {
-                return res.status(401).json({ error: "Not authenticated" });
-            }
-
-            userId = (req.user as User).id;
-        }
-
-        // Check if the user has an active admin session
-        if (userId) {
-            try {
+                // Check for active admin session
                 const adminSession = await db.query.adminSessions.findFirst({
                     where: and(
                         eq(adminSessions.userId, userId),
-                        eq(adminSessions.sessionId, req.sessionID) // Ensure session ID is checked too
-                    ),
+                        eq(adminSessions.isActive, true)
+                    )
                 });
 
-                if (!adminSession) {
-                    return res.status(403).json({ error: "Not authorized: No active admin session" });
+                // Check if user exists and has admin role
+                const adminUser = await db.query.adminUsers.findFirst({
+                    where: eq(adminUsers.id, userId)
+                });
+
+                if (adminUser && adminUser.role === 'admin' && adminSession) {
+                    // Update last activity
+                    await db.update(adminSessions)
+                        .set({ lastActivity: new Date() })
+                        .where(eq(adminSessions.id, adminSession.id));
+                    return next();
                 }
-
-                // If admin session exists, proceed to the next middleware
-                return next();
-
-            } catch (error) {
-                console.error("Error checking admin session:", error);
-                return res.status(500).json({ error: "Internal server error" });
             }
-        }
 
-        // If none of the above checks passed, return unauthorized
-        return res.status(403).json({ error: "Not authorized" });
+            // If session check fails, try JWT
+            const authHeader = req.headers.authorization;
+            if (authHeader && authHeader.startsWith('Bearer ')) {
+                const token = authHeader.substring(7);
+                try {
+                    const decoded = jwt.verify(token, JWT_SECRET) as { user: AdminUser };
+                    req.user = decoded.user;
+                    return next();
+                } catch (error) {
+                    console.log("JWT verification failed");
+                }
+            }
+
+            return res.status(401).json({ error: "Not authenticated" });
+        } catch (error) {
+            console.error("Auth middleware error:", error);
+            return res.status(500).json({ error: "Internal server error" });
+        }
     });
 }

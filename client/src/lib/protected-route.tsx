@@ -67,7 +67,7 @@ export function ProtectedRoute({
       return <Redirect to={redirectPath} />;
     }
 
-    if (!user) {
+    if (!user || (path.startsWith("/admin") && !user.role)) {
       // Create redirect URL with the current path for after login
       const redirectParam = `?redirect=${encodeURIComponent(path)}`;
       

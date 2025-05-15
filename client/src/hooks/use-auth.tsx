@@ -49,12 +49,12 @@ export function AuthProvider({ children }: { children: ReactNode }) {
           body: JSON.stringify(credentials),
           credentials: "include",
         });
-        
+
         if (!res.ok) {
           const errorData = await res.json().catch(() => ({ error: res.statusText }));
           throw new Error(errorData.error || "Login failed. Please check your credentials.");
         }
-        
+
         return await res.json();
       } catch (error) {
         console.error("Login error:", error);
@@ -65,11 +65,23 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       // Store JWT token if available
       if (userData.token) {
         setAuthToken(userData.token);
+        // Make an immediate user verification request
+        queryClient.prefetchQuery({
+          queryKey: ["/api/user"],
+          queryFn: getQueryFn({ on401: "returnNull" })
+        });
       }
-      
+
       // Store user data without token in the query cache
       const { token, ...userWithoutToken } = userData;
       queryClient.setQueryData(["/api/user"], userWithoutToken);
+
+      // Set up periodic session refresh
+      const refreshInterval = setInterval(() => {
+        queryClient.invalidateQueries({ queryKey: ["/api/user"] });
+      }, 60000); // Refresh every minute
+
+      return () => clearInterval(refreshInterval);
     },
     onError: (error: Error) => {
       toast({
@@ -89,8 +101,13 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       // Store JWT token if available
       if (userData.token) {
         setAuthToken(userData.token);
+        // Make an immediate user verification request
+        queryClient.prefetchQuery({
+          queryKey: ["/api/user"],
+          queryFn: getQueryFn({ on401: "returnNull" })
+        });
       }
-      
+
       // Store user data without token in the query cache
       const { token, ...userWithoutToken } = userData;
       queryClient.setQueryData(["/api/user"], userWithoutToken);
@@ -111,7 +128,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     onSuccess: () => {
       // Remove JWT token from localStorage
       removeAuthToken();
-      
+
       // Clear user data from query cache
       queryClient.setQueryData(["/api/user"], null);
     },
