@@ -1534,56 +1534,72 @@ app.get("/api/last-logout", async (req: Request, res: Response) => {
 // Check current user (admin or regular)
 app.get("/api/user", async (req: Request, res: Response) => {
   try {
-    let userId: number | null = null;
-    let isAdmin = false;
-
-    // First check session authentication
+    // Check session first
     if (req.isAuthenticated() && req.user) {
-      userId = req.user.id;
+      const userId = req.user.id;
       
-      // Check if this is an admin user
+      // First try admin_users table
       const adminUser = await db.query.adminUsers.findFirst({
         where: eq(adminUsers.id, userId)
       });
-      
-      if (adminUser) {
-        const { password, ...userData } = adminUser;
-        return res.json({...userData, isAdmin: true});
-      }
-    }
 
-    // If not admin, check regular user authentication
-    if (userId) {
+      if (adminUser) {
+        // Check for valid admin session
+        const activeSession = await db.query.adminSessions.findFirst({
+          where: and(
+            eq(adminSessions.userId, userId),
+            eq(adminSessions.isActive, true),
+            gt(adminSessions.expiresAt, new Date())
+          )
+        });
+
+        if (activeSession) {
+          const { password, ...userData } = adminUser;
+          return res.json({ ...userData, isAdmin: true });
+        }
+      }
+
+      // If not admin, try regular users
       const user = await storage.getUserById(userId);
       if (user) {
         const { password, ...userData } = user;
-        return res.json({...userData, isAdmin: false});
+        return res.json({ ...userData, isAdmin: false });
       }
     }
 
-    // If no session, try JWT
+    // Try JWT if no session
     const authHeader = req.headers.authorization;
     if (authHeader && authHeader.startsWith('Bearer ')) {
       const token = authHeader.substring(7);
       try {
         const decoded = jwt.verify(token, JWT_SECRET) as { user: any };
-        userId = decoded.user.id;
-        
-        // Check admin users first
+        const userId = decoded.user.id;
+
+        // Try admin first
         const adminUser = await db.query.adminUsers.findFirst({
           where: eq(adminUsers.id, userId)
         });
-        
+
         if (adminUser) {
-          const { password, ...userData } = adminUser;
-          return res.json({...userData, isAdmin: true});
+          const activeSession = await db.query.adminSessions.findFirst({
+            where: and(
+              eq(adminSessions.userId, userId),
+              eq(adminSessions.isActive, true),
+              gt(adminSessions.expiresAt, new Date())
+            )
+          });
+
+          if (activeSession) {
+            const { password, ...userData } = adminUser;
+            return res.json({ ...userData, isAdmin: true });
+          }
         }
 
-        // If not admin, check regular users
+        // If not admin, try regular user
         const user = await storage.getUserById(userId);
         if (user) {
           const { password, ...userData } = user;
-          return res.json({...userData, isAdmin: false});
+          return res.json({ ...userData, isAdmin: false });
         }
       } catch (error) {
         console.log("JWT verification failed");
