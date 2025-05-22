@@ -1,0 +1,73 @@
+GET https://c97bc9b7-d459-4d54-aa25-a500aa3482fe-00-17pkxb2ueb99z.sisko.replit.dev/api/user 401 (Unauthorized)
+(anonymous) @ queryClient.ts:74
+fetchFn @ @tanstack_react-query.js?v=34ad6779:844
+run @ @tanstack_react-query.js?v=34ad6779:494
+start @ @tanstack_react-query.js?v=34ad6779:536
+fetch @ @tanstack_react-query.js?v=34ad6779:931
+executeFetch_fn @ @tanstack_react-query.js?v=34ad6779:2238
+onSubscribe @ @tanstack_react-query.js?v=34ad6779:1942
+subscribe @ @tanstack_react-query.js?v=34ad6779:24
+(anonymous) @ @tanstack_react-query.js?v=34ad6779:3099
+subscribeToStore @ chunk-RPCDYKBN.js?v=34ad6779:11984
+commitHookEffectListMount @ chunk-RPCDYKBN.js?v=34ad6779:16915
+commitPassiveMountOnFiber @ chunk-RPCDYKBN.js?v=34ad6779:18156
+commitPassiveMountEffects_complete @ chunk-RPCDYKBN.js?v=34ad6779:18129
+commitPassiveMountEffects_begin @ chunk-RPCDYKBN.js?v=34ad6779:18119
+commitPassiveMountEffects @ chunk-RPCDYKBN.js?v=34ad6779:18109
+flushPassiveEffectsImpl @ chunk-RPCDYKBN.js?v=34ad6779:19490
+flushPassiveEffects @ chunk-RPCDYKBN.js?v=34ad6779:19447
+performSyncWorkOnRoot @ chunk-RPCDYKBN.js?v=34ad6779:18868
+flushSyncCallbacks @ chunk-RPCDYKBN.js?v=34ad6779:9119
+commitRootImpl @ chunk-RPCDYKBN.js?v=34ad6779:19432
+commitRoot @ chunk-RPCDYKBN.js?v=34ad6779:19277
+finishConcurrentRender @ chunk-RPCDYKBN.js?v=34ad6779:18805
+performConcurrentWorkOnRoot @ chunk-RPCDYKBN.js?v=34ad6779:18718
+workLoop @ chunk-RPCDYKBN.js?v=34ad6779:197
+flushWork @ chunk-RPCDYKBN.js?v=34ad6779:176
+performWorkUntilDeadline @ chunk-RPCDYKBN.js?v=34ad6779:384Understand this error
+queryClient.ts:74 
+            
+            
+           GET https://c97bc9b7-d459-4d54-aa25-a500aa3482fe-00-17pkxb2ueb99z.sisko.replit.dev/api/user 401 (Unauthorized)
+(anonymous) @ queryClient.ts:74
+fetchFn @ @tanstack_react-query.js?v=34ad6779:844
+run @ @tanstack_react-query.js?v=34ad6779:494
+start @ @tanstack_react-query.js?v=34ad6779:536
+fetch @ @tanstack_react-query.js?v=34ad6779:931
+(anonymous) @ @tanstack_react-query.js?v=34ad6779:1770
+(anonymous) @ @tanstack_react-query.js?v=34ad6779:1769
+batch @ @tanstack_react-query.js?v=34ad6779:584
+refetchQueries @ @tanstack_react-query.js?v=34ad6779:1768
+(anonymous) @ @tanstack_react-query.js?v=34ad6779:1754
+batch @ @tanstack_react-query.js?v=34ad6779:584
+invalidateQueries @ @tanstack_react-query.js?v=34ad6779:1747
+onSuccess @ AdminLogin.tsx:127
+await in onSuccess
+(anonymous) @ @tanstack_react-query.js?v=34ad6779:2670
+batch @ @tanstack_react-query.js?v=34ad6779:584
+notify_fn3 @ @tanstack_react-query.js?v=34ad6779:2664
+onMutationUpdate @ @tanstack_react-query.js?v=34ad6779:2631
+(anonymous) @ @tanstack_react-query.js?v=34ad6779:1348
+(anonymous) @ @tanstack_react-query.js?v=34ad6779:1347
+batch @ @tanstack_react-query.js?v=34ad6779:584
+dispatch_fn2 @ @tanstack_react-query.js?v=34ad6779:1346
+execute @ @tanstack_react-query.js?v=34ad6779:1251
+await in execute
+mutate @ @tanstack_react-query.js?v=34ad6779:2649
+(anonymous) @ @tanstack_react-query.js?v=34ad6779:3377
+handleLogin @ AdminLogin.tsx:90
+callCallback2 @ chunk-RPCDYKBN.js?v=34ad6779:3674
+invokeGuardedCallbackDev @ chunk-RPCDYKBN.js?v=34ad6779:3699
+invokeGuardedCallback @ chunk-RPCDYKBN.js?v=34ad6779:3733
+invokeGuardedCallbackAndCatchFirstError @ chunk-RPCDYKBN.js?v=34ad6779:3736
+executeDispatch @ chunk-RPCDYKBN.js?v=34ad6779:7014
+processDispatchQueueItemsInOrder @ chunk-RPCDYKBN.js?v=34ad6779:7034
+processDispatchQueue @ chunk-RPCDYKBN.js?v=34ad6779:7043
+dispatchEventsForPlugins @ chunk-RPCDYKBN.js?v=34ad6779:7051
+(anonymous) @ chunk-RPCDYKBN.js?v=34ad6779:7174
+batchedUpdates$1 @ chunk-RPCDYKBN.js?v=34ad6779:18913
+batchedUpdates @ chunk-RPCDYKBN.js?v=34ad6779:3579
+dispatchEventForPluginEventSystem @ chunk-RPCDYKBN.js?v=34ad6779:7173
+dispatchEventWithEnableCapturePhaseSelectiveHydrationWithoutDiscreteEventReplay @ chunk-RPCDYKBN.js?v=34ad6779:5478
+dispatchEvent @ chunk-RPCDYKBN.js?v=34ad6779:5472
+dispatchDiscreteEvent @ chunk-RPCDYKBN.js?v=34ad6779:5449Understand this error
