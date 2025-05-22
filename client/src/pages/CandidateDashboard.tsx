@@ -15,6 +15,7 @@ import { JobListing, JobApplication } from "@shared/schema";
 import { format } from "date-fns";
 import { Link, useRouter } from "wouter"; // Import useRouter
 import CandidateLayout from "@/components/layouts/CandidateLayout";
+import { Helmet } from 'react-helmet-async';
 
 type ApplicationWithJob = JobApplication & {
   job: {
@@ -30,7 +31,17 @@ type ApplicationWithJob = JobApplication & {
   };
 };
 
-export default function CandidateDashboard() {
+const CandidateDashboard = () => {
+  return (
+    <>
+      <Helmet>
+        <title>Candidate Dashboard | Niddik</title>
+        <meta name="description" content="Manage your job applications, track progress, and update your profile." />
+        <meta property="og:title" content="Candidate Dashboard | Niddik" />
+        <meta property="og:description" content="Manage your job applications, track progress, and update your profile." />
+      </Helmet>
+    
+    
   const { user } = useAuth();
   const [activeTab, setActiveTab] = useState("overview");
   const {navigate} = useRouter(); // Initialize useRouter
@@ -310,5 +321,8 @@ export default function CandidateDashboard() {
         </div>
       </div>
     </CandidateLayout>
+     </>
   );
 }
+
+export default CandidateDashboard;

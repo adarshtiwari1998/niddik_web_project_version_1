@@ -9,16 +9,27 @@ import AdminPasswordChange from "@/components/admin/AdminPasswordChange";
 import AdminLayout from "@/components/layout/AdminLayout";
 import { LoadingScreen } from "@/components/ui/loading-screen";
 import { JobListing, JobApplication } from "@shared/schema";
+import { Helmet } from 'react-helmet-async';
 
-export default function AdminDashboard() {
+const AdminDashboard = () => {
+  return (
+    <>
+      <Helmet>
+        <title>Admin Dashboard | Niddik</title>
+        <meta name="description" content="Manage job listings, applications, and candidate profiles." />
+        <meta property="og:title" content="Admin Dashboard | Niddik" />
+        <meta property="og:description" content="Manage job listings, applications, and candidate profiles." />
+      </Helmet>
+      
+
   const { user } = useAuth();
   const [activeTab, setActiveTab] = useState("overview");
   const [initialLoading, setInitialLoading] = useState(true);
-  
+
   // Show loading screen as soon as component mounts
   useEffect(() => {
     document.title = "Admin Dashboard | NiDDiK";
-    
+
     // Check if we're coming from login (which sets this flag)
     const isComingFromLogin = sessionStorage.getItem('admin_dashboard_loading') === 'true';
     if (isComingFromLogin) {
@@ -28,7 +39,7 @@ export default function AdminDashboard() {
       sessionStorage.removeItem('admin_dashboard_loading');
     }
   }, []);
-  
+
   // Fetch job statistics
   const { data: jobsData, isLoading: isLoadingJobs } = useQuery<{ data: JobListing[] }>({
     queryKey: ['/api/job-listings'],
@@ -38,7 +49,7 @@ export default function AdminDashboard() {
       return res.json();
     },
   });
-  
+
   // Fetch application statistics
   const { data: applicationsData, isLoading: isLoadingApplications } = useQuery<{ 
     success: boolean; 
@@ -52,20 +63,20 @@ export default function AdminDashboard() {
       return res.json();
     },
   });
-  
+
   // Calculate statistics from the fetched data
   const totalJobs = jobsData?.data?.length || 0;
   const totalApplications = applicationsData?.data?.length || 0;
-  
+
   // Calculate application statuses
   const newApplications = applicationsData?.data?.filter(app => app.status === 'new')?.length || 0;
   const reviewingApplications = applicationsData?.data?.filter(app => app.status === 'reviewing')?.length || 0;
   const interviewApplications = applicationsData?.data?.filter(app => app.status === 'interview')?.length || 0;
   const hiredApplications = applicationsData?.data?.filter(app => app.status === 'hired')?.length || 0;
-  
+
   // Fetch recent applications for the dashboard
   const recentApplications = applicationsData?.data?.slice(0, 5) || [];
-  
+
   // Effect to manage loading state
   useEffect(() => {
     // Check if data has loaded
@@ -74,11 +85,11 @@ export default function AdminDashboard() {
       const timer = setTimeout(() => {
         setInitialLoading(false);
       }, 200);
-      
+
       return () => clearTimeout(timer);
     }
   }, [isLoadingJobs, isLoadingApplications]);
-  
+
   // Format date
   const formatDate = (dateString: string | Date) => {
     const date = typeof dateString === 'string' ? new Date(dateString) : dateString;
@@ -88,7 +99,7 @@ export default function AdminDashboard() {
       day: 'numeric'
     }).format(date);
   };
-  
+
   // Redirect to login if not authenticated or not an admin
   if (!user || user.role !== "admin") {
     return null; // The ProtectedRoute component will handle redirection
@@ -103,7 +114,7 @@ export default function AdminDashboard() {
           <TabsTrigger value="account">Account Settings</TabsTrigger>
           <TabsTrigger value="password">Change Password</TabsTrigger>
         </TabsList>
-        
+
         <TabsContent value="overview">
           {/* Analytics Overview Cards */}
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
@@ -127,7 +138,7 @@ export default function AdminDashboard() {
                 </Link>
               </CardFooter>
             </Card>
-            
+
             <Card className="border-l-4 border-l-green-500">
               <CardHeader className="pb-2">
                 <CardTitle className="text-2xl font-bold flex items-center">
@@ -148,7 +159,7 @@ export default function AdminDashboard() {
                 </Link>
               </CardFooter>
             </Card>
-            
+
             <Card className="border-l-4 border-l-blue-500">
               <CardHeader className="pb-2">
                 <CardTitle className="text-2xl font-bold flex items-center">
@@ -169,7 +180,7 @@ export default function AdminDashboard() {
                 </Link>
               </CardFooter>
             </Card>
-            
+
             <Card className="border-l-4 border-l-amber-500">
               <CardHeader className="pb-2">
                 <CardTitle className="text-2xl font-bold flex items-center">
@@ -191,7 +202,7 @@ export default function AdminDashboard() {
               </CardFooter>
             </Card>
           </div>
-          
+
           {/* Status Breakdown */}
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-8">
             <Card>
@@ -213,7 +224,7 @@ export default function AdminDashboard() {
                       </span>
                     </div>
                   </div>
-                  
+
                   <div className="flex justify-between items-center">
                     <div className="flex items-center">
                       <span className="w-3 h-3 rounded-full bg-purple-500 mr-2"></span>
@@ -226,7 +237,7 @@ export default function AdminDashboard() {
                       </span>
                     </div>
                   </div>
-                  
+
                   <div className="flex justify-between items-center">
                     <div className="flex items-center">
                       <span className="w-3 h-3 rounded-full bg-amber-500 mr-2"></span>
@@ -239,7 +250,7 @@ export default function AdminDashboard() {
                       </span>
                     </div>
                   </div>
-                  
+
                   <div className="flex justify-between items-center">
                     <div className="flex items-center">
                       <span className="w-3 h-3 rounded-full bg-green-500 mr-2"></span>
@@ -255,7 +266,7 @@ export default function AdminDashboard() {
                 </div>
               </CardContent>
             </Card>
-            
+
             <Card>
               <CardHeader className="flex flex-row items-center justify-between">
                 <div>
@@ -299,7 +310,7 @@ export default function AdminDashboard() {
             </Card>
           </div>
         </TabsContent>
-        
+
         <TabsContent value="account">
           <Card>
             <CardHeader>
@@ -337,11 +348,14 @@ export default function AdminDashboard() {
             </CardContent>
           </Card>
         </TabsContent>
-        
+
         <TabsContent value="password">
           <AdminPasswordChange />
         </TabsContent>
       </Tabs>
     </AdminLayout>
+    </>
   );
 }
+
+export default AdminDashboard;
