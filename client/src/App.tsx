@@ -82,7 +82,7 @@ function Router() {
             <ProtectedRoute path="/candidate/jobs" component={CareerPage} />
             
             {/* Candidate Routes */}
-            <ProtectedRoute path="/candidate/dashboard" component={CandidateDashboard} />
+            <ProtectedRoute path="/candidate/dashboard" component={CandidateDashboard} requiredRole="user" />
             <ProtectedRoute path="/dashboard" component={CandidateDashboard} /> {/* Keep for backward compatibility */}
             <ProtectedRoute path="/candidate/applications" component={MyApplications} />
             <ProtectedRoute path="/my-applications" component={MyApplications} /> {/* Keep for backward compatibility */}

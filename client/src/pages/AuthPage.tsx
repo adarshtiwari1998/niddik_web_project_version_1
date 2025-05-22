@@ -168,11 +168,13 @@ export default function AuthPage() {
         setLocation(redirectUrl);
       } else if (user.role === "admin") {
         setLocation("/admin/dashboard");
-      } else {
+      } else if (user.role === "user") {
         setLocation("/candidate/dashboard");
+      } else {
+        setLocation("/");
       }
     }
-  }, [user, setLocation, redirectUrl, location]);
+  }, [user, setLocation, redirectUrl]);
 
   // Handle login submission
   const onLoginSubmit = (data: LoginFormValues) => {
