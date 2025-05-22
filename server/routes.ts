@@ -1599,35 +1599,8 @@ app.get("/api/user", async (req: Request, res: Response) => {
       const { password, ...userData } = user;
       return res.json({ ...userData, isAdmin: false });
     }
-    const authHeader = req.headers.authorization;
-    if (authHeader && authHeader.startsWith('Bearer ')) {
-      const token = authHeader.substring(7);
-      try {
-        const decoded = jwt.verify(token, JWT_SECRET) as { user: any };
-        const userId = decoded.user.id;
 
-        // Try admin first
-        const adminUser = await db.query.adminUsers.findFirst({
-          where: eq(adminUsers.id, userId)
-        });
-
-        if (adminUser) {
-          const activeSession = await db.query.adminSessions.findFirst({
-            where: and(
-              eq(adminSessions.userId, userId),
-              eq(adminSessions.isActive, true),
-              gt(adminSessions.expiresAt, new Date())
-            )
-          });
-
-          if (activeSession) {
-            const { password, ...userData } = adminUser;
-            return res.json({ ...userData, isAdmin: true });
-          }
-        }
-
-        // If not admin, try regular user
-        const user = await storage.getUserById(userId);
+    return res.status(401).json({ error: "Not authenticated" });
         if (user) {
           const { password, ...userData } = user;
           return res.json({ ...userData, isAdmin: false });
