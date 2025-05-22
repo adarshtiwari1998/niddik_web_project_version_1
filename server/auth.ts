@@ -285,16 +285,15 @@ export function setupAuth(app: Express) {
                     const existingSession = await db.select().from(sessions).where(eq(sessions.sessionId, sessionId)).limit(1);
                     
                     if (existingSession.length > 0) {
-                        if (existingSession) {
-                            await db.update(sessions)
-                                .set({
-                                    userId: user.id,
-                                    sessionData: JSON.stringify(req.session),
-                                    lastActivity: now,
-                                    expiresAt: expiresAt,
-                                    isActive: true
-                                })
-                                .where(eq(sessions.sessionId, sessionId));
+                        await db.update(sessions)
+                            .set({
+                                userId: user.id,
+                                sessionData: JSON.stringify(req.session),
+                                lastActivity: now,
+                                expiresAt: expiresAt,
+                                isActive: true
+                            })
+                            .where(eq(sessions.sessionId, sessionId));
                     } else {
                         await db.insert(sessions)
                             .values({
