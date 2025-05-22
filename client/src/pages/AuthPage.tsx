@@ -1,7 +1,3 @@
-The code was updated to correctly define the `lastLogoutTime` state variable, but the type definition was incorrect. This commit fixes the type definition to `string | null` and ensures type safety and avoids potential errors.
-```
-
-```replit_final_file
 import { useState, useEffect } from "react";
 import { useLocation, Link } from "wouter";
 import { z } from "zod";

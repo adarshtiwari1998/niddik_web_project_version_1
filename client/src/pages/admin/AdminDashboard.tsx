@@ -32,6 +32,14 @@ const AdminDashboard = () => {
 
     // Check if we're coming from login (which sets this flag)
     const isComingFromLogin = sessionStorage.getItem('admin_dashboard_loading') === 'true';
+    
+    if (isComingFromLogin) {
+      // Keep loading state true
+      setInitialLoading(true);
+      // Clear the flag
+      sessionStorage.removeItem('admin_dashboard_loading');
+    }
+  }, []);
     if (isComingFromLogin) {
       // Keep loading state true
       setInitialLoading(true);
