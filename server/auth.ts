@@ -257,25 +257,56 @@ export function setupAuth(app: Express) {
                     const sessionId = req.sessionID;
                     console.log("Admin session ID:", sessionId);
 
-                        // Set session data
-                        req.session.user = {
-                            id: user.id,
-                            username: user.username,
-                            role: user.role,
-                            email: user.email
-                        };
-                        // req.session.adminSessionId = session.id;
-                        req.session.role = 'admin';
+                    const now = new Date();
+                    const expiresAt = new Date(now.getTime() + (30 * 24 * 60 * 60 * 1000));
 
-                        await new Promise<void>((resolve, reject) => {
-                            req.session.save((err) => {
-                                if (err) {
-                                    console.error("Session save error:", err);
-                                    reject(err);
-                                }
-                                resolve();
-                            });
+                    // Set session data
+                    req.session.user = {
+                        id: user.id,
+                        username: user.username,
+                        role: user.role,
+                        email: user.email,
+                        lastActivity: now,
+                        authenticated: true
+                    };
+
+                    // Save session immediately
+                    await new Promise<void>((resolve, reject) => {
+                        req.session.save((err) => {
+                            if (err) {
+                                console.error("Session save error:", err);
+                                reject(err);
+                            }
+                            resolve();
                         });
+                    });
+
+                    // Update or insert into sessions table
+                    await db.query.sessions.findFirst({
+                        where: eq(sessions.sessionId, sessionId)
+                    }).then(async (existingSession) => {
+                        if (existingSession) {
+                            await db.update(sessions)
+                                .set({
+                                    userId: user.id,
+                                    sessionData: JSON.stringify(req.session),
+                                    lastActivity: now,
+                                    expiresAt: expiresAt,
+                                    isActive: true
+                                })
+                                .where(eq(sessions.sessionId, sessionId));
+                        } else {
+                            await db.insert(sessions)
+                                .values({
+                                    userId: user.id,
+                                    sessionId: sessionId,
+                                    sessionData: JSON.stringify(req.session),
+                                    lastActivity: now,
+                                    expiresAt: expiresAt,
+                                    isActive: true
+                                });
+                        }
+                    });
 
                         // Update session store immediately
                         // await db.update(adminSessions)
