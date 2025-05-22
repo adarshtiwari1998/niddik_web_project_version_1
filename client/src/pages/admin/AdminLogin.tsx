@@ -21,7 +21,7 @@ export default function AdminLogin() {
   const { toast } = useToast();
   const [_, setLocation] = useLocation();
   const [lastLogoutTime, setLastLogoutTime] = useState<string | null>(null);
-  
+
   // Check if a user is already logged in as candidate
   useEffect(() => {
     if (user && user.role === "user") {
@@ -32,16 +32,16 @@ export default function AdminLogin() {
         variant: "default",
       });
       setShowRedirectMessage(true);
-      
+
       // Set a short timeout to allow the toast to be seen
       const timer = setTimeout(() => {
         window.location.href = "/candidate/dashboard";
       }, 1500);
-      
+
       return () => clearTimeout(timer);
     }
   }, [user, toast]);
-  
+
   // Check if we're coming from logout and fetch last logout time
   useEffect(() => {
     // Check if we're coming from a logout
@@ -49,13 +49,13 @@ export default function AdminLogin() {
     if (isComingFromLogout) {
       setIsComingFromLogout(true);
       sessionStorage.removeItem('admin_login_after_logout');
-      
+
       // Set a timeout to remove the loading screen after a short delay
       setTimeout(() => {
         setIsComingFromLogout(false);
       }, 500);
     }
-    
+
     // Fetch last logout time
     const fetchLastLogout = async () => {
       try {
@@ -70,13 +70,13 @@ export default function AdminLogin() {
         console.error('Error fetching last logout time:', error);
       }
     };
-    
+
     fetchLastLogout();
   }, []);
 
   const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault();
-    
+
     if (!username || !password) {
       toast({
         title: "Missing credentials",
@@ -99,7 +99,7 @@ export default function AdminLogin() {
               });
               return;
             }
-            
+
             // Store JWT token if available
             if (userData.token) {
               setAuthToken(userData.token);
@@ -107,14 +107,14 @@ export default function AdminLogin() {
               sessionStorage.setItem('isAuthenticated', 'true');
               sessionStorage.setItem('userRole', 'admin');
             }
-            
+
             // Set redirecting state to show loading screen immediately
             setIsRedirecting(true);
-            
+
             // Get redirect URL from query parameters if it exists
             const urlParams = new URLSearchParams(window.location.search);
             const redirectUrl = urlParams.get("redirect");
-            
+
             // Show success toast
             toast({
               title: "Welcome back",
@@ -125,10 +125,10 @@ export default function AdminLogin() {
             // Wait for session to be properly established
             await new Promise(resolve => setTimeout(resolve, 100));
             await queryClient.invalidateQueries({ queryKey: ["/api/user"] });
-            
+
             // Wait for session establishment
             await new Promise(resolve => setTimeout(resolve, 1000));
-            
+
             // Verify admin session
             const verifySession = async () => {
               try {
@@ -139,12 +139,12 @@ export default function AdminLogin() {
                     'Cache-Control': 'no-cache'
                   }
                 });
-                
+
                 if (!response.ok) {
                   const error = await response.json();
                   throw new Error(error.error || "Session verification failed");
                 }
-                
+
                 const verifiedUser = await response.json();
                 return verifiedUser;
               } catch (error) {
@@ -164,7 +164,7 @@ export default function AdminLogin() {
             // Get redirect URL from query parameters
             const params = new URLSearchParams(window.location.search);
             const redirectPath = params.get("redirect") || "/admin";
-            
+
             // Use setLocation for navigation
             setLocation(decodeURIComponent(redirectPath));
           },
@@ -215,7 +215,7 @@ export default function AdminLogin() {
               </Link>
             </nav>
           </div>
-          
+
           <div className="flex items-center gap-4">
             {lastLogoutTime && (
               <div className="flex items-center gap-1 text-muted-foreground text-xs mr-2">
@@ -229,7 +229,7 @@ export default function AdminLogin() {
           </div>
         </div>
       </header>
-      
+
       {/* Main Content */}
       <div className="flex-grow flex items-center justify-center px-4 py-12">
         <Card className="w-full max-w-md">

@@ -1536,10 +1536,11 @@ app.get("/api/user", async (req: Request, res: Response) => {
   try {
     // Check JWT first
     const authHeader = req.headers.authorization;
+    //console.log(req.headers)
     if (authHeader && authHeader.startsWith('Bearer ')) {
       const token = authHeader.substring(7);
       try {
-        const decoded = jwt.verify(token, JWT_SECRET) as { user: any };
+        const decoded = jwt.verify(token, process.env.JWT_SECRET!) as { user: any };
         const userId = decoded.user.id;
 
         // Check for admin user
@@ -1548,18 +1549,15 @@ app.get("/api/user", async (req: Request, res: Response) => {
         });
 
         if (adminUser) {
-          const activeSession = await db.query.adminSessions.findFirst({
-            where: and(
-              eq(adminSessions.userId, userId),
-              eq(adminSessions.isActive, true),
-              gt(adminSessions.expiresAt, new Date())
-            )
-          });
-
-          if (activeSession) {
-            const { password, ...userData } = adminUser;
-            return res.json({ ...userData, isAdmin: true });
-          }
+         // console.log("Admin JWT verified")
+          const { password, ...userData } = adminUser;
+          return res.json({ ...userData, isAdmin: true });
+        }
+         //console.log("regular JWT verified")
+         const user = await storage.getUserById(userId);
+         if (user) {
+          const { password, ...userData } = user;
+          return res.json({ ...userData, isAdmin: false });
         }
       } catch (error) {
         console.log("JWT verification failed, checking session");
@@ -1579,18 +1577,8 @@ app.get("/api/user", async (req: Request, res: Response) => {
     });
 
     if (adminUser) {
-      const activeSession = await db.query.adminSessions.findFirst({
-        where: and(
-          eq(adminSessions.userId, userId),
-          eq(adminSessions.isActive, true),
-          gt(adminSessions.expiresAt, new Date())
-        )
-      });
-
-      if (activeSession) {
-        const { password, ...userData } = adminUser;
-        return res.json({ ...userData, isAdmin: true });
-      }
+      const { password, ...userData } = adminUser;
+      return res.json({ ...userData, isAdmin: true });
     }
 
     // If not admin, try regular user
@@ -1604,7 +1592,6 @@ app.get("/api/user", async (req: Request, res: Response) => {
   } catch (error) {
     console.error("Error fetching user:", error);
     return res.status(500).json({ error: "Internal server error" });
-  }
   }
 });
 
