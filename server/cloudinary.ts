@@ -1,3 +1,4 @@
+
 import { v2 as cloudinary } from 'cloudinary';
 import { CloudinaryStorage } from 'multer-storage-cloudinary';
 import multer from 'multer';
@@ -17,14 +18,20 @@ const resumeStorage = new CloudinaryStorage({
     resource_type: 'auto',
     allowed_formats: ['pdf', 'doc', 'docx'],
     transformation: [{ quality: 'auto' }],
-    // Ensure public access
+    // Enhanced public access settings
     public_id: (req, file) => `cv_${Date.now()}`,
     access_mode: 'public',
+    folder_access_mode: 'public',
+    access_control: { access_type: 'public' },
     use_filename: true,
     unique_filename: true,
     overwrite: true,
     type: 'upload',
-    accessibility: 'public'
+    resource_options: {
+      type: 'upload',
+      access_mode: 'public',
+      access_control: 'public'
+    }
   } as any
 });
 
