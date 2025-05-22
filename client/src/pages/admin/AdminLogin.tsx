@@ -126,22 +126,43 @@ export default function AdminLogin() {
             await new Promise(resolve => setTimeout(resolve, 100));
             await queryClient.invalidateQueries({ queryKey: ["/api/user"] });
             
-            // Force refetch user data
-            const userDataRefresh = await queryClient.fetchQuery({ 
-              queryKey: ["/api/user"],
-              queryFn: async () => {
+            // Wait for session establishment
+            await new Promise(resolve => setTimeout(resolve, 1000));
+            
+            // Verify admin session
+            const verifySession = async () => {
+              try {
                 const response = await fetch("/api/user", {
                   credentials: "include",
-                  headers: { Authorization: `Bearer ${userData.token}` }
+                  headers: { 
+                    Authorization: `Bearer ${userData.token}`,
+                    'Cache-Control': 'no-cache'
+                  }
                 });
-                if (!response.ok) throw new Error("Failed to fetch user data");
-                return response.json();
+                
+                if (!response.ok) {
+                  throw new Error("Session verification failed");
+                }
+                
+                const verifiedUser = await response.json();
+                if (!verifiedUser || verifiedUser.role !== 'admin') {
+                  throw new Error("Admin privileges not verified");
+                }
+                
+                return verifiedUser;
+              } catch (error) {
+                console.error("Session verification error:", error);
+                throw new Error("Failed to establish admin session");
               }
-            });
+            };
 
-            if (!userDataRefresh || userDataRefresh.role !== 'admin') {
+            const verifiedUser = await verifySession();
+            if (!verifiedUser) {
               throw new Error("Admin session not established");
             }
+
+            // Update query cache with verified user data
+            queryClient.setQueryData(["/api/user"], verifiedUser);
 
             // Get redirect URL from query parameters
             const params = new URLSearchParams(window.location.search);

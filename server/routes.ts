@@ -90,7 +90,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
   });
 
   // Job Listings API Endpoints
-  
+
   // Get featured job listings
   app.get('/api/job-listings/featured', async (req, res) => {
     try {
@@ -120,7 +120,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
       });
     }
   });
-  
+
   // Get all job listings (with pagination and filtering)
   app.get('/api/job-listings', async (req, res) => {
     try {
@@ -239,7 +239,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
       // Partial validation (only validate fields that are provided)
       const validatedData = jobListingSchema.partial().parse(req.body);
       const updatedListing = await storage.updateJobListing(id, validatedData);
-      
+
       return res.status(200).json({ success: true, data: updatedListing });
     } catch (error) {
       if (error instanceof z.ZodError) {
@@ -276,7 +276,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
           message: "Job listing not found" 
         });
       }
-      
+
       await storage.deleteJobListing(id);
       return res.status(200).json({ 
         success: true, 
@@ -293,32 +293,32 @@ export async function registerRoutes(app: Express): Promise<Server> {
 
   // Set up authentication
   setupAuth(app);
-  
+
   // Submitted Candidates API Endpoints
-  
+
   // Get job applicants for use in submitted candidates
   app.get('/api/submitted-candidates/job-applicants', async (req: AuthenticatedRequest, res: Response) => {
     try {
       if (!req.user) {
         return res.status(401).json({ success: false, message: 'Not authenticated' });
       }
-      
+
       // Get all job applications with user details
       const result = await storage.getAllApplicationsWithPagination({
         page: 1,
         limit: 100, // Get a reasonable number of recent applications
       });
-      
+
       // Get application user details
       const applications = result.applications;
       const formattedApplicants = [];
-      
+
       // Process each application
       for (const app of applications) {
         // Get user details for this application
         const user = await storage.getUserById(app.userId);
         const jobListing = await storage.getJobListingById(app.jobId);
-        
+
         if (user) {
           formattedApplicants.push({
             candidateName: user.username || '',
@@ -338,14 +338,14 @@ export async function registerRoutes(app: Express): Promise<Server> {
           });
         }
       }
-      
+
       res.json({ success: true, data: formattedApplicants });
     } catch (error) {
       console.error('Error fetching applicants for import:', error);
       res.status(500).json({ success: false, message: 'Failed to fetch applicants for import' });
     }
   });
-  
+
   app.get('/api/submitted-candidates', async (req: AuthenticatedRequest, res: Response) => {
     try {
       // Check if user is authenticated and is an admin
@@ -355,13 +355,13 @@ export async function registerRoutes(app: Express): Promise<Server> {
           message: "Unauthorized access" 
         });
       }
-      
+
       const page = req.query.page ? parseInt(req.query.page as string) : 1;
       const limit = req.query.limit ? parseInt(req.query.limit as string) : 10;
       const search = req.query.search as string;
       const status = req.query.status as string;
       const client = req.query.client as string;
-      
+
       const result = await storage.getAllSubmittedCandidates({
         page,
         limit,
@@ -369,7 +369,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
         status,
         client
       });
-      
+
       return res.status(200).json({ 
         success: true, 
         data: result.candidates,
@@ -388,7 +388,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
       });
     }
   });
-  
+
   // Get submitted candidate by ID
   app.get('/api/submitted-candidates/:id', async (req: AuthenticatedRequest, res: Response) => {
     try {
@@ -399,7 +399,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
           message: "Unauthorized access" 
         });
       }
-      
+
       const id = parseInt(req.params.id);
       if (isNaN(id)) {
         return res.status(400).json({ 
@@ -407,7 +407,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
           message: "Invalid candidate ID" 
         });
       }
-      
+
       const candidate = await storage.getSubmittedCandidateById(id);
       if (!candidate) {
         return res.status(404).json({ 
@@ -415,7 +415,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
           message: "Candidate not found" 
         });
       }
-      
+
       return res.status(200).json({ success: true, data: candidate });
     } catch (error) {
       console.error('Error fetching submitted candidate:', error);
@@ -425,7 +425,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
       });
     }
   });
-  
+
   // Create a new submitted candidate
   app.post('/api/submitted-candidates', async (req: AuthenticatedRequest, res: Response) => {
     try {
@@ -436,25 +436,25 @@ export async function registerRoutes(app: Express): Promise<Server> {
           message: "Unauthorized access" 
         });
       }
-      
+
       // Validate the submission data
       const validatedData = submittedCandidateSchema.parse(req.body);
-      
+
       // Calculate margin and profit if bill rate and pay rate are provided
       if (validatedData.billRate && validatedData.payRate) {
         const billRate = Number(validatedData.billRate);
         const payRate = Number(validatedData.payRate);
-        
+
         if (!isNaN(billRate) && !isNaN(payRate)) {
           const margin = parseFloat((billRate - payRate).toFixed(2));
           const profit = parseFloat(((billRate - payRate) * 160).toFixed(2));
-          
+
           validatedData.marginPerHour = margin;
           // Assuming 160 hours per month (40 hours per week * 4 weeks)
           validatedData.profitPerMonth = profit;
         }
       }
-      
+
       const candidate = await storage.createSubmittedCandidate(validatedData);
       return res.status(201).json({ success: true, data: candidate });
     } catch (error) {
@@ -472,7 +472,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
       });
     }
   });
-  
+
   // Update a submitted candidate
   app.put('/api/submitted-candidates/:id', async (req: AuthenticatedRequest, res: Response) => {
     try {
@@ -483,7 +483,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
           message: "Unauthorized access" 
         });
       }
-      
+
       const id = parseInt(req.params.id);
       if (isNaN(id)) {
         return res.status(400).json({ 
@@ -491,7 +491,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
           message: "Invalid candidate ID" 
         });
       }
-      
+
       // Ensure the candidate exists
       const existingCandidate = await storage.getSubmittedCandidateById(id);
       if (!existingCandidate) {
@@ -500,25 +500,25 @@ export async function registerRoutes(app: Express): Promise<Server> {
           message: "Candidate not found" 
         });
       }
-      
+
       // Validate the update data
       const validatedData = submittedCandidateSchema.partial().parse(req.body);
-      
+
       // Calculate margin and profit if bill rate or pay rate are updated
       if (validatedData.billRate !== undefined || validatedData.payRate !== undefined) {
         const billRate = Number(validatedData.billRate !== undefined ? validatedData.billRate : existingCandidate.billRate);
         const payRate = Number(validatedData.payRate !== undefined ? validatedData.payRate : existingCandidate.payRate);
-        
+
         if (!isNaN(billRate) && !isNaN(payRate)) {
           const margin = parseFloat((billRate - payRate).toFixed(2));
           const profit = parseFloat(((billRate - payRate) * 160).toFixed(2));
-          
+
           validatedData.marginPerHour = margin;
           // Assuming 160 hours per month (40 hours per week * 4 weeks)
           validatedData.profitPerMonth = profit;
         }
       }
-      
+
       const updatedCandidate = await storage.updateSubmittedCandidate(id, validatedData);
       return res.status(200).json({ success: true, data: updatedCandidate });
     } catch (error) {
@@ -536,7 +536,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
       });
     }
   });
-  
+
   // Delete a submitted candidate
   app.delete('/api/submitted-candidates/:id', async (req: AuthenticatedRequest, res: Response) => {
     try {
@@ -547,7 +547,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
           message: "Unauthorized access" 
         });
       }
-      
+
       const id = parseInt(req.params.id);
       if (isNaN(id)) {
         return res.status(400).json({ 
@@ -555,7 +555,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
           message: "Invalid candidate ID" 
         });
       }
-      
+
       // Ensure the candidate exists
       const existingCandidate = await storage.getSubmittedCandidateById(id);
       if (!existingCandidate) {
@@ -564,7 +564,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
           message: "Candidate not found" 
         });
       }
-      
+
       await storage.deleteSubmittedCandidate(id);
       return res.status(200).json({ 
         success: true, 
@@ -578,7 +578,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
       });
     }
   });
-  
+
   // Get analytics for submitted candidates
   app.get('/api/submitted-candidates/analytics/summary', async (req: AuthenticatedRequest, res: Response) => {
     try {
@@ -589,7 +589,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
           message: "Unauthorized access" 
         });
       }
-      
+
       const analytics = await storage.getSubmittedCandidateAnalytics();
       return res.status(200).json({ success: true, data: analytics });
     } catch (error) {
@@ -600,7 +600,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
       });
     }
   });
-  
+
   // Bulk create submitted candidates (for importing from sheets)
   app.post('/api/submitted-candidates/bulk', async (req: AuthenticatedRequest, res: Response) => {
     try {
@@ -611,39 +611,39 @@ export async function registerRoutes(app: Express): Promise<Server> {
           message: "Unauthorized access" 
         });
       }
-      
+
       const { candidates } = req.body;
-      
+
       if (!Array.isArray(candidates) || candidates.length === 0) {
         return res.status(400).json({ 
           success: false, 
           message: "Invalid candidates data. Expected a non-empty array." 
         });
       }
-      
+
       // Validate each candidate and calculate margins/profits
       const validatedCandidates = [];
       const errors = [];
-      
+
       for (let i = 0; i < candidates.length; i++) {
         try {
           const candidate = candidates[i];
           const validatedData = submittedCandidateSchema.parse(candidate);
-          
+
           // Calculate margin and profit if bill rate and pay rate are provided
           if (validatedData.billRate && validatedData.payRate) {
             const billRate = Number(validatedData.billRate);
             const payRate = Number(validatedData.payRate);
-            
+
             if (!isNaN(billRate) && !isNaN(payRate)) {
               const margin = parseFloat((billRate - payRate).toFixed(2));
               const profit = parseFloat(((billRate - payRate) * 160).toFixed(2));
-              
+
               validatedData.marginPerHour = margin;
               validatedData.profitPerMonth = profit; // 160 hours per month
             }
           }
-          
+
           validatedCandidates.push(validatedData);
         } catch (validationError) {
           errors.push({
@@ -652,7 +652,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
           });
         }
       }
-      
+
       if (errors.length > 0) {
         return res.status(400).json({ 
           success: false, 
@@ -660,7 +660,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
           errors 
         });
       }
-      
+
       const createdCandidates = await storage.bulkCreateSubmittedCandidates(validatedCandidates);
       return res.status(201).json({ 
         success: true, 
@@ -677,7 +677,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
   });
 
   // Job Application API Endpoints
-  
+
   // Apply for a job (requires authentication, handles both file upload and existing resume URL)
   app.post('/api/job-applications', resumeUpload.single('resume'), async (req, res) => {
     try {
@@ -690,9 +690,9 @@ export async function registerRoutes(app: Express): Promise<Server> {
       }
 
       const userId = req.user!.id;
-      
+
       let resumeUrl = '';
-      
+
       // If resume is uploaded through form, use the file
       if (req.file) {
         resumeUrl = req.file.path || '';
@@ -708,7 +708,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
           message: "Resume is required (either upload a file or provide an existing URL)"
         });
       }
-      
+
       // Parse and validate the job application data
       const applicationData = {
         ...req.body,
@@ -716,9 +716,9 @@ export async function registerRoutes(app: Express): Promise<Server> {
         resumeUrl,
         jobId: parseInt(req.body.jobId)
       };
-      
+
       const validatedData = jobApplicationSchema.parse(applicationData);
-      
+
       // Check if user has already applied to this job
       const existingApplication = await db
         .select()
@@ -728,17 +728,17 @@ export async function registerRoutes(app: Express): Promise<Server> {
           eq(jobApplications.jobId, validatedData.jobId)
         ))
         .limit(1);
-      
+
       if (existingApplication.length > 0) {
         return res.status(400).json({
           success: false,
           message: "You have already applied to this job"
         });
       }
-      
+
       // Create the job application
       const application = await storage.createJobApplication(validatedData);
-      
+
       return res.status(201).json({ 
         success: true, 
         data: application 
@@ -751,7 +751,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
           errors: error.errors
         });
       }
-      
+
       console.error('Error creating job application:', error);
       return res.status(500).json({
         success: false,
@@ -772,10 +772,10 @@ export async function registerRoutes(app: Express): Promise<Server> {
       }
 
       const userId = req.user!.id;
-      
+
       // Get user's job applications
       const applications = await storage.getJobApplicationsForUser(userId);
-      
+
       return res.status(200).json({ 
         success: true, 
         data: applications 
@@ -793,17 +793,17 @@ export async function registerRoutes(app: Express): Promise<Server> {
   app.get('/api/admin/job-applications/:jobId', async (req, res) => {
     try {
       const jobId = parseInt(req.params.jobId);
-      
+
       if (isNaN(jobId)) {
         return res.status(400).json({
           success: false,
           message: "Invalid job ID"
         });
       }
-      
+
       // Get job applications for the specified job
       const applications = await storage.getJobApplicationsForJob(jobId);
-      
+
       return res.status(200).json({
         success: true,
         data: applications
@@ -816,38 +816,38 @@ export async function registerRoutes(app: Express): Promise<Server> {
       });
     }
   });
-  
+
   // Admin API: Update application status
   app.put('/api/admin/job-applications/:id/status', async (req, res) => {
     try {
       const id = parseInt(req.params.id);
-      
+
       if (isNaN(id)) {
         return res.status(400).json({
           success: false,
           message: "Invalid application ID"
         });
       }
-      
+
       const { status } = req.body;
-      
+
       if (!status || !['new', 'reviewing', 'interview', 'hired', 'rejected'].includes(status)) {
         return res.status(400).json({
           success: false,
           message: "Invalid status"
         });
       }
-      
+
       // Update application status
       const updatedApplication = await storage.updateJobApplicationStatus(id, status);
-      
+
       if (!updatedApplication) {
         return res.status(404).json({
           success: false,
           message: "Application not found"
         });
       }
-      
+
       return res.status(200).json({
         success: true,
         data: updatedApplication
@@ -860,13 +860,13 @@ export async function registerRoutes(app: Express): Promise<Server> {
       });
     }
   });
-  
+
   // API endpoint for uploading resume without authentication (for registration)
   app.post('/api/upload-resume', resumeUpload.single('resume'), (req: Request, res: Response) => {
     if (!req.file) {
       return res.status(400).json({ success: false, message: 'No file uploaded' });
     }
-    
+
     // @ts-ignore - Cloudinary typings
     const file = req.file;
     return res.status(200).json({ 
@@ -876,7 +876,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
     });
   });
 
-  
+
   // Get user's job applications with pagination and filtering
   app.get('/api/my-applications', async (req: AuthenticatedRequest, res) => {
     try {
@@ -892,21 +892,21 @@ export async function registerRoutes(app: Express): Promise<Server> {
       const page = parseInt(req.query.page as string) || 1;
       const limit = parseInt(req.query.limit as string) || 10;
       const status = req.query.status as string;
-      
+
       // Get user's job applications with detailed job info
       const applications = await storage.getJobApplicationsForUser(userId);
-      
+
       // Filter by status if provided
       const filteredApplications = status && status !== 'all' 
         ? applications.filter(app => app.status === status)
         : applications;
-        
+
       // Calculate pagination
       const total = filteredApplications.length;
       const startIndex = (page - 1) * limit;
       const endIndex = page * limit;
       const paginatedApplications = filteredApplications.slice(startIndex, endIndex);
-      
+
       return res.status(200).json({ 
         success: true, 
         data: paginatedApplications,
@@ -925,7 +925,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
       });
     }
   });
-  
+
   // Withdraw job application
   app.put('/api/my-applications/:id/withdraw', async (req: AuthenticatedRequest, res) => {
     try {
@@ -935,20 +935,20 @@ export async function registerRoutes(app: Express): Promise<Server> {
           message: "You must be logged in to withdraw applications" 
         });
       }
-      
+
       const applicationId = parseInt(req.params.id);
       const userId = req.user!.id;
-      
+
       // Verify the application belongs to the user
       const application = await storage.getJobApplicationById(applicationId);
       if (!application) {
         return res.status(404).json({ success: false, message: 'Application not found' });
       }
-      
+
       if (application.userId !== userId) {
         return res.status(403).json({ success: false, message: 'Not authorized to withdraw this application' });
       }
-      
+
       // Only allow withdrawing if application is in 'new' or 'reviewing' status
       if (application.status !== 'new' && application.status !== 'reviewing') {
         return res.status(400).json({ 
@@ -956,9 +956,9 @@ export async function registerRoutes(app: Express): Promise<Server> {
           message: 'Cannot withdraw application in current status' 
         });
       }
-      
+
       const updatedApplication = await storage.updateJobApplicationStatus(applicationId, 'withdrawn');
-      
+
       return res.status(200).json({
         success: true,
         data: updatedApplication
@@ -968,7 +968,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
       return res.status(500).json({ success: false, message: 'Failed to withdraw application' });
     }
   });
-  
+
   // Admin API: Get all applications with pagination
   app.get('/api/admin/applications', async (req: AuthenticatedRequest, res) => {
     try {
@@ -979,19 +979,19 @@ export async function registerRoutes(app: Express): Promise<Server> {
           message: "Not authorized" 
         });
       }
-      
+
       const page = req.query.page ? parseInt(req.query.page as string) : 1;
       const limit = req.query.limit ? parseInt(req.query.limit as string) : 10;
       const status = req.query.status as string;
       const search = req.query.search as string;
-      
+
       const result = await storage.getAllApplicationsWithPagination({
         page,
         limit,
         status,
         search
       });
-      
+
       return res.status(200).json({
         success: true,
         data: result.applications,
@@ -1055,7 +1055,7 @@ app.put('/api/profile', async (req: AuthenticatedRequest, res) => {
   }
 });
 
-  
+
   // API for user password change
   app.post('/api/change-password', async (req: AuthenticatedRequest, res) => {
     try {
@@ -1065,17 +1065,17 @@ app.put('/api/profile', async (req: AuthenticatedRequest, res) => {
           message: "You must be logged in to change your password" 
         });
       }
-      
+
       const userId = req.user!.id;
       const { currentPassword, newPassword } = req.body;
-      
+
       if (!currentPassword || !newPassword) {
         return res.status(400).json({
           success: false,
           message: "Current password and new password are required"
         });
       }
-      
+
       // Get the user
       const user = await storage.getUserById(userId);
       if (!user) {
@@ -1084,7 +1084,7 @@ app.put('/api/profile', async (req: AuthenticatedRequest, res) => {
           message: "User not found"
         });
       }
-      
+
       // Verify current password
       const isPasswordValid = await comparePasswords(currentPassword, user.password);
       if (!isPasswordValid) {
@@ -1093,20 +1093,20 @@ app.put('/api/profile', async (req: AuthenticatedRequest, res) => {
           message: "Current password is incorrect"
         });
       }
-      
+
       // Hash the new password
       const hashedPassword = await hashPassword(newPassword);
-      
+
       // Update the user's password
       const updatedUser = await storage.updateUserPassword(userId, hashedPassword);
-      
+
       if (!updatedUser) {
         return res.status(500).json({
           success: false,
           message: "Failed to update password"
         });
       }
-      
+
       return res.status(200).json({
         success: true,
         message: "Password changed successfully"
@@ -1119,7 +1119,7 @@ app.put('/api/profile', async (req: AuthenticatedRequest, res) => {
       });
     }
   });
-  
+
 
 
   // API for application summary (count by status)
@@ -1131,25 +1131,25 @@ app.put('/api/profile', async (req: AuthenticatedRequest, res) => {
           message: "You must be logged in to view your applications" 
         });
       }
-      
+
       const userId = req.user!.id;
-      
+
       // Get user's job applications
       const applications = await storage.getJobApplicationsForUser(userId);
-      
+
       // Count applications by status
       const statusCounts: { status: string; count: number }[] = [];
       const statusMap = new Map<string, number>();
-      
+
       applications.forEach(app => {
         const count = statusMap.get(app.status) || 0;
         statusMap.set(app.status, count + 1);
       });
-      
+
       statusMap.forEach((count, status) => {
         statusCounts.push({ status, count });
       });
-      
+
       return res.status(200).json({ 
         success: true, 
         data: statusCounts 
@@ -1174,7 +1174,7 @@ app.put('/api/profile', async (req: AuthenticatedRequest, res) => {
       }
 
       const { currentPassword, newPassword } = req.body;
-      
+
       if (!currentPassword || !newPassword) {
         return res.status(400).json({
           success: false,
@@ -1202,10 +1202,10 @@ app.put('/api/profile', async (req: AuthenticatedRequest, res) => {
 
       // Hash the new password
       const hashedPassword = await hashPassword(newPassword);
-      
+
       // Update the admin's password
       const updatedUser = await storage.updateUserPassword(adminUser.id, hashedPassword);
-      
+
       if (!updatedUser) {
         return res.status(500).json({
           success: false,
@@ -1227,15 +1227,15 @@ app.put('/api/profile', async (req: AuthenticatedRequest, res) => {
   });
 
   // Demo Request API Endpoints
-  
+
   // Submit a new demo request
   app.post('/api/demo-requests', async (req, res) => {
     try {
       const validatedData = demoRequestSchema.parse(req.body);
-      
+
       // Check if a request with this email already exists
       const existingRequest = await storage.getDemoRequestByEmail(validatedData.workEmail);
-      
+
       if (existingRequest) {
         return res.status(400).json({
           success: false,
@@ -1248,10 +1248,10 @@ app.put('/api/profile', async (req: AuthenticatedRequest, res) => {
           }
         });
       }
-      
+
       // Create the demo request
       const newRequest = await storage.createDemoRequest(validatedData);
-      
+
       return res.status(201).json({
         success: true,
         message: "Demo request submitted successfully",
@@ -1272,29 +1272,29 @@ app.put('/api/profile', async (req: AuthenticatedRequest, res) => {
       });
     }
   });
-  
+
   // Get demo request by email (for checking status)
   // Demo Request Check endpoint  
   app.get('/api/demo-requests/check', async (req, res) => {
     try {
       const email = req.query.email as string;
-      
+
       if (!email) {
         return res.status(400).json({
           success: false,
           message: "Email parameter is required"
         });
       }
-      
+
       const demoRequest = await storage.getDemoRequestByEmail(email);
-      
+
       if (!demoRequest) {
         return res.status(404).json({
           success: false,
           message: "No demo request found for this email"
         });
       }
-      
+
       return res.status(200).json({
         success: true,
         message: "Demo request found",
@@ -1308,14 +1308,14 @@ app.put('/api/profile', async (req: AuthenticatedRequest, res) => {
       });
     }
   });
-  
+
   // Demo Request Endpoints
-  
+
   // Submit a new demo request
   app.post('/api/demo-requests', async (req: Request, res: Response) => {
     try {
       const { workEmail, phoneNumber, message, companyName, fullName, jobTitle, acceptedTerms } = req.body;
-      
+
       // Validate request data
       try {
         demoRequestSchema.parse({
@@ -1336,10 +1336,10 @@ app.put('/api/profile', async (req: AuthenticatedRequest, res) => {
           });
         }
       }
-      
+
       // Check if a demo request with this email already exists
       const existingRequest = await storage.getDemoRequestByEmail(workEmail);
-      
+
       if (existingRequest) {
         return res.status(400).json({
           success: false,
@@ -1347,7 +1347,7 @@ app.put('/api/profile', async (req: AuthenticatedRequest, res) => {
           existingRequest: true
         });
       }
-      
+
       // Create new demo request
       const demoRequest = await storage.createDemoRequest({
         workEmail,
@@ -1358,7 +1358,7 @@ app.put('/api/profile', async (req: AuthenticatedRequest, res) => {
         jobTitle: jobTitle || null,
         acceptedTerms: acceptedTerms === true
       });
-      
+
       return res.status(201).json({
         success: true,
         message: "Demo request submitted successfully",
@@ -1372,11 +1372,11 @@ app.put('/api/profile', async (req: AuthenticatedRequest, res) => {
       });
     }
   });
-  
+
   // This route definition was moved above to avoid duplication
-  
+
   // Admin endpoints for demo requests
-  
+
   // Get all demo requests (admin only)
   app.get('/api/admin/demo-requests', async (req: AuthenticatedRequest, res) => {
     try {
@@ -1386,18 +1386,18 @@ app.put('/api/profile', async (req: AuthenticatedRequest, res) => {
           message: "Unauthorized"
         });
       }
-      
+
       const page = req.query.page ? parseInt(req.query.page as string) : 1;
       const limit = req.query.limit ? parseInt(req.query.limit as string) : 10;
       const status = req.query.status as string;
-      
+
       // Get paginated results using storage method
       const result = await storage.getAllDemoRequests({
         page,
         limit,
         status
       });
-      
+
       return res.status(200).json({
         success: true,
         data: result.demoRequests,
@@ -1416,7 +1416,7 @@ app.put('/api/profile', async (req: AuthenticatedRequest, res) => {
       });
     }
   });
-  
+
   // Update demo request status (admin only)
   app.patch('/api/admin/demo-requests/:id', async (req: AuthenticatedRequest, res) => {
     try {
@@ -1426,37 +1426,37 @@ app.put('/api/profile', async (req: AuthenticatedRequest, res) => {
           message: "Unauthorized"
         });
       }
-      
+
       const id = parseInt(req.params.id);
-      
+
       if (isNaN(id)) {
         return res.status(400).json({
           success: false,
           message: "Invalid ID"
         });
       }
-      
+
       // Check if the demo request exists
       const existingRequest = await storage.getDemoRequestById(id);
-      
+
       if (!existingRequest) {
         return res.status(404).json({
           success: false,
           message: "Demo request not found"
         });
       }
-      
+
       // Validate and update
       const { status, adminNotes, scheduledDate } = req.body;
-      
+
       const updateData: any = {};
-      
+
       if (status) updateData.status = status;
       if (adminNotes !== undefined) updateData.adminNotes = adminNotes;
       if (scheduledDate !== undefined) updateData.scheduledDate = scheduledDate ? new Date(scheduledDate) : null;
-      
+
       const updatedRequest = await storage.updateDemoRequest(id, updateData);
-      
+
       return res.status(200).json({
         success: true,
         message: "Demo request updated successfully",
@@ -1470,7 +1470,7 @@ app.put('/api/profile', async (req: AuthenticatedRequest, res) => {
       });
     }
   });
-  
+
   // Delete demo request (admin only)
   app.delete('/api/admin/demo-requests/:id', async (req: AuthenticatedRequest, res) => {
     try {
@@ -1480,29 +1480,29 @@ app.put('/api/profile', async (req: AuthenticatedRequest, res) => {
           message: "Unauthorized"
         });
       }
-      
+
       const id = parseInt(req.params.id);
-      
+
       if (isNaN(id)) {
         return res.status(400).json({
           success: false,
           message: "Invalid ID"
         });
       }
-      
+
       // Check if the demo request exists
       const existingRequest = await storage.getDemoRequestById(id);
-      
+
       if (!existingRequest) {
         return res.status(404).json({
           success: false,
           message: "Demo request not found"
         });
       }
-      
+
       // Delete the demo request
       await storage.deleteDemoRequest(id);
-      
+
       return res.status(200).json({
         success: true,
         message: "Demo request deleted successfully"
@@ -1515,6 +1515,41 @@ app.put('/api/profile', async (req: AuthenticatedRequest, res) => {
       });
     }
   });
+
+app.get("/api/last-logout", async (req: Request, res: Response) => {
+  try {
+    if (!req.user) {
+      return res.json({ lastLogout: null });
+    }
+    const user = await storage.getUserById(req.user.id);
+    return res.json({ lastLogout: user?.lastLogout || null });
+  } catch (error) {
+    console.error("Error fetching last logout:", error);
+    return res.status(500).json({ error: "Internal server error" });
+  }
+});
+
+app.get("/api/user", async (req: Request, res: Response) => {
+  try {
+    if (!req.user) {
+      return res.status(401).json({ message: "Not authenticated" });
+    }
+    const user = await storage.getUserById(req.user.id);
+    if (!user) {
+      return res.status(404).json({ message: "User not found" });
+    }
+    return res.json({
+      id: user.id,
+      username: user.username,
+      email: user.email,
+      role: user.role,
+      profileData: user.profileData,
+    });
+  } catch (error) {
+    console.error("Error fetching user:", error);
+    return res.status(500).json({ error: "Internal server error" });
+  }
+});
 
   const httpServer = createServer(app);
   return httpServer;

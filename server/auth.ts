@@ -248,77 +248,56 @@ export function setupAuth(app: Express) {
             if (err) return next(err);
             if (!user) return res.status(401).json({ error: info.message || "Invalid credentials" });
 
-            req.login(user, async (err) => { // Make the callback async
+            req.login(user, async (err) => {
                 if (err) return next(err);
 
-                // Log the user object to verify the role
                 console.log("Logged-in user:", user);
 
-                // Check if the user is an admin
                 if (user.role === "admin") {
-                    // Get the session ID
                     const sessionId = req.sessionID;
-
-                    // Log the session ID
                     console.log("Admin session ID:", sessionId);
 
-                    // Create session data
+                    const now = new Date();
+                    const expiresAt = new Date(now.getTime() + (30 * 24 * 60 * 60 * 1000));
+
                     const sessionData = {
                         userId: user.id,
                         username: user.username,
                         role: user.role,
-                        lastActivity: new Date()
-                    };
-
-                    // Create admin session entry
-                    const newAdminSession: InsertAdminSession = {
-                        userId: user.id,
-                        sessionId: sessionId,
-                        sessionData: JSON.stringify(sessionData),
-                        expiresAt: new Date(Date.now() + (30 * 24 * 60 * 60 * 1000)) // 30 days from now
+                        lastActivity: now
                     };
 
                     try {
-                        // First deactivate any existing sessions for this user
+                        // Deactivate existing sessions
                         await db.update(adminSessions)
                             .set({ isActive: false })
                             .where(eq(adminSessions.userId, user.id));
 
-                        // Insert new admin session
+                        // Create new session
                         const [session] = await db.insert(adminSessions)
-                            .values(newAdminSession)
+                            .values({
+                                userId: user.id,
+                                sessionId: sessionId,
+                                sessionData: JSON.stringify(sessionData),
+                                expiresAt: expiresAt,
+                                lastActivity: now,
+                                isActive: true
+                            })
                             .returning();
-                            
-                        // Update the session data
-                        req.session.passport = {
-                            user: user.id
-                        };
-                        req.session.role = 'admin';
-                        req.session.adminSession = true;
+
+                        // Set session data
+                        req.session.user = user;
                         req.session.adminSessionId = session.id;
-                        
-                        // Save session with proper data
-                        await new Promise((resolve, reject) => {
+                        req.session.role = 'admin';
+
+                        await new Promise<void>((resolve) => {
                             req.session.save((err) => {
-                                if (err) {
-                                    console.error("Session save error:", err);
-                                    reject(err);
-                                }
-                                resolve(true);
+                                if (err) console.error("Session save error:", err);
+                                resolve();
                             });
                         });
-                        
-                        // Force session regeneration to ensure proper storage
-                        await new Promise((resolve, reject) => {
-                            req.session.regenerate((err) => {
-                                if (err) {
-                                    console.error("Session regeneration error:", err);
-                                    reject(err);
-                                }
-                                resolve(true);
-                            });
-                        });
-                        console.log("Regular session updated with admin role");
+
+                        console.log("Admin session established:", session.id);
                     } catch (error: any) {
                         console.error("Error creating admin session:", error);
                         return res.status(500).json({ error: `Failed to create admin session: ${error.message}` });
