@@ -21,16 +21,16 @@ export const removeAuthToken = (): void => {
 // Function to add auth headers to requests
 const getAuthHeaders = (hasContent: boolean = false): HeadersInit => {
   const headers: HeadersInit = {};
-  
+
   if (hasContent) {
     headers['Content-Type'] = 'application/json';
   }
-  
+
   const token = getAuthToken();
   if (token) {
     headers['Authorization'] = `Bearer ${token}`;
   }
-  
+
   return headers;
 };
 
@@ -66,14 +66,11 @@ export const getQueryFn: <T>(options: {
   async ({ queryKey }) => {
     const token = getAuthToken();
     const headers: HeadersInit = {
-      'Cache-Control': 'no-cache',
-      'Pragma': 'no-cache'
+      'Cache-Control': 'no-cache, no-store, must-revalidate',
+      'Pragma': 'no-cache',
+      'Authorization': `Bearer ${token}`
     };
-    
-    if (token) {
-      headers['Authorization'] = `Bearer ${token}`;
-    }
-    
+
     const res = await fetch(queryKey[0] as string, {
       headers,
       credentials: "include",

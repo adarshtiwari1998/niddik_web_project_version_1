@@ -1554,25 +1554,17 @@ app.get("/api/user", async (req: Request, res: Response) => {
 // Admin-specific user check endpoint
 app.get("/api/admin/check", async (req: Request, res: Response) => {
   try {
-    if (!req.isAuthenticated() || !req.user) {
+    const authHeader = req.headers.authorization;
+    const token = authHeader && authHeader.startsWith('Bearer ') ? authHeader.substring(7) : null;
+
+    if (!token) {
       return res.status(401).json({ error: "Not authenticated" });
     }
 
-    const userId = req.user.id;
-
-    // Check if admin user exists
-    const adminUser = await db.query.adminUsers.findFirst({
-      where: (fields, { eq }) => eq(fields.id, userId)
-    });
-
-    if (!adminUser) {
-      return res.status(403).json({ error: "Not an admin user" });
-    }
-
-    // Check for valid admin session
+    // Check if admin session exists with matching session ID
     const adminSession = await db.query.adminSessions.findFirst({
       where: and(
-        eq(adminSessions.userId, userId),
+        eq(adminSessions.sessionId, token),
         eq(adminSessions.isActive, true),
         gt(adminSessions.expiresAt, new Date())
       )
@@ -1580,6 +1572,15 @@ app.get("/api/admin/check", async (req: Request, res: Response) => {
 
     if (!adminSession) {
       return res.status(401).json({ error: "No valid admin session" });
+    }
+
+    // Get admin user
+    const adminUser = await db.query.adminUsers.findFirst({
+      where: eq(adminUsers.id, adminSession.userId)
+    });
+
+    if (!adminUser || adminUser.role !== 'admin') {
+      return res.status(403).json({ error: "Not an admin user" });
     }
 
     // Update session activity
