@@ -197,24 +197,26 @@ const AuthPage = () => {
     };
 
     try {
-      if (resumeFile) {
-        const formData = new FormData();
-        formData.append('resume', resumeFile);
+      // Upload resume first if it exists
+        if (resumeFile) {
+          const formData = new FormData();
+          formData.append('resume', resumeFile);
 
-        const uploadRes = await fetch('/api/upload-resume', {
-          method: 'POST',
-          body: formData,
-        });
+          const uploadRes = await fetch('/api/upload-resume', {
+            method: 'POST',
+            body: formData,
+          });
 
-        if (!uploadRes.ok) {
-          throw new Error('Failed to upload resume');
+          if (!uploadRes.ok) {
+            throw new Error('Failed to upload resume');
+          }
+
+          const { url } = await uploadRes.json();
+          completeData.resumeUrl = url; // Changed from resume to resumeUrl to match schema
         }
 
-        const { url } = await uploadRes.json();
-        completeData.resume = url;
-      }
-
-      registerMutation.mutate(completeData as any);
+        // Now register with the complete data
+        registerMutation.mutate(completeData as any);
     } catch (error) {
       console.error('Registration error:', error);
       toast({

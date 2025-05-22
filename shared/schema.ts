@@ -28,7 +28,10 @@ export const users = pgTable("users", {
 
 export const insertUserSchema = createInsertSchema(users, {
   username: (schema) => schema.min(3, "Username must be at least 3 characters"),
-  password: (schema) => schema.min(6, "Password must be at least 6 characters"),
+  password: (schema) => schema.min(6, "Password must be at least 6 characters").refine(
+    (val) => val.length >= 6,
+    "Password must be at least 6 characters long"
+  ),
   email: (schema) => schema.email("Please enter a valid email address"),
   fullName: (schema) => schema.min(2, "Full name must be at least 2 characters"),
   phone: (schema) => schema.optional(),
