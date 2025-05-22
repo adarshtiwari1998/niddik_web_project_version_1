@@ -46,22 +46,22 @@ const CandidateDashboard = () => {
   const [activeTab, setActiveTab] = useState("overview");
   const {navigate} = useRouter(); // Initialize useRouter
 
-  useEffect(function() {
+  useEffect(() => {
     async function checkSession() {
-        try {
-            // Attempt to fetch user data from /api/user
-            const response = await fetch("/api/user");
+      try {
+        // Attempt to fetch user data from /api/user
+        const response = await fetch("/api/user");
 
-            if (response.status === 401) {
-                // Session is invalid, redirect to /auth
-                console.log("Session is invalid, redirecting to /auth");
-                navigate("/auth", { replace: true }); // Use navigate for redirection
-            }
-        } catch (error) {
-            console.error("Error checking session:", error);
-            // Handle error appropriately (e.g., redirect to an error page)
-            navigate("/auth", { replace: true });
+        if (response.status === 401) {
+          // Session is invalid, redirect to /auth
+          console.log("Session is invalid, redirecting to /auth");
+          navigate("/auth", { replace: true }); // Use navigate for redirection
         }
+      } catch (error) {
+        console.error("Error checking session:", error);
+        // Handle error appropriately (e.g., redirect to an error page)
+        navigate("/auth", { replace: true });
+      }
     }
 
     checkSession();
