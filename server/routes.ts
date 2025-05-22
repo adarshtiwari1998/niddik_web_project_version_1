@@ -8,7 +8,8 @@ import {
   jobApplications,
   submittedCandidateSchema,
   demoRequestSchema,
-  demoRequests
+  demoRequests,
+  adminSessions
 } from "@shared/schema";
 import { db } from "../db";
 import { and, eq, count } from "drizzle-orm";
