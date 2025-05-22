@@ -1,0 +1,24 @@
+11:35:14 PM [express] Serving on port 5000
+11:35:34 PM [express] GET /api/user 200 in 260ms :: {"id":5,"username":"admin","email":"admin@niddik.…
+11:35:42 PM [express] GET /api/user 200 in 358ms :: {"id":5,"username":"admin","email":"admin@niddik.…
+Auth middleware error: TypeError: Cannot read properties of undefined (reading 'findFirst')
+    at <anonymous> (/home/runner/workspace/server/auth.ts:440:61)
+    at Layer.handle [as handle_request] (/home/runner/workspace/node_modules/express/lib/router/layer.js:95:5)
+    at trim_prefix (/home/runner/workspace/node_modules/express/lib/router/index.js:328:13)
+    at /home/runner/workspace/node_modules/express/lib/router/index.js:286:9
+    at Function.process_params (/home/runner/workspace/node_modules/express/lib/router/index.js:346:12)
+    at next (/home/runner/workspace/node_modules/express/lib/router/index.js:280:10)
+    at validateJWT (/home/runner/workspace/server/auth.ts:35:16)
+    at Layer.handle [as handle_request] (/home/runner/workspace/node_modules/express/lib/router/layer.js:95:5)
+    at trim_prefix (/home/runner/workspace/node_modules/express/lib/router/index.js:328:13)
+    at /home/runner/workspace/node_modules/express/lib/router/index.js:286:9
+    at Function.process_params (/home/runner/workspace/node_modules/express/lib/router/index.js:346:12)
+    at next (/home/runner/workspace/node_modules/express/lib/router/index.js:280:10)
+    at strategy.pass (/home/runner/workspace/node_modules/passport/lib/middleware/authenticate.js:355:9)
+    at /home/runner/workspace/node_modules/passport/lib/strategies/session.js:120:12
+    at pass (/home/runner/workspace/node_modules/passport/lib/authenticator.js:352:31)
+    at deserialized (/home/runner/workspace/node_modules/passport/lib/authenticator.js:364:7)
+    at <anonymous> (/home/runner/workspace/server/auth.ts:185:13)
+    at process.processTicksAndRejections (node:internal/process/task_queues:95:5)
+11:35:42 PM [express] GET /api/job-listings 304 in 135ms :: {"success":true,"data":[{"id":1,"title":"…
+11:35:42 PM [express] GET /api/admin/applications 500 in 196ms :: {"error":"Internal server error"}
