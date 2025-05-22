@@ -12,36 +12,20 @@ import { JobListing, JobApplication } from "@shared/schema";
 import { Helmet } from 'react-helmet-async';
 
 const AdminDashboard = () => {
-  return (
-    <>
-      <Helmet>
-        <title>Admin Dashboard | Niddik</title>
-        <meta name="description" content="Manage job listings, applications, and candidate profiles." />
-        <meta property="og:title" content="Admin Dashboard | Niddik" />
-        <meta property="og:description" content="Manage job listings, applications, and candidate profiles." />
-      </Helmet>
-      
-
   const { user } = useAuth();
   const [activeTab, setActiveTab] = useState("overview");
   const [initialLoading, setInitialLoading] = useState(true);
 
-  // Show loading screen as soon as component mounts
-  useEffect(function() {
+  useEffect(() => {
     document.title = "Admin Dashboard | NiDDiK"
 
-    // Check if we're coming from login (which sets this flag)
     const isComingFromLogin = sessionStorage.getItem('admin_dashboard_loading') === 'true';
-    
     if (isComingFromLogin) {
-      // Keep loading state true
       setInitialLoading(true);
-      // Clear the flag
       sessionStorage.removeItem('admin_dashboard_loading');
     }
   }, []);
 
-  // Fetch job statistics
   const { data: jobsData, isLoading: isLoadingJobs } = useQuery<{ data: JobListing[] }>({
     queryKey: ['/api/job-listings'],
     queryFn: async () => {
@@ -51,7 +35,6 @@ const AdminDashboard = () => {
     },
   });
 
-  // Fetch application statistics
   const { data: applicationsData, isLoading: isLoadingApplications } = useQuery<{ 
     success: boolean; 
     data: Array<JobApplication & { user: any; job: any }>;
@@ -65,24 +48,18 @@ const AdminDashboard = () => {
     },
   });
 
-  // Calculate statistics from the fetched data
   const totalJobs = jobsData?.data?.length || 0;
   const totalApplications = applicationsData?.data?.length || 0;
 
-  // Calculate application statuses
   const newApplications = applicationsData?.data?.filter(app => app.status === 'new')?.length || 0;
   const reviewingApplications = applicationsData?.data?.filter(app => app.status === 'reviewing')?.length || 0;
   const interviewApplications = applicationsData?.data?.filter(app => app.status === 'interview')?.length || 0;
   const hiredApplications = applicationsData?.data?.filter(app => app.status === 'hired')?.length || 0;
 
-  // Fetch recent applications for the dashboard
   const recentApplications = applicationsData?.data?.slice(0, 5) || [];
 
-  // Effect to manage loading state
   useEffect(() => {
-    // Check if data has loaded
     if (!isLoadingJobs && !isLoadingApplications) {
-      // Shorter delay to ensure smooth transition
       const timer = setTimeout(() => {
         setInitialLoading(false);
       }, 200);
@@ -91,7 +68,6 @@ const AdminDashboard = () => {
     }
   }, [isLoadingJobs, isLoadingApplications]);
 
-  // Format date
   const formatDate = (dateString: string | Date) => {
     const date = typeof dateString === 'string' ? new Date(dateString) : dateString;
     return new Intl.DateTimeFormat('en-US', {
@@ -101,13 +77,18 @@ const AdminDashboard = () => {
     }).format(date);
   };
 
-  // Redirect to login if not authenticated or not an admin
   if (!user || user.role !== "admin") {
-    return null; // The ProtectedRoute component will handle redirection
+    return null;
   }
 
   return (
     <AdminLayout title="Dashboard" description="Overview and insights">
+      <Helmet>
+        <title>Admin Dashboard | Niddik</title>
+        <meta name="description" content="Manage job listings, applications, and candidate profiles." />
+        <meta property="og:title" content="Admin Dashboard | Niddik" />
+        <meta property="og:description" content="Manage job listings, applications, and candidate profiles." />
+      </Helmet>
       {initialLoading && <LoadingScreen message="Loading admin dashboard..." />}
       <Tabs defaultValue="overview" onValueChange={setActiveTab}>
         <TabsList className="mb-6">
@@ -117,7 +98,6 @@ const AdminDashboard = () => {
         </TabsList>
 
         <TabsContent value="overview">
-          {/* Analytics Overview Cards */}
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
             <Card className="border-l-4 border-l-primary">
               <CardHeader className="pb-2">
@@ -204,7 +184,6 @@ const AdminDashboard = () => {
             </Card>
           </div>
 
-          {/* Status Breakdown */}
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-8">
             <Card>
               <CardHeader>
@@ -355,8 +334,7 @@ const AdminDashboard = () => {
         </TabsContent>
       </Tabs>
     </AdminLayout>
-    </>
   );
-}
+};
 
 export default AdminDashboard;
