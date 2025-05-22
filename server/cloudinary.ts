@@ -14,23 +14,26 @@ cloudinary.config({
 const resumeStorage = new CloudinaryStorage({
   cloudinary: cloudinary,
   params: {
-    folder: 'cv_upload',
+    folder: 'public/cv_upload',
     resource_type: 'auto',
     allowed_formats: ['pdf', 'doc', 'docx'],
     transformation: [{ quality: 'auto' }],
     // Enhanced public access settings
-    public_id: (req, file) => `cv_${Date.now()}`,
+    public_id: (req, file) => `public_cv_${Date.now()}`,
     access_mode: 'public',
     folder_access_mode: 'public',
-    access_control: { access_type: 'public' },
+    access_type: 'upload',
+    type: 'upload',
+    accessibility: 'public',
     use_filename: true,
     unique_filename: true,
     overwrite: true,
-    type: 'upload',
+    secure: true,
     resource_options: {
       type: 'upload',
       access_mode: 'public',
-      access_control: 'public'
+      access_type: 'public',
+      delivery_type: 'upload'
     }
   } as any
 });
