@@ -17,7 +17,7 @@ import { Separator } from "@/components/ui/separator";
 import { format } from "date-fns";
 import { Helmet } from 'react-helmet-async';
 
-// Step 1: Basic registration schema (account details)
+// Schema definitions
 const registerStep1Schema = z.object({
   username: z.string().min(3, "Username must be at least 3 characters"),
   email: z.string().email("Please enter a valid email address"),
@@ -25,7 +25,6 @@ const registerStep1Schema = z.object({
   phone: z.string().min(6, "Please enter a valid phone number"),
 });
 
-// Step 2: Professional details schema
 const registerStep2Schema = z.object({
   experience: z.string().optional(),
   noticePeriod: z.string(),
@@ -39,7 +38,6 @@ const registerStep2Schema = z.object({
   zipCode: z.string().optional(),
 });
 
-// Step 3: Resume upload and password schema
 const registerStep3Schema = z.object({
   password: z.string().min(6, "Password must be at least 6 characters"),
   confirmPassword: z.string().min(6, "Password must be at least 6 characters"),
@@ -49,13 +47,11 @@ const registerStep3Schema = z.object({
   path: ["confirmPassword"],
 });
 
-// Login schema
 const loginSchema = z.object({
   username: z.string().min(3, "Username must be at least 3 characters"),
   password: z.string().min(6, "Password must be at least 6 characters"),
 });
 
-// Combined type for all registration steps
 type RegisterFormValues = z.infer<typeof registerStep1Schema> & 
                          z.infer<typeof registerStep2Schema> & 
                          z.infer<typeof registerStep3Schema>;
@@ -63,30 +59,45 @@ type RegisterFormValues = z.infer<typeof registerStep1Schema> &
 type LoginFormValues = z.infer<typeof loginSchema>;
 
 const AuthPage = () => {
+  const [location, setLocation] = useLocation();
   const urlParams = new URLSearchParams(window.location.search);
   const redirectUrl = urlParams.get("redirect");
 
   const [activeTab, setActiveTab] = useState("login");
   const [registrationStep, setRegistrationStep] = useState(1);
   const [isUploading, setIsUploading] = useState(false);
-  const [resumeFile, setResumeFile] = useState<File>(null as unknown as File);
+  const [resumeFile, setResumeFile] = useState<File | null>(null);
   const [formData, setFormData] = useState<Partial<RegisterFormValues>>({});
   const [lastLogoutTime, setLastLogoutTime] = useState<string | null>(null);
-  const [showRedirectMessage, setShowRedirectMessage] = useState(false);
   const { user, loginMutation, registerMutation } = useAuth();
   const { toast } = useToast();
 
-  useEffect(function() {
+  useEffect(() => {
+    const fetchLastLogout = async () => {
+      try {
+        const response = await fetch('/api/last-logout');
+        if (response.ok) {
+          const data = await response.json();
+          if (data.lastLogout) {
+            setLastLogoutTime(data.lastLogout);
+          }
+        }
+      } catch (error) {
+        console.error('Error fetching last logout time:', error);
+      }
+    };
+
+    fetchLastLogout();
+  }, []);
+
+  useEffect(() => {
     if (user && user.role === "admin") {
-      // Show a message before redirecting
       toast({
         title: "Already logged in",
         description: "You are already logged in as an administrator.",
         variant: "default",
       });
-      setShowRedirectMessage(true);
 
-      // Set a short timeout to allow the toast to be seen
       const timer = setTimeout(() => {
         window.location.href = "/admin/dashboard";
       }, 1500);
@@ -94,6 +105,127 @@ const AuthPage = () => {
       return () => clearTimeout(timer);
     }
   }, [user, toast]);
+
+  useEffect(() => {
+    if (user) {
+      if (redirectUrl) {
+        setLocation(redirectUrl);
+      } else if (user.role === "admin") {
+        setLocation("/admin/dashboard");
+      } else if (user.role === "user") {
+        setLocation("/candidate/dashboard");
+      } else {
+        setLocation("/");
+      }
+    }
+  }, [user, setLocation, redirectUrl]);
+
+  const loginForm = useForm<LoginFormValues>({
+    resolver: zodResolver(loginSchema),
+    defaultValues: {
+      username: "",
+      password: "",
+    },
+  });
+
+  const registerStep1Form = useForm<z.infer<typeof registerStep1Schema>>({
+    resolver: zodResolver(registerStep1Schema),
+    defaultValues: {
+      username: formData.username || "",
+      email: formData.email || "",
+      fullName: formData.fullName || "",
+      phone: formData.phone || "",
+    },
+  });
+
+  const registerStep2Form = useForm<z.infer<typeof registerStep2Schema>>({
+    resolver: zodResolver(registerStep2Schema),
+    defaultValues: {
+      experience: formData.experience || "",
+      noticePeriod: formData.noticePeriod || "Immediately",
+      currentCtc: formData.currentCtc || "",
+      expectedCtc: formData.expectedCtc || "",
+      skills: formData.skills || "",
+      location: formData.location || "",
+      city: formData.city || "",
+      state: formData.state || "",
+      country: formData.country || "",
+      zipCode: formData.zipCode || "",
+    },
+  });
+
+  const registerStep3Form = useForm<z.infer<typeof registerStep3Schema>>({
+    resolver: zodResolver(registerStep3Schema),
+    defaultValues: {
+      password: "",
+      confirmPassword: "",
+    },
+  });
+
+  const onLoginSubmit = (data: LoginFormValues) => {
+    loginMutation.mutate(data);
+  };
+
+  const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    if (e.target.files && e.target.files[0]) {
+      setResumeFile(e.target.files[0]);
+    }
+  };
+
+  const onStep1Submit = (data: z.infer<typeof registerStep1Schema>) => {
+    setFormData({
+      ...formData,
+      ...data
+    });
+    setRegistrationStep(2);
+  };
+
+  const onStep2Submit = (data: z.infer<typeof registerStep2Schema>) => {
+    setFormData({
+      ...formData,
+      ...data
+    });
+    setRegistrationStep(3);
+  };
+
+  const onStep3Submit = async (data: z.infer<typeof registerStep3Schema>) => {
+    setIsUploading(true);
+
+    const completeData = {
+      ...formData,
+      ...data
+    };
+
+    try {
+      if (resumeFile) {
+        const formData = new FormData();
+        formData.append('resume', resumeFile);
+
+        const uploadRes = await fetch('/api/upload-resume', {
+          method: 'POST',
+          body: formData,
+        });
+
+        if (!uploadRes.ok) {
+          throw new Error('Failed to upload resume');
+        }
+
+        const { url } = await uploadRes.json();
+        completeData.resume = url;
+      }
+
+      registerMutation.mutate(completeData as any);
+    } catch (error) {
+      console.error('Registration error:', error);
+      toast({
+        title: 'Registration failed',
+        description: error instanceof Error ? error.message : 'Unknown error occurred',
+        variant: 'destructive',
+      });
+    } finally {
+      setIsUploading(false);
+    }
+  };
 
   return (
     <>
@@ -103,8 +235,8 @@ const AuthPage = () => {
         <meta property="og:title" content="Login & Register | Niddik" />
         <meta property="og:description" content="Sign in or create your account to access personalized job recommendations and application tracking." />
       </Helmet>
+
       <div className="flex flex-col min-h-screen">
-        {/* Header */}
         <header className="border-b bg-background">
           <div className="container flex h-16 items-center justify-between">
             <div className="flex items-center gap-6">
@@ -115,7 +247,9 @@ const AuthPage = () => {
                     alt="NiDDiK Logo" 
                     className="h-10"
                   />
-                  <div className="text-[10px] text-gray-500 mt-0.5">Connecting People, Changing Lives</div>
+                  <div className="text-[10px] text-gray-500 mt-0.5">
+                    Connecting People, Changing Lives
+                  </div>
                 </div>
               </Link>
               <nav className="hidden md:flex gap-6">
@@ -142,177 +276,7 @@ const AuthPage = () => {
           </div>
         </header>
 
-  const [location, setLocation] = useLocation();
-
-  // Fetch last logout time
-  useEffect(() => {
-    const fetchLastLogout = async () => {
-      try {
-        const response = await fetch('/api/last-logout');
-        if (response.ok) {
-          const data = await response.json();
-          if (data.lastLogout) {
-            setLastLogoutTime(data.lastLogout);
-          }
-        }
-      } catch (error) {
-        console.error('Error fetching last logout time:', error);
-      }
-    };
-
-    fetchLastLogout();
-  }, []);
-
-  // Form for login
-  const loginForm = useForm<LoginFormValues>({
-    resolver: zodResolver(loginSchema),
-    defaultValues: {
-      username: "",
-      password: "",
-    },
-  });
-
-  // Form for registration step 1
-  const registerStep1Form = useForm<z.infer<typeof registerStep1Schema>>({
-    resolver: zodResolver(registerStep1Schema),
-    defaultValues: {
-      username: formData.username || "",
-      email: formData.email || "",
-      fullName: formData.fullName || "",
-      phone: formData.phone || "",
-    },
-  });
-
-  // Form for registration step 2
-  const registerStep2Form = useForm<z.infer<typeof registerStep2Schema>>({
-    resolver: zodResolver(registerStep2Schema),
-    defaultValues: {
-      experience: formData.experience || "",
-      noticePeriod: formData.noticePeriod || "Immediately",
-      currentCtc: formData.currentCtc || "",
-      expectedCtc: formData.expectedCtc || "",
-      skills: formData.skills || "",
-      location: formData.location || "",
-      city: formData.city || "",
-      state: formData.state || "",
-      country: formData.country || "",
-      zipCode: formData.zipCode || "",
-    },
-  });
-
-  // Form for registration step 3
-  const registerStep3Form = useForm<z.infer<typeof registerStep3Schema>>({
-    resolver: zodResolver(registerStep3Schema),
-    defaultValues: {
-      password: "",
-      confirmPassword: "",
-    },
-  });
-
-  // If user is already logged in, redirect to homepage or specified redirect URL
-  useEffect(() => {
-    if (user) {
-      if (redirectUrl) {
-        setLocation(redirectUrl);
-      } else if (user.role === "admin") {
-        setLocation("/admin/dashboard");
-      } else if (user.role === "user") {
-        setLocation("/candidate/dashboard");
-      } else {
-        setLocation("/");
-      }
-    }
-  }, [user, setLocation, redirectUrl]);
-
-  // Handle login submission
-  const onLoginSubmit = (data: LoginFormValues) => {
-    loginMutation.mutate(data);
-  };
-
-  // Handle file upload
-  const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    if (e.target.files && e.target.files[0]) {
-      setResumeFile(e.target.files[0]);
-    }
-  };
-
-  // Handle step 1 submission
-  const onStep1Submit = (data: z.infer<typeof registerStep1Schema>) => {
-    setFormData({
-      ...formData,
-      ...data
-    });
-    setRegistrationStep(2);
-  };
-
-  // Handle step 2 submission
-  const onStep2Submit = (data: z.infer<typeof registerStep2Schema>) => {
-    setFormData({
-      ...formData,
-      ...data
-    });
-    setRegistrationStep(3);
-  };
-
-  // Handle final registration submission
-  const onStep3Submit = async (data: z.infer<typeof registerStep3Schema>) => {
-    setIsUploading(true);
-
-    // Combine all form data
-    const completeData = {
-      ...formData,
-      ...data
-    };
-
-    try {
-      // Upload resume first if it exists
-      if (resumeFile) {
-        const formData = new FormData();
-        formData.append('resume', resumeFile);
-
-        const uploadRes = await fetch('/api/upload-resume', {
-          method: 'POST',
-          body: formData,
-        });
-
-        if (!uploadRes.ok) {
-          throw new Error('Failed to upload resume');
-        }
-
-        const { url } = await uploadRes.json();
-        completeData.resume = url;
-      }
-
-      // Now register with the complete data
-      registerMutation.mutate(completeData as any);
-    } catch (error) {
-      console.error('Registration error:', error);
-      toast({
-        title: 'Registration failed',
-        description: error instanceof Error ? error.message : 'Unknown error occurred',
-        variant: 'destructive',
-      });
-    } finally {
-      setIsUploading(false);
-    }
-  };
-
-              {lastLogoutTime && (
-                <div className="flex items-center gap-1 text-muted-foreground text-xs mr-2">
-                  <Clock className="h-3 w-3" />
-                  <span>Last seen: {format(new Date(lastLogoutTime), "MMM d, yyyy h:mm a")}</span>
-                </div>
-              )}
-              <div className="bg-green-600 text-white rounded-md px-3 py-1 text-xs font-medium">
-                A workforce partner
-              </div>
-            </div>
-          </div>
-        </header>
-
-        {/* Main Content */}
         <div className="flex flex-grow">
-          {/* Left side - Auth forms */}
           <div className="flex flex-col justify-center w-full px-4 py-12 md:w-1/2 lg:px-12">
             <div className="mx-auto w-full max-w-md">
               <div className="flex flex-col space-y-2 text-center mb-8">
@@ -335,7 +299,6 @@ const AuthPage = () => {
                   <TabsTrigger value="register">Register</TabsTrigger>
                 </TabsList>
 
-                {/* Login Tab */}
                 <TabsContent value="login">
                   <Card>
                     <CardHeader>
@@ -902,6 +865,6 @@ const AuthPage = () => {
       </div>
     </>
   );
-}
+};
 
 export default AuthPage;
