@@ -68,7 +68,8 @@ const AdminLogin = () => {
             </CardDescription>
           </CardHeader>
           
-        </div>
+        </CardContent>
+        </Card>
       </div>
     </div>
     </>

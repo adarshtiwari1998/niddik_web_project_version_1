@@ -103,7 +103,7 @@ const AuthPage = () => {
   const [activeTab, setActiveTab] = useState("login");
   const [registrationStep, setRegistrationStep] = useState(1);
   const [isUploading, setIsUploading] = useState(false);
-  const [resumeFile, setResumeFile] = useState<File | null>(null);
+  const [resumeFile, setResumeFile] = useState<File>(null as unknown as File);
   const [formData, setFormData] = useState<Partial<RegisterFormValues>>({});
   const [lastLogoutTime, setLastLogoutTime] = useState<string | null>(null);
   const [showRedirectMessage, setShowRedirectMessage] = useState(false);
