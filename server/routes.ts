@@ -1601,16 +1601,10 @@ app.get("/api/user", async (req: Request, res: Response) => {
     }
 
     return res.status(401).json({ error: "Not authenticated" });
-        if (user) {
-          const { password, ...userData } = user;
-          return res.json({ ...userData, isAdmin: false });
-        }
-      } catch (error) {
-        console.log("JWT verification failed");
-      }
-    }
-
-    return res.status(401).json({ error: "Not authenticated" });
+  } catch (error) {
+    console.error("Error fetching user:", error);
+    return res.status(500).json({ error: "Internal server error" });
+  }
   } catch (error) {
     console.error("Error fetching user:", error);
     return res.status(500).json({ error: "Internal server error" });
