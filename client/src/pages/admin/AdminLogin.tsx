@@ -103,6 +103,9 @@ export default function AdminLogin() {
             // Store JWT token if available
             if (userData.token) {
               setAuthToken(userData.token);
+              // Store auth state in sessionStorage
+              sessionStorage.setItem('isAuthenticated', 'true');
+              sessionStorage.setItem('userRole', 'admin');
             }
             
             // Set redirecting state to show loading screen immediately
@@ -120,17 +123,15 @@ export default function AdminLogin() {
               title: "Welcome back",
               description: "You have successfully logged in to the admin panel",
             });
+
+            // Ensure auth state is properly set before redirecting
+            queryClient.invalidateQueries({ queryKey: ["/api/user"] });
             
-            // Navigate to admin dashboard using client-side routing
+            // Navigate after a short delay to ensure state is updated
             setTimeout(() => {
-              if (redirectUrl) {
-                // For a redirect URL, use setLocation for client-side navigation
-                setLocation(redirectUrl);
-              } else {
-                // For the default admin dashboard path
-                setLocation("/admin/dashboard");
-              }
-            }, 100); // Small delay to ensure loading screen shows properly
+              const targetPath = redirectUrl || "/admin/dashboard";
+              window.location.href = targetPath; // Use full page navigation
+            }, 500);
           },
           onError: (error) => {
             console.error("Login error:", error);

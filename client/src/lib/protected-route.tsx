@@ -22,13 +22,29 @@ export function ProtectedRoute({
 
   // Create a wrapper component that incorporates all our protection logic
   const ProtectedComponent = () => {
+    const { user, isLoading } = useAuth();
+  const [location] = useLocation();
+
+  useEffect(() => {
+    // Check both auth contexts - session storage and user state
+    const isAuthenticated = sessionStorage.getItem('isAuthenticated') === 'true';
+    const userRole = sessionStorage.getItem('userRole');
+
+    if (!isLoading && !user && !isAuthenticated) {
+      // Clear any stale auth state
+      sessionStorage.removeItem('isAuthenticated');
+      sessionStorage.removeItem('userRole');
+      window.location.href = `/admin/login?redirect=${encodeURIComponent(location)}`;
+    }
+  }, [user, isLoading, location]);
+
     useEffect(() => {
       // If there's a role mismatch, show a message and redirect
       if (user && requiredRole && user.role !== requiredRole) {
         // Stop multiple toasts from appearing
         if (!showRedirectMessage) {
           setShowRedirectMessage(true);
-          
+
           // Show different messages based on user role and attempted access
           if (user.role === "admin" && (path.startsWith("/candidate") || requiredRole === "user")) {
             toast({
@@ -45,7 +61,7 @@ export function ProtectedRoute({
             });
             setRedirectPath("/candidate/dashboard");
           }
-          
+
           // Delay the redirect slightly to allow the toast to be seen
           setTimeout(() => {
             setShowRedirectMessage(false);
@@ -53,7 +69,7 @@ export function ProtectedRoute({
         }
       }
     }, [user, requiredRole, path, showRedirectMessage]);
-    
+
     if (isLoading) {
       return (
         <div className="flex items-center justify-center min-h-screen">
@@ -61,7 +77,7 @@ export function ProtectedRoute({
         </div>
       );
     }
-    
+
     // If we need to redirect the user after showing a message
     if (redirectPath) {
       return <Redirect to={redirectPath} />;
@@ -70,7 +86,7 @@ export function ProtectedRoute({
     if (!user || (path.startsWith("/admin") && !user.role)) {
       // Create redirect URL with the current path for after login
       const redirectParam = `?redirect=${encodeURIComponent(path)}`;
-      
+
       if (path.startsWith("/admin")) {
         return <Redirect to={`/admin/login${redirectParam}`} />;
       } else if (path.startsWith("/candidate")) {

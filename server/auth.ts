@@ -74,8 +74,8 @@ async function comparePasswords(supplied: string, stored: string) {
 export function setupAuth(app: Express) {
     const sessionSettings: session.SessionOptions = {
         secret: process.env.SESSION_SECRET || 'niddik-secret-key',
-        resave: false,
-        saveUninitialized: false,
+        resave: true,
+        saveUninitialized: true,
         store: new PostgresSessionStore({
             pool,
             tableName: 'session',
@@ -84,11 +84,12 @@ export function setupAuth(app: Express) {
         }),
         name: 'admin.sid',
         cookie: {
-            secure: process.env.NODE_ENV === "production",
+            secure: false, // Set to false for development
             maxAge: 30 * 24 * 60 * 60 * 1000, // 30 days
             httpOnly: true,
             path: '/',
-            sameSite: 'lax'
+            sameSite: 'lax',
+            domain: process.env.NODE_ENV === 'production' ? '.replit.dev' : undefined
         },
         rolling: true,
         unset: 'destroy',
