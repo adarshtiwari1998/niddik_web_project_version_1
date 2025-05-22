@@ -1,0 +1,102 @@
+// Combined type for all registration steps
+type RegisterFormValues = z.infer<typeof registerStep1Schema> & 
+                         z.infer<typeof registerStep2Schema> & 
+                         z.infer<typeof registerStep3Schema>;
+
+type LoginFormValues = z.infer<typeof loginSchema>;
+
+const AuthPage = () => {
+  return (
+    <>
+      <Helmet>
+        <title>Login & Register | Niddik</title>
+        <meta name="description" content="Sign in or create your account to access personalized job recommendations and application tracking." />
+        <meta property="og:title" content="Login & Register | Niddik" />
+        <meta property="og:description" content="Sign in or create your account to access personalized job recommendations and application tracking." />
+      </Helmet>
+      <div className="flex flex-col min-h-screen">
+        {/* Header */}
+        <header className="border-b bg-background">
+          <div className="container flex h-16 items-center justify-between">
+            <div className="flex items-center gap-6">
+              <Link href="/" className="flex flex-col items-start pt-2 pb-2">
+                <div className="flex flex-col items-center">
+                  <img 
+                    src="/images/niddik_logo.png" 
+                    alt="NiDDiK Logo" 
+                    className="h-10"
+                  />
+                  <div className="text-[10px] text-gray-500 mt-0.5">Connecting People, Changing Lives</div>
+                </div>
+              </Link>
+              <nav className="hidden md:flex gap-6">
+                <Link href="/careers" className="text-sm font-medium hover:text-primary">
+                  Browse Jobs
+                </Link>
+                <Link href="/about-us" className="text-sm font-medium hover:text-primary">
+                  About Us
+                </Link>
+              </nav>
+            </div>
+
+            <div className="flex items-center gap-4">
+              const urlParams = new URLSearchParams(window.location.search);
+  const redirectUrl = urlParams.get("redirect");
+
+  const [activeTab, setActiveTab] = useState("login");
+  const [registrationStep, setRegistrationStep] = useState(1);
+  const [isUploading, setIsUploading] = useState(false);
+  const [resumeFile, setResumeFile] = useState<File>(null as unknown as File);
+  const [formData, setFormData] = useState<Partial<RegisterFormValues>>({});
+  const [lastLogoutTime, setLastLogoutTime] = useState<string | null>(null);
+  const [showRedirectMessage, setShowRedirectMessage] = useState(false);
+  const { user, loginMutation, registerMutation } = useAuth();
+  const { toast } = useToast();
+
+  // Redirect admin users to their dashboard
+  useEffect(function() {
+    if (user && user.role === "admin") {
+      // Show a message before redirecting
+      toast({
+        title: "Already logged in",
+        description: "You are already logged in as an administrator.",
+        variant: "default",
+      });
+      setShowRedirectMessage(true);
+
+      // Set a short timeout to allow the toast to be seen
+      const timer = setTimeout(() => {
+        window.location.href = "/admin/dashboard";
+      }, 1500);
+
+      return () => clearTimeout(timer);
+    }
+  }, [user, toast]);
+
+  // Fetch last logout time
+  useEffect(() => {
+    const fetchLastLogout = async () => {
+      try {
+        const response = await fetch('/api/last-logout');
+        if (response.ok) {
+          const data = await response.json();
+          if (data.lastLogout) {
+            setLastLogoutTime(data.lastLogout);
+          }
+        }
+      } catch (error) {
+        console.error('Error fetching last logout time:', error);
+      }
+    };
+
+    fetchLastLogout();
+  }, []);
+
+  // Form for login
+  const loginForm = useForm<LoginFormValues>({
+    resolver: zodResolver(loginSchema),
+    defaultValues: {
+      username: "",
+      password: "",
+    },
+  });

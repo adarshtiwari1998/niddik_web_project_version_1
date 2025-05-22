@@ -44,7 +44,7 @@ const CandidateDashboard = () => {
 
   const { user } = useAuth();
   const [activeTab, setActiveTab] = useState("overview");
-  const {navigate} = useRouter(); // Initialize useRouter
+  const {navigate} = useRouter(); 
 
   useEffect(function() {
     async function checkSession() {
@@ -66,7 +66,7 @@ const CandidateDashboard = () => {
     checkSession();
   }, [navigate]);
 
-  // Fetch recent job listings
+  
   const { data: recentJobs, isLoading: isLoadingJobs } = useQuery<{ success: boolean; data: JobListing[] }>({
     queryKey: ['/api/job-listings/recent', 5],
     queryFn: getQueryFn({ on401: "throw" }),
