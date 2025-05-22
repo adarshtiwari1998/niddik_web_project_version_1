@@ -282,9 +282,9 @@ export function setupAuth(app: Express) {
                     });
 
                     // Update or insert into sessions table
-                    await db.query.sessions.findFirst({
-                        where: eq(sessions.sessionId, sessionId)
-                    }).then(async (existingSession) => {
+                    const existingSession = await db.select().from(sessions).where(eq(sessions.sessionId, sessionId)).limit(1);
+                    
+                    if (existingSession.length > 0) {
                         if (existingSession) {
                             await db.update(sessions)
                                 .set({
@@ -295,18 +295,17 @@ export function setupAuth(app: Express) {
                                     isActive: true
                                 })
                                 .where(eq(sessions.sessionId, sessionId));
-                        } else {
-                            await db.insert(sessions)
-                                .values({
-                                    userId: user.id,
-                                    sessionId: sessionId,
-                                    sessionData: JSON.stringify(req.session),
-                                    lastActivity: now,
-                                    expiresAt: expiresAt,
-                                    isActive: true
-                                });
-                        }
-                    });
+                    } else {
+                        await db.insert(sessions)
+                            .values({
+                                userId: user.id,
+                                sessionId: sessionId,
+                                sessionData: JSON.stringify(req.session),
+                                lastActivity: now,
+                                expiresAt: expiresAt,
+                                isActive: true
+                            });
+                    }
 
                         // Update session store immediately
                         // await db.update(adminSessions)
