@@ -10,7 +10,7 @@ import {
   demoRequestSchema,
   demoRequests,
   adminSessions,
-  adminUsers
+  users
 } from "@shared/schema";
 import { db } from "../db";
 import { and, eq, count, gt } from "drizzle-orm";
@@ -1571,13 +1571,10 @@ app.get("/api/user", async (req: Request, res: Response) => {
 
     const userId = req.user.id;
 
-    // Try to get admin first
-    const adminUser = await db.query.adminUsers.findFirst({
-      where: eq(adminUsers.id, userId)
-    });
-
-    if (adminUser) {
-      const { password, ...userData } = adminUser;
+    // Check if user has admin role
+    const user = await storage.getUserById(userId);
+    if (user && user.role === 'admin') {
+      const { password, ...userData } = user;
       return res.json({ ...userData, isAdmin: true });
     }
 
@@ -1619,17 +1616,15 @@ app.get("/api/admin/check", async (req: Request, res: Response) => {
       });
     });
 
-    // Get admin user
-    const adminUser = await db.query.adminUsers.findFirst({
-      where: eq(adminUsers.id, req.session.user.id)
-    });
+    // Get user and check admin role
+    const user = await storage.getUserById(req.session.user.id);
 
-    if (!adminUser || adminUser.role !== 'admin') {
+    if (!user || user.role !== 'admin') {
       return res.status(403).json({ error: "Not an admin user" });
     }
 
-    // Return admin data without password
-    const { password, ...adminData } = adminUser;
+    // Return user data without password
+    const { password, ...userData } = user;
     return res.json(adminData);
   } catch (error) {
     console.error("Error checking admin status:", error);
