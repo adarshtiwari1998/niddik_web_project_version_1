@@ -90,7 +90,7 @@ export default function AdminLogin() {
       loginMutation.mutate(
         { username, password },
         {
-          onSuccess: (userData: any) => {
+          onSuccess: async (userData: any) => {
             if (userData.role !== 'admin') {
               toast({
                 title: "Access denied",
