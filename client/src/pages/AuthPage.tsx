@@ -63,6 +63,19 @@ type RegisterFormValues = z.infer<typeof registerStep1Schema> &
 type LoginFormValues = z.infer<typeof loginSchema>;
 
 const AuthPage = () => {
+  const urlParams = new URLSearchParams(window.location.search);
+  const redirectUrl = urlParams.get("redirect");
+
+  const [activeTab, setActiveTab] = useState("login");
+  const [registrationStep, setRegistrationStep] = useState(1);
+  const [isUploading, setIsUploading] = useState(false);
+  const [resumeFile, setResumeFile] = useState<File>(null as unknown as File);
+  const [formData, setFormData] = useState<Partial<RegisterFormValues>>({});
+  const [lastLogoutTime, setLastLogoutTime] = useState<string | null>(null);
+  const [showRedirectMessage, setShowRedirectMessage] = useState(false);
+  const { user, loginMutation, registerMutation } = useAuth();
+  const { toast } = useToast();
+
   return (
     <>
       <Helmet>
@@ -97,18 +110,6 @@ const AuthPage = () => {
             </div>
 
             <div className="flex items-center gap-4">
-              const urlParams = new URLSearchParams(window.location.search);
-  const redirectUrl = urlParams.get("redirect");
-
-  const [activeTab, setActiveTab] = useState("login");
-  const [registrationStep, setRegistrationStep] = useState(1);
-  const [isUploading, setIsUploading] = useState(false);
-  const [resumeFile, setResumeFile] = useState<File>(null as unknown as File);
-  const [formData, setFormData] = useState<Partial<RegisterFormValues>>({});
-  const [lastLogoutTime, setLastLogoutTime] = useState<string | null>(null);
-  const [showRedirectMessage, setShowRedirectMessage] = useState(false);
-  const { user, loginMutation, registerMutation } = useAuth();
-  const { toast } = useToast();
 
   // Redirect admin users to their dashboard
   useEffect(function() {
