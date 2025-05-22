@@ -269,7 +269,7 @@ export function setupAuth(app: Express) {
 
                     // Update or insert into sessions table
                     const existingSession = await db.select().from(sessions).where(eq(sessions.sessionId, sessionId)).limit(1);
-                    
+
                     if (existingSession.length > 0) {
                         await db.update(sessions)
                             .set({
@@ -478,4 +478,46 @@ app.get("/api/user", async (req: Request, res: Response) => {
             return res.status(500).json({ error: "Internal server error" });
         }
     });
+
+    // Admin-specific user check endpoint
+app.get("/api/admin/check", async (req: Request, res: Response) => {
+  try {
+    if (!req.isAuthenticated() || !req.user) {
+      return res.status(401).json({ error: "Not authenticated" });
+    }
+
+    const userId = req.user.id;
+    const now = new Date();
+
+    // Check session from sessions table
+    if (!req.session || !req.session.user || req.session.user.role !== 'admin') {
+      return res.status(401).json({ error: "Admin session expired" });
+    }
+
+    // Update session activity
+    req.session.lastActivity = now;
+    await new Promise<void>((resolve, reject) => {
+      req.session.save((err) => {
+        if (err) reject(err);
+        resolve();
+      });
+    });
+
+    // Get user from users table and check admin role
+    const user = await db.query.users.findFirst({
+      where: (fields, { eq }) => eq(fields.id, userId)
+    });
+
+    if (!user || user.role !== 'admin') {
+      return res.status(403).json({ error: "Not an admin user" });
+    }
+
+    // Return user data without password
+    const { password, ...userData } = user;
+    return res.json(userData);
+  } catch (error) {
+    console.error("Error checking admin status:", error);
+    return res.status(500).json({ error: "Internal server error" });
+  }
+});
 }
