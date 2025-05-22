@@ -9,7 +9,7 @@ import {
   submittedCandidateSchema,
   demoRequestSchema,
   demoRequests,
-  adminSessions,
+  sessions,
   users
 } from "@shared/schema";
 import { db } from "../db";
