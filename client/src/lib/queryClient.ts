@@ -50,7 +50,8 @@ export async function apiRequest(
     method,
     headers: getAuthHeaders(!!data),
     body: data ? JSON.stringify(data) : undefined,
-    credentials: "include", // Keep for session-based auth as fallback
+    credentials: "include",
+    cache: 'no-store',
   });
 
   await throwIfResNotOk(res);
@@ -64,7 +65,10 @@ export const getQueryFn: <T>(options: {
   ({ on401: unauthorizedBehavior }) =>
   async ({ queryKey }) => {
     const token = getAuthToken();
-    const headers: HeadersInit = {};
+    const headers: HeadersInit = {
+      'Cache-Control': 'no-cache',
+      'Pragma': 'no-cache'
+    };
     
     if (token) {
       headers['Authorization'] = `Bearer ${token}`;
@@ -72,7 +76,8 @@ export const getQueryFn: <T>(options: {
     
     const res = await fetch(queryKey[0] as string, {
       headers,
-      credentials: "include", // Keep for session-based auth as fallback
+      credentials: "include",
+      cache: 'no-store'
     });
 
     if (unauthorizedBehavior === "returnNull" && res.status === 401) {
