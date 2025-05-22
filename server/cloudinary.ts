@@ -17,9 +17,14 @@ const resumeStorage = new CloudinaryStorage({
     resource_type: 'auto',
     allowed_formats: ['pdf', 'doc', 'docx'],
     transformation: [{ quality: 'auto' }],
-    // Make files publicly accessible
+    // Ensure public access
     public_id: (req, file) => `cv_${Date.now()}`,
-    access_mode: 'public'
+    access_mode: 'public',
+    use_filename: true,
+    unique_filename: true,
+    overwrite: true,
+    type: 'upload',
+    accessibility: 'public'
   } as any
 });
 
