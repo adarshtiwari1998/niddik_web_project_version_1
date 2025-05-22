@@ -3,6 +3,7 @@ import { Loader2 } from "lucide-react";
 import { Redirect, Route, useLocation } from "wouter";
 import { useToast } from "@/hooks/use-toast";
 import { useEffect, useState } from "react";
+import { LoadingScreen } from "@/components/ui/loading-screen";
 
 interface ProtectedRouteProps {
   path: string;

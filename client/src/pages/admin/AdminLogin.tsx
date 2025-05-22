@@ -122,8 +122,27 @@ export default function AdminLogin() {
             });
 
             // Ensure auth state is properly set before redirecting
+            // Wait for session to be properly established
+            await new Promise(resolve => setTimeout(resolve, 100));
             await queryClient.invalidateQueries({ queryKey: ["/api/user"] });
             
+            // Force refetch user data
+            const userData = await queryClient.fetchQuery({ 
+              queryKey: ["/api/user"],
+              queryFn: async () => {
+                const response = await fetch("/api/user", {
+                  credentials: "include",
+                  headers: { Authorization: `Bearer ${userData.token}` }
+                });
+                if (!response.ok) throw new Error("Failed to fetch user data");
+                return response.json();
+              }
+            });
+
+            if (!userData || userData.role !== 'admin') {
+              throw new Error("Admin session not established");
+            }
+
             // Get redirect URL from query parameters
             const params = new URLSearchParams(window.location.search);
             const redirectPath = params.get("redirect") || "/admin";
