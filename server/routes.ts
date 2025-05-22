@@ -1532,41 +1532,46 @@ app.get("/api/last-logout", async (req: Request, res: Response) => {
 app.get("/api/user", async (req: Request, res: Response) => {
   try {
     if (!req.isAuthenticated() || !req.user) {
-      return res.status(401).json({ message: "Not authenticated" });
+      return res.status(401).json({ error: "Not authenticated" });
     }
 
-    // Check for active admin session
-    const adminSession = await db.query.adminSessions.findFirst({
-      where: and(
-        eq(adminSessions.userId, req.user.id),
-        eq(adminSessions.isActive, true),
-        gt(adminSessions.expiresAt, new Date())
-      )
-    });
+    const userId = req.user.id;
 
-    // First try to find admin user
+    // First check if this is an admin user
     const adminUser = await db.query.adminUsers.findFirst({
-      where: (fields, { eq }) => eq(fields.id, req.user.id)
+      where: (fields, { eq }) => eq(fields.id, userId)
     });
 
-    if (adminUser && adminSession) {
-      const { password, ...adminData } = adminUser;
-      return res.json(adminData);
+    if (adminUser) {
+      // Check for valid admin session
+      const adminSession = await db.query.adminSessions.findFirst({
+        where: and(
+          eq(adminSessions.userId, userId),
+          eq(adminSessions.isActive, true),
+          gt(adminSessions.expiresAt, new Date())
+        )
+      });
+
+      if (adminSession) {
+        // Update session activity
+        await db.update(adminSessions)
+          .set({ lastActivity: new Date() })
+          .where(eq(adminSessions.id, adminSession.id));
+
+        const { password, ...adminData } = adminUser;
+        return res.json(adminData);
+      }
     }
 
-    // If not admin or no active session, try regular user
-    const user = await storage.getUserById(req.user.id);
+    // If not admin or no valid session, try regular user
+    const user = await storage.getUserById(userId);
     if (!user) {
-      return res.status(404).json({ message: "User not found" });
+      return res.status(401).json({ error: "User not found" });
     }
 
-    return res.json({
-      id: user.id,
-      username: user.username,
-      email: user.email,
-      role: user.role,
-      profileData: user.profileData,
-    });
+    // Return user data without password
+    const { password, ...userData } = user;
+    return res.json(userData);
   } catch (error) {
     console.error("Error fetching user:", error);
     return res.status(500).json({ error: "Internal server error" });
