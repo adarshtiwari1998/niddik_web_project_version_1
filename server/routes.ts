@@ -1534,37 +1534,37 @@ app.get("/api/last-logout", async (req: Request, res: Response) => {
 // Check current user (admin or regular)
 app.get("/api/user", async (req: Request, res: Response) => {
   try {
-    // Check session first
-    if (req.isAuthenticated() && req.user) {
-      const userId = req.user.id;
-      
-      // First try admin_users table
+    if (!req.isAuthenticated() || !req.user) {
+      return res.status(401).json({ error: "Not authenticated" });
+    }
+
+    const userId = req.user.id;
+    
+    // Check admin session first
+    const adminSession = await db.query.adminSessions.findFirst({
+      where: and(
+        eq(adminSessions.userId, userId),
+        eq(adminSessions.isActive, true),
+        gt(adminSessions.expiresAt, new Date())
+      )
+    });
+
+    if (adminSession) {
       const adminUser = await db.query.adminUsers.findFirst({
         where: eq(adminUsers.id, userId)
       });
 
       if (adminUser) {
-        // Check for valid admin session
-        const activeSession = await db.query.adminSessions.findFirst({
-          where: and(
-            eq(adminSessions.userId, userId),
-            eq(adminSessions.isActive, true),
-            gt(adminSessions.expiresAt, new Date())
-          )
-        });
-
-        if (activeSession) {
-          const { password, ...userData } = adminUser;
-          return res.json({ ...userData, isAdmin: true });
-        }
+        const { password, ...userData } = adminUser;
+        return res.json({ ...userData, isAdmin: true });
       }
+    }
 
-      // If not admin, try regular users
-      const user = await storage.getUserById(userId);
-      if (user) {
-        const { password, ...userData } = user;
-        return res.json({ ...userData, isAdmin: false });
-      }
+    // If not admin, try regular users
+    const user = await storage.getUserById(userId);
+    if (user) {
+      const { password, ...userData } = user;
+      return res.json({ ...userData, isAdmin: false });
     }
 
     // Try JWT if no session
