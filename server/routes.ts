@@ -1534,25 +1534,56 @@ app.get("/api/last-logout", async (req: Request, res: Response) => {
 // Check current user (admin or regular)
 app.get("/api/user", async (req: Request, res: Response) => {
   try {
-    // Check if user is authenticated via session
+    let userId: number | null = null;
+    let isAdmin = false;
+
+    // First check session authentication
     if (req.isAuthenticated() && req.user) {
-      const user = await storage.getUserById(req.user.id);
-      if (user) {
-        const { password, ...userData } = user;
-        return res.json(userData);
+      userId = req.user.id;
+      
+      // Check if this is an admin user
+      const adminUser = await db.query.adminUsers.findFirst({
+        where: eq(adminUsers.id, userId)
+      });
+      
+      if (adminUser) {
+        const { password, ...userData } = adminUser;
+        return res.json({...userData, isAdmin: true});
       }
     }
 
-    // If not authenticated via session, check JWT
+    // If not admin, check regular user authentication
+    if (userId) {
+      const user = await storage.getUserById(userId);
+      if (user) {
+        const { password, ...userData } = user;
+        return res.json({...userData, isAdmin: false});
+      }
+    }
+
+    // If no session, try JWT
     const authHeader = req.headers.authorization;
     if (authHeader && authHeader.startsWith('Bearer ')) {
       const token = authHeader.substring(7);
       try {
         const decoded = jwt.verify(token, JWT_SECRET) as { user: any };
-        const user = await storage.getUserById(decoded.user.id);
+        userId = decoded.user.id;
+        
+        // Check admin users first
+        const adminUser = await db.query.adminUsers.findFirst({
+          where: eq(adminUsers.id, userId)
+        });
+        
+        if (adminUser) {
+          const { password, ...userData } = adminUser;
+          return res.json({...userData, isAdmin: true});
+        }
+
+        // If not admin, check regular users
+        const user = await storage.getUserById(userId);
         if (user) {
           const { password, ...userData } = user;
-          return res.json(userData);
+          return res.json({...userData, isAdmin: false});
         }
       } catch (error) {
         console.log("JWT verification failed");
@@ -1560,15 +1591,6 @@ app.get("/api/user", async (req: Request, res: Response) => {
     }
 
     return res.status(401).json({ error: "Not authenticated" });
-
-    // Get user from storage
-    const user = await storage.getUserById(userId);
-    if (!user) {
-      return res.status(401).json({ error: "User not found" });
-    }
-
-    const { password, ...userData } = user;
-    return res.json(userData);
   } catch (error) {
     console.error("Error fetching user:", error);
     return res.status(500).json({ error: "Internal server error" });
