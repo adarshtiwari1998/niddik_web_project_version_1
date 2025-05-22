@@ -1578,8 +1578,7 @@ app.get("/api/user", async (req: Request, res: Response) => {
       return res.json({ ...userData, isAdmin: true });
     }
 
-    // If not admin, try regular user
-    const user = await storage.getUserById(userId);
+    // If not admin, return existing user data
     if (user) {
       const { password, ...userData } = user;
       return res.json({ ...userData, isAdmin: false });
