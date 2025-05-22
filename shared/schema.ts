@@ -297,6 +297,18 @@ export const adminSessions = pgTable("admin_sessions", {
   isActive: boolean("is_active").notNull().default(true),
 });
 
+export const sessions = pgTable("sessions", {
+  id: serial("id").primaryKey(),
+  userId: integer("user_id").references(() => users.id).notNull(),
+  sessionId: text("session_id").notNull().unique(),
+  sessionData: text("session_data").notNull(),
+  lastActivity: timestamp("last_activity").defaultNow().notNull(),
+  expiresAt: timestamp("expires_at").notNull(),
+  isActive: boolean("is_active").notNull().default(true),
+});
+
 export type AdminSession = typeof adminSessions.$inferSelect;
 export type InsertAdminSession = typeof adminSessions.$inferInsert;
+export type Session = typeof sessions.$inferSelect;
+export type InsertSession = typeof sessions.$inferInsert;
 
