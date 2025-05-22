@@ -142,6 +142,8 @@ const AuthPage = () => {
           </div>
         </header>
 
+  const [location, setLocation] = useLocation();
+
   // Fetch last logout time
   useEffect(() => {
     const fetchLastLogout = async () => {
