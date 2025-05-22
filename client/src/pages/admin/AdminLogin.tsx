@@ -8,7 +8,7 @@ import { Label } from "@/components/ui/label";
 import { Loader2, Lock, Shield, Clock } from "lucide-react";
 import { LoadingScreen } from "@/components/ui/loading-screen";
 import { useToast } from "@/hooks/use-toast";
-import { setAuthToken } from "@/lib/queryClient";
+import { setAuthToken, queryClient } from "@/lib/queryClient";
 import { format } from "date-fns";
 
 export default function AdminLogin() {
