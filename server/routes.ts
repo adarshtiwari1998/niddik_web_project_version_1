@@ -1534,13 +1534,31 @@ app.get("/api/last-logout", async (req: Request, res: Response) => {
 // Check current user (admin or regular)
 app.get("/api/user", async (req: Request, res: Response) => {
   try {
-    if (!req.isAuthenticated() || !req.user) {
+    let userId: number | null = null;
+
+    // First check for JWT token
+    const authHeader = req.headers.authorization;
+    if (authHeader && authHeader.startsWith('Bearer ')) {
+      const token = authHeader.substring(7);
+      try {
+        const decoded = jwt.verify(token, JWT_SECRET) as { user: any };
+        userId = decoded.user.id;
+      } catch (error) {
+        console.log("JWT verification failed, falling back to session check");
+      }
+    }
+
+    // If no valid JWT, check session authentication
+    if (!userId && req.isAuthenticated() && req.user) {
+      userId = req.user.id;
+    }
+
+    if (!userId) {
       return res.status(401).json({ error: "Not authenticated" });
     }
 
-    const userId = req.user.id;
+    // Get user from storage
     const user = await storage.getUserById(userId);
-    
     if (!user) {
       return res.status(401).json({ error: "User not found" });
     }
