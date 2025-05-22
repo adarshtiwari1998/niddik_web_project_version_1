@@ -111,28 +111,21 @@ export function setupAuth(app: Express) {
     passport.use(
         new LocalStrategy(async (username, password, done) => {
             try {
-                // Try to find the user in the adminUsers table
-                let adminUser = await db.query.adminUsers.findFirst({
+                // Find user in the users table
+                const user = await db.query.users.findFirst({
                     where: (fields, { eq }) => eq(fields.username, username)
                 });
 
-                // If not found in adminUsers, try the regular users table
-                if (!adminUser) {
-                    adminUser = await db.query.users.findFirst({
-                        where: (fields, { eq }) => eq(fields.username, username)
-                    }) as any; // Type assertion to allow assignment
-                }
-
-                if (!adminUser) {
+                if (!user) {
                     return done(null, false, { message: 'Invalid credentials' });
                 }
 
-                const passwordMatch = await comparePasswords(password, adminUser.password);
+                const passwordMatch = await comparePasswords(password, user.password);
 
                 if (!passwordMatch) {
                     return done(null, false, { message: 'Invalid credentials' });
                 } else {
-                    return done(null, adminUser);
+                    return done(null, user);
                 }
             } catch (error) {
                 return done(error);
@@ -143,17 +136,10 @@ export function setupAuth(app: Express) {
     passport.serializeUser((user: any, done) => done(null, user.id));
     passport.deserializeUser(async (id: number, done) => {
         try {
-            // Try to find the user in adminUsers first
-            let user = await db.query.adminUsers.findFirst({
+            // Find user in the users table
+            const user = await db.query.users.findFirst({
                 where: (fields, { eq }) => eq(fields.id, id)
             });
-
-            // If not found, try the regular users table
-            if (!user) {
-                user = await db.query.users.findFirst({
-                    where: (fields, { eq }) => eq(fields.id, id)
-                });
-            }
 
             if (!user) {
                 console.log('User not found during deserialization:', id);
