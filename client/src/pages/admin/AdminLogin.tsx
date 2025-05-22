@@ -35,12 +35,21 @@ const AdminLogin = () => {
   const onSubmit = async (values: z.infer<typeof formSchema>) => {
     setIsLoading(true);
     try {
-      await loginMutation.mutateAsync(values);
-      toast({
-        title: "Login successful",
-        description: "Redirecting to dashboard...",
-      });
-      setLocation("/admin/dashboard");
+      const response = await loginMutation.mutateAsync(values);
+      if (response.role === 'admin') {
+        toast({
+          title: "Login successful",
+          description: "Redirecting to admin dashboard...",
+        });
+        // Set loading state for dashboard
+        sessionStorage.setItem('admin_dashboard_loading', 'true');
+        // Redirect to admin dashboard
+        setTimeout(() => {
+          setLocation("/admin/dashboard");
+        }, 100);
+      } else {
+        throw new Error("Unauthorized access");
+      }
     } catch (error) {
       toast({
         title: "Login failed",
