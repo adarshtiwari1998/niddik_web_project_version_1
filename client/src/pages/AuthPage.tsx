@@ -141,7 +141,6 @@ const AuthPage = () => {
             </div>
           </div>
         </header>
-      // Show a message before redirecting
       toast({
         title: "Already logged in",
         description: "You are already logged in as an administrator.",
