@@ -1,3 +1,4 @@
+
 import React from 'react';
 import { Route, Switch } from "wouter";
 import { QueryClientProvider } from "@tanstack/react-query";
@@ -36,7 +37,7 @@ import DemoRequests from "@/pages/admin/DemoRequests";
 // Auth Provider
 import { AuthProvider } from "@/hooks/use-auth";
 import { ProtectedRoute } from "@/lib/protected-route";
-import StickyPopup from '@/hooks/StickyPopup'; // Import the StickyPopup component
+import StickyPopup from '@/hooks/StickyPopup';
 import FactsAndTrends from './pages/FactsAndTrends';
 import HiringAdvice from './pages/HiringAdvice';
 import CorporateResponsibilities from './pages/CorporateResponsibilities';
@@ -64,8 +65,8 @@ function Router() {
             <Route path="/whitepaper" component={Whitepaper} />
             <Route path="/facts-and-trends" component={FactsAndTrends} />
             <Route path="/hiring-advice" component={HiringAdvice} />
-            <Route path="/corporate-social-responsibilities" component={CorporateResponsibilities} /> {/*Added Route*/}
-            <Route path="/career-advice" component={CareerAdvice} /> {/*Added Route*/}
+            <Route path="/corporate-social-responsibilities" component={CorporateResponsibilities} />
+            <Route path="/career-advice" component={CareerAdvice} />
             <Route path="/six-factor-recruiting-model" component={SixFactorModel} />
             <Route path="/agile-approach-based-recruiting" component={AgileRecruiting} />
             <Route path="/community-involvement" component={CommunityInvolvement} />
@@ -84,14 +85,14 @@ function Router() {
             
             {/* Candidate Routes */}
             <ProtectedRoute path="/candidate/dashboard" component={CandidateDashboard} requiredRole="user" />
-            <ProtectedRoute path="/dashboard" component={CandidateDashboard} /> {/* Keep for backward compatibility */}
+            <ProtectedRoute path="/dashboard" component={CandidateDashboard} />
             <ProtectedRoute path="/candidate/applications" component={MyApplications} />
-            <ProtectedRoute path="/my-applications" component={MyApplications} /> {/* Keep for backward compatibility */}
+            <ProtectedRoute path="/my-applications" component={MyApplications} />
             <ProtectedRoute path="/candidate/profile" component={ProfilePage} />
-            <ProtectedRoute path="/profile" component={ProfilePage} /> {/* Keep for backward compatibility */}
+            <ProtectedRoute path="/profile" component={ProfilePage} />
             <ProtectedRoute path="/candidate/jobs/:id" component={JobDetail} />
             <ProtectedRoute path="/candidate/apply/:id" component={JobApplication} />
-            <ProtectedRoute path="/apply/:id" component={JobApplication} /> {/* Keep for backward compatibility */}
+            <ProtectedRoute path="/apply/:id" component={JobApplication} />
             
             {/* Auth Routes */}
             <Route path="/auth" component={AuthPage} />
@@ -100,12 +101,6 @@ function Router() {
             {/* Admin Routes - Require admin role */}
             <ProtectedRoute path="/admin" component={AdminDashboard} requiredRole="admin" />
             <ProtectedRoute path="/admin/dashboard" component={AdminDashboard} requiredRole="admin" />
-            <ProtectedRoute path="/admin/jobs" component={JobListings} requiredRole="admin" />
-            <ProtectedRoute path="/admin/jobs/new" component={JobForm} requiredRole="admin" />
-            <ProtectedRoute path="/admin/jobs/:id/edit" component={JobForm} requiredRole="admin" />
-            <ProtectedRoute path="/admin/candidates" component={Candidates} requiredRole="admin" />
-            <ProtectedRoute path="/admin/submitted-candidates" component={SubmittedCandidates} requiredRole="admin" />
-            <ProtectedRoute path="/admin/demo-requests" component={DemoRequests} requiredRole="admin" />
             <ProtectedRoute path="/admin/jobs" component={JobListings} requiredRole="admin" />
             <ProtectedRoute path="/admin/jobs/new" component={JobForm} requiredRole="admin" />
             <ProtectedRoute path="/admin/jobs/:id/edit" component={JobForm} requiredRole="admin" />
@@ -125,13 +120,14 @@ function Router() {
 function App() {
     return (
         <HelmetProvider>
-          <QueryClientProvider client={queryClient}>
-            <AuthProvider>
-                <Router />
-                <StickyPopup /> {/* Add the StickyPopup component here */}
-                <Toaster />
-            </AuthProvider>
-        </QueryClientProvider>
+            <QueryClientProvider client={queryClient}>
+                <AuthProvider>
+                    <Router />
+                    <StickyPopup />
+                    <Toaster />
+                </AuthProvider>
+            </QueryClientProvider>
+        </HelmetProvider>
     );
 }
 
