@@ -257,34 +257,6 @@ export function setupAuth(app: Express) {
                     const sessionId = req.sessionID;
                     console.log("Admin session ID:", sessionId);
 
-                    const now = new Date();
-                    const expiresAt = new Date(now.getTime() + (30 * 24 * 60 * 60 * 1000));
-
-                    const sessionData = {
-                        userId: user.id,
-                        username: user.username,
-                        role: user.role,
-                        lastActivity: now
-                    };
-
-                    // try {
-                    //     // Deactivate existing sessions
-                    //     await db.update(adminSessions)
-                    //         .set({ isActive: false })
-                    //         .where(eq(adminSessions.userId, user.id));
-
-                    //     // Create new session
-                    //     const [session] = await db.insert(adminSessions)
-                    //         .values({
-                    //             userId: user.id,
-                    //             sessionId: sessionId,
-                    //             sessionData: JSON.stringify(sessionData),
-                    //             expiresAt: expiresAt,
-                    //             lastActivity: now,
-                    //             isActive: true
-                    //         })
-                    //         .returning();
-
                         // Set session data
                         req.session.user = {
                             id: user.id,

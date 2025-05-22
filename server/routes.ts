@@ -1603,33 +1603,30 @@ app.get("/api/admin/check", async (req: Request, res: Response) => {
     }
 
     const userId = req.user.id;
+    const now = new Date();
 
-    // Check if admin session exists for this user
-    const adminSession = await db.query.adminSessions.findFirst({
-      where: and(
-        eq(adminSessions.userId, userId),
-        eq(adminSessions.isActive, true),
-        gt(adminSessions.expiresAt, new Date())
-      )
-    });
-
-    if (!adminSession) {
-      return res.status(401).json({ error: "No valid admin session" });
+    // Check session from sessions table
+    if (!req.session || !req.session.user || req.session.user.role !== 'admin') {
+      return res.status(401).json({ error: "Admin session expired" });
     }
+
+    // Update session activity
+    req.session.lastActivity = now;
+    await new Promise<void>((resolve, reject) => {
+      req.session.save((err) => {
+        if (err) reject(err);
+        resolve();
+      });
+    });
 
     // Get admin user
     const adminUser = await db.query.adminUsers.findFirst({
-      where: eq(adminUsers.id, adminSession.userId)
+      where: eq(adminUsers.id, req.session.user.id)
     });
 
     if (!adminUser || adminUser.role !== 'admin') {
       return res.status(403).json({ error: "Not an admin user" });
     }
-
-    // Update session activity
-    await db.update(adminSessions)
-      .set({ lastActivity: new Date() })
-      .where(eq(adminSessions.id, adminSession.id));
 
     // Return admin data without password
     const { password, ...adminData } = adminUser;

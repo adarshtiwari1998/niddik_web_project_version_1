@@ -1,4 +1,3 @@
-
 import { QueryClient, QueryFunction } from "@tanstack/react-query";
 
 // Token storage key
@@ -52,7 +51,11 @@ export async function apiRequest(
 ): Promise<Response> {
   const res = await fetch(url, {
     method,
-    headers: getAuthHeaders(!!data),
+    headers: {
+            "Content-Type": "application/json",
+            ...(getAuthToken() ? { Authorization: `Bearer ${getAuthToken()}` } : {}),
+            'Cache-Control': 'no-cache',
+        },
     body: data ? JSON.stringify(data) : undefined,
     credentials: "include",
   });
