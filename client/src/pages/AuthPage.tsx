@@ -105,13 +105,13 @@ const AuthPage = () => {
   const [isUploading, setIsUploading] = useState(false);
   const [resumeFile, setResumeFile] = useState<File>(null as unknown as File);
   const [formData, setFormData] = useState<Partial<RegisterFormValues>>({});
-  const [lastLogoutTime, setLastLogoutTime] = useState<string>(null as unknown as string);
+  const [lastLogoutTime, setLastLogoutTime] = useState<string | null>(null);
   const [showRedirectMessage, setShowRedirectMessage] = useState(false);
   const { user, loginMutation, registerMutation } = useAuth();
   const { toast } = useToast();
 
   // Redirect admin users to their dashboard
-  useEffect(() => {
+  useEffect(function() {
     if (user && user.role === "admin") {
       // Show a message before redirecting
       toast({
