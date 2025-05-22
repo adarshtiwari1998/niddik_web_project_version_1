@@ -6,7 +6,7 @@ import { scrypt, randomBytes, timingSafeEqual } from "crypto";
 import { promisify } from "util";
 import jwt from 'jsonwebtoken';
 import { storage } from "./storage"; // Adjust path as needed
-import { User, InsertUser, adminSessions, InsertAdminSession, users, AdminUser, adminUsers, sessions } from "@shared/schema"; // Adjust path as needed
+import { User, InsertUser, adminSessions, InsertAdminSession, users, sessions } from "@shared/schema"; // Adjust path as needed
 import connectPg from "connect-pg-simple";
 import { pool } from "@db"; // Adjust path as needed
 import { eq, and, gt } from "drizzle-orm";

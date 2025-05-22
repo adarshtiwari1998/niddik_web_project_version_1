@@ -263,28 +263,7 @@ export type DemoRequest = typeof demoRequests.$inferSelect;
 export type InsertDemoRequest = z.infer<typeof demoRequestSchema>;
 
 
-// admi schema
 
-// Admin users table (in a separate admin schema)
-export const adminUsers = pgTable("admin_users", {
-  id: serial("id").primaryKey(),
-  username: text("username").notNull().unique(),
-  password: text("password").notNull(),
-  email: text("email").notNull().unique(),
-  fullName: text("full_name").notNull(),
-  role: text("role").notNull().default("admin"), // Always "admin"
-  createdAt: timestamp("created_at").defaultNow().notNull(),
-});
-
-export const insertAdminUserSchema = createInsertSchema(adminUsers, {
-  username: (schema) => schema.min(3, "Username must be at least 3 characters"),
-  password: (schema) => schema.min(6, "Password must be at least 6 characters"),
-  email: (schema) => schema.email("Please enter a valid email address"),
-  fullName: (schema) => schema.min(2, "Full name must be at least 2 characters"),
-});
-
-export type InsertAdminUser = z.infer<typeof insertAdminUserSchema>;
-export type AdminUser = typeof adminUsers.$inferSelect;
 
 export const adminSessions = pgTable("admin_sessions", {
   id: serial("id").primaryKey(),
