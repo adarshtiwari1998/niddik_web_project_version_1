@@ -1605,9 +1605,6 @@ app.get("/api/user", async (req: Request, res: Response) => {
     console.error("Error fetching user:", error);
     return res.status(500).json({ error: "Internal server error" });
   }
-  } catch (error) {
-    console.error("Error fetching user:", error);
-    return res.status(500).json({ error: "Internal server error" });
   }
 });
 
