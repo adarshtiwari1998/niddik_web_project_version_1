@@ -279,16 +279,23 @@ export function setupAuth(app: Express) {
                     };
 
                     try {
-                        // Insert into admin_sessions table
-                        await db.insert(adminSessions).values(newAdminSession).returning();
-                        console.log("Admin session created successfully");
+                        // First deactivate any existing sessions for this user
+                        await db.update(adminSessions)
+                            .set({ isActive: false })
+                            .where(eq(adminSessions.userId, user.id));
 
-                        // Update the session data to include admin role
+                        // Insert new admin session
+                        const [session] = await db.insert(adminSessions)
+                            .values(newAdminSession)
+                            .returning();
+                            
+                        // Update the session data
                         req.session.passport = {
                             user: user.id
                         };
                         req.session.role = 'admin';
                         req.session.adminSession = true;
+                        req.session.adminSessionId = session.id;
                         
                         // Save session with proper data
                         await new Promise((resolve, reject) => {

@@ -115,9 +115,6 @@ export default function AdminLogin() {
             const urlParams = new URLSearchParams(window.location.search);
             const redirectUrl = urlParams.get("redirect");
             
-            // Store a loading flag in sessionStorage that the dashboard will check
-            sessionStorage.setItem('admin_dashboard_loading', 'true');
-            
             // Show success toast
             toast({
               title: "Welcome back",
@@ -125,13 +122,14 @@ export default function AdminLogin() {
             });
 
             // Ensure auth state is properly set before redirecting
-            queryClient.invalidateQueries({ queryKey: ["/api/user"] });
+            await queryClient.invalidateQueries({ queryKey: ["/api/user"] });
             
-            // Navigate after a short delay to ensure state is updated
-            setTimeout(() => {
-              const targetPath = redirectUrl || "/admin/dashboard";
-              window.location.href = targetPath; // Use full page navigation
-            }, 500);
+            // Get redirect URL from query parameters
+            const params = new URLSearchParams(window.location.search);
+            const redirectPath = params.get("redirect") || "/admin";
+            
+            // Use setLocation for navigation
+            setLocation(decodeURIComponent(redirectPath));
           },
           onError: (error) => {
             console.error("Login error:", error);
