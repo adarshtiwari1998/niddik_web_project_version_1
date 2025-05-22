@@ -141,21 +141,6 @@ const AuthPage = () => {
             </div>
           </div>
         </header>
-      toast({
-        title: "Already logged in",
-        description: "You are already logged in as an administrator.",
-        variant: "default",
-      });
-      setShowRedirectMessage(true);
-
-      // Set a short timeout to allow the toast to be seen
-      const timer = setTimeout(() => {
-        window.location.href = "/admin/dashboard";
-      }, 1500);
-
-      return () => clearTimeout(timer);
-    }
-  }, [user, toast]);
 
   // Fetch last logout time
   useEffect(() => {
