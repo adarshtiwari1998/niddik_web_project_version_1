@@ -162,36 +162,36 @@ export function setupAuth(app: Express) {
 
             // For admin users, verify session less frequently (every 5 minutes)
             if (user.role === 'admin') {
-                const now = new Date();
-                const adminSession = await db.query.adminSessions.findFirst({
-                    where: and(
-                        eq(adminSessions.userId, user.id),
-                        eq(adminSessions.isActive, true),
-                        gt(adminSessions.expiresAt, now)
-                    )
-                });
+                // const now = new Date();
+                // const adminSession = await db.query.adminSessions.findFirst({
+                //     where: and(
+                //         eq(adminSessions.userId, user.id),
+                //         eq(adminSessions.isActive, true),
+                //         gt(adminSessions.expiresAt, now)
+                //     )
+                // });
 
-                if (!adminSession) {
-                    console.log('No valid admin session found for user:', user.id);
-                    // Clear invalid session
-                    await db.update(adminSessions)
-                        .set({ isActive: false })
-                        .where(eq(adminSessions.userId, user.id));
-                    return done(null, false);
-                }
+                // if (!adminSession) {
+                //     console.log('No valid admin session found for user:', user.id);
+                //     // Clear invalid session
+                //     await db.update(adminSessions)
+                //         .set({ isActive: false })
+                //         .where(eq(adminSessions.userId, user.id));
+                //     return done(null, false);
+                // }
 
-                // Only update session if last activity was more than 5 minutes ago
-                const fiveMinutesAgo = new Date(now.getTime() - (5 * 60 * 1000));
-                if (adminSession.lastActivity < fiveMinutesAgo) {
-                    const newExpiresAt = new Date(now.getTime() + (30 * 24 * 60 * 60 * 1000));
-                    await db.update(adminSessions)
-                        .set({ 
-                            lastActivity: now,
-                            expiresAt: newExpiresAt,
-                            isActive: true
-                        })
-                        .where(eq(adminSessions.id, adminSession.id));
-                }
+                // // Only update session if last activity was more than 5 minutes ago
+                // const fiveMinutesAgo = new Date(now.getTime() - (5 * 60 * 1000));
+                // if (adminSession.lastActivity < fiveMinutesAgo) {
+                //     const newExpiresAt = new Date(now.getTime() + (30 * 24 * 60 * 60 * 1000));
+                //     await db.update(adminSessions)
+                //         .set({ 
+                //             lastActivity: now,
+                //             expiresAt: newExpiresAt,
+                //             isActive: true
+                //         })
+                //         .where(eq(adminSessions.id, adminSession.id));
+                // }
             }
 
             // Remove password before sending to client
@@ -267,23 +267,23 @@ export function setupAuth(app: Express) {
                         lastActivity: now
                     };
 
-                    try {
-                        // Deactivate existing sessions
-                        await db.update(adminSessions)
-                            .set({ isActive: false })
-                            .where(eq(adminSessions.userId, user.id));
+                    // try {
+                    //     // Deactivate existing sessions
+                    //     await db.update(adminSessions)
+                    //         .set({ isActive: false })
+                    //         .where(eq(adminSessions.userId, user.id));
 
-                        // Create new session
-                        const [session] = await db.insert(adminSessions)
-                            .values({
-                                userId: user.id,
-                                sessionId: sessionId,
-                                sessionData: JSON.stringify(sessionData),
-                                expiresAt: expiresAt,
-                                lastActivity: now,
-                                isActive: true
-                            })
-                            .returning();
+                    //     // Create new session
+                    //     const [session] = await db.insert(adminSessions)
+                    //         .values({
+                    //             userId: user.id,
+                    //             sessionId: sessionId,
+                    //             sessionData: JSON.stringify(sessionData),
+                    //             expiresAt: expiresAt,
+                    //             lastActivity: now,
+                    //             isActive: true
+                    //         })
+                    //         .returning();
 
                         // Set session data
                         req.session.user = {
@@ -292,7 +292,7 @@ export function setupAuth(app: Express) {
                             role: user.role,
                             email: user.email
                         };
-                        req.session.adminSessionId = session.id;
+                        // req.session.adminSessionId = session.id;
                         req.session.role = 'admin';
 
                         await new Promise<void>((resolve, reject) => {
@@ -306,21 +306,21 @@ export function setupAuth(app: Express) {
                         });
 
                         // Update session store immediately
-                        await db.update(adminSessions)
-                            .set({ 
-                                lastActivity: new Date(),
-                                sessionData: JSON.stringify({
-                                    ...sessionData,
-                                    authenticated: true
-                                })
-                            })
-                            .where(eq(adminSessions.id, session.id));
+                        // await db.update(adminSessions)
+                        //     .set({ 
+                        //         lastActivity: new Date(),
+                        //         sessionData: JSON.stringify({
+                        //             ...sessionData,
+                        //             authenticated: true
+                        //         })
+                        //     })
+                        //     .where(eq(adminSessions.id, session.id));
 
-                        console.log("Admin session established:", session.id);
-                    } catch (error: any) {
-                        console.error("Error creating admin session:", error);
-                        return res.status(500).json({ error: `Failed to create admin session: ${error.message}` });
-                    }
+                        // console.log("Admin session established:", session.id);
+                    // } catch (error: any) {
+                    //     console.error("Error creating admin session:", error);
+                    //     return res.status(500).json({ error: `Failed to create admin session: ${error.message}` });
+                    // }
                 }
 
                 // Generate JWT token
@@ -449,26 +449,27 @@ app.get("/api/user", async (req: Request, res: Response) => {
             if (req.isAuthenticated() && req.user) {
                 const userId = (req.user as User).id;
 
-                // Check for active admin session
-                const adminSession = await db.query.adminSessions.findFirst({
-                    where: and(
-                        eq(adminSessions.userId, userId),
-                        eq(adminSessions.isActive, true)
-                    )
-                });
-
-                // Check if user exists and has admin role
+                // Get admin user
                 const adminUser = await db.query.adminUsers.findFirst({
                     where: eq(adminUsers.id, userId)
                 });
 
-                if (adminUser && adminUser.role === 'admin' && adminSession) {
-                    // Update last activity
-                    await db.update(adminSessions)
-                        .set({ lastActivity: new Date() })
-                        .where(eq(adminSessions.id, adminSession.id));
-                    return next();
+                if (!adminUser || adminUser.role !== 'admin') {
+                    return res.status(403).json({ error: "Not an admin user" });
                 }
+
+                // Update session activity
+                req.session.lastActivity = new Date();
+                await new Promise<void>((resolve, reject) => {
+                    req.session.save((err) => {
+                        if (err) {
+                            console.error("Session save error:", err);
+                            reject(err);
+                        }
+                        resolve();
+                    });
+                });
+                return next();
             }
 
             // If session check fails, try JWT
