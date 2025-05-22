@@ -64,7 +64,7 @@ app.use((req, res, next) => {
   }
 
   // Always serve the app on port 13000
-  const port = 13000;
+  const port = 5000;
   server.listen({ port, host: "0.0.0.0", reusePort: true }, () => {
     log(`Serving on port ${port}`);
   });
