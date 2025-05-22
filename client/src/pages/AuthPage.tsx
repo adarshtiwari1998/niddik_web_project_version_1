@@ -76,6 +76,25 @@ const AuthPage = () => {
   const { user, loginMutation, registerMutation } = useAuth();
   const { toast } = useToast();
 
+  useEffect(function() {
+    if (user && user.role === "admin") {
+      // Show a message before redirecting
+      toast({
+        title: "Already logged in",
+        description: "You are already logged in as an administrator.",
+        variant: "default",
+      });
+      setShowRedirectMessage(true);
+
+      // Set a short timeout to allow the toast to be seen
+      const timer = setTimeout(() => {
+        window.location.href = "/admin/dashboard";
+      }, 1500);
+
+      return () => clearTimeout(timer);
+    }
+  }, [user, toast]);
+
   return (
     <>
       <Helmet>
@@ -110,9 +129,18 @@ const AuthPage = () => {
             </div>
 
             <div className="flex items-center gap-4">
-
-  useEffect(function() {
-    if (user && user.role === "admin") {
+              {lastLogoutTime && (
+                <div className="flex items-center gap-1 text-muted-foreground text-xs mr-2">
+                  <Clock className="h-3 w-3" />
+                  <span>Last seen: {format(new Date(lastLogoutTime), "MMM d, yyyy h:mm a")}</span>
+                </div>
+              )}
+              <div className="bg-green-600 text-white rounded-md px-3 py-1 text-xs font-medium">
+                A workforce partner
+              </div>
+            </div>
+          </div>
+        </header>
       // Show a message before redirecting
       toast({
         title: "Already logged in",
