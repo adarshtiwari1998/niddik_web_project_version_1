@@ -1,16 +1,12 @@
 
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import { useLocation, Link } from "wouter";
 import { useAuth } from "@/hooks/use-auth";
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
-import { Label } from "@/components/ui/label";
-import { Loader2, Lock, Shield, Clock, User } from "lucide-react";
-import { LoadingScreen } from "@/components/ui/loading-screen";
+import { Loader2, Lock, Shield, User } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
-import { setAuthToken, queryClient } from "@/lib/queryClient";
-import { format } from "date-fns";
 import { Helmet } from 'react-helmet-async';
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
@@ -66,6 +62,7 @@ const AdminLogin = () => {
       </Helmet>
 
       <div className="flex flex-col min-h-screen bg-gray-50 dark:bg-gray-900">
+        {/* Header */}
         <header className="border-b bg-background">
           <div className="container flex h-16 items-center justify-between">
             <div className="flex items-center gap-6">
@@ -97,6 +94,7 @@ const AdminLogin = () => {
           </div>
         </header>
 
+        {/* Main Content */}
         <div className="flex-grow flex items-center justify-center px-4 py-12">
           <Card className="w-full max-w-md">
             <CardHeader className="space-y-2 text-center">
