@@ -286,16 +286,35 @@ export function setupAuth(app: Express) {
                             .returning();
 
                         // Set session data
-                        req.session.user = user;
+                        req.session.user = {
+                            id: user.id,
+                            username: user.username,
+                            role: user.role,
+                            email: user.email
+                        };
                         req.session.adminSessionId = session.id;
                         req.session.role = 'admin';
 
-                        await new Promise<void>((resolve) => {
+                        await new Promise<void>((resolve, reject) => {
                             req.session.save((err) => {
-                                if (err) console.error("Session save error:", err);
+                                if (err) {
+                                    console.error("Session save error:", err);
+                                    reject(err);
+                                }
                                 resolve();
                             });
                         });
+
+                        // Update session store immediately
+                        await db.update(adminSessions)
+                            .set({ 
+                                lastActivity: new Date(),
+                                sessionData: JSON.stringify({
+                                    ...sessionData,
+                                    authenticated: true
+                                })
+                            })
+                            .where(eq(adminSessions.id, session.id));
 
                         console.log("Admin session established:", session.id);
                     } catch (error: any) {

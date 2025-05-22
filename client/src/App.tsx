@@ -105,6 +105,12 @@ function Router() {
             <ProtectedRoute path="/admin/candidates" component={Candidates} requiredRole="admin" />
             <ProtectedRoute path="/admin/submitted-candidates" component={SubmittedCandidates} requiredRole="admin" />
             <ProtectedRoute path="/admin/demo-requests" component={DemoRequests} requiredRole="admin" />
+            <ProtectedRoute path="/admin/jobs" component={JobListings} requiredRole="admin" />
+            <ProtectedRoute path="/admin/jobs/new" component={JobForm} requiredRole="admin" />
+            <ProtectedRoute path="/admin/jobs/:id/edit" component={JobForm} requiredRole="admin" />
+            <ProtectedRoute path="/admin/candidates" component={Candidates} requiredRole="admin" />
+            <ProtectedRoute path="/admin/submitted-candidates" component={SubmittedCandidates} requiredRole="admin" />
+            <ProtectedRoute path="/admin/demo-requests" component={DemoRequests} requiredRole="admin" />
             
             {/* Demo Request */}
             <Route path="/request-demo" component={RequestDemo} />
