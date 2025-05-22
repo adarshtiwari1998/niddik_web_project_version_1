@@ -1534,10 +1534,23 @@ app.get("/api/user", async (req: Request, res: Response) => {
     if (!req.user) {
       return res.status(401).json({ message: "Not authenticated" });
     }
+
+    // First try to find admin user
+    const adminUser = await db.query.adminUsers.findFirst({
+      where: (fields, { eq }) => eq(fields.id, req.user.id)
+    });
+
+    if (adminUser) {
+      const { password, ...adminData } = adminUser;
+      return res.json(adminData);
+    }
+
+    // If not admin, try regular user
     const user = await storage.getUserById(req.user.id);
     if (!user) {
       return res.status(404).json({ message: "User not found" });
     }
+
     return res.json({
       id: user.id,
       username: user.username,
