@@ -1555,17 +1555,16 @@ app.get("/api/user", async (req: Request, res: Response) => {
 // Admin-specific user check endpoint
 app.get("/api/admin/check", async (req: Request, res: Response) => {
   try {
-    const authHeader = req.headers.authorization;
-    const token = authHeader && authHeader.startsWith('Bearer ') ? authHeader.substring(7) : null;
-
-    if (!token) {
+    if (!req.isAuthenticated() || !req.user) {
       return res.status(401).json({ error: "Not authenticated" });
     }
 
-    // Check if admin session exists with matching session ID
+    const userId = req.user.id;
+
+    // Check if admin session exists for this user
     const adminSession = await db.query.adminSessions.findFirst({
       where: and(
-        eq(adminSessions.sessionId, token),
+        eq(adminSessions.userId, userId),
         eq(adminSessions.isActive, true),
         gt(adminSessions.expiresAt, new Date())
       )
