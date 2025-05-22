@@ -1534,28 +1534,32 @@ app.get("/api/last-logout", async (req: Request, res: Response) => {
 // Check current user (admin or regular)
 app.get("/api/user", async (req: Request, res: Response) => {
   try {
-    let userId: number | null = null;
+    // Check if user is authenticated via session
+    if (req.isAuthenticated() && req.user) {
+      const user = await storage.getUserById(req.user.id);
+      if (user) {
+        const { password, ...userData } = user;
+        return res.json(userData);
+      }
+    }
 
-    // First check for JWT token
+    // If not authenticated via session, check JWT
     const authHeader = req.headers.authorization;
     if (authHeader && authHeader.startsWith('Bearer ')) {
       const token = authHeader.substring(7);
       try {
         const decoded = jwt.verify(token, JWT_SECRET) as { user: any };
-        userId = decoded.user.id;
+        const user = await storage.getUserById(decoded.user.id);
+        if (user) {
+          const { password, ...userData } = user;
+          return res.json(userData);
+        }
       } catch (error) {
-        console.log("JWT verification failed, falling back to session check");
+        console.log("JWT verification failed");
       }
     }
 
-    // If no valid JWT, check session authentication
-    if (!userId && req.isAuthenticated() && req.user) {
-      userId = req.user.id;
-    }
-
-    if (!userId) {
-      return res.status(401).json({ error: "Not authenticated" });
-    }
+    return res.status(401).json({ error: "Not authenticated" });
 
     // Get user from storage
     const user = await storage.getUserById(userId);
