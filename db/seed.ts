@@ -1,6 +1,5 @@
-
 import { db, pool } from "./index";
-import { testimonials, clients, jobListings, users, adminUsers, contactSubmissions, jobApplications, submittedCandidates, demoRequests } from "@shared/schema";
+import { testimonials, clients, jobListings, users, contactSubmissions, jobApplications, submittedCandidates, demoRequests } from "@shared/schema";
 import { scrypt, randomBytes } from "crypto";
 import { promisify } from "util";
 import { sql } from "drizzle-orm";
@@ -21,27 +20,6 @@ async function seed() {
     // Create tables
     console.log("Creating tables if they don't exist...");
     await db.execute(sql`
-     CREATE TABLE IF NOT EXISTS admin_users (
-     id SERIAL PRIMARY KEY,
-     username TEXT NOT NULL UNIQUE,
-     password TEXT NOT NULL,
-     email TEXT NOT NULL UNIQUE,
-     full_name TEXT NOT NULL,
-     role TEXT NOT NULL DEFAULT 'admin',
-     created_at TIMESTAMP NOT NULL DEFAULT NOW()
-    );
-
-    CREATE TABLE IF NOT EXISTS admin_sessions (
-      id SERIAL PRIMARY KEY,
-      user_id INTEGER REFERENCES admin_users(id) NOT NULL,
-      session_id TEXT NOT NULL UNIQUE,
-      session_data TEXT NOT NULL,
-      created_at TIMESTAMP NOT NULL DEFAULT NOW(),
-      last_activity TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
-      expires_at TIMESTAMP NOT NULL,
-      is_active BOOLEAN NOT NULL DEFAULT TRUE
-    );
-
       CREATE TABLE IF NOT EXISTS users (
         id SERIAL PRIMARY KEY,
         username TEXT NOT NULL UNIQUE,
@@ -63,6 +41,17 @@ async function seed() {
         resume_url TEXT,
         last_logout TIMESTAMP,
         created_at TIMESTAMP NOT NULL DEFAULT NOW()
+      );
+
+      CREATE TABLE IF NOT EXISTS sessions (
+        id SERIAL PRIMARY KEY,
+        user_id INTEGER REFERENCES users(id) NOT NULL,
+        session_id TEXT NOT NULL UNIQUE,
+        session_data TEXT NOT NULL,
+        created_at TIMESTAMP NOT NULL DEFAULT NOW(),
+        last_activity TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+        expires_at TIMESTAMP NOT NULL,
+        is_active BOOLEAN NOT NULL DEFAULT TRUE
       );
 
       CREATE TABLE IF NOT EXISTS testimonials (
@@ -327,52 +316,32 @@ async function seed() {
       console.log("Job listings already exist, skipping seeding");
     }
 
-    // Seed admin user
-// Seed admin user
-console.log("Seeding admin user...");
+    // Seed admin user in users table
+    console.log("Seeding admin user...");
+    const adminPassword = "admin123"; // Default admin password
+    const hashedPassword = await hashPassword(adminPassword);
 
-const adminPassword = "admin123"; // Default admin password
-const hashedPassword = await hashPassword(adminPassword);
+    // Check if admin user exists
+    const existingUser = await db.query.users.findFirst({
+      where: (fields, { eq }) => eq(fields.username, "admin")
+    });
 
-// Check if admin user exists in users table
-const existingUser = await db.query.users.findFirst({
-    where: (fields, { eq }) => eq(fields.username, "admin")
-});
-
-// Check if admin user exists in admin_users table
-const existingAdmin = await db.query.adminUsers.findFirst({
-    where: (fields, { eq }) => eq(fields.username, "admin")
-});
-
-// Only insert if the admin user does not exist in either table
-if (!existingUser && !existingAdmin) {
-    await db.insert(adminUsers).values({
+    if (!existingUser) {
+      await db.insert(users).values({
         username: "admin",
         password: hashedPassword,
         email: "admin@niddik.com",
         fullName: "Niddik Admin",
         role: "admin",
-    });
+      });
 
-    await db.insert(users).values({
-        username: "admin",
-        password: hashedPassword, // Should ideally use a different password or handle roles differently
-        email: "admin@niddik.com",
-        fullName: "Niddik Admin",
-        role: "admin",
-    });
+      console.log(`Added admin user with username: admin and password: ${adminPassword}`);
+      console.log("IMPORTANT: Change this password after first login for security!");
+    } else {
+      console.log("Admin user already exists, skipping seeding.");
+    }
 
-    console.log(`Added admin user with username: admin and password: ${adminPassword}`);
-    console.log("IMPORTANT: Change this password after first login for security!");
-} else if (existingUser) {
-    console.log("Admin user already exists in users table, skipping seeding in users.");
-} else if (existingAdmin) {
-    console.log("Admin user already exists in admin_users table, skipping seeding in admin_users.");
-} else {
-    console.log("Admin user exists in both tables, skipping seeding.");
-}
-
-console.log("Seeding completed successfully!");
+    console.log("Seeding completed successfully!");
 
   } catch (error) {
     console.error("Error seeding database:", error);
