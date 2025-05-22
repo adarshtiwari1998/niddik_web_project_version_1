@@ -9,7 +9,8 @@ import {
   submittedCandidateSchema,
   demoRequestSchema,
   demoRequests,
-  adminSessions
+  adminSessions,
+  adminUsers
 } from "@shared/schema";
 import { db } from "../db";
 import { and, eq, count, gt } from "drizzle-orm";
