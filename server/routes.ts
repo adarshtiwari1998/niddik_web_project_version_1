@@ -1529,6 +1529,7 @@ app.get("/api/last-logout", async (req: Request, res: Response) => {
   }
 });
 
+// Check current user (admin or regular)
 app.get("/api/user", async (req: Request, res: Response) => {
   try {
     if (!req.isAuthenticated() || !req.user) {
@@ -1536,44 +1537,61 @@ app.get("/api/user", async (req: Request, res: Response) => {
     }
 
     const userId = req.user.id;
-
-    // First check if this is an admin user
-    const adminUser = await db.query.adminUsers.findFirst({
-      where: (fields, { eq }) => eq(fields.id, userId)
-    });
-
-    if (adminUser) {
-      // Check for valid admin session
-      const adminSession = await db.query.adminSessions.findFirst({
-        where: and(
-          eq(adminSessions.userId, userId),
-          eq(adminSessions.isActive, true),
-          gt(adminSessions.expiresAt, new Date())
-        )
-      });
-
-      if (adminSession) {
-        // Update session activity
-        await db.update(adminSessions)
-          .set({ lastActivity: new Date() })
-          .where(eq(adminSessions.id, adminSession.id));
-
-        const { password, ...adminData } = adminUser;
-        return res.json(adminData);
-      }
-    }
-
-    // If not admin or no valid session, try regular user
     const user = await storage.getUserById(userId);
+    
     if (!user) {
       return res.status(401).json({ error: "User not found" });
     }
 
-    // Return user data without password
     const { password, ...userData } = user;
     return res.json(userData);
   } catch (error) {
     console.error("Error fetching user:", error);
+    return res.status(500).json({ error: "Internal server error" });
+  }
+});
+
+// Admin-specific user check endpoint
+app.get("/api/admin/check", async (req: Request, res: Response) => {
+  try {
+    if (!req.isAuthenticated() || !req.user) {
+      return res.status(401).json({ error: "Not authenticated" });
+    }
+
+    const userId = req.user.id;
+
+    // Check if admin user exists
+    const adminUser = await db.query.adminUsers.findFirst({
+      where: (fields, { eq }) => eq(fields.id, userId)
+    });
+
+    if (!adminUser) {
+      return res.status(403).json({ error: "Not an admin user" });
+    }
+
+    // Check for valid admin session
+    const adminSession = await db.query.adminSessions.findFirst({
+      where: and(
+        eq(adminSessions.userId, userId),
+        eq(adminSessions.isActive, true),
+        gt(adminSessions.expiresAt, new Date())
+      )
+    });
+
+    if (!adminSession) {
+      return res.status(401).json({ error: "No valid admin session" });
+    }
+
+    // Update session activity
+    await db.update(adminSessions)
+      .set({ lastActivity: new Date() })
+      .where(eq(adminSessions.id, adminSession.id));
+
+    // Return admin data without password
+    const { password, ...adminData } = adminUser;
+    return res.json(adminData);
+  } catch (error) {
+    console.error("Error checking admin status:", error);
     return res.status(500).json({ error: "Internal server error" });
   }
 });

@@ -132,7 +132,7 @@ export default function AdminLogin() {
             // Verify admin session
             const verifySession = async () => {
               try {
-                const response = await fetch("/api/user", {
+                const response = await fetch("/api/admin/check", {
                   credentials: "include",
                   headers: { 
                     Authorization: `Bearer ${userData.token}`,
@@ -141,18 +141,15 @@ export default function AdminLogin() {
                 });
                 
                 if (!response.ok) {
-                  throw new Error("Session verification failed");
+                  const error = await response.json();
+                  throw new Error(error.error || "Session verification failed");
                 }
                 
                 const verifiedUser = await response.json();
-                if (!verifiedUser || verifiedUser.role !== 'admin') {
-                  throw new Error("Admin privileges not verified");
-                }
-                
                 return verifiedUser;
               } catch (error) {
                 console.error("Session verification error:", error);
-                throw new Error("Failed to establish admin session");
+                throw error;
               }
             };
 
