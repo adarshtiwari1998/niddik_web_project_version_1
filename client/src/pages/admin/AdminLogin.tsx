@@ -21,7 +21,7 @@ const AdminLogin = () => {
         <meta property="og:title" content="Admin Login | Niddik" />
         <meta property="og:description" content="Secure login portal for Niddik administrators." />
       </Helmet>
-    
+
     <div className="flex flex-col min-h-screen bg-gray-50 dark:bg-gray-900">
       {/* Header */}
       <header className="border-b bg-background">
@@ -66,12 +66,13 @@ const AdminLogin = () => {
             <CardDescription>
               Enter your credentials to access the administrator dashboard
             </CardDescription>
-          </CardHeader>
-          
-        </CardContent>
-        </Card>
+            </CardHeader>
+            <CardContent>
+              {/* Add login form content here */}
+            </CardContent>
+          </Card>
+        </div>
       </div>
-    </div>
     </>
   );
 }

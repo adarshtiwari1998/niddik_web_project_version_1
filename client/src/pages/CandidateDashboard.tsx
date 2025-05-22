@@ -45,8 +45,9 @@ const CandidateDashboard = () => {
   const { user } = useAuth();
   const [activeTab, setActiveTab] = useState("overview");
   const {navigate} = useRouter(); // Initialize useRouter
-  useEffect(() => {
-    const checkSession = async (): Promise<void> => {
+  
+  useEffect(function() {
+    async function checkSession() {
         try {
             // Attempt to fetch user data from /api/user
             const response = await fetch("/api/user");
