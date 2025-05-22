@@ -111,7 +111,6 @@ const AuthPage = () => {
 
             <div className="flex items-center gap-4">
 
-  // Redirect admin users to their dashboard
   useEffect(function() {
     if (user && user.role === "admin") {
       // Show a message before redirecting
