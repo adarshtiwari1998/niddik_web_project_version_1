@@ -127,7 +127,7 @@ export default function AdminLogin() {
             await queryClient.invalidateQueries({ queryKey: ["/api/user"] });
             
             // Force refetch user data
-            const userData = await queryClient.fetchQuery({ 
+            const userDataRefresh = await queryClient.fetchQuery({ 
               queryKey: ["/api/user"],
               queryFn: async () => {
                 const response = await fetch("/api/user", {
@@ -139,7 +139,7 @@ export default function AdminLogin() {
               }
             });
 
-            if (!userData || userData.role !== 'admin') {
+            if (!userDataRefresh || userDataRefresh.role !== 'admin') {
               throw new Error("Admin session not established");
             }
 
