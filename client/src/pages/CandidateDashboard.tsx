@@ -63,7 +63,6 @@ const CandidateDashboard = () => {
         navigate("/auth", { replace: true });
       }
     }
-
     checkSession();
   }, [navigate]);
 

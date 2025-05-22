@@ -40,13 +40,6 @@ const AdminDashboard = () => {
       sessionStorage.removeItem('admin_dashboard_loading');
     }
   }, []);
-    if (isComingFromLogin) {
-      // Keep loading state true
-      setInitialLoading(true);
-      // Clear the flag
-      sessionStorage.removeItem('admin_dashboard_loading');
-    }
-  }, []);
 
   // Fetch job statistics
   const { data: jobsData, isLoading: isLoadingJobs } = useQuery<{ data: JobListing[] }>({
