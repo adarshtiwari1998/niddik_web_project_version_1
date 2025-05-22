@@ -65,7 +65,7 @@ const CandidateDashboard = () => {
     };
 
     checkSession();
-}, [navigate]); // Add navigate to the dependency array
+  }, [navigate]); // Add navigate to the dependency array
 
   // Fetch recent job listings
   const { data: recentJobs, isLoading: isLoadingJobs } = useQuery<{ success: boolean; data: JobListing[] }>({

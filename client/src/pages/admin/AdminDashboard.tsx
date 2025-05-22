@@ -28,7 +28,7 @@ const AdminDashboard = () => {
 
   // Show loading screen as soon as component mounts
   useEffect(function() {
-    document.title = "Admin Dashboard | NiDDiK"
+    document.title = "Admin Dashboard | NiDDiK";
 
     // Check if we're coming from login (which sets this flag)
     const isComingFromLogin = sessionStorage.getItem('admin_dashboard_loading') === 'true';
