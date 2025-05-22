@@ -1531,21 +1531,30 @@ app.get("/api/last-logout", async (req: Request, res: Response) => {
 
 app.get("/api/user", async (req: Request, res: Response) => {
   try {
-    if (!req.user) {
+    if (!req.isAuthenticated() || !req.user) {
       return res.status(401).json({ message: "Not authenticated" });
     }
+
+    // Check for active admin session
+    const adminSession = await db.query.adminSessions.findFirst({
+      where: and(
+        eq(adminSessions.userId, req.user.id),
+        eq(adminSessions.isActive, true),
+        gt(adminSessions.expiresAt, new Date())
+      )
+    });
 
     // First try to find admin user
     const adminUser = await db.query.adminUsers.findFirst({
       where: (fields, { eq }) => eq(fields.id, req.user.id)
     });
 
-    if (adminUser) {
+    if (adminUser && adminSession) {
       const { password, ...adminData } = adminUser;
       return res.json(adminData);
     }
 
-    // If not admin, try regular user
+    // If not admin or no active session, try regular user
     const user = await storage.getUserById(req.user.id);
     if (!user) {
       return res.status(404).json({ message: "User not found" });
