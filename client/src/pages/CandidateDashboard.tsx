@@ -40,12 +40,12 @@ const CandidateDashboard = () => {
         <meta property="og:title" content="Candidate Dashboard | Niddik" />
         <meta property="og:description" content="Manage your job applications, track progress, and update your profile." />
       </Helmet>
-    
-    
+
+
   const { user } = useAuth();
   const [activeTab, setActiveTab] = useState("overview");
   const {navigate} = useRouter(); // Initialize useRouter
-  
+
   useEffect(function() {
     async function checkSession() {
         try {
@@ -62,7 +62,7 @@ const CandidateDashboard = () => {
             // Handle error appropriately (e.g., redirect to an error page)
             navigate("/auth", { replace: true });
         }
-    };
+    }
 
     checkSession();
   }, [navigate]); // Add navigate to the dependency array
