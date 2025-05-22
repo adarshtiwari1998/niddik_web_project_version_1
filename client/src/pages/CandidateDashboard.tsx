@@ -1,4 +1,4 @@
-import { useState, useEffect  } from "react";
+import { useState, useEffect } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { getQueryFn } from "@/lib/queryClient";
 import { useAuth } from "@/hooks/use-auth";
@@ -13,7 +13,7 @@ import { Badge } from "@/components/ui/badge";
 import { Separator } from "@/components/ui/separator";
 import { JobListing, JobApplication } from "@shared/schema";
 import { format } from "date-fns";
-import { Link, useRouter } from "wouter"; // Import useRouter
+import { Link, useRouter } from "wouter";
 import CandidateLayout from "@/components/layouts/CandidateLayout";
 import { Helmet } from 'react-helmet-async';
 
@@ -32,19 +32,9 @@ type ApplicationWithJob = JobApplication & {
 };
 
 const CandidateDashboard = () => {
-  return (
-    <>
-      <Helmet>
-        <title>Candidate Dashboard | Niddik</title>
-        <meta name="description" content="Manage your job applications, track progress, and update your profile." />
-        <meta property="og:title" content="Candidate Dashboard | Niddik" />
-        <meta property="og:description" content="Manage your job applications, track progress, and update your profile." />
-      </Helmet>
-
-
   const { user } = useAuth();
   const [activeTab, setActiveTab] = useState("overview");
-  const {navigate} = useRouter(); 
+  const { navigate } = useRouter();
 
   useEffect(() => {
     const checkSession = async () => {
@@ -59,17 +49,15 @@ const CandidateDashboard = () => {
         navigate("/auth", { replace: true });
       }
     };
-    
+
     checkSession();
   }, [navigate]);
 
-  
   const { data: recentJobs, isLoading: isLoadingJobs } = useQuery<{ success: boolean; data: JobListing[] }>({
     queryKey: ['/api/job-listings/recent', 5],
     queryFn: getQueryFn({ on401: "throw" }),
   });
 
-  // Fetch user's applications
   const { data: applicationsData, isLoading: isLoadingApplications } = useQuery<{
     success: boolean;
     data: ApplicationWithJob[];
@@ -80,27 +68,30 @@ const CandidateDashboard = () => {
     enabled: !!user
   });
 
-  // Format date to a readable string
   const formatDate = (dateString: string | Date) => {
     if (!dateString) return "N/A";
     const date = typeof dateString === 'string' ? new Date(dateString) : dateString;
     return format(date, 'MMM dd, yyyy');
   };
 
-  // Get applications count by status
   const newApplicationsCount = applicationsData?.data?.filter(app => app.status === 'new')?.length || 0;
   const reviewingApplicationsCount = applicationsData?.data?.filter(app => app.status === 'reviewing')?.length || 0;
   const interviewApplicationsCount = applicationsData?.data?.filter(app => app.status === 'interview')?.length || 0;
   const hiredApplicationsCount = applicationsData?.data?.filter(app => app.status === 'hired')?.length || 0;
   const totalApplicationsCount = applicationsData?.data?.length || 0;
 
-  // Redirect to login if not authenticated
   if (!user) {
-    return null; // The ProtectedRoute component will handle redirection
+    return null;
   }
 
   return (
     <CandidateLayout activeTab="dashboard">
+      <Helmet>
+        <title>Candidate Dashboard | Niddik</title>
+        <meta name="description" content="Manage your job applications, track progress, and update your profile." />
+        <meta property="og:title" content="Candidate Dashboard | Niddik" />
+        <meta property="og:description" content="Manage your job applications, track progress, and update your profile." />
+      </Helmet>
       <div>
         <h1 className="text-3xl font-bold mb-2">Hello, {user.fullName || user.username}</h1>
         <p className="text-muted-foreground mb-6">
@@ -318,8 +309,7 @@ const CandidateDashboard = () => {
         </div>
       </div>
     </CandidateLayout>
-     </>
   );
-}
+};
 
 export default CandidateDashboard;
