@@ -64,10 +64,10 @@ export default function CandidateLayout({ children, activeTab = "" }: CandidateL
   };
 
   return (
-    <div className="flex flex-col min-h-screen bg-background">
+    <div className="flex flex-col h-screen bg-background">
       {isLoggingOut && <LoadingScreen message="Logging out..." />}
       {/* Header */}
-      <header className="sticky top-0 z-30 w-full border-b bg-background">
+      <header className="fixed top-0 left-0 right-0 z-50 border-b bg-background">
         <div className="container flex h-16 items-center justify-between py-4">
           <div className="flex items-center gap-4">
             <Link href="/" className="flex flex-col items-start">
@@ -197,9 +197,9 @@ export default function CandidateLayout({ children, activeTab = "" }: CandidateL
       </header>
 
       {/* Main Content */}
-      <div className="flex-1 flex">
+      <div className="flex pt-16 h-screen">
         {/* Sidebar - Desktop only */}
-        <div className="hidden md:flex w-64 border-r bg-background h-[calc(100vh-64px)] sticky top-16">
+        <div className="hidden md:block fixed left-0 top-16 w-64 border-r bg-background h-[calc(100vh-64px)] overflow-y-auto">
           <div className="w-full p-4">
             <div className="flex flex-col h-full">
               <nav className="space-y-1">
@@ -243,13 +243,13 @@ export default function CandidateLayout({ children, activeTab = "" }: CandidateL
         </div>
 
         {/* Main Content */}
-        <div className="flex-1 p-4 md:p-8">
+        <div className="flex-1 ml-0 md:ml-64 p-4 md:p-8 overflow-y-auto min-h-[calc(100vh-64px)]">
           {children}
         </div>
       </div>
 
       {/* Footer */}
-      <footer className="border-t py-6 bg-background">
+      <footer className="border-t py-6 bg-background mt-auto">
         <div className="container flex flex-col md:flex-row items-center justify-between gap-4">
           <div className="text-sm text-muted-foreground">
             © 2025 NiDDiK. All rights reserved.
