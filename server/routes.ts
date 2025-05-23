@@ -874,11 +874,18 @@ export async function registerRoutes(app: Express): Promise<Server> {
       const file = req.file;
       
       if (!file.path) {
+        console.error('Upload failed - file path missing', file);
         return res.status(500).json({ 
           success: false, 
           message: 'Upload failed - no file path returned' 
         });
       }
+
+      console.log('File uploaded successfully:', {
+        path: file.path,
+        filename: file.originalname,
+        size: file.size
+      });
 
       return res.status(200).json({ 
         success: true, 
@@ -887,6 +894,9 @@ export async function registerRoutes(app: Express): Promise<Server> {
       });
     } catch (error) {
       console.error('Resume upload error:', error);
+      if (error instanceof Error) {
+        console.error('Error details:', error.message, error.stack);
+      }
       return res.status(500).json({ 
         success: false, 
         message: error instanceof Error ? error.message : 'Upload failed',

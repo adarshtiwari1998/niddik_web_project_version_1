@@ -14,19 +14,20 @@ cloudinary.config({
 const resumeStorage = new CloudinaryStorage({
   cloudinary: cloudinary,
   params: {
-    folder: 'cv_upload',
+    folder: 'resumes',
     resource_type: 'raw',
     allowed_formats: ['pdf', 'doc', 'docx'],
     public_id: (req, file) => {
       const timestamp = Date.now();
-      const uniqueId = `cv_${timestamp}`;
+      const uniqueId = `resume_${timestamp}`;
       return uniqueId;
     },
-    use_filename: false,
+    use_filename: true,
     unique_filename: true,
     overwrite: true,
     type: 'upload',
-    access_mode: 'public'
+    access_mode: 'public',
+    format: 'raw'
   } as any
 });
 
