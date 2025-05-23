@@ -112,8 +112,8 @@ export const jobListings = pgTable("job_listings", {
   contactEmail: text("contact_email"),
   status: text("status").notNull().default("active"), // active, filled, expired
   featured: boolean("featured").notNull().default(false),
-  postedDate: timestamp("posted_date").defaultNow().notNull(),
-  expiryDate: timestamp("expiry_date"),
+  postedDate: text("posted_date").notNull(),
+  expiryDate: text("expiry_date"),
   category: text("category").notNull(), // Technology, Design, Marketing, etc.
   skills: text("skills").notNull(), // Comma-separated list of skills
 });
