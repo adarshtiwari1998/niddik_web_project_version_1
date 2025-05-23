@@ -19,11 +19,11 @@ const resumeStorage = new CloudinaryStorage({
     allowed_formats: ['pdf', 'doc', 'docx'],
     public_id: (req, file) => {
       const timestamp = Date.now();
-      const originalName = file.originalname.split('.')[0];
+      const filename = file.originalname.replace(/\.[^/.]+$/, ''); // Remove extension
       const extension = file.originalname.split('.').pop();
-      // Combine original name with timestamp and extension
-      return `${originalName}_${timestamp}.${extension}`;
+      return `${filename}_${timestamp}.${extension}`;
     },
+    format: (req, file) => file.originalname.split('.').pop(), // Explicitly set format from extension
     use_filename: true,
     unique_filename: true,
     overwrite: true,
