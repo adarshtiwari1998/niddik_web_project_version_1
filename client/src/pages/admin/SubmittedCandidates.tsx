@@ -962,11 +962,21 @@ function SubmittedCandidates() {
                 <SelectValue placeholder="Filter by status" />
               </SelectTrigger>
               <SelectContent>
-                {statusOptions.map((option) => (
-                  <SelectItem key={option.value} value={option.value}>
-                    {option.label}
-                  </SelectItem>
-                ))}
+                <SelectItem value="all_statuses">All Statuses</SelectItem>
+                {/* Get unique statuses from candidates data */}
+                {candidatesData?.data ? 
+                  Array.from(new Set(candidatesData.data.map((c: SubmittedCandidate) => c.status)))
+                    .filter(Boolean)
+                    .sort()
+                    .map((status: string) => (
+                      <SelectItem key={status} value={status}>{status}</SelectItem>
+                    ))
+                  : statusOptions.map((option) => (
+                      <SelectItem key={option.value} value={option.value}>
+                        {option.label}
+                      </SelectItem>
+                    ))
+                }
               </SelectContent>
             </Select>
 
