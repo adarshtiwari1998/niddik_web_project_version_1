@@ -85,27 +85,39 @@ export default function JobForm() {
   });
 
   useEffect(() => {
+    // Redirect to jobs list if in edit mode but no data available
+    if (isEditMode && jobData && !jobData.data) {
+      toast({
+        title: "Error",
+        description: "No job data found to edit",
+        variant: "destructive",
+      });
+      setLocation("/admin/jobs");
+      return;
+    }
+
+    // Only attempt to populate form if we have data
     if (jobData?.data && isEditMode) {
       const job = jobData.data;
       form.reset({
-        title: job.title || "",
-        company: job.company || "Niddik",
-        location: job.location || "",
-        jobType: job.jobType || "",
-        experienceLevel: job.experienceLevel || "",
-        salary: job.salary || "",
-        description: job.description || "",
-        requirements: job.requirements || "",
+        title: job.title,
+        company: job.company,
+        location: job.location,
+        jobType: job.jobType,
+        experienceLevel: job.experienceLevel,
+        salary: job.salary,
+        description: job.description,
+        requirements: job.requirements,
         benefits: job.benefits || "",
         applicationUrl: job.applicationUrl || "",
-        contactEmail: job.contactEmail || "",
-        status: job.status || "active",
-        featured: Boolean(job.featured),
-        category: job.category || "",
-        skills: job.skills || ""
+        contactEmail: job.contactEmail,
+        status: job.status,
+        featured: job.featured,
+        category: job.category,
+        skills: job.skills,
       });
     }
-  }, [jobData?.data, form, isEditMode]);
+  }, [jobData, form, isEditMode, setLocation, toast]);
 
   // Create job mutation
   const createJobMutation = useMutation({
