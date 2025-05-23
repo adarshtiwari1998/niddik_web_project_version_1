@@ -47,7 +47,7 @@ export default function MyApplications() {
     queryKey: ['/api/my-applications', page, activeTab, user?.id],
     queryFn: async () => {
       if (!user) throw new Error("User not authenticated");
-      
+
       const params = new URLSearchParams();
       params.append("page", page.toString());
       params.append("limit", pageSize.toString());
@@ -80,6 +80,8 @@ export default function MyApplications() {
         return 'success';
       case 'rejected':
         return 'destructive';
+      case 'withdrawn':
+        return 'secondary';
       default:
         return 'default';
     }
@@ -268,9 +270,9 @@ export default function MyApplications() {
                       </div>
                     </div>
                   </div>
-                  
+
                   <Separator className="my-4" />
-                  
+
                   <div className="flex justify-between items-center">
                     <div className="flex items-center gap-2">
                       <span className="text-sm text-muted-foreground">Status Timeline:</span>
@@ -294,7 +296,7 @@ export default function MyApplications() {
                         <span className="text-xs">Hired</span>
                       </div>
                     </div>
-                    
+
                     <div className="flex gap-2">
                       <Link href={`/candidate/jobs/${application.job.id}`}>
                         <Button variant="outline" size="sm">
@@ -317,7 +319,7 @@ export default function MyApplications() {
               </Card>
             ))}
           </div>
-          
+
           {data?.meta && data.meta.pages > 1 && (
             <div className="flex justify-between items-center mt-8">
               <p className="text-sm text-muted-foreground">

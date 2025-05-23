@@ -57,10 +57,12 @@ export default function JobDetail() {
     enabled: !!user
   });
 
-  // Determine if user has already applied to this job
+  // Determine if user has already applied to this job (excluding withdrawn applications)
   const hasApplied = React.useMemo(() => {
     if (!userApplicationsData?.data) return false;
-    return userApplicationsData.data.some(app => app.jobId === jobId);
+    return userApplicationsData.data.some(app => 
+      app.jobId === jobId && app.status !== 'withdrawn'
+    );
   }, [userApplicationsData, jobId]);
 
   // Get application date if user has applied
