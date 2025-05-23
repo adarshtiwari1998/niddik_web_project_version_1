@@ -71,14 +71,15 @@ export default function JobForm() {
     },
   });
 
-  // Fetch job data if in edit mode
+  // Fetch job details
   const { data: jobData, isLoading: isLoadingJob } = useQuery({
     queryKey: [`/api/job-listings/${jobId}`],
     queryFn: async () => {
       if (!jobId) return null;
       const res = await fetch(`/api/job-listings/${jobId}`);
       if (!res.ok) throw new Error("Failed to fetch job listing");
-      return res.json();
+      const data = await res.json();
+      return data;
     },
     enabled: isEditMode,
   });
@@ -86,26 +87,25 @@ export default function JobForm() {
   useEffect(() => {
     if (jobData?.data && isEditMode) {
       const job = jobData.data;
-      // Reset form with job data
       form.reset({
-        title: job.title,
-        company: job.company,
-        location: job.location,
-        jobType: job.jobType,
-        experienceLevel: job.experienceLevel,
-        salary: job.salary,
-        description: job.description,
-        requirements: job.requirements,
+        title: job.title || "",
+        company: job.company || "Niddik",
+        location: job.location || "",
+        jobType: job.jobType || "",
+        experienceLevel: job.experienceLevel || "",
+        salary: job.salary || "",
+        description: job.description || "",
+        requirements: job.requirements || "",
         benefits: job.benefits || "",
         applicationUrl: job.applicationUrl || "",
-        contactEmail: job.contactEmail,
-        status: job.status,
-        featured: job.featured,
-        category: job.category,
-        skills: job.skills,
+        contactEmail: job.contactEmail || "",
+        status: job.status || "active",
+        featured: job.featured || false,
+        category: job.category || "",
+        skills: job.skills || "",
       });
     }
-  }, [jobData?.data, isEditMode]);
+  }, [jobData, form, isEditMode]);
 
   // Create job mutation
   const createJobMutation = useMutation({
