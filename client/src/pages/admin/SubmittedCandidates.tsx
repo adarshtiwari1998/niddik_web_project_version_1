@@ -870,11 +870,11 @@ export default function SubmittedCandidates() {
                           <TableBody>
                             {importData.slice(0, 5).map((item: Record<string, string>, rowIndex: number) => (
                               <TableRow key={`preview-${rowIndex}`}>
-                                <TableCell>{item.sourced_by || ""}</TableCell>
+                                <TableCell>{item.sourced_by || item.sourcedBy || ""}</TableCell>
                                 <TableCell>{item.client || ""}</TableCell>
                                 <TableCell>{item.poc || ""}</TableCell>
                                 <TableCell>{item.skills || ""}</TableCell>
-                                <TableCell>{item.candidate_name || ""}</TableCell>
+                                <TableCell>{item.candidate_name || item.candidateName || ""}</TableCell>
                                 <TableCell>{item.contact_no || ""}</TableCell>
                                 <TableCell>{item.email_id || ""}</TableCell>
                                 <TableCell>{item.experience || ""}</TableCell>
