@@ -1,0 +1,67 @@
+Uncaught ReferenceError: Calendar is not defined
+    at Object.render (SubmittedCandidates.tsx:1829:30)
+    at Controller (chunk-MGW4VB6R.js?v=1d9bb03f:328:35)
+    at renderWithHooks (chunk-RPCDYKBN.js?v=1d9bb03f:11548:26)
+    at mountIndeterminateComponent (chunk-RPCDYKBN.js?v=1d9bb03f:14926:21)
+    at beginWork (chunk-RPCDYKBN.js?v=1d9bb03f:15914:22)
+    at HTMLUnknownElement.callCallback2 (chunk-RPCDYKBN.js?v=1d9bb03f:3674:22)
+    at Object.invokeGuardedCallbackDev (chunk-RPCDYKBN.js?v=1d9bb03f:3699:24)
+    at invokeGuardedCallback (chunk-RPCDYKBN.js?v=1d9bb03f:3733:39)
+    at beginWork$1 (chunk-RPCDYKBN.js?v=1d9bb03f:19765:15)
+    at performUnitOfWork (chunk-RPCDYKBN.js?v=1d9bb03f:19198:20)Understand this error
+chunk-RPCDYKBN.js?v=1d9bb03f:14032 The above error occurred in the <Controller> component:
+
+    at Controller (https://c97bc9b7-d459-4d54-aa25-a500aa3482fe-00-17pkxb2ueb99z.sisko.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/chunk-MGW4VB6R.js?v=1d9bb03f:328:35)
+    at FormField (https://c97bc9b7-d459-4d54-aa25-a500aa3482fe-00-17pkxb2ueb99z.sisko.replit.dev/src/components/ui/form.tsx:32:6)
+    at div
+    at form
+    at FormProvider (https://c97bc9b7-d459-4d54-aa25-a500aa3482fe-00-17pkxb2ueb99z.sisko.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/chunk-MGW4VB6R.js?v=1d9bb03f:103:11)
+    at div
+    at https://c97bc9b7-d459-4d54-aa25-a500aa3482fe-00-17pkxb2ueb99z.sisko.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/chunk-AXMZZQ2X.js?v=1d9bb03f:42:13
+    at https://c97bc9b7-d459-4d54-aa25-a500aa3482fe-00-17pkxb2ueb99z.sisko.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/chunk-SD42OOGP.js?v=1d9bb03f:61:7
+    at https://c97bc9b7-d459-4d54-aa25-a500aa3482fe-00-17pkxb2ueb99z.sisko.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/chunk-2K77HOHX.js?v=1d9bb03f:79:13
+    at https://c97bc9b7-d459-4d54-aa25-a500aa3482fe-00-17pkxb2ueb99z.sisko.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/chunk-2K77HOHX.js?v=1d9bb03f:56:13
+    at https://c97bc9b7-d459-4d54-aa25-a500aa3482fe-00-17pkxb2ueb99z.sisko.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/chunk-AXMZZQ2X.js?v=1d9bb03f:42:13
+    at https://c97bc9b7-d459-4d54-aa25-a500aa3482fe-00-17pkxb2ueb99z.sisko.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/chunk-UDJZONCO.js?v=1d9bb03f:29:5
+    at https://c97bc9b7-d459-4d54-aa25-a500aa3482fe-00-17pkxb2ueb99z.sisko.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/chunk-PQN6GQXC.js?v=1d9bb03f:233:13
+    at https://c97bc9b7-d459-4d54-aa25-a500aa3482fe-00-17pkxb2ueb99z.sisko.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/chunk-PQN6GQXC.js?v=1d9bb03f:156:58
+    at Presence (https://c97bc9b7-d459-4d54-aa25-a500aa3482fe-00-17pkxb2ueb99z.sisko.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/chunk-WIIJQEXM.js?v=1d9bb03f:24:11)
+    at https://c97bc9b7-d459-4d54-aa25-a500aa3482fe-00-17pkxb2ueb99z.sisko.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/chunk-PQN6GQXC.js?v=1d9bb03f:147:64
+    at https://c97bc9b7-d459-4d54-aa25-a500aa3482fe-00-17pkxb2ueb99z.sisko.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/chunk-2K77HOHX.js?v=1d9bb03f:79:13
+    at https://c97bc9b7-d459-4d54-aa25-a500aa3482fe-00-17pkxb2ueb99z.sisko.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/chunk-2K77HOHX.js?v=1d9bb03f:56:13
+    at https://c97bc9b7-d459-4d54-aa25-a500aa3482fe-00-17pkxb2ueb99z.sisko.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/chunk-AXMZZQ2X.js?v=1d9bb03f:42:13
+    at https://c97bc9b7-d459-4d54-aa25-a500aa3482fe-00-17pkxb2ueb99z.sisko.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/chunk-SD42OOGP.js?v=1d9bb03f:260:22
+    at Presence (https://c97bc9b7-d459-4d54-aa25-a500aa3482fe-00-17pkxb2ueb99z.sisko.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/chunk-WIIJQEXM.js?v=1d9bb03f:24:11)
+    at Provider (https://c97bc9b7-d459-4d54-aa25-a500aa3482fe-00-17pkxb2ueb99z.sisko.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/chunk-5AJU3CG7.js?v=1d9bb03f:38:15)
+    at DialogPortal (https://c97bc9b7-d459-4d54-aa25-a500aa3482fe-00-17pkxb2ueb99z.sisko.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/chunk-PQN6GQXC.js?v=1d9bb03f:109:11)
+    at _c3 (https://c97bc9b7-d459-4d54-aa25-a500aa3482fe-00-17pkxb2ueb99z.sisko.replit.dev/src/components/ui/dialog.tsx:49:12)
+    at Provider (https://c97bc9b7-d459-4d54-aa25-a500aa3482fe-00-17pkxb2ueb99z.sisko.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/chunk-5AJU3CG7.js?v=1d9bb03f:38:15)
+    at Dialog (https://c97bc9b7-d459-4d54-aa25-a500aa3482fe-00-17pkxb2ueb99z.sisko.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/chunk-PQN6GQXC.js?v=1d9bb03f:50:5)
+    at div
+    at div
+    at div
+    at div
+    at AdminLayout (https://c97bc9b7-d459-4d54-aa25-a500aa3482fe-00-17pkxb2ueb99z.sisko.replit.dev/src/components/layout/AdminLayout.tsx:25:39)
+    at SubmittedCandidates (https://c97bc9b7-d459-4d54-aa25-a500aa3482fe-00-17pkxb2ueb99z.sisko.replit.dev/src/pages/admin/SubmittedCandidates.tsx?t=1748034084742:186:21)
+    at ProtectedRoute (https://c97bc9b7-d459-4d54-aa25-a500aa3482fe-00-17pkxb2ueb99z.sisko.replit.dev/src/lib/protected-route.tsx:22:45)
+    at Switch (https://c97bc9b7-d459-4d54-aa25-a500aa3482fe-00-17pkxb2ueb99z.sisko.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/wouter.js?v=1d9bb03f:336:17)
+    at Router
+    at AuthProvider (https://c97bc9b7-d459-4d54-aa25-a500aa3482fe-00-17pkxb2ueb99z.sisko.replit.dev/src/hooks/use-auth.tsx:32:32)
+    at QueryClientProvider (https://c97bc9b7-d459-4d54-aa25-a500aa3482fe-00-17pkxb2ueb99z.sisko.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/@tanstack_react-query.js?v=1d9bb03f:2875:3)
+    at _a (https://c97bc9b7-d459-4d54-aa25-a500aa3482fe-00-17pkxb2ueb99z.sisko.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/react-helmet-async.js?v=1d9bb03f:624:5)
+    at App
+
+Consider adding an error boundary to your tree to customize error handling behavior.
+Visit https://reactjs.org/link/error-boundaries to learn more about error boundaries.
+logCapturedError @ chunk-RPCDYKBN.js?v=1d9bb03f:14032Understand this error
+chunk-RPCDYKBN.js?v=1d9bb03f:9129 Uncaught ReferenceError: Calendar is not defined
+    at Object.render (SubmittedCandidates.tsx:1829:30)
+    at Controller (chunk-MGW4VB6R.js?v=1d9bb03f:328:35)
+    at renderWithHooks (chunk-RPCDYKBN.js?v=1d9bb03f:11548:26)
+    at mountIndeterminateComponent (chunk-RPCDYKBN.js?v=1d9bb03f:14926:21)
+    at beginWork (chunk-RPCDYKBN.js?v=1d9bb03f:15914:22)
+    at beginWork$1 (chunk-RPCDYKBN.js?v=1d9bb03f:19753:22)
+    at performUnitOfWork (chunk-RPCDYKBN.js?v=1d9bb03f:19198:20)
+    at workLoopSync (chunk-RPCDYKBN.js?v=1d9bb03f:19137:13)
+    at renderRootSync (chunk-RPCDYKBN.js?v=1d9bb03f:19116:15)
+    at recoverFromConcurrentError (chunk-RPCDYKBN.js?v=1d9bb03f:18736:28)Understand this error
