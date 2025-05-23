@@ -243,13 +243,13 @@ export default function CandidateLayout({ children, activeTab = "" }: CandidateL
         </div>
 
         {/* Main Content */}
-        <div className="flex-1 ml-0 md:ml-64 p-4 md:p-8 overflow-y-auto h-[calc(100vh-64px)]">
+        <div className="flex-1 ml-0 md:ml-64 p-4 md:p-8 h-[calc(100vh-64px)]">
           {children}
         </div>
       </div>
 
       {/* Footer */}
-      <footer className="border-t py-6 bg-background w-full">
+      <footer className="border-t py-6 bg-background w-full relative z-[99]">
         <div className="container flex flex-col md:flex-row items-center justify-between gap-4">
           <div className="text-sm text-muted-foreground">
             © 2025 NiDDiK. All rights reserved.
