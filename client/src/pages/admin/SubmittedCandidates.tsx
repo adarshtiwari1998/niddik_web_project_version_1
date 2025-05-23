@@ -1809,18 +1809,35 @@ function SubmittedCandidates() {
                   render={({ field }) => (
                     <FormItem>
                       <FormLabel>Sourced By *</FormLabel>
-                      <FormControl>
-                        <Input 
-                          type="date" 
-                          {...field}
-                          value={field.value || selectedCandidate?.sourcedBy || new Date().toISOString().split('T')[0]}
-                          onChange={(e) => {
-                            const value = e.target.value || new Date().toISOString().split('T')[0];
-                            field.onChange(value);
-                            form.setValue('sourcedBy', value, { shouldValidate: true });
-                          }}
-                        />
-                      </FormControl>
+                      <div className="flex gap-2">
+                        <FormControl className="flex-1">
+                          <Input 
+                            placeholder="Sourced by name"
+                            {...field}
+                            type="text"
+                            value={field.value || selectedCandidate?.sourcedBy || ''}
+                          />
+                        </FormControl>
+                        <Popover>
+                          <PopoverTrigger asChild>
+                            <Button variant="outline" size="icon">
+                              <CalendarIcon className="h-4 w-4" />
+                            </Button>
+                          </PopoverTrigger>
+                          <PopoverContent className="w-auto p-0" align="end">
+                            <Calendar
+                              mode="single"
+                              selected={selectedCandidate?.submissionDate ? new Date(selectedCandidate.submissionDate) : new Date()}
+                              onSelect={(date) => {
+                                if (date) {
+                                  form.setValue('submissionDate', date, { shouldValidate: true });
+                                }
+                              }}
+                              initialFocus
+                            />
+                          </PopoverContent>
+                        </Popover>
+                      </div>
                       <FormMessage />
                     </FormItem>
                   )}
