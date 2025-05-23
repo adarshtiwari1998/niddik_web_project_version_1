@@ -858,8 +858,7 @@ function SubmittedCandidates() {
                               <TableHead>POC</TableHead>
                               <TableHead>Skills</TableHead>
                               <TableHead>Candidate Name</TableHead>
-                              <TableHead>Contact No</TableHead>
-                              <TableHead>Email ID</TableHead>
+                              <TableHead>Contact No</Table                              <TableHead>Email ID</TableHead>
                               <TableHead>Experience</              TableHead>
                               <TableHead>Notice Period</TableHead>
                               <TableHead>Location</TableHead>
@@ -1830,9 +1829,9 @@ function SubmittedCandidates() {
                             <Calendar
                               mode="single"
                               selected={form.getValues('submissionDate') ? new Date(form.getValues('submissionDate')) : new Date()}
-                              onSelect={(date) => {
-                                if (date) {
-                                  form.setValue('submissionDate', date);                                  form.setValue('sourcedBy', form.getValues('sourcedBy') || date.toISOString().split('T')[0]);
+                              onSelect={(date) => {                                if (date) {
+                                  form.setValue('submissionDate', date, { shouldValidate: true });
+                                  form.setValue('sourcedBy', date.toISOString().split('T')[0], { shouldValidate: true });
                                 }
                               }}
                               initialFocus
