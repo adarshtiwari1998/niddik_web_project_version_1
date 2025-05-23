@@ -257,8 +257,8 @@ export default function JobForm() {
     // Format the data for submission with proper date handling
     const formattedData = {
       ...data,
-      expiryDate: data.expiryDate ? data.expiryDate : null,
-      postedDate: data.postedDate ? new Date(data.postedDate) : new Date()
+      expiryDate: data.expiryDate ? data.expiryDate.toISOString() : null,
+      postedDate: data.postedDate ? new Date(data.postedDate).toISOString() : new Date().toISOString()
     };
 
     if (isNewJob) {
