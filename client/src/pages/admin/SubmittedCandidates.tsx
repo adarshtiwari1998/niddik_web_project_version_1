@@ -1844,7 +1844,8 @@ export default function SubmittedCandidates() {
                   control={form.control}
                   name="poc"
                   render={({ field }) => (
-                    <FormItem                      <FormLabel>POC *</FormLabel>
+                    <FormItem>
+                      <FormLabel>POC *</FormLabel>
                       <FormControl>
                         <Input {...field} />
                       </FormControl>
