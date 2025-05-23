@@ -2163,6 +2163,7 @@ export default function SubmittedCandidates() {
           </Form>
         </DialogContent>
       </Dialog>
+      {/* End edit dialog */}
     </AdminLayout>
   );
 }
