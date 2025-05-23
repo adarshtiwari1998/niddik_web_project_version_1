@@ -402,8 +402,23 @@ export default function JobApplication() {
                         <div className="flex-1">
                           <Input
                             type="file"
-                            accept=".pdf,.doc,.docx,application/pdf,application/msword,application/vnd.openxmlformats-officedocument.wordprocessingml.document"
-                            onChange={handleFileChange}
+                            accept=".pdf,.doc,.docx"
+                            onChange={(e) => {
+                              const file = e.target.files?.[0];
+                              if (file) {
+                                const ext = file.name.split('.').pop()?.toLowerCase();
+                                if (!['pdf', 'doc', 'docx'].includes(ext || '')) {
+                                  toast({
+                                    title: "Invalid file format",
+                                    description: "Please upload only PDF, DOC, or DOCX files",
+                                    variant: "destructive"
+                                  });
+                                  e.target.value = '';
+                                  return;
+                                }
+                                handleFileChange(e);
+                              }
+                            }}
                             className="file:mr-4 file:py-2 file:px-4 file:rounded-md file:border-0 file:text-sm file:font-medium file:bg-primary file:text-primary-foreground hover:file:bg-primary/90"
                           />
                         </div>
