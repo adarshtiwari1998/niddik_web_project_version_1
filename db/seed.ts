@@ -178,7 +178,7 @@ async function seed() {
         image: "https://images.unsplash.com/photo-1519085360753-af0119f7cbe7?auto=format&fit=crop&w=100&h=100&q=80"
       }
     ];
-    
+
     // Check if testimonials already exist
     const existingTestimonials = await db.query.testimonials.findMany();
     if (existingTestimonials.length === 0) {
@@ -187,7 +187,7 @@ async function seed() {
     } else {
       console.log("Testimonials already exist, skipping seeding");
     }
-    
+
     // Seed clients
     console.log("Seeding clients...");
     const clientsData = [
@@ -216,7 +216,7 @@ async function seed() {
         logo: "https://via.placeholder.com/150x60?text=Coursera"
       }
     ];
-    
+
     // Check if clients already exist
     const existingClients = await db.query.clients.findMany();
     if (existingClients.length === 0) {
@@ -231,7 +231,7 @@ async function seed() {
     const jobListingsData = [
       {
         title: "Senior React Developer",
-        company: "Andela",
+        company: "Niddik",
         location: "Remote",
         jobType: "Full-time",
         experienceLevel: "Senior",
@@ -240,7 +240,7 @@ async function seed() {
         requirements: "5+ years of experience with React.js\nStrong proficiency in JavaScript, including DOM manipulation and the JavaScript object model\nThorough understanding of React.js and its core principles\nExperience with popular React.js workflows (such as Flux or Redux)\nExperience with data structure libraries (e.g., Immutable.js)\nKnowledge of isomorphic React is a plus\nFamiliarity with RESTful APIs\nKnowledge of modern authorization mechanisms, such as JSON Web Token\nFamiliarity with modern front-end build pipelines and tools",
         benefits: "Competitive salary\nFlexible work hours\nRemote work\nHealth insurance\nPaid time off\n401(k) matching",
         applicationUrl: "https://example.com/apply",
-        contactEmail: "careers@andela.com",
+        contactEmail: "careers@niddik.com",
         status: "active",
         featured: true,
         postedDate: new Date(),
@@ -250,7 +250,7 @@ async function seed() {
       },
       {
         title: "Product Manager",
-        company: "Andela",
+        company: "Niddik",
         location: "New York, NY",
         jobType: "Full-time",
         experienceLevel: "Mid",
@@ -259,7 +259,7 @@ async function seed() {
         requirements: "3+ years of experience in Product Management\nProven ability to develop product strategies and effectively communicate recommendations to executive management\nStrong problem-solving skills and willingness to roll up one's sleeves to get the job done\nSkilled at working effectively with cross-functional teams in a matrix organization\nExcellent written and verbal communication skills\nMS/BS degree in Computer Science, Engineering or equivalent preferred",
         benefits: "Competitive salary\nFlexible work hours\nHealth insurance\nPaid time off\n401(k) matching",
         applicationUrl: "https://example.com/apply",
-        contactEmail: "careers@andela.com",
+        contactEmail: "careers@niddik.com",
         status: "active",
         featured: false,
         postedDate: new Date(Date.now() - 2 * 24 * 60 * 60 * 1000),
@@ -269,7 +269,7 @@ async function seed() {
       },
       {
         title: "DevOps Engineer",
-        company: "Andela",
+        company: "Niddik",
         location: "Remote",
         jobType: "Full-time",
         experienceLevel: "Mid",
@@ -278,7 +278,7 @@ async function seed() {
         requirements: "3+ years of experience in a DevOps role\nStrong knowledge of Linux/Unix administration\nExperience with cloud services (AWS, Azure, or GCP)\nFamiliarity with infrastructure as code tools (Terraform, CloudFormation)\nExperience with containerization (Docker, Kubernetes)\nUnderstanding of CI/CD pipelines\nKnowledge of monitoring tools (Prometheus, Grafana, ELK stack)\nFamiliarity with scripting languages (Python, Bash)",
         benefits: "Competitive salary\nFlexible work hours\nRemote work\nHealth insurance\nPaid time off\n401(k) matching",
         applicationUrl: "https://example.com/apply",
-        contactEmail: "careers@andela.com",
+        contactEmail: "careers@niddik.com",
         status: "active",
         featured: true,
         postedDate: new Date(Date.now() - 5 * 24 * 60 * 60 * 1000),
@@ -288,7 +288,7 @@ async function seed() {
       },
       {
         title: "UX/UI Designer",
-        company: "Andela",
+        company: "Niddik",
         location: "Remote",
         jobType: "Full-time",
         experienceLevel: "Mid",
@@ -297,7 +297,7 @@ async function seed() {
         requirements: "3+ years of experience in UX/UI design\nProven experience as a UI/UX Designer or similar role\nPortfolio of design projects\nKnowledge of wireframe tools (e.g. Figma, Sketch, Adobe XD)\nUp-to-date knowledge of design software like Adobe Illustrator and Photoshop\nTeam spirit; strong communication skills to collaborate with various stakeholders\nCreative thinking",
         benefits: "Competitive salary\nFlexible work hours\nRemote work\nHealth insurance\nPaid time off\n401(k) matching",
         applicationUrl: "https://example.com/apply",
-        contactEmail: "careers@andela.com",
+        contactEmail: "careers@niddik.com",
         status: "active",
         featured: false,
         postedDate: new Date(Date.now() - 7 * 24 * 60 * 60 * 1000),
@@ -306,7 +306,7 @@ async function seed() {
         skills: "UI, UX, Figma, Sketch, Adobe XD, Design Systems",
       },
     ];
-    
+
     // Check if job listings already exist
     const existingJobListings = await db.query.jobListings.findMany();
     if (existingJobListings.length === 0) {

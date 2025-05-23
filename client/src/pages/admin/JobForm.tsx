@@ -120,12 +120,12 @@ export default function JobForm() {
           expiryDate: new Date(Date.now() + 30 * 24 * 60 * 60 * 1000), // 30 days from now
         }),
       });
-      
+
       if (!response.ok) {
         const errorData = await response.json();
         throw new Error(errorData.message || "Failed to create job listing");
       }
-      
+
       return response.json();
     },
     onSuccess: () => {
@@ -148,7 +148,7 @@ export default function JobForm() {
   const updateJobMutation = useMutation({
     mutationFn: async (data: FormData) => {
       if (!jobId) throw new Error("Job ID is required for updates");
-      
+
       const response = await fetch(`/api/job-listings/${jobId}`, {
         method: "PUT",
         headers: {
@@ -156,19 +156,19 @@ export default function JobForm() {
         },
         body: JSON.stringify(data),
       });
-      
+
       if (!response.ok) {
         const errorData = await response.json();
         throw new Error(errorData.message || "Failed to update job listing");
       }
-      
+
       return response.json();
     },
     onSuccess: (data) => {
       // Invalidate queries to refresh the job listings data
       queryClient.invalidateQueries({ queryKey: ['/api/job-listings'] });
       queryClient.invalidateQueries({ queryKey: [`/api/job-listings/${jobId}`] });
-      
+
       toast({
         title: "Job updated",
         description: "The job listing has been updated successfully",
