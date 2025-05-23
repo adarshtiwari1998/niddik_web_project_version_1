@@ -66,6 +66,7 @@ export default function ProfilePage() {
       noticePeriod: user?.noticePeriod || "Immediately",
       currentCtc: user?.currentCtc || "",
       expectedCtc: user?.expectedCtc || "",
+      skills: user?.skills || "",
       location: user?.location || "",
       city: user?.city || "",
       state: user?.state || "",
