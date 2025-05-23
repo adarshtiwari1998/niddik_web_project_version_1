@@ -234,10 +234,16 @@ export default function JobForm() {
 
   // Submit handler
   function onSubmit(data: z.infer<typeof formSchema>) {
+    // Convert expiryDate to ISO string if it exists
+    const formattedData = {
+      ...data,
+      expiryDate: data.expiryDate ? new Date(data.expiryDate).toISOString() : undefined
+    };
+
     if (isNewJob) {
-      createMutation.mutate(data);
+      createMutation.mutate(formattedData);
     } else {
-      updateMutation.mutate(data);
+      updateMutation.mutate(formattedData);
     }
   }
 
