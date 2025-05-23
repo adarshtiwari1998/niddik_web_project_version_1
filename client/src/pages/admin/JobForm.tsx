@@ -254,12 +254,19 @@ export default function JobForm() {
   // Submit handler
   function onSubmit(data: z.infer<typeof formSchema>) {
     console.log("Form submission data:", data);
+    
+    // Convert dates to ISO string format before submission
+    const timestamp = data.expiryDate ? new Date(data.expiryDate).toISOString() : null;
+    console.log("Converted timestamp:", timestamp);
+    
     // Format the data for submission with proper date handling
     const formattedData = {
       ...data,
-      expiryDate: data.expiryDate ? data.expiryDate.toISOString() : null,
-      postedDate: data.postedDate ? new Date(data.postedDate).toISOString() : new Date().toISOString()
+      expiryDate: timestamp,
+      postedDate: new Date().toISOString()
     };
+    
+    console.log("Formatted submission data:", formattedData);
 
     if (isNewJob) {
       createMutation.mutate(formattedData);
