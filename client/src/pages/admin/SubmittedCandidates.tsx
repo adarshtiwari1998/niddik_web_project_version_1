@@ -1389,7 +1389,6 @@ function SubmittedCandidates() {
                         <div key={`status-${status}`} className="flex items-center justify-between">
                           <div className="flex items-center gap-2">
                             <StatusBadge status={status} />
-                            <span>{status}</span>
                           </div>
                           <div className="text-sm font-medium">{count as number}</div>
                         </div>
