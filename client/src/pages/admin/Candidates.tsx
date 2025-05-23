@@ -218,11 +218,11 @@ export default function Candidates() {
           </CardDescription>
         </CardHeader>
         <CardContent>
-          {isLoading ? (
-            <div className="py-8 text-center">Loading applications...</div>
-          ) : error ? (
+          {error ? (
             <div className="py-8 text-center text-red-500">Error loading applications. Please try again.</div>
-          ) : data?.data.length === 0 ? (
+          ) : isLoading ? (
+            <div className="py-8 text-center">Loading applications...</div>
+          ) : data?.data?.length === 0 ? (
             <div className="py-8 text-center">No applications found. Try adjusting your filters.</div>
           ) : (
             <div className="overflow-x-auto">
