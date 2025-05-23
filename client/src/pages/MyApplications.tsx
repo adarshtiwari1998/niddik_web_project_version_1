@@ -206,7 +206,7 @@ export default function MyApplications() {
         <Card>
           <CardContent className="py-10 text-center">
             <p>You haven't applied to any jobs yet.</p>
-            <Link href="/candidate/jobs">
+            <Link href="/jobs">
               <Button className="mt-4">
                 Browse Jobs
               </Button>
@@ -302,7 +302,7 @@ export default function MyApplications() {
                     </div>
 
                     <div className="flex gap-2">
-                      <Link href={`/candidate/jobs/${application.job.id}`}>
+                      <Link href={`/jobs/${application.job.id}`}>
                         <Button variant="outline" size="sm">
                           View Job
                         </Button>
