@@ -847,6 +847,7 @@ export default function SubmittedCandidates() {
                         <Table>
                           <TableHeader>
                             <TableRow>
+                              <TableHead>Submission Date</TableHead>
                               <TableHead>Sourced By</TableHead>
                               <TableHead>Client</TableHead>
                               <TableHead>POC</TableHead>
@@ -868,22 +869,23 @@ export default function SubmittedCandidates() {
                           <TableBody>
                             {importData.slice(0, 5).map((item: Record<string, string>, index: number) => (
                               <TableRow key={`preview-${index}`}>
-                                <TableCell>{item.sourced_by || item.sourcedBy || ""}</TableCell>
+                                <TableCell>{item.submission_date || ""}</TableCell>
+                                <TableCell>{item.sourced_by || ""}</TableCell>
                                 <TableCell>{item.client || ""}</TableCell>
                                 <TableCell>{item.poc || ""}</TableCell>
                                 <TableCell>{item.skills || ""}</TableCell>
-                                <TableCell>{item.candidate_name || item.candidateName || ""}</TableCell>
-                                <TableCell>{item.contact_no || item.contactNo || ""}</TableCell>
-                                <TableCell>{item.email_id || item.emailId || ""}</TableCell>
+                                <TableCell>{item.candidate_name || ""}</TableCell>
+                                <TableCell>{item.contact_no || ""}</TableCell>
+                                <TableCell>{item.email_id || ""}</TableCell>
                                 <TableCell>{item.experience || ""}</TableCell>
-                                <TableCell>{item.notice_period || item.noticePeriod || ""}</TableCell>
+                                <TableCell>{item.notice_period || ""}</TableCell>
                                 <TableCell>{item.location || ""}</TableCell>
-                                <TableCell>{item.current_ctc || item.currentCtc || ""}</TableCell>
-                                <TableCell>{item.expected_ctc || item.expectedCtc || ""}</TableCell>
-                                <TableCell>{item.bill_rate || item.billRate || ""}</TableCell>
-                                <TableCell>{item.pay_rate || item.payRate || ""}</TableCell>
+                                <TableCell>{item.current_ctc || ""}</TableCell>
+                                <TableCell>{item.expected_ctc || ""}</TableCell>
+                                <TableCell>{item.bill_rate || ""}</TableCell>
+                                <TableCell>{item.pay_rate || ""}</TableCell>
                                 <TableCell>{item.status || ""}</TableCell>
-                                <TableCell>{item.salary_in_lacs || item.salaryInLacs || ""}</TableCell>
+                                <TableCell>{item.salary_in_lacs || ""}</TableCell>
                               </TableRow>
                             ))}
                             {importData.length > 5 && (
