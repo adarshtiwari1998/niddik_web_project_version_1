@@ -251,23 +251,24 @@ export default function CandidateLayout({ children, activeTab = "" }: CandidateL
 
         {/* Footer */}
         <footer className="border-t py-6 bg-background w-full mt-auto">
-        <div className="container flex flex-col md:flex-row items-center justify-between gap-4">
-          <div className="text-sm text-muted-foreground">
-            © 2025 NiDDiK. All rights reserved.
+          <div className="container flex flex-col md:flex-row items-center justify-between gap-4">
+            <div className="text-sm text-muted-foreground">
+              © 2025 NiDDiK. All rights reserved.
+            </div>
+            <div className="flex items-center gap-4">
+              <Link href="/terms">
+                <span className="text-sm text-muted-foreground hover:text-foreground transition-colors">Terms</span>
+              </Link>
+              <Link href="/privacy">
+                <span className="text-sm text-muted-foreground hover:text-foreground transition-colors">Privacy</span>
+              </Link>
+              <Link href="/contact">
+                <span className="text-sm text-muted-foreground hover:text-foreground transition-colors">Contact</span>
+              </Link>
+            </div>
           </div>
-          <div className="flex items-center gap-4">
-            <Link href="/terms">
-              <span className="text-sm text-muted-foreground hover:text-foreground transition-colors">Terms</span>
-            </Link>
-            <Link href="/privacy">
-              <span className="text-sm text-muted-foreground hover:text-foreground transition-colors">Privacy</span>
-            </Link>
-            <Link href="/contact">
-              <span className="text-sm text-muted-foreground hover:text-foreground transition-colors">Contact</span>
-            </Link>
-          </div>
-        </div>
-      </footer>
+        </footer>
+      </div>
     </div>
   );
 }
