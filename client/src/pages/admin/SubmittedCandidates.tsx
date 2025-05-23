@@ -404,30 +404,75 @@ export default function SubmittedCandidates() {
     Papa.parse(file, {
       header: true,
       skipEmptyLines: true,
+      transformHeader: (header: string) => {
+        // Transform headers to match our schema
+        const headerMap: { [key: string]: string } = {
+          'submission date': 'submissionDate',
+          'sourced by': 'sourcedBy',
+          'client': 'client',
+          'poc': 'poc',
+          'skills': 'skills',
+          'candidate name': 'candidateName',
+          'contact no': 'contactNo',
+          'email id': 'emailId',
+          'experience': 'experience',
+          'notice period': 'noticePeriod',
+          'location': 'location',
+          'current ctc': 'currentCtc',
+          'expected ctc': 'expectedCtc',
+          'bill rate': 'billRate',
+          'pay/hr': 'payRate',
+          'status': 'status',
+          'salary (lacs)': 'salaryInLacs'
+        };
+        return headerMap[header.toLowerCase()] || header;
+      },
       complete: (results) => {
-        // Map CSV headers to our schema
+        if (results.errors.length > 0) {
+          toast({
+            title: "Parse Errors",
+            description: "Some rows could not be parsed correctly. Please check your CSV format.",
+            variant: "destructive",
+          });
+          return;
+        }
+
         const mappedData = results.data.map((row: any) => ({
-          submissionDate: row['Submission Date'] || new Date().toISOString().split('T')[0],
-          sourcedBy: row['Sourced By'] || '',
-          client: row['Client'] || '',
-          poc: row['POC'] || '',
-          skills: row['Skills'] || '',
-          candidateName: row['Candidate Name'] || '',
-          contactNo: row['Contact No'] || '',
-          emailId: row['Email ID'] || '',
-          experience: row['Experience'] || '',
-          noticePeriod: row['Notice Period'] || '',
-          location: row['Location'] || '',
-          currentCtc: row['Current CTC'] || '',
-          expectedCtc: row['Expected CTC'] || '',
-          billRate: row['Bill Rate'] || '0',
-          payRate: row['Pay/hr'] || '0',
-          status: row['Status'] || 'new',
-          salaryInLacs: row['Salary (Lacs)'] || ''
+          submissionDate: row.submissionDate || new Date().toISOString().split('T')[0],
+          sourcedBy: row.sourcedBy || 'CSV Import',
+          client: row.client || '',
+          poc: row.poc || '',
+          skills: row.skills || '',
+          candidateName: row.candidateName || '',
+          contactNo: row.contactNo || '',
+          emailId: row.emailId || '',
+          experience: row.experience || '',
+          noticePeriod: row.noticePeriod || '',
+          location: row.location || '',
+          currentCtc: row.currentCtc || '',
+          expectedCtc: row.expectedCtc || '',
+          billRate: row.billRate || '0',
+          payRate: row.payRate || '0',
+          status: row.status || 'new',
+          salaryInLacs: row.salaryInLacs || ''
         }));
-        
+
+        // Validate data before setting
+        if (mappedData.length === 0) {
+          toast({
+            title: "Error",
+            description: "No valid data found in CSV file",
+            variant: "destructive",
+          });
+          return;
+        }
+
         setImportData(mappedData);
         setIsPreviewMode(true);
+        toast({
+          title: "Success",
+          description: `${mappedData.length} records loaded for preview`,
+        });
       },
       error: (error) => {
         toast({
