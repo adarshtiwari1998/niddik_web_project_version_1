@@ -1916,8 +1916,7 @@ export default function SubmittedCandidates() {
                       <CardTitle className="text-base">Rate Information</CardTitle>
                     </CardHeader>
                     <CardContent className="grid grid-cols-1 md:grid-cols-3 gap-4">
-                      <FormField
-                        control={form.control}
+                      <FormFieldcontrol={form.control}
                         name="billRate"
                         render={({ field }) => (
                           <FormItem>
