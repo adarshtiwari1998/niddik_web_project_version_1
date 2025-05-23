@@ -1,4 +1,3 @@
-
 import React from 'react';
 import { Route, Switch } from "wouter";
 import { QueryClientProvider } from "@tanstack/react-query";
@@ -55,7 +54,7 @@ function Router() {
             {/* Public Routes */}
             <Route path="/" component={Home} />
             <Route path="/landing" component={LandingPage} />
-            
+
             {/* Service Routes */}
             <Route path="/services" component={ServicesOverview} />
             <Route path="/services/:serviceSlug" component={ServiceDetail} />
@@ -73,16 +72,16 @@ function Router() {
             <Route path="/partners/it" component={ITPartners} />
             <Route path="/partners/non-it" component={NonITPartners} />
             <Route path="/partners/healthcare" component={HealthcarePartners} />
-            
+
             {/* Company Routes */}
             <Route path="/about-us" component={AboutUs} />
             <Route path="/why-us" component={WhyUs} />
-            
+
             {/* Careers & Jobs */}
             <Route path="/careers" component={CareerPage} />
             <Route path="/jobs/:id" component={JobDetail} />
             <ProtectedRoute path="/candidate/jobs" component={CareerPage} />
-            
+
             {/* Candidate Routes */}
             <ProtectedRoute path="/candidate/dashboard" component={CandidateDashboard} requiredRole="user" />
             <ProtectedRoute path="/dashboard" component={CandidateDashboard} />
@@ -93,11 +92,11 @@ function Router() {
             <ProtectedRoute path="/candidate/jobs/:id" component={JobDetail} />
             <ProtectedRoute path="/candidate/apply/:id" component={JobApplication} />
             <ProtectedRoute path="/apply/:id" component={JobApplication} />
-            
+
             {/* Auth Routes */}
             <Route path="/auth" component={AuthPage} />
             <Route path="/admin/login" component={AdminLogin} />
-            
+
             {/* Admin Routes - Require admin role */}
             <ProtectedRoute path="/admin" component={AdminDashboard} requiredRole="admin" />
             <ProtectedRoute path="/admin/dashboard" component={AdminDashboard} requiredRole="admin" />
@@ -107,10 +106,10 @@ function Router() {
             <ProtectedRoute path="/admin/candidates" component={Candidates} requiredRole="admin" />
             <ProtectedRoute path="/admin/submitted-candidates" component={SubmittedCandidates} requiredRole="admin" />
             <ProtectedRoute path="/admin/demo-requests" component={DemoRequests} requiredRole="admin" />
-            
+
             {/* Demo Request */}
             <Route path="/request-demo" component={RequestDemo} />
-            
+
             {/* 404 - Not Found */}
             <Route component={NotFound} />
         </Switch>
@@ -123,7 +122,8 @@ function App() {
             <QueryClientProvider client={queryClient}>
                 <AuthProvider>
                     <Router />
-                    <StickyPopup />
+                    {window.location.pathname.startsWith('/admin') || 
+                     window.location.pathname.startsWith('/candidate') ? null : <StickyPopup />}
                     <Toaster />
                 </AuthProvider>
             </QueryClientProvider>
