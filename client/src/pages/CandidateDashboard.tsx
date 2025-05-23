@@ -209,7 +209,7 @@ const CandidateDashboard = () => {
                   <div className="space-y-4">
                     {recentJobs.data.slice(0, 5).map((job) => (
                       <div key={job.id} className="border rounded-lg p-4 hover:border-primary transition-colors">
-                        <Link href={`/candidate/jobs/${job.id}`}>
+                        <Link href={`/jobs/${job.id}`}>
                           <h3 className="font-medium mb-2 hover:text-primary cursor-pointer">{job.title}</h3>
                         </Link>
                         <div className="flex flex-wrap gap-y-2 gap-x-3 text-sm text-muted-foreground">
@@ -259,7 +259,7 @@ const CandidateDashboard = () => {
                     {applicationsData.data.slice(0, 5).map((application) => (
                       <div key={application.id} className="border rounded-lg p-4">
                         <div className="flex justify-between mb-2">
-                          <Link href={`/candidate/jobs/${application.jobId}`}>
+                          <Link href={`/jobs/${application.jobId}`}>
                             <h3 className="font-medium hover:text-primary cursor-pointer">{application.job.title}</h3>
                           </Link>
                           <Badge className={
