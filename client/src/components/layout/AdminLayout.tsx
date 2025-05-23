@@ -87,7 +87,7 @@ export default function AdminLayout({ children, title, description }: AdminLayou
       <div className="container mx-auto px-4 py-8 mt-[88px] flex-1">
         <div className="grid grid-cols-1 md:grid-cols-4 gap-6 relative">
           {/* Sidebar */}
-          <div className="md:col-span-1 md:fixed md:w-[276px]">
+          <div className="md:col-span-1 h-100% md:fixed md:w-[276px]">
             <Card>
               <CardHeader className="pb-3">
                 <CardTitle>Admin Menu</CardTitle>
@@ -165,7 +165,7 @@ export default function AdminLayout({ children, title, description }: AdminLayou
           </div>
 
           {/* Main Content */}
-          <div className="md:col-span-3 md:ml-[300px] w-full max-w-[calc(100%-300px)]">
+          <div className="md:col-span-3 md:ml-[300px] w-full max-w-[calc(100%)]">
             <div className="flex justify-between items-center mb-6">
               <div>
                 <h1 className="text-2xl font-bold">{title}</h1>
