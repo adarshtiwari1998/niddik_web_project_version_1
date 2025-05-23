@@ -19,7 +19,8 @@ const resumeStorage = new CloudinaryStorage({
     allowed_formats: ['pdf', 'doc', 'docx'],
     public_id: (req, file) => {
       const timestamp = Date.now();
-      const uniqueId = `resume_${timestamp}`;
+      const extension = file.originalname.split('.').pop();
+      const uniqueId = `resume_${timestamp}.${extension}`;
       return uniqueId;
     },
     use_filename: true,
