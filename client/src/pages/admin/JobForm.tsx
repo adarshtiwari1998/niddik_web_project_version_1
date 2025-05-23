@@ -85,26 +85,27 @@ export default function JobForm() {
 
   useEffect(() => {
     if (jobData?.data && isEditMode) {
+      const job = jobData.data;
       // Reset form with job data
       form.reset({
-        title: jobData.data.title || "",
-        company: jobData.data.company || "Niddik",
-        location: jobData.data.location || "",
-        jobType: jobData.data.jobType || "",
-        experienceLevel: jobData.data.experienceLevel || "",
-        salary: jobData.data.salary || "",
-        description: jobData.data.description || "",
-        requirements: jobData.data.requirements || "",
-        benefits: jobData.data.benefits || "",
-        applicationUrl: jobData.data.applicationUrl || "",
-        contactEmail: jobData.data.contactEmail || "",
-        status: jobData.data.status || "active",
-        featured: jobData.data.featured || false,
-        category: jobData.data.category || "",
-        skills: jobData.data.skills || "",
+        title: job.title,
+        company: job.company,
+        location: job.location,
+        jobType: job.jobType,
+        experienceLevel: job.experienceLevel,
+        salary: job.salary,
+        description: job.description,
+        requirements: job.requirements,
+        benefits: job.benefits || "",
+        applicationUrl: job.applicationUrl || "",
+        contactEmail: job.contactEmail,
+        status: job.status,
+        featured: job.featured,
+        category: job.category,
+        skills: job.skills,
       });
     }
-  }, [jobData, isEditMode, form]);
+  }, [jobData?.data, isEditMode]);
 
   // Create job mutation
   const createJobMutation = useMutation({
