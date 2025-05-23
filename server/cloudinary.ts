@@ -19,10 +19,13 @@ const resumeStorage = new CloudinaryStorage({
     type: 'upload',
     access_mode: 'public',
     allowed_formats: ['pdf', 'doc', 'docx'],
+    use_filename: true,
+    unique_filename: true,
+    overwrite: false,
     public_id: (req, file) => {
       const timestamp = Date.now();
-      const originalName = file.originalname;
-      return `cv-data_${timestamp}_${originalName}`;
+      const nameWithoutExt = file.originalname.split('.')[0];
+      return `cv-data_${timestamp}_${nameWithoutExt}`;
     }
   }
 });
