@@ -887,7 +887,7 @@ export default function SubmittedCandidates() {
                                 <TableCell>{item.margin_per_hour || ""}</TableCell>
                                 <TableCell>{item.profit_per_month || ""}</TableCell>
                                 <TableCell>{item.status || ""}</TableCell>
-                                <TableCell>{item.salary_in_lacs || ""}</TableCell>
+                                <TableCell>{item.salary_in_lacs || item.salaryInLacs || ""}</TableCell>
                               </TableRow>
                             ))}
                             {importData.length > 5 && (
