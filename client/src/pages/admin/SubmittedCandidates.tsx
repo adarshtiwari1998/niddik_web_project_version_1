@@ -67,7 +67,7 @@ type PaginationMeta = {
 // Form schema for candidate form
 const candidateFormSchema = z.object({
   submissionDate: z.string().optional(),
-  sourcedBy: z.string().min(2, "Sourced by is required"),
+  sourcedBy: z.string().optional(),
   client: z.string().min(2, "Client is required"),
   poc: z.string().min(2, "POC is required"),
   skills: z.string().min(2, "Skills are required"),
@@ -1764,7 +1764,7 @@ function SubmittedCandidates() {
                   name="sourcedBy"
                   render={({ field }) => (
                     <FormItem>
-                      <FormLabel>Sourced By *</FormLabel>
+                      <FormLabel>Sourced By</FormLabel>
                       <FormControl>
                         <Input 
                           type="date" 
@@ -1773,7 +1773,6 @@ function SubmittedCandidates() {
                           onChange={(e) => {
                             const value = e.target.value || new Date().toISOString().split('T')[0];
                             field.onChange(value);
-                            form.setValue('sourcedBy', value, { shouldValidate: true });
                           }}
                         />
                       </FormControl>
