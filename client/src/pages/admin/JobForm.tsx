@@ -234,7 +234,13 @@ export default function JobForm() {
     mutationFn: (data: z.infer<typeof formSchema>) =>
       apiRequest("PUT", `/api/job-listings/${jobId}`, data),
     onSuccess: () => {
+      // Invalidate both the list and the individual job query
       queryClient.invalidateQueries({ queryKey: ["/api/job-listings"] });
+      queryClient.invalidateQueries({ queryKey: [`/api/job-listings/${jobId}`] });
+      
+      // Refetch the current job data
+      queryClient.refetchQueries({ queryKey: [`/api/job-listings/${jobId}`] });
+      
       toast({
         title: "Job listing updated",
         description: "Your job listing has been updated successfully.",
