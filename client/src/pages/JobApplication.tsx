@@ -92,7 +92,7 @@ export default function JobApplication() {
       if (!resumeFile && !user.resumeUrl) throw new Error("Resume is required");
 
       setIsUploading(true);
-      
+
       try {
         // Prepare application data
         const applicationData = {
@@ -105,30 +105,30 @@ export default function JobApplication() {
           phoneNumber: data.phoneNumber,
           skills: data.skills,
         };
-        
+
         // If a new resume is being uploaded, use multipart form
         if (resumeFile) {
           const formData = new FormData();
-          
+
           // Add the resume file
           formData.append('resume', resumeFile);
-          
+
           // Add all other application data as form fields
           Object.entries(applicationData).forEach(([key, value]) => {
             formData.append(key, value.toString());
           });
-          
+
           // Submit using FormData for multipart/form-data
           const response = await fetch('/api/job-applications', {
             method: 'POST',
             body: formData,
           });
-          
+
           if (!response.ok) {
             const errorData = await response.json();
             throw new Error(errorData.message || "Failed to submit application");
           }
-          
+
           return response.json();
         } else {
           // No new resume, use the existing resume URL and JSON request
@@ -136,12 +136,12 @@ export default function JobApplication() {
             ...applicationData,
             resumeUrl: user.resumeUrl,
           });
-          
+
           if (!response.ok) {
             const errorData = await response.json();
             throw new Error(errorData.message || "Failed to submit application");
           }
-          
+
           return response.json();
         }
       } catch (error) {
@@ -402,7 +402,7 @@ export default function JobApplication() {
                         <div className="flex-1">
                           <Input
                             type="file"
-                            accept="application/pdf,.doc,.docx,application/msword,application/vnd.openxmlformats-officedocument.wordprocessingml.document"
+                            accept=".pdf,.doc,.docx,application/pdf,application/msword,application/vnd.openxmlformats-officedocument.wordprocessingml.document"
                             onChange={handleFileChange}
                             className="file:mr-4 file:py-2 file:px-4 file:rounded-md file:border-0 file:text-sm file:font-medium file:bg-primary file:text-primary-foreground hover:file:bg-primary/90"
                           />
