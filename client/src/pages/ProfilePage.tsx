@@ -3,7 +3,7 @@ import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
 import { useMutation, useQuery } from "@tanstack/react-query";
-import { User, Mail, Phone, Briefcase, Calendar, MapPin, DollarSign, Upload, Loader2, Code } from "lucide-react";
+import { User, Mail, Phone, Briefcase, Calendar, MapPin, DollarSign, Upload, Loader2, Code, FileText, Trash } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
