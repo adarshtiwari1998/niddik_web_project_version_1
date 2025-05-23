@@ -237,8 +237,8 @@ export default function JobForm() {
     // Format the data for submission
     const formattedData = {
       ...data,
-      // Keep expiryDate as Date object if it exists
-      expiryDate: data.expiryDate ? data.expiryDate : undefined
+      // Convert expiryDate to proper ISO string format
+      expiryDate: data.expiryDate ? new Date(data.expiryDate).toISOString() : null
     };
 
     if (isNewJob) {
