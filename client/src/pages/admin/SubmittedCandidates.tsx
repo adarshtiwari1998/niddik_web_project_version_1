@@ -1403,11 +1403,21 @@ function SubmittedCandidates() {
                     <CardDescription>Clients with most candidate submissions</CardDescription>
                   </CardHeader>
                   <CardContent>
-                    <div className="text-center py-8">
-                      <Info className="h-12 w-12 mx-auto text-muted-foreground" />
-                      <p className="mt-2 text-sm text-muted-foreground">
-                        Client breakdown visualization will be added soon.
-                      </p>
+                    <div className="space-y-4">
+                      {Object.entries(analyticsData.data.clientCounts || {})
+                        .sort(([, a], [, b]) => (b as number) - (a as number))
+                        .slice(0, 5)
+                        .map(([client, count]) => (
+                          <div key={client} className="flex items-center justify-between">
+                            <div className="font-medium">{client}</div>
+                            <div className="text-sm text-muted-foreground">{count as number} candidates</div>
+                          </div>
+                        ))}
+                      {(!analyticsData.data.clientCounts || Object.keys(analyticsData.data.clientCounts).length === 0) && (
+                        <div className="text-center py-4 text-sm text-muted-foreground">
+                          No client data available
+                        </div>
+                      )}
                     </div>
                   </CardContent>
                 </Card>

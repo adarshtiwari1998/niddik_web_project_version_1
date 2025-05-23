@@ -486,19 +486,32 @@ export const storage = {
 
     // Get status counts
     const statusCounts: Record<string, number> = {};
+    const clientCounts: Record<string, number> = {};
+    
     allCandidates.forEach(candidate => {
+      // Count by status
       const status = candidate.status;
       if (!statusCounts[status]) {
         statusCounts[status] = 1;
       } else {
         statusCounts[status]++;
       }
+      
+      // Count by client
+      if (candidate.client) {
+        if (!clientCounts[candidate.client]) {
+          clientCounts[candidate.client] = 1;
+        } else {
+          clientCounts[candidate.client]++;
+        }
+      }
     });
 
     return {
       totalCandidates: totalCount,
       uniqueClients: uniqueClientsCount,
-      statusCounts
+      statusCounts,
+      clientCounts
     };
   },
 
