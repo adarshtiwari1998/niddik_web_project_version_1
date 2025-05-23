@@ -108,13 +108,7 @@ export default function JobForm() {
     },
   });
 
-  // Set form values when editing an existing job
-  // Fetch job data when editing
-  const { data: jobData, isLoading: isLoadingJob } = useQuery({
-    queryKey: [`/api/job-listings/${jobId}`],
-    queryFn: () => apiRequest("GET", `/api/job-listings/${jobId}`),
-    enabled: !isNewJob && jobId !== null,
-  });
+  // Use previously declared jobData and isLoadingJob
 
   useEffect(() => {
     if (!isNewJob && jobData?.data) {
@@ -202,9 +196,12 @@ export default function JobForm() {
       <div className="space-y-6">
         <div>
           <h1 className="text-3xl font-bold tracking-tight">
-            {isNewJob ? "Create Job Listing" : "Edit Job Listing"}
+            {isNewJob ? "Create Job Listing" : `Edit Job Listing - ${jobData?.data?.title || ''}`}
           </h1>
-          <p className="text-muted-foreground">
+          {!isNewJob && jobId && (
+            <p className="text-sm text-muted-foreground">Job ID: {jobId}</p>
+          )}
+          <p className="text-muted-foreground mt-2">
             {isNewJob
               ? "Create a new job listing for your company."
               : "Update the details of an existing job listing."}
