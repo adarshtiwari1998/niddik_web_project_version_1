@@ -861,7 +861,7 @@ export default function SubmittedCandidates() {
                                 <TableCell>{item.skills || ""}</TableCell>
                                 <TableCell>{item.status || ""}</TableCell>
                               </TableRow>
-                            ))}```
+                            ))}
                             {importData.length > 5 && (
                               <TableRow>
                                 <TableCell colSpan={4} className="text-center text-muted-foreground">
@@ -1695,7 +1695,6 @@ export default function SubmittedCandidates() {
               </DialogFooter>
             </form>
           </Form>
-          )}
         </DialogContent>
       </Dialog>
 
