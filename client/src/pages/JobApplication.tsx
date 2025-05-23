@@ -402,7 +402,7 @@ export default function JobApplication() {
                         <div className="flex-1">
                           <Input
                             type="file"
-                            accept=".pdf,.doc,.docx"
+                            accept="application/pdf,.pdf,application/msword,.doc,application/vnd.openxmlformats-officedocument.wordprocessingml.document,.docx"
                             onChange={(e) => {
                               const file = e.target.files?.[0];
                               if (file) {
