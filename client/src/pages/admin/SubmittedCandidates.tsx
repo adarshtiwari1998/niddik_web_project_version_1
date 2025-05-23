@@ -1921,7 +1921,7 @@ export default function SubmittedCandidates() {
                         name="billRate"
                         render={({ field }) => (
                           <FormItem>
-                            <FormLabelBill Rate ($)</FormLabel>
+                            <FormLabel>Bill Rate ($)</FormLabel>
                             <FormControl>
                               <Input 
                                 type="number" 
