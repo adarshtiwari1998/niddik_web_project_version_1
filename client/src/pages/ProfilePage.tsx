@@ -465,7 +465,7 @@ export default function ProfilePage() {
                                   value={field.value}
                                 >
                                   <FormControl>
-                                    <SelectTrigger className="pl-10">
+                                    <SelectTrigger className="pl-10 relative">
                                       <Calendar className="absolute left-3 top-3 h-4 w-4 text-muted-foreground" />
                                       <SelectValue placeholder="Select notice period" />
                                     </SelectTrigger>
