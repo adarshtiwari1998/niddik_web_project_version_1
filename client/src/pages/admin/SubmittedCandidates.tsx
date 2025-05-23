@@ -875,7 +875,8 @@ export default function SubmittedCandidates() {
                       </Button>
                     )}
                   </DialogFooter>
-                </DialogContent>
+                </```text
+                DialogContent>
               </Dialog>
             </div>
 
@@ -1687,55 +1688,14 @@ export default function SubmittedCandidates() {
 
           <Form {...form}>
             <form onSubmit={form.handleSubmit(onSubmitEdit)} className="space-y-6">
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              
+<div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                 <FormField
                   control={form.control}
-                  name="candidateName"
+                  name="sourcedBy"
                   render={({ field }) => (
                     <FormItem>
-                      <FormLabel>Candidate Name *</FormLabel>
-                      <FormControl>
-                        <Input placeholder="Full name" {...field} />
-                      </FormControl>
-                      <FormMessage />
-                    </FormItem>
-                  )}
-                />
-
-                <FormField
-                  control={form.control}
-                  name="emailId"
-                  render={({ field }) => (
-                    <FormItem>
-                      <FormLabel>Email ID *</FormLabel>
-                      <FormControl>
-                        <Input type="email" placeholder="Email address" {...field} />
-                      </FormControl>
-                      <FormMessage />
-                    </FormItem>
-                  )}
-                />
-
-                <FormField
-                  control={form.control}
-                  name="contactNo"
-                  render={({ field }) => (
-                    <FormItem>
-                      <FormLabel>Contact Number *</FormLabel>
-                      <FormControl>
-                        <Input placeholder="Phone number" {...field} />
-                      </FormControl>
-                      <FormMessage />
-                    </FormItem>
-                  )}
-                />
-
-                <FormField
-                  control={form.control}
-                  name="submissionDate"
-                  render={({ field }) => (
-                    <FormItem>
-                      <FormLabel>Submission Date</FormLabel>
+                      <FormLabel>Sourced By *</FormLabel>
                       <FormControl>
                         <Input type="date" {...field} />
                       </FormControl>
@@ -1751,7 +1711,7 @@ export default function SubmittedCandidates() {
                     <FormItem>
                       <FormLabel>Client *</FormLabel>
                       <FormControl>
-                        <Input placeholder="Client company name" {...field} />
+                        <Input {...field} />
                       </FormControl>
                       <FormMessage />
                     </FormItem>
@@ -1765,7 +1725,7 @@ export default function SubmittedCandidates() {
                     <FormItem>
                       <FormLabel>POC *</FormLabel>
                       <FormControl>
-                        <Input placeholder="Point of contact" {...field} />
+                        <Input {...field} />
                       </FormControl>
                       <FormMessage />
                     </FormItem>
@@ -1774,12 +1734,40 @@ export default function SubmittedCandidates() {
 
                 <FormField
                   control={form.control}
-                  name="sourcedBy"
+                  name="candidateName"
                   render={({ field }) => (
                     <FormItem>
-                      <FormLabel>Sourced By *</FormLabel>
+                      <FormLabel>Candidate Name *</FormLabel>
                       <FormControl>
-                        <Input placeholder="Recruiter name" {...field} />
+                        <Input {...field} />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+
+                <FormField
+                  control={form.control}
+                  name="contactNo"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>Contact Number *</FormLabel>
+                      <FormControl>
+                        <Input {...field} />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+
+                <FormField
+                  control={form.control}
+                  name="emailId"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>Email ID *</FormLabel>
+                      <FormControl>
+                        <Input {...field} />
                       </FormControl>
                       <FormMessage />
                     </FormItem>
@@ -1793,7 +1781,7 @@ export default function SubmittedCandidates() {
                     <FormItem>
                       <FormLabel>Location *</FormLabel>
                       <FormControl>
-                        <Input placeholder="Candidate location" {...field} />
+                        <Input {...field} />
                       </FormControl>
                       <FormMessage />
                     </FormItem>
@@ -1807,7 +1795,7 @@ export default function SubmittedCandidates() {
                     <FormItem>
                       <FormLabel>Experience (years) *</FormLabel>
                       <FormControl>
-                        <Input placeholder="Years of experience" {...field} />
+                        <Input {...field} />
                       </FormControl>
                       <FormMessage />
                     </FormItem>
@@ -1821,7 +1809,7 @@ export default function SubmittedCandidates() {
                     <FormItem>
                       <FormLabel>Notice Period *</FormLabel>
                       <FormControl>
-                        <Input placeholder="e.g., Immediate, 30 days" {...field} />
+                        <Input {...field} />
                       </FormControl>
                       <FormMessage />
                     </FormItem>
@@ -1835,7 +1823,7 @@ export default function SubmittedCandidates() {
                     <FormItem>
                       <FormLabel>Current CTC *</FormLabel>
                       <FormControl>
-                        <Input placeholder="Current salary" {...field} />
+                        <Input {...field} />
                       </FormControl>
                       <FormMessage />
                     </FormItem>
@@ -1849,21 +1837,35 @@ export default function SubmittedCandidates() {
                     <FormItem>
                       <FormLabel>Expected CTC *</FormLabel>
                       <FormControl>
-                        <Input placeholder="Expected salary" {...field} />
+                        <Input{...field} />
                       </FormControl>
                       <FormMessage />
                     </FormItem>
                   )}
                 />
 
-                <FormField
+                 <FormField
+                  control={form.control}
+                  name="skills"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>Skills *</FormLabel>
+                      <FormControl>
+                        <Input {...field} />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+
+                 <FormField
                   control={form.control}
                   name="salaryInLacs"
                   render={({ field }) => (
                     <FormItem>
                       <FormLabel>Salary (Lacs)</FormLabel>
                       <FormControl>
-                        <Input placeholder="Annual salary in lacs" {...field} />
+                        <Input {...field} />
                       </FormControl>
                       <FormMessage />
                     </FormItem>
@@ -1876,8 +1878,8 @@ export default function SubmittedCandidates() {
                   render={({ field }) => (
                     <FormItem>
                       <FormLabel>Status *</FormLabel>
-                      <Select 
-                        onValueChange={field.onChange} 
+                      <Select
+                        onValueChange={field.onChange}
                         defaultValue={field.value}
                       >
                         <FormControl>
@@ -1898,15 +1900,38 @@ export default function SubmittedCandidates() {
                   )}
                 />
 
-                <div className="space-y-4 md:col-span-2">
-                  <FormField
+                 <FormField
                     control={form.control}
-                    name="skills"
+                    name="billRate"
                     render={({ field }) => (
                       <FormItem>
-                        <FormLabel>Skills *</FormLabel>
+                        <FormLabel>Bill Rate ($)</FormLabel>
                         <FormControl>
-                          <Input placeholder="Comma-separated skills" {...field} />
+                          <Input
+                            type="number"
+                            step="0.01"
+                            placeholder="Client bill rate"
+                            {...field}
+                          />
+                        </FormControl>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
+
+                  <FormField
+                    control={form.control}
+                    name="payRate"
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormLabel>Pay Rate ($)</FormLabel>
+                        <FormControl>
+                          <Input
+                            type="number"
+                            step="0.01"
+                            placeholder="Candidate pay rate"
+                            {...field}
+                          />
                         </FormControl>
                         <FormMessage />
                       </FormItem>
@@ -1914,72 +1939,13 @@ export default function SubmittedCandidates() {
                   />
                 </div>
 
-                <div className="md:col-span-2">
-                  <Card className="bg-muted/40">
-                    <CardHeader className="pb-3">
-                      <CardTitle className="text-base">Rate Information</CardTitle>
-                    </CardHeader>
-                    <CardContent className="grid grid-cols-1 md:grid-cols-3 gap-4">
-                      <FormField
-                        control={form.control}
-                        name="billRate"
-                        render={({ field }) => (
-                          <FormItem>
-                            <FormLabel>Bill Rate ($)</FormLabel>
-                            <FormControl>
-                              <Input 
-                                type="number" 
-                                step="0.01" 
-                                placeholder="Client bill rate"
-                                {...field}
-                              />
-                            </FormControl>
-                            <FormMessage />
-                          </FormItem>
-                        )}
-                      />
-
-                      <FormField
-                        control={form.control}
-                        name="payRate"
-                        render={({ field }) => (
-                          <FormItem>
-                            <FormLabel>Pay Rate ($)</FormLabel>
-                            <FormControl>
-                              <Input 
-                                type="number" 
-                                step="0.01" 
-                                placeholder="Candidate pay rate"
-                                {...field}
-                              />
-                            </FormControl>
-                            <FormMessage />
-                          </FormItem>
-                        )}
-                      />
-
-                      <div>
-                        <div className="space-y-2">
-                          <Label>Margin/hr ($)</Label>
-                          <Input value={marginPerHour} readOnly disabled className="bg-muted" />
-                          <div className="text-xs text-muted-foreground">
-                            Monthly profit: ${profitPerMonth}
-                          </div>
-                        </div>
-                      </div>
-                    </CardContent>
-                  </Card>
-                </div>
-              </div>
-
               <DialogFooter>
                 <Button variant="outline" type="button" onClick={() => {
                   setIsEditDialogOpen(false);
                   setSelectedCandidate(null);
                 }}>
                   Cancel
-                </Button>
-                <Button type="submit" disabled={updateMutation.isPending}>
+                </Button                <Button type="submit" disabled={updateMutation.isPending}>
                   {updateMutation.isPending ? (
                     <>
                       <Loader2 className="mr-2 h-4 w-4 animate-spin" />
