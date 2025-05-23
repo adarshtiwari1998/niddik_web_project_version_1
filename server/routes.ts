@@ -239,18 +239,27 @@ export async function registerRoutes(app: Express): Promise<Server> {
       }
 
       // Partial validation (only validate fields that are provided)
-      const validatedData = jobListingSchema.partial().parse(req.body);
-      const updatedListing = await storage.updateJobListing(id, validatedData);
-
-      return res.status(200).json({ success: true, data: updatedListing });
-    } catch (error) {
-      if (error instanceof z.ZodError) {
-        return res.status(400).json({ 
-          success: false, 
-          message: "Validation error", 
-          errors: error.errors 
-        });
+      try {
+        const validatedData = jobListingSchema.partial().parse(req.body);
+        const updatedListing = await storage.updateJobListing(id, validatedData);
+        return res.status(200).json({ success: true, data: updatedListing });
+      } catch (validationError) {
+        if (validationError instanceof z.ZodError) {
+          const formattedErrors = validationError.errors.map(err => ({
+            field: err.path.join('.'),
+            message: err.message,
+            code: err.code
+          }));
+          
+          return res.status(400).json({ 
+            success: false, 
+            message: "Invalid job listing data",
+            errors: formattedErrors
+          });
+        }
+        throw validationError; // Re-throw if not a validation error
       }
+    } catch (error) {
       console.error('Error updating job listing:', error);
       return res.status(500).json({ 
         success: false, 
