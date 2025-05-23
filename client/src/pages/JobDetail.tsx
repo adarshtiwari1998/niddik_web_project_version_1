@@ -616,11 +616,11 @@ const handleResumeRemove = async () => {
                 )}
               </div>
             )}
+        </div>,
 
-        </div>
-
-        {/* Application Form */}
-        <Form {...form}>
+        <div className="space-y-4">
+          {/* Application Form */}
+          <Form {...form}>
           <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
             <FormField
                       control={form.control}
