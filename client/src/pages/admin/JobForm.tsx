@@ -87,8 +87,7 @@ export default function JobForm() {
   useEffect(() => {
     if (jobData?.data && isEditMode) {
       const job = jobData.data;
-      // Ensure all fields are populated with default values if missing
-      const formData = {
+      form.reset({
         title: job.title || "",
         company: job.company || "Niddik",
         location: job.location || "",
@@ -104,14 +103,9 @@ export default function JobForm() {
         featured: Boolean(job.featured),
         category: job.category || "",
         skills: job.skills || ""
-      };
-      
-      // Use setTimeout to ensure form is ready
-      setTimeout(() => {
-        form.reset(formData);
-      }, 0);
+      });
     }
-  }, [jobData?.data, isEditMode]);
+  }, [jobData?.data, form, isEditMode]);
 
   // Create job mutation
   const createJobMutation = useMutation({
