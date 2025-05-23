@@ -111,12 +111,26 @@ export default function MyApplications() {
       const res = await fetch(`/api/my-applications/${applicationId}/withdraw`, {
         method: 'DELETE',
       });
-      if (!res.ok) throw new Error("Failed to withdraw application");
+      if (!res.ok) {
+        const error = await res.json();
+        throw new Error(error.message || "Failed to withdraw application");
+      }
       return res.json();
     },
     onSuccess: () => {
+      toast({
+        title: "Application withdrawn",
+        description: "Your application has been successfully withdrawn",
+      });
       queryClient.invalidateQueries({ queryKey: ['/api/my-applications'] });
     },
+    onError: (error) => {
+      toast({
+        title: "Error",
+        description: error instanceof Error ? error.message : "Failed to withdraw application",
+        variant: "destructive",
+      });
+    }
   });
 
   // Handle application withdrawal
