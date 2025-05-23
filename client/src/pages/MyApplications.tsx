@@ -259,14 +259,18 @@ export default function MyApplications() {
                       <div className="flex items-center gap-2 text-sm">
                         <FileText className="h-4 w-4 text-muted-foreground" />
                         <span className="text-muted-foreground">Resume:</span>
-                        <a 
-                          href={application.resumeUrl} 
-                          target="_blank" 
-                          rel="noopener noreferrer"
-                          className="text-primary hover:underline flex items-center gap-1"
-                        >
-                          View <ExternalLink className="h-3 w-3" />
-                        </a>
+                        {application.resumeUrl ? (
+                          <a 
+                            href={application.resumeUrl} 
+                            target="_blank" 
+                            rel="noopener noreferrer"
+                            className="text-primary hover:underline flex items-center gap-1"
+                          >
+                            View <ExternalLink className="h-3 w-3" />
+                          </a>
+                        ) : (
+                          <span className="text-muted-foreground">Not available</span>
+                        )}
                       </div>
                     </div>
                   </div>
