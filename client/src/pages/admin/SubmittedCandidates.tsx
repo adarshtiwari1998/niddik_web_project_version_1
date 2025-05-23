@@ -860,8 +860,7 @@ export default function SubmittedCandidates() {
                               <TableHead>Experience</TableHead>
                               <TableHead>Notice Period</TableHead>
                               <TableHead>Location</TableHead>
-                              <TableHead>Current CTC</TableHead>
-                              <TableHead>Expected CTC</TableHead>
+                              <TableHead>Current CTC</TableHead><TableHead>Expected CTC</TableHead>
                               <TableHead>Bill Rate</TableHead>
                               <TableHead>Pay Rate</TableHead>
                               <TableHead>Margin/Hour</TableHead>
@@ -1862,8 +1861,7 @@ export default function SubmittedCandidates() {
                   render={({ field }) => (
                     <FormItem>
                       <FormLabel>Experience (years) *</FormLabel>
-                      <FormControl>
-                        <Input {...field} />
+                      <FormControl><Input {...field} />
                       </FormControl>
                       <FormMessage />
                     </FormItem>
@@ -2102,7 +2100,7 @@ export default function SubmittedCandidates() {
                   </Card>
                 </div>
 
-                
+
 
                  {/* <FormField
                     control={form.control}
