@@ -847,18 +847,24 @@ export default function SubmittedCandidates() {
                         <Table>
                           <TableHeader>
                             <TableRow>
-                              <TableHead>Name</TableHead>
+                              <TableHead>Sourced By</TableHead>
                               <TableHead>Client</TableHead>
+                              <TableHead>Candidate Name</TableHead>
                               <TableHead>Skills</TableHead>
+                              <TableHead>Experience</TableHead>
+                              <TableHead>Location</TableHead>
                               <TableHead>Status</TableHead>
                             </TableRow>
                           </TableHeader>
                           <TableBody>
                             {importData.slice(0, 5).map((item: Record<string, string>, index: number) => (
                               <TableRow key={`preview-${index}`}>
-                                <TableCell>{item.candidate_name || item.candidateName || ""}</TableCell>
+                                <TableCell>{item.sourcedBy || ""}</TableCell>
                                 <TableCell>{item.client || ""}</TableCell>
+                                <TableCell>{item.candidateName || item.candidate_name || ""}</TableCell>
                                 <TableCell>{item.skills || ""}</TableCell>
+                                <TableCell>{item.experience || ""}</TableCell>
+                                <TableCell>{item.location || ""}</TableCell>
                                 <TableCell>{item.status || ""}</TableCell>
                               </TableRow>
                             ))}
