@@ -238,10 +238,24 @@ export async function registerRoutes(app: Express): Promise<Server> {
         });
       }
 
-      // Partial validation (only validate fields that are provided)
+      // Extract date fields and validate remaining fields separately
+      const { postedDate, expiryDate, ...otherFields } = req.body;
+      
       try {
-        const validatedData = jobListingSchema.partial().parse(req.body);
-        const updatedListing = await storage.updateJobListing(id, validatedData);
+        // Only validate non-date fields
+        const validatedData = jobListingSchema.partial().omit({ 
+          postedDate: true, 
+          expiryDate: true 
+        }).parse(otherFields);
+
+        // Combine validated data with date fields
+        const updateData = {
+          ...validatedData,
+          postedDate: postedDate,
+          expiryDate: expiryDate
+        };
+
+        const updatedListing = await storage.updateJobListing(id, updateData);
         return res.status(200).json({ success: true, data: updatedListing });
       } catch (validationError) {
         if (validationError instanceof z.ZodError) {
