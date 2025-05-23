@@ -1750,16 +1750,30 @@ export default function SubmittedCandidates() {
 <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                 <FormField
                   control={form.control}
+                  name="submissionDate"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>Submission Date *</FormLabel>
+                      <FormControl>
+                        <Input 
+                          type="date" 
+                          {...field} 
+                          value={field.value || selectedCandidate?.submissionDate || new Date().toISOString().split('T')[0]}
+                        />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+
+                <FormField
+                  control={form.control}
                   name="sourcedBy"
                   render={({ field }) => (
                     <FormItem>
                       <FormLabel>Sourced By *</FormLabel>
                       <FormControl>
-                        <Input 
-                          type="date" 
-                          {...field} 
-                          value={field.value || selectedCandidate?.sourcedBy || new Date().toISOString().split('T')[0]}
-                        />
+                        <Input {...field} value={field.value || selectedCandidate?.sourcedBy || ''} />
                       </FormControl>
                       <FormMessage />
                     </FormItem>
