@@ -2166,3 +2166,6 @@ export default function SubmittedCandidates() {
     </AdminLayout>
   );
 }
+
+export default SubmittedCandidates;
+}
