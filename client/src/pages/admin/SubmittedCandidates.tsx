@@ -21,6 +21,7 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { Form, FormControl, FormDescription, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
 import { Textarea } from "@/components/ui/textarea";
 import Papa from 'papaparse';
+import React from 'react';
 
 // Define the type for a submitted candidate
 type SubmittedCandidate = {
@@ -163,7 +164,7 @@ const statusOptions = [
   { value: "selected", label: "Selected" }
 ];
 
-export default function SubmittedCandidates() {
+function SubmittedCandidates() {
   const { toast } = useToast();
   const queryClient = useQueryClient();
 
@@ -701,6 +702,7 @@ export default function SubmittedCandidates() {
   };
 
   return (
+    <>
     <AdminLayout title="Submitted Candidates" description="Manage candidate submissions to clients">
       <Tabs defaultValue="list" className="space-y-4">
         <TabsList>
@@ -859,6 +861,8 @@ export default function SubmittedCandidates() {
                               <TableHead>Email ID</TableHead>
                               <TableHead>Experience</TableHead>
                               <TableHead>Notice Period</TableHead>
+                              ```
+<previous_generation>
                               <TableHead>Location</TableHead>
                               <TableHead>Current CTC</TableHead>
                               <TableHead>Expected CTC</TableHead>
@@ -1858,7 +1862,7 @@ export default function SubmittedCandidates() {
                 <FormField
                   control={form.control}
                   name="experience"
-                  render={({ field }) => (
+                  render={({ field}) => (
                     <FormItem>
                       <FormLabel>Experience (years) *</FormLabel>
                       <FormControl><Input {...field} />
@@ -2164,8 +2168,8 @@ export default function SubmittedCandidates() {
         </DialogContent>
       </Dialog>
     </AdminLayout>
+    </>
   );
 }
 
 export default SubmittedCandidates;
-}
