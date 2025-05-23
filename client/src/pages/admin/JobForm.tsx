@@ -83,38 +83,89 @@ export default function JobForm() {
   // If editing, fetch the job data
   const { data: jobData, isLoading: isLoadingJob } = useQuery({
     queryKey: [`/api/job-listings/${jobId}`],
-    queryFn: () => apiRequest("GET", `/api/job-listings/${jobId}`),
+    queryFn: async () => {
+      const response = await apiRequest("GET", `/api/job-listings/${jobId}`);
+      const data = await response.json();
+      return data;
+    },
     enabled: !isNewJob && jobId !== null,
   });
 
-  // Form setup
+  // Form setup with async default values
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
-    defaultValues: {
-      title: "",
-      company: "Andela", // Default to company name
-      location: "",
-      jobType: "Full-time",
-      experienceLevel: "Mid",
-      salary: "",
-      description: "",
-      requirements: "",
-      benefits: "",
-      applicationUrl: "",
-      contactEmail: "",
-      status: "active",
-      featured: false,
-      category: "Engineering",
-      skills: "",
+    defaultValues: async () => {
+      if (!isNewJob && jobId) {
+        try {
+          const response = await apiRequest("GET", `/api/job-listings/${jobId}`);
+          const data = await response.json();
+          const job = data.data;
+          
+          return {
+            title: job.title,
+            company: job.company,
+            location: job.location,
+            jobType: job.jobType,
+            experienceLevel: job.experienceLevel,
+            salary: job.salary,
+            description: job.description,
+            requirements: job.requirements,
+            benefits: job.benefits || "",
+            applicationUrl: job.applicationUrl || "",
+            contactEmail: job.contactEmail || "",
+            status: job.status,
+            featured: Boolean(job.featured),
+            category: job.category,
+            skills: job.skills,
+            expiryDate: job.expiryDate ? new Date(job.expiryDate) : undefined,
+          };
+        } catch (error) {
+          console.error("Error fetching job data:", error);
+          return {
+            title: "",
+            company: "Andela",
+            location: "",
+            jobType: "Full-time",
+            experienceLevel: "Mid",
+            salary: "",
+            description: "",
+            requirements: "",
+            benefits: "",
+            applicationUrl: "",
+            contactEmail: "",
+            status: "active",
+            featured: false,
+            category: "Engineering",
+            skills: "",
+          };
+        }
+      }
+      
+      // Default values for new job
+      return {
+        title: "",
+        company: "Andela",
+        location: "",
+        jobType: "Full-time",
+        experienceLevel: "Mid",
+        salary: "",
+        description: "",
+        requirements: "",
+        benefits: "",
+        applicationUrl: "",
+        contactEmail: "",
+        status: "active",
+        featured: false,
+        category: "Engineering",
+        skills: "",
+      };
     },
   });
-
-  // Use previously declared jobData and isLoadingJob
 
   useEffect(() => {
     if (!isNewJob && jobData?.data) {
       const job = jobData.data;
-      console.log("Setting form data:", job); // Debug log
+      console.log("Updating form data:", job);
       
       form.reset({
         title: job.title,
