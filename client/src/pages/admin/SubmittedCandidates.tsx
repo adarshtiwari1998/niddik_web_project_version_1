@@ -1760,7 +1760,9 @@ export default function SubmittedCandidates() {
                           {...field}
                           value={field.value || selectedCandidate?.sourcedBy || new Date().toISOString().split('T')[0]}
                           onChange={(e) => {
-                            field.onChange(e.target.value || new Date().toISOString().split('T')[0]);
+                            const value = e.target.value || new Date().toISOString().split('T')[0];
+                            field.onChange(value);
+                            form.setValue('sourcedBy', value, { shouldValidate: true });
                           }}
                         />
                       </FormControl>
