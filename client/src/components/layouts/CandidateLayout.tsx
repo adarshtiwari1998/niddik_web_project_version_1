@@ -197,9 +197,9 @@ export default function CandidateLayout({ children, activeTab = "" }: CandidateL
       </header>
 
       {/* Main Content */}
-      <div className="flex pt-16 min-h-screen overflow-hidden">
+      <div className="flex pt-16 min-h-[calc(100vh-64px)] relative">
         {/* Sidebar - Desktop only */}
-        <div className="hidden md:block fixed left-0 top-16 w-64 border-r bg-background h-[calc(100vh-64px)] overflow-y-auto">
+        <div className="hidden md:block fixed left-0 top-16 w-64 border-r bg-background h-[calc(100vh-64px)]">
           <div className="w-full p-4">
             <div className="flex flex-col h-full">
               <nav className="space-y-1">
@@ -243,7 +243,7 @@ export default function CandidateLayout({ children, activeTab = "" }: CandidateL
         </div>
 
         {/* Main Content */}
-        <div className="flex-1 ml-0 md:ml-64 p-4 md:p-8 h-[calc(100vh-64px)]">
+        <div className="flex-1 ml-0 md:ml-64 p-4 md:p-8 min-h-full pb-24">
           {children}
         </div>
       </div>
