@@ -524,13 +524,43 @@ export default function ProfilePage() {
                               <FormItem className="col-span-2">
                                 <FormLabel>Skills</FormLabel>
                                 <FormControl>
-                                  <div className="relative">
-                                    <Code className="absolute left-3 top-3 h-4 w-4 text-muted-foreground" />
-                                    <Input 
-                                      placeholder="Add your skills (comma separated)" 
-                                      className="pl-10" 
-                                      {...field} 
-                                    />
+                                  <div className="space-y-2">
+                                    <div className="relative">
+                                      <Code className="absolute left-3 top-3 h-4 w-4 text-muted-foreground" />
+                                      <Input 
+                                        placeholder="Add your skills (comma separated)" 
+                                        className="pl-10"
+                                        value={field.value || ''}
+                                        onChange={(e) => {
+                                          const value = e.target.value;
+                                          if (value.endsWith(',')) {
+                                            field.onChange(value.slice(0, -1).trim() + ', ');
+                                          } else {
+                                            field.onChange(value);
+                                          }
+                                        }}
+                                        onKeyDown={(e) => {
+                                          if (e.key === ',') {
+                                            e.preventDefault();
+                                            const value = field.value?.trim() || '';
+                                            field.onChange(value + (value ? ', ' : ''));
+                                          }
+                                        }}
+                                      />
+                                    </div>
+                                    <div className="flex flex-wrap gap-2">
+                                      {field.value?.split(',').map((skill, index) => (
+                                        skill.trim() && (
+                                          <Badge 
+                                            key={index} 
+                                            variant="secondary"
+                                            className="text-sm"
+                                          >
+                                            {skill.trim()}
+                                          </Badge>
+                                        )
+                                      ))}
+                                    </div>
                                   </div>
                                 </FormControl>
                                 <FormDescription>
