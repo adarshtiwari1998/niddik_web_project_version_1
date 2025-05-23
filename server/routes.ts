@@ -20,7 +20,7 @@ import { resumeUpload } from "./cloudinary";
 import { scrypt, randomBytes, timingSafeEqual } from "crypto";
 import { promisify } from "util";
 import jwt from "jsonwebtoken";
-import { adminUsers } from "../db/schema";
+import { adminUsers } from "@shared/schema";
 
 const scryptAsync = promisify(scrypt);
 
