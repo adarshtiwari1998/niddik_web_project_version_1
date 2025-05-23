@@ -10,40 +10,50 @@ cloudinary.config({
   api_secret: process.env.CLOUDINARY_API_SECRET
 });
 
-// Create storage engine for CV uploads
+// Log configuration (development purposes)
+console.log('Cloudinary configuration:', {
+  cloud_name: cloudinary.config().cloud_name,
+  api_key: cloudinary.config().api_key,
+});
+
+// Create storage engine for resume uploads
 const resumeStorage = new CloudinaryStorage({
   cloudinary: cloudinary,
   params: {
-    folder: 'public',
+    folder: 'resumes',
     resource_type: 'raw',
-    allowed_formats: ['pdf', 'doc', 'docx'],
-    public_id: (req, file) => {
-      const timestamp = Date.now();
-      return `resumes/resume_${timestamp}`;
-    },
-    use_filename: false,
-    unique_filename: true,
-    overwrite: true,
-    access_mode: 'public',
     type: 'upload',
-    resource_type: 'auto',
-    folder_access_mode: 'public',
-    resource_options: {
-      type: 'upload',
-      access_mode: 'public',
-      folder_access_mode: 'public'
-    },
-    overwrite: true,
-    use_filename: true,
-    folder_access_mode: 'public'
-  } as any
+    format: async (req, file) => file.originalname.split('.').pop() || 'pdf',
+    public_id: (req, file) => `resume_${Date.now()}`,
+    allowed_formats: ['pdf', 'doc', 'docx'],
+    access_mode: 'public'
+  }
 });
 
-// Create the multer upload instance for CVs
+// Create the multer upload instance for resumes
 export const resumeUpload = multer({ 
   storage: resumeStorage,
   limits: { fileSize: 5 * 1024 * 1024 } // 5MB limit
 });
+
+// Function to get configured storage for different purposes
+export const getCloudinaryStorage = (
+  folder: string,
+  format = 'png',
+  publicIdPrefix = '',
+  isProtected = false
+) => {
+  return new CloudinaryStorage({
+    cloudinary,
+    params: {
+      folder,
+      resource_type: 'image',
+      type: isProtected ? 'private' : 'upload',
+      format: async (req, file) => format,
+      public_id: (req, file) => `${publicIdPrefix}_${Date.now()}`
+    }
+  });
+};
 
 // Function to delete file from Cloudinary
 export const deleteFile = async (publicId: string) => {
@@ -55,3 +65,5 @@ export const deleteFile = async (publicId: string) => {
     return false;
   }
 };
+
+export { cloudinary };
