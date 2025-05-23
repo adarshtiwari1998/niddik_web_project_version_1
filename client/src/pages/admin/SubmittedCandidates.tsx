@@ -6,23 +6,19 @@ import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle }
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { Calendar } from "@/components/ui/calendar";
-import { CalendarIcon } from "lucide-react";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Table, TableBody, TableCaption, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
 import { Badge } from "@/components/ui/badge";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle, AlertDialogTrigger } from "@/components/ui/alert-dialog";
-import { Loader2, Edit, Trash2, Info, Plus, Download, Upload, Filter, Search, FileSpreadsheet, Check, X, Calendar as CalendarIcon } from "lucide-react";
+import { Loader2, Edit, Trash2, Info, Plus, Download, Upload, Filter, Search, FileSpreadsheet, Check, X } from "lucide-react";
 import { formatDistanceToNow } from "date-fns";
 import { apiRequest } from "@/lib/queryClient";
 import { useForm, SubmitHandler } from "react-hook-form";
 import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Form, FormControl, FormDescription, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
-import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
-import { Calendar } from "@/components/ui/calendar";
 import { Textarea } from "@/components/ui/textarea";
 import Papa from 'papaparse';
 import React from 'react';
@@ -70,8 +66,8 @@ type PaginationMeta = {
 
 // Form schema for candidate form
 const candidateFormSchema = z.object({
-  submissionDate: z.date().optional(),
-  sourcedBy: z.string().optional(),
+  submissionDate: z.string().optional(),
+  sourcedBy: z.string().min(2, "Sourced by is required"),
   client: z.string().min(2, "Client is required"),
   poc: z.string().min(2, "POC is required"),
   skills: z.string().min(2, "Skills are required"),
@@ -860,11 +856,13 @@ function SubmittedCandidates() {
                               <TableHead>POC</TableHead>
                               <TableHead>Skills</TableHead>
                               <TableHead>Candidate Name</TableHead>
-                              <TableHead>Contact No</Table                              <TableHead>Email ID</TableHead>
-                              <TableHead>Experience</              TableHead>
+                              <TableHead>Contact No</TableHead>
+                              <TableHead>Email ID</TableHead>
+                              <TableHead>Experience</TableHead>
                               <TableHead>Notice Period</TableHead>
                               <TableHead>Location</TableHead>
-                              <TableHead>Current CTC</TableHead>                              <TableHead>Expected CTC</TableHead>
+                              <TableHead>Current CTC</TableHead>
+                              <TableHead>Expected CTC</TableHead>
                               <TableHead>Bill Rate</TableHead>
                               <TableHead>Pay Rate</TableHead>
                               <TableHead>Margin/Hour</TableHead>
@@ -1623,74 +1621,29 @@ function SubmittedCandidates() {
                 <FormField
                   control={form.control}
                   name="status"
-                  render={({ field }) => {
-                    const [isCustom, setIsCustom] = useState(false);
-                    const [customValue, setCustomValue] = useState(field.value || "");
-
-                    useEffect(() => {
-                      const standardStatuses = ["new", "submitted to client", "scheduled for interview", "rejected", "selected"];
-                      if (field.value && !standardStatuses.includes(field.value)) {
-                        setIsCustom(true);
-                        setCustomValue(field.value);
-                      }
-                    }, [field.value]);
-
-                    return (
-                      <FormItem>
-                        <FormLabel>Status *</FormLabel>
-                        {!isCustom ? (
-                          <Select
-                            onValueChange={(value) => {
-                              if (value === "custom") {
-                                setIsCustom(true);
-                              } else {
-                                field.onChange(value);
-                              }
-                            }}
-                            value={field.value}
-                          >
-                            <FormControl>
-                              <SelectTrigger>
-                                <SelectValue placeholder="Select status" />
-                              </SelectTrigger>
-                            </FormControl>
-                            <SelectContent>
-                              <SelectItem value="new">New</SelectItem>
-                              <SelectItem value="submitted to client">Submitted to Client</SelectItem>
-                              <SelectItem value="scheduled for interview">Scheduled for Interview</SelectItem>
-                              <SelectItem value="rejected">Rejected</SelectItem>
-                              <SelectItem value="selected">Selected</SelectItem>
-                              <SelectItem value="custom">+ Add Custom Status</SelectItem>
-                            </SelectContent>
-                          </Select>
-                        ) : (
-                          <div className="flex gap-2">
-                            <Input
-                              value={customValue}
-                              onChange={(e) => {
-                                setCustomValue(e.target.value);
-                                field.onChange(e.target.value);
-                              }}
-                              placeholder="Enter custom status"
-                            />
-                            <Button
-                              type="button"
-                              variant="outline"
-                              size="icon"
-                              onClick={() => {
-                                setIsCustom(false);
-                                setCustomValue("");
-                                field.onChange("new");
-                              }}
-                            >
-                              <X className="h-4 w-4" />
-                            </Button>
-                          </div>
-                        )}
-                        <FormMessage />
-                      </FormItem>
-                    );
-                  }}
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>Status *</FormLabel>
+                      <Select 
+                        onValueChange={field.onChange} 
+                        defaultValue={field.value}
+                      >
+                        <FormControl>
+                          <SelectTrigger>
+                            <SelectValue placeholder="Select status" />
+                          </SelectTrigger>
+                        </FormControl>
+                        <SelectContent>
+                          <SelectItem value="new">New</SelectItem>
+                          <SelectItem value="submitted to client">Submitted to Client</SelectItem>
+                          <SelectItem value="scheduled for interview">Scheduled for Interview</SelectItem>
+                          <SelectItem value="rejected">Rejected</SelectItem>
+                          <SelectItem value="selected">Selected</SelectItem>
+                        </SelectContent>
+                      </Select>
+                      <FormMessage />
+                    </FormItem>
+                  )}
                 />
 
                 <div className="space-y-4 md:col-span-2">
@@ -1812,35 +1765,18 @@ function SubmittedCandidates() {
                   render={({ field }) => (
                     <FormItem>
                       <FormLabel>Sourced By *</FormLabel>
-                      <div className="flex gap-2">
-                        <FormControl className="flex-1">
-                          <Input 
-                            placeholder="Sourced by name"
-                            {...field}
-                            type="text"
-                            value={field.value || selectedCandidate?.sourcedBy || ''}
-                          />
-                        </FormControl>
-                        <Popover>
-                          <PopoverTrigger asChild>
-                            <Button variant="outline" size="icon">
-                              <CalendarIcon className="h-4 w-4" />
-                            </Button>
-                          </PopoverTrigger>
-                          <PopoverContent className="w-auto p-0" align="end">
-                            <Calendar
-                              mode="single"
-                              selected={form.getValues('submissionDate') ? new Date(form.getValues('submissionDate')) : new Date()}
-                              onSelect={(date) => {                                if (date) {
-                                  form.setValue('submissionDate', date, { shouldValidate: true });
-                                  form.setValue('sourcedBy', date.toISOString().split('T')[0], { shouldValidate: true });
-                                }
-                              }}
-                              initialFocus
-                            />
-                          </PopoverContent>
-                        </Popover>
-                      </div>
+                      <FormControl>
+                        <Input 
+                          type="date" 
+                          {...field}
+                          value={field.value || selectedCandidate?.sourcedBy || new Date().toISOString().split('T')[0]}
+                          onChange={(e) => {
+                            const value = e.target.value || new Date().toISOString().split('T')[0];
+                            field.onChange(value);
+                            form.setValue('sourcedBy', value, { shouldValidate: true });
+                          }}
+                        />
+                      </FormControl>
                       <FormMessage />
                     </FormItem>
                   )}
