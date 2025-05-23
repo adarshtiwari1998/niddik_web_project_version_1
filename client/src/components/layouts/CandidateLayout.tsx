@@ -197,8 +197,8 @@ export default function CandidateLayout({ children, activeTab = "" }: CandidateL
       </header>
 
       {/* Main Content */}
-      <div className="flex flex-col pt-16 min-h-screen">
-        <div className="flex flex-1 relative">
+      <div className="flex flex-col min-h-screen pt-16">
+        <div className="flex-1 flex relative">
           {/* Sidebar - Desktop only */}
           <div className="hidden md:block fixed left-0 top-16 w-64 border-r bg-background h-[calc(100vh-64px)]">
             <div className="w-full p-4">
@@ -244,14 +244,13 @@ export default function CandidateLayout({ children, activeTab = "" }: CandidateL
           </div>
 
           {/* Main Content */}
-          <div className="flex-1 ml-0 md:ml-64 p-4 md:p-8 min-h-full pb-24">
+          <div className="flex-1 ml-0 md:ml-64 p-4 md:p-8">
             {children}
           </div>
         </div>
-      </div>
 
-      {/* Footer */}
-      <footer className="border-t py-6 bg-background w-full relative z-[99]">
+        {/* Footer */}
+        <footer className="border-t py-6 bg-background w-full mt-auto">
         <div className="container flex flex-col md:flex-row items-center justify-between gap-4">
           <div className="text-sm text-muted-foreground">
             © 2025 NiDDiK. All rights reserved.
