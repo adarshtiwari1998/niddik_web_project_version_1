@@ -181,6 +181,7 @@ export default function SubmittedCandidates() {
   const [isPreviewMode, setIsPreviewMode] = useState(false);
   const [applicantSearch, setApplicantSearch] = useState("");
   const [isApplicantsDialogOpen, setIsApplicantsDialogOpen] = useState(false);
+  const [editDialogLoading, setEditDialogLoading] = useState(false);
 
   // Calculate margin and profit based on bill rate and pay rate
   const calculateMarginAndProfit = (billRate: string, payRate: string) => {
@@ -245,30 +246,35 @@ export default function SubmittedCandidates() {
   }, [selectedCandidate, form]);
 
   // Initialize edit form when a candidate is selected
-  const initializeEditForm = (candidate: SubmittedCandidate) => {
-    const formData = {
-      ...candidate,
-      sourcedBy: candidate.sourcedBy || '',
-      submissionDate: candidate.submissionDate ? new Date(candidate.submissionDate).toISOString().split('T')[0] : new Date().toISOString().split('T')[0],
-      client: candidate.client || '',
-      poc: candidate.poc || '',
-      skills: candidate.skills || '',
-      candidateName: candidate.candidateName || '',
-      contactNo: candidate.contactNo || '',
-      emailId: candidate.emailId || '',
-      experience: candidate.experience || '',
-      noticePeriod: candidate.noticePeriod || '',
-      location: candidate.location || '',
-      currentCtc: candidate.currentCtc || '',
-      expectedCtc: candidate.expectedCtc || '',
-      billRate: candidate.billRate?.toString() || '',
-      payRate: candidate.payRate?.toString() || '',
-      status: candidate.status || '',
-      salaryInLacs: candidate.salaryInLacs || ''
-    };
-    form.reset(formData);
-    setSelectedCandidate(candidate);
-    setIsEditDialogOpen(true);
+  const initializeEditForm = async (candidate: SubmittedCandidate) => {
+    setEditDialogLoading(true);
+    try {
+      const formData = {
+        ...candidate,
+        sourcedBy: candidate.sourcedBy || '',
+        submissionDate: candidate.submissionDate ? new Date(candidate.submissionDate).toISOString().split('T')[0] : new Date().toISOString().split('T')[0],
+        client: candidate.client || '',
+        poc: candidate.poc || '',
+        skills: candidate.skills || '',
+        candidateName: candidate.candidateName || '',
+        contactNo: candidate.contactNo || '',
+        emailId: candidate.emailId || '',
+        experience: candidate.experience || '',
+        noticePeriod: candidate.noticePeriod || '',
+        location: candidate.location || '',
+        currentCtc: candidate.currentCtc || '',
+        expectedCtc: candidate.expectedCtc || '',
+        billRate: candidate.billRate?.toString() || '',
+        payRate: candidate.payRate?.toString() || '',
+        status: candidate.status || '',
+        salaryInLacs: candidate.salaryInLacs || ''
+      };
+      form.reset(formData);
+      setSelectedCandidate(candidate);
+      setIsEditDialogOpen(true);
+    } finally {
+      setEditDialogLoading(false);
+    }
   };
 
   // Watch billRate and payRate for auto-calculation
@@ -855,7 +861,7 @@ export default function SubmittedCandidates() {
                                 <TableCell>{item.skills || ""}</TableCell>
                                 <TableCell>{item.status || ""}</TableCell>
                               </TableRow>
-                            ))}
+                            ))}```
                             {importData.length > 5 && (
                               <TableRow>
                                 <TableCell colSpan={4} className="text-center text-muted-foreground">
@@ -1701,7 +1707,12 @@ export default function SubmittedCandidates() {
               Update the details of this candidate.
             </DialogDescription>
           </DialogHeader>
-
+           {editDialogLoading ? (
+            <div className="flex flex-col items-center justify-center py-8">
+              <Loader2 className="h-6 w-6 animate-spin mx-auto" />
+              <span className="text-sm text-muted-foreground mt-2 block">Loading candidate data...</span>
+            </div>
+          ) : (
           <Form {...form}>
             <form onSubmit={form.handleSubmit(onSubmitEdit)} className="space-y-6">
 
@@ -1904,8 +1915,7 @@ export default function SubmittedCandidates() {
                           </SelectTrigger>
                         </FormControl>
                         <SelectContent>
-                          <SelectItem value="new">New</SelectItem>
-                          <SelectItem value="submitted to client">Submitted to Client</SelectItem>
+                          <SelectItem value="new">New</SelectItem                          <SelectItem value="submitted to client">Submitted to Client</SelectItem>
                           <SelectItem value="scheduled for interview">Scheduled for Interview</SelectItem>
                           <SelectItem value="rejected">Rejected</SelectItem>
                           <SelectItem value="selected">Selected</SelectItem>
@@ -1975,6 +1985,7 @@ export default function SubmittedCandidates() {
               </DialogFooter>
             </form>
           </Form>
+          )}
         </DialogContent>
       </Dialog>
     </AdminLayout>
