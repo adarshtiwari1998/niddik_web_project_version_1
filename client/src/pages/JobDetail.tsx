@@ -506,34 +506,34 @@ const handleResumeRemove = async () => {
                 </div>
 
                 {/* Resume Link */}
-                <div className="container mx-100 ">
-                {/* Resume Management */}
-            {user?.resumeUrl ? (
-              <div className="p-4 border rounded-md bg-muted/5">
-                <div className="flex items-center justify-between">
-                  <div className="flex items-center gap-2">
-                    <FileText className="h-4 w-4 text-primary" />
-                    <a href={user.resumeUrl} target="_blank" className="underline">
-                      View Resume
-                    </a>
-                  </div>
-                  <Button
-                    variant="destructive"
-                    size="sm"
-                    onClick={handleResumeRemove}
-                    disabled={isRemoving}
-                  >
-                    {isRemoving ? (
-                      <Loader2 className="h-4 w-4 animate-spin" />
-                    ) : (
-                      <Trash className="h-4 w-4" />
-                    )}
-                    Remove
-                  </Button>
-                </div>
-              </div>
-            ) : (
-              <div className="space-y-2">
+                <div className="container mx-100">
+                  {/* Resume Management */}
+                  {user?.resumeUrl ? (
+                    <div className="p-4 border rounded-md bg-muted/5">
+                      <div className="flex items-center justify-between">
+                        <div className="flex items-center gap-2">
+                          <FileText className="h-4 w-4 text-primary" />
+                          <a href={user.resumeUrl} target="_blank" className="underline">
+                            View Resume
+                          </a>
+                        </div>
+                        <Button
+                          variant="destructive"
+                          size="sm"
+                          onClick={handleResumeRemove}
+                          disabled={isRemoving}
+                        >
+                          {isRemoving ? (
+                            <Loader2 className="h-4 w-4 animate-spin" />
+                          ) : (
+                            <Trash className="h-4 w-4" />
+                          )}
+                          Remove
+                        </Button>
+                      </div>
+                    </div>
+                  ) : (
+                    <div className="space-y-2">
                 <div>
                   <Input
                     type="file"
@@ -612,11 +612,10 @@ const handleResumeRemove = async () => {
 
                     </div>
                   </div>
-                )}
-              </div>
-            )}
-        </div>
-        <div className="space-y-4">
+                </div>
+                  )}
+                </div>
+                <div className="space-y-4">
           {/* Application Form */}
           <Form {...form}>
           <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
