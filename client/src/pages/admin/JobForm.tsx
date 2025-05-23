@@ -12,7 +12,6 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { Switch } from "@/components/ui/switch";
-import { Label } from "@/components/ui/label";
 import { Loader2, Save, ArrowLeft } from "lucide-react";
 import { Form, FormControl, FormDescription, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
@@ -212,7 +211,6 @@ export default function JobForm() {
         <Form {...form}>
           <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8">
             <div className="grid grid-cols-1 gap-8 md:grid-cols-2">
-              {/* Basic Information Card */}
               <Card>
                 <CardHeader>
                   <CardTitle>Basic Information</CardTitle>
@@ -365,7 +363,6 @@ export default function JobForm() {
                 </CardContent>
               </Card>
 
-              {/* Job Details Card */}
               <Card>
                 <CardHeader>
                   <CardTitle>Job Details</CardTitle>
@@ -483,7 +480,6 @@ export default function JobForm() {
               </Card>
             </div>
 
-            {/* Publishing Options Card */}
             <Card>
               <CardHeader>
                 <CardTitle>Publishing Options</CardTitle>
