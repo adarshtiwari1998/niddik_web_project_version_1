@@ -860,7 +860,7 @@ export default function SubmittedCandidates() {
                               <TableHead>Experience</TableHead>
                               <TableHead>Notice Period</TableHead>
                               <TableHead>Location</TableHead>
-                              <TableHead>Current CTC</TableHead><TableHead>Expected CTC</TableHead>
+                              <TableHead>Current CTC</Table                              <TableHead>Expected CTC</TableHead>
                               <TableHead>Bill Rate</TableHead>
                               <TableHead>Pay Rate</TableHead>
                               <TableHead>Margin/Hour</TableHead>
@@ -1725,7 +1725,6 @@ export default function SubmittedCandidates() {
               </DialogFooter>
             </form>
           </Form>
-          )}
         </DialogContent>
       </Dialog>
 
@@ -2087,7 +2086,7 @@ export default function SubmittedCandidates() {
                         <Label>Calculated Values</Label>
                         <div className="mt-2 space-y-2">
                           <div className="text-sm">
-                            <span className="font-medium">Margin/hr: </span>
+                            <span className="font-medium">Margin/hr: </span> 
                             <span>${marginPerHour}</span>
                           </div>
                           <div className="text-sm">
@@ -2161,7 +2160,6 @@ export default function SubmittedCandidates() {
               </DialogFooter>
             </form>
           </Form>
-          )}
         </DialogContent>
       </Dialog>
     </AdminLayout>
