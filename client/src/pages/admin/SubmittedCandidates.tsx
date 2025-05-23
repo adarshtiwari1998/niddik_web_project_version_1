@@ -89,10 +89,10 @@ type CandidateFormValues = z.infer<typeof candidateFormSchema>;
 // Status badge component
 const StatusBadge = ({ status }: { status: string }) => {
   let variant: "outline" | "default" | "secondary" | "destructive" = "outline";
-  
+
   // Support partial matching for common statuses
   const statusLower = status.toLowerCase();
-  
+
   if (statusLower.includes("new")) {
     variant = "default";
   } else if (statusLower.includes("submit")) {
@@ -104,10 +104,10 @@ const StatusBadge = ({ status }: { status: string }) => {
   } else if (statusLower.includes("select") || statusLower.includes("accept") || statusLower.includes("offer")) {
     variant = "default";
   }
-  
+
   // Get the display text - show only first 15 chars in badge if longer
   const displayText = status.length > 15 ? `${status.substring(0, 15)}...` : status;
-  
+
   return (
     <div className="max-w-[200px]">
       <Badge variant={variant} className="whitespace-nowrap overflow-hidden text-ellipsis">
@@ -132,14 +132,14 @@ const AnalyticsCard = ({ data }: { data: AnalyticsData }) => {
           <CardDescription>Total Candidates</CardDescription>
         </CardHeader>
       </Card>
-      
+
       <Card>
         <CardHeader className="pb-2">
           <CardTitle className="text-2xl font-bold">{data.uniqueClients}</CardTitle>
           <CardDescription>Unique Clients</CardDescription>
         </CardHeader>
       </Card>
-      
+
       <Card>
         <CardHeader className="pb-2">
           <CardTitle className="flex gap-2 items-baseline">
@@ -166,7 +166,7 @@ const statusOptions = [
 export default function SubmittedCandidates() {
   const { toast } = useToast();
   const queryClient = useQueryClient();
-  
+
   // State for filters, pagination, and form dialogs
   const [page, setPage] = useState(1);
   const [limit, setLimit] = useState(10);
@@ -181,46 +181,69 @@ export default function SubmittedCandidates() {
   const [isPreviewMode, setIsPreviewMode] = useState(false);
   const [applicantSearch, setApplicantSearch] = useState("");
   const [isApplicantsDialogOpen, setIsApplicantsDialogOpen] = useState(false);
-  
+
   // Calculate margin and profit based on bill rate and pay rate
   const calculateMarginAndProfit = (billRate: string, payRate: string) => {
     const bill = parseFloat(billRate || "0");
     const pay = parseFloat(payRate || "0");
-    
+
     if (isNaN(bill) || isNaN(pay)) {
       return { marginPerHour: "0", profitPerMonth: "0" };
     }
-    
+
     const margin = (bill - pay).toFixed(2);
     const profit = ((bill - pay) * 160).toFixed(2); // 160 hours per month
-    
+
     return { marginPerHour: margin, profitPerMonth: profit };
   };
-  
+
   // Form for adding/editing candidates
   const form = useForm<CandidateFormValues>({
     resolver: zodResolver(candidateFormSchema),
     defaultValues: {
-      submissionDate: new Date().toISOString().split('T')[0],
-      sourcedBy: "",
-      client: "",
-      poc: "",
-      skills: "",
-      candidateName: "",
-      contactNo: "",
-      emailId: "",
-      experience: "",
-      noticePeriod: "",
-      location: "",
-      currentCtc: "",
-      expectedCtc: "",
-      billRate: "",
-      payRate: "",
-      status: "new",
-      salaryInLacs: "",
+      candidateName: selectedCandidate?.candidateName || "",
+      emailId: selectedCandidate?.emailId || "",
+      location: selectedCandidate?.location || "",
+      experience: selectedCandidate?.experience || "",
+      skills: selectedCandidate?.skills || "",
+      noticePeriod: selectedCandidate?.noticePeriod || "",
+      currentCtc: selectedCandidate?.currentCtc || "",
+      expectedCtc: selectedCandidate?.expectedCtc || "",
+      contactNo: selectedCandidate?.contactNo || "",
+      client: selectedCandidate?.client || "",
+      poc: selectedCandidate?.poc || "",
+      status: selectedCandidate?.status || "new",
+      billRate: selectedCandidate?.billRate?.toString() || "",
+      payRate: selectedCandidate?.payRate?.toString() || "",
+      marginPerHour: selectedCandidate?.marginPerHour?.toString() || "",
+      profitPerMonth: selectedCandidate?.profitPerMonth?.toString() || "",
     }
   });
-  
+
+  // Reset form values when selected candidate changes
+  useEffect(() => {
+    if (selectedCandidate) {
+      form.reset({
+        candidateName: selectedCandidate.candidateName,
+        emailId: selectedCandidate.emailId,
+        location: selectedCandidate.location,
+        experience: selectedCandidate.experience,
+        skills: selectedCandidate.skills,
+        noticePeriod: selectedCandidate.noticePeriod,
+        currentCtc: selectedCandidate.currentCtc,
+        expectedCtc: selectedCandidate.expectedCtc,
+        contactNo: selectedCandidate.contactNo,
+        client: selectedCandidate.client,
+        poc: selectedCandidate.poc,
+        status: selectedCandidate.status,
+        billRate: selectedCandidate.billRate?.toString() || "",
+        payRate: selectedCandidate.payRate?.toString() || "",
+        marginPerHour: selectedCandidate.marginPerHour?.toString() || "",
+        profitPerMonth: selectedCandidate.profitPerMonth?.toString() || "",
+      });
+    }
+  }, [selectedCandidate, form]);
+
   // Initialize edit form when a candidate is selected
   const initializeEditForm = (candidate: SubmittedCandidate) => {
     form.reset({
@@ -230,14 +253,14 @@ export default function SubmittedCandidates() {
     setSelectedCandidate(candidate);
     setIsEditDialogOpen(true);
   };
-  
+
   // Watch billRate and payRate for auto-calculation
   const billRate = form.watch("billRate");
   const payRate = form.watch("payRate");
-  
+
   // Auto-calculate margin and profit when bill rate or pay rate changes
   const { marginPerHour, profitPerMonth } = calculateMarginAndProfit(billRate || "0", payRate || "0");
-  
+
   // Query to fetch submitted candidates
   const { data: candidatesData, isLoading: isLoadingCandidates, refetch: refetchCandidates } = useQuery({
     queryKey: ['/api/submitted-candidates', page, limit, search, statusFilter, clientFilter],
@@ -249,13 +272,13 @@ export default function SubmittedCandidates() {
         ...(statusFilter !== "all_statuses" && { status: statusFilter }),
         ...(clientFilter !== "all_clients" && { client: clientFilter }),
       });
-      
+
       const res = await apiRequest("GET", `/api/submitted-candidates?${queryParams}`);
       if (!res.ok) throw new Error("Failed to fetch candidates");
       return await res.json();
     }
   });
-  
+
   // Query to fetch analytics data
   const { data: analyticsData, isLoading: isLoadingAnalytics } = useQuery({
     queryKey: ['/api/submitted-candidates/analytics/summary'],
@@ -265,7 +288,7 @@ export default function SubmittedCandidates() {
       return await res.json();
     }
   });
-  
+
   // Mutation to create a candidate
   const createMutation = useMutation({
     mutationFn: async (data: CandidateFormValues) => {
@@ -274,7 +297,7 @@ export default function SubmittedCandidates() {
         marginPerHour,
         profitPerMonth
       };
-      
+
       const res = await apiRequest("POST", "/api/submitted-candidates", combinedData);
       if (!res.ok) {
         const errorData = await res.json();
@@ -300,18 +323,18 @@ export default function SubmittedCandidates() {
       });
     },
   });
-  
+
   // Mutation to update a candidate
   const updateMutation = useMutation({
     mutationFn: async (data: CandidateFormValues) => {
       if (!selectedCandidate) throw new Error("No candidate selected");
-      
+
       const combinedData = {
         ...data,
         marginPerHour,
         profitPerMonth
       };
-      
+
       const res = await apiRequest("PUT", `/api/submitted-candidates/${selectedCandidate.id}`, combinedData);
       if (!res.ok) {
         const errorData = await res.json();
@@ -338,7 +361,7 @@ export default function SubmittedCandidates() {
       });
     },
   });
-  
+
   // Mutation to delete a candidate
   const deleteMutation = useMutation({
     mutationFn: async (id: number) => {
@@ -365,7 +388,7 @@ export default function SubmittedCandidates() {
       });
     },
   });
-  
+
   // Mutation to import candidates in bulk
   const importMutation = useMutation({
     mutationFn: async (data: any[]) => {
@@ -395,12 +418,12 @@ export default function SubmittedCandidates() {
       });
     },
   });
-  
+
   // Handle file import
   const handleFileImport = (event: React.ChangeEvent<HTMLInputElement>) => {
     const file = event.target.files?.[0];
     if (!file) return;
-    
+
     Papa.parse(file, {
       header: true,
       skipEmptyLines: true,
@@ -483,7 +506,7 @@ export default function SubmittedCandidates() {
       }
     });
   };
-  
+
   // Query for job applicants
   const { 
     data: applicantsData, 
@@ -498,44 +521,44 @@ export default function SubmittedCandidates() {
     },
     enabled: false // Don't load automatically, only when requested
   });
-  
+
   // Extended form type with margin calculations
   type ExtendedCandidateFormValues = CandidateFormValues & {
     marginPerHour?: string;
     profitPerMonth?: string;
   };
-  
+
   // State for inline editing
   const [isAddingInline, setIsAddingInline] = useState(false);
   const [newCandidateData, setNewCandidateData] = useState<Partial<ExtendedCandidateFormValues>>({
     submissionDate: new Date().toISOString().split('T')[0],
     status: 'new'
   });
-  
+
   // Handle inline editing field change
   const handleInlineFieldChange = (field: keyof ExtendedCandidateFormValues, value: string) => {
     setNewCandidateData(prev => {
       const updated = { ...prev, [field]: value } as Partial<ExtendedCandidateFormValues>;
-      
+
       // Auto-calculate margin and profit if bill rate or pay rate changes
       if (field === 'billRate' || field === 'payRate') {
         const bill = parseFloat(updated.billRate || '0');
         const pay = parseFloat(updated.payRate || '0');
-        
+
         if (!isNaN(bill) && !isNaN(pay)) {
           updated.marginPerHour = (bill - pay).toFixed(2);
           updated.profitPerMonth = ((bill - pay) * 160).toFixed(2);
         }
       }
-      
+
       return updated;
     });
   };
-  
+
   // Function to filter applicants based on search term
   const filteredApplicants = useMemo(() => {
     if (!applicantsData?.data || !applicantSearch) return applicantsData?.data;
-    
+
     const searchLower = applicantSearch.toLowerCase();
     return applicantsData.data.filter((applicant: any) => 
       applicant.candidateName?.toLowerCase().includes(searchLower) ||
@@ -544,13 +567,13 @@ export default function SubmittedCandidates() {
       applicant.location?.toLowerCase().includes(searchLower)
     );
   }, [applicantsData?.data, applicantSearch]);
-  
+
   // Add candidate inline
   const handleAddInline = () => {
     // Validate required fields
     const requiredFields = ['candidateName', 'client', 'poc', 'emailId', 'sourcedBy'];
     const missingFields = requiredFields.filter(field => !newCandidateData[field as keyof ExtendedCandidateFormValues]);
-    
+
     if (missingFields.length > 0) {
       toast({
         title: "Missing required fields",
@@ -559,18 +582,18 @@ export default function SubmittedCandidates() {
       });
       return;
     }
-    
+
     // Add margin calculations
     const billRate = newCandidateData.billRate || "0";
     const payRate = newCandidateData.payRate || "0";
     const { marginPerHour, profitPerMonth } = calculateMarginAndProfit(billRate, payRate);
-    
+
     const dataToSubmit = {
       ...newCandidateData,
       marginPerHour,
       profitPerMonth
     };
-    
+
     createMutation.mutate(dataToSubmit as unknown as CandidateFormValues);
     setIsAddingInline(false);
     setNewCandidateData({
@@ -578,18 +601,18 @@ export default function SubmittedCandidates() {
       status: 'new'
     });
   };
-  
+
   // Import from existing applicants
   const handleImportFromApplicants = () => {
     // Reset applicant search when opening dialog
     setApplicantSearch("");
-    
+
     // Enable the query and fetch the data
     refetchApplicants();
-    
+
     setIsApplicantsDialogOpen(true);
   };
-  
+
   // Handle selecting an applicant to import
   const handleSelectApplicant = (applicant: any) => {
     setNewCandidateData({
@@ -601,52 +624,52 @@ export default function SubmittedCandidates() {
     setIsApplicantsDialogOpen(false);
     setIsAddingInline(true);
   };
-  
+
   // Form submit handlers
   const onSubmitAdd: SubmitHandler<CandidateFormValues> = (data) => {
     createMutation.mutate(data);
   };
-  
+
   const onSubmitEdit: SubmitHandler<CandidateFormValues> = (data) => {
     updateMutation.mutate(data);
   };
-  
+
   // Handle import submit
   const handleImportSubmit = () => {
     importMutation.mutate(importData);
   };
-  
+
   // Handle search input
   const handleSearchChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setSearch(e.target.value);
   };
-  
+
   const handleSearchSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     setPage(1); // Reset to first page on search
     refetchCandidates();
   };
-  
+
   // Get unique client names from candidates data for filter
   const clients: string[] = candidatesData?.data ? 
     Array.from(new Set(candidatesData.data.map((c: SubmittedCandidate) => c.client))).filter(Boolean) as string[] : 
     [];
-  
+
   // Pagination controls
   const totalPages = candidatesData?.meta?.pages || 1;
-  
+
   const goToNextPage = () => {
     if (page < totalPages) {
       setPage(page + 1);
     }
   };
-  
+
   const goToPrevPage = () => {
     if (page > 1) {
       setPage(page - 1);
     }
   };
-  
+
   return (
     <AdminLayout title="Submitted Candidates" description="Manage candidate submissions to clients">
       <Tabs defaultValue="list" className="space-y-4">
@@ -654,7 +677,7 @@ export default function SubmittedCandidates() {
           <TabsTrigger value="list">Candidate List</TabsTrigger>
           <TabsTrigger value="analytics">Analytics</TabsTrigger>
         </TabsList>
-        
+
         <TabsContent value="list" className="space-y-4">
           <div className="flex flex-col md:flex-row justify-between items-center gap-4 mb-6">
             <div className="flex flex-wrap gap-2">
@@ -665,7 +688,7 @@ export default function SubmittedCandidates() {
                 <Plus className="h-4 w-4 mr-2" />
                 Add Candidate
               </Button>
-              
+
               <Button 
                 variant="outline" 
                 onClick={handleImportFromApplicants}
@@ -673,7 +696,7 @@ export default function SubmittedCandidates() {
                 <Download className="h-4 w-4 mr-2" />
                 Import from Applications
               </Button>
-              
+
               <Dialog open={isApplicantsDialogOpen} onOpenChange={setIsApplicantsDialogOpen}>
                 <DialogContent className="max-w-4xl">
                   <DialogHeader>
@@ -682,7 +705,7 @@ export default function SubmittedCandidates() {
                       Select an applicant to import as a submitted candidate
                     </DialogDescription>
                   </DialogHeader>
-                  
+
                   <div className="my-4">
                     <div className="relative">
                       <Search className="absolute left-2.5 top-2.5 h-4 w-4 text-muted-foreground" />
@@ -699,7 +722,7 @@ export default function SubmittedCandidates() {
                       </p>
                     )}
                   </div>
-                  
+
                   <div className="max-h-[400px] overflow-auto">
                     {isLoadingApplicants ? (
                       <div className="flex flex-col items-center justify-center py-8">
@@ -749,7 +772,7 @@ export default function SubmittedCandidates() {
                       </Table>
                     )}
                   </div>
-                  
+
                   <DialogFooter>
                     <Button variant="outline" onClick={() => setIsApplicantsDialogOpen(false)}>
                       Cancel
@@ -757,7 +780,7 @@ export default function SubmittedCandidates() {
                   </DialogFooter>
                 </DialogContent>
               </Dialog>
-              
+
               <Dialog open={isImportDialogOpen} onOpenChange={setIsImportDialogOpen}>
                 <DialogTrigger asChild>
                   <Button variant="outline">
@@ -772,7 +795,7 @@ export default function SubmittedCandidates() {
                       Upload a CSV file with candidate data to bulk import.
                     </DialogDescription>
                   </DialogHeader>
-                  
+
                   {!isPreviewMode ? (
                     <div className="py-4">
                       <div className="border-2 border-dashed border-gray-300 rounded-lg p-8 text-center">
@@ -824,7 +847,7 @@ export default function SubmittedCandidates() {
                       </div>
                     </div>
                   )}
-                  
+
                   <DialogFooter>
                     <Button variant="outline" onClick={() => {
                       setIsPreviewMode(false);
@@ -851,9 +874,8 @@ export default function SubmittedCandidates() {
                 </DialogContent>
               </Dialog>
             </div>
-            
-            <div className="flex flex-col sm:flex-row gap-2 w-full md:w-auto">
-              <form onSubmit={handleSearchSubmit} className="flex gap-2 w-full">
+
+            <div className="flex flex-col sm:flex-row gap-2 w-full md:w-auto">The code is modified to pre-fill the edit form with data from the selected candidate, using useEffect to reset the form when the selectedCandidate changes.              <form onSubmit={handleSearchSubmit} className="flex gap-2 w-full">
                 <div className="relative flex-grow">
                   <Search className="absolute left-2.5 top-2.5 h-4 w-4 text-muted-foreground" />
                   <Input
@@ -868,7 +890,7 @@ export default function SubmittedCandidates() {
               </form>
             </div>
           </div>
-          
+
           <div className="flex flex-wrap gap-2 mb-4">
             <Select
               value={statusFilter}
@@ -888,7 +910,7 @@ export default function SubmittedCandidates() {
                 ))}
               </SelectContent>
             </Select>
-            
+
             <Select
               value={clientFilter}
               onValueChange={(value) => {
@@ -909,7 +931,7 @@ export default function SubmittedCandidates() {
               </SelectContent>
             </Select>
           </div>
-          
+
           <Card>
             <CardContent className="p-0">
               <div className="relative overflow-x-auto">
@@ -951,7 +973,7 @@ export default function SubmittedCandidates() {
                           onChange={(e) => handleInlineFieldChange('sourcedBy', e.target.value)}
                         />
                       </TableCell>
-                      
+
                       {/* Client */}
                       <TableCell>
                         <Input 
@@ -961,7 +983,7 @@ export default function SubmittedCandidates() {
                           onChange={(e) => handleInlineFieldChange('client', e.target.value)}
                         />
                       </TableCell>
-                      
+
                       {/* POC */}
                       <TableCell>
                         <Input 
@@ -971,7 +993,7 @@ export default function SubmittedCandidates() {
                           onChange={(e) => handleInlineFieldChange('poc', e.target.value)}
                         />
                       </TableCell>
-                      
+
                       {/* Skills */}
                       <TableCell>
                         <Input
@@ -981,7 +1003,7 @@ export default function SubmittedCandidates() {
                           onChange={(e) => handleInlineFieldChange('skills', e.target.value)}
                         />
                       </TableCell>
-                      
+
                       {/* Candidate Name */}
                       <TableCell className="sticky left-0 bg-muted/30 z-20">
                         <Input 
@@ -991,7 +1013,7 @@ export default function SubmittedCandidates() {
                           onChange={(e) => handleInlineFieldChange('candidateName', e.target.value)}
                         />
                       </TableCell>
-                      
+
                       {/* Contact No */}
                       <TableCell>
                         <Input 
@@ -1001,7 +1023,7 @@ export default function SubmittedCandidates() {
                           onChange={(e) => handleInlineFieldChange('contactNo', e.target.value)}
                         />
                       </TableCell>
-                      
+
                       {/* Email ID */}
                       <TableCell>
                         <Input 
@@ -1011,7 +1033,7 @@ export default function SubmittedCandidates() {
                           onChange={(e) => handleInlineFieldChange('emailId', e.target.value)}
                         />
                       </TableCell>
-                      
+
                       {/* Experience */}
                       <TableCell>
                         <Input 
@@ -1021,7 +1043,7 @@ export default function SubmittedCandidates() {
                           onChange={(e) => handleInlineFieldChange('experience', e.target.value)}
                         />
                       </TableCell>
-                      
+
                       {/* Notice Period */}
                       <TableCell>
                         <Input 
@@ -1031,7 +1053,7 @@ export default function SubmittedCandidates() {
                           onChange={(e) => handleInlineFieldChange('noticePeriod', e.target.value)}
                         />
                       </TableCell>
-                      
+
                       {/* Location */}
                       <TableCell>
                         <Input 
@@ -1041,7 +1063,7 @@ export default function SubmittedCandidates() {
                           onChange={(e) => handleInlineFieldChange('location', e.target.value)}
                         />
                       </TableCell>
-                      
+
                       {/* Current CTC */}
                       <TableCell>
                         <Input 
@@ -1051,7 +1073,7 @@ export default function SubmittedCandidates() {
                           onChange={(e) => handleInlineFieldChange('currentCtc', e.target.value)}
                         />
                       </TableCell>
-                      
+
                       {/* Expected CTC */}
                       <TableCell>
                         <Input 
@@ -1061,7 +1083,7 @@ export default function SubmittedCandidates() {
                           onChange={(e) => handleInlineFieldChange('expectedCtc', e.target.value)}
                         />
                       </TableCell>
-                      
+
                       {/* Bill Rate */}
                       <TableCell>
                         <Input 
@@ -1072,7 +1094,7 @@ export default function SubmittedCandidates() {
                           onChange={(e) => handleInlineFieldChange('billRate', e.target.value)}
                         />
                       </TableCell>
-                      
+
                       {/* Pay Rate */}
                       <TableCell>
                         <Input 
@@ -1083,17 +1105,17 @@ export default function SubmittedCandidates() {
                           onChange={(e) => handleInlineFieldChange('payRate', e.target.value)}
                         />
                       </TableCell>
-                      
+
                       {/* Margin/hr */}
                       <TableCell>
                         <div className="text-muted-foreground text-sm">Auto-calculated</div>
                       </TableCell>
-                      
+
                       {/* Profit/Month */}
                       <TableCell>
                         <div className="text-muted-foreground text-sm">Auto-calculated</div>
                       </TableCell>
-                      
+
                       {/* Status */}
                       <TableCell>
                         <textarea 
@@ -1104,7 +1126,7 @@ export default function SubmittedCandidates() {
                           onChange={(e) => handleInlineFieldChange('status', e.target.value)}
                         />
                       </TableCell>
-                      
+
                       {/* Salary (Lacs) */}
                       <TableCell>
                         <Input 
@@ -1114,7 +1136,7 @@ export default function SubmittedCandidates() {
                           onChange={(e) => handleInlineFieldChange('salaryInLacs', e.target.value)}
                         />
                       </TableCell>
-                      
+
                       <TableCell className="sticky right-0 bg-muted/30 z-20 text-right">
                         <div className="flex justify-end gap-2">
                           <Button
@@ -1204,7 +1226,7 @@ export default function SubmittedCandidates() {
                             >
                               <Edit className="h-4 w-4" />
                             </Button>
-                            
+
                             <AlertDialog>
                               <AlertDialogTrigger asChild>
                                 <Button variant="ghost" size="icon">
@@ -1275,7 +1297,7 @@ export default function SubmittedCandidates() {
             </CardFooter>
           </Card>
         </TabsContent>
-        
+
         <TabsContent value="analytics" className="space-y-6">
           {isLoadingAnalytics ? (
             <div className="flex flex-col items-center justify-center py-12">
@@ -1285,7 +1307,7 @@ export default function SubmittedCandidates() {
           ) : analyticsData?.data ? (
             <>
               <AnalyticsCard data={analyticsData.data} />
-              
+
               <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                 <Card>
                   <CardHeader>
@@ -1306,7 +1328,7 @@ export default function SubmittedCandidates() {
                     </div>
                   </CardContent>
                 </Card>
-                
+
                 <Card>
                   <CardHeader>
                     <CardTitle>Top Clients</CardTitle>
@@ -1331,7 +1353,7 @@ export default function SubmittedCandidates() {
           )}
         </TabsContent>
       </Tabs>
-      
+
       {/* Add Candidate Dialog */}
       <Dialog open={isAddDialogOpen} onOpenChange={setIsAddDialogOpen}>
         <DialogContent className="max-w-3xl">
@@ -1341,7 +1363,7 @@ export default function SubmittedCandidates() {
               Enter the details of the candidate you want to add to the system.
             </DialogDescription>
           </DialogHeader>
-          
+
           <Form {...form}>
             <form onSubmit={form.handleSubmit(onSubmitAdd)} className="space-y-6">
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
@@ -1358,7 +1380,7 @@ export default function SubmittedCandidates() {
                     </FormItem>
                   )}
                 />
-                
+
                 <FormField
                   control={form.control}
                   name="emailId"
@@ -1372,7 +1394,7 @@ export default function SubmittedCandidates() {
                     </FormItem>
                   )}
                 />
-                
+
                 <FormField
                   control={form.control}
                   name="contactNo"
@@ -1386,7 +1408,7 @@ export default function SubmittedCandidates() {
                     </FormItem>
                   )}
                 />
-                
+
                 <FormField
                   control={form.control}
                   name="submissionDate"
@@ -1400,7 +1422,7 @@ export default function SubmittedCandidates() {
                     </FormItem>
                   )}
                 />
-                
+
                 <FormField
                   control={form.control}
                   name="client"
@@ -1414,7 +1436,7 @@ export default function SubmittedCandidates() {
                     </FormItem>
                   )}
                 />
-                
+
                 <FormField
                   control={form.control}
                   name="poc"
@@ -1428,7 +1450,7 @@ export default function SubmittedCandidates() {
                     </FormItem>
                   )}
                 />
-                
+
                 <FormField
                   control={form.control}
                   name="sourcedBy"
@@ -1442,7 +1464,7 @@ export default function SubmittedCandidates() {
                     </FormItem>
                   )}
                 />
-                
+
                 <FormField
                   control={form.control}
                   name="location"
@@ -1456,7 +1478,7 @@ export default function SubmittedCandidates() {
                     </FormItem>
                   )}
                 />
-                
+
                 <FormField
                   control={form.control}
                   name="experience"
@@ -1470,7 +1492,7 @@ export default function SubmittedCandidates() {
                     </FormItem>
                   )}
                 />
-                
+
                 <FormField
                   control={form.control}
                   name="noticePeriod"
@@ -1484,7 +1506,7 @@ export default function SubmittedCandidates() {
                     </FormItem>
                   )}
                 />
-                
+
                 <FormField
                   control={form.control}
                   name="currentCtc"
@@ -1498,7 +1520,7 @@ export default function SubmittedCandidates() {
                     </FormItem>
                   )}
                 />
-                
+
                 <FormField
                   control={form.control}
                   name="expectedCtc"
@@ -1512,7 +1534,7 @@ export default function SubmittedCandidates() {
                     </FormItem>
                   )}
                 />
-                
+
                 <FormField
                   control={form.control}
                   name="salaryInLacs"
@@ -1526,7 +1548,7 @@ export default function SubmittedCandidates() {
                     </FormItem>
                   )}
                 />
-                
+
                 <FormField
                   control={form.control}
                   name="status"
@@ -1554,7 +1576,7 @@ export default function SubmittedCandidates() {
                     </FormItem>
                   )}
                 />
-                
+
                 <div className="space-y-4 md:col-span-2">
                   <FormField
                     control={form.control}
@@ -1570,7 +1592,7 @@ export default function SubmittedCandidates() {
                     )}
                   />
                 </div>
-                
+
                 <div className="md:col-span-2">
                   <Card className="bg-muted/40">
                     <CardHeader className="pb-3">
@@ -1595,7 +1617,7 @@ export default function SubmittedCandidates() {
                           </FormItem>
                         )}
                       />
-                      
+
                       <FormField
                         control={form.control}
                         name="payRate"
@@ -1614,7 +1636,7 @@ export default function SubmittedCandidates() {
                           </FormItem>
                         )}
                       />
-                      
+
                       <div>
                         <div className="space-y-2">
                           <Label>Margin/hr ($)</Label>
@@ -1628,7 +1650,7 @@ export default function SubmittedCandidates() {
                   </Card>
                 </div>
               </div>
-              
+
               <DialogFooter>
                 <Button variant="outline" type="button" onClick={() => setIsAddDialogOpen(false)}>
                   Cancel
@@ -1648,7 +1670,7 @@ export default function SubmittedCandidates() {
           </Form>
         </DialogContent>
       </Dialog>
-      
+
       {/* Edit Candidate Dialog */}
       <Dialog open={isEditDialogOpen} onOpenChange={setIsEditDialogOpen}>
         <DialogContent className="max-w-3xl">
@@ -1658,7 +1680,7 @@ export default function SubmittedCandidates() {
               Update the details of this candidate.
             </DialogDescription>
           </DialogHeader>
-          
+
           <Form {...form}>
             <form onSubmit={form.handleSubmit(onSubmitEdit)} className="space-y-6">
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
@@ -1675,7 +1697,7 @@ export default function SubmittedCandidates() {
                     </FormItem>
                   )}
                 />
-                
+
                 <FormField
                   control={form.control}
                   name="emailId"
@@ -1689,7 +1711,7 @@ export default function SubmittedCandidates() {
                     </FormItem>
                   )}
                 />
-                
+
                 <FormField
                   control={form.control}
                   name="contactNo"
@@ -1703,7 +1725,7 @@ export default function SubmittedCandidates() {
                     </FormItem>
                   )}
                 />
-                
+
                 <FormField
                   control={form.control}
                   name="submissionDate"
@@ -1717,7 +1739,7 @@ export default function SubmittedCandidates() {
                     </FormItem>
                   )}
                 />
-                
+
                 <FormField
                   control={form.control}
                   name="client"
@@ -1731,7 +1753,7 @@ export default function SubmittedCandidates() {
                     </FormItem>
                   )}
                 />
-                
+
                 <FormField
                   control={form.control}
                   name="poc"
@@ -1745,7 +1767,7 @@ export default function SubmittedCandidates() {
                     </FormItem>
                   )}
                 />
-                
+
                 <FormField
                   control={form.control}
                   name="sourcedBy"
@@ -1759,7 +1781,7 @@ export default function SubmittedCandidates() {
                     </FormItem>
                   )}
                 />
-                
+
                 <FormField
                   control={form.control}
                   name="location"
@@ -1773,7 +1795,7 @@ export default function SubmittedCandidates() {
                     </FormItem>
                   )}
                 />
-                
+
                 <FormField
                   control={form.control}
                   name="experience"
@@ -1787,7 +1809,7 @@ export default function SubmittedCandidates() {
                     </FormItem>
                   )}
                 />
-                
+
                 <FormField
                   control={form.control}
                   name="noticePeriod"
@@ -1801,7 +1823,7 @@ export default function SubmittedCandidates() {
                     </FormItem>
                   )}
                 />
-                
+
                 <FormField
                   control={form.control}
                   name="currentCtc"
@@ -1815,7 +1837,7 @@ export default function SubmittedCandidates() {
                     </FormItem>
                   )}
                 />
-                
+
                 <FormField
                   control={form.control}
                   name="expectedCtc"
@@ -1829,7 +1851,7 @@ export default function SubmittedCandidates() {
                     </FormItem>
                   )}
                 />
-                
+
                 <FormField
                   control={form.control}
                   name="salaryInLacs"
@@ -1843,7 +1865,7 @@ export default function SubmittedCandidates() {
                     </FormItem>
                   )}
                 />
-                
+
                 <FormField
                   control={form.control}
                   name="status"
@@ -1871,7 +1893,7 @@ export default function SubmittedCandidates() {
                     </FormItem>
                   )}
                 />
-                
+
                 <div className="space-y-4 md:col-span-2">
                   <FormField
                     control={form.control}
@@ -1887,7 +1909,7 @@ export default function SubmittedCandidates() {
                     )}
                   />
                 </div>
-                
+
                 <div className="md:col-span-2">
                   <Card className="bg-muted/40">
                     <CardHeader className="pb-3">
@@ -1899,7 +1921,7 @@ export default function SubmittedCandidates() {
                         name="billRate"
                         render={({ field }) => (
                           <FormItem>
-                            <FormLabel>Bill Rate ($)</FormLabel>
+                            <FormLabelBill Rate ($)</FormLabel>
                             <FormControl>
                               <Input 
                                 type="number" 
@@ -1912,7 +1934,7 @@ export default function SubmittedCandidates() {
                           </FormItem>
                         )}
                       />
-                      
+
                       <FormField
                         control={form.control}
                         name="payRate"
@@ -1931,7 +1953,7 @@ export default function SubmittedCandidates() {
                           </FormItem>
                         )}
                       />
-                      
+
                       <div>
                         <div className="space-y-2">
                           <Label>Margin/hr ($)</Label>
@@ -1945,7 +1967,7 @@ export default function SubmittedCandidates() {
                   </Card>
                 </div>
               </div>
-              
+
               <DialogFooter>
                 <Button variant="outline" type="button" onClick={() => {
                   setIsEditDialogOpen(false);
