@@ -864,7 +864,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
   });
 
   // API endpoint for uploading resume without authentication (for registration)
-  app.post('/api/upload-resume', resumeUpload.single('resume'), (req: Request, res: Response) => {
+  app.post('/api/upload-resume', resumeUpload.single('resume'), async (req: Request, res: Response) => {
     try {
       if (!req.file) {
         return res.status(400).json({ success: false, message: 'No file uploaded' });
