@@ -534,10 +534,9 @@ const handleResumeRemove = async () => {
               </div>
             ) : (
               <div className="space-y-2">
-
-<div>
-                <Input
-                  type="file"
+                <div>
+                  <Input
+                    type="file"
                   accept=".pdf,.doc,.docx,application/pdf,application/msword,application/vnd.openxmlformats-officedocument.wordprocessingml.document"
                   onChange={async (e) => {
                     const file = e.target.files?.[0];
@@ -616,8 +615,7 @@ const handleResumeRemove = async () => {
                 )}
               </div>
             )}
-        </div>,
-
+        </div>
         <div className="space-y-4">
           {/* Application Form */}
           <Form {...form}>
