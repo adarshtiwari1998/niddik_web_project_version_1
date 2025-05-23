@@ -880,10 +880,10 @@ export default function SubmittedCandidates() {
                                 <TableCell>{item.experience || ""}</TableCell>
                                 <TableCell>{item.notice_period || item.noticePeriod || ""}</TableCell>
                                 <TableCell>{item.location || ""}</TableCell>
-                                <TableCell>{item.current_ctc || ""}</TableCell>
-                                <TableCell>{item.expected_ctc || ""}</TableCell>
-                                <TableCell>{item.bill_rate || ""}</TableCell>
-                                <TableCell>{item.pay_rate || ""}</TableCell>
+                                <TableCell>{item.current_ctc || item.currentCtc || ""}</TableCell>
+                                <TableCell>{item.expected_ctc || item.expectedCtc || ""}</TableCell>
+                                <TableCell>{item.bill_rate || item.billRate || ""}</TableCell>
+                                <TableCell>{item.pay_rate || item.payRate || ""}</TableCell>
                                 <TableCell>{item.margin_per_hour || ""}</TableCell>
                                 <TableCell>{item.profit_per_month || ""}</TableCell>
                                 <TableCell>{item.status || ""}</TableCell>
