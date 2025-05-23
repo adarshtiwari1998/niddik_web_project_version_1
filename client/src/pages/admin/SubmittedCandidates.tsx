@@ -847,47 +847,17 @@ export default function SubmittedCandidates() {
                         <Table>
                           <TableHeader>
                             <TableRow>
-                              <TableHead>Sourced By</TableHead>
-                              <TableHead>Client</TableHead>
-                              <TableHead>POC</TableHead>
-                              <TableHead>Skills</TableHead>
-                              <TableHead>Candidate Name</TableHead>
-                              <TableHead>Contact No</TableHead>
-                              <TableHead>Email ID</TableHead>
-                              <TableHead>Experience</TableHead>
-                              <TableHead>Notice Period</TableHead>
-                              <TableHead>Location</TableHead>
-                              <TableHead>Current CTC</TableHead>
-                              <TableHead>Expected CTC</TableHead>
-                              <TableHead>Bill Rate</TableHead>
-                              <TableHead>Pay Rate</TableHead>
-                              <TableHead>Margin/Hour</TableHead>
-                              <TableHead>Profit/Month</TableHead>
-                              <TableHead>Status</TableHead>
-                              <TableHead>Salary (Lacs)</TableHead>
+                              {Object.keys(importData[0] || {}).map((header, index) => (
+                                <TableHead key={`header-${index}`}>{header}</TableHead>
+                              ))}
                             </TableRow>
                           </TableHeader>
                           <TableBody>
-                            {importData.slice(0, 5).map((item: Record<string, string>, index: number) => (
-                              <TableRow key={`preview-${index}`}>
-                                <TableCell>{item.sourced_by || ""}</TableCell>
-                                <TableCell>{item.client || ""}</TableCell>
-                                <TableCell>{item.poc || ""}</TableCell>
-                                <TableCell>{item.skills || ""}</TableCell>
-                                <TableCell>{item.candidate_name || ""}</TableCell>
-                                <TableCell>{item.contact_no || ""}</TableCell>
-                                <TableCell>{item.email_id || ""}</TableCell>
-                                <TableCell>{item.experience || ""}</TableCell>
-                                <TableCell>{item.notice_period || ""}</TableCell>
-                                <TableCell>{item.location || ""}</TableCell>
-                                <TableCell>{item.current_ctc || ""}</TableCell>
-                                <TableCell>{item.expected_ctc || ""}</TableCell>
-                                <TableCell>{item.bill_rate || ""}</TableCell>
-                                <TableCell>{item.pay_rate || ""}</TableCell>
-                                <TableCell>{item.margin_per_hour || ""}</TableCell>
-                                <TableCell>{item.profit_per_month || ""}</TableCell>
-                                <TableCell>{item.status || ""}</TableCell>
-                                <TableCell>{item.salary_in_lacs || ""}</TableCell>
+                            {importData.slice(0, 5).map((item: Record<string, string>, rowIndex: number) => (
+                              <TableRow key={`preview-${rowIndex}`}>
+                                {Object.keys(importData[0] || {}).map((header, cellIndex) => (
+                                  <TableCell key={`cell-${rowIndex}-${cellIndex}`}>{item[header] || ""}</TableCell>
+                                ))}
                               </TableRow>
                             ))}
                             {importData.length > 5 && (
