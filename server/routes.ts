@@ -993,8 +993,10 @@ export async function registerRoutes(app: Express): Promise<Server> {
         });
       }
 
-      // Delete the application instead of updating status
-      await db.delete(jobApplications).where(eq(jobApplications.id, applicationId));
+      // Update the application status to withdrawn
+      await db.update(jobApplications)
+        .set({ status: 'withdrawn' })
+        .where(eq(jobApplications.id, applicationId));
 
       return res.status(200).json({
         success: true,

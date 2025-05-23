@@ -117,14 +117,28 @@ export default function MyApplications() {
       }
       return res.json();
     },
-    onSuccess: () => {
+    onMutate: async (applicationId) => {
+      // Cancel outgoing refetches
+      await queryClient.cancelQueries({ queryKey: ['/api/my-applications'] });
+      
+      // Snapshot previous value
+      const previousApplications = queryClient.getQueryData(['/api/my-applications']);
+      
+      // Return context with snapshot
+      return { previousApplications };
+    },
+    onSuccess: (data, applicationId) => {
+      queryClient.invalidateQueries({ queryKey: ['/api/my-applications'] });
       toast({
         title: "Application withdrawn",
         description: "Your application has been successfully withdrawn",
       });
-      queryClient.invalidateQueries({ queryKey: ['/api/my-applications'] });
     },
-    onError: (error) => {
+    onError: (error, variables, context) => {
+      // If there was an error, restore previous data
+      if (context?.previousApplications) {
+        queryClient.setQueryData(['/api/my-applications'], context.previousApplications);
+      }
       toast({
         title: "Error",
         description: error instanceof Error ? error.message : "Failed to withdraw application",
@@ -132,6 +146,19 @@ export default function MyApplications() {
       });
     }
   });
+
+  // Handle application withdrawal with confirmation
+  const handleWithdraw = async (id: number) => {
+    if (withdrawMutation.isPending) return;
+    
+    if (window.confirm("Are you sure you want to withdraw this application?")) {
+      try {
+        await withdrawMutation.mutateAsync(id);
+      } catch (error) {
+        console.error("Failed to withdraw application:", error);
+      }
+    }
+  };
 
   // Handle application withdrawal
   const handleWithdraw = (id: number) => {
