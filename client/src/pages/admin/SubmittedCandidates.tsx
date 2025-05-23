@@ -1755,7 +1755,11 @@ export default function SubmittedCandidates() {
                     <FormItem>
                       <FormLabel>Sourced By *</FormLabel>
                       <FormControl>
-                        <Input type="date" {...field} />
+                        <Input 
+                          type="date" 
+                          {...field} 
+                          value={field.value || selectedCandidate?.sourcedBy || new Date().toISOString().split('T')[0]}
+                        />
                       </FormControl>
                       <FormMessage />
                     </FormItem>
@@ -1874,7 +1878,8 @@ export default function SubmittedCandidates() {
                   )}
                 />
 
-                <FormField                  control={form.control}
+                <FormField
+                  control={form.control}
                   name="currentCtc"
                   render={({ field }) => (
                     <FormItem>
@@ -1894,14 +1899,14 @@ export default function SubmittedCandidates() {
                     <FormItem>
                       <FormLabel>Expected CTC *</FormLabel>
                       <FormControl>
-                        <Input{...field} />
+                        <Input {...field} />
                       </FormControl>
                       <FormMessage />
                     </FormItem>
                   )}
                 />
 
-                 <FormField
+                <FormField
                   control={form.control}
                   name="skills"
                   render={({ field }) => (
@@ -1915,14 +1920,14 @@ export default function SubmittedCandidates() {
                   )}
                 />
 
-                 <FormField
+                <FormField
                   control={form.control}
                   name="salaryInLacs"
                   render={({ field }) => (
                     <FormItem>
                       <FormLabel>Salary (Lacs)</FormLabel>
                       <FormControl>
-                        <Input {...field} />
+                        <Input {...field} value={field.value || selectedCandidate?.salaryInLacs || ''} />
                       </FormControl>
                       <FormMessage />
                     </FormItem>
@@ -1931,21 +1936,95 @@ export default function SubmittedCandidates() {
 
                 <FormField
                   control={form.control}
-                  name="sourcedBy"
+                  name="status"
                   render={({ field }) => (
                     <FormItem>
-                      <FormLabel>Sourced By *</FormLabel>
-                      <FormControl>
-                        <Input 
-                          type="date" 
-                          {...field} 
-                          value={field.value || selectedCandidate?.sourcedBy || new Date().toISOString().split('T')[0]}
-                        />
-                      </FormControl>
+                      <FormLabel>Status *</FormLabel>
+                      <Select
+                        onValueChange={field.onChange}
+                        value={field.value}
+                        defaultValue={selectedCandidate?.status}
+                      >
+                        <FormControl>
+                          <SelectTrigger>
+                            <SelectValue placeholder="Select status" />
+                          </SelectTrigger>
+                        </FormControl>
+                        <SelectContent>
+                          <SelectItem value="new">New</SelectItem>
+                          <SelectItem value="submitted to client">Submitted to Client</SelectItem>
+                          <SelectItem value="scheduled for interview">Scheduled for Interview</SelectItem>
+                          <SelectItem value="rejected">Rejected</SelectItem>
+                          <SelectItem value="selected">Selected</SelectItem>
+                        </SelectContent>
+                      </Select>
                       <FormMessage />
                     </FormItem>
                   )}
                 />
+
+                <div className="col-span-2">
+                  <Card className="bg-muted/40">
+                    <CardHeader className="pb-3">
+                      <CardTitle className="text-base">Rate Information</CardTitle>
+                    </CardHeader>
+                    <CardContent className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                      <FormField
+                        control={form.control}
+                        name="billRate"
+                        render={({ field }) => (
+                          <FormItem>
+                            <FormLabel>Bill Rate ($)</FormLabel>
+                            <FormControl>
+                              <Input 
+                                type="number" 
+                                step="0.01" 
+                                placeholder="Client bill rate"
+                                {...field}
+                                value={field.value || selectedCandidate?.billRate || ''}
+                              />
+                            </FormControl>
+                            <FormMessage />
+                          </FormItem>
+                        )}
+                      />
+
+                      <FormField
+                        control={form.control}
+                        name="payRate"
+                        render={({ field }) => (
+                          <FormItem>
+                            <FormLabel>Pay Rate ($)</FormLabel>
+                            <FormControl>
+                              <Input 
+                                type="number" 
+                                step="0.01" 
+                                placeholder="Candidate pay rate"
+                                {...field}
+                                value={field.value || selectedCandidate?.payRate || ''}
+                              />
+                            </FormControl>
+                            <FormMessage />
+                          </FormItem>
+                        )}
+                      />
+
+                      <div>
+                        <Label>Calculated Values</Label>
+                        <div className="mt-2 space-y-2">
+                          <div className="text-sm">
+                            <span className="font-medium">Margin/hr: </span>
+                            <span>${marginPerHour}</span>
+                          </div>
+                          <div className="text-sm">
+                            <span className="font-medium">Profit/Month: </span>
+                            <span>${profitPerMonth}</span>
+                          </div>
+                        </div>
+                      </div>
+                    </CardContent>
+                  </Card>
+                </div>
 
                   <FormField
                   control={form.control}
