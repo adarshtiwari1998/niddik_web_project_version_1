@@ -91,7 +91,7 @@ export default function JobForm() {
     enabled: !isNewJob && jobId !== null,
   });
 
-  // Form setup with async default values
+  // Form initialization with async default values
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
     defaultValues: async () => {
@@ -101,19 +101,31 @@ export default function JobForm() {
           const data = await response.json();
           const job = data.data;
 
+          // Ensure proper case for values that need to match SelectItem values
+          const normalizedJobType = job.jobType === 'full-time' ? 'Full-time' : 
+                                  job.jobType === 'part-time' ? 'Part-time' : 
+                                  job.jobType === 'contract' ? 'Contract' : 
+                                  job.jobType === 'freelance' ? 'Freelance' : 
+                                  job.jobType === 'internship' ? 'Internship' : job.jobType;
+
+          const normalizedExperienceLevel = job.experienceLevel === 'entry' ? 'Entry' :
+                                          job.experienceLevel === 'mid' ? 'Mid' :
+                                          job.experienceLevel === 'senior' ? 'Senior' :
+                                          job.experienceLevel === 'executive' ? 'Executive' : job.experienceLevel;
+
           return {
             title: job.title,
             company: job.company,
             location: job.location,
-            jobType: job.jobType,
-            experienceLevel: job.experienceLevel,
+            jobType: normalizedJobType,
+            experienceLevel: normalizedExperienceLevel,
             salary: job.salary,
             description: job.description,
             requirements: job.requirements,
             benefits: job.benefits || "",
             applicationUrl: job.applicationUrl || "",
             contactEmail: job.contactEmail || "",
-            status: job.status,
+            status: job.status || "active",
             featured: Boolean(job.featured),
             category: job.category,
             skills: job.skills,
