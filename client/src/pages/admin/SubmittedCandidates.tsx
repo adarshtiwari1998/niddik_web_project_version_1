@@ -878,7 +878,7 @@ export default function SubmittedCandidates() {
                                 <TableCell>{item.contact_no || item.contactNo || ""}</TableCell>
                                 <TableCell>{item.email_id || item.emailId || ""}</TableCell>
                                 <TableCell>{item.experience || ""}</TableCell>
-                                <TableCell>{item.notice_period || ""}</TableCell>
+                                <TableCell>{item.notice_period || item.noticePeriod || ""}</TableCell>
                                 <TableCell>{item.location || ""}</TableCell>
                                 <TableCell>{item.current_ctc || ""}</TableCell>
                                 <TableCell>{item.expected_ctc || ""}</TableCell>
