@@ -702,7 +702,6 @@ function SubmittedCandidates() {
   };
 
   return (
-    <>
     <AdminLayout title="Submitted Candidates" description="Manage candidate submissions to clients">
       <Tabs defaultValue="list" className="space-y-4">
         <TabsList>
@@ -2137,7 +2136,6 @@ function SubmittedCandidates() {
         </DialogContent>
       </Dialog>
     </AdminLayout>
-    </>
   );
 }
 
