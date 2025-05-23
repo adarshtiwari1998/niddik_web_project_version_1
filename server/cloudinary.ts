@@ -12,15 +12,20 @@ cloudinary.config({
 // Create storage engine for uploads
 const resumeStorage = new CloudinaryStorage({
   cloudinary: cloudinary,
-  params: {
-    folder: 'public',
-    resource_type: 'auto',
-    public_id: (req, file) => {
-      const timestamp = Date.now();
-      return `resume_${timestamp}`;
-    }
-  }
-});
+//   params: {
+//     folder: 'public',
+//     resource_type: 'auto',
+//     public_id: (req, file) => {
+//       const timestamp = Date.now();
+//       return `resume_${timestamp}`;
+//     }
+//   }
+// });
+    params: {
+      folder: 'Niddik-Assets/cv-data',
+      public_id: (req, file) => `cv-data_${Date.now()}`,
+    },
+  });
 
 // Create the multer upload instance
 export const resumeUpload = multer({ 
@@ -28,15 +33,5 @@ export const resumeUpload = multer({
   limits: { fileSize: 5 * 1024 * 1024 } // 5MB limit
 });
 
-// Function to delete file from Cloudinary
-export const deleteFile = async (publicId: string) => {
-  try {
-    await cloudinary.uploader.destroy(publicId);
-    return true;
-  } catch (error) {
-    console.error('Error deleting file from Cloudinary:', error);
-    return false;
-  }
-};
 
 export { cloudinary };
