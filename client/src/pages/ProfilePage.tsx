@@ -606,7 +606,44 @@ export default function ProfilePage() {
                         <p className="text-sm text-muted-foreground mb-4">Upload your latest resume</p>
                         
                         <div className="space-y-4">
-                          <div className="flex items-center gap-4">
+                          {user?.resumeUrl ? (
+                            <div className="p-4 border rounded-md bg-muted/5">
+                              <div className="flex items-center justify-between">
+                                <div className="flex items-center gap-2">
+                                  <FileText className="h-4 w-4 text-primary" />
+                                  <a 
+                                    href={user.resumeUrl} 
+                                    target="_blank" 
+                                    rel="noopener noreferrer"
+                                    className="text-sm text-primary hover:underline"
+                                  >
+                                    View Current Resume
+                                  </a>
+                                </div>
+                                <div className="flex gap-2">
+                                  <Input
+                                    type="file"
+                                    accept=".pdf,.doc,.docx"
+                                    onChange={handleFileChange}
+                                    className="max-w-[200px] file:mr-2 file:py-1 file:px-2 file:rounded-md file:border-0 file:text-xs file:font-medium file:bg-primary file:text-primary-foreground hover:file:bg-primary/90"
+                                  />
+                                  <Button
+                                    variant="destructive"
+                                    size="sm"
+                                    onClick={handleResumeRemove}
+                                    disabled={isRemoving}
+                                  >
+                                    {isRemoving ? (
+                                      <Loader2 className="h-4 w-4 animate-spin" />
+                                    ) : (
+                                      <Trash className="h-4 w-4" />
+                                    )}
+                                    Remove
+                                  </Button>
+                                </div>
+                              </div>
+                            </div>
+                          ) : (
                             <div className="flex-1">
                               <Input
                                 type="file"
@@ -615,17 +652,7 @@ export default function ProfilePage() {
                                 className="file:mr-4 file:py-2 file:px-4 file:rounded-md file:border-0 file:text-sm file:font-medium file:bg-primary file:text-primary-foreground hover:file:bg-primary/90"
                               />
                             </div>
-                            {user && user.resumeUrl && (
-                              <a
-                                href={user.resumeUrl}
-                                target="_blank"
-                                rel="noopener noreferrer"
-                                className="inline-flex items-center justify-center gap-1 text-sm text-primary hover:underline"
-                              >
-                                View Current Resume
-                              </a>
-                            )}
-                          </div>
+                          )}
                           
                           {resumeFile && (
                             <p className="text-sm text-muted-foreground">
