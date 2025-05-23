@@ -15,8 +15,10 @@ const resumeStorage = new CloudinaryStorage({
   cloudinary: cloudinary,
   params: {
     folder: 'Niddik-Assets/cv-data',
-    resource_type: 'auto',
+    resource_type: 'raw',
+    type: 'upload',
     access_mode: 'public',
+    allowed_formats: ['pdf', 'doc', 'docx'],
     public_id: (req, file) => {
       const timestamp = Date.now();
       const originalName = file.originalname.split('.')[0];
