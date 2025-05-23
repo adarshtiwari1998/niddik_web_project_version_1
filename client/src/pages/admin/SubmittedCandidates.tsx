@@ -246,10 +246,27 @@ export default function SubmittedCandidates() {
 
   // Initialize edit form when a candidate is selected
   const initializeEditForm = (candidate: SubmittedCandidate) => {
-    form.reset({
+    const formData = {
       ...candidate,
+      sourcedBy: candidate.sourcedBy || '',
       submissionDate: candidate.submissionDate ? new Date(candidate.submissionDate).toISOString().split('T')[0] : new Date().toISOString().split('T')[0],
-    });
+      client: candidate.client || '',
+      poc: candidate.poc || '',
+      skills: candidate.skills || '',
+      candidateName: candidate.candidateName || '',
+      contactNo: candidate.contactNo || '',
+      emailId: candidate.emailId || '',
+      experience: candidate.experience || '',
+      noticePeriod: candidate.noticePeriod || '',
+      location: candidate.location || '',
+      currentCtc: candidate.currentCtc || '',
+      expectedCtc: candidate.expectedCtc || '',
+      billRate: candidate.billRate?.toString() || '',
+      payRate: candidate.payRate?.toString() || '',
+      status: candidate.status || '',
+      salaryInLacs: candidate.salaryInLacs || ''
+    };
+    form.reset(formData);
     setSelectedCandidate(candidate);
     setIsEditDialogOpen(true);
   };
