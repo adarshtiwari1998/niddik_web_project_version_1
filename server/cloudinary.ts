@@ -21,7 +21,7 @@ const resumeStorage = new CloudinaryStorage({
     allowed_formats: ['pdf', 'doc', 'docx'],
     public_id: (req, file) => {
       const timestamp = Date.now();
-      const originalName = file.originalname.split('.')[0];
+      const originalName = file.originalname;
       return `cv-data_${timestamp}_${originalName}`;
     }
   }
