@@ -68,8 +68,8 @@ type PaginationMeta = {
 
 // Form schema for candidate form
 const candidateFormSchema = z.object({
-  submissionDate: z.string().optional(),
-  sourcedBy: z.string().min(2, "Sourced by is required"),
+  submissionDate: z.date().optional(),
+  sourcedBy: z.string().optional(),
   client: z.string().min(2, "Client is required"),
   poc: z.string().min(2, "POC is required"),
   skills: z.string().min(2, "Skills are required"),
@@ -1829,10 +1829,11 @@ function SubmittedCandidates() {
                           <PopoverContent className="w-auto p-0" align="end">
                             <Calendar
                               mode="single"
-                              selected={selectedCandidate?.submissionDate ? new Date(selectedCandidate.submissionDate) : new Date()}
+                              selected={form.getValues('submissionDate') ? new Date(form.getValues('submissionDate')) : new Date()}
                               onSelect={(date) => {
                                 if (date) {
-                                  form.setValue('submissionDate', date, { shouldValidate: true });
+                                  form.setValue('submissionDate', date);
+                                  form.setValue('sourcedBy', form.getValues('sourcedBy') || date.toISOString().split('T')[0]);
                                 }
                               }}
                               initialFocus
