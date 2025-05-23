@@ -56,13 +56,13 @@ export default function JobDetail() {
     queryFn: getQueryFn({ on401: "returnNull" }),
     enabled: !!user
   });
-  
+
   // Determine if user has already applied to this job
   const hasApplied = React.useMemo(() => {
     if (!userApplicationsData?.data) return false;
     return userApplicationsData.data.some(app => app.jobId === jobId);
   }, [userApplicationsData, jobId]);
-  
+
   // Get application date if user has applied
   const applicationDate = React.useMemo(() => {
     if (!hasApplied || !userApplicationsData?.data) return null;
@@ -82,23 +82,23 @@ export default function JobDetail() {
   const applyMutation = useMutation({
     mutationFn: async (data: ApplicationFormValues) => {
       if (!user) throw new Error("User not authenticated");
-      
+
       try {
         // Prepare application data - simplified for direct submission
         const applicationData = {
           jobId: jobId,
           coverLetter: data.note,
-          resumeUrl: user.resumeUrl,
+          resumeUrl: resumeFile ? resumeFile.name : user.resumeUrl,
           skills: user.skills || job.skills || '', // Use user skills if available, otherwise job skills or empty string
         };
-        
+
         const response = await apiRequest("POST", "/api/job-applications", applicationData);
-        
+
         if (!response.ok) {
           const errorData = await response.json();
           throw new Error(errorData.message || "Failed to submit application");
         }
-        
+
         return response.json();
       } catch (error) {
         console.error("Application error:", error);
@@ -217,7 +217,7 @@ const handleResumeRemove = async () => {
       });
       return;
     }
-    
+
     // If user is not logged in, redirect to auth page
     if (!user) {
       toast({
@@ -368,7 +368,7 @@ const handleResumeRemove = async () => {
                       <span>{job.location}</span>
                     </div>
                   </div>
-                  
+
                   <div>
                     <p className="text-sm font-medium mb-1">Job Type</p>
                     <div className="flex items-center text-muted-foreground">
@@ -376,7 +376,7 @@ const handleResumeRemove = async () => {
                       <span className="capitalize">{job.jobType}</span>
                     </div>
                   </div>
-                  
+
                   <div>
                     <p className="text-sm font-medium mb-1">Experience Level</p>
                     <div className="flex items-center text-muted-foreground">
@@ -384,21 +384,21 @@ const handleResumeRemove = async () => {
                       <span className="capitalize">{job.experienceLevel}</span>
                     </div>
                   </div>
-                  
+
                   <div>
                     <p className="text-sm font-medium mb-1">Salary Range</p>
                     <div className="flex items-center text-muted-foreground">
                       <span>{job.salary || "Competitive"}</span>
                     </div>
                   </div>
-                  
+
                   <div>
                     <p className="text-sm font-medium mb-1">Category</p>
                     <div className="flex items-center text-muted-foreground">
                       <span className="capitalize">{job.category}</span>
                     </div>
                   </div>
-                  
+
                   <div>
                     <p className="text-sm font-medium mb-1">Posted On</p>
                     <div className="flex items-center text-muted-foreground">
@@ -448,7 +448,7 @@ const handleResumeRemove = async () => {
                   Apply quickly using your profile information.
                 </DialogDescription>
               </DialogHeader>
-              
+
               <div className="space-y-4 my-2">
                 {/* User Information */}
                 <div className="grid grid-cols-2 gap-4">
@@ -556,7 +556,7 @@ const handleResumeRemove = async () => {
                         </FormItem>
                       )}
                     />
-                    
+
                     <div className="flex justify-end gap-2 pt-2">
                       <DialogClose asChild>
                         <Button type="button" variant="outline">Cancel</Button>
