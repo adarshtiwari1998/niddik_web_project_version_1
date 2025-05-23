@@ -19,9 +19,10 @@ const resumeStorage = new CloudinaryStorage({
     allowed_formats: ['pdf', 'doc', 'docx'],
     public_id: (req, file) => {
       const timestamp = Date.now();
+      const originalName = file.originalname.split('.')[0];
       const extension = file.originalname.split('.').pop();
-      const uniqueId = `resume_${timestamp}.${extension}`;
-      return uniqueId;
+      // Combine original name with timestamp and extension
+      return `${originalName}_${timestamp}.${extension}`;
     },
     use_filename: true,
     unique_filename: true,
