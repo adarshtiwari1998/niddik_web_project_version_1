@@ -861,8 +861,7 @@ function SubmittedCandidates() {
                               <TableHead>Experience</TableHead>
                               <TableHead>Notice Period</TableHead>
                               <TableHead>Location</TableHead>
-                              <TableHead>Current CTC</TableHead>
-                              <TableHead>Expected CTC</TableHead>
+                              <TableHead>Current CTC</Table                              <TableHead>Expected CTC</TableHead>
                               <TableHead>Bill Rate</TableHead>
                               <TableHead>Pay Rate</TableHead>
                               <TableHead>Margin/Hour</TableHead>
@@ -2133,6 +2132,7 @@ function SubmittedCandidates() {
               </DialogFooter>
             </form>
           </Form>
+      }
         </DialogContent>
       </Dialog>
     </AdminLayout>
