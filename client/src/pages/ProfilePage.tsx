@@ -100,8 +100,8 @@ export default function ProfilePage() {
       location: user?.location || "",
       city: user?.city || "",
       state: user?.state || "",
-      country: user?.country || "",
-      zipCode: user?.zipCode || "",
+      country: z.string().optional(),
+      zipCode: z.string().optional(),
     },
   });
 
