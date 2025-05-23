@@ -2132,7 +2132,7 @@ function SubmittedCandidates() {
               </DialogFooter>
             </form>
           </Form>
-      }
+      )}
         </DialogContent>
       </Dialog>
     </AdminLayout>
