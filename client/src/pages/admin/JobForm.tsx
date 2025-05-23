@@ -100,7 +100,7 @@ export default function JobForm() {
           const response = await apiRequest("GET", `/api/job-listings/${jobId}`);
           const data = await response.json();
           const job = data.data;
-          
+
           return {
             title: job.title,
             company: job.company,
@@ -140,7 +140,7 @@ export default function JobForm() {
           };
         }
       }
-      
+
       // Default values for new job
       return {
         title: "",
@@ -166,7 +166,7 @@ export default function JobForm() {
     if (!isNewJob && jobData?.data) {
       const job = jobData.data;
       console.log("Updating form data:", job);
-      
+
       form.reset({
         title: job.title,
         company: job.company,
@@ -594,6 +594,7 @@ export default function JobForm() {
                             </FormControl>
                             <SelectContent>
                               <SelectItem value="active">Active</SelectItem>
+                              <SelectItem value="draft">Draft</SelectItem>
                               <SelectItem value="filled">Filled</SelectItem>
                               <SelectItem value="expired">Expired</SelectItem>
                             </SelectContent>
@@ -673,7 +674,7 @@ export default function JobForm() {
                 </CardContent>
               </Card>
 
-              <div className="flex justify-end gap-4">
+              <div className="flex justify-start gap-4">
                 <Button
                   type="button"
                   variant="outline"
