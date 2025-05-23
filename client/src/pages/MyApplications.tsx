@@ -160,13 +160,6 @@ export default function MyApplications() {
     }
   };
 
-  // Handle application withdrawal
-  const handleWithdraw = (id: number) => {
-    if (window.confirm("Are you sure you want to withdraw this application?")) {
-      withdrawMutation.mutate(id);
-    }
-  };
-
   if (!user) {
     return (
       <div className="container mx-auto px-4 py-8">
