@@ -86,10 +86,8 @@ export default function AdminLayout({ children, title, description }: AdminLayou
       
       <div className="container mx-auto px-4 py-8 mt-[88px] flex-1">
         <div className="grid grid-cols-1 md:grid-cols-4 gap-6 relative">
-          {/* Fixed Sidebar */}
-          <div className="md:col-span-1 md:fixed md:w-[calc(25%-24px)] md:max-w-[300px]">
           {/* Sidebar */}
-          <div className="md:col-span-1">
+          <div className="md:col-span-1 md:fixed md:w-[calc(25%-24px)] md:max-w-[300px]">
             <Card>
               <CardHeader className="pb-3">
                 <CardTitle>Admin Menu</CardTitle>
