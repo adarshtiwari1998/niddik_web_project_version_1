@@ -875,7 +875,7 @@ export default function SubmittedCandidates() {
               </Dialog>
             </div>
 
-            <div className="flex flex-col sm:flex-row gap-2 w-full md:w-auto">The code is modified to pre-fill the edit form with data from the selected candidate, using useEffect to reset the form when the selectedCandidate changes.              <form onSubmit={handleSearchSubmit} className="flex gap-2 w-full">
+            <div className="flex flex-col sm:flex-row gap-2 w-full md:w-auto">          <form onSubmit={handleSearchSubmit} className="flex gap-2 w-full">
                 <div className="relative flex-grow">
                   <Search className="absolute left-2.5 top-2.5 h-4 w-4 text-muted-foreground" />
                   <Input
