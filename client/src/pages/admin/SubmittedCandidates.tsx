@@ -1695,6 +1695,7 @@ export default function SubmittedCandidates() {
               </DialogFooter>
             </form>
           </Form>
+          )}
         </DialogContent>
       </Dialog>
 
@@ -1707,6 +1708,12 @@ export default function SubmittedCandidates() {
               Update the details of this candidate.
             </DialogDescription>
           </DialogHeader>
+          {editDialogLoading ? (
+            <div className="flex flex-col items-center justify-center py-8">
+              <Loader2 className="h-6 w-6 animate-spin mx-auto" />
+              <span className="text-sm text-muted-foreground mt-2 block">Loading candidate data...</span>
+            </div>
+          ) : (
            {editDialogLoading ? (
             <div className="flex flex-col items-center justify-center py-8">
               <Loader2 className="h-6 w-6 animate-spin mx-auto" />
