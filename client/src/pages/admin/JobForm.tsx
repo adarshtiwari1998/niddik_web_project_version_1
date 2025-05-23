@@ -87,22 +87,11 @@ export default function JobForm() {
   useEffect(() => {
     if (jobData?.data && isEditMode) {
       const job = jobData.data;
-      form.reset({
-        title: job.title || "",
-        company: job.company || "Niddik",
-        location: job.location || "",
-        jobType: job.jobType || "",
-        experienceLevel: job.experienceLevel || "",
-        salary: job.salary || "",
-        description: job.description || "",
-        requirements: job.requirements || "",
-        benefits: job.benefits || "",
-        applicationUrl: job.applicationUrl || "",
-        contactEmail: job.contactEmail || "",
-        status: job.status || "active",
-        featured: job.featured || false,
-        category: job.category || "",
-        skills: job.skills || "",
+      // Set form values directly rather than using reset to ensure immediate update
+      Object.keys(job).forEach((key) => {
+        if (key in form.getValues()) {
+          form.setValue(key, job[key] || form.getValues()[key]);
+        }
       });
     }
   }, [jobData, form, isEditMode]);
