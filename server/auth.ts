@@ -370,15 +370,10 @@ export function setupAuth(app: Express) {
             return res.status(401).json({ error: "Not authenticated" });
           }
 
-          // Find the user in the database
-          const user = await storage.getUserById(userId);
-          if (!user) {
-            return res.status(404).json({ error: "User not found" });
-          }
-
-          // Remove the resumeUrl
-          user.resumeUrl = null; // Set resumeUrl to null or use delete operator
-          await user.save(); // Save changes to the database
+          // Update user in the database
+          await db.update(users)
+            .set({ resumeUrl: null })
+            .where(eq(users.id, userId));
 
           return res.status(200).json({ success: true, message: "Resume URL deleted successfully" });
         } catch (error) {
