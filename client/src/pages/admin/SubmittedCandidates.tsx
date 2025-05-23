@@ -1983,12 +1983,26 @@ function SubmittedCandidates() {
                 </SelectTrigger>
               </FormControl>
               <SelectContent>
-                <SelectItem value="new">New</SelectItem>
-                <SelectItem value="submitted to client">Submitted to Client</SelectItem>
-                <SelectItem value="scheduled for interview">Scheduled for Interview</SelectItem>
-                <SelectItem value="rejected">Rejected</SelectItem>
-                <SelectItem value="selected">Selected</SelectItem>
-                <SelectItem value="custom">+ Add Custom Status</SelectItem>
+                {candidatesData?.data ? (
+                  <>
+                    {Array.from(new Set(candidatesData.data.map((c: SubmittedCandidate) => c.status)))
+                      .filter(Boolean)
+                      .sort()
+                      .map((status: string) => (
+                        <SelectItem key={status} value={status}>{status}</SelectItem>
+                      ))}
+                    <SelectItem value="custom">+ Add Custom Status</SelectItem>
+                  </>
+                ) : (
+                  <>
+                    <SelectItem value="new">New</SelectItem>
+                    <SelectItem value="submitted to client">Submitted to Client</SelectItem>
+                    <SelectItem value="scheduled for interview">Scheduled for Interview</SelectItem>
+                    <SelectItem value="rejected">Rejected</SelectItem>
+                    <SelectItem value="selected">Selected</SelectItem>
+                    <SelectItem value="custom">+ Add Custom Status</SelectItem>
+                  </>
+                )}
               </SelectContent>
             </Select>
           ) : (
