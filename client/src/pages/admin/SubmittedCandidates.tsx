@@ -861,8 +861,6 @@ function SubmittedCandidates() {
                               <TableHead>Email ID</TableHead>
                               <TableHead>Experience</TableHead>
                               <TableHead>Notice Period</TableHead>
-                              ```
-<previous_generation>
                               <TableHead>Location</TableHead>
                               <TableHead>Current CTC</TableHead>
                               <TableHead>Expected CTC</TableHead>
@@ -1941,35 +1939,6 @@ function SubmittedCandidates() {
                     </FormItem>
                   )}
                 />
-
-                {/* <FormField
-                  control={form.control}
-                  name="status"
-                  render={({ field }) => (
-                    <FormItem>
-                      <FormLabel>Status *</FormLabel>
-                      <Select
-                        onValueChange={field.onChange}
-                        value={field.value}
-                        defaultValue={selectedCandidate?.status}
-                      >
-                        <FormControl>
-                          <SelectTrigger>
-                            <SelectValue placeholder="Select status" />
-                          </SelectTrigger>
-                        </FormControl>
-                        <SelectContent>
-                          <SelectItem value="new">New</SelectItem>
-                          <SelectItem value="submitted to client">Submitted to Client</SelectItem>
-                          <SelectItem value="scheduled for interview">Scheduled for Interview</SelectItem>
-                          <SelectItem value="rejected">Rejected</SelectItem>
-                          <SelectItem value="selected">Selected</SelectItem>
-                        </SelectContent>
-                      </Select>
-                      <FormMessage />
-                    </FormItem>
-                  )}
-                /> */}
 
   <FormField
     control={form.control}
