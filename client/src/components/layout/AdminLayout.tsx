@@ -21,10 +21,10 @@ export default function AdminLayout({ children, title, description }: AdminLayou
   const handleLogout = () => {
     // Show loading screen immediately
     setIsLoggingOut(true);
-    
+
     // Store a flag in sessionStorage that the login page will check
     sessionStorage.setItem('admin_login_after_logout', 'true');
-    
+
     logoutMutation.mutate(undefined, {
       onSuccess: () => {
         // We're still using the setTimeout to ensure the loading screen
@@ -32,7 +32,7 @@ export default function AdminLayout({ children, title, description }: AdminLayou
         setTimeout(() => {
           // This will redirect without a page reload
           setLocation("/admin/login");
-          
+
           // Set a flag that the login page will check on mount
           // The loading screen will stay visible until the login page mounts
           sessionStorage.setItem('admin_login_after_logout', 'true');
@@ -83,7 +83,7 @@ export default function AdminLayout({ children, title, description }: AdminLayou
           </div>
         </div>
       </header>
-      
+
       <div className="container mx-auto px-4 py-8 mt-[88px] flex-1">
         <div className="grid grid-cols-1 md:grid-cols-4 gap-6 relative">
           {/* Sidebar */}
@@ -165,7 +165,7 @@ export default function AdminLayout({ children, title, description }: AdminLayou
           </div>
 
           {/* Main Content */}
-          <div className="md:col-span-3 md:ml-[300px] w-[calc(100%)]">
+          <div className="md:col-span-3 md:ml-[300px] w-full max-w-[calc(100%-300px)]">
             <div className="flex justify-between items-center mb-6">
               <div>
                 <h1 className="text-2xl font-bold">{title}</h1>
