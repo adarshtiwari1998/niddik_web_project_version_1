@@ -1714,9 +1714,6 @@ export default function SubmittedCandidates() {
               <span className="text-sm text-muted-foreground mt-2 block">Loading candidate data...</span>
             </div>
           ) : (
-              <span className="text-sm text-muted-foreground mt-2 block">Loading candidate data...</span>
-            </div>
-          ) : (
           <Form {...form}>
             <form onSubmit={form.handleSubmit(onSubmitEdit)} className="space-y-6">
 
