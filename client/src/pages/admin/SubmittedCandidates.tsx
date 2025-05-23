@@ -1944,7 +1944,8 @@ export default function SubmittedCandidates() {
                   setSelectedCandidate(null);
                 }}>
                   Cancel
-                </Button                <Button type="submit" disabled={updateMutation.isPending}>
+                </Button>
+                <Button type="submit" disabled={updateMutation.isPending}>
                   {updateMutation.isPending ? (
                     <>
                       <Loader2 className="mr-2 h-4 w-4 animate-spin" />
