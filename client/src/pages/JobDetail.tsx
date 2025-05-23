@@ -619,45 +619,46 @@ const handleResumeRemove = async () => {
                   </div>
                 </div>
                 <div className="space-y-4">
-          {/* Application Form */}
-          <Form {...form}>
-          <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
-            <FormField
-                      control={form.control}
-                      name="note"
-                      render={({ field }) => (
-                        <FormItem>
-                          <FormLabel>Cover Letter / Note *</FormLabel>
-                          <FormControl>
-                            <Textarea 
-                              {...field} 
-                              placeholder="Tell us why you're interested in this position and how your experience makes you a great fit."
-                              className="min-h-[120px]"
-                            />
-                          </FormControl>
-                          <FormMessage />
-                        </FormItem>
-                      )}
-                    />
+                  {/* Application Form */}
+                  <Form {...form}>
+                    <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
+                      <FormField
+                        control={form.control}
+                        name="note"
+                        render={({ field }) => (
+                          <FormItem>
+                            <FormLabel>Cover Letter / Note *</FormLabel>
+                            <FormControl>
+                              <Textarea 
+                                {...field} 
+                                placeholder="Tell us why you're interested in this position and how your experience makes you a great fit."
+                                className="min-h-[120px]"
+                              />
+                            </FormControl>
+                            <FormMessage />
+                          </FormItem>
+                        )}
+                      />
 
-                    <div className="flex justify-end gap-2 pt-2">
-                      <DialogClose asChild>
-                        <Button type="button" variant="outline">Cancel</Button>
-                      </DialogClose>
-                      <Button 
-                        type="submit" 
-                        disabled={applyMutation.isPending}
-                      >
-                        {applyMutation.isPending ? (
-                          <>
-                            <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                            Submitting...
-                          </>
-                        ) : "Submit Application"}
-                      </Button>
-                    </div>
-                  </form>
-                </Form>
+                      <div className="flex justify-end gap-2 pt-2">
+                        <DialogClose asChild>
+                          <Button type="button" variant="outline">Cancel</Button>
+                        </DialogClose>
+                        <Button 
+                          type="submit" 
+                          disabled={applyMutation.isPending}
+                        >
+                          {applyMutation.isPending ? (
+                            <>
+                              <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                              Submitting...
+                            </>
+                          ) : "Submit Application"}
+                        </Button>
+                      </div>
+                    </form>
+                  </Form>
+                </div>
               </div>
             </DialogContent>
           </Dialog>
