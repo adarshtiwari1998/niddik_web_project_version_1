@@ -538,10 +538,25 @@ const handleResumeRemove = async () => {
                         <div>
                           <Input
                             type="file"
-                            accept=".pdf,.doc,.docx"
+                            accept=".pdf,.doc,.docx,application/pdf,application/msword,application/vnd.openxmlformats-officedocument.wordprocessingml.document"
                             onChange={async (e) => {
                               const file = e.target.files?.[0];
                               if (file) {
+                                const fileType = file.type;
+                                const validTypes = [
+                                  'application/pdf',
+                                  'application/msword',
+                                  'application/vnd.openxmlformats-officedocument.wordprocessingml.document'
+                                ];
+                                if (!validTypes.includes(fileType)) {
+                                  toast({
+                                    title: "Invalid file format",
+                                    description: "Please upload only PDF, DOC, or DOCX files",
+                                    variant: "destructive"
+                                  });
+                                  e.target.value = '';
+                                  return;
+                                }
                                 const ext = file.name.split('.').pop()?.toLowerCase();
                                 if (!['pdf', 'doc', 'docx'].includes(ext || '')) {
                                   toast({
