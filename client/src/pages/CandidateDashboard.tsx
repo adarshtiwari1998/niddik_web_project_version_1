@@ -65,7 +65,11 @@ const CandidateDashboard = () => {
   }>({
     queryKey: ['/api/my-applications'],
     queryFn: getQueryFn({ on401: "throw" }),
-    enabled: !!user
+    enabled: !!user,
+    refetchInterval: 2000, // Refetch every 2 seconds
+    refetchOnMount: true,
+    refetchOnWindowFocus: true,
+    staleTime: 0 // Consider data stale immediately
   });
 
   const formatDate = (dateString: string | Date) => {
