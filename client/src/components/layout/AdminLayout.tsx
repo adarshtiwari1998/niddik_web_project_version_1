@@ -165,7 +165,7 @@ export default function AdminLayout({ children, title, description }: AdminLayou
           </div>
 
           {/* Main Content */}
-          <div className="md:col-span-3 md:ml-[300px] w-[calc(100%-324px)]">
+          <div className="md:col-span-3 md:ml-[300px] w-[calc(100%)]">
             <div className="flex justify-between items-center mb-6">
               <div>
                 <h1 className="text-2xl font-bold">{title}</h1>
