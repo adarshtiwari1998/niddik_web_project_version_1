@@ -79,31 +79,29 @@ export default function JobForm() {
       return res.json();
     },
     enabled: isEditMode,
-  });
-
-  useEffect(() => {
-    // Reset form with job data when in edit mode
-    if (jobData?.data && isEditMode) {
-      const job = jobData.data;
-      form.reset({
-        title: job.title || "",
-        company: job.company || "Niddik",
-        location: job.location || "",
-        jobType: job.jobType || "",
-        experienceLevel: job.experienceLevel || "",
-        salary: job.salary || "",
-        description: job.description || "",
-        requirements: job.requirements || "",
-        benefits: job.benefits || "",
-        applicationUrl: job.applicationUrl || "",
-        contactEmail: job.contactEmail || "",
-        status: job.status || "active",
-        featured: Boolean(job.featured),
-        category: job.category || "",
-        skills: job.skills || "",
-      });
+    onSuccess: (data) => {
+      if (data?.data && isEditMode) {
+        const job = data.data;
+        form.reset({
+          title: job.title,
+          company: job.company,
+          location: job.location,
+          jobType: job.jobType,
+          experienceLevel: job.experienceLevel,
+          salary: job.salary,
+          description: job.description,
+          requirements: job.requirements,
+          benefits: job.benefits || "",
+          applicationUrl: job.applicationUrl || "",
+          contactEmail: job.contactEmail,
+          status: job.status,
+          featured: Boolean(job.featured),
+          category: job.category,
+          skills: job.skills,
+        });
+      }
     }
-  }, [jobData?.data, form, isEditMode]);
+  });
 
   // Create job mutation
   const createJobMutation = useMutation({
@@ -193,7 +191,7 @@ export default function JobForm() {
 
   return (
     <AdminLayout 
-      title={isEditMode ? "Edit Job Listing" : "Create New Job Listing"}
+      title={isEditMode && jobData?.data ? `Edit Job: ${jobData.data.title}` : "Create New Job Listing"}
       description={isEditMode ? "Update the details of an existing job listing" : "Add a new job opportunity to your careers page"}
     >
       <div className="flex items-center mb-6">
