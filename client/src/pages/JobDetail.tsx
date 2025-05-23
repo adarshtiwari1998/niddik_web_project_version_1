@@ -617,7 +617,7 @@ const handleResumeRemove = async () => {
               </div>
             )}
 
-        </div>
+        </div>,
 
         {/* Application Form */}
         <Form {...form}>
