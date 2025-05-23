@@ -1915,7 +1915,8 @@ export default function SubmittedCandidates() {
                           </SelectTrigger>
                         </FormControl>
                         <SelectContent>
-                          <SelectItem value="new">New</SelectItem                          <SelectItem value="submitted to client">Submitted to Client</SelectItem>
+                          <SelectItem value="new">New</SelectItem>
+                          <SelectItem value="submitted to client">Submitted to Client</SelectItem>
                           <SelectItem value="scheduled for interview">Scheduled for Interview</SelectItem>
                           <SelectItem value="rejected">Rejected</SelectItem>
                           <SelectItem value="selected">Selected</SelectItem>
