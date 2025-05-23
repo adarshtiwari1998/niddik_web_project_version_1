@@ -841,7 +841,44 @@ function SubmittedCandidates() {
 
                   {!isPreviewMode ? (
                     <div className="py-4">
-                      <div className="border-2 border-dashed border-gray-300 rounded-lg p-8 text-center">
+                      <div 
+                        className="border-2 border-dashed border-gray-300 rounded-lg p-8 text-center transition-colors duration-200 ease-in-out"
+                        onDragOver={(e) => {
+                          e.preventDefault();
+                          e.stopPropagation();
+                          e.currentTarget.classList.add('border-primary');
+                        }}
+                        onDragLeave={(e) => {
+                          e.preventDefault();
+                          e.stopPropagation();
+                          e.currentTarget.classList.remove('border-primary');
+                        }}
+                        onDrop={(e) => {
+                          e.preventDefault();
+                          e.stopPropagation();
+                          e.currentTarget.classList.remove('border-primary');
+                          
+                          const files = Array.from(e.dataTransfer.files);
+                          const csvFile = files.find(file => file.name.endsWith('.csv'));
+                          
+                          if (csvFile) {
+                            // Create a synthetic event object
+                            const syntheticEvent = {
+                              target: {
+                                files: [csvFile]
+                              }
+                            } as React.ChangeEvent<HTMLInputElement>;
+                            
+                            handleFileImport(syntheticEvent);
+                          } else {
+                            toast({
+                              title: "Invalid file format",
+                              description: "Please upload only CSV files",
+                              variant: "destructive"
+                            });
+                          }
+                        }}
+                      >
                         <Input
                           type="file"
                           accept=".csv"
