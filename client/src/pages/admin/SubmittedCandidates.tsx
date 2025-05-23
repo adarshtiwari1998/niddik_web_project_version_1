@@ -847,7 +847,6 @@ export default function SubmittedCandidates() {
                         <Table>
                           <TableHeader>
                             <TableRow>
-                              <TableHead>Submission Date</TableHead>
                               <TableHead>Sourced By</TableHead>
                               <TableHead>Client</TableHead>
                               <TableHead>POC</TableHead>
@@ -862,6 +861,8 @@ export default function SubmittedCandidates() {
                               <TableHead>Expected CTC</TableHead>
                               <TableHead>Bill Rate</TableHead>
                               <TableHead>Pay Rate</TableHead>
+                              <TableHead>Margin/Hour</TableHead>
+                              <TableHead>Profit/Month</TableHead>
                               <TableHead>Status</TableHead>
                               <TableHead>Salary (Lacs)</TableHead>
                             </TableRow>
@@ -869,7 +870,6 @@ export default function SubmittedCandidates() {
                           <TableBody>
                             {importData.slice(0, 5).map((item: Record<string, string>, index: number) => (
                               <TableRow key={`preview-${index}`}>
-                                <TableCell>{item.submission_date || ""}</TableCell>
                                 <TableCell>{item.sourced_by || ""}</TableCell>
                                 <TableCell>{item.client || ""}</TableCell>
                                 <TableCell>{item.poc || ""}</TableCell>
@@ -884,6 +884,8 @@ export default function SubmittedCandidates() {
                                 <TableCell>{item.expected_ctc || ""}</TableCell>
                                 <TableCell>{item.bill_rate || ""}</TableCell>
                                 <TableCell>{item.pay_rate || ""}</TableCell>
+                                <TableCell>{item.margin_per_hour || ""}</TableCell>
+                                <TableCell>{item.profit_per_month || ""}</TableCell>
                                 <TableCell>{item.status || ""}</TableCell>
                                 <TableCell>{item.salary_in_lacs || ""}</TableCell>
                               </TableRow>
