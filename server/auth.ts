@@ -436,11 +436,11 @@ app.get("/api/user", async (req: Request, res: Response) => {
                 const userId = (req.user as User).id;
 
                 // Get admin user
-                const adminUser = await db.query.adminUsers.findFirst({
-                    where: eq(adminUsers.id, userId)
+                const user = await db.query.users.findFirst({
+                    where: eq(users.id, userId)
                 });
 
-                if (!adminUser || adminUser.role !== 'admin') {
+                if (!user || user.role !== 'admin') {
                     return res.status(403).json({ error: "Not an admin user" });
                 }
 
