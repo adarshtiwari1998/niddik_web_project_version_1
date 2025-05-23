@@ -875,8 +875,7 @@ export default function SubmittedCandidates() {
                       </Button>
                     )}
                   </DialogFooter>
-                </```text
-                DialogContent>
+                </DialogContent>
               </Dialog>
             </div>
 
