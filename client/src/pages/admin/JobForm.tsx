@@ -82,7 +82,8 @@ export default function JobForm() {
 
   // If editing, fetch the job data
   const { data: jobData, isLoading: isLoadingJob } = useQuery({
-    queryKey: ["/api/job-listings", jobId],
+    queryKey: [`/api/job-listings/${jobId}`],
+    queryFn: () => apiRequest("GET", `/api/job-listings/${jobId}`),
     enabled: !isNewJob && jobId !== null,
   });
 
