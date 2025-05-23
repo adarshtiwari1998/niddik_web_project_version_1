@@ -100,24 +100,26 @@ export default function JobForm() {
     if (jobData?.data && isEditMode) {
       const job = jobData.data;
       form.reset({
-        title: job.title,
-        company: job.company,
-        location: job.location,
-        jobType: job.jobType,
-        experienceLevel: job.experienceLevel,
-        salary: job.salary,
-        description: job.description,
-        requirements: job.requirements,
+        title: job.title || "",
+        company: job.company || "Niddik",
+        location: job.location || "",
+        jobType: job.jobType || "",
+        experienceLevel: job.experienceLevel || "",
+        salary: job.salary || "",
+        description: job.description || "",
+        requirements: job.requirements || "",
         benefits: job.benefits || "",
         applicationUrl: job.applicationUrl || "",
-        contactEmail: job.contactEmail,
-        status: job.status,
-        featured: job.featured,
-        category: job.category,
-        skills: job.skills,
+        contactEmail: job.contactEmail || "",
+        status: job.status || "active",
+        featured: Boolean(job.featured),
+        category: job.category || "",
+        skills: job.skills || ""
+      }, {
+        keepDefaultValues: false
       });
     }
-  }, [jobData, form, isEditMode, setLocation, toast]);
+  }, [jobData?.data, form, isEditMode, setLocation, toast]);
 
   // Create job mutation
   const createJobMutation = useMutation({
