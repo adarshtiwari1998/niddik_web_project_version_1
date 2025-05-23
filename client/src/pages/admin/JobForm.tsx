@@ -234,11 +234,11 @@ export default function JobForm() {
 
   // Submit handler
   function onSubmit(data: z.infer<typeof formSchema>) {
-    // Format the data for submission
+    // Format the data for submission with proper date handling
     const formattedData = {
       ...data,
-      // Keep expiryDate as a Date object
-      expiryDate: data.expiryDate
+      expiryDate: data.expiryDate ? data.expiryDate : null,
+      postedDate: data.postedDate ? new Date(data.postedDate) : new Date()
     };
 
     if (isNewJob) {
