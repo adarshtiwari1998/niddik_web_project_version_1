@@ -3,7 +3,7 @@ import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
 import { useMutation, useQuery } from "@tanstack/react-query";
-import { User, Mail, Phone, Briefcase, Calendar, MapPin, DollarSign, Upload, Loader2 } from "lucide-react";
+import { User, Mail, Phone, Briefcase, Calendar, MapPin, DollarSign, Upload, Loader2, Code } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
@@ -28,6 +28,7 @@ const profileSchema = z.object({
   noticePeriod: z.string().optional(),
   currentCtc: z.string().optional(),
   expectedCtc: z.string().optional(),
+  skills: z.string().optional(),
   location: z.string().optional(),
   city: z.string().optional(),
   state: z.string().optional(),
@@ -480,6 +481,30 @@ export default function ProfilePage() {
                                     <Input placeholder="Expected salary" className="pl-10" {...field} />
                                   </div>
                                 </FormControl>
+                                <FormMessage />
+                              </FormItem>
+                            )}
+                          />
+
+                          <FormField
+                            control={profileForm.control}
+                            name="skills"
+                            render={({ field }) => (
+                              <FormItem className="col-span-2">
+                                <FormLabel>Skills</FormLabel>
+                                <FormControl>
+                                  <div className="relative">
+                                    <Code className="absolute left-3 top-3 h-4 w-4 text-muted-foreground" />
+                                    <Input 
+                                      placeholder="Add your skills (comma separated)" 
+                                      className="pl-10" 
+                                      {...field} 
+                                    />
+                                  </div>
+                                </FormControl>
+                                <FormDescription>
+                                  Enter your skills separated by commas (e.g. JavaScript, React, Node.js)
+                                </FormDescription>
                                 <FormMessage />
                               </FormItem>
                             )}
