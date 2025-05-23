@@ -19,8 +19,6 @@ import { setupAuth } from "./auth";
 import { resumeUpload } from "./cloudinary";
 import { scrypt, randomBytes, timingSafeEqual } from "crypto";
 import { promisify } from "util";
-import jwt from "jsonwebtoken";
-import { adminUsers } from "@shared/schema";
 
 const scryptAsync = promisify(scrypt);
 
@@ -240,24 +238,10 @@ export async function registerRoutes(app: Express): Promise<Server> {
         });
       }
 
+      // Partial validation (only validate fields that are provided)
       try {
-        // Extract date fields and validate remaining fields separately
-        const { postedDate, expiryDate, ...otherFields } = req.body;
-
-        // Only validate non-date fields
-        const validatedData = jobListingSchema.partial().omit({ 
-          postedDate: true, 
-          expiryDate: true 
-        }).parse(otherFields);
-
-        // Combine validated data with date fields
-        const updateData = {
-          ...validatedData,
-          postedDate,
-          expiryDate
-        };
-
-        const updatedListing = await storage.updateJobListing(id, updateData);
+        const validatedData = jobListingSchema.partial().parse(req.body);
+        const updatedListing = await storage.updateJobListing(id, validatedData);
         return res.status(200).json({ success: true, data: updatedListing });
       } catch (validationError) {
         if (validationError instanceof z.ZodError) {
@@ -266,7 +250,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
             message: err.message,
             code: err.code
           }));
-
+          
           return res.status(400).json({ 
             success: false, 
             message: "Invalid job listing data",
@@ -897,7 +881,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
 
       // @ts-ignore - Cloudinary typings
       const file = req.file;
-
+      
       if (!file.path) {
         console.error('Upload failed - file path missing', file);
         return res.status(500).json({ 

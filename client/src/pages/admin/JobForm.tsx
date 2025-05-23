@@ -135,7 +135,7 @@ export default function JobForm() {
           console.error("Error fetching job data:", error);
           return {
             title: "",
-            company: "Andela",
+            company: "Niddik",
             location: "",
             jobType: "Full-time",
             experienceLevel: "Mid",
@@ -156,7 +156,7 @@ export default function JobForm() {
       // Default values for new job
       return {
         title: "",
-        company: "Andela",
+        company: "Niddik",
         location: "",
         jobType: "Full-time",
         experienceLevel: "Mid",
