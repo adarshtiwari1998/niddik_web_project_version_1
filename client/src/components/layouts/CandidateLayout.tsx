@@ -197,9 +197,9 @@ export default function CandidateLayout({ children, activeTab = "" }: CandidateL
       </header>
 
       {/* Main Content */}
-      <div className="flex pt-16 min-h-[calc(100vh-64px)] relative">
+      <div className="flex pt-16 min-h-[calc(100vh-128px)] relative">
         {/* Sidebar - Desktop only */}
-        <div className="hidden md:block fixed left-0 top-16 w-64 border-r bg-background h-[calc(100vh-64px)]">
+        <div className="hidden md:block fixed left-0 top-16 w-64 border-r bg-background h-[calc(100vh-128px)]">
           <div className="w-full p-4">
             <div className="flex flex-col h-full">
               <nav className="space-y-1">
