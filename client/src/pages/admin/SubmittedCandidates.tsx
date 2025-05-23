@@ -1832,8 +1832,7 @@ function SubmittedCandidates() {
                               selected={form.getValues('submissionDate') ? new Date(form.getValues('submissionDate')) : new Date()}
                               onSelect={(date) => {
                                 if (date) {
-                                  form.setValue('submissionDate', date);
-                                  form.setValue('sourcedBy', form.getValues('sourcedBy') || date.toISOString().split('T')[0]);
+                                  form.setValue('submissionDate', date);                                  form.setValue('sourcedBy', form.getValues('sourcedBy') || date.toISOString().split('T')[0]);
                                 }
                               }}
                               initialFocus
