@@ -534,58 +534,84 @@ const handleResumeRemove = async () => {
               </div>
             ) : (
               <div className="space-y-2">
-                {user?.resumeUrl || resumeFile ? (
-                  <div className="p-4 border rounded-md bg-muted/5">
+                
+<div>
+                <Input
+                  type="file"
+                  accept=".pdf,.doc,.docx,application/pdf,application/msword,application/vnd.openxmlformats-officedocument.wordprocessingml.document"
+                  onChange={async (e) => {
+                    const file = e.target.files?.[0];
+                    if (file) {
+                      const ext = file.name.split('.').pop()?.toLowerCase();
+                      if (!['pdf', 'doc', 'docx'].includes(ext || '')) {
+                        toast({
+                          title: "Invalid file format",
+                          description: "Please upload only PDF, DOC, or DOCX files",
+                          variant: "destructive"
+                        });
+                        e.target.value = '';
+                        return;
+                      }
+
+                      setResumeFile(file);
+                      setIsUploading(true);
+
+                      const formData = new FormData();
+                      formData.append("resume", file);
+
+                      try {
+                        const response = await fetch("/api/upload-resume", {
+                          method: "POST",
+                          body: formData,
+                        });
+
+                        if (!response.ok) {
+                          throw new Error("Unable to upload resume.");
+                        }
+
+                        const data = await response.json();
+
+                        // Update user data to reflect new resume URL
+                        queryClient.invalidateQueries({ queryKey: ["/api/user"] });
+
+                        toast({
+                          title: "Resume uploaded",
+                          description: "Your resume has been uploaded successfully.",
+                        });
+
+                      } catch (error) {
+                        toast({
+                          title: "Upload failed",
+                          description: "Unable to upload resume. Please try again.",
+                          variant: "destructive",
+                        });
+                        setResumeFile(null);
+                        e.target.value = '';
+                      } finally {
+                        setIsUploading(false);
+                      }
+                    }
+                  }}
+                  placeholder="Upload resume"
+                  className="file:mr-4 file:py-2 file:px-4 file:rounded-md file:border-0 file:text-sm file:font-medium file:bg-primary file:text-primary-foreground hover:file:bg-primary/90"
+                />
+                {isUploading && (
+                  <div className="flex items-center gap-2 mt-2 text-sm text-muted-foreground">
+                    <Loader2 className="h-4 w-4 animate-spin" />
+                    Uploading resume...
+                  </div>
+                )}
+                {user?.resumeUrl && !isUploading && (
+  <div className="p-4 border rounded-md bg-muted/5">
                     <div className="flex items-center justify-between">
                       <div className="flex items-center gap-2">
                         <FileText className="h-4 w-4 text-primary" />
                         <a href={user?.resumeUrl} target="_blank" rel="noopener noreferrer" className="text-sm hover:underline">
-                          {resumeFile?.name || "View Resume"}
+                          View Resume
                         </a>
                       </div>
-                      <Button
-                        variant="destructive"
-                        size="sm"
-                        onClick={handleResumeRemove}
-                        disabled={isRemoving}
-                      >
-                        {isRemoving ? (
-                          <Loader2 className="h-4 w-4 animate-spin" />
-                        ) : (
-                          <Trash className="h-4 w-4" />
-                        )}
-                      </Button>
+                      
                     </div>
-                  </div>
-                ) : (
-                  <Input
-                    type="file"
-                    accept=".pdf,.doc,.docx,application/pdf,application/msword,application/vnd.openxmlformats-officedocument.wordprocessingml.document"
-                    onChange={async (e) => {
-                      const file = e.target.files?.[0];
-                      if (file) {
-                        const ext = file.name.split('.').pop()?.toLowerCase();
-                        if (!['pdf', 'doc', 'docx'].includes(ext || '')) {
-                          toast({
-                            title: "Invalid file format",
-                            description: "Please upload only PDF, DOC, or DOCX files",
-                            variant: "destructive"
-                          });
-                          e.target.value = '';
-                          return;
-                        }
-                        handleFileChange(e);
-                        await handleResumeUpload();
-                      }
-                    }}
-                    placeholder="Upload resume"
-                    className="file:mr-4 file:py-2 file:px-4 file:rounded-md file:border-0 file:text-sm file:font-medium file:bg-primary file:text-primary-foreground hover:file:bg-primary/90"
-                  />
-                )}
-                {isUploading && (
-                  <div className="flex items-center gap-2 text-sm text-muted-foreground">
-                    <Loader2 className="h-4 w-4 animate-spin" />
-                    Uploading resume...
                   </div>
                 )}
               </div>
