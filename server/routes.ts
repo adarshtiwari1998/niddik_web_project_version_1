@@ -865,17 +865,34 @@ export async function registerRoutes(app: Express): Promise<Server> {
 
   // API endpoint for uploading resume without authentication (for registration)
   app.post('/api/upload-resume', resumeUpload.single('resume'), (req: Request, res: Response) => {
-    if (!req.file) {
-      return res.status(400).json({ success: false, message: 'No file uploaded' });
-    }
+    try {
+      if (!req.file) {
+        return res.status(400).json({ success: false, message: 'No file uploaded' });
+      }
 
-    // @ts-ignore - Cloudinary typings
-    const file = req.file;
-    return res.status(200).json({ 
-      success: true, 
-      url: file.path,
-      filename: file.originalname 
-    });
+      // @ts-ignore - Cloudinary typings
+      const file = req.file;
+      
+      if (!file.path) {
+        return res.status(500).json({ 
+          success: false, 
+          message: 'Upload failed - no file path returned' 
+        });
+      }
+
+      return res.status(200).json({ 
+        success: true, 
+        url: file.path,
+        filename: file.originalname 
+      });
+    } catch (error) {
+      console.error('Resume upload error:', error);
+      return res.status(500).json({ 
+        success: false, 
+        message: error instanceof Error ? error.message : 'Upload failed',
+        error: error
+      });
+    }
   });
 
 
