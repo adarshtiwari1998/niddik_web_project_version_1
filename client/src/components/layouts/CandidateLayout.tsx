@@ -82,7 +82,7 @@ export default function CandidateLayout({ children, activeTab = "" }: CandidateL
             </Link>
             <span className="text-sm text-muted-foreground border-l pl-4">Candidate Portal</span>
           </div>
-          
+
           <div className="hidden md:flex items-center gap-4">
             <DropdownMenu>
               <DropdownMenuTrigger asChild>
@@ -152,7 +152,7 @@ export default function CandidateLayout({ children, activeTab = "" }: CandidateL
                       </div>
                     </div>
                   </div>
-                  
+
                   <nav className="flex-1 px-2 py-4 space-y-2">
                     <Link href="/candidate/dashboard">
                       <div className={`flex items-center space-x-2 p-2 rounded-md hover:bg-muted transition-colors ${activeTab === 'overview' ? 'bg-muted font-medium' : ''}`}>
@@ -179,7 +179,7 @@ export default function CandidateLayout({ children, activeTab = "" }: CandidateL
                       </div>
                     </Link>
                   </nav>
-                  
+
                   <div className="px-2 py-4 mt-auto border-t">
                     <button 
                       onClick={handleLogout}
@@ -197,54 +197,56 @@ export default function CandidateLayout({ children, activeTab = "" }: CandidateL
       </header>
 
       {/* Main Content */}
-      <div className="flex pt-16 min-h-[calc(100vh-128px)] relative">
-        {/* Sidebar - Desktop only */}
-        <div className="hidden md:block fixed left-0 top-16 w-64 border-r bg-background h-[calc(100vh-128px)]">
-          <div className="w-full p-4">
-            <div className="flex flex-col h-full">
-              <nav className="space-y-1">
-                <Link href="/candidate/dashboard">
-                  <div className={`flex items-center space-x-2 p-2 rounded-md hover:bg-muted transition-colors ${activeTab === 'overview' ? 'bg-muted font-medium' : ''}`}>
-                    <BarChart3 className="h-4 w-4" />
-                    <span>Dashboard</span>
-                  </div>
-                </Link>
-                <Link href="/candidate/applications">
-                  <div className={`flex items-center space-x-2 p-2 rounded-md hover:bg-muted transition-colors ${activeTab === 'applications' ? 'bg-muted font-medium' : ''}`}>
-                    <Briefcase className="h-4 w-4" />
-                    <span>My Applications</span>
-                  </div>
-                </Link>
-                <Link href="/candidate/jobs">
-                  <div className={`flex items-center space-x-2 p-2 rounded-md hover:bg-muted transition-colors ${activeTab === 'jobs' ? 'bg-muted font-medium' : ''}`}>
-                    <FileText className="h-4 w-4" />
-                    <span>Job Listings</span>
-                  </div>
-                </Link>
-                <Link href="/candidate/profile">
-                  <div className={`flex items-center space-x-2 p-2 rounded-md hover:bg-muted transition-colors ${activeTab === 'profile' ? 'bg-muted font-medium' : ''}`}>
-                    <User className="h-4 w-4" />
-                    <span>My Profile</span>
-                  </div>
-                </Link>
-              </nav>
-              
-              <div className="pt-6 mt-auto border-t border-border">
-                <button 
-                  onClick={handleLogout}
-                  className="flex w-full items-center space-x-2 p-2 text-sm text-red-500 hover:bg-red-50 hover:text-red-600 rounded-md transition-colors"
-                >
-                  <LogOut className="h-4 w-4" />
-                  <span>Logout</span>
-                </button>
+      <div className="flex flex-col pt-16 min-h-screen">
+        <div className="flex flex-1 relative">
+          {/* Sidebar - Desktop only */}
+          <div className="hidden md:block fixed left-0 top-16 w-64 border-r bg-background h-[calc(100vh-64px)]">
+            <div className="w-full p-4">
+              <div className="flex flex-col h-full">
+                <nav className="space-y-1">
+                  <Link href="/candidate/dashboard">
+                    <div className={`flex items-center space-x-2 p-2 rounded-md hover:bg-muted transition-colors ${activeTab === 'overview' ? 'bg-muted font-medium' : ''}`}>
+                      <BarChart3 className="h-4 w-4" />
+                      <span>Dashboard</span>
+                    </div>
+                  </Link>
+                  <Link href="/candidate/applications">
+                    <div className={`flex items-center space-x-2 p-2 rounded-md hover:bg-muted transition-colors ${activeTab === 'applications' ? 'bg-muted font-medium' : ''}`}>
+                      <Briefcase className="h-4 w-4" />
+                      <span>My Applications</span>
+                    </div>
+                  </Link>
+                  <Link href="/candidate/jobs">
+                    <div className={`flex items-center space-x-2 p-2 rounded-md hover:bg-muted transition-colors ${activeTab === 'jobs' ? 'bg-muted font-medium' : ''}`}>
+                      <FileText className="h-4 w-4" />
+                      <span>Job Listings</span>
+                    </div>
+                  </Link>
+                  <Link href="/candidate/profile">
+                    <div className={`flex items-center space-x-2 p-2 rounded-md hover:bg-muted transition-colors ${activeTab === 'profile' ? 'bg-muted font-medium' : ''}`}>
+                      <User className="h-4 w-4" />
+                      <span>My Profile</span>
+                    </div>
+                  </Link>
+                </nav>
+
+                <div className="pt-6 mt-auto border-t border-border">
+                  <button 
+                    onClick={handleLogout}
+                    className="flex w-full items-center space-x-2 p-2 text-sm text-red-500 hover:bg-red-50 hover:text-red-600 rounded-md transition-colors"
+                  >
+                    <LogOut className="h-4 w-4" />
+                    <span>Logout</span>
+                  </button>
+                </div>
               </div>
             </div>
           </div>
-        </div>
 
-        {/* Main Content */}
-        <div className="flex-1 ml-0 md:ml-64 p-4 md:p-8 min-h-full pb-24">
-          {children}
+          {/* Main Content */}
+          <div className="flex-1 ml-0 md:ml-64 p-4 md:p-8 min-h-full pb-24">
+            {children}
+          </div>
         </div>
       </div>
 
