@@ -538,7 +538,7 @@ const handleResumeRemove = async () => {
                         <div>
                           <Input
                             type="file"
-                            accept="application/pdf,.pdf,application/msword,.doc,.docx,application/vnd.openxmlformats-officedocument.wordprocessingml.document"
+                            accept=".pdf,.doc,.docx"
                             onChange={async (e) => {
                               const file = e.target.files?.[0];
                               if (file) {
