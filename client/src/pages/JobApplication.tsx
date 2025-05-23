@@ -106,22 +106,28 @@ export default function JobApplication() {
           skills: data.skills,
         };
 
-        // If a new resume is being uploaded, use multipart form
+        // If a new resume is being uploaded, first upload the file
         if (resumeFile) {
-          const formData = new FormData();
+          // Create form data for resume upload
+          const uploadFormData = new FormData();
+          uploadFormData.append('resume', resumeFile);
 
-          // Add the resume file
-          formData.append('resume', resumeFile);
-
-          // Add all other application data as form fields
-          Object.entries(applicationData).forEach(([key, value]) => {
-            formData.append(key, value.toString());
+          // Upload the resume first
+          const uploadResponse = await fetch('/api/upload-resume', {
+            method: 'POST',
+            body: uploadFormData,
           });
 
-          // Submit using FormData for multipart/form-data
-          const response = await fetch('/api/job-applications', {
-            method: 'POST',
-            body: formData,
+          if (!uploadResponse.ok) {
+            throw new Error("Failed to upload resume");
+          }
+
+          const uploadResult = await uploadResponse.json();
+
+          // Now create the application with the resume URL
+          const response = await apiRequest("POST", "/api/job-applications", {
+            ...applicationData,
+            resumeUrl: uploadResult.url // Use the cloudinary URL from upload response
           });
 
           if (!response.ok) {
