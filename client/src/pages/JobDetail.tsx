@@ -534,7 +534,7 @@ const handleResumeRemove = async () => {
               </div>
             ) : (
               <div className="space-y-2">
-                
+
 <div>
                 <Input
                   type="file"
@@ -610,7 +610,7 @@ const handleResumeRemove = async () => {
                           View Resume
                         </a>
                       </div>
-                      
+
                     </div>
                   </div>
                 )}
@@ -619,10 +619,10 @@ const handleResumeRemove = async () => {
 
         </div>
 
-                {/* Application Form */}
-            <Form {...form}>
-              <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
-                <FormField
+        {/* Application Form */}
+        <Form {...form}>
+          <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
+            <FormField
                       control={form.control}
                       name="note"
                       render={({ field }) => (
