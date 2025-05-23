@@ -875,8 +875,8 @@ export default function SubmittedCandidates() {
                                 <TableCell>{item.poc || ""}</TableCell>
                                 <TableCell>{item.skills || ""}</TableCell>
                                 <TableCell>{item.candidate_name || item.candidateName || ""}</TableCell>
-                                <TableCell>{item.contact_no || ""}</TableCell>
-                                <TableCell>{item.email_id || ""}</TableCell>
+                                <TableCell>{item.contact_no || item.contactNo || ""}</TableCell>
+                                <TableCell>{item.email_id || item.emailId || ""}</TableCell>
                                 <TableCell>{item.experience || ""}</TableCell>
                                 <TableCell>{item.notice_period || ""}</TableCell>
                                 <TableCell>{item.location || ""}</TableCell>
