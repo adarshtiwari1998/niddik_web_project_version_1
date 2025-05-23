@@ -255,13 +255,11 @@ export default function JobForm() {
   function onSubmit(data: z.infer<typeof formSchema>) {
     console.log("Form submission data:", data);
     
-    // Format dates properly for submission
+    // Use dates directly without timezone conversion
     const formattedData = {
       ...data,
-      // Convert expiryDate to Date object if it exists
-      expiryDate: data.expiryDate ? new Date(data.expiryDate) : null,
-      // Always set postedDate as Date object
-      postedDate: new Date()
+      expiryDate: data.expiryDate,
+      postedDate: data.postedDate || new Date()
     };
     
     console.log("Formatted submission data:", formattedData);
