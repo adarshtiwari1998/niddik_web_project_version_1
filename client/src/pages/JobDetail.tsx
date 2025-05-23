@@ -499,37 +499,60 @@ const handleResumeRemove = async () => {
                 </div>
               </div>
             ) : (
-              <div>
-                <Input
-                  type="file"
-                  accept=".pdf,.doc,.docx,application/pdf,application/msword,application/vnd.openxmlformats-officedocument.wordprocessingml.document"
-                  onChange={(e) => {
-                    const file = e.target.files?.[0];
-                    if (file) {
-                      const ext = file.name.split('.').pop()?.toLowerCase();
-                      if (!['pdf', 'doc', 'docx'].includes(ext || '')) {
-                        toast({
-                          title: "Invalid file format",
-                          description: "Please upload only PDF, DOC, or DOCX files",
-                          variant: "destructive"
-                        });
-                        e.target.value = '';
-                        return;
+              <div className="space-y-2">
+                {user?.resumeUrl || resumeFile ? (
+                  <div className="p-4 border rounded-md bg-muted/5">
+                    <div className="flex items-center justify-between">
+                      <div className="flex items-center gap-2">
+                        <FileText className="h-4 w-4 text-primary" />
+                        <a href={user?.resumeUrl} target="_blank" rel="noopener noreferrer" className="text-sm hover:underline">
+                          {resumeFile?.name || "View Resume"}
+                        </a>
+                      </div>
+                      <Button
+                        variant="destructive"
+                        size="sm"
+                        onClick={handleResumeRemove}
+                        disabled={isRemoving}
+                      >
+                        {isRemoving ? (
+                          <Loader2 className="h-4 w-4 animate-spin" />
+                        ) : (
+                          <Trash className="h-4 w-4" />
+                        )}
+                      </Button>
+                    </div>
+                  </div>
+                ) : (
+                  <Input
+                    type="file"
+                    accept=".pdf,.doc,.docx,application/pdf,application/msword,application/vnd.openxmlformats-officedocument.wordprocessingml.document"
+                    onChange={async (e) => {
+                      const file = e.target.files?.[0];
+                      if (file) {
+                        const ext = file.name.split('.').pop()?.toLowerCase();
+                        if (!['pdf', 'doc', 'docx'].includes(ext || '')) {
+                          toast({
+                            title: "Invalid file format",
+                            description: "Please upload only PDF, DOC, or DOCX files",
+                            variant: "destructive"
+                          });
+                          e.target.value = '';
+                          return;
+                        }
+                        handleFileChange(e);
+                        await handleResumeUpload();
                       }
-                      handleFileChange(e);
-                    }
-                  }}
-                  placeholder="Upload resume"
-                  className="file:mr-4 file:py-2 file:px-4 file:rounded-md file:border-0 file:text-sm file:font-medium file:bg-primary file:text-primary-foreground hover:file:bg-primary/90"
-                />
-                {resumeFile && (
-                  <Button onClick={handleResumeUpload} disabled={isUploading}>
-                    {isUploading ? (
-                      <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                    ) : (
-                      "Upload Resume"
-                    )}
-                  </Button>
+                    }}
+                    placeholder="Upload resume"
+                    className="file:mr-4 file:py-2 file:px-4 file:rounded-md file:border-0 file:text-sm file:font-medium file:bg-primary file:text-primary-foreground hover:file:bg-primary/90"
+                  />
+                )}
+                {isUploading && (
+                  <div className="flex items-center gap-2 text-sm text-muted-foreground">
+                    <Loader2 className="h-4 w-4 animate-spin" />
+                    Uploading resume...
+                  </div>
                 )}
               </div>
             )}
