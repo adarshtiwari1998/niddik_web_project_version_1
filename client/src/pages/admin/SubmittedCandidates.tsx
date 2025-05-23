@@ -1934,7 +1934,7 @@ export default function SubmittedCandidates() {
                   )}
                 />
 
-                <FormField
+                {/* <FormField
                   control={form.control}
                   name="status"
                   render={({ field }) => (
@@ -1961,7 +1961,77 @@ export default function SubmittedCandidates() {
                       <FormMessage />
                     </FormItem>
                   )}
-                />
+                /> */}
+  <FormField
+    control={form.control}
+    name="status"
+    render={({ field }) => {
+      const [isCustom, setIsCustom] = useState(false);
+      const [customValue, setCustomValue] = useState("");
+
+      useEffect(() => {
+        if (field.value && !["new", "submitted to client", "scheduled for interview", "rejected", "selected"].includes(field.value)) {
+          setIsCustom(true);
+          setCustomValue(field.value);
+        }
+      }, [field.value]);
+
+      return (
+        <FormItem>
+          <FormLabel>Status *</FormLabel>
+          {!isCustom ? (
+            <Select
+              onValueChange={(value) => {
+                if (value === "custom") {
+                  setIsCustom(true);
+                } else {
+                  field.onChange(value);
+                }
+              }}
+              value={field.value}
+            >
+              <FormControl>
+                <SelectTrigger>
+                  <SelectValue placeholder="Select status" />
+                </SelectTrigger>
+              </FormControl>
+              <SelectContent>
+                <SelectItem value="new">New</SelectItem>
+                <SelectItem value="submitted to client">Submitted to Client</SelectItem>
+                <SelectItem value="scheduled for interview">Scheduled for Interview</SelectItem>
+                <SelectItem value="rejected">Rejected</SelectItem>
+                <SelectItem value="selected">Selected</SelectItem>
+                <SelectItem value="custom">+ Add Custom Status</SelectItem>
+              </SelectContent>
+            </Select>
+          ) : (
+            <div className="flex gap-2">
+              <Input
+                value={customValue}
+                onChange={(e) => {
+                  setCustomValue(e.target.value);
+                  field.onChange(e.target.value);
+                }}
+                placeholder="Enter custom status"
+              />
+              <Button
+                type="button"
+                variant="outline"
+                size="icon"
+                onClick={() => {
+                  setIsCustom(false);
+                  field.onChange("new");
+                }}
+              >
+                <X className="h-4 w-4" />
+              </Button>
+            </div>
+          )}
+          <FormMessage />
+        </FormItem>
+      );
+    }}
+  />
 
                 <div className="col-span-2">
                   <Card className="bg-muted/40">
@@ -2026,7 +2096,9 @@ export default function SubmittedCandidates() {
                   </Card>
                 </div>
 
-                  <FormField
+                
+
+                 {/* <FormField
                     control={form.control}
                     name="billRate"
                     render={({ field }) => (
@@ -2062,7 +2134,7 @@ export default function SubmittedCandidates() {
                         <FormMessage />
                       </FormItem>
                     )}
-                  />
+                  /> */}
                 </div>
 
               <DialogFooter>
