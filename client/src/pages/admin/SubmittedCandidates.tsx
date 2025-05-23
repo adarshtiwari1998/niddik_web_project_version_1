@@ -871,7 +871,7 @@ export default function SubmittedCandidates() {
                           </>
                         ) : (
                           "Import Candidates"
-                        )}
+                                                )}
                       </Button>
                     )}
                   </DialogFooter>
@@ -1934,7 +1934,6 @@ export default function SubmittedCandidates() {
                         </FormControl>
                         <FormMessage />
                       </FormItem>
-                    ```text
                     )}
                   />
                 </div>
