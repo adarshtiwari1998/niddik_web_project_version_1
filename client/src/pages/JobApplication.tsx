@@ -402,7 +402,7 @@ export default function JobApplication() {
                         <div className="flex-1">
                           <Input
                             type="file"
-                            accept=".pdf,.doc,.docx"
+                            accept="application/pdf,.doc,.docx,application/msword,application/vnd.openxmlformats-officedocument.wordprocessingml.document"
                             onChange={handleFileChange}
                             className="file:mr-4 file:py-2 file:px-4 file:rounded-md file:border-0 file:text-sm file:font-medium file:bg-primary file:text-primary-foreground hover:file:bg-primary/90"
                           />
