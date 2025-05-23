@@ -254,14 +254,14 @@ export default function JobForm() {
   // Submit handler
   function onSubmit(data: z.infer<typeof formSchema>) {
     console.log("Form submission data:", data);
-    
+
     // Convert dates to timestamps ISO format
     const formattedData = {
       ...data,
       expiryDate: data.expiryDate ? new Date(data.expiryDate).toISOString() : null,
       postedDate: new Date().toISOString()
     };
-    
+
     console.log("Formatted submission data:", formattedData);
 
     if (isNewJob) {
@@ -377,7 +377,7 @@ export default function JobForm() {
                           <FormLabel>Job Type*</FormLabel>
                           <Select
                             onValueChange={field.onChange}
-                            defaultValue={field.value}
+                            value={field.value}
                           >
                             <FormControl>
                               <SelectTrigger>
@@ -405,7 +405,7 @@ export default function JobForm() {
                           <FormLabel>Experience Level*</FormLabel>
                           <Select
                             onValueChange={field.onChange}
-                            defaultValue={field.value}
+                            value={field.value}
                           >
                             <FormControl>
                               <SelectTrigger>
@@ -432,7 +432,7 @@ export default function JobForm() {
                           <FormLabel>Category*</FormLabel>
                           <Select
                             onValueChange={field.onChange}
-                            defaultValue={field.value}
+                            value={field.value}
                           >
                             <FormControl>
                               <SelectTrigger>
@@ -615,7 +615,7 @@ export default function JobForm() {
                           <FormLabel>Status*</FormLabel>
                           <Select
                             onValueChange={field.onChange}
-                            defaultValue={field.value}
+                            value={field.value}
                           >
                             <FormControl>
                               <SelectTrigger>
