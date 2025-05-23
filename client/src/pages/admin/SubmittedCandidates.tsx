@@ -164,7 +164,7 @@ const statusOptions = [
   { value: "selected", label: "Selected" }
 ];
 
-function SubmittedCandidates() {
+export default function SubmittedCandidates() {
   const { toast } = useToast();
   const queryClient = useQueryClient();
 
