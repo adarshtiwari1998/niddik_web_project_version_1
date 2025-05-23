@@ -177,7 +177,14 @@ export default function JobForm() {
   useEffect(() => {
     if (!isNewJob && jobData?.data) {
       const job = jobData.data;
-      console.log("Updating form data:", job);
+      console.log("Editing job listing - Job Data:", {
+        id: job.id,
+        title: job.title,
+        company: job.company,
+        status: job.status,
+        expiryDate: job.expiryDate,
+        allData: job
+      });
 
       form.reset({
         title: job.title,
@@ -246,6 +253,7 @@ export default function JobForm() {
 
   // Submit handler
   function onSubmit(data: z.infer<typeof formSchema>) {
+    console.log("Form submission data:", data);
     // Format the data for submission with proper date handling
     const formattedData = {
       ...data,
