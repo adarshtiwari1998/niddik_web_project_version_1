@@ -53,7 +53,37 @@ export default function ProfilePage() {
   const { toast } = useToast();
   const [activeTab, setActiveTab] = useState("profile");
   const [isUploading, setIsUploading] = useState(false);
+  const [isRemoving, setIsRemoving] = useState(false);
   const [resumeFile, setResumeFile] = useState<File | null>(null);
+
+  const handleResumeRemove = async () => {
+    setIsRemoving(true);
+    try {
+      const response = await fetch("/api/remove-resume", {
+        method: "DELETE",
+      });
+
+      if (!response.ok) {
+        throw new Error("Unable to remove resume.");
+      }
+
+      toast({
+        title: "Resume removed",
+        description: "Your resume has been removed successfully.",
+      });
+
+      queryClient.invalidateQueries({ queryKey: ["/api/user"] });
+      setResumeFile(null);
+    } catch (error) {
+      toast({
+        title: "Remove failed",
+        description: "Unable to remove resume. Please try again.",
+        variant: "destructive",
+      });
+    } finally {
+      setIsRemoving(false);
+    }
+  };
 
   // Form for profile update
   const profileForm = useForm<ProfileFormValues>({
@@ -137,24 +167,24 @@ export default function ProfilePage() {
         setIsUploading(true);
         const formData = new FormData();
         formData.append('resume', resumeFile);
-        
+
         try {
           const uploadRes = await fetch('/api/upload-resume', {
             method: 'POST',
             body: formData,
           });
-          
+
           if (!uploadRes.ok) {
             throw new Error('Failed to upload resume');
           }
-          
+
           const result = await uploadRes.json();
           resumeUrl = result.url;
         } finally {
           setIsUploading(false);
         }
       }
-      
+
       // Now update the profile with the resume URL
       const updateRes = await fetch('/api/profile', {
         method: 'PUT',
@@ -166,21 +196,21 @@ export default function ProfilePage() {
           resumeUrl,
         }),
       });
-      
+
       if (!updateRes.ok) {
         throw new Error('Failed to update profile');
       }
-      
+
       return updateRes.json();
     },
     onSuccess: (data) => {
       queryClient.invalidateQueries({ queryKey: ['/api/user'] });
-      
+
       toast({
         title: "Profile updated",
         description: "Your profile has been updated successfully",
       });
-      
+
       setResumeFile(null);
     },
     onError: (error) => {
@@ -206,12 +236,12 @@ export default function ProfilePage() {
           newPassword: data.newPassword,
         }),
       });
-      
+
       if (!res.ok) {
         const errorData = await res.json();
         throw new Error(errorData.message || 'Failed to change password');
       }
-      
+
       return res.json();
     },
     onSuccess: () => {
@@ -219,7 +249,7 @@ export default function ProfilePage() {
         title: "Password changed",
         description: "Your password has been changed successfully",
       });
-      
+
       passwordForm.reset({
         currentPassword: "",
         newPassword: "",
@@ -326,7 +356,7 @@ export default function ProfilePage() {
             <TabsTrigger value="profile">Profile Information</TabsTrigger>
             <TabsTrigger value="security">Security & Password</TabsTrigger>
           </TabsList>
-          
+
           {/* Profile Tab */}
           <TabsContent value="profile" className="mt-6">
             <Card>
@@ -344,7 +374,7 @@ export default function ProfilePage() {
                       <div>
                         <h3 className="text-lg font-medium">Basic Information</h3>
                         <p className="text-sm text-muted-foreground mb-4">Your personal details</p>
-                        
+
                         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                           <FormField
                             control={profileForm.control}
@@ -362,7 +392,7 @@ export default function ProfilePage() {
                               </FormItem>
                             )}
                           />
-                          
+
                           <FormField
                             control={profileForm.control}
                             name="email"
@@ -379,7 +409,7 @@ export default function ProfilePage() {
                               </FormItem>
                             )}
                           />
-                          
+
                           <FormField
                             control={profileForm.control}
                             name="phone"
@@ -398,14 +428,14 @@ export default function ProfilePage() {
                           />
                         </div>
                       </div>
-                      
+
                       <Separator />
-                      
+
                       {/* Career Information */}
                       <div>
                         <h3 className="text-lg font-medium">Career Information</h3>
                         <p className="text-sm text-muted-foreground mb-4">Your professional details</p>
-                        
+
                         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                           <FormField
                             control={profileForm.control}
@@ -423,7 +453,7 @@ export default function ProfilePage() {
                               </FormItem>
                             )}
                           />
-                          
+
                           <FormField
                             control={profileForm.control}
                             name="noticePeriod"
@@ -452,7 +482,7 @@ export default function ProfilePage() {
                               </FormItem>
                             )}
                           />
-                          
+
                           <FormField
                             control={profileForm.control}
                             name="currentCtc"
@@ -469,7 +499,7 @@ export default function ProfilePage() {
                               </FormItem>
                             )}
                           />
-                          
+
                           <FormField
                             control={profileForm.control}
                             name="expectedCtc"
@@ -512,14 +542,14 @@ export default function ProfilePage() {
                           />
                         </div>
                       </div>
-                      
+
                       <Separator />
-                      
+
                       {/* Location Information */}
                       <div>
                         <h3 className="text-lg font-medium">Location Information</h3>
                         <p className="text-sm text-muted-foreground mb-4">Your address details</p>
-                        
+
                         <div className="grid grid-cols-1 gap-4">
                           <FormField
                             control={profileForm.control}
@@ -537,7 +567,7 @@ export default function ProfilePage() {
                               </FormItem>
                             )}
                           />
-                          
+
                           <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
                             <FormField
                               control={profileForm.control}
@@ -552,7 +582,7 @@ export default function ProfilePage() {
                                 </FormItem>
                               )}
                             />
-                            
+
                             <FormField
                               control={profileForm.control}
                               name="state"
@@ -566,7 +596,7 @@ export default function ProfilePage() {
                                 </FormItem>
                               )}
                             />
-                            
+
                             <FormField
                               control={profileForm.control}
                               name="zipCode"
@@ -581,7 +611,7 @@ export default function ProfilePage() {
                               )}
                             />
                           </div>
-                          
+
                           <FormField
                             control={profileForm.control}
                             name="country"
@@ -597,14 +627,14 @@ export default function ProfilePage() {
                           />
                         </div>
                       </div>
-                      
+
                       <Separator />
-                      
+
                       {/* Resume Upload */}
                       <div>
                         <h3 className="text-lg font-medium">Resume</h3>
                         <p className="text-sm text-muted-foreground mb-4">Upload your latest resume</p>
-                        
+
                         <div className="space-y-4">
                           {user?.resumeUrl ? (
                             <div className="p-4 border rounded-md bg-muted/5">
@@ -653,20 +683,20 @@ export default function ProfilePage() {
                               />
                             </div>
                           )}
-                          
+
                           {resumeFile && (
                             <p className="text-sm text-muted-foreground">
                               Selected file: {resumeFile.name}
                             </p>
                           )}
-                          
+
                           <FormDescription>
                             Upload your resume in PDF, DOC, or DOCX format (max 5MB)
                           </FormDescription>
                         </div>
                       </div>
                     </div>
-                    
+
                     <Button 
                       type="submit" 
                       className="w-full md:w-auto" 
@@ -686,7 +716,7 @@ export default function ProfilePage() {
               </CardContent>
             </Card>
           </TabsContent>
-          
+
           {/* Security Tab */}
           <TabsContent value="security" className="mt-6">
             <Card>
@@ -706,7 +736,7 @@ export default function ProfilePage() {
                           Passwords must be at least 6 characters long and include a mix of letters, numbers, and special characters for better security.
                         </AlertDescription>
                       </Alert>
-                      
+
                       <FormField
                         control={passwordForm.control}
                         name="currentPassword"
@@ -720,7 +750,7 @@ export default function ProfilePage() {
                           </FormItem>
                         )}
                       />
-                      
+
                       <FormField
                         control={passwordForm.control}
                         name="newPassword"
@@ -734,7 +764,7 @@ export default function ProfilePage() {
                           </FormItem>
                         )}
                       />
-                      
+
                       <FormField
                         control={passwordForm.control}
                         name="confirmPassword"
@@ -749,7 +779,7 @@ export default function ProfilePage() {
                         )}
                       />
                     </div>
-                    
+
                     <Button 
                       type="submit" 
                       className="w-full md:w-auto" 
@@ -768,7 +798,7 @@ export default function ProfilePage() {
                 </Form>
               </CardContent>
             </Card>
-            
+
             {/* Account Settings */}
             <Card className="mt-6">
               <CardHeader>
@@ -786,9 +816,9 @@ export default function ProfilePage() {
                     </div>
                     <Badge>Candidate</Badge>
                   </div>
-                  
+
                   <Separator />
-                  
+
                   <div className="flex justify-between items-center">
                     <div>
                       <p className="text-sm font-medium">Account Created</p>
@@ -798,9 +828,9 @@ export default function ProfilePage() {
                       {user.createdAt ? new Date(user.createdAt).toLocaleDateString() : "N/A"}
                     </span>
                   </div>
-                  
+
                   <Separator />
-                  
+
                   <div className="flex justify-between items-center">
                     <div>
                       <p className="text-sm font-medium">Username</p>
