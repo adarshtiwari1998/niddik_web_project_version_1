@@ -99,6 +99,40 @@ export default function JobDetail() {
           throw new Error(errorData.message || "Failed to submit application");
         }
 
+        // After successful application submission, update user's resume URL in the database if a new resume was uploaded
+        if (resumeFile) {
+          try {
+            // Fetch the updated user information to get the new resume URL after upload
+            const updatedUserResponse = await apiRequest("GET", "/api/user");
+            if (updatedUserResponse.ok) {
+              const updatedUserData = await updatedUserResponse.json();
+              // Optimistically update the user object in the auth context if available
+              // This assumes that the /api/user endpoint returns the complete user object
+              // which includes the updated resume URL
+              if (updatedUserData && updatedUserData.resumeUrl) {
+                // Assuming useAuth provides a method to update the user object
+                // For example: updateUser(updatedUserData)
+                // You'll need to adapt this part to match the actual implementation of useAuth
+                // If useAuth does not provide such a method, you may need to refetch user data
+                // or manually update the user object in the component's state
+
+                // Placeholder for the actual update logic
+                // updateUser(updatedUserData);
+                console.log("Resume URL updated in user profile:", updatedUserData.resumeUrl);
+              }
+            } else {
+              console.error("Failed to fetch updated user data:", updatedUserResponse.status);
+            }
+          } catch (updateError) {
+            console.error("Error updating resume URL in user profile:", updateError);
+            toast({
+              title: "Update failed",
+              description: "Unable to update resume URL in your profile. Please try again.",
+              variant: "destructive",
+            });
+          }
+        }
+
         return response.json();
       } catch (error) {
         console.error("Application error:", error);

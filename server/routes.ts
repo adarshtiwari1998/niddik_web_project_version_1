@@ -887,6 +887,13 @@ export async function registerRoutes(app: Express): Promise<Server> {
         size: file.size
       });
 
+      // If user is authenticated, update their profile with the resume URL
+      if (req.isAuthenticated() && req.user) {
+        await db.update(users)
+          .set({ resumeUrl: file.path })
+          .where(eq(users.id, req.user.id));
+      }
+
       return res.status(200).json({ 
         success: true, 
         url: file.path,
