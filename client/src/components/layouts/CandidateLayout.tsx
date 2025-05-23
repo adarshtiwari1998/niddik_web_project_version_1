@@ -250,7 +250,7 @@ export default function CandidateLayout({ children, activeTab = "" }: CandidateL
         </div>
 
         {/* Footer */}
-        <footer className="border-t py-6 bg-background w-full mt-auto">
+        <footer className="border-t py-6 bg-background w-full mt-auto z-[99] relative">
           <div className="container flex flex-col md:flex-row items-center justify-between gap-4">
             <div className="text-sm text-muted-foreground">
               © 2025 NiDDiK. All rights reserved.
