@@ -27,23 +27,27 @@ const generateToken = (user: User | AdminUser) => { // Updated type
 };
 
 // JWT token validation middleware
-const validateJWT = (req: Request, res: Response, next: NextFunction) => {
-    const authHeader = req.headers.authorization;
-    const token = authHeader && authHeader.split(' ')[1]; // Bearer TOKEN format
-
-    if (!token) {
-        return next(); // No token, proceed with session auth
-    }
-
+const validateJWT = async (req: Request, res: Response, next: NextFunction) => {
     try {
-        const decoded = jwt.verify(token, JWT_SECRET) as { user: User | AdminUser }; // Updated type
-        if (decoded.user) {
-            // Set user if token is valid
-            req.user = decoded.user;
+        const authHeader = req.headers.authorization;
+        const token = authHeader && authHeader.split(' ')[1]; // Bearer TOKEN format
+
+        if (!token) {
+            return next(); // No token, proceed with session auth
+        }
+
+        const decoded = jwt.verify(token, JWT_SECRET) as { user: User };
+        if (decoded.user && decoded.user.id) {
+            // Get fresh user data from database
+            const user = await storage.getUserById(decoded.user.id);
+            if (user) {
+                req.user = user;
+            }
         }
         next();
     } catch (error) {
         // Invalid token, but we'll still proceed with session auth
+        console.error('JWT validation error:', error);
         next();
     }
 };
