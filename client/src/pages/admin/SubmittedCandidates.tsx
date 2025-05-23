@@ -820,12 +820,24 @@ function SubmittedCandidates() {
                   </Button>
                 </DialogTrigger>
                 <DialogContent className="max-w-3xl max-h-[80vh] overflow-y-auto">
-                  <DialogHeader>
+                  
+              <DialogHeader>
+                <div className="flex items-center justify-between">
+                  <div>
                     <DialogTitle>Import Candidates from CSV</DialogTitle>
                     <DialogDescription>
                       Upload a CSV file with candidate data to bulk import.
                     </DialogDescription>
-                  </DialogHeader>
+                  </div>
+                  <a 
+                    href="https://res.cloudinary.com/dhanz6zty/raw/upload/v1748032463/Import_from_Sheet___Niddik_-_Sheet1_1_ujofic.csv"
+                    target="_blank"
+                    className="text-sm text-primary hover:underline"
+                  >
+                    View Sample Format
+                  </a>
+                </div>
+              </DialogHeader>
 
                   {!isPreviewMode ? (
                     <div className="py-4">
