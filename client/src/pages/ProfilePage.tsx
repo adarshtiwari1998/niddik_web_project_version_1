@@ -51,7 +51,15 @@ type PasswordFormValues = z.infer<typeof passwordSchema>;
 export default function ProfilePage() {
   const { user } = useAuth();
   const { toast } = useToast();
-  const [activeTab, setActiveTab] = useState("profile");
+  const [activeTab, setActiveTab] = useState(() => {
+    // Get the last active tab from sessionStorage or default to "profile"
+    return sessionStorage.getItem('profile_active_tab') || "profile";
+  });
+
+  // Save active tab to sessionStorage when it changes
+  useEffect(() => {
+    sessionStorage.setItem('profile_active_tab', activeTab);
+  }, [activeTab]);
   const [isUploading, setIsUploading] = useState(false);
   const [isRemoving, setIsRemoving] = useState(false);
   const [resumeFile, setResumeFile] = useState<File | null>(null);
@@ -118,19 +126,23 @@ export default function ProfilePage() {
   // Update profile information when user data changes
   useEffect(() => {
     if (user) {
+      // Get the current form values
+      const currentValues = profileForm.getValues();
+      
       profileForm.reset({
-        fullName: user.fullName || "",
-        email: user.email || "",
-        phone: user.phone || "",
-        experience: user.experience || "",
-        noticePeriod: user.noticePeriod || "Immediately",
-        currentCtc: user.currentCtc || "",
-        expectedCtc: user.expectedCtc || "",
-        location: user.location || "",
-        city: user.city || "",
-        state: user.state || "",
-        country: user.country || "",
-        zipCode: user.zipCode || "",
+        fullName: currentValues.fullName || user.fullName || "",
+        email: currentValues.email || user.email || "",
+        phone: currentValues.phone || user.phone || "",
+        experience: currentValues.experience || user.experience || "",
+        noticePeriod: currentValues.noticePeriod || user.noticePeriod || "Immediately",
+        currentCtc: currentValues.currentCtc || user.currentCtc || "",
+        expectedCtc: currentValues.expectedCtc || user.expectedCtc || "",
+        skills: currentValues.skills || user.skills || "",
+        location: currentValues.location || user.location || "",
+        city: currentValues.city || user.city || "",
+        state: currentValues.state || user.state || "",
+        country: currentValues.country || user.country || "",
+        zipCode: currentValues.zipCode || user.zipCode || "",
       });
     }
   }, [user, profileForm]);
