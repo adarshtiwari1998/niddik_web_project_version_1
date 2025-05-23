@@ -109,26 +109,34 @@ export default function JobForm() {
   });
 
   // Set form values when editing an existing job
-  useEffect(() => {
-    if (!isNewJob && jobData && typeof jobData === 'object' && 'data' in jobData) {
-      const job = jobData.data as Record<string, any>;
+  // Fetch job data when editing
+  const { data: jobData, isLoading: isLoadingJob } = useQuery({
+    queryKey: [`/api/job-listings/${jobId}`],
+    queryFn: () => apiRequest("GET", `/api/job-listings/${jobId}`),
+    enabled: !isNewJob && jobId !== null,
+  });
 
+  useEffect(() => {
+    if (!isNewJob && jobData?.data) {
+      const job = jobData.data;
+      console.log("Setting form data:", job); // Debug log
+      
       form.reset({
-        title: job.title || "",
-        company: job.company || "Andela",
-        location: job.location || "",
-        jobType: job.jobType || "Full-time",
-        experienceLevel: job.experienceLevel || "Mid",
-        salary: job.salary || "",
-        description: job.description || "",
-        requirements: job.requirements || "",
+        title: job.title,
+        company: job.company,
+        location: job.location,
+        jobType: job.jobType,
+        experienceLevel: job.experienceLevel,
+        salary: job.salary,
+        description: job.description,
+        requirements: job.requirements,
         benefits: job.benefits || "",
         applicationUrl: job.applicationUrl || "",
         contactEmail: job.contactEmail || "",
-        status: job.status || "active",
+        status: job.status,
         featured: Boolean(job.featured),
-        category: job.category || "Engineering",
-        skills: job.skills || "",
+        category: job.category,
+        skills: job.skills,
         expiryDate: job.expiryDate ? new Date(job.expiryDate) : undefined,
       });
     }
@@ -629,7 +637,7 @@ export default function JobForm() {
                   {isSubmitting && (
                     <Loader2 className="mr-2 h-4 w-4 animate-spin" />
                   )}
-                  {isNewJob ? "Create Job Listing" : "Update Job Listing"}
+                  {isNewJob ? "Create Job Listing" : "Edit Job Listing"}
                 </Button>
               </div>
             </form>
