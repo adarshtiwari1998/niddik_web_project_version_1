@@ -53,10 +53,10 @@ export default function AdminLayout({ children, title, description }: AdminLayou
   }
 
   return (
-    <div className="min-h-screen bg-gray-50 dark:bg-gray-900">
+    <div className="min-h-screen bg-gray-50 dark:bg-gray-900 flex flex-col">
       {isLoggingOut && <LoadingScreen message="Logging out..." />}
       {/* Admin Header */}
-      <header className="bg-white dark:bg-gray-800 shadow-sm border-b">
+      <header className="bg-white dark:bg-gray-800 shadow-sm border-b fixed top-0 left-0 right-0 z-50">
         <div className="container mx-auto px-4 py-3 flex justify-between items-center">
           <Link href="/admin/dashboard">
             <div className="flex flex-col cursor-pointer">
@@ -84,8 +84,10 @@ export default function AdminLayout({ children, title, description }: AdminLayou
         </div>
       </header>
       
-      <div className="container mx-auto px-4 py-8">
-        <div className="grid grid-cols-1 md:grid-cols-4 gap-6">
+      <div className="container mx-auto px-4 py-8 mt-[88px] flex-1">
+        <div className="grid grid-cols-1 md:grid-cols-4 gap-6 relative">
+          {/* Fixed Sidebar */}
+          <div className="md:col-span-1 md:fixed md:w-[calc(25%-24px)] md:max-w-[300px]">
           {/* Sidebar */}
           <div className="md:col-span-1">
             <Card>
@@ -165,7 +167,7 @@ export default function AdminLayout({ children, title, description }: AdminLayou
           </div>
 
           {/* Main Content */}
-          <div className="md:col-span-3">
+          <div className="md:col-span-3 md:ml-[calc(25%+24px)]">
             <div className="flex justify-between items-center mb-6">
               <div>
                 <h1 className="text-2xl font-bold">{title}</h1>

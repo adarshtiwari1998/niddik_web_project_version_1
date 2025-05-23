@@ -43,6 +43,7 @@ import { format } from "date-fns";
 import { CalendarIcon, Loader2 } from "lucide-react";
 import { queryClient, apiRequest } from "@/lib/queryClient";
 import { jobListingSchema } from "@shared/schema";
+import { ChevronLeft } from 'lucide-react';
 
 // Form schema based on the job listing schema
 const formSchema = z.object({
@@ -237,10 +238,10 @@ export default function JobForm() {
       // Invalidate both the list and the individual job query
       queryClient.invalidateQueries({ queryKey: ["/api/job-listings"] });
       queryClient.invalidateQueries({ queryKey: [`/api/job-listings/${jobId}`] });
-      
+
       // Refetch the current job data
       queryClient.refetchQueries({ queryKey: [`/api/job-listings/${jobId}`] });
-      
+
       toast({
         title: "Job listing updated",
         description: "Your job listing has been updated successfully.",
@@ -283,17 +284,27 @@ export default function JobForm() {
     <AdminLayout>
       <div className="space-y-6">
         <div>
-          <h1 className="text-3xl font-bold tracking-tight">
-            {isNewJob ? "Create Job Listing" : `Edit Job Listing - ${jobData?.data?.title || ''}`}
-          </h1>
-          {!isNewJob && jobId && (
-            <p className="text-sm text-muted-foreground">Job ID: {jobId}</p>
-          )}
-          <p className="text-muted-foreground mt-2">
-            {isNewJob
-              ? "Create a new job listing for your company."
-              : "Update the details of an existing job listing."}
-          </p>
+          <div className="flex items-center gap-4">
+            <button 
+              onClick={() => navigate("/admin/jobs")}
+              className="p-2 hover:bg-gray-100 rounded-full transition-colors"
+            >
+              <ChevronLeft className="h-5 w-5" />
+            </button>
+            <div>
+              <h1 className="text-3xl font-bold tracking-tight">
+                {isNewJob ? "Create Job Listing" : `Edit Job Listing - ${jobData?.data?.title || ''}`}
+              </h1>
+              {!isNewJob && jobId && (
+                <p className="text-sm text-muted-foreground">Job ID: {jobId}</p>
+              )}
+              <p className="text-muted-foreground mt-2">
+                {isNewJob
+                  ? "Create a new job listing for your company."
+                  : "Update the details of an existing job listing."}
+              </p>
+            </div>
+          </div>
         </div>
 
         {!isNewJob && isLoadingJob ? (
