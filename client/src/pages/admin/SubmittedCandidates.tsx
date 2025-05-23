@@ -570,8 +570,12 @@ export default function SubmittedCandidates() {
 
   // Add candidate inline
   const handleAddInline = () => {
-    // Validate required fields
-    const requiredFields = ['candidateName', 'client', 'poc', 'emailId', 'sourcedBy'];
+    // Validate required fields 
+    const requiredFields = [
+      'candidateName', 'client', 'poc', 'contactNo', 'emailId', 
+      'experience', 'noticePeriod', 'location', 'currentCtc', 
+      'expectedCtc', 'skills', 'sourcedBy'
+    ];
     const missingFields = requiredFields.filter(field => !newCandidateData[field as keyof ExtendedCandidateFormValues]);
 
     if (missingFields.length > 0) {
