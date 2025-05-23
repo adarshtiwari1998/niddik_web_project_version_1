@@ -599,7 +599,7 @@ export default function JobForm() {
                           <FormLabel>Contact Email (Optional)</FormLabel>
                           <FormControl>
                             <Input
-                              placeholder="e.g. careers@example.com"
+                              placeholder="e.g. info@niddik.com"
                               {...field}
                             />
                           </FormControl>
