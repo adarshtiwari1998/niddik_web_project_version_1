@@ -468,6 +468,9 @@ export default function SubmittedCandidates() {
           'expected ctc': 'expectedCtc',
           'bill rate': 'billRate',
           'pay/hr': 'payRate',
+          'pay rate': 'payRate',
+          'pay_rate': 'payRate',
+          'payrate': 'payRate',
           'status': 'status',
           'salary (lacs)': 'salaryInLacs'
         };
