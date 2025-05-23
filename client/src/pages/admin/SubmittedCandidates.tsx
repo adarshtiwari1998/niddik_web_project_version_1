@@ -1750,30 +1750,16 @@ export default function SubmittedCandidates() {
 <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                 <FormField
                   control={form.control}
-                  name="submissionDate"
-                  render={({ field }) => (
-                    <FormItem>
-                      <FormLabel>Submission Date *</FormLabel>
-                      <FormControl>
-                        <Input 
-                          type="date" 
-                          {...field} 
-                          value={field.value || selectedCandidate?.submissionDate || new Date().toISOString().split('T')[0]}
-                        />
-                      </FormControl>
-                      <FormMessage />
-                    </FormItem>
-                  )}
-                />
-
-                <FormField
-                  control={form.control}
                   name="sourcedBy"
                   render={({ field }) => (
                     <FormItem>
                       <FormLabel>Sourced By *</FormLabel>
                       <FormControl>
-                        <Input {...field} value={field.value || selectedCandidate?.sourcedBy || ''} />
+                        <Input 
+                          type="date" 
+                          {...field} 
+                          value={field.value || selectedCandidate?.sourcedBy || new Date().toISOString().split('T')[0]}
+                        />
                       </FormControl>
                       <FormMessage />
                     </FormItem>
@@ -1976,6 +1962,7 @@ export default function SubmittedCandidates() {
                     </FormItem>
                   )}
                 /> */}
+
   <FormField
     control={form.control}
     name="status"
@@ -2046,7 +2033,6 @@ export default function SubmittedCandidates() {
       );
     }}
   />
-
                 <div className="col-span-2">
                   <Card className="bg-muted/40">
                     <CardHeader className="pb-3">
