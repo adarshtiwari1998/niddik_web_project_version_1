@@ -963,7 +963,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
   });
 
   // Withdraw job application
-  app.put('/api/my-applications/:id/withdraw', async (req: AuthenticatedRequest, res) => {
+  app.delete('/api/my-applications/:id/withdraw', async (req: AuthenticatedRequest, res) => {
     try {
       if (!req.isAuthenticated()) {
         return res.status(401).json({ 
@@ -993,11 +993,12 @@ export async function registerRoutes(app: Express): Promise<Server> {
         });
       }
 
-      const updatedApplication = await storage.updateJobApplicationStatus(applicationId, 'withdrawn');
+      // Delete the application instead of updating status
+      await db.delete(jobApplications).where(eq(jobApplications.id, applicationId));
 
       return res.status(200).json({
         success: true,
-        data: updatedApplication
+        message: "Application withdrawn successfully"
       });
     } catch (error) {
       console.error('Error withdrawing application:', error);

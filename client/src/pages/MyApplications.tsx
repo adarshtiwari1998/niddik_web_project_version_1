@@ -109,7 +109,7 @@ export default function MyApplications() {
   const withdrawMutation = useMutation({
     mutationFn: async (applicationId: number) => {
       const res = await fetch(`/api/my-applications/${applicationId}/withdraw`, {
-        method: 'PUT',
+        method: 'DELETE',
       });
       if (!res.ok) throw new Error("Failed to withdraw application");
       return res.json();
