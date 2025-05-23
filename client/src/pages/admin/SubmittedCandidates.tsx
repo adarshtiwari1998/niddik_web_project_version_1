@@ -792,7 +792,7 @@ export default function SubmittedCandidates() {
                     Import from Sheet
                   </Button>
                 </DialogTrigger>
-                <DialogContent className="max-w-3xl">
+                <DialogContent className="max-w-3xl max-h-[80vh] overflow-y-auto">
                   <DialogHeader>
                     <DialogTitle>Import Candidates from CSV</DialogTitle>
                     <DialogDescription>
@@ -869,7 +869,9 @@ export default function SubmittedCandidates() {
                             <Loader2 className="w-4 h-4 mr-2 animate-spin" />
                             Importing...
                           </>
-                        ) : (
+                        )```text
+```text
+                         ) : (
                           "Import Candidates"
                         )}
                       </Button>
@@ -1360,7 +1362,7 @@ export default function SubmittedCandidates() {
 
       {/* Add Candidate Dialog */}
       <Dialog open={isAddDialogOpen} onOpenChange={setIsAddDialogOpen}>
-        <DialogContent className="max-w-3xl">
+        <DialogContent className="max-w-3xl max-h-[80vh] overflow-y-auto">
           <DialogHeader>
             <DialogTitle>Add New Candidate</DialogTitle>
             <DialogDescription>
@@ -1677,7 +1679,7 @@ export default function SubmittedCandidates() {
 
       {/* Edit Candidate Dialog */}
       <Dialog open={isEditDialogOpen} onOpenChange={setIsEditDialogOpen}>
-        <DialogContent className="max-w-3xl">
+        <DialogContent className="max-w-3xl max-h-[80vh] overflow-y-auto">
           <DialogHeader>
             <DialogTitle>Edit Candidate</DialogTitle>
             <DialogDescription>
@@ -1687,7 +1689,7 @@ export default function SubmittedCandidates() {
 
           <Form {...form}>
             <form onSubmit={form.handleSubmit(onSubmitEdit)} className="space-y-6">
-              
+
 <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                 <FormField
                   control={form.control}
@@ -1934,6 +1936,7 @@ export default function SubmittedCandidates() {
                         </FormControl>
                         <FormMessage />
                       </FormItem>
+                    ```text
                     )}
                   />
                 </div>
