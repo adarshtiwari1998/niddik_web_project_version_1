@@ -856,7 +856,7 @@ export default function SubmittedCandidates() {
                           <TableBody>
                             {importData.slice(0, 5).map((item: Record<string, string>, index: number) => (
                               <TableRow key={`preview-${index}`}>
-                                <TableCell>{item.candidateName || ""}</TableCell>
+                                <TableCell>{item.candidate_name || item.candidateName || ""}</TableCell>
                                 <TableCell>{item.client || ""}</TableCell>
                                 <TableCell>{item.skills || ""}</TableCell>
                                 <TableCell>{item.status || ""}</TableCell>
