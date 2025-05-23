@@ -862,7 +862,8 @@ export default function SubmittedCandidates() {
                               <TableHead>Location</TableHead>
                               <TableHead>Current CTC</TableHead>
                               <TableHead>Expected CTC</TableHead>
-                              <TableHead>Bill Rate</TableHead                              <TableHead>Pay Rate</TableHead>
+                              <TableHead>Bill Rate</TableHead>
+                              <TableHead>Pay Rate</TableHead>
                               <TableHead>Margin/Hour</TableHead>
                               <TableHead>Profit/Month</TableHead>
                               <TableHead>Status</TableHead>
