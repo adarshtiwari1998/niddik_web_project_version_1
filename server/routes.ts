@@ -6,6 +6,7 @@ import {
   jobListingSchema, 
   jobApplicationSchema,
   jobApplications,
+  jobListings,
   submittedCandidateSchema,
   demoRequestSchema,
   demoRequests,
@@ -1025,8 +1026,10 @@ export async function registerRoutes(app: Express): Promise<Server> {
         sortBy?: string;
       };
 
-      // Base query to get all applications with user and job details
-      let query = db
+      console.log("Analytics endpoint called with params:", { search, status, sortBy });
+
+      // Base query to get all applications with user details
+      let baseQuery = db
         .select({
           applicationId: jobApplications.id,
           applicationStatus: jobApplications.status,
@@ -1041,29 +1044,44 @@ export async function registerRoutes(app: Express): Promise<Server> {
         .leftJoin(users, eq(jobApplications.userId, users.id));
 
       // Apply search filter if provided
-      if (search) {
-        query = query.where(
+      if (search && search.trim()) {
+        baseQuery = baseQuery.where(
           or(
-            ilike(users.email, `%${search}%`),
-            ilike(users.username, `%${search}%`),
-            ilike(users.fullName, `%${search}%`)
+            ilike(users.email, `%${search.trim()}%`),
+            ilike(users.username, `%${search.trim()}%`),
+            ilike(users.fullName, `%${search.trim()}%`)
           )
         );
       }
 
-      const applications = await query;
+      console.log("Executing applications query...");
+      const applications = await baseQuery;
+      console.log(`Found ${applications.length} applications`);
 
-      // Get job listings to map job titles
-      const jobIds = [...new Set(applications.map(app => app.jobId).filter(Boolean))];
-      const jobs = jobIds.length > 0 ? await db
-        .select({
-          id: jobListings.id,
-          title: jobListings.title
-        })
-        .from(jobListings)
-        .where(inArray(jobListings.id, jobIds)) : [];
+      // Get unique job IDs and fetch job titles
+      const jobIds = [...new Set(applications.map(app => app.jobId).filter(id => id !== null && id !== undefined))];
+      console.log(`Found ${jobIds.length} unique job IDs:`, jobIds);
 
-      const jobTitleMap = new Map(jobs.map(job => [job.id, job.title]));
+      let jobTitleMap = new Map<number, string>();
+      
+      if (jobIds.length > 0) {
+        try {
+          console.log("Fetching job listings...");
+          const jobs = await db
+            .select({
+              id: jobListings.id,
+              title: jobListings.title
+            })
+            .from(jobListings)
+            .where(inArray(jobListings.id, jobIds));
+          
+          console.log(`Found ${jobs.length} job listings`);
+          jobTitleMap = new Map(jobs.map(job => [job.id, job.title || 'Untitled Job']));
+        } catch (jobError) {
+          console.error("Error fetching job listings:", jobError);
+          // Continue with empty job map if job fetching fails
+        }
+      }
 
       // Group applications by user
       const userMap = new Map<string, {
@@ -1087,8 +1105,11 @@ export async function registerRoutes(app: Express): Promise<Server> {
         }>;
       }>();
 
+      console.log("Processing applications...");
       applications.forEach((app) => {
-        const email = app.userEmail || '';
+        if (!app.userEmail) return; // Skip applications without user email
+        
+        const email = app.userEmail;
         const name = app.userName || 'Unknown User';
         const fullName = app.userFullName || name;
 
@@ -1114,36 +1135,44 @@ export async function registerRoutes(app: Express): Promise<Server> {
         userData.applicationsCount++;
 
         // Update latest application date
-        const appDate = new Date(app.applicationDate).toISOString();
+        const appDate = app.applicationDate ? new Date(app.applicationDate).toISOString() : new Date().toISOString();
         if (!userData.latestApplicationDate || appDate > userData.latestApplicationDate) {
           userData.latestApplicationDate = appDate;
         }
 
-        // Count statuses
-        const status = app.applicationStatus as keyof typeof userData.statuses;
-        if (userData.statuses.hasOwnProperty(status)) {
-          userData.statuses[status]++;
+        // Count statuses safely
+        const appStatus = app.applicationStatus || 'new';
+        const validStatuses = ['new', 'reviewing', 'interview', 'hired', 'rejected'];
+        
+        if (validStatuses.includes(appStatus)) {
+          userData.statuses[appStatus as keyof typeof userData.statuses]++;
+        } else {
+          userData.statuses.new++; // Default to 'new' for unknown statuses
         }
 
         // Get job title from the job listings
-        const jobTitle = jobTitleMap.get(app.jobId) || 'Unknown Job';
+        const jobTitle = app.jobId ? (jobTitleMap.get(app.jobId) || `Job ID: ${app.jobId}`) : 'Unknown Job';
 
         // Add application details
         userData.applications.push({
-          id: app.applicationId,
-          status: app.applicationStatus,
+          id: app.applicationId || 0,
+          status: appStatus,
           createdAt: appDate,
           jobTitle: jobTitle,
         });
       });
 
       let analyticsData = Array.from(userMap.values());
+      console.log(`Grouped into ${analyticsData.length} users`);
 
       // Apply status filter if provided
-      if (status && status !== 'all_statuses') {
-        analyticsData = analyticsData.filter(user => {
-          return user.statuses[status as keyof typeof user.statuses] > 0;
-        });
+      if (status && status !== 'all_statuses' && status.trim()) {
+        const validStatuses = ['new', 'reviewing', 'interview', 'hired', 'rejected'];
+        if (validStatuses.includes(status)) {
+          analyticsData = analyticsData.filter(user => {
+            return user.statuses[status as keyof typeof user.statuses] > 0;
+          });
+        }
       }
 
       // Apply sorting
@@ -1159,7 +1188,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
             analyticsData.sort((a, b) => b.latestApplicationDate.localeCompare(a.latestApplicationDate));
             break;
           case 'name_asc':
-            analyticsData.sort((a, b) => a.userName.localeCompare(b.userName));
+            analyticsData.sort((a, b) => (a.userFullName || a.userName).localeCompare(b.userFullName || b.userName));
             break;
           default:
             analyticsData.sort((a, b) => b.applicationsCount - a.applicationsCount);
@@ -1180,10 +1209,15 @@ export async function registerRoutes(app: Express): Promise<Server> {
           }) : 'No applications'
       }));
 
+      console.log(`Returning ${analyticsData.length} analytics records`);
       res.json(analyticsData);
     } catch (error) {
       console.error("Error fetching analytics data:", error);
-      res.status(500).json({ error: "Failed to fetch analytics data" });
+      console.error("Error stack:", error instanceof Error ? error.stack : 'No stack trace');
+      res.status(500).json({ 
+        error: "Failed to fetch analytics data",
+        details: error instanceof Error ? error.message : 'Unknown error'
+      });
     }
   });
 
