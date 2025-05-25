@@ -100,8 +100,8 @@ async function comparePasswords(supplied: string, stored: string) {
 export function setupAuth(app: Express) {
     const sessionSettings: session.SessionOptions = {
         secret: process.env.SESSION_SECRET || 'niddik-secret-key',
-        resave: true,
-        saveUninitialized: true,
+        resave: false, // Don't save session if unmodified
+        saveUninitialized: false, // Don't create session until something stored
         store: new PostgresSessionStore({
             pool,
             tableName: 'session',
@@ -114,16 +114,12 @@ export function setupAuth(app: Express) {
             maxAge: 30 * 24 * 60 * 60 * 1000, // 30 days
             httpOnly: true,
             path: '/',
-            sameSite: 'lax',
-            domain: process.env.NODE_ENV === 'production' ? '.replit.dev' : undefined
+            sameSite: 'lax'
+            // Remove domain setting for development
         },
         rolling: true,
-        unset: 'destroy',
-        genid: (req) => {
-            const sessionId = uuidv4();
-            console.log('New session ID generated:', sessionId);
-            return sessionId;
-        }
+        unset: 'destroy'
+        // Remove custom genid to use default behavior
     };
 
     app.set("trust proxy", 1);
@@ -287,20 +283,13 @@ export function setupAuth(app: Express) {
                 console.log("Logged-in user:", user);
 
                 if (user.role === "admin") {
-                    const sessionId = req.sessionID;
-                    console.log("Admin session ID:", sessionId);
-
-                    const now = new Date();
-                    const expiresAt = new Date(now.getTime() + (30 * 24 * 60 * 60 * 1000));
-
-                    // Set session data
-                    req.session.user = {
-                        id: user.id,
-                        username: user.username,
+                    console.log("Admin login - Session ID:", req.sessionID);
+                    
+                    // Store essential session data for admin
+                    req.session.adminAuth = {
+                        userId: user.id,
                         role: user.role,
-                        email: user.email,
-                        lastActivity: now,
-                        authenticated: true
+                        authenticatedAt: new Date()
                     };
 
                     // Save session immediately
@@ -309,35 +298,12 @@ export function setupAuth(app: Express) {
                             if (err) {
                                 console.error("Session save error:", err);
                                 reject(err);
+                            } else {
+                                console.log("Admin session saved successfully");
+                                resolve();
                             }
-                            resolve();
                         });
                     });
-
-                    // Update or insert into sessions table
-                    const existingSession = await db.select().from(sessions).where(eq(sessions.sessionId, sessionId)).limit(1);
-
-                    if (existingSession.length > 0) {
-                        await db.update(sessions)
-                            .set({
-                                userId: user.id,
-                                sessionData: JSON.stringify(req.session),
-                                lastActivity: now,
-                                expiresAt: expiresAt,
-                                isActive: true
-                            })
-                            .where(eq(sessions.sessionId, sessionId));
-                    } else {
-                        await db.insert(sessions)
-                            .values({
-                                userId: user.id,
-                                sessionId: sessionId,
-                                sessionData: JSON.stringify(req.session),
-                                lastActivity: now,
-                                expiresAt: expiresAt,
-                                isActive: true
-                            });
-                    }
 
                         // Update session store immediately
                         // await db.update(adminSessions)
@@ -474,30 +440,29 @@ app.get("/api/user", async (req: Request, res: Response) => {
     // Middleware to check if user is authenticated (supports both session and JWT)
     app.use("/api/admin", async (req: Request, res: Response, next: NextFunction) => {
         try {
+            console.log('Admin middleware - Session ID:', req.sessionID);
+            console.log('Admin middleware - Session data:', req.session);
+            console.log('Admin middleware - User authenticated:', req.isAuthenticated());
+            console.log('Admin middleware - User data:', req.user);
+
             // First check session authentication
             if (req.isAuthenticated() && req.user) {
                 const userId = (req.user as User).id;
+                console.log('Admin middleware - User ID from session:', userId);
 
                 // Get admin user
                 const user = await db.query.users.findFirst({
                     where: eq(users.id, userId)
                 });
 
+                console.log('Admin middleware - Database user:', user);
+
                 if (!user || user.role !== 'admin') {
+                    console.log('Admin middleware - User not admin or not found');
                     return res.status(403).json({ error: "Not an admin user" });
                 }
 
-                // Update session activity
-                req.session.lastActivity = new Date();
-                await new Promise<void>((resolve, reject) => {
-                    req.session.save((err) => {
-                        if (err) {
-                            console.error("Session save error:", err);
-                            reject(err);
-                        }
-                        resolve();
-                    });
-                });
+                console.log('Admin middleware - Admin authenticated successfully');
                 return next();
             }
 
@@ -506,14 +471,18 @@ app.get("/api/user", async (req: Request, res: Response) => {
             if (authHeader && authHeader.startsWith('Bearer ')) {
                 const token = authHeader.substring(7);
                 try {
-                    const decoded = jwt.verify(token, JWT_SECRET) as { user: AdminUser };
-                    req.user = decoded.user;
-                    return next();
+                    const decoded = jwt.verify(token, JWT_SECRET) as { user: User };
+                    if (decoded.user && decoded.user.role === 'admin') {
+                        req.user = decoded.user;
+                        console.log('Admin middleware - JWT admin authenticated');
+                        return next();
+                    }
                 } catch (error) {
-                    console.log("JWT verification failed");
+                    console.log("JWT verification failed:", error);
                 }
             }
 
+            console.log('Admin middleware - Authentication failed');
             return res.status(401).json({ error: "Not authenticated" });
         } catch (error) {
             console.error("Auth middleware error:", error);
@@ -524,26 +493,15 @@ app.get("/api/user", async (req: Request, res: Response) => {
     // Admin-specific user check endpoint
 app.get("/api/admin/check", async (req: Request, res: Response) => {
   try {
+    console.log('Admin check - Session ID:', req.sessionID);
+    console.log('Admin check - Authenticated:', req.isAuthenticated());
+    console.log('Admin check - User:', req.user);
+
     if (!req.isAuthenticated() || !req.user) {
       return res.status(401).json({ error: "Not authenticated" });
     }
 
     const userId = req.user.id;
-    const now = new Date();
-
-    // Check session from sessions table
-    if (!req.session || !req.session.user || req.session.user.role !== 'admin') {
-      return res.status(401).json({ error: "Admin session expired" });
-    }
-
-    // Update session activity
-    req.session.lastActivity = now;
-    await new Promise<void>((resolve, reject) => {
-      req.session.save((err) => {
-        if (err) reject(err);
-        resolve();
-      });
-    });
 
     // Get user from users table and check admin role
     const user = await db.query.users.findFirst({
