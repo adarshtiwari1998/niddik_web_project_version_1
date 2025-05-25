@@ -155,7 +155,7 @@ export default function AdminLayout({ children, title, description }: AdminLayou
               <div 
                 onClick={handleDashboardNavigation}
                 className={`flex items-center px-3 py-2 mb-1 rounded-md transition-colors cursor-pointer ${
-                  location === "/admin/dashboard" 
+                  (location === "/admin/dashboard" && !window.location.search.includes('tab='))
                     ? "bg-primary/10 text-primary" 
                     : "hover:bg-gray-100 dark:hover:bg-gray-700"
                 } ${isCollapsed ? 'justify-center' : ''}`}
