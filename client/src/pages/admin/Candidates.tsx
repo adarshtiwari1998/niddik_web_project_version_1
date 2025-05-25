@@ -242,7 +242,7 @@ function UserDetailModal({ userEmail, data, onClose }: { userEmail: string | nul
               <TableBody>
                 {userData.applications.map((app) => (
                   <TableRow key={app.id}>
-                    <TableCell>#{app.jobId}</TableCell>
+                    <TableCell>{app.jobId || 'N/A'}</TableCell>
                     <TableCell>{app.jobTitle || 'N/A'}</TableCell>
                     <TableCell>
                       <Badge
@@ -257,7 +257,10 @@ function UserDetailModal({ userEmail, data, onClose }: { userEmail: string | nul
                         {app.status}
                       </Badge>
                     </TableCell>
-                    <TableCell>{app.appliedDate ? new Date(app.appliedDate).toLocaleDateString() : 'Invalid Date'}</TableCell>
+                    <TableCell>
+                      {app.appliedDate ? new Date(app.appliedDate).toLocaleDateString() : 
+                       app.createdAt ? new Date(app.createdAt).toLocaleDateString() : 'N/A'}
+                    </TableCell>
                   </TableRow>
                 ))}
               </TableBody>

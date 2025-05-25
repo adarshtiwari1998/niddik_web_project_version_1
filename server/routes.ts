@@ -1161,22 +1161,16 @@ const endIndex = page * limit;
           latestApplicationDate: latestDate.toLocaleDateString(),
           statuses,
           applications: userApps.map(app => {
-
             // Get job title from the job listings
             const jobTitle = app.jobId ? (jobTitleMap.get(app.jobId) || `Job ID: ${app.jobId}`) : 'Unknown Job';
-            const jobs = await db
-            .select({
-              companyName: jobListings.companyName,
-            })
-            .from(jobListings)
-            .where(eq(jobListings.id, app.jobId));
+            
             return {
               id: app.applicationId,
               jobId: app.jobId,
               jobTitle: jobTitle,
               status: app.applicationStatus,
-              createdAt: app.applicationDate,
-              jobCompany: jobs[0]?.companyName || 'Unknown Company'
+              appliedDate: app.applicationDate,
+              createdAt: app.applicationDate
             };
           })
         });
