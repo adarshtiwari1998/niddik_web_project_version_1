@@ -22,6 +22,13 @@ const AdminDashboard = () => {
   useEffect(() => {
     document.title = "Admin Dashboard | NiDDiK"
 
+    // Check if there's a specific tab to navigate to
+    const targetTab = sessionStorage.getItem('admin_dashboard_tab');
+    if (targetTab) {
+      setActiveTab(targetTab);
+      sessionStorage.removeItem('admin_dashboard_tab');
+    }
+
     const isComingFromLogin = sessionStorage.getItem('admin_dashboard_loading') === 'true';
     if (isComingFromLogin) {
       setInitialLoading(true);
@@ -119,7 +126,7 @@ const AdminDashboard = () => {
   }
 
   return (
-    <AdminLayout title="Dashboard" description="Overview and insights">
+    <AdminLayout>
       <Helmet>
         <title>Admin Dashboard | Niddik</title>
         <meta name="description" content="Manage job listings, applications, and candidate profiles." />
@@ -144,7 +151,7 @@ const AdminDashboard = () => {
         </Button>
       </div>
       
-      <Tabs defaultValue="overview" onValueChange={setActiveTab}>
+      <Tabs value={activeTab} onValueChange={setActiveTab}>
         <TabsList className="mb-6">
           <TabsTrigger value="overview">Dashboard Overview</TabsTrigger>
           <TabsTrigger value="account">Account Settings</TabsTrigger>
