@@ -13,7 +13,7 @@ import {
   users
 } from "@shared/schema";
 import { db } from "../db";
-import { and, eq, count, gt } from "drizzle-orm";
+import { eq, desc, asc, and, or, ilike, inArray, count } from "drizzle-orm";
 import { z } from "zod";
 import { setupAuth } from "./auth";
 import { resumeUpload } from "./cloudinary";
@@ -250,7 +250,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
             message: err.message,
             code: err.code
           }));
-          
+
           return res.status(400).json({ 
             success: false, 
             message: "Invalid job listing data",
@@ -881,7 +881,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
 
       // @ts-ignore - Cloudinary typings
       const file = req.file;
-      
+
       if (!file.path) {
         console.error('Upload failed - file path missing', file);
         return res.status(500).json({ 
@@ -948,7 +948,8 @@ export async function registerRoutes(app: Express): Promise<Server> {
 
       // Calculate pagination
       const total = filteredApplications.length;
-      const startIndex = (page - 1) * limit;
+      const startIndex = (page - 1) * limit```text
+,
       const endIndex = page * limit;
       const paginatedApplications = filteredApplications.slice(startIndex, endIndex);
 
@@ -1016,8 +1017,159 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
-  // Admin API: Get all applications with pagination
-  app.get('/api/admin/applications', async (req: AuthenticatedRequest, res) => {
+// Analytics endpoint for user application aggregation
+  app.get("/api/admin/analytics", async (req: Request, res: Response) => {
+    try {
+      const { search, status, sortBy } = req.query as {
+        search?: string;
+        status?: string;
+        sortBy?: string;
+      };
+
+      // Base query to get all applications with user and job details
+      let query = db
+        .select({
+          applicationId: jobApplications.id,
+          applicationStatus: jobApplications.status,
+          applicationDate: jobApplications.createdAt,
+          jobTitle: jobApplications.jobTitle,
+          userEmail: users.email,
+          userName: users.fullName,
+          userId: users.id,
+        })
+        .from(jobApplications)
+        .leftJoin(users, eq(jobApplications.userId, users.id));
+
+      // Apply search filter if provided
+      if (search) {
+        query = query.where(
+          or(
+            ilike(users.email, `%${search}%`),
+            ilike(users.fullName, `%${search}%`)
+          )
+        );
+      }
+
+      const applications = await query;
+
+      // Group applications by user
+      const userMap = new Map<string, {
+        userEmail: string;
+        userName: string;
+        applicationsCount: number;
+        latestApplicationDate: string;
+        statuses: {
+          new: number;
+          reviewing: number;
+          interview: number;
+          hired: number;
+          rejected: number;
+        };
+        applications: Array<{
+          id: number;
+          status: string;
+          createdAt: string;
+          jobTitle: string;
+        }>;
+      }>();
+
+      applications.forEach((app) => {
+        const email = app.userEmail || '';
+        const name = app.userName || 'Unknown User';
+
+        if (!userMap.has(email)) {
+          userMap.set(email, {
+            userEmail: email,
+            userName: name,
+            applicationsCount: 0,
+            latestApplicationDate: '',
+            statuses: {
+              new: 0,
+              reviewing: 0,
+              interview: 0,
+              hired: 0,
+              rejected: 0,
+            },
+            applications: [],
+          });
+        }
+
+        const userData = userMap.get(email)!;
+        userData.applicationsCount++;
+
+        // Update latest application date
+        const appDate = new Date(app.applicationDate).toISOString();
+        if (!userData.latestApplicationDate || appDate > userData.latestApplicationDate) {
+          userData.latestApplicationDate = appDate;
+        }
+
+        // Count statuses
+        const status = app.applicationStatus as keyof typeof userData.statuses;
+        if (userData.statuses.hasOwnProperty(status)) {
+          userData.statuses[status]++;
+        }
+
+        // Add application details
+        userData.applications.push({
+          id: app.applicationId,
+          status: app.applicationStatus,
+          createdAt: appDate,
+          jobTitle: app.jobTitle,
+        });
+      });
+
+      let analyticsData = Array.from(userMap.values());
+
+      // Apply status filter if provided
+      if (status && status !== 'all_statuses') {
+        analyticsData = analyticsData.filter(user => {
+          return user.statuses[status as keyof typeof user.statuses] > 0;
+        });
+      }
+
+      // Apply sorting
+      if (sortBy) {
+        switch (sortBy) {
+          case 'applications_desc':
+            analyticsData.sort((a, b) => b.applicationsCount - a.applicationsCount);
+            break;
+          case 'applications_asc':
+            analyticsData.sort((a, b) => a.applicationsCount - b.applicationsCount);
+            break;
+          case 'latest_desc':
+            analyticsData.sort((a, b) => b.latestApplicationDate.localeCompare(a.latestApplicationDate));
+            break;
+          case 'name_asc':
+            analyticsData.sort((a, b) => a.userName.localeCompare(b.userName));
+            break;
+          default:
+            analyticsData.sort((a, b) => b.applicationsCount - a.applicationsCount);
+        }
+      } else {
+        // Default sorting by applications count descending
+        analyticsData.sort((a, b) => b.applicationsCount - a.applicationsCount);
+      }
+
+      // Format dates for display
+      analyticsData = analyticsData.map(user => ({
+        ...user,
+        latestApplicationDate: user.latestApplicationDate ? 
+          new Date(user.latestApplicationDate).toLocaleDateString('en-US', {
+            year: 'numeric',
+            month: 'short',
+            day: 'numeric'
+          }) : 'No applications'
+      }));
+
+      res.json(analyticsData);
+    } catch (error) {
+      console.error("Error fetching analytics data:", error);
+      res.status(500).json({ error: "Failed to fetch analytics data" });
+    }
+  });
+
+  // Get all job applications with filtering, pagination, and detailed information
+  app.get("/api/admin/applications", async (req: AuthenticatedRequest, res: Response) => {
     try {
       // Check if user is authenticated and is an admin
       if (!req.isAuthenticated() || req.user.role !== 'admin') {
@@ -1286,7 +1438,7 @@ app.put('/api/profile', async (req: AuthenticatedRequest, res) => {
         .select({ total: count() })
         .from(users)
         .where(drizzleAnd(...whereConditions));
-      
+
       const total = countResult[0]?.total || 0;
 
       // Get paginated users
@@ -1634,7 +1786,7 @@ app.put('/api/profile', async (req: AuthenticatedRequest, res) => {
       }
 
       const updateData = req.body;
-      
+
       // Remove any fields that shouldn't be updated
       delete updateData.id;
       delete updateData.password;
@@ -1791,6 +1943,7 @@ app.put('/api/profile', async (req: AuthenticatedRequest, res) => {
           acceptedTerms
         });
       } catch (validationError) {
+```text
         if (validationError instanceof z.ZodError) {
           return res.status(400).json({
             success: false,
