@@ -1052,41 +1052,40 @@ function SubmittedCandidates() {
 
           <Card>
             <CardContent className="p-0">
-              <div className="relative overflow-x-auto">
-                <Table className="min-w-[1500px]">
+              <div className="overflow-x-auto">
+                <Table className="w-full min-w-[1800px]">
                   <TableHeader>
                     <TableRow>
-                      <TableHead className="min-w-[150px]">Sourced By</TableHead>
-                      <TableHead className="min-w-[150px]">Client</TableHead>
-                      <TableHead className="min-w-[150px]">POC</TableHead>
-                      <TableHead className="min-w-[180px]">Skills</TableHead>
-                      <TableHead className="sticky left-0 bg-background z-20 min-w-[200px]">Candidate Name</TableHead>
-                      <TableHead className="min-w-[150px]">Contact No</TableHead>
-                      <TableHead className="min-w-[180px]">Email ID</TableHead>
-                      <TableHead className="min-w-[120px]">Experience</TableHead>
-                      <TableHead className="min-w-[120px]">Notice Period</TableHead>
-                      <TableHead className="min-w-[120px]">Location</TableHead>
-                      <TableHead className="min-w-[120px]">Current CTC</TableHead>
-                      <TableHead className="min-w-[120px]">Expected CTC</TableHead>
-                      <TableHead className="min-w-[120px]">Bill Rate ($$)</TableHead>
-                      <TableHead className="min-w-[120px]">Pay/hr</TableHead>
-                      <TableHead className="min-w-[120px]">Margin/hr</TableHead>
-                      <TableHead className="min-w-[120px]">Profit/Month</TableHead>
-                      <TableHead className="min-w-[180px]">Status</TableHead>
-                      <TableHead className="min-w-[120px]">Salary (Lacs)</TableHead>
-                      <TableHead className="sticky right-0 bg-background z-20 min-w-[100px] text-right">Actions</TableHead>
+                      <TableHead className="w-[120px]">Sourced By</TableHead>
+                      <TableHead className="w-[120px]">Client</TableHead>
+                      <TableHead className="w-[100px]">POC</TableHead>
+                      <TableHead className="w-[150px]">Skills</TableHead>
+                      <TableHead className="w-[150px]">Candidate Name</TableHead>
+                      <TableHead className="w-[120px]">Contact No</TableHead>
+                      <TableHead className="w-[150px]">Email ID</TableHead>
+                      <TableHead className="w-[100px]">Experience</TableHead>
+                      <TableHead className="w-[100px]">Notice Period</TableHead>
+                      <TableHead className="w-[100px]">Location</TableHead>
+                      <TableHead className="w-[100px]">Current CTC</TableHead>
+                      <TableHead className="w-[100px]">Expected CTC</TableHead>
+                      <TableHead className="w-[100px]">Bill Rate ($$)</TableHead>
+                      <TableHead className="w-[100px]">Pay/hr</TableHead>
+                      <TableHead className="w-[100px]">Margin/hr</TableHead>
+                      <TableHead className="w-[100px]">Profit/Month</TableHead>
+                      <TableHead className="w-[150px]">Status</TableHead>
+                      <TableHead className="w-[100px]">Salary (Lacs)</TableHead>
+                      <TableHead className="w-[100px] text-right">Actions</TableHead>
                     </TableRow>
                   </TableHeader>
                 <TableBody>
                   {/* Inline add candidate row */}
                   {isAddingInline && (
                     <TableRow className="bg-muted/30">
-                      {/* Sourced By (Date Picker) */}
+                      {/* Sourced By */}
                       <TableCell>
                         <Input 
-                          type="date"
                           placeholder="Sourced By"
-                          className="w-full"
+                          className="w-full text-xs"
                           value={newCandidateData.sourcedBy || ''}
                           onChange={(e) => handleInlineFieldChange('sourcedBy', e.target.value)}
                         />
@@ -1096,7 +1095,7 @@ function SubmittedCandidates() {
                       <TableCell>
                         <Input 
                           placeholder="Client"
-                          className="w-full"
+                          className="w-full text-xs"
                           value={newCandidateData.client || ''}
                           onChange={(e) => handleInlineFieldChange('client', e.target.value)}
                         />
@@ -1106,7 +1105,7 @@ function SubmittedCandidates() {
                       <TableCell>
                         <Input 
                           placeholder="POC"
-                          className="w-full"
+                          className="w-full text-xs"
                           value={newCandidateData.poc || ''}
                           onChange={(e) => handleInlineFieldChange('poc', e.target.value)}
                         />
@@ -1115,18 +1114,18 @@ function SubmittedCandidates() {
                       {/* Skills */}
                       <TableCell>
                         <Input
-                          placeholder="Skills (comma-separated)"
-                          className="w-full"
+                          placeholder="Skills"
+                          className="w-full text-xs"
                           value={newCandidateData.skills || ''}
                           onChange={(e) => handleInlineFieldChange('skills', e.target.value)}
                         />
                       </TableCell>
 
                       {/* Candidate Name */}
-                      <TableCell className="sticky left-0 bg-muted/30 z-20">
+                      <TableCell>
                         <Input 
                           placeholder="Candidate name"
-                          className="w-full"
+                          className="w-full text-xs"
                           value={newCandidateData.candidateName || ''}
                           onChange={(e) => handleInlineFieldChange('candidateName', e.target.value)}
                         />
@@ -1135,8 +1134,8 @@ function SubmittedCandidates() {
                       {/* Contact No */}
                       <TableCell>
                         <Input 
-                          placeholder="Contact Number"
-                          className="w-full"
+                          placeholder="Contact No"
+                          className="w-full text-xs"
                           value={newCandidateData.contactNo || ''}
                           onChange={(e) => handleInlineFieldChange('contactNo', e.target.value)}
                         />
@@ -1145,8 +1144,8 @@ function SubmittedCandidates() {
                       {/* Email ID */}
                       <TableCell>
                         <Input 
-                          placeholder="Email address"
-                          className="w-full"
+                          placeholder="Email"
+                          className="w-full text-xs"
                           value={newCandidateData.emailId || ''}
                           onChange={(e) => handleInlineFieldChange('emailId', e.target.value)}
                         />
@@ -1155,8 +1154,8 @@ function SubmittedCandidates() {
                       {/* Experience */}
                       <TableCell>
                         <Input 
-                          placeholder="Experience (years)"
-                          className="w-full"
+                          placeholder="Experience"
+                          className="w-full text-xs"
                           value={newCandidateData.experience || ''}
                           onChange={(e) => handleInlineFieldChange('experience', e.target.value)}
                         />
@@ -1165,8 +1164,8 @@ function SubmittedCandidates() {
                       {/* Notice Period */}
                       <TableCell>
                         <Input 
-                          placeholder="Notice period"
-                          className="w-full"
+                          placeholder="Notice"
+                          className="w-full text-xs"
                           value={newCandidateData.noticePeriod || ''}
                           onChange={(e) => handleInlineFieldChange('noticePeriod', e.target.value)}
                         />
@@ -1176,7 +1175,7 @@ function SubmittedCandidates() {
                       <TableCell>
                         <Input 
                           placeholder="Location"
-                          className="w-full"
+                          className="w-full text-xs"
                           value={newCandidateData.location || ''}
                           onChange={(e) => handleInlineFieldChange('location', e.target.value)}
                         />
@@ -1186,7 +1185,7 @@ function SubmittedCandidates() {
                       <TableCell>
                         <Input 
                           placeholder="Current CTC"
-                          className="w-full"
+                          className="w-full text-xs"
                           value={newCandidateData.currentCtc || ''}
                           onChange={(e) => handleInlineFieldChange('currentCtc', e.target.value)}
                         />
@@ -1196,7 +1195,7 @@ function SubmittedCandidates() {
                       <TableCell>
                         <Input 
                           placeholder="Expected CTC"
-                          className="w-full"
+                          className="w-full text-xs"
                           value={newCandidateData.expectedCtc || ''}
                           onChange={(e) => handleInlineFieldChange('expectedCtc', e.target.value)}
                         />
@@ -1205,8 +1204,8 @@ function SubmittedCandidates() {
                       {/* Bill Rate */}
                       <TableCell>
                         <Input 
-                          placeholder="Bill rate"
-                          className="w-full"
+                          placeholder="Bill Rate"
+                          className="w-full text-xs"
                           type="number"
                           value={newCandidateData.billRate || ''}
                           onChange={(e) => handleInlineFieldChange('billRate', e.target.value)}
@@ -1216,8 +1215,8 @@ function SubmittedCandidates() {
                       {/* Pay Rate */}
                       <TableCell>
                         <Input 
-                          placeholder="Pay rate"
-                          className="w-full"
+                          placeholder="Pay Rate"
+                          className="w-full text-xs"
                           type="number"
                           value={newCandidateData.payRate || ''}
                           onChange={(e) => handleInlineFieldChange('payRate', e.target.value)}
@@ -1226,20 +1225,19 @@ function SubmittedCandidates() {
 
                       {/* Margin/hr */}
                       <TableCell>
-                        <div className="text-muted-foreground text-sm">Auto-calculated</div>
+                        <div className="text-muted-foreground text-xs">Auto</div>
                       </TableCell>
 
                       {/* Profit/Month */}
                       <TableCell>
-                        <div className="text-muted-foreground text-sm">Auto-calculated</div>
+                        <div className="text-muted-foreground text-xs">Auto</div>
                       </TableCell>
 
                       {/* Status */}
                       <TableCell>
-                        <textarea 
+                        <Input 
                           placeholder="Status"
-                          className="w-full px-3 py-2 border rounded-md border-input bg-background text-sm ring-offset-background"
-                          rows={2}
+                          className="w-full text-xs"
                           value={newCandidateData.status || ''}
                           onChange={(e) => handleInlineFieldChange('status', e.target.value)}
                         />
@@ -1248,19 +1246,19 @@ function SubmittedCandidates() {
                       {/* Salary (Lacs) */}
                       <TableCell>
                         <Input 
-                          placeholder="Salary (Lacs)"
-                          className="w-full"
+                          placeholder="Salary"
+                          className="w-full text-xs"
                           value={newCandidateData.salaryInLacs || ''}
                           onChange={(e) => handleInlineFieldChange('salaryInLacs', e.target.value)}
                         />
                       </TableCell>
 
-                      <TableCell className="sticky right-0 bg-muted/30 z-20 text-right">
-                        <div className="flex justify-end gap-2">
+                      <TableCell className="text-right">
+                        <div className="flex justify-end gap-1">
                           <Button
                             onClick={handleAddInline}
                             variant="ghost"
-                            size="icon"
+                            size="sm"
                             disabled={createMutation.isPending}
                           >
                             {createMutation.isPending ? (
@@ -1272,7 +1270,7 @@ function SubmittedCandidates() {
                           <Button
                             onClick={() => setIsAddingInline(false)}
                             variant="ghost"
-                            size="icon"
+                            size="sm"
                           >
                             <X className="h-4 w-4 text-red-500" />
                           </Button>
@@ -1309,37 +1307,37 @@ function SubmittedCandidates() {
                   ) : (
                     candidatesData?.data?.map((candidate: SubmittedCandidate) => (
                       <TableRow key={candidate.id}>
-                        <TableCell>{candidate.sourcedBy || '-'}</TableCell>
-                        <TableCell>{candidate.client || '-'}</TableCell>
-                        <TableCell>{candidate.poc || '-'}</TableCell>
-                        <TableCell>
-                          <div className="max-w-[150px] truncate" title={candidate.skills}>
-                            {candidate.skills}
+                        <TableCell className="text-xs">{candidate.sourcedBy || '-'}</TableCell>
+                        <TableCell className="text-xs">{candidate.client || '-'}</TableCell>
+                        <TableCell className="text-xs">{candidate.poc || '-'}</TableCell>
+                        <TableCell className="text-xs">
+                          <div className="max-w-[140px] truncate" title={candidate.skills}>
+                            {candidate.skills || '-'}
                           </div>
                         </TableCell>
-                        <TableCell className="sticky left-0 bg-background z-20">
-                          <div className="font-medium">{candidate.candidateName}</div>
+                        <TableCell className="text-xs">
+                          <div className="font-medium">{candidate.candidateName || '-'}</div>
                         </TableCell>
-                        <TableCell>{candidate.contactNo || '-'}</TableCell>
-                        <TableCell>{candidate.emailId || '-'}</TableCell>
-                        <TableCell>{candidate.experience || '-'}</TableCell>
-                        <TableCell>{candidate.noticePeriod || '-'}</TableCell>
-                        <TableCell>{candidate.location || '-'}</TableCell>
-                        <TableCell>{candidate.currentCtc || '-'}</TableCell>
-                        <TableCell>{candidate.expectedCtc || '-'}</TableCell>
-                        <TableCell>${candidate.billRate || '-'}</TableCell>
-                        <TableCell>${candidate.payRate || '-'}</TableCell>
-                        <TableCell>${candidate.marginPerHour || '-'}</TableCell>
-                        <TableCell>${candidate.profitPerMonth || '-'}</TableCell>
-                        <TableCell>
+                        <TableCell className="text-xs">{candidate.contactNo || '-'}</TableCell>
+                        <TableCell className="text-xs">{candidate.emailId || '-'}</TableCell>
+                        <TableCell className="text-xs">{candidate.experience || '-'}</TableCell>
+                        <TableCell className="text-xs">{candidate.noticePeriod || '-'}</TableCell>
+                        <TableCell className="text-xs">{candidate.location || '-'}</TableCell>
+                        <TableCell className="text-xs">{candidate.currentCtc || '-'}</TableCell>
+                        <TableCell className="text-xs">{candidate.expectedCtc || '-'}</TableCell>
+                        <TableCell className="text-xs">${candidate.billRate || '0'}</TableCell>
+                        <TableCell className="text-xs">${candidate.payRate || '0'}</TableCell>
+                        <TableCell className="text-xs">${candidate.marginPerHour || '0'}</TableCell>
+                        <TableCell className="text-xs">${candidate.profitPerMonth || '0'}</TableCell>
+                        <TableCell className="text-xs">
                           <StatusBadge status={candidate.status} />
                         </TableCell>
-                        <TableCell>{candidate.salaryInLacs || '-'}</TableCell>
-                        <TableCell className="sticky right-0 bg-background z-20 text-right">
-                          <div className="flex justify-end gap-2">
+                        <TableCell className="text-xs">{candidate.salaryInLacs || '-'}</TableCell>
+                        <TableCell className="text-right">
+                          <div className="flex justify-end gap-1">
                             <Button 
                               variant="ghost" 
-                              size="icon"
+                              size="sm"
                               onClick={() => initializeEditForm(candidate)}
                             >
                               <Edit className="h-4 w-4" />
@@ -1347,7 +1345,7 @@ function SubmittedCandidates() {
 
                             <AlertDialog>
                               <AlertDialogTrigger asChild>
-                                <Button variant="ghost" size="icon">
+                                <Button variant="ghost" size="sm">
                                   <Trash2 className="h-4 w-4 text-red-500" />
                                 </Button>
                               </AlertDialogTrigger>

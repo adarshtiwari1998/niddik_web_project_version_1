@@ -1,4 +1,3 @@
-
 import { ReactNode, useState, useEffect } from "react";
 import { Link, useLocation } from "wouter";
 import { useAuth } from "@/hooks/use-auth";
@@ -18,7 +17,7 @@ export default function AdminLayout({ children, title, description }: AdminLayou
   const [_, setLocation] = useLocation();
   const location = _; // Current path
   const [isLoggingOut, setIsLoggingOut] = useState(false);
-  
+
   // Sidebar state management
   const [isCollapsed, setIsCollapsed] = useState(() => {
     const saved = localStorage.getItem('admin-sidebar-collapsed');
@@ -81,7 +80,7 @@ export default function AdminLayout({ children, title, description }: AdminLayou
   return (
     <div className="min-h-screen bg-gray-50 dark:bg-gray-900">
       {isLoggingOut && <LoadingScreen message="Logging out..." />}
-      
+
       {/* Admin Header */}
       <header className="bg-white dark:bg-gray-800 shadow-sm border-b fixed top-0 left-0 right-0 z-50">
         <div className="px-4 py-3 flex justify-between items-center">
@@ -95,7 +94,7 @@ export default function AdminLayout({ children, title, description }: AdminLayou
             >
               {isCollapsed ? <Menu className="h-5 w-5" /> : <X className="h-5 w-5" />}
             </Button>
-            
+
             <Link href="/admin/dashboard">
               <div className="flex flex-col cursor-pointer">
                 <div className="flex items-center">
@@ -110,7 +109,7 @@ export default function AdminLayout({ children, title, description }: AdminLayou
               </div>
             </Link>
           </div>
-          
+
           <div className="flex items-center">
             <div className="flex items-center mr-4">
               <span className="w-3 h-3 bg-green-600 rounded-full mr-2"></span>
@@ -141,7 +140,7 @@ export default function AdminLayout({ children, title, description }: AdminLayou
                 </div>
               )}
             </div>
-            
+
             <nav className="p-2">
               {/* Dashboard */}
               <div 
@@ -247,15 +246,31 @@ export default function AdminLayout({ children, title, description }: AdminLayou
         </div>
 
         {/* Main Content */}
-        <div className={`flex-1 ${isCollapsed ? 'ml-16' : 'ml-[276px]'} transition-all duration-300 ease-in-out`}>
-          <div className="p-6">
-            <div className="mb-6">
-              <h1 className="text-2xl font-bold">{title}</h1>
-              {description && <p className="text-muted-foreground">{description}</p>}
+      <div className={`flex-1 ${isCollapsed ? 'ml-16' : 'ml-[276px]'} transition-all duration-300 ease-in-out`}>
+        {/* Header */}
+        <header className="bg-white dark:bg-gray-800 border-b border-gray-200 dark:border-gray-700 px-6 py-4">
+          <div className="flex items-center justify-between">
+            <div className="flex items-center gap-4">
+              <Button
+                variant="ghost"
+                size="icon"
+                onClick={() => setIsCollapsed(!isCollapsed)}
+                className="lg:hidden"
+              >
+                <Menu className="h-5 w-5" />
+              </Button>
+              <div>
+                <h1 className="text-2xl font-bold text-gray-900 dark:text-white">{title}</h1>
+                {description && (
+                  <p className="text-sm text-gray-600 dark:text-gray-400 mt-1">{description}</p>
+                )}
+              </div>
             </div>
-            {children}
-          </div>
-        </div>
+
+            {/* Content */}
+        <main className="p-6 bg-gray-50 dark:bg-gray-900 min-h-[calc(100vh-73px)] overflow-x-auto">
+          {children}
+        </main>
       </div>
     </div>
   );
