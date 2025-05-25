@@ -24,6 +24,7 @@ import { useAuth } from "@/hooks/use-auth";
 import { useToast } from "@/hooks/use-toast";
 import { JobApplication } from "@shared/schema";
 import AdminLayout from "@/components/layout/AdminLayout";
+import { useLocation } from "wouter";
 
 type ApplicationWithDetails = JobApplication & {
   billRate?: string;
@@ -51,6 +52,7 @@ type ApplicationWithDetails = JobApplication & {
 export default function Candidates() {
   const { user } = useAuth();
   const { toast } = useToast();
+  const [, setLocation] = useLocation();
   const [page, setPage] = useState(1);
   const [search, setSearch] = useState("");
   const [statusFilter, setStatusFilter] = useState<string>("all_statuses");
@@ -162,7 +164,7 @@ export default function Candidates() {
   // Handler for navigating to user details
   const handleViewUserDetails = (userEmail: string) => {
     // Navigate to users page with search parameter to find the user
-    window.location.href = `/admin/users?search=${encodeURIComponent(userEmail)}`;
+    setLocation(`/admin/users?search=${encodeURIComponent(userEmail)}`);
   };
 
   // Redirect to login if not authenticated or not an admin
