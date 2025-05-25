@@ -114,7 +114,7 @@ export default function AdminLayout({ children, title, description }: AdminLayou
                   />
                   <h1 className="text-xl font-bold">Admin</h1>
                 </div>
-                <p className="text-sm text-gray-500 ml-1">Connecting People, Changing Lives</p>
+                {/* <p className="text-sm text-gray-500 ml-1">Connecting People, Changing Lives</p> */}
               </div>
             </Link>
           </div>
