@@ -256,9 +256,9 @@ export default function Candidates() {
                     <TableHead>Location</TableHead>
                     <TableHead>CTC</TableHead>
                     <TableHead>Expected CTC</TableHead>
-                    <TableHead>Bill Rate</TableHead>
+                    {/* <TableHead>Bill Rate</TableHead>
                     <TableHead>Pay Rate</TableHead>
-                    <TableHead>Margin/Profit</TableHead>
+                    <TableHead>Margin/Profit</TableHead> */}
                     <TableHead>Status</TableHead>
                     <TableHead>Actions</TableHead>
                   </TableRow>
@@ -311,7 +311,7 @@ export default function Candidates() {
                           {application.user.expectedCtc || "-"}
                         </div>
                       </TableCell>
-                      <TableCell>
+                      {/* <TableCell>
                         {application.billRate ? `$${application.billRate}` : "-"}
                       </TableCell>
                       <TableCell>
@@ -321,7 +321,7 @@ export default function Candidates() {
                         {application.billRate && application.payRate 
                           ? `$${(parseFloat(application.billRate) - parseFloat(application.payRate)).toFixed(2)}` 
                           : "-"}
-                      </TableCell>
+                      </TableCell> */}
                       <TableCell>
                         <Select
                           value={application.status}
