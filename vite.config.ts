@@ -38,7 +38,7 @@ export default defineConfig({
     port: 7000,
   },
   build: {
-    outDir: path.resolve(__dirname, "dist"),
+    outDir: path.resolve(__dirname, "dist/public"),
     emptyOutDir: true,
   },
   resolve: {
