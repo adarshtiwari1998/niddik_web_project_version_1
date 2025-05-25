@@ -133,11 +133,14 @@ export function setupAuth(app: Express) {
     passport.use(
         new LocalStrategy(async (username, password, done) => {
             try {
-                console.log('Login attempt for username:', username);
+                console.log('Login attempt for username/email:', username);
                 
-                // Find user in the users table
+                // Find user in the users table by username or email
                 const user = await db.query.users.findFirst({
-                    where: (fields, { eq }) => eq(fields.username, username)
+                    where: (fields, { eq, or }) => or(
+                        eq(fields.username, username),
+                        eq(fields.email, username)
+                    )
                 });
 
                 if (!user) {
