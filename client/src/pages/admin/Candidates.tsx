@@ -16,13 +16,15 @@ import {
   Phone,
   FileText,
   Calendar,
-  DollarSign
+  DollarSign,
+  ExternalLink
 } from "lucide-react";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { useAuth } from "@/hooks/use-auth";
 import { useToast } from "@/hooks/use-toast";
 import { JobApplication } from "@shared/schema";
 import AdminLayout from "@/components/layout/AdminLayout";
+import { useNavigate } from "react-router-dom";
 
 type ApplicationWithDetails = JobApplication & {
   billRate?: string;
@@ -50,6 +52,7 @@ type ApplicationWithDetails = JobApplication & {
 export default function Candidates() {
   const { user } = useAuth();
   const { toast } = useToast();
+  const navigate = useNavigate();
   const [page, setPage] = useState(1);
   const [search, setSearch] = useState("");
   const [statusFilter, setStatusFilter] = useState<string>("all_statuses");
@@ -158,6 +161,12 @@ export default function Candidates() {
     updateStatusMutation.mutate({ id, status });
   };
 
+  // Handler for navigating to user details
+  const handleViewUserDetails = (userEmail: string) => {
+    // Navigate to users page with search parameter to find the user
+    navigate(`/admin/users?search=${encodeURIComponent(userEmail)}`);
+  };
+
   // Redirect to login if not authenticated or not an admin
   if (!user || user.role !== "admin") {
     return null; // The ProtectedRoute component will handle redirection
@@ -258,8 +267,17 @@ export default function Candidates() {
                   {data?.data.map((application) => (
                     <TableRow key={application.id}>
                       <TableCell>
-                        <div className="font-medium">{application.user.fullName}</div>
-                        <div className="text-xs text-muted-foreground">{application.job.title}</div>
+                        <div className="space-y-1">
+                          <button
+                            onClick={() => handleViewUserDetails(application.user.email)}
+                            className="font-medium text-blue-600 hover:text-blue-800 hover:underline flex items-center gap-1 text-left"
+                            title="View user details"
+                          >
+                            {application.user.fullName}
+                            <ExternalLink className="h-3 w-3" />
+                          </button>
+                          <div className="text-xs text-muted-foreground">{application.job.title}</div>
+                        </div>
                       </TableCell>
                       <TableCell>
                         <div className="flex items-center">

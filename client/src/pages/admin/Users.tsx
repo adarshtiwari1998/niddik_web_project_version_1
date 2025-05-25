@@ -2,6 +2,7 @@
 import { useState, useEffect } from "react";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { useAuth } from "@/hooks/use-auth";
+import { useSearchParams } from "react-router-dom";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -54,6 +55,7 @@ const Users = () => {
   const { user } = useAuth();
   const { toast } = useToast();
   const queryClient = useQueryClient();
+  const [searchParams, setSearchParams] = useSearchParams();
   const [page, setPage] = useState(1);
   const [search, setSearch] = useState("");
   const [debouncedSearch, setDebouncedSearch] = useState("");
@@ -62,6 +64,7 @@ const Users = () => {
   const [ctcFilter, setCtcFilter] = useState("all");
   const [isRefreshing, setIsRefreshing] = useState(false);
   const [editingUser, setEditingUser] = useState<User | null>(null);
+  const [highlightedUserId, setHighlightedUserId] = useState<number | null>(null);
   const [editFormData, setEditFormData] = useState({
     username: "",
     email: "",
@@ -79,6 +82,16 @@ const Users = () => {
     zip_code: ""
   });
 
+  // Handle search parameter from URL
+  useEffect(() => {
+    const searchParam = searchParams.get('search');
+    if (searchParam) {
+      setSearch(searchParam);
+      // Clear the search parameter from URL after setting
+      setSearchParams({});
+    }
+  }, [searchParams, setSearchParams]);
+
   // Debounce search input
   useEffect(() => {
     const timer = setTimeout(() => {
@@ -88,6 +101,22 @@ const Users = () => {
 
     return () => clearTimeout(timer);
   }, [search]);
+
+  // Highlight user when search results are loaded
+  useEffect(() => {
+    if (usersData?.data && search) {
+      const foundUser = usersData.data.find(u => 
+        u.email.toLowerCase().includes(search.toLowerCase()) ||
+        u.username.toLowerCase().includes(search.toLowerCase()) ||
+        u.full_name?.toLowerCase().includes(search.toLowerCase())
+      );
+      if (foundUser) {
+        setHighlightedUserId(foundUser.id);
+        // Remove highlight after 3 seconds
+        setTimeout(() => setHighlightedUserId(null), 3000);
+      }
+    }
+  }, [usersData?.data, search]);
 
   const { data: usersData, isLoading, refetch } = useQuery<{
     success: boolean;
@@ -605,7 +634,10 @@ const Users = () => {
                       </TableHeader>
                       <TableBody>
                         {users.map((userData) => (
-                          <TableRow key={userData.id}>
+                          <TableRow 
+                            key={userData.id}
+                            className={highlightedUserId === userData.id ? "bg-blue-50 border-blue-200 animate-pulse" : ""}
+                          >
                             <TableCell className="font-medium">#{userData.id}</TableCell>
                             <TableCell>
                               <div>
