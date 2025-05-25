@@ -950,7 +950,8 @@ export async function registerRoutes(app: Express): Promise<Server> {
       // Calculate pagination
       const total = filteredApplications.length;
       const startIndex = (page - 1) * limit
-      const endIndex = page * limit;
+      ```text
+const endIndex = page * limit;
       const paginatedApplications = filteredApplications.slice(startIndex, endIndex);
 
       return res.status(200).json({ 
@@ -1018,18 +1019,15 @@ export async function registerRoutes(app: Express): Promise<Server> {
   });
 
 // Analytics endpoint for user application aggregation
-  app.get("/api/admin/analytics", async (req: Request, res: Response) => {
+  app.get('/api/admin/analytics', async (req: AuthenticatedRequest, res: Response) => {
     try {
-      const { search, status, sortBy } = req.query as {
-        search?: string;
-        status?: string;
-        sortBy?: string;
-      };
+      console.log('Analytics endpoint called with params:', req.query);
 
-      console.log("Analytics endpoint called with params:", { search, status, sortBy });
+      const { search, status, sortBy } = req.query;
 
-      // Base query to get all applications with user details
-      let baseQuery = db
+      // Base query for applications with user data
+      console.log('Executing applications query...');
+      const applications = await db
         .select({
           applicationId: jobApplications.id,
           applicationStatus: jobApplications.status,
@@ -1052,7 +1050,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
 
       // Apply search filter if provided
       if (search && search.trim()) {
-        baseQuery = baseQuery.where(
+        applications.where(
           or(
             ilike(users.email, `%${search.trim()}%`),
             ilike(users.username, `%${search.trim()}%`),
@@ -1061,27 +1059,31 @@ export async function registerRoutes(app: Express): Promise<Server> {
         );
       }
 
-      console.log("Executing applications query...");
-      const applications = await baseQuery;
       console.log(`Found ${applications.length} applications`);
 
-      // Get unique job IDs and fetch job titles
-      const jobIds = [...new Set(applications.map(app => app.jobId).filter(id => id !== null && id !== undefined))];
-      console.log(`Found ${jobIds.length} unique job IDs:`, jobIds);
+      if (applications.length === 0) {
+        return res.json([]);
+      }
 
-      let jobTitleMap = new Map<number, string>();
-      
+      // Get unique job IDs to fetch job details
+      const jobIds = [...new Set(applications.map(app => app.jobId).filter(id => id !== null && id !== undefined))];
+      console.log('Found unique job IDs:', jobIds);
+
+       let jobTitleMap = new Map<number, string>();
+
       if (jobIds.length > 0) {
         try {
           console.log("Fetching job listings...");
           const jobs = await db
             .select({
               id: jobListings.id,
-              title: jobListings.title
+              title: jobListings.title,
+              company: jobListings.companyName,
+              location: jobListings.location
             })
             .from(jobListings)
             .where(inArray(jobListings.id, jobIds));
-          
+
           console.log(`Found ${jobs.length} job listings`);
           jobTitleMap = new Map(jobs.map(job => [job.id, job.title || 'Untitled Job']));
         } catch (jobError) {
@@ -1090,148 +1092,119 @@ export async function registerRoutes(app: Express): Promise<Server> {
         }
       }
 
-      // Group applications by user
-      const userMap = new Map<string, {
-        userEmail: string;
-        userName: string;
-        userFullName: string;
-        applicationsCount: number;
-        latestApplicationDate: string;
-        statuses: {
-          new: number;
-          reviewing: number;
-          interview: number;
-          hired: number;
-          rejected: number;
+      // Group applications by user email
+      const userApplicationMap = new Map<string, any[]>();
+
+      applications.forEach(app => {
+        const userEmail = app.userEmail;
+        if (!userApplicationMap.has(userEmail)) {
+          userApplicationMap.set(userEmail, []);
+        }
+        userApplicationMap.get(userEmail)!.push(app);
+      });
+
+      console.log(`Grouped into ${userApplicationMap.size} users`);
+
+      // Build analytics data for each user
+      const analyticsData: any[] = [];
+
+      userApplicationMap.forEach((userApps, userEmail) => {
+
+        const user = {
+          userEmail: userApps[0].userEmail,
+          userName: userApps[0].userName,
+          userFullName: userApps[0].userFullName,
+          userId: userApps[0].userId,
+          userPhone: userApps[0].userPhone,
+          userExperience: userApps[0].userExperience,
+          userLocation: userApps[0].userLocation,
+          userCity: userApps[0].userCity,
+          userSkills: userApps[0].userSkills,
+          userCurrentCtc: userApps[0].userCurrentCtc,
+          userExpectedCtc: userApps[0].userExpectedCtc,
+        }; // Get user details from first application
+
+        // Calculate status counts
+        const statuses = {
+          new: userApps.filter(app => app.applicationStatus === 'new').length,
+          reviewing: userApps.filter(app => app.applicationStatus === 'reviewing').length,
+          interview: userApps.filter(app => app.applicationStatus === 'interview').length,
+          hired: userApps.filter(app => app.applicationStatus === 'hired').length,
+          rejected: userApps.filter(app => app.applicationStatus === 'rejected').length
         };
-        applications: Array<{
-          id: number;
-          status: string;
-          createdAt: string;
-          jobTitle: string;
-        }>;
-      }>();
 
-      console.log("Processing applications...");
-      applications.forEach((app) => {
-        if (!app.userEmail) return; // Skip applications without user email
-        
-        const email = app.userEmail;
-        const name = app.userName || 'Unknown User';
-        const fullName = app.userFullName || name;
-
-        if (!userMap.has(email)) {
-          userMap.set(email, {
-            userEmail: email,
-            userName: name,
-            userFullName: fullName,
-            userPhone: app.userPhone || '',
-            userExperience: app.userExperience || '',
-            userLocation: app.userLocation || '',
-            userCity: app.userCity || '',
-            userSkills: app.userSkills || '',
-            userCurrentCtc: app.userCurrentCtc || '',
-            userExpectedCtc: app.userExpectedCtc || '',
-            applicationsCount: 0,
-            latestApplicationDate: '',
-            statuses: {
-              new: 0,
-              reviewing: 0,
-              interview: 0,
-              hired: 0,
-              rejected: 0,
-            },
-            applications: [],
-          });
+        // Apply status filter if provided
+        if (status && status !== 'all_statuses') {
+          if (statuses[status as keyof typeof statuses] === 0) {
+            return; // Skip this user if they don't have applications with the filtered status
+          }
         }
 
-        const userData = userMap.get(email)!;
-        userData.applicationsCount++;
+        // Find latest application date
+        const latestDate = userApps.reduce((latest, app) => {
+          const appDate = app.applicationDate ? new Date(app.applicationDate) : latest;
+          return appDate > latest ? appDate : latest;
+        }, new Date(0));
 
-        // Update latest application date
-        const appDate = app.applicationDate ? new Date(app.applicationDate).toISOString() : new Date().toISOString();
-        if (!userData.latestApplicationDate || appDate > userData.latestApplicationDate) {
-          userData.latestApplicationDate = appDate;
-        }
+        analyticsData.push({
+          userEmail: user.userEmail,
+          userName: user.userFullName || user.userName || user.userEmail,
+          userFullName: user.userFullName,
+          userPhone: user.userPhone,
+          userExperience: user.userExperience,
+          userLocation: user.userLocation,
+          userCity: user.userCity,
+          userSkills: user.userSkills,
+          userCurrentCtc: user.userCurrentCtc,
+          userExpectedCtc: user.userExpectedCtc,
+          applicationsCount: userApps.length,
+          latestApplicationDate: latestDate.toLocaleDateString(),
+          statuses,
+          applications: userApps.map(app => {
 
-        // Count statuses safely
-        const appStatus = app.applicationStatus || 'new';
-        const validStatuses = ['new', 'reviewing', 'interview', 'hired', 'rejected'];
-        
-        if (validStatuses.includes(appStatus)) {
-          userData.statuses[appStatus as keyof typeof userData.statuses]++;
-        } else {
-          userData.statuses.new++; // Default to 'new' for unknown statuses
-        }
-
-        // Get job title from the job listings
-        const jobTitle = app.jobId ? (jobTitleMap.get(app.jobId) || `Job ID: ${app.jobId}`) : 'Unknown Job';
-
-        // Add application details
-        userData.applications.push({
-          id: app.applicationId || 0,
-          status: appStatus,
-          createdAt: appDate,
-          jobTitle: jobTitle,
+            // Get job title from the job listings
+            const jobTitle = app.jobId ? (jobTitleMap.get(app.jobId) || `Job ID: ${app.jobId}`) : 'Unknown Job';
+            const jobs = await db
+            .select({
+              companyName: jobListings.companyName,
+            })
+            .from(jobListings)
+            .where(eq(jobListings.id, app.jobId));
+            return {
+              id: app.applicationId,
+              jobId: app.jobId,
+              jobTitle: jobTitle,
+              status: app.applicationStatus,
+              createdAt: app.applicationDate,
+              jobCompany: jobs[0]?.companyName || 'Unknown Company'
+            };
+          })
         });
       });
 
-      let analyticsData = Array.from(userMap.values());
-      console.log(`Grouped into ${analyticsData.length} users`);
-
-      // Apply status filter if provided
-      if (status && status !== 'all_statuses' && status.trim()) {
-        const validStatuses = ['new', 'reviewing', 'interview', 'hired', 'rejected'];
-        if (validStatuses.includes(status)) {
-          analyticsData = analyticsData.filter(user => {
-            return user.statuses[status as keyof typeof user.statuses] > 0;
-          });
-        }
-      }
-
       // Apply sorting
       if (sortBy) {
-        switch (sortBy) {
-          case 'applications_desc':
-            analyticsData.sort((a, b) => b.applicationsCount - a.applicationsCount);
-            break;
-          case 'applications_asc':
-            analyticsData.sort((a, b) => a.applicationsCount - b.applicationsCount);
-            break;
-          case 'latest_desc':
-            analyticsData.sort((a, b) => b.latestApplicationDate.localeCompare(a.latestApplicationDate));
-            break;
-          case 'name_asc':
-            analyticsData.sort((a, b) => (a.userFullName || a.userName).localeCompare(b.userFullName || b.userName));
-            break;
-          default:
-            analyticsData.sort((a, b) => b.applicationsCount - a.applicationsCount);
-        }
-      } else {
-        // Default sorting by applications count descending
-        analyticsData.sort((a, b) => b.applicationsCount - a.applicationsCount);
+        analyticsData.sort((a, b) => {
+          switch (sortBy) {
+            case 'applications_desc':
+              return b.applicationsCount - a.applicationsCount;
+            case 'applications_asc':
+              return a.applicationsCount - b.applicationsCount;
+            case 'latest_desc':
+              return new Date(b.latestApplicationDate).getTime() - new Date(a.latestApplicationDate).getTime();
+            case 'name_asc':
+              return a.userName.localeCompare(b.userName);
+            default:
+              return 0;
+          }
+        });
       }
-
-      // Format dates for display
-      analyticsData = analyticsData.map(user => ({
-        ...user,
-        latestApplicationDate: user.latestApplicationDate ? 
-          new Date(user.latestApplicationDate).toLocaleDateString('en-US', {
-            year: 'numeric',
-            month: 'short',
-            day: 'numeric'
-          }) : 'No applications'
-      }));
 
       console.log(`Returning ${analyticsData.length} analytics records`);
       res.json(analyticsData);
     } catch (error) {
-      console.error("Error fetching analytics data:", error);
-      console.error("Error stack:", error instanceof Error ? error.stack : 'No stack trace');
-      res.status(500).json({ 
-        error: "Failed to fetch analytics data",
-        details: error instanceof Error ? error.message : 'Unknown error'
-      });
+      console.error('Analytics endpoint error:', error);
+      res.status(500).json({ error: 'Failed to fetch analytics data' });
     }
   });
 
@@ -1921,7 +1894,8 @@ app.put('/api/profile', async (req: AuthenticatedRequest, res) => {
       if (existingRequest) {
         return res.status(400).json({
           success: false,
-          message: "A demo request with this email already exists",
+          ```text
+message: "A demo request with this email already exists",
           existingRequest: {
             id: existingRequest.id,
             status: existingRequest.status,

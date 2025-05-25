@@ -196,46 +196,15 @@ function UserApplicationsTable({ data, onViewDetails }: { data: AnalyticsData[],
 }
 
 function UserDetailModal({ userEmail, data, onClose }: { userEmail: string | null, data: AnalyticsData[], onClose: () => void }) {
-  const [modalPage, setModalPage] = useState(1);
-  const modalPageSize = 5;
   const userData = userEmail ? data.find(user => user.userEmail === userEmail) : null;
 
   if (!userData) {
     return null;
   }
 
-  // Calculate pagination for applications
-  const totalApplications = userData.applications.length;
-  const totalPages = Math.ceil(totalApplications / modalPageSize);
-  const startIndex = (modalPage - 1) * modalPageSize;
-  const endIndex = startIndex + modalPageSize;
-  const paginatedApplications = userData.applications.slice(startIndex, endIndex);
-
-  // Format date safely
-  const formatDate = (dateString: string | Date) => {
-    try {
-      if (!dateString) return 'N/A';
-      const date = typeof dateString === 'string' ? new Date(dateString) : dateString;
-      return isNaN(date.getTime()) ? 'N/A' : new Intl.DateTimeFormat('en-US', {
-        year: 'numeric',
-        month: 'short',
-        day: 'numeric'
-      }).format(date);
-    } catch (error) {
-      return 'N/A';
-    }
-  };
-
-  // Reset page when modal opens/closes
-  useEffect(() => {
-    if (userEmail) {
-      setModalPage(1);
-    }
-  }, [userEmail]);
-
   return (
     <Dialog open={!!userEmail} onOpenChange={(open) => !open && onClose()}>
-      <DialogContent className="max-w-4xl max-h-[80vh] overflow-y-auto">
+      <DialogContent className="max-w-2xl max-h-[80vh] overflow-y-auto">
         <DialogHeader>
           <DialogTitle>User Details</DialogTitle>
           <DialogDescription>Details for {userData.userName}</DialogDescription>
@@ -254,17 +223,12 @@ function UserDetailModal({ userEmail, data, onClose }: { userEmail: string | nul
             <div className="text-muted-foreground">Applications Count</div>
           </div>
           <div>
-            <div className="text-lg font-semibold">{formatDate(userData.latestApplicationDate)}</div>
+            <div className="text-lg font-semibold">{userData.latestApplicationDate}</div>
             <div className="text-muted-foreground">Latest Application Date</div>
           </div>
         </div>
         <div className="mt-4">
-          <div className="flex justify-between items-center mb-2">
-            <h3 className="text-lg font-semibold">Job Applications</h3>
-            <div className="text-sm text-muted-foreground">
-              {totalApplications} application{totalApplications !== 1 ? 's' : ''} total
-            </div>
-          </div>
+          <h3 className="text-lg font-semibold mb-2">Job Applications</h3>
           <div className="overflow-x-auto">
             <Table>
               <TableHeader>
@@ -276,66 +240,29 @@ function UserDetailModal({ userEmail, data, onClose }: { userEmail: string | nul
                 </TableRow>
               </TableHeader>
               <TableBody>
-                {paginatedApplications.length > 0 ? (
-                  paginatedApplications.map((app) => (
-                    <TableRow key={app.id}>
-                      <TableCell>#{app.jobId}</TableCell>
-                      <TableCell>{app.jobTitle || 'N/A'}</TableCell>
-                      <TableCell>
-                        <Badge
-                          variant={
-                            app.status === "new" ? "default" :
-                            app.status === "reviewing" ? "secondary" :
-                            app.status === "interview" ? "outline" :
-                            app.status === "hired" ? "success" :
-                            app.status === "rejected" ? "destructive" : "default"
-                          }
-                        >
-                          {app.status}
-                        </Badge>
-                      </TableCell>
-                      <TableCell>{formatDate(app.appliedDate)}</TableCell>
-                    </TableRow>
-                  ))
-                ) : (
-                  <TableRow>
-                    <TableCell colSpan={4} className="text-center py-4">
-                      No applications found
+                {userData.applications.map((app) => (
+                  <TableRow key={app.id}>
+                    <TableCell>#{app.jobId}</TableCell>
+                    <TableCell>{app.jobTitle || 'N/A'}</TableCell>
+                    <TableCell>
+                      <Badge
+                        variant={
+                          app.status === "new" ? "default" :
+                          app.status === "reviewing" ? "secondary" :
+                          app.status === "interview" ? "outline" :
+                          app.status === "hired" ? "success" :
+                          app.status === "rejected" ? "destructive" : "default"
+                        }
+                      >
+                        {app.status}
+                      </Badge>
                     </TableCell>
+                    <TableCell>{app.appliedDate ? new Date(app.appliedDate).toLocaleDateString() : 'Invalid Date'}</TableCell>
                   </TableRow>
-                )}
+                ))}
               </TableBody>
             </Table>
           </div>
-          
-          {/* Pagination Controls */}
-          {totalPages > 1 && (
-            <div className="flex justify-between items-center mt-4">
-              <div className="text-sm text-muted-foreground">
-                Page {modalPage} of {totalPages}
-              </div>
-              <div className="flex gap-2">
-                <Button
-                  variant="outline"
-                  size="sm"
-                  onClick={() => setModalPage(p => Math.max(1, p - 1))}
-                  disabled={modalPage === 1}
-                >
-                  <ChevronLeft className="h-4 w-4" />
-                  Previous
-                </Button>
-                <Button
-                  variant="outline"
-                  size="sm"
-                  onClick={() => setModalPage(p => Math.min(totalPages, p + 1))}
-                  disabled={modalPage >= totalPages}
-                >
-                  Next
-                  <ChevronRight className="h-4 w-4" />
-                </Button>
-              </div>
-            </div>
-          )}
         </div>
       </DialogContent>
     </Dialog>
