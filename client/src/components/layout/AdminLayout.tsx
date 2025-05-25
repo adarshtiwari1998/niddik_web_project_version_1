@@ -1,3 +1,4 @@
+
 import { ReactNode, useState, useEffect } from "react";
 import { Link, useLocation } from "wouter";
 import { useAuth } from "@/hooks/use-auth";
@@ -246,31 +247,34 @@ export default function AdminLayout({ children, title, description }: AdminLayou
         </div>
 
         {/* Main Content */}
-      <div className={`flex-1 ${isCollapsed ? 'ml-16' : 'ml-[276px]'} transition-all duration-300 ease-in-out`}>
-        {/* Header */}
-        <header className="bg-white dark:bg-gray-800 border-b border-gray-200 dark:border-gray-700 px-6 py-4">
-          <div className="flex items-center justify-between">
-            <div className="flex items-center gap-4">
-              <Button
-                variant="ghost"
-                size="icon"
-                onClick={() => setIsCollapsed(!isCollapsed)}
-                className="lg:hidden"
-              >
-                <Menu className="h-5 w-5" />
-              </Button>
-              <div>
-                <h1 className="text-2xl font-bold text-gray-900 dark:text-white">{title}</h1>
-                {description && (
-                  <p className="text-sm text-gray-600 dark:text-gray-400 mt-1">{description}</p>
-                )}
+        <div className={`flex-1 ${isCollapsed ? 'ml-16' : 'ml-[276px]'} transition-all duration-300 ease-in-out`}>
+          {/* Page Header */}
+          <header className="bg-white dark:bg-gray-800 border-b border-gray-200 dark:border-gray-700 px-6 py-4">
+            <div className="flex items-center justify-between">
+              <div className="flex items-center gap-4">
+                <Button
+                  variant="ghost"
+                  size="icon"
+                  onClick={() => setIsCollapsed(!isCollapsed)}
+                  className="lg:hidden"
+                >
+                  <Menu className="h-5 w-5" />
+                </Button>
+                <div>
+                  <h1 className="text-2xl font-bold text-gray-900 dark:text-white">{title}</h1>
+                  {description && (
+                    <p className="text-sm text-gray-600 dark:text-gray-400 mt-1">{description}</p>
+                  )}
+                </div>
               </div>
             </div>
+          </header>
 
-            {/* Content */}
-        <main className="p-6 bg-gray-50 dark:bg-gray-900 min-h-[calc(100vh-73px)] overflow-x-auto">
-          {children}
-        </main>
+          {/* Content */}
+          <main className="p-6 bg-gray-50 dark:bg-gray-900 min-h-[calc(100vh-73px)] overflow-x-auto">
+            {children}
+          </main>
+        </div>
       </div>
     </div>
   );
