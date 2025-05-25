@@ -1063,7 +1063,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
       console.log(`Found ${jobIds.length} unique job IDs:`, jobIds);
 
       let jobTitleMap = new Map<number, string>();
-
+      
       if (jobIds.length > 0) {
         try {
           console.log("Fetching job listings...");
@@ -1074,7 +1074,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
             })
             .from(jobListings)
             .where(inArray(jobListings.id, jobIds));
-
+          
           console.log(`Found ${jobs.length} job listings`);
           jobTitleMap = new Map(jobs.map(job => [job.id, job.title || 'Untitled Job']));
         } catch (jobError) {
@@ -1108,7 +1108,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
       console.log("Processing applications...");
       applications.forEach((app) => {
         if (!app.userEmail) return; // Skip applications without user email
-
+        
         const email = app.userEmail;
         const name = app.userName || 'Unknown User';
         const fullName = app.userFullName || name;
@@ -1143,7 +1143,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
         // Count statuses safely
         const appStatus = app.applicationStatus || 'new';
         const validStatuses = ['new', 'reviewing', 'interview', 'hired', 'rejected'];
-
+        
         if (validStatuses.includes(appStatus)) {
           userData.statuses[appStatus as keyof typeof userData.statuses]++;
         } else {
