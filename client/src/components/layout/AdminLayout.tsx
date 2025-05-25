@@ -247,7 +247,10 @@ export default function AdminLayout({ children, title, description }: AdminLayou
         </div>
 
         {/* Main Content */}
-        <div className={`flex-1 ${isCollapsed ? 'ml-16' : 'ml-[276px]'} transition-all duration-300 ease-in-out`}>
+        <div className={`flex-1 transition-all duration-300 ease-in-out`} style={{
+          marginLeft: isCollapsed ? '64px' : '276px',
+          width: isCollapsed ? 'calc(100% - 64px)' : 'calc(100% - 276px)'
+        }}>
           {/* Page Header */}
           <header className="bg-white dark:bg-gray-800 border-b border-gray-200 dark:border-gray-700 px-6 py-4">
             <div className="flex items-center justify-between">
@@ -271,8 +274,10 @@ export default function AdminLayout({ children, title, description }: AdminLayou
           </header>
 
           {/* Content */}
-          <main className="p-6 bg-gray-50 dark:bg-gray-900 min-h-[calc(100vh-73px)] overflow-x-auto">
-            {children}
+          <main className="p-6 bg-gray-50 dark:bg-gray-900 min-h-[calc(100vh-161px)] w-full">
+            <div className="w-full max-w-none">
+              {children}
+            </div>
           </main>
         </div>
       </div>
