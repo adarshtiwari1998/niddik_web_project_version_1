@@ -244,7 +244,11 @@ export default function AdminLayout({ children, title, description }: AdminLayou
               {/* Account Settings */}
               <div 
                 onClick={handleAccountSettingsNavigation}
-                className={`flex items-center px-3 py-2 mb-1 rounded-md transition-colors cursor-pointer hover:bg-gray-100 dark:hover:bg-gray-700 ${isCollapsed ? 'justify-center' : ''}`}
+                className={`flex items-center px-3 py-2 mb-1 rounded-md transition-colors cursor-pointer ${
+                  (location === "/admin/dashboard" && window.location.search.includes('tab=account'))
+                    ? "bg-primary/10 text-primary" 
+                    : "hover:bg-gray-100 dark:hover:bg-gray-700"
+                } ${isCollapsed ? 'justify-center' : ''}`}
                 title={isCollapsed ? "Account Settings" : ""}
               >
                 <Settings className="h-5 w-5" />
