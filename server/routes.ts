@@ -1039,6 +1039,13 @@ export async function registerRoutes(app: Express): Promise<Server> {
           userName: users.username,
           userFullName: users.fullName,
           userId: users.id,
+          userPhone: users.phone,
+          userExperience: users.experience,
+          userLocation: users.location,
+          userCity: users.city,
+          userSkills: users.skills,
+          userCurrentCtc: users.currentCtc,
+          userExpectedCtc: users.expectedCtc,
         })
         .from(jobApplications)
         .leftJoin(users, eq(jobApplications.userId, users.id));
@@ -1118,6 +1125,13 @@ export async function registerRoutes(app: Express): Promise<Server> {
             userEmail: email,
             userName: name,
             userFullName: fullName,
+            userPhone: app.userPhone || '',
+            userExperience: app.userExperience || '',
+            userLocation: app.userLocation || '',
+            userCity: app.userCity || '',
+            userSkills: app.userSkills || '',
+            userCurrentCtc: app.userCurrentCtc || '',
+            userExpectedCtc: app.userExpectedCtc || '',
             applicationsCount: 0,
             latestApplicationDate: '',
             statuses: {

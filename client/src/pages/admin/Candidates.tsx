@@ -287,7 +287,7 @@ export default function Candidates() {
       if (analyticsSearch) params.append("search", analyticsSearch);
       if (analyticsStatusFilter && analyticsStatusFilter !== "all_statuses") params.append("status", analyticsStatusFilter);
       if (sortBy) params.append("sortBy", sortBy);
-  
+
       return params.toString();
     };
 
