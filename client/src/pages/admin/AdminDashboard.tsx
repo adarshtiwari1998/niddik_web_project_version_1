@@ -1,10 +1,11 @@
 import { useState, useEffect } from "react";
 import { useLocation, Link } from "wouter";
-import { useQuery } from "@tanstack/react-query";
+import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { useAuth } from "@/hooks/use-auth";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle, CardFooter } from "@/components/ui/card";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { Shield, Briefcase, Users, Calendar, Activity, Clock, ChevronRight, CreditCard, Box } from "lucide-react";
+import { Button } from "@/components/ui/button";
+import { Shield, Briefcase, Users, Calendar, Activity, Clock, ChevronRight, CreditCard, Box, RefreshCw } from "lucide-react";
 import AdminPasswordChange from "@/components/admin/AdminPasswordChange";
 import AdminLayout from "@/components/layout/AdminLayout";
 import { LoadingScreen } from "@/components/ui/loading-screen";
@@ -15,6 +16,8 @@ const AdminDashboard = () => {
   const { user } = useAuth();
   const [activeTab, setActiveTab] = useState("overview");
   const [initialLoading, setInitialLoading] = useState(true);
+  const [isRefreshing, setIsRefreshing] = useState(false);
+  const queryClient = useQueryClient();
 
   useEffect(() => {
     document.title = "Admin Dashboard | NiDDiK"
@@ -29,10 +32,20 @@ const AdminDashboard = () => {
   const { data: jobsData, isLoading: isLoadingJobs } = useQuery<{ data: JobListing[] }>({
     queryKey: ['/api/job-listings'],
     queryFn: async () => {
-      const res = await fetch('/api/job-listings');
+      const res = await fetch('/api/job-listings', {
+        headers: {
+          'Cache-Control': 'no-cache',
+          'Pragma': 'no-cache'
+        }
+      });
       if (!res.ok) throw new Error('Failed to fetch job listings');
       return res.json();
     },
+    refetchInterval: 30000, // Refetch every 30 seconds
+    refetchOnMount: true,
+    refetchOnWindowFocus: true,
+    staleTime: 0, // Consider data stale immediately
+    gcTime: 5 * 60 * 1000, // Keep in cache for 5 minutes
   });
 
   const { data: applicationsData, isLoading: isLoadingApplications } = useQuery<{ 
@@ -42,10 +55,20 @@ const AdminDashboard = () => {
   }>({
     queryKey: ['/api/admin/applications'],
     queryFn: async () => {
-      const res = await fetch('/api/admin/applications');
+      const res = await fetch('/api/admin/applications', {
+        headers: {
+          'Cache-Control': 'no-cache',
+          'Pragma': 'no-cache'
+        }
+      });
       if (!res.ok) throw new Error('Failed to fetch applications');
       return res.json();
     },
+    refetchInterval: 15000, // Refetch every 15 seconds for more frequent updates
+    refetchOnMount: true,
+    refetchOnWindowFocus: true,
+    staleTime: 0, // Consider data stale immediately
+    gcTime: 5 * 60 * 1000, // Keep in cache for 5 minutes
   });
 
   const totalJobs = jobsData?.data?.length || 0;
@@ -77,6 +100,20 @@ const AdminDashboard = () => {
     }).format(date);
   };
 
+  const handleRefresh = async () => {
+    setIsRefreshing(true);
+    try {
+      await Promise.all([
+        queryClient.invalidateQueries({ queryKey: ['/api/job-listings'] }),
+        queryClient.invalidateQueries({ queryKey: ['/api/admin/applications'] })
+      ]);
+    } catch (error) {
+      console.error('Error refreshing data:', error);
+    } finally {
+      setIsRefreshing(false);
+    }
+  };
+
   if (!user || user.role !== "admin") {
     return null;
   }
@@ -90,6 +127,23 @@ const AdminDashboard = () => {
         <meta property="og:description" content="Manage job listings, applications, and candidate profiles." />
       </Helmet>
       {initialLoading && <LoadingScreen message="Loading admin dashboard..." />}
+      
+      <div className="flex justify-between items-center mb-6">
+        <div>
+          <h1 className="text-2xl font-bold">Dashboard</h1>
+          <p className="text-muted-foreground">Overview and insights</p>
+        </div>
+        <Button 
+          onClick={handleRefresh} 
+          disabled={isRefreshing}
+          variant="outline"
+          size="sm"
+        >
+          <RefreshCw className={`h-4 w-4 mr-2 ${isRefreshing ? 'animate-spin' : ''}`} />
+          {isRefreshing ? 'Refreshing...' : 'Refresh Data'}
+        </Button>
+      </div>
+      
       <Tabs defaultValue="overview" onValueChange={setActiveTab}>
         <TabsList className="mb-6">
           <TabsTrigger value="overview">Dashboard Overview</TabsTrigger>
@@ -99,7 +153,12 @@ const AdminDashboard = () => {
 
         <TabsContent value="overview">
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
-            <Card className="border-l-4 border-l-primary">
+            <Card className="border-l-4 border-l-primary relative">
+              {isLoadingJobs && (
+                <div className="absolute top-2 right-2">
+                  <div className="w-2 h-2 bg-blue-500 rounded-full animate-pulse"></div>
+                </div>
+              )}
               <CardHeader className="pb-2">
                 <CardTitle className="text-2xl font-bold flex items-center">
                   <Briefcase className="h-5 w-5 mr-2 text-primary" />
@@ -120,7 +179,12 @@ const AdminDashboard = () => {
               </CardFooter>
             </Card>
 
-            <Card className="border-l-4 border-l-green-500">
+            <Card className="border-l-4 border-l-green-500 relative">
+              {isLoadingApplications && (
+                <div className="absolute top-2 right-2">
+                  <div className="w-2 h-2 bg-blue-500 rounded-full animate-pulse"></div>
+                </div>
+              )}
               <CardHeader className="pb-2">
                 <CardTitle className="text-2xl font-bold flex items-center">
                   <Users className="h-5 w-5 mr-2 text-green-500" />
@@ -141,7 +205,12 @@ const AdminDashboard = () => {
               </CardFooter>
             </Card>
 
-            <Card className="border-l-4 border-l-blue-500">
+            <Card className="border-l-4 border-l-blue-500 relative">
+              {isLoadingApplications && (
+                <div className="absolute top-2 right-2">
+                  <div className="w-2 h-2 bg-blue-500 rounded-full animate-pulse"></div>
+                </div>
+              )}
               <CardHeader className="pb-2">
                 <CardTitle className="text-2xl font-bold flex items-center">
                   <Clock className="h-5 w-5 mr-2 text-blue-500" />
@@ -162,7 +231,12 @@ const AdminDashboard = () => {
               </CardFooter>
             </Card>
 
-            <Card className="border-l-4 border-l-amber-500">
+            <Card className="border-l-4 border-l-amber-500 relative">
+              {isLoadingApplications && (
+                <div className="absolute top-2 right-2">
+                  <div className="w-2 h-2 bg-blue-500 rounded-full animate-pulse"></div>
+                </div>
+              )}
               <CardHeader className="pb-2">
                 <CardTitle className="text-2xl font-bold flex items-center">
                   <Activity className="h-5 w-5 mr-2 text-amber-500" />

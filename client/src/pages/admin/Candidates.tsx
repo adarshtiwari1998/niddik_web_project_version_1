@@ -60,10 +60,10 @@ export default function Candidates() {
     const params = new URLSearchParams();
     params.append("page", page.toString());
     params.append("limit", pageSize.toString());
-    
+
     if (search) params.append("search", search);
     if (statusFilter && statusFilter !== "all_statuses") params.append("status", statusFilter);
-    
+
     return params.toString();
   };
 
@@ -80,10 +80,19 @@ export default function Candidates() {
   }>({
     queryKey: ['/api/admin/applications', page, search, statusFilter],
     queryFn: async () => {
-      const res = await fetch(`/api/admin/applications?${buildQueryParams()}`);
+      const res = await fetch(`/api/admin/applications?${buildQueryParams()}`, {
+        headers: {
+          'Cache-Control': 'no-cache',
+          'Pragma': 'no-cache'
+        }
+      });
       if (!res.ok) throw new Error("Failed to fetch applications");
       return res.json();
     },
+    refetchInterval: 20000, // Refetch every 20 seconds
+    refetchOnMount: true,
+    refetchOnWindowFocus: true,
+    staleTime: 0, // Consider data stale immediately
   });
 
   // Format date to a readable string
@@ -117,7 +126,7 @@ export default function Candidates() {
         },
         body: JSON.stringify({ status }),
       });
-      
+
       if (!res.ok) {
         const errorText = await res.text();
         console.error("Status update error:", errorText);
@@ -128,7 +137,7 @@ export default function Candidates() {
     onSuccess: (data, variables) => {
       // Invalidate the applications query to refresh data
       queryClient.invalidateQueries({ queryKey: ['/api/admin/applications'] });
-      
+
       toast({
         title: "Status updated",
         description: `Application status changed to ${variables.status}`,
@@ -143,7 +152,7 @@ export default function Candidates() {
       });
     },
   });
-  
+
   // Handler for updating application status
   const handleUpdateStatus = (id: number, status: string) => {
     updateStatusMutation.mutate({ id, status });
@@ -176,7 +185,7 @@ export default function Candidates() {
                 className="pl-8"
               />
             </div>
-            
+
             <div>
               <Select
                 value={statusFilter}
@@ -196,7 +205,7 @@ export default function Candidates() {
                 </SelectContent>
               </Select>
             </div>
-            
+
             <Button 
               variant="outline" 
               onClick={() => {
