@@ -727,7 +727,7 @@ const Users = () => {
                                     <DialogHeader>
                                       <DialogTitle>Edit User: {userData.username}</DialogTitle>
                                       <DialogDescription>
-                                        Update user information. Email and username changes require user to re-login.
+                                        Update user information. Email and username cannot be edited for security reasons.
                                       </DialogDescription>
                                     </DialogHeader>
                                     <div className="grid grid-cols-1 md:grid-cols-2 gap-4 py-4">
@@ -736,7 +736,9 @@ const Users = () => {
                                         <Input
                                           id="username"
                                           value={editFormData.username}
-                                          onChange={(e) => setEditFormData(prev => ({ ...prev, username: e.target.value }))}
+                                          disabled
+                                          className="bg-muted cursor-not-allowed"
+                                          title="Username cannot be edited"
                                         />
                                       </div>
                                       <div className="space-y-2">
@@ -745,7 +747,9 @@ const Users = () => {
                                           id="email"
                                           type="email"
                                           value={editFormData.email}
-                                          onChange={(e) => setEditFormData(prev => ({ ...prev, email: e.target.value }))}
+                                          disabled
+                                          className="bg-muted cursor-not-allowed"
+                                          title="Email cannot be edited"
                                         />
                                       </div>
                                       <div className="space-y-2">
