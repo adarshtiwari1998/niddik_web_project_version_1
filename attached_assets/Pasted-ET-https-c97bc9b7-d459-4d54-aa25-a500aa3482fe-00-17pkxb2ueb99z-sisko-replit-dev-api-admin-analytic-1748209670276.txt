@@ -1,0 +1,81 @@
+ET https://c97bc9b7-d459-4d54-aa25-a500aa3482fe-00-17pkxb2ueb99z.sisko.replit.dev/api/admin/analytics?sortBy=applications_desc 500 (Internal Server Error)
+queryFn @ Candidates.tsx:326
+fetchFn @ @tanstack_react-query.js?v=d1ff9c50:844
+run @ @tanstack_react-query.js?v=d1ff9c50:494
+start @ @tanstack_react-query.js?v=d1ff9c50:536
+fetch @ @tanstack_react-query.js?v=d1ff9c50:931
+executeFetch_fn @ @tanstack_react-query.js?v=d1ff9c50:2238
+fetch @ @tanstack_react-query.js?v=d1ff9c50:2049
+refetch @ @tanstack_react-query.js?v=d1ff9c50:2039
+onFocus @ @tanstack_react-query.js?v=d1ff9c50:752
+(anonymous) @ @tanstack_react-query.js?v=d1ff9c50:1117
+(anonymous) @ @tanstack_react-query.js?v=d1ff9c50:1116
+batch @ @tanstack_react-query.js?v=d1ff9c50:584
+onFocus @ @tanstack_react-query.js?v=d1ff9c50:1115
+(anonymous) @ @tanstack_react-query.js?v=d1ff9c50:1634
+await in (anonymous)
+(anonymous) @ @tanstack_react-query.js?v=d1ff9c50:313
+onFocus @ @tanstack_react-query.js?v=d1ff9c50:312
+(anonymous) @ @tanstack_react-query.js?v=d1ff9c50:299
+listener @ @tanstack_react-query.js?v=d1ff9c50:270Understand this error
+Candidates.tsx:326 
+            
+            
+           GET https://c97bc9b7-d459-4d54-aa25-a500aa3482fe-00-17pkxb2ueb99z.sisko.replit.dev/api/admin/analytics?sortBy=applications_desc 500 (Internal Server Error)
+queryFn @ Candidates.tsx:326
+fetchFn @ @tanstack_react-query.js?v=d1ff9c50:844
+run @ @tanstack_react-query.js?v=d1ff9c50:494
+(anonymous) @ @tanstack_react-query.js?v=d1ff9c50:519
+Promise.then
+(anonymous) @ @tanstack_react-query.js?v=d1ff9c50:515
+Promise.catch
+run @ @tanstack_react-query.js?v=d1ff9c50:498
+start @ @tanstack_react-query.js?v=d1ff9c50:536
+fetch @ @tanstack_react-query.js?v=d1ff9c50:931
+executeFetch_fn @ @tanstack_react-query.js?v=d1ff9c50:2238
+fetch @ @tanstack_react-query.js?v=d1ff9c50:2049
+refetch @ @tanstack_react-query.js?v=d1ff9c50:2039
+onFocus @ @tanstack_react-query.js?v=d1ff9c50:752
+(anonymous) @ @tanstack_react-query.js?v=d1ff9c50:1117
+(anonymous) @ @tanstack_react-query.js?v=d1ff9c50:1116
+batch @ @tanstack_react-query.js?v=d1ff9c50:584
+onFocus @ @tanstack_react-query.js?v=d1ff9c50:1115
+(anonymous) @ @tanstack_react-query.js?v=d1ff9c50:1634
+await in (anonymous)
+(anonymous) @ @tanstack_react-query.js?v=d1ff9c50:313
+onFocus @ @tanstack_react-query.js?v=d1ff9c50:312
+(anonymous) @ @tanstack_react-query.js?v=d1ff9c50:299
+listener @ @tanstack_react-query.js?v=d1ff9c50:270Understand this error
+Candidates.tsx:326 
+            
+            
+           GET https://c97bc9b7-d459-4d54-aa25-a500aa3482fe-00-17pkxb2ueb99z.sisko.replit.dev/api/admin/analytics?sortBy=applications_desc 500 (Internal Server Error)
+queryFn @ Candidates.tsx:326
+fetchFn @ @tanstack_react-query.js?v=d1ff9c50:844
+run @ @tanstack_react-query.js?v=d1ff9c50:494
+(anonymous) @ @tanstack_react-query.js?v=d1ff9c50:519
+Promise.then
+(anonymous) @ @tanstack_react-query.js?v=d1ff9c50:515
+Promise.catch
+run @ @tanstack_react-query.js?v=d1ff9c50:498
+(anonymous) @ @tanstack_react-query.js?v=d1ff9c50:519
+Promise.then
+(anonymous) @ @tanstack_react-query.js?v=d1ff9c50:515
+Promise.catch
+run @ @tanstack_react-query.js?v=d1ff9c50:498
+start @ @tanstack_react-query.js?v=d1ff9c50:536
+fetch @ @tanstack_react-query.js?v=d1ff9c50:931
+executeFetch_fn @ @tanstack_react-query.js?v=d1ff9c50:2238
+fetch @ @tanstack_react-query.js?v=d1ff9c50:2049
+refetch @ @tanstack_react-query.js?v=d1ff9c50:2039
+onFocus @ @tanstack_react-query.js?v=d1ff9c50:752
+(anonymous) @ @tanstack_react-query.js?v=d1ff9c50:1117
+(anonymous) @ @tanstack_react-query.js?v=d1ff9c50:1116
+batch @ @tanstack_react-query.js?v=d1ff9c50:584
+onFocus @ @tanstack_react-query.js?v=d1ff9c50:1115
+(anonymous) @ @tanstack_react-query.js?v=d1ff9c50:1634
+await in (anonymous)
+(anonymous) @ @tanstack_react-query.js?v=d1ff9c50:313
+onFocus @ @tanstack_react-query.js?v=d1ff9c50:312
+(anonymous) @ @tanstack_react-query.js?v=d1ff9c50:299
+listener @ @tanstack_react-query.js?v=d1ff9c50:270Understand this error

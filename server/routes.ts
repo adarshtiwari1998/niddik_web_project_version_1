@@ -948,8 +948,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
 
       // Calculate pagination
       const total = filteredApplications.length;
-      const startIndex = (page - 1) * limit```text
-,
+      const startIndex = (page - 1) * limit
       const endIndex = page * limit;
       const paginatedApplications = filteredApplications.slice(startIndex, endIndex);
 
@@ -1943,7 +1942,7 @@ app.put('/api/profile', async (req: AuthenticatedRequest, res) => {
           acceptedTerms
         });
       } catch (validationError) {
-```text
+
         if (validationError instanceof z.ZodError) {
           return res.status(400).json({
             success: false,
