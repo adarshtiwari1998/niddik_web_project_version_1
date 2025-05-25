@@ -156,9 +156,7 @@ function StatusDistributionCard({ data }: { data: AnalyticsData[] }) {
 }
 
 // User Applications Table
-function UserApplicationsTable({ data }: { data: AnalyticsData[] }) {
-  const [selectedUserEmail, setSelectedUserEmail] = useState<string | null>(null);
-
+function UserApplicationsTable({ data, onViewDetails }: { data: AnalyticsData[], onViewDetails: (userEmail: string) => void }) {
   return (
     <Card>
       <CardHeader>
@@ -184,7 +182,7 @@ function UserApplicationsTable({ data }: { data: AnalyticsData[] }) {
                 <TableCell>{user.applicationsCount}</TableCell>
                 <TableCell>{user.latestApplicationDate}</TableCell>
                 <TableCell>
-                  <Button variant="outline" size="sm" onClick={() => setSelectedUserEmail(user.userEmail)}>
+                  <Button variant="outline" size="sm" onClick={() => onViewDetails(user.userEmail)}>
                     View Details
                   </Button>
                 </TableCell>
@@ -197,16 +195,16 @@ function UserApplicationsTable({ data }: { data: AnalyticsData[] }) {
   );
 }
 
-function UserDetailModal({ userEmail, data }: { userEmail: string, data: AnalyticsData[] }) {
-  const userData = data.find(user => user.userEmail === userEmail);
+function UserDetailModal({ userEmail, data, onClose }: { userEmail: string | null, data: AnalyticsData[], onClose: () => void }) {
+  const userData = userEmail ? data.find(user => user.userEmail === userEmail) : null;
 
   if (!userData) {
     return null;
   }
 
   return (
-    <Dialog open={!!userEmail} onOpenChange={() => null}>
-      <DialogContent className="max-w-2xl">
+    <Dialog open={!!userEmail} onOpenChange={(open) => !open && onClose()}>
+      <DialogContent className="max-w-2xl max-h-[80vh] overflow-y-auto">
         <DialogHeader>
           <DialogTitle>User Details</DialogTitle>
           <DialogDescription>Details for {userData.userName}</DialogDescription>
@@ -230,25 +228,41 @@ function UserDetailModal({ userEmail, data }: { userEmail: string, data: Analyti
           </div>
         </div>
         <div className="mt-4">
-          <h3 className="text-lg font-semibold mb-2">Applications</h3>
-          <Table>
-            <TableHeader>
-              <TableRow>
-                <TableHead>Job Title</TableHead>
-                <TableHead>Status</TableHead>
-                <TableHead>Applied Date</TableHead>
-              </TableRow>
-            </TableHeader>
-            <TableBody>
-              {userData.applications.map((app) => (
-                <TableRow key={app.id}>
-                  <TableCell>{app.jobTitle}</TableCell>
-                  <TableCell>{app.status}</TableCell>
-                  <TableCell>{app.createdAt}</TableCell>
+          <h3 className="text-lg font-semibold mb-2">Job Applications</h3>
+          <div className="overflow-x-auto">
+            <Table>
+              <TableHeader>
+                <TableRow>
+                  <TableHead>Job ID</TableHead>
+                  <TableHead>Job Title</TableHead>
+                  <TableHead>Status</TableHead>
+                  <TableHead>Applied Date</TableHead>
                 </TableRow>
-              ))}
-            </TableBody>
-          </Table>
+              </TableHeader>
+              <TableBody>
+                {userData.applications.map((app) => (
+                  <TableRow key={app.id}>
+                    <TableCell>#{app.jobId}</TableCell>
+                    <TableCell>{app.jobTitle || 'N/A'}</TableCell>
+                    <TableCell>
+                      <Badge
+                        variant={
+                          app.status === "new" ? "default" :
+                          app.status === "reviewing" ? "secondary" :
+                          app.status === "interview" ? "outline" :
+                          app.status === "hired" ? "success" :
+                          app.status === "rejected" ? "destructive" : "default"
+                        }
+                      >
+                        {app.status}
+                      </Badge>
+                    </TableCell>
+                    <TableCell>{new Date(app.appliedDate).toLocaleDateString()}</TableCell>
+                  </TableRow>
+                ))}
+              </TableBody>
+            </Table>
+          </div>
         </div>
       </DialogContent>
     </Dialog>
@@ -730,14 +744,16 @@ export default function Candidates() {
                 </CardContent>
               </Card>
 
-              <UserApplicationsTable data={analyticsData} />
+              <UserApplicationsTable 
+                data={analyticsData} 
+                onViewDetails={setSelectedUserEmail}
+              />
 
-              {selectedUserEmail && (
-                <UserDetailModal 
-                  userEmail={selectedUserEmail} 
-                  data={analyticsData} 
-                />
-              )}
+              <UserDetailModal 
+                userEmail={selectedUserEmail} 
+                data={analyticsData} 
+                onClose={() => setSelectedUserEmail(null)}
+              />
             </>
           ) : (
             <Card>
