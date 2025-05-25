@@ -1223,9 +1223,12 @@ app.put('/api/profile', async (req: AuthenticatedRequest, res) => {
       const page = req.query.page ? parseInt(req.query.page as string) : 1;
       const limit = req.query.limit ? parseInt(req.query.limit as string) : 10;
       const search = req.query.search as string;
+      const experience = req.query.experience as string;
+      const location = req.query.location as string;
+      const ctc = req.query.ctc as string;
 
       // Build where conditions
-      const { ne, or, ilike, sql } = await import('drizzle-orm');
+      const { ne, or, ilike, sql, and: drizzleAnd } = await import('drizzle-orm');
       let whereConditions = [ne(users.role, 'admin')];
 
       if (search) {
@@ -1240,11 +1243,49 @@ app.put('/api/profile', async (req: AuthenticatedRequest, res) => {
         );
       }
 
+      if (experience) {
+        if (experience === '0-1') {
+          whereConditions.push(sql`${users.experience}::int BETWEEN 0 AND 1`);
+        } else if (experience === '1-3') {
+          whereConditions.push(sql`${users.experience}::int BETWEEN 1 AND 3`);
+        } else if (experience === '3-5') {
+          whereConditions.push(sql`${users.experience}::int BETWEEN 3 AND 5`);
+        } else if (experience === '5-8') {
+          whereConditions.push(sql`${users.experience}::int BETWEEN 5 AND 8`);
+        } else if (experience === '8+') {
+          whereConditions.push(sql`${users.experience}::int >= 8`);
+        }
+      }
+
+      if (location) {
+        whereConditions.push(
+          or(
+            ilike(users.city, `%${location}%`),
+            ilike(users.state, `%${location}%`),
+            ilike(users.location, `%${location}%`)
+          )
+        );
+      }
+
+      if (ctc) {
+        if (ctc === '0-3') {
+          whereConditions.push(sql`${users.currentCtc}::int BETWEEN 0 AND 300000`);
+        } else if (ctc === '3-6') {
+          whereConditions.push(sql`${users.currentCtc}::int BETWEEN 300000 AND 600000`);
+        } else if (ctc === '6-10') {
+          whereConditions.push(sql`${users.currentCtc}::int BETWEEN 600000 AND 1000000`);
+        } else if (ctc === '10-15') {
+          whereConditions.push(sql`${users.currentCtc}::int BETWEEN 1000000 AND 1500000`);
+        } else if (ctc === '15+') {
+          whereConditions.push(sql`${users.currentCtc}::int >= 1500000`);
+        }
+      }
+
       // Get total count
       const countResult = await db
         .select({ total: count() })
         .from(users)
-        .where(and(...whereConditions));
+        .where(drizzleAnd(...whereConditions));
       
       const total = countResult[0]?.total || 0;
 
@@ -1273,7 +1314,7 @@ app.put('/api/profile', async (req: AuthenticatedRequest, res) => {
           created_at: users.createdAt
         })
         .from(users)
-        .where(and(...whereConditions))
+        .where(drizzleAnd(...whereConditions))
         .orderBy(sql`${users.createdAt} DESC`)
         .limit(limit)
         .offset(offset);
@@ -1290,6 +1331,151 @@ app.put('/api/profile', async (req: AuthenticatedRequest, res) => {
       });
     } catch (error) {
       console.error('Error fetching users:', error);
+      return res.status(500).json({
+        success: false,
+        message: "Internal server error"
+      });
+    }
+  });
+
+  // Admin API: Get user analytics
+  app.get('/api/admin/users/analytics', async (req: AuthenticatedRequest, res) => {
+    try {
+      if (!req.isAuthenticated() || req.user?.role !== 'admin') {
+        return res.status(403).json({
+          success: false,
+          message: "Unauthorized"
+        });
+      }
+
+      const { ne, sql, and: drizzleAnd } = await import('drizzle-orm');
+
+      // Get all non-admin users for analytics
+      const allUsers = await db
+        .select({
+          experience: users.experience,
+          city: users.city,
+          state: users.state,
+          country: users.country,
+          skills: users.skills,
+          currentCtc: users.currentCtc,
+          lastLogout: users.lastLogout,
+          createdAt: users.createdAt
+        })
+        .from(users)
+        .where(ne(users.role, 'admin'));
+
+      const totalUsers = allUsers.length;
+      const now = new Date();
+      const lastMonth = new Date(now.getFullYear(), now.getMonth() - 1, now.getDate());
+      const lastWeek = new Date(now.getTime() - 7 * 24 * 60 * 60 * 1000);
+
+      // Calculate active users (logged out within last week)
+      const activeUsers = allUsers.filter(user => 
+        user.lastLogout && new Date(user.lastLogout) > lastWeek
+      ).length;
+
+      // Calculate recent users (joined this month)
+      const recentUsers = allUsers.filter(user => 
+        user.createdAt && new Date(user.createdAt) > lastMonth
+      ).length;
+
+      // Experience distribution
+      const experienceDistribution = [
+        { range: '0-1 years', count: 0 },
+        { range: '1-3 years', count: 0 },
+        { range: '3-5 years', count: 0 },
+        { range: '5-8 years', count: 0 },
+        { range: '8+ years', count: 0 },
+        { range: 'Not specified', count: 0 }
+      ];
+
+      allUsers.forEach(user => {
+        const exp = parseInt(user.experience || '0');
+        if (!user.experience) {
+          experienceDistribution[5].count++;
+        } else if (exp <= 1) {
+          experienceDistribution[0].count++;
+        } else if (exp <= 3) {
+          experienceDistribution[1].count++;
+        } else if (exp <= 5) {
+          experienceDistribution[2].count++;
+        } else if (exp <= 8) {
+          experienceDistribution[3].count++;
+        } else {
+          experienceDistribution[4].count++;
+        }
+      });
+
+      // Location distribution
+      const locationMap = new Map<string, number>();
+      allUsers.forEach(user => {
+        const location = user.city || user.state || user.country || 'Not specified';
+        locationMap.set(location, (locationMap.get(location) || 0) + 1);
+      });
+      const locationDistribution = Array.from(locationMap.entries())
+        .map(([location, count]) => ({ location, count }))
+        .sort((a, b) => b.count - a.count);
+
+      // Skills distribution
+      const skillsMap = new Map<string, number>();
+      allUsers.forEach(user => {
+        if (user.skills) {
+          const skills = user.skills.split(',').map(s => s.trim().toLowerCase());
+          skills.forEach(skill => {
+            if (skill) {
+              skillsMap.set(skill, (skillsMap.get(skill) || 0) + 1);
+            }
+          });
+        }
+      });
+      const skillsDistribution = Array.from(skillsMap.entries())
+        .map(([skill, count]) => ({ skill, count }))
+        .sort((a, b) => b.count - a.count);
+
+      // CTC distribution
+      const ctcDistribution = [
+        { range: '0-3 LPA', count: 0 },
+        { range: '3-6 LPA', count: 0 },
+        { range: '6-10 LPA', count: 0 },
+        { range: '10-15 LPA', count: 0 },
+        { range: '15+ LPA', count: 0 },
+        { range: 'Not specified', count: 0 }
+      ];
+
+      allUsers.forEach(user => {
+        const ctc = parseInt(user.currentCtc || '0');
+        if (!user.currentCtc) {
+          ctcDistribution[5].count++;
+        } else if (ctc <= 300000) {
+          ctcDistribution[0].count++;
+        } else if (ctc <= 600000) {
+          ctcDistribution[1].count++;
+        } else if (ctc <= 1000000) {
+          ctcDistribution[2].count++;
+        } else if (ctc <= 1500000) {
+          ctcDistribution[3].count++;
+        } else {
+          ctcDistribution[4].count++;
+        }
+      });
+
+      const analytics = {
+        totalUsers,
+        activeUsers,
+        recentUsers,
+        experienceDistribution,
+        locationDistribution,
+        skillsDistribution,
+        ctcDistribution
+      };
+
+      return res.status(200).json({
+        success: true,
+        data: analytics
+      });
+    } catch (error) {
+      console.error('Error fetching user analytics:', error);
       return res.status(500).json({
         success: false,
         message: "Internal server error"
