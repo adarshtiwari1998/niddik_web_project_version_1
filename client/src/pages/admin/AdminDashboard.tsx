@@ -159,11 +159,7 @@ const AdminDashboard = () => {
       </Helmet>
       {initialLoading && <LoadingScreen message="Loading admin dashboard..." />}
       
-      <div className="flex justify-between items-center mb-6">
-        <div>
-          <h1 className="text-2xl font-bold">Dashboard</h1>
-          <p className="text-muted-foreground">Overview and insights</p>
-        </div>
+      <div className="flex justify-end items-center mb-6">
         <Button 
           onClick={handleRefresh} 
           disabled={isRefreshing}
