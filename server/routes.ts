@@ -950,7 +950,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
       // Calculate pagination
       const total = filteredApplications.length;
       const startIndex = (page - 1) * limit
-      ```text
+     
 const endIndex = page * limit;
       const paginatedApplications = filteredApplications.slice(startIndex, endIndex);
 
@@ -1894,7 +1894,7 @@ app.put('/api/profile', async (req: AuthenticatedRequest, res) => {
       if (existingRequest) {
         return res.status(400).json({
           success: false,
-          ```text
+          
 message: "A demo request with this email already exists",
           existingRequest: {
             id: existingRequest.id,
