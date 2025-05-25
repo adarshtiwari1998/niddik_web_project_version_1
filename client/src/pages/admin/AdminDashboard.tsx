@@ -14,10 +14,41 @@ import { Helmet } from 'react-helmet-async';
 
 const AdminDashboard = () => {
   const { user } = useAuth();
-  const [activeTab, setActiveTab] = useState("overview");
+  const [_, setLocation] = useLocation();
   const [initialLoading, setInitialLoading] = useState(true);
   const [isRefreshing, setIsRefreshing] = useState(false);
   const queryClient = useQueryClient();
+
+  // Get tab from URL parameters
+  const getActiveTabFromURL = () => {
+    const urlParams = new URLSearchParams(window.location.search);
+    const tab = urlParams.get('tab');
+    if (tab === 'account' || tab === 'password') {
+      return tab;
+    }
+    return 'overview';
+  };
+
+  const [activeTab, setActiveTab] = useState(getActiveTabFromURL);
+
+  // Listen for URL changes to update active tab
+  useEffect(() => {
+    const handlePopState = () => {
+      setActiveTab(getActiveTabFromURL());
+    };
+    
+    window.addEventListener('popstate', handlePopState);
+    return () => window.removeEventListener('popstate', handlePopState);
+  }, []);
+
+  // Update URL when tab changes
+  const handleTabChange = (tab: string) => {
+    setActiveTab(tab);
+    const newURL = tab === 'overview' 
+      ? '/admin/dashboard' 
+      : `/admin/dashboard?tab=${tab}`;
+    window.history.pushState(null, '', newURL);
+  };
 
   useEffect(() => {
     document.title = "Admin Dashboard | NiDDiK"
@@ -144,7 +175,7 @@ const AdminDashboard = () => {
         </Button>
       </div>
       
-      <Tabs defaultValue="overview" onValueChange={setActiveTab}>
+      <Tabs value={activeTab} onValueChange={handleTabChange}>
         <TabsList className="mb-6">
           <TabsTrigger value="overview">Dashboard Overview</TabsTrigger>
           <TabsTrigger value="account">Account Settings</TabsTrigger>
