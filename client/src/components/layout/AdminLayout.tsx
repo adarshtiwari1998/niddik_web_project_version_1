@@ -78,16 +78,13 @@ export default function AdminLayout({ children, title, description }: AdminLayou
     return null; // The ProtectedRoute component will handle redirection
   }
 
-  const sidebarWidth = isCollapsed ? "w-16" : "w-[276px]";
-  const contentMargin = isCollapsed ? "ml-20" : "ml-[300px]";
-
   return (
-    <div className="min-h-screen bg-gray-50 dark:bg-gray-900 flex flex-col">
+    <div className="min-h-screen bg-gray-50 dark:bg-gray-900">
       {isLoggingOut && <LoadingScreen message="Logging out..." />}
       
       {/* Admin Header */}
       <header className="bg-white dark:bg-gray-800 shadow-sm border-b fixed top-0 left-0 right-0 z-50">
-        <div className="container mx-auto px-4 py-3 flex justify-between items-center">
+        <div className="px-4 py-3 flex justify-between items-center">
           <div className="flex items-center">
             {/* Sidebar Toggle Button */}
             <Button
@@ -127,143 +124,134 @@ export default function AdminLayout({ children, title, description }: AdminLayou
         </div>
       </header>
 
-      <div className="container mx-auto px-4 py-8 mt-[88px] flex-1">
-        <div className="grid grid-cols-1 md:grid-cols-4 gap-6 relative">
-          {/* Collapsible Sidebar */}
-          <div className={`md:col-span-1 h-100% md:fixed md:${sidebarWidth} transition-all duration-300 ease-in-out z-40`}>
-            <Card className="h-full">
-              <CardHeader className={`pb-3 ${isCollapsed ? 'px-2' : ''}`}>
-                {!isCollapsed && (
-                  <>
-                    <CardTitle>Admin Menu</CardTitle>
-                    <CardDescription>Manage your talent platform</CardDescription>
-                  </>
-                )}
-                {isCollapsed && (
-                  <div className="flex justify-center">
-                    <Shield className="h-6 w-6 text-primary" />
-                  </div>
-                )}
-              </CardHeader>
-              <CardContent className="p-0">
-                <nav className="flex flex-col">
-                  {/* Dashboard */}
-                  <div 
-                    onClick={handleDashboardNavigation}
-                    className={`flex items-center px-4 py-3 transition-colors cursor-pointer ${
-                      location === "/admin/dashboard" 
-                        ? "bg-gray-100 dark:bg-gray-700" 
-                        : "hover:bg-gray-100 dark:hover:bg-gray-700"
-                    } ${isCollapsed ? 'justify-center px-2' : ''}`}
-                    title={isCollapsed ? "Dashboard" : ""}
-                  >
-                    <User className="h-4 w-4 text-primary" />
-                    {!isCollapsed && (
-                      <>
-                        <span className="ml-3">Dashboard</span>
-                      </>
-                    )}
-                  </div>
-
-                  {/* Manage Job Listings */}
-                  <Link href="/admin/jobs">
-                    <div className={`flex items-center px-4 py-3 transition-colors cursor-pointer ${
-                      location === "/admin/jobs" 
-                        ? "bg-gray-100 dark:bg-gray-700" 
-                        : "hover:bg-gray-100 dark:hover:bg-gray-700"
-                    } ${isCollapsed ? 'justify-center px-2' : ''}`}
-                    title={isCollapsed ? "Manage Job Listings" : ""}
-                    >
-                      <FileText className="h-4 w-4 text-primary" />
-                      {!isCollapsed && (
-                        <>
-                          <span className="ml-3">Manage Job Listings</span>
-                          <ChevronRight className="h-4 w-4 ml-auto" />
-                        </>
-                      )}
-                    </div>
-                  </Link>
-
-                  {/* Candidates */}
-                  <Link href="/admin/candidates">
-                    <div className={`flex items-center px-4 py-3 transition-colors cursor-pointer ${
-                      location === "/admin/candidates" 
-                        ? "bg-gray-100 dark:bg-gray-700" 
-                        : "hover:bg-gray-100 dark:hover:bg-gray-700"
-                    } ${isCollapsed ? 'justify-center px-2' : ''}`}
-                    title={isCollapsed ? "Candidates" : ""}
-                    >
-                      <User className="h-4 w-4 text-primary" />
-                      {!isCollapsed && (
-                        <>
-                          <span className="ml-3">Candidates</span>
-                          <ChevronRight className="h-4 w-4 ml-auto" />
-                        </>
-                      )}
-                    </div>
-                  </Link>
-
-                  {/* Submitted Candidates */}
-                  <Link href="/admin/submitted-candidates">
-                    <div className={`flex items-center px-4 py-3 transition-colors cursor-pointer ${
-                      location === "/admin/submitted-candidates" 
-                        ? "bg-gray-100 dark:bg-gray-700" 
-                        : "hover:bg-gray-100 dark:hover:bg-gray-700"
-                    } ${isCollapsed ? 'justify-center px-2' : ''}`}
-                    title={isCollapsed ? "Submitted Candidates" : ""}
-                    >
-                      <FileText className="h-4 w-4 text-primary" />
-                      {!isCollapsed && (
-                        <>
-                          <span className="ml-3">Submitted Candidates</span>
-                          <ChevronRight className="h-4 w-4 ml-auto" />
-                        </>
-                      )}
-                    </div>
-                  </Link>
-
-                  {/* Demo Requests */}
-                  <Link href="/admin/demo-requests">
-                    <div className={`flex items-center px-4 py-3 transition-colors cursor-pointer ${
-                      location === "/admin/demo-requests" 
-                        ? "bg-gray-100 dark:bg-gray-700" 
-                        : "hover:bg-gray-100 dark:hover:bg-gray-700"
-                    } ${isCollapsed ? 'justify-center px-2' : ''}`}
-                    title={isCollapsed ? "Demo Requests" : ""}
-                    >
-                      <CalendarClock className="h-4 w-4 text-primary" />
-                      {!isCollapsed && (
-                        <>
-                          <span className="ml-3">Demo Requests</span>
-                          <ChevronRight className="h-4 w-4 ml-auto" />
-                        </>
-                      )}
-                    </div>
-                  </Link>
-
-                  {/* Account Settings */}
-                  <div 
-                    onClick={handleAccountSettingsNavigation}
-                    className={`flex items-center px-4 py-3 transition-colors cursor-pointer hover:bg-gray-100 dark:hover:bg-gray-700 ${isCollapsed ? 'justify-center px-2' : ''}`}
-                    title={isCollapsed ? "Account Settings" : ""}
-                  >
-                    <Settings className="h-4 w-4 text-primary" />
-                    {!isCollapsed && (
-                      <span className="ml-3">Account Settings</span>
-                    )}
-                  </div>
-                </nav>
-              </CardContent>
-            </Card>
-          </div>
-
-          {/* Main Content */}
-          <div className={`md:col-span-3 md:${contentMargin} w-full max-w-[calc(100%)] transition-all duration-300 ease-in-out`}>
-            <div className="flex justify-between items-center mb-6">
-              <div>
-                <h1 className="text-2xl font-bold">{title}</h1>
-                {description && <p className="text-muted-foreground">{description}</p>}
+      <div className="flex pt-[88px]">
+        {/* Collapsible Sidebar */}
+        <div className={`${isCollapsed ? 'w-16' : 'w-[276px]'} fixed left-0 top-[88px] h-[calc(100vh-88px)] transition-all duration-300 ease-in-out z-40 bg-white dark:bg-gray-800 border-r border-gray-200 dark:border-gray-700`}>
+          <div className="h-full overflow-y-auto">
+            <div className={`p-4 border-b border-gray-200 dark:border-gray-700 ${isCollapsed ? 'px-2' : ''}`}>
+              {!isCollapsed && (
+                <>
+                  <h2 className="text-lg font-semibold">Admin Menu</h2>
+                  <p className="text-sm text-muted-foreground">Manage your talent platform</p>
+                </>
+              )}
+              {isCollapsed && (
+                <div className="flex justify-center">
+                  <Shield className="h-6 w-6 text-primary" />
+                </div>
+              )}
+            </div>
+            
+            <nav className="p-2">
+              {/* Dashboard */}
+              <div 
+                onClick={handleDashboardNavigation}
+                className={`flex items-center px-3 py-2 mb-1 rounded-md transition-colors cursor-pointer ${
+                  location === "/admin/dashboard" 
+                    ? "bg-primary/10 text-primary" 
+                    : "hover:bg-gray-100 dark:hover:bg-gray-700"
+                } ${isCollapsed ? 'justify-center' : ''}`}
+                title={isCollapsed ? "Dashboard" : ""}
+              >
+                <User className="h-5 w-5" />
+                {!isCollapsed && <span className="ml-3">Dashboard</span>}
               </div>
+
+              {/* Manage Job Listings */}
+              <Link href="/admin/jobs">
+                <div className={`flex items-center px-3 py-2 mb-1 rounded-md transition-colors cursor-pointer ${
+                  location === "/admin/jobs" 
+                    ? "bg-primary/10 text-primary" 
+                    : "hover:bg-gray-100 dark:hover:bg-gray-700"
+                } ${isCollapsed ? 'justify-center' : ''}`}
+                title={isCollapsed ? "Manage Job Listings" : ""}
+                >
+                  <FileText className="h-5 w-5" />
+                  {!isCollapsed && (
+                    <>
+                      <span className="ml-3">Manage Job Listings</span>
+                      <ChevronRight className="h-4 w-4 ml-auto" />
+                    </>
+                  )}
+                </div>
+              </Link>
+
+              {/* Candidates */}
+              <Link href="/admin/candidates">
+                <div className={`flex items-center px-3 py-2 mb-1 rounded-md transition-colors cursor-pointer ${
+                  location === "/admin/candidates" 
+                    ? "bg-primary/10 text-primary" 
+                    : "hover:bg-gray-100 dark:hover:bg-gray-700"
+                } ${isCollapsed ? 'justify-center' : ''}`}
+                title={isCollapsed ? "Candidates" : ""}
+                >
+                  <User className="h-5 w-5" />
+                  {!isCollapsed && (
+                    <>
+                      <span className="ml-3">Candidates</span>
+                      <ChevronRight className="h-4 w-4 ml-auto" />
+                    </>
+                  )}
+                </div>
+              </Link>
+
+              {/* Submitted Candidates */}
+              <Link href="/admin/submitted-candidates">
+                <div className={`flex items-center px-3 py-2 mb-1 rounded-md transition-colors cursor-pointer ${
+                  location === "/admin/submitted-candidates" 
+                    ? "bg-primary/10 text-primary" 
+                    : "hover:bg-gray-100 dark:hover:bg-gray-700"
+                } ${isCollapsed ? 'justify-center' : ''}`}
+                title={isCollapsed ? "Submitted Candidates" : ""}
+                >
+                  <FileText className="h-5 w-5" />
+                  {!isCollapsed && (
+                    <>
+                      <span className="ml-3">Submitted Candidates</span>
+                      <ChevronRight className="h-4 w-4 ml-auto" />
+                    </>
+                  )}
+                </div>
+              </Link>
+
+              {/* Demo Requests */}
+              <Link href="/admin/demo-requests">
+                <div className={`flex items-center px-3 py-2 mb-1 rounded-md transition-colors cursor-pointer ${
+                  location === "/admin/demo-requests" 
+                    ? "bg-primary/10 text-primary" 
+                    : "hover:bg-gray-100 dark:hover:bg-gray-700"
+                } ${isCollapsed ? 'justify-center' : ''}`}
+                title={isCollapsed ? "Demo Requests" : ""}
+                >
+                  <CalendarClock className="h-5 w-5" />
+                  {!isCollapsed && (
+                    <>
+                      <span className="ml-3">Demo Requests</span>
+                      <ChevronRight className="h-4 w-4 ml-auto" />
+                    </>
+                  )}
+                </div>
+              </Link>
+
+              {/* Account Settings */}
+              <div 
+                onClick={handleAccountSettingsNavigation}
+                className={`flex items-center px-3 py-2 mb-1 rounded-md transition-colors cursor-pointer hover:bg-gray-100 dark:hover:bg-gray-700 ${isCollapsed ? 'justify-center' : ''}`}
+                title={isCollapsed ? "Account Settings" : ""}
+              >
+                <Settings className="h-5 w-5" />
+                {!isCollapsed && <span className="ml-3">Account Settings</span>}
+              </div>
+            </nav>
+          </div>
+        </div>
+
+        {/* Main Content */}
+        <div className={`flex-1 ${isCollapsed ? 'ml-16' : 'ml-[276px]'} transition-all duration-300 ease-in-out`}>
+          <div className="p-6">
+            <div className="mb-6">
+              <h1 className="text-2xl font-bold">{title}</h1>
+              {description && <p className="text-muted-foreground">{description}</p>}
             </div>
             {children}
           </div>
