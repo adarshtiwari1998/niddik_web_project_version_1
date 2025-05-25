@@ -69,10 +69,32 @@ async function hashPassword(password: string) {
 }
 
 async function comparePasswords(supplied: string, stored: string) {
-    const [hashed, salt] = stored.split(".");
-    const hashedBuf = Buffer.from(hashed, "hex");
-    const suppliedBuf = (await scryptAsync(supplied, salt, 64)) as Buffer;
-    return timingSafeEqual(hashedBuf, suppliedBuf);
+    try {
+        console.log('Comparing passwords - supplied length:', supplied.length, 'stored format:', stored.includes('.') ? 'valid' : 'invalid');
+        
+        if (!stored || !stored.includes('.')) {
+            console.log('Invalid stored password format');
+            return false;
+        }
+
+        const [hashed, salt] = stored.split(".");
+        if (!hashed || !salt) {
+            console.log('Unable to extract hash and salt');
+            return false;
+        }
+
+        console.log('Hash length:', hashed.length, 'Salt length:', salt.length);
+        
+        const hashedBuf = Buffer.from(hashed, "hex");
+        const suppliedBuf = (await scryptAsync(supplied, salt, 64)) as Buffer;
+        const result = timingSafeEqual(hashedBuf, suppliedBuf);
+        
+        console.log('Password comparison result:', result);
+        return result;
+    } catch (error) {
+        console.error('Error in comparePasswords:', error);
+        return false;
+    }
 }
 
 export function setupAuth(app: Express) {
@@ -115,23 +137,38 @@ export function setupAuth(app: Express) {
     passport.use(
         new LocalStrategy(async (username, password, done) => {
             try {
+                console.log('Login attempt for username:', username);
+                
                 // Find user in the users table
                 const user = await db.query.users.findFirst({
                     where: (fields, { eq }) => eq(fields.username, username)
                 });
 
                 if (!user) {
+                    console.log('User not found:', username);
+                    return done(null, false, { message: 'Invalid credentials' });
+                }
+
+                console.log('User found:', user.username, 'Password hash format check:', user.password ? user.password.substring(0, 20) + '...' : 'NO PASSWORD');
+                
+                // Check if password exists and is properly formatted
+                if (!user.password || !user.password.includes('.')) {
+                    console.log('Invalid password format for user:', username);
                     return done(null, false, { message: 'Invalid credentials' });
                 }
 
                 const passwordMatch = await comparePasswords(password, user.password);
+                console.log('Password match result:', passwordMatch);
 
                 if (!passwordMatch) {
+                    console.log('Password mismatch for user:', username);
                     return done(null, false, { message: 'Invalid credentials' });
                 } else {
+                    console.log('Login successful for user:', username);
                     return done(null, user);
                 }
             } catch (error) {
+                console.error('Login error:', error);
                 return done(error);
             }
         }),
@@ -196,6 +233,8 @@ export function setupAuth(app: Express) {
     // Register API route
     app.post("/api/register", async (req: Request, res: Response, next: NextFunction) => {
         try {
+            console.log('Registration attempt for username:', req.body.username);
+            
             // Check if user already exists
             const existingByUsername = await storage.getUserByUsername(req.body.username);
             if (existingByUsername) {
@@ -207,10 +246,14 @@ export function setupAuth(app: Express) {
                 return res.status(400).json({ error: "Email already exists" });
             }
 
+            // Hash the password
+            const hashedPassword = await hashPassword(req.body.password);
+            console.log('Password hashed successfully for user:', req.body.username, 'Hash format:', hashedPassword.substring(0, 20) + '...');
+
             // Create user with hashed password
             const user = await storage.createUser({
                 ...req.body,
-                password: await hashPassword(req.body.password),
+                password: hashedPassword,
             });
 
             // Log the user in after registration
