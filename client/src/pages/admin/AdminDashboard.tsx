@@ -14,7 +14,7 @@ import { Helmet } from 'react-helmet-async';
 
 const AdminDashboard = () => {
   const { user } = useAuth();
-  const [_, setLocation] = useLocation();
+  const [location, setLocation] = useLocation();
   const [initialLoading, setInitialLoading] = useState(true);
   const [isRefreshing, setIsRefreshing] = useState(false);
   const queryClient = useQueryClient();
@@ -31,6 +31,11 @@ const AdminDashboard = () => {
 
   const [activeTab, setActiveTab] = useState(getActiveTabFromURL);
 
+  // Watch for location changes to update active tab
+  useEffect(() => {
+    setActiveTab(getActiveTabFromURL());
+  }, [location]);
+
   // Listen for URL changes to update active tab
   useEffect(() => {
     const handlePopState = () => {
@@ -38,7 +43,13 @@ const AdminDashboard = () => {
     };
     
     window.addEventListener('popstate', handlePopState);
-    return () => window.removeEventListener('popstate', handlePopState);
+    
+    // Check URL on component mount to set correct initial tab
+    setActiveTab(getActiveTabFromURL());
+    
+    return () => {
+      window.removeEventListener('popstate', handlePopState);
+    };
   }, []);
 
   // Update URL when tab changes

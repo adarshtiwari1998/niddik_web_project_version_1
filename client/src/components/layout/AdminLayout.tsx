@@ -66,11 +66,19 @@ export default function AdminLayout({ children, title, description }: AdminLayou
   // Navigation handler for dashboard with tab routing
   const handleDashboardNavigation = () => {
     setLocation("/admin/dashboard");
+    // Force a page reload to ensure proper tab state initialization
+    setTimeout(() => {
+      window.dispatchEvent(new PopStateEvent('popstate'));
+    }, 10);
   };
 
   // Navigation handler for account settings with tab routing
   const handleAccountSettingsNavigation = () => {
     setLocation("/admin/dashboard?tab=account");
+    // Force a page reload to ensure proper tab state initialization
+    setTimeout(() => {
+      window.dispatchEvent(new PopStateEvent('popstate'));
+    }, 10);
   };
 
   // Redirect to login if not authenticated or not an admin
