@@ -1030,10 +1030,11 @@ export async function registerRoutes(app: Express): Promise<Server> {
         .select({
           applicationId: jobApplications.id,
           applicationStatus: jobApplications.status,
-          applicationDate: jobApplications.createdAt,
-          jobTitle: jobApplications.jobTitle,
+          applicationDate: jobApplications.appliedDate,
+          jobId: jobApplications.jobId,
           userEmail: users.email,
           userName: users.username,
+          userFullName: users.fullName,
           userId: users.id,
         })
         .from(jobApplications)
@@ -1044,17 +1045,31 @@ export async function registerRoutes(app: Express): Promise<Server> {
         query = query.where(
           or(
             ilike(users.email, `%${search}%`),
-            ilike(users.username, `%${search}%`)
+            ilike(users.username, `%${search}%`),
+            ilike(users.fullName, `%${search}%`)
           )
         );
       }
 
       const applications = await query;
 
+      // Get job listings to map job titles
+      const jobIds = [...new Set(applications.map(app => app.jobId).filter(Boolean))];
+      const jobs = jobIds.length > 0 ? await db
+        .select({
+          id: jobListings.id,
+          title: jobListings.title
+        })
+        .from(jobListings)
+        .where(inArray(jobListings.id, jobIds)) : [];
+
+      const jobTitleMap = new Map(jobs.map(job => [job.id, job.title]));
+
       // Group applications by user
       const userMap = new Map<string, {
         userEmail: string;
         userName: string;
+        userFullName: string;
         applicationsCount: number;
         latestApplicationDate: string;
         statuses: {
@@ -1075,11 +1090,13 @@ export async function registerRoutes(app: Express): Promise<Server> {
       applications.forEach((app) => {
         const email = app.userEmail || '';
         const name = app.userName || 'Unknown User';
+        const fullName = app.userFullName || name;
 
         if (!userMap.has(email)) {
           userMap.set(email, {
             userEmail: email,
             userName: name,
+            userFullName: fullName,
             applicationsCount: 0,
             latestApplicationDate: '',
             statuses: {
@@ -1108,12 +1125,15 @@ export async function registerRoutes(app: Express): Promise<Server> {
           userData.statuses[status]++;
         }
 
+        // Get job title from the job listings
+        const jobTitle = jobTitleMap.get(app.jobId) || 'Unknown Job';
+
         // Add application details
         userData.applications.push({
           id: app.applicationId,
           status: app.applicationStatus,
           createdAt: appDate,
-          jobTitle: app.jobTitle,
+          jobTitle: jobTitle,
         });
       });
 
