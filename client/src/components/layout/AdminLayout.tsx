@@ -3,12 +3,12 @@ import { Link, useLocation } from "wouter";
 import { useAuth } from "@/hooks/use-auth";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { User, FileText, Settings, ChevronRight, LogOut, Shield, Loader2, CalendarClock, Menu, X } from "lucide-react";
+import { User, FileText, Settings, ChevronRight, LogOut, Shield, Loader2, CalendarClock } from "lucide-react";
 import { LoadingScreen } from "@/components/ui/loading-screen";
 
 interface AdminLayoutProps {
   children: ReactNode;
-  title?: string;
+  title: string;
   description?: string;
 }
 
@@ -17,16 +17,6 @@ export default function AdminLayout({ children, title, description }: AdminLayou
   const [_, setLocation] = useLocation();
   const location = _; // Current path
   const [isLoggingOut, setIsLoggingOut] = useState(false);
-  const [sidebarCollapsed, setSidebarCollapsed] = useState(false);
-
-  // Navigation handler that sets the appropriate tab
-  const handleNavigation = (path: string, tab?: string) => {
-    if (tab) {
-      // Store the desired tab in sessionStorage
-      sessionStorage.setItem('admin_dashboard_tab', tab);
-    }
-    setLocation(path);
-  };
 
   const handleLogout = () => {
     // Show loading screen immediately
@@ -95,58 +85,35 @@ export default function AdminLayout({ children, title, description }: AdminLayou
       </header>
 
       <div className="container mx-auto px-4 py-8 mt-[88px] flex-1">
-        <div className="flex gap-6 relative">
+        <div className="grid grid-cols-1 md:grid-cols-4 gap-6 relative">
           {/* Sidebar */}
-          <div className={`${sidebarCollapsed ? 'w-16' : 'w-[276px]'} transition-all duration-300 fixed left-4 top-[120px] bottom-8 z-40`}>
-            <Card className="h-full flex flex-col">
-              <CardHeader className={`pb-3 ${sidebarCollapsed ? 'px-2' : ''}`}>
-                <div className="flex items-center justify-between">
-                  {!sidebarCollapsed && (
-                    <div>
-                      <CardTitle>Admin Menu</CardTitle>
-                      <CardDescription>Manage your talent platform</CardDescription>
-                    </div>
-                  )}
-                  <Button 
-                    variant="ghost" 
-                    size="sm"
-                    onClick={() => setSidebarCollapsed(!sidebarCollapsed)}
-                    className="h-8 w-8 p-0"
-                  >
-                    {sidebarCollapsed ? <Menu className="h-4 w-4" /> : <X className="h-4 w-4" />}
-                  </Button>
-                </div>
+          <div className="md:col-span-1 h-100% md:fixed md:w-[276px]">
+            <Card>
+              <CardHeader className="pb-3">
+                <CardTitle>Admin Menu</CardTitle>
+                <CardDescription>Manage your talent platform</CardDescription>
               </CardHeader>
-              <CardContent className="p-0 flex-1 overflow-y-auto">
+              <CardContent className="p-0">
                 <nav className="flex flex-col">
-                  <div
-                    onClick={() => handleNavigation("/admin/dashboard", "overview")}
-                    className={`flex items-center px-4 py-3 transition-colors cursor-pointer ${
+                  <Link href="/admin/dashboard">
+                    <div className={`flex items-center px-4 py-3 transition-colors cursor-pointer ${
                       location === "/admin/dashboard" 
                         ? "bg-gray-100 dark:bg-gray-700" 
                         : "hover:bg-gray-100 dark:hover:bg-gray-700"
-                    } ${sidebarCollapsed ? 'justify-center px-2' : ''}`}
-                  >
-                    <User className="h-4 w-4 text-primary" />
-                    {!sidebarCollapsed && (
-                      <>
-                        <span className="ml-3">Dashboard</span>
-                      </>
-                    )}
-                  </div>
+                    }`}>
+                      <User className="h-4 w-4 mr-3 text-primary" />
+                      <span>Dashboard</span>
+                    </div>
+                  </Link>
                   <Link href="/admin/jobs">
                     <div className={`flex items-center px-4 py-3 transition-colors cursor-pointer ${
                       location === "/admin/jobs" 
                         ? "bg-gray-100 dark:bg-gray-700" 
                         : "hover:bg-gray-100 dark:hover:bg-gray-700"
-                    } ${sidebarCollapsed ? 'justify-center px-2' : ''}`}>
-                      <FileText className="h-4 w-4 text-primary" />
-                      {!sidebarCollapsed && (
-                        <>
-                          <span className="ml-3">Manage Job Listings</span>
-                          <ChevronRight className="h-4 w-4 ml-auto" />
-                        </>
-                      )}
+                    }`}>
+                      <FileText className="h-4 w-4 mr-3 text-primary" />
+                      <span>Manage Job Listings</span>
+                      <ChevronRight className="h-4 w-4 ml-auto" />
                     </div>
                   </Link>
                   <Link href="/admin/candidates">
@@ -154,14 +121,10 @@ export default function AdminLayout({ children, title, description }: AdminLayou
                       location === "/admin/candidates" 
                         ? "bg-gray-100 dark:bg-gray-700" 
                         : "hover:bg-gray-100 dark:hover:bg-gray-700"
-                    } ${sidebarCollapsed ? 'justify-center px-2' : ''}`}>
-                      <User className="h-4 w-4 text-primary" />
-                      {!sidebarCollapsed && (
-                        <>
-                          <span className="ml-3">Candidates</span>
-                          <ChevronRight className="h-4 w-4 ml-auto" />
-                        </>
-                      )}
+                    }`}>
+                      <User className="h-4 w-4 mr-3 text-primary" />
+                      <span>Candidates</span>
+                      <ChevronRight className="h-4 w-4 ml-auto" />
                     </div>
                   </Link>
                   <Link href="/admin/submitted-candidates">
@@ -169,14 +132,10 @@ export default function AdminLayout({ children, title, description }: AdminLayou
                       location === "/admin/submitted-candidates" 
                         ? "bg-gray-100 dark:bg-gray-700" 
                         : "hover:bg-gray-100 dark:hover:bg-gray-700"
-                    } ${sidebarCollapsed ? 'justify-center px-2' : ''}`}>
-                      <FileText className="h-4 w-4 text-primary" />
-                      {!sidebarCollapsed && (
-                        <>
-                          <span className="ml-3">Submitted Candidates</span>
-                          <ChevronRight className="h-4 w-4 ml-auto" />
-                        </>
-                      )}
+                    }`}>
+                      <FileText className="h-4 w-4 mr-3 text-primary" />
+                      <span>Submitted Candidates</span>
+                      <ChevronRight className="h-4 w-4 ml-auto" />
                     </div>
                   </Link>
                   <Link href="/admin/demo-requests">
@@ -184,40 +143,35 @@ export default function AdminLayout({ children, title, description }: AdminLayou
                       location === "/admin/demo-requests" 
                         ? "bg-gray-100 dark:bg-gray-700" 
                         : "hover:bg-gray-100 dark:hover:bg-gray-700"
-                    } ${sidebarCollapsed ? 'justify-center px-2' : ''}`}>
-                      <CalendarClock className="h-4 w-4 text-primary" />
-                      {!sidebarCollapsed && (
-                        <>
-                          <span className="ml-3">Demo Requests</span>
-                          <ChevronRight className="h-4 w-4 ml-auto" />
-                        </>
-                      )}
+                    }`}>
+                      <CalendarClock className="h-4 w-4 mr-3 text-primary" />
+                      <span>Demo Requests</span>
+                      <ChevronRight className="h-4 w-4 ml-auto" />
                     </div>
                   </Link>
-                  <div
-                    onClick={() => handleNavigation("/admin/dashboard", "account")}
-                    className={`flex items-center px-4 py-3 transition-colors cursor-pointer hover:bg-gray-100 dark:hover:bg-gray-700 ${sidebarCollapsed ? 'justify-center px-2' : ''}`}
-                  >
-                    <Settings className="h-4 w-4 text-primary" />
-                    {!sidebarCollapsed && (
-                      <span className="ml-3">Account Settings</span>
-                    )}
-                  </div>
+                  <Link href="/admin/dashboard">
+                    <div className={`flex items-center px-4 py-3 transition-colors cursor-pointer ${
+                      false // Account settings is part of dashboard tabs
+                        ? "bg-gray-100 dark:bg-gray-700" 
+                        : "hover:bg-gray-100 dark:hover:bg-gray-700"
+                    }`}>
+                      <Settings className="h-4 w-4 mr-3 text-primary" />
+                      <span>Account Settings</span>
+                    </div>
+                  </Link>
                 </nav>
               </CardContent>
             </Card>
           </div>
 
           {/* Main Content */}
-          <div className={`flex-1 transition-all duration-300 ${sidebarCollapsed ? 'ml-20' : 'ml-[300px]'}`}>
-            {title && (
-              <div className="flex justify-between items-center mb-6">
-                <div>
-                  <h1 className="text-2xl font-bold">{title}</h1>
-                  {description && <p className="text-muted-foreground">{description}</p>}
-                </div>
+          <div className="md:col-span-3 md:ml-[300px] w-full max-w-[calc(100%)]">
+            <div className="flex justify-between items-center mb-6">
+              <div>
+                <h1 className="text-2xl font-bold">{title}</h1>
+                {description && <p className="text-muted-foreground">{description}</p>}
               </div>
-            )}
+            </div>
             {children}
           </div>
         </div>
