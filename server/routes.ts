@@ -1025,8 +1025,21 @@ export async function registerRoutes(app: Express): Promise<Server> {
         sortBy?: string;
       };
 
+      // Build where conditions array
+      const whereConditions = [];
+
+      // Apply search filter if provided
+      if (search) {
+        whereConditions.push(
+          or(
+            ilike(users.email, `%${search}%`),
+            ilike(users.username, `%${search}%`)
+          )
+        );
+      }
+
       // Base query to get all applications with user and job details
-      let query = db
+      const queryBuilder = db
         .select({
           applicationId: jobApplications.id,
           applicationStatus: jobApplications.status,
@@ -1039,17 +1052,10 @@ export async function registerRoutes(app: Express): Promise<Server> {
         .from(jobApplications)
         .leftJoin(users, eq(jobApplications.userId, users.id));
 
-      // Apply search filter if provided
-      if (search) {
-        query = query.where(
-          or(
-            ilike(users.email, `%${search}%`),
-            ilike(users.username, `%${search}%`)
-          )
-        );
-      }
-
-      const applications = await query;
+      // Apply where conditions if any exist
+      const applications = whereConditions.length > 0 
+        ? await queryBuilder.where(and(...whereConditions))
+        : await queryBuilder;
 
       // Group applications by user
       const userMap = new Map<string, {
