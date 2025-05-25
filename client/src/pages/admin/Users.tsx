@@ -2,7 +2,7 @@
 import { useState, useEffect } from "react";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { useAuth } from "@/hooks/use-auth";
-import { useSearchParams } from "react-router-dom";
+import { useLocation } from "wouter";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -55,7 +55,7 @@ const Users = () => {
   const { user } = useAuth();
   const { toast } = useToast();
   const queryClient = useQueryClient();
-  const [searchParams, setSearchParams] = useSearchParams();
+  const [location] = useLocation();
   const [page, setPage] = useState(1);
   const [search, setSearch] = useState("");
   const [debouncedSearch, setDebouncedSearch] = useState("");
@@ -84,13 +84,14 @@ const Users = () => {
 
   // Handle search parameter from URL
   useEffect(() => {
-    const searchParam = searchParams.get('search');
+    const urlParams = new URLSearchParams(location.split('?')[1] || '');
+    const searchParam = urlParams.get('search');
     if (searchParam) {
       setSearch(searchParam);
       // Clear the search parameter from URL after setting
-      setSearchParams({});
+      window.history.replaceState({}, '', '/admin/users');
     }
-  }, [searchParams, setSearchParams]);
+  }, [location]);
 
   // Debounce search input
   useEffect(() => {
