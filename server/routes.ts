@@ -1210,6 +1210,93 @@ app.put('/api/profile', async (req: AuthenticatedRequest, res) => {
     }
   });
 
+  // Admin API: Get all users (excluding admin users)
+  app.get('/api/admin/users', async (req: AuthenticatedRequest, res) => {
+    try {
+      if (!req.isAuthenticated() || req.user?.role !== 'admin') {
+        return res.status(403).json({
+          success: false,
+          message: "Unauthorized"
+        });
+      }
+
+      const page = req.query.page ? parseInt(req.query.page as string) : 1;
+      const limit = req.query.limit ? parseInt(req.query.limit as string) : 10;
+      const search = req.query.search as string;
+
+      // Build where conditions
+      const { ne, or, ilike, sql } = await import('drizzle-orm');
+      let whereConditions = [ne(users.role, 'admin')];
+
+      if (search) {
+        const searchPattern = `%${search}%`;
+        whereConditions.push(
+          or(
+            sql`${users.id}::text ILIKE ${searchPattern}`,
+            ilike(users.username, searchPattern),
+            ilike(users.email, searchPattern),
+            ilike(users.fullName, searchPattern)
+          )
+        );
+      }
+
+      // Get total count
+      const countResult = await db
+        .select({ total: count() })
+        .from(users)
+        .where(and(...whereConditions));
+      
+      const total = countResult[0]?.total || 0;
+
+      // Get paginated users
+      const offset = (page - 1) * limit;
+      const usersResult = await db
+        .select({
+          id: users.id,
+          username: users.username,
+          email: users.email,
+          full_name: users.fullName,
+          phone: users.phone,
+          role: users.role,
+          experience: users.experience,
+          notice_period: users.noticePeriod,
+          current_ctc: users.currentCtc,
+          expected_ctc: users.expectedCtc,
+          skills: users.skills,
+          location: users.location,
+          city: users.city,
+          state: users.state,
+          country: users.country,
+          zip_code: users.zipCode,
+          resume_url: users.resumeUrl,
+          last_logout: users.lastLogout,
+          created_at: users.createdAt
+        })
+        .from(users)
+        .where(and(...whereConditions))
+        .orderBy(sql`${users.createdAt} DESC`)
+        .limit(limit)
+        .offset(offset);
+
+      return res.status(200).json({
+        success: true,
+        data: usersResult,
+        meta: {
+          total,
+          page,
+          limit,
+          pages: Math.ceil(total / limit)
+        }
+      });
+    } catch (error) {
+      console.error('Error fetching users:', error);
+      return res.status(500).json({
+        success: false,
+        message: "Internal server error"
+      });
+    }
+  });
+
   // Admin routes for password change
   app.post('/api/admin/change-password', async (req: AuthenticatedRequest, res) => {
     try {

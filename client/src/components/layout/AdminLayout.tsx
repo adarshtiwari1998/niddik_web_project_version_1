@@ -222,6 +222,25 @@ export default function AdminLayout({ children, title, description }: AdminLayou
                 </div>
               </Link>
 
+              {/* Users Management */}
+              <Link href="/admin/users">
+                <div className={`flex items-center px-3 py-2 mb-1 rounded-md transition-colors cursor-pointer ${
+                  location === "/admin/users" 
+                    ? "bg-primary/10 text-primary" 
+                    : "hover:bg-gray-100 dark:hover:bg-gray-700"
+                } ${isCollapsed ? 'justify-center' : ''}`}
+                title={isCollapsed ? "Users Management" : ""}
+                >
+                  <User className="h-5 w-5" />
+                  {!isCollapsed && (
+                    <>
+                      <span className="ml-3">Users Management</span>
+                      <ChevronRight className="h-4 w-4 ml-auto" />
+                    </>
+                  )}
+                </div>
+              </Link>
+
               {/* Demo Requests */}
               <Link href="/admin/demo-requests">
                 <div className={`flex items-center px-3 py-2 mb-1 rounded-md transition-colors cursor-pointer ${

@@ -32,6 +32,7 @@ import JobForm from "@/pages/admin/JobForm";
 import Candidates from "@/pages/admin/Candidates";
 import SubmittedCandidates from "@/pages/admin/SubmittedCandidates";
 import DemoRequests from "@/pages/admin/DemoRequests";
+import Users from "@/pages/admin/Users";
 
 // Auth Provider
 import { AuthProvider } from "@/hooks/use-auth";
@@ -105,6 +106,7 @@ function Router() {
             <ProtectedRoute path="/admin/jobs/:id/edit" component={JobForm} requiredRole="admin" />
             <ProtectedRoute path="/admin/candidates" component={Candidates} requiredRole="admin" />
             <ProtectedRoute path="/admin/submitted-candidates" component={SubmittedCandidates} requiredRole="admin" />
+            <ProtectedRoute path="/admin/users" component={Users} requiredRole="admin" />
             <ProtectedRoute path="/admin/demo-requests" component={DemoRequests} requiredRole="admin" />
 
             {/* Demo Request */}
