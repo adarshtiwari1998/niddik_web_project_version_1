@@ -1033,7 +1033,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
           applicationDate: jobApplications.createdAt,
           jobTitle: jobApplications.jobTitle,
           userEmail: users.email,
-          userName: users.fullName,
+          userName: users.username,
           userId: users.id,
         })
         .from(jobApplications)
@@ -1044,7 +1044,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
         query = query.where(
           or(
             ilike(users.email, `%${search}%`),
-            ilike(users.fullName, `%${search}%`)
+            ilike(users.username, `%${search}%`)
           )
         );
       }
