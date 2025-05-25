@@ -50,9 +50,9 @@ const Users = () => {
   const [page, setPage] = useState(1);
   const [search, setSearch] = useState("");
   const [debouncedSearch, setDebouncedSearch] = useState("");
-  const [experienceFilter, setExperienceFilter] = useState("");
-  const [locationFilter, setLocationFilter] = useState("");
-  const [ctcFilter, setCtcFilter] = useState("");
+  const [experienceFilter, setExperienceFilter] = useState("all");
+  const [locationFilter, setLocationFilter] = useState("all");
+  const [ctcFilter, setCtcFilter] = useState("all");
   const [isRefreshing, setIsRefreshing] = useState(false);
 
   // Debounce search input
@@ -79,13 +79,13 @@ const Users = () => {
       if (debouncedSearch) {
         params.append('search', debouncedSearch);
       }
-      if (experienceFilter) {
+      if (experienceFilter && experienceFilter !== 'all') {
         params.append('experience', experienceFilter);
       }
-      if (locationFilter) {
+      if (locationFilter && locationFilter !== 'all') {
         params.append('location', locationFilter);
       }
-      if (ctcFilter) {
+      if (ctcFilter && ctcFilter !== 'all') {
         params.append('ctc', ctcFilter);
       }
 
@@ -163,9 +163,9 @@ const Users = () => {
   };
 
   const clearFilters = () => {
-    setExperienceFilter("");
-    setLocationFilter("");
-    setCtcFilter("");
+    setExperienceFilter("all");
+    setLocationFilter("all");
+    setCtcFilter("all");
     setSearch("");
     setPage(1);
   };
@@ -400,7 +400,7 @@ const Users = () => {
                     <SelectValue placeholder="Experience" />
                   </SelectTrigger>
                   <SelectContent>
-                    <SelectItem value="">All Experience</SelectItem>
+                    <SelectItem value="all">All Experience</SelectItem>
                     <SelectItem value="0-1">0-1 years</SelectItem>
                     <SelectItem value="1-3">1-3 years</SelectItem>
                     <SelectItem value="3-5">3-5 years</SelectItem>
@@ -413,7 +413,7 @@ const Users = () => {
                     <SelectValue placeholder="Location" />
                   </SelectTrigger>
                   <SelectContent>
-                    <SelectItem value="">All Locations</SelectItem>
+                    <SelectItem value="all">All Locations</SelectItem>
                     <SelectItem value="Delhi">Delhi</SelectItem>
                     <SelectItem value="Mumbai">Mumbai</SelectItem>
                     <SelectItem value="Bangalore">Bangalore</SelectItem>
@@ -427,7 +427,7 @@ const Users = () => {
                     <SelectValue placeholder="CTC Range" />
                   </SelectTrigger>
                   <SelectContent>
-                    <SelectItem value="">All CTC</SelectItem>
+                    <SelectItem value="all">All CTC</SelectItem>
                     <SelectItem value="0-3">0-3 LPA</SelectItem>
                     <SelectItem value="3-6">3-6 LPA</SelectItem>
                     <SelectItem value="6-10">6-10 LPA</SelectItem>
