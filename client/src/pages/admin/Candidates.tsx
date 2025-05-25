@@ -1,43 +1,20 @@
 import { useState, useEffect } from "react";
-import { useQuery, useMutation } from "@tanstack/react-query";
-import { queryClient } from "@/lib/queryClient";
-import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
-import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
-import { Badge } from "@/components/ui/badge";
-import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
-import { 
-  ChevronLeft, 
-  ChevronRight, 
-  Search, 
-  Filter, 
-  Download, 
-  Mail, 
-  Phone,
-  FileText,
-  Calendar,
-  DollarSign,
-  ExternalLink
-} from "lucide-react";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { useAuth } from "@/hooks/use-auth";
 import { useToast } from "@/hooks/use-toast";
-import { JobApplication } from "@shared/schema";
-import AdminLayout from "@/components/layout/AdminLayout";
 import { useLocation } from "wouter";
+import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import {
-  ChartBar,
-  ChartPie
-} from "lucide-react";
-import {
-  Dialog,
-  DialogContent,
-  DialogDescription,
-  DialogHeader,
-  DialogTitle,
-  DialogTrigger,
-} from "@/components/ui/dialog"
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
+import { Badge } from "@/components/ui/badge";
+import { Loader2, FileText, Download, Search, Users, AlertCircle, ChartBar, Eye, ExternalLink } from "lucide-react";
+import AdminLayout from "@/components/layout/AdminLayout";
+import { JobApplication } from "@shared/schema";
+import { getQueryFn } from "@/lib/queryClient";
 
 type ApplicationWithDetails = JobApplication & {
   billRate?: string;
@@ -258,7 +235,8 @@ function UserDetailModal({ userEmail, data }: { userEmail: string, data: Analyti
 export default function Candidates() {
   const { user } = useAuth();
   const { toast } = useToast();
-  const [, setLocation] = useLocation();
+  const queryClient = useQueryClient();
+  const [location, setLocation] = useLocation();
   const [page, setPage] = useState(1);
   const [search, setSearch] = useState("");
   const [statusFilter, setStatusFilter] = useState<string>("all_statuses");
@@ -287,7 +265,7 @@ export default function Candidates() {
       if (analyticsSearch) params.append("search", analyticsSearch);
       if (analyticsStatusFilter && analyticsStatusFilter !== "all_statuses") params.append("status", analyticsStatusFilter);
       if (sortBy) params.append("sortBy", sortBy);
-  
+
       return params.toString();
     };
 
@@ -660,92 +638,111 @@ export default function Candidates() {
         </TabsContent>
 
         <TabsContent value="analytics" className="space-y-6">
-          {analyticsData ? (
-            <>
-              <AnalyticsOverview data={analyticsData} />
-              <StatusDistributionCard data={analyticsData} />
-
-              <Card className="mb-6">
-                <CardHeader className="pb-3">
-                  <CardTitle>Analytics Filters</CardTitle>
-                  <CardDescription>Filter and sort user analytics data</CardDescription>
-                </CardHeader>
-                <CardContent>
-                  <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
-                    <div className="relative">
-                      <Search className="absolute left-2.5 top-2.5 h-4 w-4 text-muted-foreground" />
-                      <Input
-                        type="search"
-                        placeholder="Search users..."
-                        value={analyticsSearch}
-                        onChange={(e) => setAnalyticsSearch(e.target.value)}
-                        className="pl-8"
-                      />
-                    </div>
-
-                    <Select
-                      value={analyticsStatusFilter}
-                      onValueChange={setAnalyticsStatusFilter}
-                    >
-                      <SelectTrigger>
-                        <Filter className="h-4 w-4 mr-2" />
-                        <SelectValue placeholder="Filter by Status" />
-                      </SelectTrigger>
-                      <SelectContent>
-                        <SelectItem value="all_statuses">All Statuses</SelectItem>
-                        <SelectItem value="new">Has New</SelectItem>
-                        <SelectItem value="reviewing">Has Reviewing</SelectItem>
-                        <SelectItem value="interview">Has Interview</SelectItem>
-                        <SelectItem value="hired">Has Hired</SelectItem>
-                        <SelectItem value="rejected">Has Rejected</SelectItem>
-                      </SelectContent>
-                    </Select>
-
-                    <Select
-                      value={sortBy}
-                      onValueChange={setSortBy}
-                    >
-                      <SelectTrigger>
-                        <SelectValue placeholder="Sort by" />
-                      </SelectTrigger>
-                      <SelectContent>
-                        <SelectItem value="applications_desc">Most Applications</SelectItem>
-                        <SelectItem value="applications_asc">Least Applications</SelectItem>
-                        <SelectItem value="latest_desc">Latest Application</SelectItem>
-                        <SelectItem value="name_asc">Name A-Z</SelectItem>
-                      </SelectContent>
-                    </Select>
-
-                    <Button 
-                      variant="outline" 
-                      onClick={() => {
-                        setAnalyticsSearch("");
-                        setAnalyticsStatusFilter("all_statuses");
-                        setSortBy("applications_desc");
-                      }}
-                    >
-                      Clear Filters
-                    </Button>
-                  </div>
-                </CardContent>
-              </Card>
-
-              <UserApplicationsTable data={analyticsData} />
-
-              {selectedUserEmail && (
-                <UserDetailModal 
-                  userEmail={selectedUserEmail} 
-                  data={analyticsData} 
+          <div className="flex flex-col sm:flex-row gap-4 mb-6">
+            <div className="flex-1">
+              <div className="relative">
+                <Search className="absolute left-2.5 top-2.5 h-4 w-4 text-muted-foreground" />
+                <Input
+                  placeholder="Search by name or email..."
+                  className="pl-8"
+                  value={analyticsSearch}
+                  onChange={(e) => setAnalyticsSearch(e.target.value)}
                 />
+              </div>
+            </div>
+
+            <Select value={analyticsStatusFilter} onValueChange={setAnalyticsStatusFilter}>
+              <SelectTrigger className="w-[180px]">
+                <SelectValue placeholder="Filter by status" />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="all_statuses">All Statuses</SelectItem>
+                <SelectItem value="new">New</SelectItem>
+                <SelectItem value="reviewing">Reviewing</SelectItem>
+                <SelectItem value="interview">Interview</SelectItem>
+                <SelectItem value="hired">Hired</SelectItem>
+                <SelectItem value="rejected">Rejected</SelectItem>
+              </SelectContent>
+            </Select>
+
+            <Select value={sortBy} onValueChange={setSortBy}>
+              <SelectTrigger className="w-[200px]">
+                <SelectValue placeholder="Sort by" />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="applications_desc">Most Applications</SelectItem>
+                <SelectItem value="applications_asc">Least Applications</SelectItem>
+                <SelectItem value="latest_desc">Latest Activity</SelectItem>
+                <SelectItem value="name_asc">Name (A-Z)</SelectItem>
+              </SelectContent>
+            </Select>
+          </div>
+
+          <Card>
+            <CardHeader>
+              <CardTitle>User Applications</CardTitle>
+              <CardDescription>List of users and their application details</CardDescription>
+            </CardHeader>
+            <CardContent>
+              {isAnalyticsLoading ? (
+                <div className="flex flex-col items-center justify-center py-8">
+                  <Loader2 className="h-8 w-8 animate-spin text-primary" />
+                  <p className="mt-2 text-muted-foreground">Loading analytics data...</p>
+                </div>
+              ) : analyticsError ? (
+                <div className="flex flex-col items-center justify-center py-8">
+                  <AlertCircle className="h-8 w-8 text-destructive" />
+                  <p className="mt-2 text-destructive">Failed to load analytics data</p>
+                  <p className="text-sm text-muted-foreground">{analyticsError.message}</p>
+                </div>
+              ) : !analyticsData || analyticsData.length === 0 ? (
+                <div className="flex flex-col items-center justify-center py-8">
+                  <Users className="h-8 w-8 text-muted-foreground" />
+                  <p className="mt-2 text-muted-foreground">No user applications found</p>
+                </div>
+              ) : (
+                <Table>
+                  <TableHeader>
+                    <TableRow>
+                      <TableHead>User Name</TableHead>
+                      <TableHead>Email</TableHead>
+                      <TableHead>Applications Count</TableHead>
+                      <TableHead>Latest Application Date</TableHead>
+                      <TableHead className="text-right">Actions</TableHead>
+                    </TableRow>
+                  </TableHeader>
+                  <TableBody>
+                    {analyticsData.map((user, index) => (
+                      <TableRow key={user.userEmail || index}>
+                        <TableCell className="font-medium">
+                          {user.userName || 'Unknown User'}
+                        </TableCell>
+                        <TableCell>{user.userEmail}</TableCell>
+                        <TableCell>
+                          <Badge variant="secondary">
+                            {user.applicationsCount}
+                          </Badge>
+                        </TableCell>
+                        <TableCell>
+                          {user.latestApplicationDate || 'No applications'}
+                        </TableCell>
+                        <TableCell className="text-right">
+                          <Button
+                            variant="outline"
+                            size="sm"
+                            onClick={() => handleViewUserDetails(user.userEmail)}
+                          >
+                            <ExternalLink className="h-4 w-4 mr-2" />
+                            View Details
+                          </Button>
+                        </TableCell>
+                      </TableRow>
+                    ))}
+                  </TableBody>
+                </Table>
               )}
-            </>
-          ) : (
-            <Card>
-              <CardContent className="py-8 text-center">
-                <p className="text-muted-foreground">Loading analytics data...</p>
-              </CardContent>
-            </Card>
-          )}
+            </CardContent>
+          </Card>
         </TabsContent>
       </Tabs>
     </AdminLayout>
