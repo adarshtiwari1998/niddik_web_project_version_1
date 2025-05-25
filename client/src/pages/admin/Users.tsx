@@ -65,6 +65,7 @@ const Users = () => {
   const [isRefreshing, setIsRefreshing] = useState(false);
   const [editingUser, setEditingUser] = useState<User | null>(null);
   const [highlightedUserId, setHighlightedUserId] = useState<number | null>(null);
+  const [viewingUser, setViewingUser] = useState<User | null>(null);
   const [editFormData, setEditFormData] = useState({
     username: "",
     email: "",
@@ -84,14 +85,15 @@ const Users = () => {
 
   // Handle search parameter from URL
   useEffect(() => {
-    const urlParams = new URLSearchParams(location.split('?')[1] || '');
+    const urlParams = new URLSearchParams(window.location.search);
     const searchParam = urlParams.get('search');
     if (searchParam) {
       setSearch(searchParam);
+      setDebouncedSearch(searchParam);
       // Clear the search parameter from URL after setting
       window.history.replaceState({}, '', '/admin/users');
     }
-  }, [location]);
+  }, []);
 
   // Debounce search input
   useEffect(() => {
@@ -160,21 +162,31 @@ const Users = () => {
     refetchInterval: 60000,
   });
 
-  // Highlight user when search results are loaded
+  // Highlight user when search results are loaded and optionally show popup
   useEffect(() => {
-    if (usersData?.data && search) {
+    if (usersData?.data && debouncedSearch) {
       const foundUser = usersData.data.find(u => 
-        u.email.toLowerCase().includes(search.toLowerCase()) ||
-        u.username.toLowerCase().includes(search.toLowerCase()) ||
-        u.full_name?.toLowerCase().includes(search.toLowerCase())
+        u.email.toLowerCase().includes(debouncedSearch.toLowerCase()) ||
+        u.username.toLowerCase().includes(debouncedSearch.toLowerCase()) ||
+        u.full_name?.toLowerCase().includes(debouncedSearch.toLowerCase())
       );
       if (foundUser) {
         setHighlightedUserId(foundUser.id);
-        // Remove highlight after 3 seconds
-        setTimeout(() => setHighlightedUserId(null), 3000);
+        
+        // If the search exactly matches an email, show the user details popup
+        const exactEmailMatch = usersData.data.find(u => 
+          u.email.toLowerCase() === debouncedSearch.toLowerCase()
+        );
+        if (exactEmailMatch) {
+          setViewingUser(exactEmailMatch);
+        }
+        
+        // Remove highlight after 5 seconds
+        const timer = setTimeout(() => setHighlightedUserId(null), 5000);
+        return () => clearTimeout(timer);
       }
     }
-  }, [usersData?.data, search]);
+  }, [usersData?.data, debouncedSearch]);
 
   // Delete user mutation
   const deleteUserMutation = useMutation({
@@ -637,7 +649,7 @@ const Users = () => {
                         {users.map((userData) => (
                           <TableRow 
                             key={userData.id}
-                            className={highlightedUserId === userData.id ? "bg-blue-50 border-blue-200 animate-pulse" : ""}
+                            className={highlightedUserId === userData.id ? "bg-blue-50 border-blue-200 shadow-md transition-all duration-500 animate-pulse" : ""}
                           >
                             <TableCell className="font-medium">#{userData.id}</TableCell>
                             <TableCell>
@@ -894,6 +906,133 @@ const Users = () => {
                                     </DialogFooter>
                                   </DialogContent>
                                 </Dialog>
+                                
+                                {/* View User Details Dialog */}
+                                <Dialog open={viewingUser?.id === userData.id} onOpenChange={() => setViewingUser(null)}>
+                                  <DialogContent className="max-w-2xl max-h-[80vh] overflow-y-auto">
+                                    <DialogHeader>
+                                      <DialogTitle>User Details: {userData.username}</DialogTitle>
+                                      <DialogDescription>
+                                        Complete user information and profile details.
+                                      </DialogDescription>
+                                    </DialogHeader>
+                                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4 py-4">
+                                      <div className="space-y-2">
+                                        <Label>User ID</Label>
+                                        <div className="p-2 bg-muted rounded">#{userData.id}</div>
+                                      </div>
+                                      <div className="space-y-2">
+                                        <Label>Role</Label>
+                                        <div className="p-2 bg-muted rounded">{userData.role}</div>
+                                      </div>
+                                      <div className="space-y-2">
+                                        <Label>Username</Label>
+                                        <div className="p-2 bg-muted rounded">{userData.username}</div>
+                                      </div>
+                                      <div className="space-y-2">
+                                        <Label>Email</Label>
+                                        <div className="p-2 bg-muted rounded">{userData.email}</div>
+                                      </div>
+                                      <div className="space-y-2">
+                                        <Label>Full Name</Label>
+                                        <div className="p-2 bg-muted rounded">{userData.full_name || 'Not provided'}</div>
+                                      </div>
+                                      <div className="space-y-2">
+                                        <Label>Phone</Label>
+                                        <div className="p-2 bg-muted rounded">{userData.phone || 'Not provided'}</div>
+                                      </div>
+                                      <div className="space-y-2">
+                                        <Label>Experience</Label>
+                                        <div className="p-2 bg-muted rounded">{userData.experience ? `${userData.experience} years` : 'Not provided'}</div>
+                                      </div>
+                                      <div className="space-y-2">
+                                        <Label>Notice Period</Label>
+                                        <div className="p-2 bg-muted rounded">{userData.notice_period || 'Not provided'}</div>
+                                      </div>
+                                      <div className="space-y-2">
+                                        <Label>Current CTC</Label>
+                                        <div className="p-2 bg-muted rounded">{userData.current_ctc ? `₹${userData.current_ctc}` : 'Not provided'}</div>
+                                      </div>
+                                      <div className="space-y-2">
+                                        <Label>Expected CTC</Label>
+                                        <div className="p-2 bg-muted rounded">{userData.expected_ctc ? `₹${userData.expected_ctc}` : 'Not provided'}</div>
+                                      </div>
+                                      <div className="space-y-2">
+                                        <Label>Location</Label>
+                                        <div className="p-2 bg-muted rounded">
+                                          {userData.city && userData.state ? `${userData.city}, ${userData.state}` : userData.location || 'Not provided'}
+                                          {userData.country && userData.country !== userData.state && (
+                                            <div className="text-sm text-muted-foreground mt-1">{userData.country}</div>
+                                          )}
+                                          {userData.zip_code && (
+                                            <div className="text-sm text-muted-foreground">ZIP: {userData.zip_code}</div>
+                                          )}
+                                        </div>
+                                      </div>
+                                      <div className="space-y-2">
+                                        <Label>Resume</Label>
+                                        <div className="p-2 bg-muted rounded">
+                                          {userData.resume_url ? (
+                                            <Button
+                                              variant="outline"
+                                              size="sm"
+                                              onClick={() => handleViewResume(userData.resume_url)}
+                                            >
+                                              <Eye className="h-3 w-3 mr-1" />
+                                              View Resume
+                                            </Button>
+                                          ) : (
+                                            'No resume uploaded'
+                                          )}
+                                        </div>
+                                      </div>
+                                      <div className="space-y-2 md:col-span-2">
+                                        <Label>Skills</Label>
+                                        <div className="p-2 bg-muted rounded min-h-[60px]">
+                                          {userData.skills || 'No skills listed'}
+                                        </div>
+                                      </div>
+                                      <div className="space-y-2">
+                                        <Label>Last Activity</Label>
+                                        <div className="p-2 bg-muted rounded">{formatDate(userData.last_logout)}</div>
+                                      </div>
+                                      <div className="space-y-2">
+                                        <Label>Joined</Label>
+                                        <div className="p-2 bg-muted rounded">{formatDate(userData.created_at)}</div>
+                                      </div>
+                                    </div>
+                                    <DialogFooter>
+                                      <div className="flex space-x-2">
+                                        <Button
+                                          variant="outline"
+                                          onClick={() => handleEmailUser(userData.email, userData.full_name || userData.username)}
+                                        >
+                                          <Mail className="h-4 w-4 mr-2" />
+                                          Send Email
+                                        </Button>
+                                        {userData.phone && (
+                                          <Button
+                                            variant="outline"
+                                            onClick={() => handleCallUser(userData.phone)}
+                                          >
+                                            <Phone className="h-4 w-4 mr-2" />
+                                            Call
+                                          </Button>
+                                        )}
+                                        <Button
+                                          onClick={() => {
+                                            setViewingUser(null);
+                                            handleEditUser(userData);
+                                          }}
+                                        >
+                                          <Edit className="h-4 w-4 mr-2" />
+                                          Edit User
+                                        </Button>
+                                      </div>
+                                    </DialogFooter>
+                                  </DialogContent>
+                                </Dialog>
+
                                 <AlertDialog>
                                   <AlertDialogTrigger asChild>
                                     <Button

@@ -22,6 +22,7 @@ import { Form, FormControl, FormDescription, FormField, FormItem, FormLabel, For
 import { Textarea } from "@/components/ui/textarea";
 import Papa from 'papaparse';
 import React from 'react';
+import { useLocation, Link } from "wouter";
 
 // Define the type for a submitted candidate
 type SubmittedCandidate = {
@@ -870,7 +871,7 @@ function SubmittedCandidates() {
                             } as React.ChangeEvent<HTMLInputElement>;
 
                             handleFileImport(syntheticEvent);
-                          } else {
+                                                    } else {
                             toast({
                               title: "Invalid file format",
                               description: "Please upload only CSV files",
