@@ -1546,6 +1546,149 @@ app.put('/api/profile', async (req: AuthenticatedRequest, res) => {
     }
   });
 
+  // Admin API: Delete user
+  app.delete('/api/admin/users/:id', async (req: AuthenticatedRequest, res) => {
+    try {
+      if (!req.isAuthenticated() || req.user?.role !== 'admin') {
+        return res.status(403).json({
+          success: false,
+          message: "Unauthorized"
+        });
+      }
+
+      const userId = parseInt(req.params.id);
+      if (isNaN(userId)) {
+        return res.status(400).json({
+          success: false,
+          message: "Invalid user ID"
+        });
+      }
+
+      // Check if user exists and is not an admin
+      const userToDelete = await storage.getUserById(userId);
+      if (!userToDelete) {
+        return res.status(404).json({
+          success: false,
+          message: "User not found"
+        });
+      }
+
+      if (userToDelete.role === 'admin') {
+        return res.status(400).json({
+          success: false,
+          message: "Cannot delete admin users"
+        });
+      }
+
+      // Delete all sessions for this user (force logout)
+      await db.delete(sessions).where(eq(sessions.userId, userId));
+
+      // Delete the user
+      await db.delete(users).where(eq(users.id, userId));
+
+      return res.status(200).json({
+        success: true,
+        message: "User deleted successfully"
+      });
+    } catch (error) {
+      console.error('Error deleting user:', error);
+      return res.status(500).json({
+        success: false,
+        message: "Internal server error"
+      });
+    }
+  });
+
+  // Admin API: Edit user
+  app.put('/api/admin/users/:id', async (req: AuthenticatedRequest, res) => {
+    try {
+      if (!req.isAuthenticated() || req.user?.role !== 'admin') {
+        return res.status(403).json({
+          success: false,
+          message: "Unauthorized"
+        });
+      }
+
+      const userId = parseInt(req.params.id);
+      if (isNaN(userId)) {
+        return res.status(400).json({
+          success: false,
+          message: "Invalid user ID"
+        });
+      }
+
+      // Check if user exists and is not an admin
+      const userToUpdate = await storage.getUserById(userId);
+      if (!userToUpdate) {
+        return res.status(404).json({
+          success: false,
+          message: "User not found"
+        });
+      }
+
+      if (userToUpdate.role === 'admin') {
+        return res.status(400).json({
+          success: false,
+          message: "Cannot edit admin users"
+        });
+      }
+
+      const updateData = req.body;
+      
+      // Remove any fields that shouldn't be updated
+      delete updateData.id;
+      delete updateData.password;
+      delete updateData.role;
+      delete updateData.created_at;
+      delete updateData.last_logout;
+
+      // Update the user
+      const updatedUser = await db.update(users)
+        .set({
+          username: updateData.username,
+          email: updateData.email,
+          fullName: updateData.full_name,
+          phone: updateData.phone,
+          experience: updateData.experience,
+          noticePeriod: updateData.notice_period,
+          currentCtc: updateData.current_ctc,
+          expectedCtc: updateData.expected_ctc,
+          skills: updateData.skills,
+          location: updateData.location,
+          city: updateData.city,
+          state: updateData.state,
+          country: updateData.country,
+          zipCode: updateData.zip_code
+        })
+        .where(eq(users.id, userId))
+        .returning();
+
+      if (!updatedUser || updatedUser.length === 0) {
+        return res.status(500).json({
+          success: false,
+          message: "Failed to update user"
+        });
+      }
+
+      // If username or email changed, force logout by deleting sessions
+      if (updateData.username !== userToUpdate.username || updateData.email !== userToUpdate.email) {
+        await db.delete(sessions).where(eq(sessions.userId, userId));
+      }
+
+      return res.status(200).json({
+        success: true,
+        data: updatedUser[0],
+        message: "User updated successfully"
+      });
+    } catch (error) {
+      console.error('Error updating user:', error);
+      return res.status(500).json({
+        success: false,
+        message: "Internal server error"
+      });
+    }
+  });
+
   // Demo Request API Endpoints
 
   // Submit a new demo request

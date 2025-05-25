@@ -1,15 +1,20 @@
 
 import { useState, useEffect } from "react";
-import { useQuery } from "@tanstack/react-query";
+import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { useAuth } from "@/hooks/use-auth";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Badge } from "@/components/ui/badge";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
-import { Search, Mail, Phone, Eye, Users as UsersIcon, RefreshCw, Download, BarChart3, MapPin, Briefcase, DollarSign, Settings } from "lucide-react";
+import { Search, Mail, Phone, Eye, Users as UsersIcon, RefreshCw, Download, BarChart3, MapPin, Briefcase, DollarSign, Settings, Trash2, Edit } from "lucide-react";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle, AlertDialogTrigger } from "@/components/ui/alert-dialog";
+import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
+import { Label } from "@/components/ui/label";
+import { Textarea } from "@/components/ui/textarea";
+import { useToast } from "@/hooks/use-toast";
 import AdminLayout from "@/components/layout/AdminLayout";
 import { Helmet } from 'react-helmet-async';
 
@@ -47,6 +52,8 @@ interface UserAnalytics {
 
 const Users = () => {
   const { user } = useAuth();
+  const { toast } = useToast();
+  const queryClient = useQueryClient();
   const [page, setPage] = useState(1);
   const [search, setSearch] = useState("");
   const [debouncedSearch, setDebouncedSearch] = useState("");
@@ -54,6 +61,23 @@ const Users = () => {
   const [locationFilter, setLocationFilter] = useState("all");
   const [ctcFilter, setCtcFilter] = useState("all");
   const [isRefreshing, setIsRefreshing] = useState(false);
+  const [editingUser, setEditingUser] = useState<User | null>(null);
+  const [editFormData, setEditFormData] = useState({
+    username: "",
+    email: "",
+    full_name: "",
+    phone: "",
+    experience: "",
+    notice_period: "",
+    current_ctc: "",
+    expected_ctc: "",
+    skills: "",
+    location: "",
+    city: "",
+    state: "",
+    country: "",
+    zip_code: ""
+  });
 
   // Debounce search input
   useEffect(() => {
@@ -122,6 +146,71 @@ const Users = () => {
     refetchInterval: 60000,
   });
 
+  // Delete user mutation
+  const deleteUserMutation = useMutation({
+    mutationFn: async (userId: number) => {
+      const response = await fetch(`/api/admin/users/${userId}`, {
+        method: 'DELETE',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+      });
+      if (!response.ok) {
+        const error = await response.json();
+        throw new Error(error.message || 'Failed to delete user');
+      }
+      return response.json();
+    },
+    onSuccess: () => {
+      toast({
+        title: "User deleted",
+        description: "User has been successfully deleted and logged out.",
+      });
+      queryClient.invalidateQueries({ queryKey: ['/api/admin/users'] });
+      queryClient.invalidateQueries({ queryKey: ['/api/admin/users/analytics'] });
+    },
+    onError: (error: Error) => {
+      toast({
+        title: "Delete failed",
+        description: error.message,
+        variant: "destructive",
+      });
+    },
+  });
+
+  // Edit user mutation
+  const editUserMutation = useMutation({
+    mutationFn: async ({ userId, userData }: { userId: number; userData: any }) => {
+      const response = await fetch(`/api/admin/users/${userId}`, {
+        method: 'PUT',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(userData),
+      });
+      if (!response.ok) {
+        const error = await response.json();
+        throw new Error(error.message || 'Failed to update user');
+      }
+      return response.json();
+    },
+    onSuccess: () => {
+      toast({
+        title: "User updated",
+        description: "User information has been successfully updated.",
+      });
+      setEditingUser(null);
+      queryClient.invalidateQueries({ queryKey: ['/api/admin/users'] });
+    },
+    onError: (error: Error) => {
+      toast({
+        title: "Update failed",
+        description: error.message,
+        variant: "destructive",
+      });
+    },
+  });
+
   const handleRefresh = async () => {
     setIsRefreshing(true);
     try {
@@ -131,6 +220,39 @@ const Users = () => {
     } finally {
       setIsRefreshing(false);
     }
+  };
+
+  const handleDeleteUser = (userId: number) => {
+    deleteUserMutation.mutate(userId);
+  };
+
+  const handleEditUser = (userData: User) => {
+    setEditingUser(userData);
+    setEditFormData({
+      username: userData.username || "",
+      email: userData.email || "",
+      full_name: userData.full_name || "",
+      phone: userData.phone || "",
+      experience: userData.experience || "",
+      notice_period: userData.notice_period || "",
+      current_ctc: userData.current_ctc || "",
+      expected_ctc: userData.expected_ctc || "",
+      skills: userData.skills || "",
+      location: userData.location || "",
+      city: userData.city || "",
+      state: userData.state || "",
+      country: userData.country || "",
+      zip_code: userData.zip_code || ""
+    });
+  };
+
+  const handleSaveEdit = () => {
+    if (!editingUser) return;
+    
+    editUserMutation.mutate({
+      userId: editingUser.id,
+      userData: editFormData
+    });
   };
 
   const handleEmailUser = (email: string, name: string) => {
@@ -590,6 +712,184 @@ const Users = () => {
                                     <Phone className="h-3 w-3" />
                                   </Button>
                                 )}
+                                <Dialog>
+                                  <DialogTrigger asChild>
+                                    <Button
+                                      variant="outline"
+                                      size="sm"
+                                      onClick={() => handleEditUser(userData)}
+                                      title="Edit User"
+                                    >
+                                      <Edit className="h-3 w-3" />
+                                    </Button>
+                                  </DialogTrigger>
+                                  <DialogContent className="max-w-2xl max-h-[80vh] overflow-y-auto">
+                                    <DialogHeader>
+                                      <DialogTitle>Edit User: {userData.username}</DialogTitle>
+                                      <DialogDescription>
+                                        Update user information. Email and username changes require user to re-login.
+                                      </DialogDescription>
+                                    </DialogHeader>
+                                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4 py-4">
+                                      <div className="space-y-2">
+                                        <Label htmlFor="username">Username</Label>
+                                        <Input
+                                          id="username"
+                                          value={editFormData.username}
+                                          onChange={(e) => setEditFormData(prev => ({ ...prev, username: e.target.value }))}
+                                        />
+                                      </div>
+                                      <div className="space-y-2">
+                                        <Label htmlFor="email">Email</Label>
+                                        <Input
+                                          id="email"
+                                          type="email"
+                                          value={editFormData.email}
+                                          onChange={(e) => setEditFormData(prev => ({ ...prev, email: e.target.value }))}
+                                        />
+                                      </div>
+                                      <div className="space-y-2">
+                                        <Label htmlFor="full_name">Full Name</Label>
+                                        <Input
+                                          id="full_name"
+                                          value={editFormData.full_name}
+                                          onChange={(e) => setEditFormData(prev => ({ ...prev, full_name: e.target.value }))}
+                                        />
+                                      </div>
+                                      <div className="space-y-2">
+                                        <Label htmlFor="phone">Phone</Label>
+                                        <Input
+                                          id="phone"
+                                          value={editFormData.phone}
+                                          onChange={(e) => setEditFormData(prev => ({ ...prev, phone: e.target.value }))}
+                                        />
+                                      </div>
+                                      <div className="space-y-2">
+                                        <Label htmlFor="experience">Experience (years)</Label>
+                                        <Input
+                                          id="experience"
+                                          value={editFormData.experience}
+                                          onChange={(e) => setEditFormData(prev => ({ ...prev, experience: e.target.value }))}
+                                        />
+                                      </div>
+                                      <div className="space-y-2">
+                                        <Label htmlFor="notice_period">Notice Period</Label>
+                                        <Input
+                                          id="notice_period"
+                                          value={editFormData.notice_period}
+                                          onChange={(e) => setEditFormData(prev => ({ ...prev, notice_period: e.target.value }))}
+                                        />
+                                      </div>
+                                      <div className="space-y-2">
+                                        <Label htmlFor="current_ctc">Current CTC</Label>
+                                        <Input
+                                          id="current_ctc"
+                                          value={editFormData.current_ctc}
+                                          onChange={(e) => setEditFormData(prev => ({ ...prev, current_ctc: e.target.value }))}
+                                        />
+                                      </div>
+                                      <div className="space-y-2">
+                                        <Label htmlFor="expected_ctc">Expected CTC</Label>
+                                        <Input
+                                          id="expected_ctc"
+                                          value={editFormData.expected_ctc}
+                                          onChange={(e) => setEditFormData(prev => ({ ...prev, expected_ctc: e.target.value }))}
+                                        />
+                                      </div>
+                                      <div className="space-y-2">
+                                        <Label htmlFor="city">City</Label>
+                                        <Input
+                                          id="city"
+                                          value={editFormData.city}
+                                          onChange={(e) => setEditFormData(prev => ({ ...prev, city: e.target.value }))}
+                                        />
+                                      </div>
+                                      <div className="space-y-2">
+                                        <Label htmlFor="state">State</Label>
+                                        <Input
+                                          id="state"
+                                          value={editFormData.state}
+                                          onChange={(e) => setEditFormData(prev => ({ ...prev, state: e.target.value }))}
+                                        />
+                                      </div>
+                                      <div className="space-y-2">
+                                        <Label htmlFor="country">Country</Label>
+                                        <Input
+                                          id="country"
+                                          value={editFormData.country}
+                                          onChange={(e) => setEditFormData(prev => ({ ...prev, country: e.target.value }))}
+                                        />
+                                      </div>
+                                      <div className="space-y-2">
+                                        <Label htmlFor="zip_code">ZIP Code</Label>
+                                        <Input
+                                          id="zip_code"
+                                          value={editFormData.zip_code}
+                                          onChange={(e) => setEditFormData(prev => ({ ...prev, zip_code: e.target.value }))}
+                                        />
+                                      </div>
+                                      <div className="space-y-2 md:col-span-2">
+                                        <Label htmlFor="skills">Skills</Label>
+                                        <Textarea
+                                          id="skills"
+                                          value={editFormData.skills}
+                                          onChange={(e) => setEditFormData(prev => ({ ...prev, skills: e.target.value }))}
+                                          placeholder="Comma-separated skills"
+                                        />
+                                      </div>
+                                      <div className="space-y-2 md:col-span-2">
+                                        <Label htmlFor="location">Location</Label>
+                                        <Input
+                                          id="location"
+                                          value={editFormData.location}
+                                          onChange={(e) => setEditFormData(prev => ({ ...prev, location: e.target.value }))}
+                                        />
+                                      </div>
+                                    </div>
+                                    <DialogFooter>
+                                      <Button
+                                        type="submit"
+                                        onClick={handleSaveEdit}
+                                        disabled={editUserMutation.isPending}
+                                      >
+                                        {editUserMutation.isPending ? 'Saving...' : 'Save Changes'}
+                                      </Button>
+                                    </DialogFooter>
+                                  </DialogContent>
+                                </Dialog>
+                                <AlertDialog>
+                                  <AlertDialogTrigger asChild>
+                                    <Button
+                                      variant="outline"
+                                      size="sm"
+                                      title="Delete User"
+                                      className="text-red-600 hover:text-red-700 hover:bg-red-50"
+                                    >
+                                      <Trash2 className="h-3 w-3" />
+                                    </Button>
+                                  </AlertDialogTrigger>
+                                  <AlertDialogContent>
+                                    <AlertDialogHeader>
+                                      <AlertDialogTitle>Are you absolutely sure?</AlertDialogTitle>
+                                      <AlertDialogDescription>
+                                        This action cannot be undone. This will permanently delete the user account for{" "}
+                                        <strong>{userData.username}</strong> ({userData.email}) and remove all their data from our servers.
+                                        <br /><br />
+                                        The user will be immediately logged out if they have an active session and will not be able to log in again.
+                                      </AlertDialogDescription>
+                                    </AlertDialogHeader>
+                                    <AlertDialogFooter>
+                                      <AlertDialogCancel>Cancel</AlertDialogCancel>
+                                      <AlertDialogAction
+                                        onClick={() => handleDeleteUser(userData.id)}
+                                        className="bg-red-600 hover:bg-red-700"
+                                        disabled={deleteUserMutation.isPending}
+                                      >
+                                        {deleteUserMutation.isPending ? 'Deleting...' : 'Delete User'}
+                                      </AlertDialogAction>
+                                    </AlertDialogFooter>
+                                  </AlertDialogContent>
+                                </AlertDialog>
                               </div>
                             </TableCell>
                           </TableRow>
