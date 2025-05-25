@@ -1075,7 +1075,10 @@ const endIndex = page * limit;
         try {
           console.log("Fetching job listings...");
           const jobs = await db
-            .select()
+            .select({
+              id: jobListings.id,
+              title: jobListings.title
+            })
             .from(jobListings)
             .where(inArray(jobListings.id, jobIds));
 
