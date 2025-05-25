@@ -103,22 +103,6 @@ const Users = () => {
     return () => clearTimeout(timer);
   }, [search]);
 
-  // Highlight user when search results are loaded
-  useEffect(() => {
-    if (usersData?.data && search) {
-      const foundUser = usersData.data.find(u => 
-        u.email.toLowerCase().includes(search.toLowerCase()) ||
-        u.username.toLowerCase().includes(search.toLowerCase()) ||
-        u.full_name?.toLowerCase().includes(search.toLowerCase())
-      );
-      if (foundUser) {
-        setHighlightedUserId(foundUser.id);
-        // Remove highlight after 3 seconds
-        setTimeout(() => setHighlightedUserId(null), 3000);
-      }
-    }
-  }, [usersData?.data, search]);
-
   const { data: usersData, isLoading, refetch } = useQuery<{
     success: boolean;
     data: User[];
@@ -175,6 +159,22 @@ const Users = () => {
     },
     refetchInterval: 60000,
   });
+
+  // Highlight user when search results are loaded
+  useEffect(() => {
+    if (usersData?.data && search) {
+      const foundUser = usersData.data.find(u => 
+        u.email.toLowerCase().includes(search.toLowerCase()) ||
+        u.username.toLowerCase().includes(search.toLowerCase()) ||
+        u.full_name?.toLowerCase().includes(search.toLowerCase())
+      );
+      if (foundUser) {
+        setHighlightedUserId(foundUser.id);
+        // Remove highlight after 3 seconds
+        setTimeout(() => setHighlightedUserId(null), 3000);
+      }
+    }
+  }, [usersData?.data, search]);
 
   // Delete user mutation
   const deleteUserMutation = useMutation({
