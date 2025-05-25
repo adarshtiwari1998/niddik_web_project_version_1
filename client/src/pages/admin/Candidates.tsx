@@ -11,7 +11,8 @@ import { Label } from "@/components/ui/label";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { Badge } from "@/components/ui/badge";
-import { Loader2, FileText, Download, Search, Users, AlertCircle, ChartBar, Eye, ExternalLink } from "lucide-react";
+import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle } from "@/components/ui/dialog";
+import { Loader2, FileText, Download, Search, Users, AlertCircle, ChartBar, Eye, ExternalLink, Filter, Phone, Mail, Calendar, DollarSign, ChevronLeft, ChevronRight } from "lucide-react";
 import AdminLayout from "@/components/layout/AdminLayout";
 import { JobApplication } from "@shared/schema";
 import { getQueryFn } from "@/lib/queryClient";
@@ -51,7 +52,19 @@ interface AnalyticsData {
     hired: number;
     rejected: number;
   };
-  applications: JobApplication[];
+  applications: Array<{
+    id: number;
+    jobId: number;
+    status: string;
+    appliedDate: string;
+    lastUpdated: string;
+    coverLetter?: string;
+    resumeUrl?: string;
+    skills?: string;
+    jobTitle: string;
+    jobCompany: string;
+    jobLocation: string;
+  }>;
 }
 
 // Analytics Overview Card
@@ -174,58 +187,165 @@ function UserApplicationsTable({ data }: { data: AnalyticsData[] }) {
   );
 }
 
-function UserDetailModal({ userEmail, data }: { userEmail: string, data: AnalyticsData[] }) {
-  const userData = data.find(user => user.userEmail === userEmail);
+function UserDetailModal({ 
+  userEmail, 
+  data, 
+  onClose 
+}: { 
+  userEmail: string | null, 
+  data: AnalyticsData[], 
+  onClose: () => void 
+}) {
+  const userData = userEmail ? data.find(user => user.userEmail === userEmail) : null;
 
   if (!userData) {
     return null;
   }
 
+  const formatDate = (dateString: string) => {
+    return new Date(dateString).toLocaleDateString('en-US', {
+      year: 'numeric',
+      month: 'short',
+      day: 'numeric'
+    });
+  };
+
+  const getStatusBadgeVariant = (status: string) => {
+    switch (status) {
+      case 'new': return 'default';
+      case 'reviewing': return 'secondary';
+      case 'interview': return 'outline';
+      case 'hired': return 'default'; // Success variant
+      case 'rejected': return 'destructive';
+      default: return 'default';
+    }
+  };
+
   return (
-    <Dialog open={!!userEmail} onOpenChange={() => null}>
-      <DialogContent className="max-w-2xl">
+    <Dialog open={!!userEmail} onOpenChange={onClose}>
+      <DialogContent className="max-w-4xl max-h-[80vh] overflow-y-auto">
         <DialogHeader>
-          <DialogTitle>User Details</DialogTitle>
-          <DialogDescription>Details for {userData.userName}</DialogDescription>
+          <DialogTitle>User Application Details</DialogTitle>
+          <DialogDescription>
+            Detailed view of applications for {userData.userName}
+          </DialogDescription>
         </DialogHeader>
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+        
+        {/* User Summary */}
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 p-4 bg-muted/50 rounded-lg">
           <div>
-            <div className="text-lg font-semibold">{userData.userName}</div>
-            <div className="text-muted-foreground">Name</div>
+            <div className="text-sm font-medium text-muted-foreground">Name</div>
+            <div className="text-base font-semibold">{userData.userName}</div>
           </div>
           <div>
-            <div className="text-lg font-semibold">{userData.userEmail}</div>
-            <div className="text-muted-foreground">Email</div>
+            <div className="text-sm font-medium text-muted-foreground">Email</div>
+            <div className="text-base font-semibold">{userData.userEmail}</div>
           </div>
           <div>
-            <div className="text-lg font-semibold">{userData.applicationsCount}</div>
-            <div className="text-muted-foreground">Applications Count</div>
+            <div className="text-sm font-medium text-muted-foreground">Total Applications</div>
+            <div className="text-base font-semibold">{userData.applicationsCount}</div>
           </div>
           <div>
-            <div className="text-lg font-semibold">{userData.latestApplicationDate}</div>
-            <div className="text-muted-foreground">Latest Application Date</div>
+            <div className="text-sm font-medium text-muted-foreground">Latest Application</div>
+            <div className="text-base font-semibold">{userData.latestApplicationDate}</div>
           </div>
         </div>
-        <div className="mt-4">
-          <h3 className="text-lg font-semibold mb-2">Applications</h3>
-          <Table>
-            <TableHeader>
-              <TableRow>
-                <TableHead>Job Title</TableHead>
-                <TableHead>Status</TableHead>
-                <TableHead>Applied Date</TableHead>
-              </TableRow>
-            </TableHeader>
-            <TableBody>
+
+        {/* Applications List */}
+        <div className="mt-6">
+          <h3 className="text-lg font-semibold mb-4">Job Applications</h3>
+          {userData.applications.length === 0 ? (
+            <div className="text-center py-8 text-muted-foreground">
+              No applications found
+            </div>
+          ) : (
+            <div className="space-y-4">
               {userData.applications.map((app) => (
-                <TableRow key={app.id}>
-                  <TableCell>{app.jobTitle}</TableCell>
-                  <TableCell>{app.status}</TableCell>
-                  <TableCell>{app.createdAt}</TableCell>
-                </TableRow>
+                <Card key={app.id} className="border-l-4 border-l-primary/20">
+                  <CardContent className="p-4">
+                    <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-4">
+                      <div className="flex-1">
+                        <div className="flex items-start justify-between mb-2">
+                          <div>
+                            <h4 className="font-semibold text-lg">{app.jobTitle}</h4>
+                            <p className="text-muted-foreground flex items-center gap-1">
+                              <Building className="h-4 w-4" />
+                              {app.jobCompany} • {app.jobLocation}
+                            </p>
+                          </div>
+                          <Badge variant={getStatusBadgeVariant(app.status)}>
+                            {app.status}
+                          </Badge>
+                        </div>
+                        
+                        <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mt-3">
+                          <div className="text-sm">
+                            <span className="font-medium text-muted-foreground">Applied Date:</span>
+                            <div className="flex items-center gap-1">
+                              <Calendar className="h-3 w-3" />
+                              {formatDate(app.appliedDate)}
+                            </div>
+                          </div>
+                          <div className="text-sm">
+                            <span className="font-medium text-muted-foreground">Last Updated:</span>
+                            <div className="flex items-center gap-1">
+                              <Clock className="h-3 w-3" />
+                              {formatDate(app.lastUpdated)}
+                            </div>
+                          </div>
+                        </div>
+
+                        {app.skills && (
+                          <div className="mt-3">
+                            <span className="font-medium text-muted-foreground text-sm">Skills:</span>
+                            <div className="flex flex-wrap gap-1 mt-1">
+                              {app.skills.split(',').map((skill, index) => (
+                                <Badge key={index} variant="outline" className="text-xs">
+                                  {skill.trim()}
+                                </Badge>
+                              ))}
+                            </div>
+                          </div>
+                        )}
+
+                        {app.coverLetter && (
+                          <div className="mt-3">
+                            <span className="font-medium text-muted-foreground text-sm">Cover Letter:</span>
+                            <p className="text-sm mt-1 p-2 bg-muted/50 rounded text-muted-foreground">
+                              {app.coverLetter}
+                            </p>
+                          </div>
+                        )}
+                      </div>
+                      
+                      <div className="flex flex-col gap-2">
+                        {app.resumeUrl && (
+                          <Button
+                            variant="outline"
+                            size="sm"
+                            onClick={() => window.open(app.resumeUrl, '_blank')}
+                            className="gap-2"
+                          >
+                            <FileText className="h-4 w-4" />
+                            View Resume
+                          </Button>
+                        )}
+                        <Button
+                          variant="outline"
+                          size="sm"
+                          onClick={() => window.open(`mailto:${userData.userEmail}`, '_blank')}
+                          className="gap-2"
+                        >
+                          <Mail className="h-4 w-4" />
+                          Email
+                        </Button>
+                      </div>
+                    </div>
+                  </CardContent>
+                </Card>
               ))}
-            </TableBody>
-          </Table>
+            </div>
+          )}
         </div>
       </DialogContent>
     </Dialog>
@@ -379,10 +499,9 @@ export default function Candidates() {
     updateStatusMutation.mutate({ id, status });
   };
 
-  // Handler for navigating to user details
+  // Handler for showing user details in modal
   const handleViewUserDetails = (userEmail: string) => {
-    // Navigate to users page with search parameter to find the user
-    setLocation(`/admin/users?search=${encodeURIComponent(userEmail)}`);
+    setSelectedUserEmail(userEmail);
   };
 
   // Redirect to login if not authenticated or not an admin
@@ -732,7 +851,7 @@ export default function Candidates() {
                             size="sm"
                             onClick={() => handleViewUserDetails(user.userEmail)}
                           >
-                            <ExternalLink className="h-4 w-4 mr-2" />
+                            <Eye className="h-4 w-4 mr-2" />
                             View Details
                           </Button>
                         </TableCell>
@@ -743,6 +862,13 @@ export default function Candidates() {
               )}
             </CardContent>
           </Card>
+
+          {/* User Detail Modal */}
+          <UserDetailModal 
+            userEmail={selectedUserEmail}
+            data={analyticsData || []}
+            onClose={() => setSelectedUserEmail(null)}
+          />
         </TabsContent>
       </Tabs>
     </AdminLayout>
