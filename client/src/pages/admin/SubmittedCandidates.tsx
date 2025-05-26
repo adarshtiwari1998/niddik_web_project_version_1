@@ -626,44 +626,80 @@ function SubmittedCandidates() {
           'current ctc': 'currentCtc',
           'expected ctc': 'expectedCtc',
           'bill rate': 'billRate',
+          'bill rate ($$)': 'billRate',
           'pay/hr': 'payRate',
           'pay rate': 'payRate',
           'pay_rate': 'payRate',
           'payrate': 'payRate',
+          'margin/hr': 'marginPerHour',
+          'margin/hour': 'marginPerHour',
+          'profit/month': 'profitPerMonth',
           'status': 'status',
-          'salary (lacs)': 'salaryInLacs'
+          'salary (lacs)': 'salaryInLacs',
+          'actions': 'actions'
         };
         return headerMap[header.toLowerCase()] || header;
       },
       complete: (results) => {
         if (results.errors.length > 0) {
-          toast({
-            title: "Parse Errors",
-            description: "Some rows could not be parsed correctly. Please check your CSV format.",
-            variant: "destructive",
-          });
-          return;
+          console.warn("CSV Parse Errors:", results.errors);
+          // Don't return here, continue with parsing as some errors might be non-critical
         }
 
-        const mappedData = results.data.map((row: any, index: number) => ({
-          submissionDate: row.submissionDate || row['submission date'] || new Date().toISOString().split('T')[0],
-          sourcedBy: row.sourcedBy || row['sourced by'] || 'CSV Import',
-          client: row.client || row.Client || 'Default Client',
-          poc: row.poc || row.POC || 'Default POC',
-          skills: row.skills || row.Skills || 'Not specified',
-          candidateName: row.candidateName || row['candidate name'] || row['Candidate Name'] || `Candidate ${index + 1}`,
-          contactNo: row.contactNo || row['contact no'] || row['Contact No'] || 'Not provided',
-          emailId: row.emailId || row['email id'] || row['Email ID'] || `candidate${index + 1}@example.com`,
-          experience: row.experience || row.Experience || 'Not specified',
-          noticePeriod: row.noticePeriod || row['notice period'] || row['Notice Period'] || 'Not specified',
-          location: row.location || row.Location || 'Not specified',
-          currentCtc: row.currentCtc || row['current ctc'] || row['Current CTC'] || '',
-          expectedCtc: row.expectedCtc || row['expected ctc'] || row['Expected CTC'] || '',
-          billRate: row.billRate || row['bill rate'] || row['Bill Rate'] || '0',
-          payRate: row.payRate || row['pay rate'] || row['Pay Rate'] || row['pay/hr'] || '0',
-          status: row.status || row.Status || 'new',
-          salaryInLacs: row.salaryInLacs || row['salary (lacs)'] || row['Salary (Lacs)'] || ''
-        }));
+        // Helper function to clean numeric values
+        const cleanNumericValue = (value: string | undefined): string => {
+          if (!value) return '';
+          // Remove currency symbols, commas, and extra spaces
+          return value.toString().replace(/[₹$,\s]/g, '').replace(/[^\d.]/g, '') || '';
+        };
+
+        // Helper function to clean text values
+        const cleanTextValue = (value: string | undefined): string => {
+          if (!value) return '';
+          return value.toString().trim().replace(/[""]/g, '');
+        };
+
+        // Helper function to validate experience
+        const cleanExperience = (value: string | undefined): string => {
+          if (!value) return 'Not specified';
+          const cleaned = value.toString().trim();
+          // If it contains invalid characters or is not a reasonable experience value
+          if (/^[a-zA-Z]+$/.test(cleaned) && cleaned.length < 5) {
+            return 'Not specified';
+          }
+          return cleaned;
+        };
+
+        const mappedData = results.data.map((row: any, index: number) => {
+          // Skip completely empty rows
+          const hasData = Object.values(row).some(value => 
+            value && value.toString().trim() && value.toString().trim() !== ''
+          );
+          
+          if (!hasData) {
+            return null;
+          }
+
+          return {
+            submissionDate: row.submissionDate || row['submission date'] || new Date().toISOString().split('T')[0],
+            sourcedBy: cleanTextValue(row.sourcedBy || row['sourced by']) || 'CSV Import',
+            client: cleanTextValue(row.client || row.Client) || 'Default Client',
+            poc: cleanTextValue(row.poc || row.POC) || 'Default POC',
+            skills: cleanTextValue(row.skills || row.Skills) || 'Not specified',
+            candidateName: cleanTextValue(row.candidateName || row['candidate name'] || row['Candidate Name']) || `Candidate ${index + 1}`,
+            contactNo: cleanTextValue(row.contactNo || row['contact no'] || row['Contact No']) || 'Not provided',
+            emailId: cleanTextValue(row.emailId || row['email id'] || row['Email ID']) || `candidate${index + 1}@example.com`,
+            experience: cleanExperience(row.experience || row.Experience),
+            noticePeriod: cleanTextValue(row.noticePeriod || row['notice period'] || row['Notice Period']) || 'Not specified',
+            location: cleanTextValue(row.location || row.Location) || 'Not specified',
+            currentCtc: cleanTextValue(row.currentCtc || row['current ctc'] || row['Current CTC']) || '',
+            expectedCtc: cleanTextValue(row.expectedCtc || row['expected ctc'] || row['Expected CTC']) || '',
+            billRate: cleanNumericValue(row.billRate || row['bill rate'] || row['Bill Rate']) || '0',
+            payRate: cleanNumericValue(row.payRate || row['pay rate'] || row['Pay Rate'] || row['pay/hr']) || '0',
+            status: cleanTextValue(row.status || row.Status) || 'new',
+            salaryInLacs: cleanTextValue(row.salaryInLacs || row['salary (lacs)'] || row['Salary (Lacs)']) || ''
+          };
+        }).filter(Boolean); // Remove null entries
 
         // Validate data before setting
         if (mappedData.length === 0) {
@@ -676,27 +712,40 @@ function SubmittedCandidates() {
         }
 
         // Filter out rows with all empty required fields
-        const validData = mappedData.filter(row => 
-          row.candidateName && row.candidateName !== `Candidate ${mappedData.indexOf(row) + 1}` ||
-          row.emailId && !row.emailId.includes('@example.com') ||
-          row.client !== 'Default Client' ||
-          row.poc !== 'Default POC'
-        );
+        const validData = mappedData.filter(row => {
+          const hasValidName = row.candidateName && 
+                              row.candidateName !== 'Default Name' && 
+                              !row.candidateName.includes('Candidate ');
+          const hasValidEmail = row.emailId && !row.emailId.includes('@example.com');
+          const hasValidClient = row.client !== 'Default Client';
+          const hasValidPoc = row.poc !== 'Default POC';
+          
+          // Require at least name and email OR client and poc
+          return (hasValidName && hasValidEmail) || (hasValidClient && hasValidPoc);
+        });
 
         if (validData.length === 0) {
           toast({
-            title: "Error",
+            title: "Error", 
             description: "No valid candidate data found. Please ensure your CSV has candidate names, emails, client, and POC information.",
             variant: "destructive",
           });
           return;
         }
 
-        setImportData(validData.length > 0 ? validData : mappedData);
+        // Show warning if many rows were filtered out
+        if (mappedData.length - validData.length > 0) {
+          toast({
+            title: "Data Filtered",
+            description: `${mappedData.length - validData.length} empty or invalid rows were filtered out. ${validData.length} valid records loaded.`,
+          });
+        }
+
+        setImportData(validData);
         setIsPreviewMode(true);
         toast({
           title: "Success",
-          description: `${validData.length > 0 ? validData.length : mappedData.length} records loaded for preview`,
+          description: `${validData.length} records loaded for preview`,
         });
       },
       error: (error) => {
