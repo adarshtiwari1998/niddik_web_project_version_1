@@ -1173,7 +1173,7 @@ function SubmittedCandidates() {
                   </div>
                   <a 
                     href="https://res.cloudinary.com/dhanz6zty/raw/upload/v1748032463/Import_from_Sheet___Niddik_-_Sheet1_1_ujofic.csv"
-                    target="_blank" className=>
+                    target="_blank">
                     View Sample Format
                   </a>
                 </div>
