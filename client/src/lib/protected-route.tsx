@@ -1,5 +1,5 @@
 
-import { useEffect } from "react";
+import { useEffect, startTransition } from "react";
 import { useLocation } from "wouter";
 import { useAuth } from "@/hooks/use-auth";
 import { LoadingScreen } from "@/components/ui/loading-screen";
@@ -16,18 +16,20 @@ export function ProtectedRoute({ component: Component, requiredRole }: Protected
   useEffect(() => {
     // Only redirect after loading is complete and we have a definitive auth state
     if (!isLoading) {
-      if (!user) {
-        const redirectPath = requiredRole === "admin" 
-          ? `/admin/login?redirect=${encodeURIComponent(window.location.pathname)}`
-          : `/auth?redirect=${encodeURIComponent(window.location.pathname)}`;
-        setLocation(redirectPath);
-        return;
-      }
+      startTransition(() => {
+        if (!user) {
+          const redirectPath = requiredRole === "admin" 
+            ? `/admin/login?redirect=${encodeURIComponent(window.location.pathname)}`
+            : `/auth?redirect=${encodeURIComponent(window.location.pathname)}`;
+          setLocation(redirectPath);
+          return;
+        }
 
-      if (user && requiredRole && user.role !== requiredRole) {
-        const redirectPath = user.role === "admin" ? "/admin" : "/candidate/dashboard";
-        setLocation(redirectPath);
-      }
+        if (user && requiredRole && user.role !== requiredRole) {
+          const redirectPath = user.role === "admin" ? "/admin" : "/candidate/dashboard";
+          setLocation(redirectPath);
+        }
+      });
     }
   }, [user, isLoading, requiredRole, setLocation]);
 
