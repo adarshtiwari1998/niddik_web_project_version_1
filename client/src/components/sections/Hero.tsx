@@ -26,20 +26,26 @@ interface Job {
 // Enhanced Job Marquee Component
 const SimpleJobMarquee = ({ jobs }: { jobs: Job[] }) => {
   const [isPaused, setIsPaused] = useState(false);
-  
-  const marqueeStyle = {
-    display: 'flex',
-    animation: isPaused ? 'none' : 'simpleMarquee 40s linear infinite',
-    whiteSpace: 'nowrap' as const,
-  };
 
   useEffect(() => {
     // Add CSS animation for marquee
     const style = document.createElement('style');
     style.textContent = `
-      @keyframes simpleMarquee {
-        0% { transform: translateX(100%); }
-        100% { transform: translateX(-100%); }
+      @keyframes smoothMarquee {
+        0% { transform: translateX(0); }
+        100% { transform: translateX(-50%); }
+      }
+      .marquee-container {
+        mask: linear-gradient(90deg, transparent 0%, black 5%, black 95%, transparent 100%);
+        -webkit-mask: linear-gradient(90deg, transparent 0%, black 5%, black 95%, transparent 100%);
+      }
+      .marquee-content {
+        display: flex;
+        animation: smoothMarquee 60s linear infinite;
+        width: max-content;
+      }
+      .marquee-content.paused {
+        animation-play-state: paused;
       }
     `;
     document.head.appendChild(style);
@@ -48,25 +54,51 @@ const SimpleJobMarquee = ({ jobs }: { jobs: Job[] }) => {
 
   if (!jobs.length) return null;
 
+  // Create enough duplicates for seamless scrolling
+  const duplicatedJobs = [...jobs, ...jobs, ...jobs];
+
   return (
-    <div 
-      className="overflow-hidden bg-gradient-to-r from-andela-green/5 via-andela-green/10 to-andela-green/5 py-4 border-t border-andela-green/20"
-      onMouseEnter={() => setIsPaused(true)}
-      onMouseLeave={() => setIsPaused(false)}
-    >
-      <div style={marqueeStyle}>
-        {/* Duplicate jobs for seamless loop */}
-        {[...jobs, ...jobs].map((job, index) => (
-          <Link 
-            key={`${job.id}-${index}`} 
-            href={`/jobs/${job.id}`}
-            className="inline-flex items-center px-8 py-3 mx-6 bg-white rounded-full shadow-lg hover:shadow-xl transition-all duration-300 hover:scale-105 hover:-translate-y-1 whitespace-nowrap border border-andela-green/20 hover:border-andela-green/40"
-          >
-            <div className="w-2 h-2 bg-andela-green rounded-full mr-3 animate-pulse"></div>
-            <span className="text-andela-green font-semibold text-sm">{job.title}</span>
-            <ArrowRight className="h-4 w-4 ml-3 text-andela-green" />
-          </Link>
-        ))}
+    <div className="py-6 bg-gradient-to-r from-andela-green/5 via-white/50 to-andela-green/5 border-t border-andela-green/10">
+      {/* Header */}
+      <div className="text-center mb-4">
+        <div className="inline-flex items-center gap-2 bg-white/80 backdrop-blur-sm px-4 py-2 rounded-full shadow-sm border border-andela-green/20">
+          <div className="w-2 h-2 bg-orange-500 rounded-full animate-pulse"></div>
+          <span className="text-sm font-semibold text-andela-green tracking-wide">🔥 LIVE OPPORTUNITIES</span>
+        </div>
+      </div>
+      
+      {/* Marquee */}
+      <div 
+        className="marquee-container overflow-hidden"
+        onMouseEnter={() => setIsPaused(true)}
+        onMouseLeave={() => setIsPaused(false)}
+      >
+        <div className={`marquee-content ${isPaused ? 'paused' : ''}`}>
+          {duplicatedJobs.map((job, index) => (
+            <Link 
+              key={`${job.id}-${index}`} 
+              href={`/jobs/${job.id}`}
+              className="flex-shrink-0 inline-flex items-center px-6 py-3 mx-3 bg-white rounded-full shadow-md hover:shadow-lg transition-all duration-300 hover:scale-105 whitespace-nowrap border border-gray-200 hover:border-andela-green/40 group"
+            >
+              <div className="w-2 h-2 bg-andela-green rounded-full mr-3 group-hover:animate-pulse"></div>
+              <span className="text-gray-800 group-hover:text-andela-green font-medium text-sm transition-colors duration-300">
+                {job.title}
+              </span>
+              <ArrowRight className="h-4 w-4 ml-3 text-gray-400 group-hover:text-andela-green transition-colors duration-300" />
+            </Link>
+          ))}
+        </div>
+      </div>
+      
+      {/* Bottom CTA */}
+      <div className="text-center mt-4">
+        <Link 
+          href="/careers" 
+          className="inline-flex items-center gap-2 text-sm text-andela-green hover:text-andela-green/80 font-medium transition-colors duration-300"
+        >
+          <span>View All {jobs.length} Open Positions</span>
+          <ArrowRight className="h-4 w-4" />
+        </Link>
       </div>
     </div>
   );
@@ -311,16 +343,10 @@ const Hero = () => {
       {jobs.length > 0 && (
         <div className="relative z-20 mt-auto">
           <motion.div
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.6, delay: 0.8 }}
           >
-            <div className="text-center py-3 bg-gradient-to-r from-andela-green/10 to-transparent">
-              <div className="inline-flex items-center gap-2 bg-andela-green/20 backdrop-blur-sm px-4 py-2 rounded-full">
-                <div className="w-2 h-2 bg-orange-500 rounded-full animate-pulse"></div>
-                <span className="text-sm font-semibold text-andela-green">🔥 Live Opportunities</span>
-              </div>
-            </div>
             <SimpleJobMarquee jobs={jobs} />
           </motion.div>
         </div>
