@@ -193,23 +193,23 @@ export default function CareerPage() {
                   </div>
                   <div className="flex flex-col gap-1 ml-4">
                     {job.featured && (
-                      <Badge className="bg-amber-500 hover:bg-amber-600 text-white text-xs px-2 py-1">
-                        Featured
+                      <Badge className="bg-gradient-to-r from-amber-500 to-orange-500 hover:from-amber-600 hover:to-orange-600 text-white px-3 py-1 text-xs font-semibold shadow-lg">
+                        ⭐ Featured
                       </Badge>
                     )}
                     {job.urgent && (
-                      <Badge className="bg-red-500 hover:bg-red-600 text-white text-xs px-2 py-1 animate-pulse">
-                        🔥 Urgent
+                      <Badge className="bg-gradient-to-r from-red-500 to-red-600 hover:from-red-600 hover:to-red-700 text-white px-3 py-1 text-xs font-semibold shadow-lg animate-pulse">
+                        🔥 Urgent Hiring
                       </Badge>
                     )}
                     {job.priority && (
-                      <Badge className="bg-orange-500 hover:bg-orange-600 text-white text-xs px-2 py-1">
-                        ⚡ Priority
+                      <Badge className="bg-gradient-to-r from-orange-500 to-yellow-500 hover:from-orange-600 hover:to-yellow-600 text-white px-3 py-1 text-xs font-semibold shadow-lg">
+                        ⚡ Priority Role
                       </Badge>
                     )}
                     {job.isOpen && (
-                      <Badge className="bg-green-500 hover:bg-green-600 text-white text-xs px-2 py-1">
-                        ✓ Open
+                      <Badge className="bg-gradient-to-r from-green-500 to-green-600 hover:from-green-600 hover:to-green-700 text-white px-3 py-1 text-xs font-semibold shadow-lg">
+                        ✅ Actively Hiring
                       </Badge>
                     )}
                   </div>
