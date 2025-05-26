@@ -430,7 +430,15 @@ function SubmittedCandidates() {
     const bulkDeleteMutation = useMutation({
     mutationFn: async (ids: number[]) => {
       console.log('Sending bulk delete request with IDs:', ids);
-      const requestBody = { ids };
+      console.log('IDs validation:', ids.map(id => ({ id, type: typeof id, isValid: typeof id === 'number' && !isNaN(id) && id > 0 })));
+      
+      // Final validation before sending
+      const validIds = ids.filter(id => typeof id === 'number' && !isNaN(id) && id > 0);
+      if (validIds.length === 0) {
+        throw new Error('No valid candidate IDs to delete');
+      }
+      
+      const requestBody = { ids: validIds };
       console.log('Request body:', JSON.stringify(requestBody));
       
       const res = await apiRequest("DELETE", `/api/submitted-candidates/bulk`, requestBody);
@@ -769,8 +777,8 @@ function SubmittedCandidates() {
     if (checked) {
       const currentPageIds = candidatesData?.data
         ?.map((candidate: SubmittedCandidate) => candidate.id)
-        .filter(id => id && typeof id === 'number' && !isNaN(id)) || [];
-      console.log("Selecting all current page IDs:", currentPageIds);
+        .filter(id => id && typeof id === 'number' && !isNaN(id) && id > 0) || [];
+      console.log("Selecting all current page IDs:", currentPageIds, "Total candidates on page:", candidatesData?.data?.length);
       setSelectedCandidateIds(currentPageIds);
     } else {
       setSelectedCandidateIds([]);
@@ -813,17 +821,25 @@ function SubmittedCandidates() {
 
   // Handle individual candidate selection
   const handleSelectCandidate = (candidateId: number, checked: boolean) => {
-    console.log("Selecting candidate:", candidateId, "checked:", checked);
+    console.log("Selecting candidate:", candidateId, "type:", typeof candidateId, "checked:", checked);
+
+    // Validate that candidateId is a valid number
+    if (!candidateId || typeof candidateId !== 'number' || isNaN(candidateId) || candidateId <= 0) {
+      console.error("Invalid candidate ID provided:", candidateId);
+      return;
+    }
 
     if (checked) {
       // Ensure we don't add duplicates and that the ID is valid
-      if (candidateId && !selectedCandidateIds.includes(candidateId)) {
+      if (!selectedCandidateIds.includes(candidateId)) {
         setSelectedCandidateIds(prev => [...prev, candidateId]);
+        console.log("Added candidate ID:", candidateId);
       }
     } else {
       setSelectedCandidateIds(prev => prev.filter(id => id !== candidateId));
       setIsSelectAllChecked(false);
       setIsSelectAllPages(false);
+      console.log("Removed candidate ID:", candidateId);
     }
   };
 
@@ -1545,12 +1561,16 @@ function SubmittedCandidates() {
                             type="checkbox"
                             checked={selectedCandidateIds.includes(candidate.id)}
                             onChange={(e) => {
-                              console.log("Checkbox changed for candidate:", candidate.id, "checked:", e.target.checked);
-                              handleSelectCandidate(candidate.id, e.target.checked);
+                              console.log("Checkbox changed for candidate:", candidate.id, "type:", typeof candidate.id, "checked:", e.target.checked);
+                              if (candidate.id && typeof candidate.id === 'number') {
+                                handleSelectCandidate(candidate.id, e.target.checked);
+                              } else {
+                                console.error("Invalid candidate ID:", candidate.id);
+                              }
                             }}
                           />
                         </TableCell>
-                        <TableCell>{candidate.id}</TableCell>
+                        <TableCell className="font-mono text-sm">{candidate.id}</TableCell>
                         <TableCell>{candidate.sourcedBy || '-'}</TableCell>
                         <TableCell>{candidate.client || '-'}</TableCell>
                         <TableCell>{candidate.poc || '-'}</TableCell>
