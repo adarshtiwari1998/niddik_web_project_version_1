@@ -14,7 +14,7 @@ import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle }
 import { Separator } from "@/components/ui/separator";
 import { getQueryFn } from "@/lib/queryClient";
 import { JobListing } from "@shared/schema";
-import { Briefcase, Clock, MapPin, Search, Filter, Loader2 } from "lucide-react";
+import { Briefcase, Clock, MapPin, Search, Filter, Loader2, Award } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 import CareersLayout from "@/components/careers/CareersLayout";
 import { format } from "date-fns";
@@ -197,13 +197,52 @@ export default function CareerPage() {
                   <div className="flex items-center">
                     <Clock className="h-4 w-4 mr-2" />
                     <span>
-                      {job.createdAt && !isNaN(new Date(job.createdAt).getTime()) 
-                        ? format(new Date(job.createdAt), "MMM dd, yyyy")
+                      {job.postedDate && !isNaN(new Date(job.postedDate).getTime()) 
+                        ? format(new Date(job.postedDate), "MMM dd, yyyy")
                         : "Recently posted"
                       }
                     </span>
                   </div>
                 </div>
+                
+                {/* Job Summary Section */}
+                <div className="space-y-2 text-sm mb-4 p-3 bg-gray-50 dark:bg-gray-800 rounded-md">
+                  <h4 className="font-semibold text-gray-900 dark:text-gray-100 mb-2">Job Summary</h4>
+                  
+                  <div className="grid grid-cols-1 gap-2">
+                    <div className="flex items-center justify-between">
+                      <div className="flex items-center text-muted-foreground">
+                        <Award className="h-3 w-3 mr-1" />
+                        <span>Experience Level:</span>
+                      </div>
+                      <span className="font-medium capitalize">{job.experienceLevel}</span>
+                    </div>
+                    
+                    <div className="flex items-center justify-between">
+                      <span className="text-muted-foreground">Salary Range:</span>
+                      <span className="font-medium">{job.salary || "Competitive"}</span>
+                    </div>
+                    
+                    <div className="flex items-center justify-between">
+                      <span className="text-muted-foreground">Category:</span>
+                      <span className="font-medium">{job.category}</span>
+                    </div>
+                    
+                    <div className="flex items-center justify-between">
+                      <div className="flex items-center text-muted-foreground">
+                        <Clock className="h-3 w-3 mr-1" />
+                        <span>Posted On:</span>
+                      </div>
+                      <span className="font-medium">
+                        {job.postedDate && !isNaN(new Date(job.postedDate).getTime()) 
+                          ? format(new Date(job.postedDate), "MMM dd, yyyy")
+                          : "Recently"
+                        }
+                      </span>
+                    </div>
+                  </div>
+                </div>
+
                 <div className="text-sm text-gray-600 leading-relaxed">
                   <p className="line-clamp-3">{job.description}</p>
                 </div>
