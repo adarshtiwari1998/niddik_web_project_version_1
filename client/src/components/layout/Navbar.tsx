@@ -1,3 +1,4 @@
+
 import { useState, useEffect } from "react";
 import { Link } from "wouter";
 import { Menu, X, ChevronDown } from "lucide-react";
@@ -301,7 +302,7 @@ const Navbar: React.FC<NavbarProps> = ({ hasAnnouncementAbove = true }) => {
                   )}
                 </div>
               ) : (
-                <Link href={item.href || "#"} className="font-medium">
+                <Link href={item.href || "#"} className="font-medium" onClick={() => setIsMobileMenuOpen(false)}>
                   {item.label}
                 </Link>
               )}
@@ -367,8 +368,8 @@ const Navbar: React.FC<NavbarProps> = ({ hasAnnouncementAbove = true }) => {
           </div>
         </nav>
       </div>
-    
+    </>
   );
 };
-    
+
 export default Navbar;
