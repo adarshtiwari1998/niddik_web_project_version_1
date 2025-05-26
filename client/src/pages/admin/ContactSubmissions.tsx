@@ -31,7 +31,7 @@ const ContactSubmissions = () => {
 
   // Fetch contact submissions
   const { data: submissionsData, isLoading, error, refetch } = useQuery({
-    queryKey: ['/api/contact-submissions', { page: currentPage, limit: itemsPerPage, search: searchTerm, interest: interestFilter }],
+    queryKey: ['/api/admin/contact-submissions', { page: currentPage, limit: itemsPerPage, search: searchTerm, interest: interestFilter }],
     queryFn: getQueryFn({ on401: "throw" }),
   });
 
@@ -107,10 +107,7 @@ const ContactSubmissions = () => {
           <div className="space-y-6">
             <div className="flex justify-between items-center">
               <div>
-                <h1 className="text-3xl font-bold tracking-tight">Contact Submissions</h1>
-                <p className="text-muted-foreground">
-                  Manage and review contact form submissions from your website
-                </p>
+              
               </div>
               <Button onClick={() => refetch()} variant="outline">
                 <RefreshCw className="h-4 w-4 mr-2" />
