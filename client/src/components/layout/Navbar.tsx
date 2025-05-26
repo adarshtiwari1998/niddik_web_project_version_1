@@ -95,7 +95,7 @@ const navItems: NavItem[] = [
 ];
 
 const Navbar: React.FC<NavbarProps> = ({ hasAnnouncementAbove = true }) => {
-  const [location] = useLocation();
+  const [location, navigate] = useLocation();
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const [isScrolled, setIsScrolled] = useState(false);
   const [isTransparent, setIsTransparent] = useState(true);
@@ -288,7 +288,8 @@ const Navbar: React.FC<NavbarProps> = ({ hasAnnouncementAbove = true }) => {
                     e.preventDefault();
                     if (searchTerm.trim()) {
                       setIsSearchOpen(false);
-                      window.location.href = `/search?q=${encodeURIComponent(searchTerm.trim())}`;
+                      // Use wouter's navigate for client-side routing
+                      navigate(`/search?q=${encodeURIComponent(searchTerm.trim())}`);
                     }
                   }}>
                     <input
@@ -309,7 +310,10 @@ const Navbar: React.FC<NavbarProps> = ({ hasAnnouncementAbove = true }) => {
                           <div key={index} className="block py-2 px-1 hover:bg-gray-50 rounded transition-colors cursor-pointer">
                             <Link 
                               href={result.href || "#"}
-                              onClick={() => setIsSearchOpen(false)}
+                              onClick={() => {
+                                setIsSearchOpen(false);
+                                setSearchTerm("");
+                              }}
                               className="block w-full text-left"
                             >
                               <div className="flex flex-col">
