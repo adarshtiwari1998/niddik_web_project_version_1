@@ -106,7 +106,7 @@ export default function CareersHeader() {
                     <span>Last logout: {formatLastLogout(user.lastLogout)}</span>
                   </div>
                 )}
-                <Link href="/candidate/dashboard">
+                <Link href={user.role === 'admin' ? '/admin/dashboard' : '/candidate/dashboard'}>
                   <Button variant="default" size="sm">
                     Dashboard
                   </Button>
@@ -131,18 +131,37 @@ export default function CareersHeader() {
                       </div>
                     </div>
                     <DropdownMenuSeparator />
-                    <DropdownMenuItem asChild>
-                      <Link href="/candidate/profile" className="cursor-pointer w-full">
-                        <User className="mr-2 h-4 w-4" />
-                        Profile
-                      </Link>
-                    </DropdownMenuItem>
-                    <DropdownMenuItem asChild>
-                      <Link href="/candidate/applications" className="cursor-pointer w-full">
-                        <Calendar className="mr-2 h-4 w-4" />
-                        My Applications
-                      </Link>
-                    </DropdownMenuItem>
+                    {user.role === 'admin' ? (
+                      <>
+                        <DropdownMenuItem asChild>
+                          <Link href="/admin/dashboard?tab=account" className="cursor-pointer w-full">
+                            <User className="mr-2 h-4 w-4" />
+                            Account Settings
+                          </Link>
+                        </DropdownMenuItem>
+                        <DropdownMenuItem asChild>
+                          <Link href="/admin/candidates" className="cursor-pointer w-full">
+                            <Calendar className="mr-2 h-4 w-4" />
+                            Manage Candidates
+                          </Link>
+                        </DropdownMenuItem>
+                      </>
+                    ) : (
+                      <>
+                        <DropdownMenuItem asChild>
+                          <Link href="/candidate/profile" className="cursor-pointer w-full">
+                            <User className="mr-2 h-4 w-4" />
+                            Profile
+                          </Link>
+                        </DropdownMenuItem>
+                        <DropdownMenuItem asChild>
+                          <Link href="/candidate/applications" className="cursor-pointer w-full">
+                            <Calendar className="mr-2 h-4 w-4" />
+                            My Applications
+                          </Link>
+                        </DropdownMenuItem>
+                      </>
+                    )}
                     <DropdownMenuSeparator />
                     <DropdownMenuItem onClick={handleLogout} className="cursor-pointer">
                       <LogOut className="mr-2 h-4 w-4" />
