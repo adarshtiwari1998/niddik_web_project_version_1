@@ -2022,15 +2022,17 @@ Next
                     <CardDescription>Breakdown of candidates by current status</CardDescription>
                   </CardHeader>
                   <CardContent>
-                    <div className="space-y-4">
-                      {Object.entries(analyticsData.data.statusCounts).map(([status, count]) => (
-                        <div key={`status-${status}`} className="flex items-center justify-between">
-                          <div className="flex items-center gap-2">
-                            <StatusBadge status={status} />
+                    <div className="max-h-96 overflow-y-auto pr-2">
+                      <div className="space-y-4">
+                        {Object.entries(analyticsData.data.statusCounts).map(([status, count]) => (
+                          <div key={`status-${status}`} className="flex items-center justify-between">
+                            <div className="flex items-center gap-2">
+                              <StatusBadge status={status} />
+                            </div>
+                            <div className="text-sm font-medium">{count as number}</div>
                           </div>
-                          <div className="text-sm font-medium">{count as number}</div>
-                        </div>
-                      ))}
+                        ))}
+                      </div>
                     </div>
                   </CardContent>
                 </Card>
@@ -2041,21 +2043,22 @@ Next
                     <CardDescription>Clients with most candidate submissions</CardDescription>
                   </CardHeader>
                   <CardContent>
-                    <div className="space-y-4">
-                      {Object.entries(analyticsData.data.clientCounts || {})
-                        .sort(([, a], [, b]) => (b as number) - (a as number))
-                        .slice(0, 5)
-                        .map(([client, count]) => (
-                          <div key={client} className="flex items-center justify-between">
-                            <div className="font-medium">{client}</div>
-                            <div className="text-sm text-muted-foreground">{count as number} candidates</div>
+                    <div className="max-h-96 overflow-y-auto pr-2">
+                      <div className="space-y-4">
+                        {Object.entries(analyticsData.data.clientCounts || {})
+                          .sort(([, a], [, b]) => (b as number) - (a as number))
+                          .map(([client, count]) => (
+                            <div key={client} className="flex items-center justify-between">
+                              <div className="font-medium truncate max-w-xs" title={client}>{client}</div>
+                              <div className="text-sm text-muted-foreground flex-shrink-0">{count as number} candidates</div>
+                            </div>
+                          ))}
+                        {(!analyticsData.data.clientCounts || Object.keys(analyticsData.data.clientCounts).length === 0) && (
+                          <div className="text-center py-4 text-sm text-muted-foreground">
+                            No client data available
                           </div>
-                        ))}
-                      {(!analyticsData.data.clientCounts || Object.keys(analyticsData.data.clientCounts).length === 0) && (
-                        <div className="text-center py-4 text-sm text-muted-foreground">
-                          No client data available
-                        </div>
-                      )}
+                        )}
+                      </div>
                     </div>
                   </CardContent>
                 </Card>
