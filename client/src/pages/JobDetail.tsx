@@ -383,28 +383,111 @@ const handleResumeRemove = async () => {
                   <CardTitle>Job Description</CardTitle>
                 </CardHeader>
                 <CardContent>
-                  <div className="prose dark:prose-invert max-w-none">
-                    <div className="whitespace-pre-line">
-                      {job.description.split(/\d+\./).map((item, index) => {
-                        if (index === 0) {
-                          // First part before any numbering
-                          return item.trim() && (
-                            <p key={index} className="mb-4">
-                              {item.trim()}
-                            </p>
-                          );
-                        }
-                        return item.trim() && (
-                          <div key={index} className="mb-3">
-                            <div className="flex items-start gap-2">
-                              <span className="font-semibold text-primary mt-0.5">{index}.</span>
-                              <span className="flex-1">{item.trim()}</span>
+                  {/* Extract and highlight employment details */}
+                  {(() => {
+                    const description = job.description;
+                    const employmentKeywords = [
+                      'Employment Type:', 'Job Type:', 'Position Type:',
+                      'Experience:', 'Years of Experience:', 'Required Experience:',
+                      'Notice Period:', 'Joining:', 'Availability:',
+                      'Salary:', 'Package:', 'CTC:', 'Compensation:',
+                      'Location:', 'Work Location:', 'Office Location:',
+                      'Work Mode:', 'Remote:', 'Hybrid:', 'Onsite:'
+                    ];
+                    
+                    // Extract employment details
+                    const employmentDetails = [];
+                    const lines = description.split('\n');
+                    
+                    lines.forEach(line => {
+                      const trimmedLine = line.trim();
+                      if (employmentKeywords.some(keyword => 
+                        trimmedLine.toLowerCase().includes(keyword.toLowerCase())
+                      )) {
+                        employmentDetails.push(trimmedLine);
+                      }
+                    });
+                    
+                    // Remove employment details from main description
+                    let cleanDescription = description;
+                    employmentDetails.forEach(detail => {
+                      cleanDescription = cleanDescription.replace(detail, '');
+                    });
+                    
+                    return (
+                      <div className="space-y-6">
+                        {/* Highlighted Employment Details */}
+                        {employmentDetails.length > 0 && (
+                          <div className="bg-gradient-to-r from-blue-50 to-indigo-50 dark:from-blue-950/20 dark:to-indigo-950/20 border border-blue-200/50 dark:border-blue-800/30 rounded-xl p-6">
+                            <div className="flex items-center gap-3 mb-4">
+                              <div className="w-8 h-8 rounded-full bg-gradient-to-r from-blue-500 to-indigo-600 flex items-center justify-center">
+                                <Briefcase className="w-4 h-4 text-white" />
+                              </div>
+                              <h3 className="text-lg font-semibold text-gray-800 dark:text-gray-200">
+                                Key Employment Details
+                              </h3>
+                            </div>
+                            <div className="grid gap-3">
+                              {employmentDetails.map((detail, index) => {
+                                const [label, ...valueParts] = detail.split(':');
+                                const value = valueParts.join(':').trim();
+                                
+                                if (label && value) {
+                                  return (
+                                    <div key={index} className="flex items-start gap-3 p-3 bg-white/50 dark:bg-gray-900/30 rounded-lg border border-blue-100/50 dark:border-blue-800/20">
+                                      <div className="flex-shrink-0 w-2 h-2 rounded-full bg-blue-500 mt-2"></div>
+                                      <div className="flex-1 min-w-0">
+                                        <div className="text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
+                                          {label.trim()}:
+                                        </div>
+                                        <div className="text-gray-900 dark:text-gray-100 font-semibold">
+                                          {value}
+                                        </div>
+                                      </div>
+                                    </div>
+                                  );
+                                }
+                                
+                                // Handle cases where the format might be different
+                                return (
+                                  <div key={index} className="flex items-center gap-3 p-3 bg-white/50 dark:bg-gray-900/30 rounded-lg border border-blue-100/50 dark:border-blue-800/20">
+                                    <div className="flex-shrink-0 w-2 h-2 rounded-full bg-blue-500"></div>
+                                    <div className="text-gray-900 dark:text-gray-100 font-medium">
+                                      {detail}
+                                    </div>
+                                  </div>
+                                );
+                              })}
                             </div>
                           </div>
-                        );
-                      })}
-                    </div>
-                  </div>
+                        )}
+                        
+                        {/* Main Job Description */}
+                        <div className="prose dark:prose-invert max-w-none">
+                          <div className="whitespace-pre-line">
+                            {cleanDescription.split(/\d+\./).map((item, index) => {
+                              if (index === 0) {
+                                // First part before any numbering
+                                return item.trim() && (
+                                  <p key={index} className="mb-4">
+                                    {item.trim()}
+                                  </p>
+                                );
+                              }
+                              return item.trim() && (
+                                <div key={index} className="mb-3">
+                                  <div className="flex items-start gap-2">
+                                    <span className="font-semibold text-primary mt-0.5">{index}.</span>
+                                    <span className="flex-1">{item.trim()}</span>
+                                  </div>
+                                </div>
+                              );
+                            })}
+                          </div>
+                        </div>
+                      </div>
+                    );
+                  })()}
                 </CardContent>
               </Card>
 
