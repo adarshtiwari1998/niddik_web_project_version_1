@@ -722,21 +722,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
         });
       }
 
-      // Check if all candidates exist (same validation pattern as single delete)
-      const existingCandidates = await Promise.all(
-        numericIds.map(id => storage.getSubmittedCandidateById(id))
-      );
-
-      const nonExistentIds = numericIds.filter((id, index) => !existingCandidates[index]);
-      
-      if (nonExistentIds.length > 0) {
-        return res.status(404).json({
-          success: false,
-          message: `Some candidates not found: ${nonExistentIds.join(', ')}`
-        });
-      }
-
-      // Perform bulk deletion (just like single delete calls storage method directly)
+      // Perform bulk deletion directly (same as single delete - no existence check)
       await storage.bulkDeleteSubmittedCandidates(numericIds);
 
       return res.status(200).json({
