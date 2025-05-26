@@ -112,6 +112,9 @@ export const jobListings = pgTable("job_listings", {
   contactEmail: text("contact_email"),
   status: text("status").notNull().default("active"), // active, filled, expired
   featured: boolean("featured").notNull().default(false),
+  urgent: boolean("urgent").notNull().default(false),
+  priority: boolean("priority").notNull().default(false),
+  isOpen: boolean("is_open").notNull().default(false),
   postedDate: text("posted_date").notNull(),
   expiryDate: text("expiry_date"),
   category: text("category").notNull(), // Technology, Design, Marketing, etc.
