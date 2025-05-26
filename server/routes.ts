@@ -633,6 +633,14 @@ export async function registerRoutes(app: Express): Promise<Server> {
         });
       }
 
+      // Limit batch size to prevent payload issues
+      if (candidates.length > 25) {
+        return res.status(400).json({ 
+          success: false, 
+          message: "Batch size too large. Maximum 25 candidates per batch." 
+        });
+      }
+
       // Validate each candidate and calculate margins/profits
       const validatedCandidates = [];
       const errors = [];
@@ -660,6 +668,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
         } catch (validationError) {
           errors.push({
             index: i,
+            candidate: candidate.candidateName || `Row ${i + 1}`,
             errors: validationError instanceof z.ZodError ? validationError.errors : [{ message: "Validation failed" }]
           });
         }
@@ -677,7 +686,8 @@ export async function registerRoutes(app: Express): Promise<Server> {
       return res.status(201).json({ 
         success: true, 
         data: createdCandidates,
-        count: createdCandidates.length
+        count: createdCandidates.length,
+        message: `Successfully imported ${createdCandidates.length} candidates`
       });
     } catch (error) {
       console.error('Error bulk creating submitted candidates:', error);

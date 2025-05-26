@@ -24,6 +24,7 @@ import { Textarea } from "@/components/ui/textarea";
 import Papa from 'papaparse';
 import React from 'react';
 import { useLocation, Link } from "wouter";
+import { Progress } from "@/components/ui/progress"
 
 // Define the type for a submitted candidate
 type SubmittedCandidate = {
@@ -870,7 +871,7 @@ function SubmittedCandidates() {
                           <TableRow>
                             <TableHead>Name</TableHead>
                             <TableHead>Email</TableHead>
-                            <TableHead>Skills</TableHead>
+                            <TableHead                            <TableHead>Skills</TableHead>
                             <TableHead>Location</TableHead>
                             <TableHead>Actions</TableHead>
                           </TableRow>
@@ -961,6 +962,20 @@ function SubmittedCandidates() {
                             )}
                           </Button>
                         </div>
+                      </div>
+
+                        {isUploading && (
+                          <div className="space-y-2">
+                            <div className="flex justify-between text-sm">
+                              <span>Import Progress</span>
+                              <span>{uploadProgress}%</span>
+                            </div>
+                            <Progress value={uploadProgress} className="w-full" />
+                            <p className="text-xs text-muted-foreground">
+                              Processing batch {Math.ceil((uploadProgress / 100) * Math.ceil(importData.length / 20))} of {Math.ceil(importData.length / 20)}
+                            </p>
+                          </div>
+                        )}
                       </div>
 
                       <div className="max-h-[400px] overflow-auto">
