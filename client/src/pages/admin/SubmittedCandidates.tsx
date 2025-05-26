@@ -185,6 +185,11 @@ function SubmittedCandidates() {
   const [isApplicantsDialogOpen, setIsApplicantsDialogOpen] = useState(false);
   const [editDialogLoading, setEditDialogLoading] = useState(false);
 
+  // Add state variables for upload status and progress
+  const [uploadStatus, setUploadStatus] = useState<'idle' | 'uploading' | 'success' | 'error'>('idle');
+  const [uploadProgress, setUploadProgress] = useState(0);
+  const [uploadMessage, setUploadMessage] = useState('');
+
   // Calculate margin and profit based on bill rate and pay rate
   const calculateMarginAndProfit = (billRate: string, payRate: string) => {
     const bill = parseFloat(billRate || "0");
@@ -417,12 +422,31 @@ function SubmittedCandidates() {
   // Mutation to import candidates in bulk
   const importMutation = useMutation({
     mutationFn: async (data: any[]) => {
-      const res = await apiRequest("POST", "/api/submitted-candidates/bulk", { candidates: data });
-      if (!res.ok) {
-        const errorData = await res.json();
-        throw new Error(errorData.message || "Failed to import candidates");
+      // Implement chunking logic
+      const chunkSize = 50; // Adjust chunk size as needed
+      const numChunks = Math.ceil(data.length / chunkSize);
+
+      for (let i = 0; i < numChunks; i++) {
+        const chunk = data.slice(i * chunkSize, (i + 1) * chunkSize);
+        
+        // Simulate upload progress
+        const progress = ((i + 1) / numChunks) * 100;
+        setUploadProgress(progress);
+        setUploadMessage(`Uploading chunk ${i + 1} of ${numChunks}...`);
+        setUploadStatus('uploading');
+
+        const res = await apiRequest("POST", "/api/submitted-candidates/bulk", { candidates: chunk });
+        if (!res.ok) {
+          const errorData = await res.json();
+          setUploadStatus('error');
+          setUploadMessage(errorData.message || "Failed to import candidates");
+          throw new Error(errorData.message || "Failed to import candidates"); // Stop processing on error
+        }
       }
-      return await res.json();
+      
+      setUploadStatus('success');
+      setUploadMessage('Candidates imported successfully!');
+      return { count: data.length }; // Return total count after successful import
     },
     onSuccess: (data) => {
       toast({
@@ -434,6 +458,9 @@ function SubmittedCandidates() {
       setIsPreviewMode(false);
       queryClient.invalidateQueries({ queryKey: ['/api/submitted-candidates'] });
       queryClient.invalidateQueries({ queryKey: ['/api/submitted-candidates/analytics/summary'] });
+      setUploadStatus('idle');
+      setUploadProgress(0);
+      setUploadMessage('');
     },
     onError: (error: Error) => {
       toast({
@@ -441,6 +468,8 @@ function SubmittedCandidates() {
         description: error.message,
         variant: "destructive",
       });
+      setUploadStatus('error');
+      setUploadMessage(error.message);
     },
   });
 
@@ -832,9 +861,7 @@ function SubmittedCandidates() {
                   </div>
                   <a 
                     href="https://res.cloudinary.com/dhanz6zty/raw/upload/v1748032463/Import_from_Sheet___Niddik_-_Sheet1_1_ujofic.csv"
-                    target="_blank"
-                    className="text-sm text-primary hover:underline"
-                  >
+                    target="_blank">
                     View Sample Format
                   </a>
                 </div>
@@ -957,26 +984,37 @@ function SubmittedCandidates() {
                     </div>
                   )}
 
+                  
                   <DialogFooter>
-                    <Button variant="outline" onClick={() => {
-                      setIsPreviewMode(false);
-                      if (!isPreviewMode) setIsImportDialogOpen(false);
-                    }}>
+                    <Button 
+                      variant="outline" 
+                      onClick={() => {
+                        if (uploadStatus === 'uploading') return; // Prevent closing during upload
+                        setIsPreviewMode(false);
+                        if (!isPreviewMode) {
+                          setIsImportDialogOpen(false);
+                          setUploadStatus('idle');
+                          setUploadProgress(0);
+                          setUploadMessage('');
+                        }
+                      }}
+                      disabled={uploadStatus === 'uploading'}
+                    >
                       {isPreviewMode ? "Back" : "Cancel"}
                     </Button>
-                    {isPreviewMode && (
+                    {isPreviewMode && uploadStatus !== 'success' && (
                       <Button 
                         onClick={handleImportSubmit} 
-                        disabled={importMutation.isPending}
+                        disabled={uploadStatus === 'uploading' || importData.length === 0}
                       >
-                        {importMutation.isPending ? (
+                        {uploadStatus === 'uploading' ? (
                           <>
                             <Loader2 className="w-4 h-4 mr-2 animate-spin" />
-                            Importing...
+                            Uploading {Math.round(uploadProgress)}%
                           </>
                         ) : (
                           "Import Candidates"
-                                                )}
+                        )}
                       </Button>
                     )}
                   </DialogFooter>
@@ -1786,8 +1824,7 @@ function SubmittedCandidates() {
                 <Button type="submit" disabled={createMutation.isPending}>
                   {createMutation.isPending ? (
                     <>
-                      <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                      Saving...
+                      <Loader2 className="mr-2 h-4 w-4 animate-spin" />                      Saving...
                     </>
                   ) : (
                     "Add Candidate"
@@ -2145,7 +2182,7 @@ function SubmittedCandidates() {
                             <span>${marginPerHour}</span>
                           </div>
                           <div className="text-sm">
-                            <span className="font-medium">Profit/Month: </span>
+                            <span className="font-medium">Profit/Month: </span> 
                             <span>${profitPerMonth}</span>
                           </div>
                         </div>
