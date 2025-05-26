@@ -407,18 +407,18 @@ function SubmittedCandidates() {
       console.log('Candidate ID to delete:', id);
       console.log('ID type:', typeof id);
       console.log('URL being called:', `/api/submitted-candidates/${id}`);
-      
+
       const res = await apiRequest("DELETE", `/api/submitted-candidates/${id}`);
-      
+
       console.log('Response status:', res.status);
       console.log('Response ok:', res.ok);
-      
+
       if (!res.ok) {
         const errorData = await res.json();
         console.log('Error response data:', errorData);
         throw new Error(errorData.message || "Failed to delete candidate");
       }
-      
+
       const responseData = await res.json();
       console.log('Success response data:', responseData);
       return responseData;
@@ -453,7 +453,7 @@ function SubmittedCandidates() {
           return Number.isInteger(numId) && numId > 0 ? numId : null;
         })
         .filter((id): id is number => id !== null);
-      
+
       console.log('Valid IDs for deletion:', validIds);
 
       if (validIds.length === 0) {
@@ -464,7 +464,7 @@ function SubmittedCandidates() {
       const deletePromises = validIds.map(async (id) => {
         console.log(`Deleting candidate ID: ${id}`);
         const res = await apiRequest("DELETE", `/api/submitted-candidates/${id}`);
-        
+
         if (!res.ok) {
           let errorMessage = `Failed to delete candidate ${id}`;
           try {
@@ -476,7 +476,7 @@ function SubmittedCandidates() {
           }
           throw new Error(errorMessage);
         }
-        
+
         const responseData = await res.json();
         console.log(`Successfully deleted candidate ${id}:`, responseData);
         return { id, success: true };
@@ -484,7 +484,7 @@ function SubmittedCandidates() {
 
       // Wait for all deletions to complete
       const results = await Promise.allSettled(deletePromises);
-      
+
       // Check for any failures
       const failures = results.filter(result => result.status === 'rejected');
       const successes = results.filter(result => result.status === 'fulfilled');
@@ -507,7 +507,7 @@ function SubmittedCandidates() {
     onSuccess: (data) => {
       console.log('Bulk delete completed successfully:', data);
       const deletedCount = data.count || data.deletedCount || 0;
-      
+
       // Handle partial success (status 207)
       if (data.partialSuccess && data.nonExistentIds?.length > 0) {
         toast({
@@ -520,14 +520,14 @@ function SubmittedCandidates() {
           description: `Successfully deleted ${deletedCount} candidate${deletedCount > 1 ? 's' : ''}`,
         });
       }
-      
+
       // Reset selection state
       setSelectedCandidateIds([]);
       setIsSelectAllChecked(false);
       setIsSelectAllPages(false);
       setBulkDeleteConfirmOpen(false);
       setBulkDeleteIds([]);
-      
+
       // Refresh data
       queryClient.invalidateQueries({ queryKey: ['/api/submitted-candidates'] });
       queryClient.invalidateQueries({ queryKey: ['/api/submitted-candidates/analytics/summary'] });
@@ -996,6 +996,45 @@ function SubmittedCandidates() {
     }
   };
 
+  // Sorting state and function
+  const [sortField, setSortField] = useState<string>('candidateName');
+  const [sortDirection, setSortDirection] = useState<'asc' | 'desc'>('asc');
+
+  const handleSort = (field: string) => {
+    if (sortField === field) {
+      setSortDirection(sortDirection === 'asc' ? 'desc' : 'asc');
+    } else {
+      setSortField(field);
+      setSortDirection('asc');
+    }
+  };
+
+  // Sort candidates
+  const sortedCandidates = useMemo(() => {
+    if (!candidatesData?.data) return [];
+
+    return [...candidatesData.data].sort((a: any, b: any) => {
+      let aValue = a[sortField];
+      let bValue = b[sortField];
+
+      // Handle null/undefined values
+      if (aValue == null) return -1;
+      if (bValue == null) return 1;
+
+      // Convert to lowercase for string comparison
+      if (typeof aValue === 'string') aValue = aValue.toLowerCase();
+      if (typeof bValue === 'string') bValue = bValue.toLowerCase();
+
+      if (aValue < bValue) {
+        return sortDirection === 'asc' ? -1 : 1;
+      }
+      if (aValue > bValue) {
+        return sortDirection === 'asc' ? 1 : -1;
+      }
+      return 0;
+    });
+  }, [candidatesData?.data, sortField, sortDirection]);
+
   return (
     <AdminLayout title="Submitted Candidates" description="Manage candidate submissions to clients">
       <Tabs defaultValue="list" className="space-y-4">
@@ -1067,31 +1106,39 @@ function SubmittedCandidates() {
                       <Table>
                         <TableHeader>
                           <TableRow>
-                            <TableHead>Name</TableHead>
-                            <TableHead>Email</TableHead>
-                            <TableHead>Skills</TableHead>
-                            <TableHead>Experience</TableHead>
-                            <TableHead>Location</TableHead>
-                            <TableHead className="text-right">Actions</TableHead>
+                            <TableHead>Candidate Name</TableHead>
+                    <TableHead>Email</TableHead>
+                    <TableHead>Contact No</TableHead>
+                    <TableHead>Skills</TableHead>
+                    <TableHead>Experience</TableHead>
+                    <TableHead>Location</TableHead>
+                    <TableHead>Notice Period</TableHead>
+                    <TableHead>Current CTC</TableHead>
+                    <TableHead>Expected CTC</TableHead>
+                    <TableHead>Actions</TableHead>
                           </TableRow>
                         </TableHeader>
                         <TableBody>
                           {(filteredApplicants || []).map((applicant: any, index: number) => (
                             <TableRow key={`applicant-${index}`}>
                               <TableCell>{applicant.candidateName}</TableCell>
-                              <TableCell>{applicant.emailId}</TableCell>
-                              <TableCell className="max-w-[200px] truncate">{applicant.skills}</TableCell>
-                              <TableCell>{applicant.experience}</TableCell>
-                              <TableCell>{applicant.location}</TableCell>
-                              <TableCell className="text-right">
-                                <Button
-                                  onClick={() => handleSelectApplicant(applicant)}
-                                  size="sm"
-                                  variant="outline"
-                                >
-                                  Select
-                                </Button>
-                              </TableCell>
+                      <TableCell>{applicant.emailId}</TableCell>
+                      <TableCell>{applicant.contactNo || 'N/A'}</TableCell>
+                      <TableCell className="max-w-xs truncate">{applicant.skills}</TableCell>
+                      <TableCell>{applicant.experience || 'N/A'}</TableCell>
+                      <TableCell>{applicant.location || 'N/A'}</TableCell>
+                      <TableCell>{applicant.noticePeriod || 'N/A'}</TableCell>
+                      <TableCell>{applicant.currentCtc || 'N/A'}</TableCell>
+                      <TableCell>{applicant.expectedCtc || 'N/A'}</TableCell>
+                      <TableCell>
+                        <Button
+                          size="sm"
+                          onClick={() => handleSelectApplicant(applicant)}
+                          disabled={selectedApplicants.some(selected => selected.emailId === applicant.emailId)}
+                        >
+                          {selectedApplicants.some(selected => selected.emailId === applicant.emailId) ? 'Selected' : 'Select'}
+                        </Button>
+                      </TableCell>
                             </TableRow>
                           ))}
                         </TableBody>
@@ -1126,7 +1173,7 @@ function SubmittedCandidates() {
                   </div>
                   <a 
                     href="https://res.cloudinary.com/dhanz6zty/raw/upload/v1748032463/Import_from_Sheet___Niddik_-_Sheet1_1_ujofic.csv"
-                    target="_blank">
+                    target="_blank" className=>
                     View Sample Format
                   </a>
                 </div>
@@ -1623,7 +1670,7 @@ function SubmittedCandidates() {
                       </TableCell>
                     </TableRow>
                   ) : (
-                    candidatesData?.data?.map((candidate: SubmittedCandidate) => (
+                    sortedCandidates?.map((candidate: SubmittedCandidate) => (
                       <TableRow key={candidate.id}>
                          <TableCell className="w-10">
                           <input
@@ -1666,7 +1713,7 @@ function SubmittedCandidates() {
                         <TableCell>
                           <StatusBadge status={candidate.status} />
                         </TableCell>
-                        <TableCell>{candidate.salaryInLacs || '-'}</TableCell>
+                        <TableCell>{candidate.salaryInLacs || candidate.currentCtc}</TableCell>
                         <TableCell className="sticky right-0 bg-background z-20 text-right">
                           <div className="flex justify-end gap-2">
                             <Button 

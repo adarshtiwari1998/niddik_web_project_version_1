@@ -334,19 +334,21 @@ export async function registerRoutes(app: Express): Promise<Server> {
 
         if (user) {
           formattedApplicants.push({
-            candidateName: user.username || '',
+            candidateName: user.fullName || user.username || '',
             emailId: user.email || '',
-            location: user.profileData?.location || '',
-            experience: user.profileData?.experience || '',
-            skills: user.profileData?.skills || app.skills || '',
-            noticePeriod: user.profileData?.noticePeriod || '',
-            currentCtc: user.profileData?.currentCtc || '',
-            expectedCtc: user.profileData?.expectedCtc || '',
-            contactNo: user.profileData?.phone || '',
+            contactNo: user.phone || '',
+            location: user.location || user.city || '',
+            experience: user.experience || app.experience || '',
+            skills: user.skills || app.skills || '',
+            noticePeriod: user.noticePeriod || '',
+            currentCtc: user.currentCtc || '',
+            expectedCtc: user.expectedCtc || '',
             // Default values for required fields
-            client: jobListing?.companyName || '',
+            client: jobListing?.company || '',
             poc: '',
             status: 'new',
+            sourcedBy: 'Job Application Import',
+            salaryInLacs: user.currentCtc || '',
             applicationId: app.id // Use application ID to link back to the original application
           });
         }
