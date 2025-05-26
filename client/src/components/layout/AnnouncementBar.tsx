@@ -48,11 +48,11 @@ export default function AnnouncementBar({
   }, []);
 
     return (
-        <AnimatePresence>
+        <AnimatePresence mode="wait">
             {/* Conditionally render the entire motion.div */}
             {isVisible ? (
                <motion.div
-               key="announcement-visible"
+               key="announcement-bar"
                initial={{ height: 0, opacity: 0 }}
                animate={{ height: 'auto', opacity: 1 }}
                exit={{ height: 0, opacity: 0 }}
