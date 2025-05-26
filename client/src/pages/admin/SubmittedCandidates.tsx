@@ -191,6 +191,9 @@ function SubmittedCandidates() {
   const [uploadProgress, setUploadProgress] = useState(0);
   const [uploadMessage, setUploadMessage] = useState('');
 
+  // State for selected applicants in import dialog
+  const [selectedApplicants, setSelectedApplicants] = useState<any[]>([]);
+
   // State for bulk actions
   const [selectedCandidateIds, setSelectedCandidateIds] = useState<number[]>([]);
   const [isSelectAllChecked, setIsSelectAllChecked] = useState(false);
@@ -801,14 +804,26 @@ function SubmittedCandidates() {
 
   // Handle selecting an applicant to import
   const handleSelectApplicant = (applicant: any) => {
-    setNewCandidateData({
-      ...applicant,
-      submissionDate: new Date().toISOString().split('T')[0],
-      sourcedBy: 'Job Application',
-      status: 'new'
-    });
-    setIsApplicantsDialogOpen(false);
-    setIsAddingInline(true);
+    // Check if applicant is already selected
+    const isAlreadySelected = selectedApplicants.some(selected => selected.emailId === applicant.emailId);
+    
+    if (isAlreadySelected) {
+      // Remove from selected if already selected
+      setSelectedApplicants(prev => prev.filter(selected => selected.emailId !== applicant.emailId));
+    } else {
+      // Add to selected applicants
+      setSelectedApplicants(prev => [...prev, applicant]);
+      
+      // Set the candidate data for inline editing
+      setNewCandidateData({
+        ...applicant,
+        submissionDate: new Date().toISOString().split('T')[0],
+        sourcedBy: 'Job Application',
+        status: 'new'
+      });
+      setIsApplicantsDialogOpen(false);
+      setIsAddingInline(true);
+    }
   };
 
   // Form submit handlers
