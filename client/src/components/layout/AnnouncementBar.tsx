@@ -52,6 +52,7 @@ export default function AnnouncementBar({
             {/* Conditionally render the entire motion.div */}
             {isVisible ? (
                <motion.div
+               key="announcement-visible"
                initial={{ height: 0, opacity: 0 }}
                animate={{ height: 'auto', opacity: 1 }}
                exit={{ height: 0, opacity: 0 }}
@@ -96,6 +97,7 @@ export default function AnnouncementBar({
             ) : (
                 showContactInfo && (
                     <motion.div
+                        key="contact-info"
                         initial={{ height: 0, opacity: 0 }}
                         animate={{ height: 'auto', opacity: 1 }}
                         exit={{ height: 0, opacity: 0 }}
@@ -164,7 +166,7 @@ export default function AnnouncementBar({
             <AnimatePresence>
                 {isDrawerOpen && (
                     <motion.div
-                        key={`announcement-${currentIndex}`}
+                        key="sign-in-drawer"
                         initial={{ x: '100%' }}
                         animate={{ x: 0 }}
                         exit={{ x: '100%' }}
