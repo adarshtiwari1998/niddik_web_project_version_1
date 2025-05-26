@@ -52,6 +52,18 @@ export const apiRequest = async (method: string, url: string, data?: any) => {
     console.log('URL:', url);
     console.log('Data:', data);
     console.log('Data type:', typeof data);
+    
+    // Special logging for bulk delete
+    if (url.includes('/bulk')) {
+      console.log('=== BULK DELETE REQUEST ===');
+      console.log('Is bulk delete:', true);
+      if (data && data.ids) {
+        console.log('IDs array:', data.ids);
+        console.log('IDs array length:', data.ids.length);
+        console.log('First few IDs:', data.ids.slice(0, 5));
+        console.log('IDs types:', data.ids.map((id: any) => typeof id));
+      }
+    }
   }
 
   const config: RequestInit = {
@@ -66,6 +78,9 @@ export const apiRequest = async (method: string, url: string, data?: any) => {
     config.body = JSON.stringify(data);
     if (method === 'DELETE') {
       console.log('Request body:', config.body);
+      if (url.includes('/bulk')) {
+        console.log('Bulk delete request body length:', config.body.length);
+      }
     }
   }
 
@@ -77,6 +92,19 @@ export const apiRequest = async (method: string, url: string, data?: any) => {
   
   if (method === 'DELETE') {
     console.log('Response received:', response);
+    console.log('Response status:', response.status);
+    console.log('Response ok:', response.ok);
+    
+    if (url.includes('/bulk')) {
+      console.log('=== BULK DELETE RESPONSE ===');
+      try {
+        const responseClone = response.clone();
+        const responseText = await responseClone.text();
+        console.log('Response text:', responseText);
+      } catch (err) {
+        console.log('Could not read response text:', err);
+      }
+    }
   }
 
   return response;

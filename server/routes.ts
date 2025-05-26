@@ -692,6 +692,13 @@ export async function registerRoutes(app: Express): Promise<Server> {
   // Bulk delete submitted candidates
   app.delete('/api/submitted-candidates/bulk', async (req: AuthenticatedRequest, res: Response) => {
     try {
+      console.log('=== BULK DELETE API ENDPOINT ===');
+      console.log('Request method:', req.method);
+      console.log('Request URL:', req.url);
+      console.log('Request body:', req.body);
+      console.log('Request body type:', typeof req.body);
+      console.log('Request body JSON:', JSON.stringify(req.body, null, 2));
+
       // Check authentication (same as single delete)
       if (!req.isAuthenticated() || req.user?.role !== 'admin') {
         return res.status(403).json({ 
@@ -702,37 +709,50 @@ export async function registerRoutes(app: Express): Promise<Server> {
 
       const { ids } = req.body;
 
+      console.log('Extracted ids:', ids);
+      console.log('Ids type:', typeof ids);
+      console.log('Is array:', Array.isArray(ids));
+
       // Basic validation (same pattern as single delete)
       if (!ids || !Array.isArray(ids) || ids.length === 0) {
+        console.log('Validation failed - invalid ids array');
         return res.status(400).json({ 
           success: false, 
-          message: "Invalid request: 'ids' must be a non-empty array" 
+          message: "No candidate IDs provided" 
         });
       }
 
       // Convert IDs to numbers and validate them (exactly like single delete)
       const numericIds = [];
       for (const id of ids) {
+        console.log('Processing ID:', id, 'type:', typeof id);
         const numericId = parseInt(String(id), 10);
+        console.log('Converted to numeric:', numericId, 'isNaN:', isNaN(numericId));
         if (isNaN(numericId)) {
+          console.log('Invalid ID found:', id, 'converted to:', numericId);
           return res.status(400).json({ 
             success: false, 
-            message: "Invalid candidate ID" 
+            message: `Invalid candidate ID: ${id}` 
           });
         }
         numericIds.push(numericId);
       }
 
+      console.log('Final numeric IDs for deletion:', numericIds);
+
       // Perform bulk deletion directly (same as single delete - no existence check)
-      await storage.bulkDeleteSubmittedCandidates(numericIds);
+      const deleteResults = await storage.bulkDeleteSubmittedCandidates(numericIds);
 
-      return res.status(200).json({
-        success: true,
-        message: "Candidates deleted successfully"
+      console.log('Delete results:', deleteResults);
+
+      return res.status(200).json({ 
+        success: true, 
+        message: `Successfully deleted ${deleteResults.count} candidate(s)`,
+        count: deleteResults.count,
+        deletedIds: deleteResults.deletedIds
       });
-
     } catch (error) {
-      console.error('Error deleting submitted candidates:', error);
+      console.error('Error in bulk delete submitted candidates:', error);
       return res.status(500).json({ 
         success: false, 
         message: "Internal server error" 
@@ -920,8 +940,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
       console.error('Error updating application status:', error);
       return res.status(500).json({
         success: false,
-        message: "Internal server error"
-      });
+        message: "Internal server error"      });
     }
   });
 
