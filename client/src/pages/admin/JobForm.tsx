@@ -160,7 +160,7 @@ export default function JobForm() {
         company: "NIDDIK (An IT Division of NIDDIKKARE LLP)",
         location: "",
         jobType: "Full-time",
-        experienceLevel: "Mid",
+        experienceLevel: "Entry",
         salary: "",
         description: "",
         requirements: "",
@@ -169,7 +169,7 @@ export default function JobForm() {
         contactEmail: "",
         status: "active",
         featured: false,
-        category: "Engineering & Architecture",
+        category: "Administrative",
         skills: "",
       };
     },
