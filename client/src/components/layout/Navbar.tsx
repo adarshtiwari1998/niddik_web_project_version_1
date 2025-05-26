@@ -223,22 +223,43 @@ const Navbar: React.FC<NavbarProps> = ({ hasAnnouncementAbove = true }) => {
 
               {isSearchOpen && (
                 <div className="absolute right-0 mt-2 w-64 rounded-lg shadow-xl bg-white p-4 opacity-100 visible transition-all duration-300 transform origin-top-right z-50">
-                  <input
-                    type="text"
-                    placeholder="Search..."
-                    className="w-full px-3 py-2 border rounded-md focus:ring focus:ring-andela-green"
-                    value={searchTerm}
-                    onChange={(e) => setSearchTerm(e.target.value)}
-                  />
+                  <form onSubmit={(e) => {
+                    e.preventDefault();
+                    if (searchTerm.trim()) {
+                      setIsSearchOpen(false);
+                      window.location.href = `/search?q=${encodeURIComponent(searchTerm.trim())}`;
+                    }
+                  }}>
+                    <input
+                      type="text"
+                      placeholder="Search..."
+                      className="w-full px-3 py-2 border rounded-md focus:ring focus:ring-andela-green"
+                      value={searchTerm}
+                      onChange={(e) => setSearchTerm(e.target.value)}
+                    />
+                  </form>
                   {searchResults.length > 0 && (
                     <div className="mt-2">
                       {searchResults.map((result, index) => (
-                        <div key={index} className="block py-2 hover:text-andela-green transition-colors">
-                          <Link href={result.href || "#"}>
+                        <div key={index} className="block py-2 hover:text-andela-green transition-colors cursor-pointer">
+                          <Link 
+                            href={result.href || "#"}
+                            onClick={() => setIsSearchOpen(false)}
+                            className="block w-full text-left"
+                          >
                             {result.label}
                           </Link>
                         </div>
                       ))}
+                      <div className="border-t mt-2 pt-2">
+                        <Link 
+                          href={`/search?q=${encodeURIComponent(searchTerm)}`}
+                          onClick={() => setIsSearchOpen(false)}
+                          className="block py-2 text-sm text-andela-green hover:text-andela-dark transition-colors"
+                        >
+                          View all results for "{searchTerm}"
+                        </Link>
+                      </div>
                     </div>
                   )}
                 </div>

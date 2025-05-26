@@ -48,15 +48,16 @@ import CommunityInvolvement from './pages/CommunityInvolvement';
 import ITPartners from './pages/ITPartners';
 import NonITPartners from './pages/NonITPartners';
 import HealthcarePartners from './pages/HealthcarePartners';
+import SearchPage from "@/pages/SearchPage";
 
 // Component to handle scroll restoration
 function ScrollToTop() {
     const [location] = useLocation();
-    
+
     useEffect(() => {
         window.scrollTo(0, 0);
     }, [location]);
-    
+
     return null;
 }
 
@@ -86,6 +87,7 @@ function Router() {
             <Route path="/partners/it" component={ITPartners} />
             <Route path="/partners/non-it" component={NonITPartners} />
             <Route path="/partners/healthcare" component={HealthcarePartners} />
+            <Route path="/search" component={SearchPage} />
 
             {/* Company Routes */}
             <Route path="/about-us" component={AboutUs} />
