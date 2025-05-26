@@ -608,7 +608,7 @@ export default function Candidates() {
                                         <DialogHeader>
                                           <DialogTitle>Cover Letter</DialogTitle>
                                           <DialogDescription>
-                                            Full cover letter from {application.user.fullName}
+                                            Full cover letter from {application.user?.fullName || 'Unknown User'}
                                           </DialogDescription>
                                         </DialogHeader>
                                         <div className="mt-4">
