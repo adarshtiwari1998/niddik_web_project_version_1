@@ -525,10 +525,9 @@ export default function Candidates() {
                         <TableHead>Notice Period</TableHead>
                         <TableHead>Location</TableHead>
                         <TableHead>CTC</TableHead>
+                        <TableHead>Skills</TableHead>
+                        <TableHead>Cover Letter/Note</TableHead>
                         <TableHead>Expected CTC</TableHead>
-                        {/* <TableHead>Bill Rate</TableHead>
-                        <TableHead>Pay Rate</TableHead>
-                        <TableHead>Margin/Profit</TableHead> */}
                         <TableHead>Status</TableHead>
                         <TableHead>Actions</TableHead>
                       </TableRow>
@@ -576,22 +575,20 @@ export default function Candidates() {
                             </div>
                           </TableCell>
                           <TableCell>
-                            <div className="flex items-center">
-                              <DollarSign className="h-3 w-3 mr-1" />
-                              {application.user.expectedCtc || "-"}
-                            </div>
-                          </TableCell>
-                          {/* <TableCell>
-                            {application.billRate ? `$${application.billRate}` : "-"}
-                          </TableCell>
-                          <TableCell>
-                            {application.payRate ? `$${application.payRate}` : "-"}
-                          </TableCell>
-                          <TableCell>
-                            {application.billRate && application.payRate 
-                              ? `$${(parseFloat(application.billRate) - parseFloat(application.payRate)).toFixed(2)}` 
-                              : "-"}
-                          </TableCell> */}
+                              <div className="max-w-[200px] overflow-hidden">
+                                <span className="text-xs text-gray-600 block truncate">
+                                  {application.skills || 'Not specified'}
+                                </span>
+                              </div>
+                            </TableCell>
+                            <TableCell>
+                              <div className="max-w-[300px] overflow-hidden">
+                                <span className="text-xs text-gray-600 block truncate" title={application.coverLetter}>
+                                  {application.coverLetter || 'No cover letter provided'}
+                                </span>
+                              </div>
+                            </TableCell>
+                            <TableCell>{application.user.expectedCtc || "-"}</TableCell>
                           <TableCell>
                             <Select
                               value={application.status}

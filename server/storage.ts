@@ -723,5 +723,68 @@ export const storage = {
     await db
       .delete(demoRequests)
       .where(eq(demoRequests.id, id));
-  }
+  },
+  async getAllJobApplications({ page = 1, limit = 10, search, status, jobId }: {
+    page?: number;
+    limit?: number;
+    search?: string;
+    status?: string;
+    jobId?: number;
+  } = {}) {
+    const offset = (page - 1) * limit;
+
+    let query = db
+      .select({
+        id: jobApplications.id,
+        jobId: jobApplications.jobId,
+        userId: jobApplications.userId,
+        coverLetter: jobApplications.coverLetter,
+        resumeUrl: jobApplications.resumeUrl,
+        status: jobApplications.status,
+        experience: jobApplications.experience,
+        skills: jobApplications.skills,
+        education: jobApplications.education,
+        additionalInfo: jobApplications.additionalInfo,
+        billRate: jobApplications.billRate,
+        payRate: jobApplications.payRate,
+        appliedDate: jobApplications.appliedDate,
+        lastUpdated: jobApplications.lastUpdated,
+        candidateName: users.candidateName,
+        email: users.email,
+        contactNo: users.contactNo,
+        location: users.location,
+        expectedCtc: users.expectedCtc,
+        jobTitle: jobListings.title,
+        company: jobListings.company
+      })
+      .from(jobApplications)
+      .leftJoin(users, eq(jobApplications.userId, users.id))
+      .leftJoin(jobListings, eq(jobApplications.jobId, jobListings.id));
+
+    if (jobId) {
+      query = query.where(eq(jobApplications.jobId, jobId));
+    }
+
+    if (status) {
+      query = query.where(eq(jobApplications.status, status));
+    }
+
+    if (search) {
+      query = query.where(
+        or(
+          like(users.candidateName, `%${search}%`),
+          like(users.email, `%${search}%`)
+        )
+      );
+    }
+
+    const applications = await query.limit(limit).offset(offset);
+
+    const totalResult = await db
+      .select({ count: sql<number>`count(*)` })
+      .from(jobApplications);
+    const total = totalResult[0].count;
+
+    return { applications, total };
+  },
 };
