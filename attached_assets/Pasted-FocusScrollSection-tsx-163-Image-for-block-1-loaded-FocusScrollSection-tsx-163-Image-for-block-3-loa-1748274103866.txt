@@ -1,0 +1,454 @@
+FocusScrollSection.tsx:163 Image for block 1 loaded
+FocusScrollSection.tsx:163 Image for block 3 loaded
+FocusScrollSection.tsx:163 Image for block 2 loaded
+FocusScrollSection.tsx:163 Image for block 5 loaded
+FocusScrollSection.tsx:163 Image for block 4 loaded
+15chunk-RPCDYKBN.js?v=d1ff9c50:521 Warning: Encountered two children with the same key, ``. Keys should be unique so that components maintain their identity across updates. Non-unique keys may cause children to be duplicated and/or omitted — the behavior is unsupported and could change in a future version.
+    at AnimatePresence (https://c97bc9b7-d459-4d54-aa25-a500aa3482fe-00-17pkxb2ueb99z.sisko.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/framer-motion.js?v=d1ff9c50:210:26)
+    at AnnouncementBar (https://c97bc9b7-d459-4d54-aa25-a500aa3482fe-00-17pkxb2ueb99z.sisko.replit.dev/src/components/layout/AnnouncementBar.tsx?t=1748272671635:23:3)
+    at div
+    at Home (https://c97bc9b7-d459-4d54-aa25-a500aa3482fe-00-17pkxb2ueb99z.sisko.replit.dev/src/pages/Home.tsx?t=1748273548759:34:61)
+    at Route (https://c97bc9b7-d459-4d54-aa25-a500aa3482fe-00-17pkxb2ueb99z.sisko.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/wouter.js?v=d1ff9c50:280:16)
+    at Switch (https://c97bc9b7-d459-4d54-aa25-a500aa3482fe-00-17pkxb2ueb99z.sisko.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/wouter.js?v=d1ff9c50:336:17)
+    at Router
+    at AuthProvider (https://c97bc9b7-d459-4d54-aa25-a500aa3482fe-00-17pkxb2ueb99z.sisko.replit.dev/src/hooks/use-auth.tsx:32:32)
+    at QueryClientProvider (https://c97bc9b7-d459-4d54-aa25-a500aa3482fe-00-17pkxb2ueb99z.sisko.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/@tanstack_react-query.js?v=d1ff9c50:2875:3)
+    at _a (https://c97bc9b7-d459-4d54-aa25-a500aa3482fe-00-17pkxb2ueb99z.sisko.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/react-helmet-async.js?v=d1ff9c50:624:5)
+    at App
+printWarning @ chunk-RPCDYKBN.js?v=d1ff9c50:521
+error @ chunk-RPCDYKBN.js?v=d1ff9c50:505
+warnOnInvalidKey @ chunk-RPCDYKBN.js?v=d1ff9c50:10219
+reconcileChildrenArray @ chunk-RPCDYKBN.js?v=d1ff9c50:10235
+reconcileChildFibers2 @ chunk-RPCDYKBN.js?v=d1ff9c50:10559
+reconcileChildren @ chunk-RPCDYKBN.js?v=d1ff9c50:14292
+updateFunctionComponent @ chunk-RPCDYKBN.js?v=d1ff9c50:14606
+beginWork @ chunk-RPCDYKBN.js?v=d1ff9c50:15924
+beginWork$1 @ chunk-RPCDYKBN.js?v=d1ff9c50:19753
+performUnitOfWork @ chunk-RPCDYKBN.js?v=d1ff9c50:19198
+workLoopSync @ chunk-RPCDYKBN.js?v=d1ff9c50:19137
+renderRootSync @ chunk-RPCDYKBN.js?v=d1ff9c50:19116
+performConcurrentWorkOnRoot @ chunk-RPCDYKBN.js?v=d1ff9c50:18678
+workLoop @ chunk-RPCDYKBN.js?v=d1ff9c50:197
+flushWork @ chunk-RPCDYKBN.js?v=d1ff9c50:176
+performWorkUntilDeadline @ chunk-RPCDYKBN.js?v=d1ff9c50:384Understand this error
+3chunk-RPCDYKBN.js?v=d1ff9c50:521 Warning: Encountered two children with the same key, ``. Keys should be unique so that components maintain their identity across updates. Non-unique keys may cause children to be duplicated and/or omitted — the behavior is unsupported and could change in a future version.
+    at AnimatePresence (https://c97bc9b7-d459-4d54-aa25-a500aa3482fe-00-17pkxb2ueb99z.sisko.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/framer-motion.js?v=d1ff9c50:210:26)
+    at AnnouncementBar (https://c97bc9b7-d459-4d54-aa25-a500aa3482fe-00-17pkxb2ueb99z.sisko.replit.dev/src/components/layout/AnnouncementBar.tsx?t=1748272671635:23:3)
+    at div
+    at Home (https://c97bc9b7-d459-4d54-aa25-a500aa3482fe-00-17pkxb2ueb99z.sisko.replit.dev/src/pages/Home.tsx?t=1748273548759:34:61)
+    at Route (https://c97bc9b7-d459-4d54-aa25-a500aa3482fe-00-17pkxb2ueb99z.sisko.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/wouter.js?v=d1ff9c50:280:16)
+    at Switch (https://c97bc9b7-d459-4d54-aa25-a500aa3482fe-00-17pkxb2ueb99z.sisko.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/wouter.js?v=d1ff9c50:336:17)
+    at Router
+    at AuthProvider (https://c97bc9b7-d459-4d54-aa25-a500aa3482fe-00-17pkxb2ueb99z.sisko.replit.dev/src/hooks/use-auth.tsx:32:32)
+    at QueryClientProvider (https://c97bc9b7-d459-4d54-aa25-a500aa3482fe-00-17pkxb2ueb99z.sisko.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/@tanstack_react-query.js?v=d1ff9c50:2875:3)
+    at _a (https://c97bc9b7-d459-4d54-aa25-a500aa3482fe-00-17pkxb2ueb99z.sisko.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/react-helmet-async.js?v=d1ff9c50:624:5)
+    at App
+printWarning @ chunk-RPCDYKBN.js?v=d1ff9c50:521Understand this error
+13chunk-RPCDYKBN.js?v=d1ff9c50:521 Warning: Encountered two children with the same key, ``. Keys should be unique so that components maintain their identity across updates. Non-unique keys may cause children to be duplicated and/or omitted — the behavior is unsupported and could change in a future version.
+    at AnimatePresence (https://c97bc9b7-d459-4d54-aa25-a500aa3482fe-00-17pkxb2ueb99z.sisko.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/framer-motion.js?v=d1ff9c50:210:26)
+    at AnnouncementBar (https://c97bc9b7-d459-4d54-aa25-a500aa3482fe-00-17pkxb2ueb99z.sisko.replit.dev/src/components/layout/AnnouncementBar.tsx?t=1748272671635:23:3)
+    at div
+    at div
+    at ServicesOverview (https://c97bc9b7-d459-4d54-aa25-a500aa3482fe-00-17pkxb2ueb99z.sisko.replit.dev/src/pages/ServicesOverview.tsx?t=1748273548759:39:61)
+    at Route (https://c97bc9b7-d459-4d54-aa25-a500aa3482fe-00-17pkxb2ueb99z.sisko.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/wouter.js?v=d1ff9c50:280:16)
+    at Switch (https://c97bc9b7-d459-4d54-aa25-a500aa3482fe-00-17pkxb2ueb99z.sisko.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/wouter.js?v=d1ff9c50:336:17)
+    at Router
+    at AuthProvider (https://c97bc9b7-d459-4d54-aa25-a500aa3482fe-00-17pkxb2ueb99z.sisko.replit.dev/src/hooks/use-auth.tsx:32:32)
+    at QueryClientProvider (https://c97bc9b7-d459-4d54-aa25-a500aa3482fe-00-17pkxb2ueb99z.sisko.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/@tanstack_react-query.js?v=d1ff9c50:2875:3)
+    at _a (https://c97bc9b7-d459-4d54-aa25-a500aa3482fe-00-17pkxb2ueb99z.sisko.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/react-helmet-async.js?v=d1ff9c50:624:5)
+    at App
+printWarning @ chunk-RPCDYKBN.js?v=d1ff9c50:521Understand this error
+chunk-RPCDYKBN.js?v=d1ff9c50:521 Warning: Encountered two children with the same key, ``. Keys should be unique so that components maintain their identity across updates. Non-unique keys may cause children to be duplicated and/or omitted — the behavior is unsupported and could change in a future version.
+    at AnimatePresence (https://c97bc9b7-d459-4d54-aa25-a500aa3482fe-00-17pkxb2ueb99z.sisko.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/framer-motion.js?v=d1ff9c50:210:26)
+    at AnnouncementBar (https://c97bc9b7-d459-4d54-aa25-a500aa3482fe-00-17pkxb2ueb99z.sisko.replit.dev/src/components/layout/AnnouncementBar.tsx?t=1748272671635:23:3)
+    at div
+    at Home (https://c97bc9b7-d459-4d54-aa25-a500aa3482fe-00-17pkxb2ueb99z.sisko.replit.dev/src/pages/Home.tsx?t=1748273548759:34:61)
+    at Route (https://c97bc9b7-d459-4d54-aa25-a500aa3482fe-00-17pkxb2ueb99z.sisko.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/wouter.js?v=d1ff9c50:280:16)
+    at Switch (https://c97bc9b7-d459-4d54-aa25-a500aa3482fe-00-17pkxb2ueb99z.sisko.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/wouter.js?v=d1ff9c50:336:17)
+    at Router
+    at AuthProvider (https://c97bc9b7-d459-4d54-aa25-a500aa3482fe-00-17pkxb2ueb99z.sisko.replit.dev/src/hooks/use-auth.tsx:32:32)
+    at QueryClientProvider (https://c97bc9b7-d459-4d54-aa25-a500aa3482fe-00-17pkxb2ueb99z.sisko.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/@tanstack_react-query.js?v=d1ff9c50:2875:3)
+    at _a (https://c97bc9b7-d459-4d54-aa25-a500aa3482fe-00-17pkxb2ueb99z.sisko.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/react-helmet-async.js?v=d1ff9c50:624:5)
+    at App
+printWarning @ chunk-RPCDYKBN.js?v=d1ff9c50:521Understand this error
+FocusScrollSection.tsx:163 Image for block 3 loaded
+FocusScrollSection.tsx:163 Image for block 1 loaded
+FocusScrollSection.tsx:163 Image for block 4 loaded
+FocusScrollSection.tsx:163 Image for block 2 loaded
+FocusScrollSection.tsx:163 Image for block 5 loaded
+client:223 [vite] hot updated: /src/pages/Home.tsx
+client:223 [vite] hot updated: /src/index.css?v=QNo7wm9biyRFNJZNvcEcs
+4chunk-RPCDYKBN.js?v=d1ff9c50:521 Warning: Encountered two children with the same key, ``. Keys should be unique so that components maintain their identity across updates. Non-unique keys may cause children to be duplicated and/or omitted — the behavior is unsupported and could change in a future version.
+    at AnimatePresence (https://c97bc9b7-d459-4d54-aa25-a500aa3482fe-00-17pkxb2ueb99z.sisko.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/framer-motion.js?v=d1ff9c50:210:26)
+    at AnnouncementBar (https://c97bc9b7-d459-4d54-aa25-a500aa3482fe-00-17pkxb2ueb99z.sisko.replit.dev/src/components/layout/AnnouncementBar.tsx?t=1748272671635:23:3)
+    at div
+    at Home (https://c97bc9b7-d459-4d54-aa25-a500aa3482fe-00-17pkxb2ueb99z.sisko.replit.dev/src/pages/Home.tsx?t=1748273776958:34:61)
+    at Route (https://c97bc9b7-d459-4d54-aa25-a500aa3482fe-00-17pkxb2ueb99z.sisko.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/wouter.js?v=d1ff9c50:280:16)
+    at Switch (https://c97bc9b7-d459-4d54-aa25-a500aa3482fe-00-17pkxb2ueb99z.sisko.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/wouter.js?v=d1ff9c50:336:17)
+    at Router
+    at AuthProvider (https://c97bc9b7-d459-4d54-aa25-a500aa3482fe-00-17pkxb2ueb99z.sisko.replit.dev/src/hooks/use-auth.tsx:32:32)
+    at QueryClientProvider (https://c97bc9b7-d459-4d54-aa25-a500aa3482fe-00-17pkxb2ueb99z.sisko.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/@tanstack_react-query.js?v=d1ff9c50:2875:3)
+    at _a (https://c97bc9b7-d459-4d54-aa25-a500aa3482fe-00-17pkxb2ueb99z.sisko.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/react-helmet-async.js?v=d1ff9c50:624:5)
+    at App
+printWarning @ chunk-RPCDYKBN.js?v=d1ff9c50:521Understand this error
+client:223 [vite] hot updated: /src/pages/Home.tsx
+client:223 [vite] hot updated: /src/index.css?v=QNo7wm9biyRFNJZNvcEcs
+chunk-RPCDYKBN.js?v=d1ff9c50:521 Warning: Encountered two children with the same key, ``. Keys should be unique so that components maintain their identity across updates. Non-unique keys may cause children to be duplicated and/or omitted — the behavior is unsupported and could change in a future version.
+    at AnimatePresence (https://c97bc9b7-d459-4d54-aa25-a500aa3482fe-00-17pkxb2ueb99z.sisko.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/framer-motion.js?v=d1ff9c50:210:26)
+    at AnnouncementBar (https://c97bc9b7-d459-4d54-aa25-a500aa3482fe-00-17pkxb2ueb99z.sisko.replit.dev/src/components/layout/AnnouncementBar.tsx?t=1748272671635:23:3)
+    at div
+    at Home (https://c97bc9b7-d459-4d54-aa25-a500aa3482fe-00-17pkxb2ueb99z.sisko.replit.dev/src/pages/Home.tsx?t=1748273823785:34:61)
+    at Route (https://c97bc9b7-d459-4d54-aa25-a500aa3482fe-00-17pkxb2ueb99z.sisko.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/wouter.js?v=d1ff9c50:280:16)
+    at Switch (https://c97bc9b7-d459-4d54-aa25-a500aa3482fe-00-17pkxb2ueb99z.sisko.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/wouter.js?v=d1ff9c50:336:17)
+    at Router
+    at AuthProvider (https://c97bc9b7-d459-4d54-aa25-a500aa3482fe-00-17pkxb2ueb99z.sisko.replit.dev/src/hooks/use-auth.tsx:32:32)
+    at QueryClientProvider (https://c97bc9b7-d459-4d54-aa25-a500aa3482fe-00-17pkxb2ueb99z.sisko.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/@tanstack_react-query.js?v=d1ff9c50:2875:3)
+    at _a (https://c97bc9b7-d459-4d54-aa25-a500aa3482fe-00-17pkxb2ueb99z.sisko.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/react-helmet-async.js?v=d1ff9c50:624:5)
+    at App
+printWarning @ chunk-RPCDYKBN.js?v=d1ff9c50:521Understand this error
+client:223 [vite] hot updated: /src/pages/Home.tsx
+client:223 [vite] hot updated: /src/index.css?v=QNo7wm9biyRFNJZNvcEcs
+10chunk-RPCDYKBN.js?v=d1ff9c50:521 Warning: Encountered two children with the same key, ``. Keys should be unique so that components maintain their identity across updates. Non-unique keys may cause children to be duplicated and/or omitted — the behavior is unsupported and could change in a future version.
+    at AnimatePresence (https://c97bc9b7-d459-4d54-aa25-a500aa3482fe-00-17pkxb2ueb99z.sisko.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/framer-motion.js?v=d1ff9c50:210:26)
+    at AnnouncementBar (https://c97bc9b7-d459-4d54-aa25-a500aa3482fe-00-17pkxb2ueb99z.sisko.replit.dev/src/components/layout/AnnouncementBar.tsx?t=1748272671635:23:3)
+    at div
+    at Home (https://c97bc9b7-d459-4d54-aa25-a500aa3482fe-00-17pkxb2ueb99z.sisko.replit.dev/src/pages/Home.tsx?t=1748273831255:34:61)
+    at Route (https://c97bc9b7-d459-4d54-aa25-a500aa3482fe-00-17pkxb2ueb99z.sisko.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/wouter.js?v=d1ff9c50:280:16)
+    at Switch (https://c97bc9b7-d459-4d54-aa25-a500aa3482fe-00-17pkxb2ueb99z.sisko.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/wouter.js?v=d1ff9c50:336:17)
+    at Router
+    at AuthProvider (https://c97bc9b7-d459-4d54-aa25-a500aa3482fe-00-17pkxb2ueb99z.sisko.replit.dev/src/hooks/use-auth.tsx:32:32)
+    at QueryClientProvider (https://c97bc9b7-d459-4d54-aa25-a500aa3482fe-00-17pkxb2ueb99z.sisko.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/@tanstack_react-query.js?v=d1ff9c50:2875:3)
+    at _a (https://c97bc9b7-d459-4d54-aa25-a500aa3482fe-00-17pkxb2ueb99z.sisko.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/react-helmet-async.js?v=d1ff9c50:624:5)
+    at App
+printWarning @ chunk-RPCDYKBN.js?v=d1ff9c50:521Understand this error
+client:223 [vite] hot updated: /src/pages/Home.tsx
+client:223 [vite] hot updated: /src/index.css?v=QNo7wm9biyRFNJZNvcEcs
+10chunk-RPCDYKBN.js?v=d1ff9c50:521 Warning: Encountered two children with the same key, ``. Keys should be unique so that components maintain their identity across updates. Non-unique keys may cause children to be duplicated and/or omitted — the behavior is unsupported and could change in a future version.
+    at AnimatePresence (https://c97bc9b7-d459-4d54-aa25-a500aa3482fe-00-17pkxb2ueb99z.sisko.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/framer-motion.js?v=d1ff9c50:210:26)
+    at AnnouncementBar (https://c97bc9b7-d459-4d54-aa25-a500aa3482fe-00-17pkxb2ueb99z.sisko.replit.dev/src/components/layout/AnnouncementBar.tsx?t=1748272671635:23:3)
+    at div
+    at Home (https://c97bc9b7-d459-4d54-aa25-a500aa3482fe-00-17pkxb2ueb99z.sisko.replit.dev/src/pages/Home.tsx?t=1748273876748:34:61)
+    at Route (https://c97bc9b7-d459-4d54-aa25-a500aa3482fe-00-17pkxb2ueb99z.sisko.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/wouter.js?v=d1ff9c50:280:16)
+    at Switch (https://c97bc9b7-d459-4d54-aa25-a500aa3482fe-00-17pkxb2ueb99z.sisko.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/wouter.js?v=d1ff9c50:336:17)
+    at Router
+    at AuthProvider (https://c97bc9b7-d459-4d54-aa25-a500aa3482fe-00-17pkxb2ueb99z.sisko.replit.dev/src/hooks/use-auth.tsx:32:32)
+    at QueryClientProvider (https://c97bc9b7-d459-4d54-aa25-a500aa3482fe-00-17pkxb2ueb99z.sisko.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/@tanstack_react-query.js?v=d1ff9c50:2875:3)
+    at _a (https://c97bc9b7-d459-4d54-aa25-a500aa3482fe-00-17pkxb2ueb99z.sisko.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/react-helmet-async.js?v=d1ff9c50:624:5)
+    at App
+printWarning @ chunk-RPCDYKBN.js?v=d1ff9c50:521Understand this error
+
+                
+          
+          
+          
+         Chrome is moving towards a new experience that allows users to choose to browse without third-party cookies.Understand this warning
+5chunk-RPCDYKBN.js?v=d1ff9c50:521 Warning: Encountered two children with the same key, ``. Keys should be unique so that components maintain their identity across updates. Non-unique keys may cause children to be duplicated and/or omitted — the behavior is unsupported and could change in a future version.
+    at AnimatePresence (https://c97bc9b7-d459-4d54-aa25-a500aa3482fe-00-17pkxb2ueb99z.sisko.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/framer-motion.js?v=d1ff9c50:210:26)
+    at AnnouncementBar (https://c97bc9b7-d459-4d54-aa25-a500aa3482fe-00-17pkxb2ueb99z.sisko.replit.dev/src/components/layout/AnnouncementBar.tsx?t=1748272671635:23:3)
+    at div
+    at Home (https://c97bc9b7-d459-4d54-aa25-a500aa3482fe-00-17pkxb2ueb99z.sisko.replit.dev/src/pages/Home.tsx?t=1748273876748:34:61)
+    at Route (https://c97bc9b7-d459-4d54-aa25-a500aa3482fe-00-17pkxb2ueb99z.sisko.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/wouter.js?v=d1ff9c50:280:16)
+    at Switch (https://c97bc9b7-d459-4d54-aa25-a500aa3482fe-00-17pkxb2ueb99z.sisko.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/wouter.js?v=d1ff9c50:336:17)
+    at Router
+    at AuthProvider (https://c97bc9b7-d459-4d54-aa25-a500aa3482fe-00-17pkxb2ueb99z.sisko.replit.dev/src/hooks/use-auth.tsx:32:32)
+    at QueryClientProvider (https://c97bc9b7-d459-4d54-aa25-a500aa3482fe-00-17pkxb2ueb99z.sisko.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/@tanstack_react-query.js?v=d1ff9c50:2875:3)
+    at _a (https://c97bc9b7-d459-4d54-aa25-a500aa3482fe-00-17pkxb2ueb99z.sisko.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/react-helmet-async.js?v=d1ff9c50:624:5)
+    at App
+printWarning @ chunk-RPCDYKBN.js?v=d1ff9c50:521
+error @ chunk-RPCDYKBN.js?v=d1ff9c50:505
+warnOnInvalidKey @ chunk-RPCDYKBN.js?v=d1ff9c50:10219
+reconcileChildrenArray @ chunk-RPCDYKBN.js?v=d1ff9c50:10235
+reconcileChildFibers2 @ chunk-RPCDYKBN.js?v=d1ff9c50:10559
+reconcileChildren @ chunk-RPCDYKBN.js?v=d1ff9c50:14292
+updateFunctionComponent @ chunk-RPCDYKBN.js?v=d1ff9c50:14606
+beginWork @ chunk-RPCDYKBN.js?v=d1ff9c50:15924
+beginWork$1 @ chunk-RPCDYKBN.js?v=d1ff9c50:19753
+performUnitOfWork @ chunk-RPCDYKBN.js?v=d1ff9c50:19198
+workLoopSync @ chunk-RPCDYKBN.js?v=d1ff9c50:19137
+renderRootSync @ chunk-RPCDYKBN.js?v=d1ff9c50:19116
+performConcurrentWorkOnRoot @ chunk-RPCDYKBN.js?v=d1ff9c50:18678
+workLoop @ chunk-RPCDYKBN.js?v=d1ff9c50:197
+flushWork @ chunk-RPCDYKBN.js?v=d1ff9c50:176
+performWorkUntilDeadline @ chunk-RPCDYKBN.js?v=d1ff9c50:384Understand this error
+client:223 [vite] hot updated: /src/components/layout/AnnouncementBar.tsx
+client:223 [vite] hot updated: /src/index.css?v=QNo7wm9biyRFNJZNvcEcs
+5[Violation] Forced reflow while executing JavaScript took <N>ms
+2@react-refresh:267 Warning: Encountered two children with the same key, ``. Keys should be unique so that components maintain their identity across updates. Non-unique keys may cause children to be duplicated and/or omitted — the behavior is unsupported and could change in a future version.
+    at AnimatePresence (https://c97bc9b7-d459-4d54-aa25-a500aa3482fe-00-17pkxb2ueb99z.sisko.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/framer-motion.js?v=d1ff9c50:210:26)
+    at AnnouncementBar (https://c97bc9b7-d459-4d54-aa25-a500aa3482fe-00-17pkxb2ueb99z.sisko.replit.dev/src/components/layout/AnnouncementBar.tsx?t=1748273992351:23:3)
+    at div
+    at Home (https://c97bc9b7-d459-4d54-aa25-a500aa3482fe-00-17pkxb2ueb99z.sisko.replit.dev/src/pages/Home.tsx?t=1748273876748:34:61)
+    at Route (https://c97bc9b7-d459-4d54-aa25-a500aa3482fe-00-17pkxb2ueb99z.sisko.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/wouter.js?v=d1ff9c50:280:16)
+    at Switch (https://c97bc9b7-d459-4d54-aa25-a500aa3482fe-00-17pkxb2ueb99z.sisko.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/wouter.js?v=d1ff9c50:336:17)
+    at Router
+    at AuthProvider (https://c97bc9b7-d459-4d54-aa25-a500aa3482fe-00-17pkxb2ueb99z.sisko.replit.dev/src/hooks/use-auth.tsx:32:32)
+    at QueryClientProvider (https://c97bc9b7-d459-4d54-aa25-a500aa3482fe-00-17pkxb2ueb99z.sisko.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/@tanstack_react-query.js?v=d1ff9c50:2875:3)
+    at _a (https://c97bc9b7-d459-4d54-aa25-a500aa3482fe-00-17pkxb2ueb99z.sisko.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/react-helmet-async.js?v=d1ff9c50:624:5)
+    at App
+printWarning @ chunk-RPCDYKBN.js?v=d1ff9c50:521
+error @ chunk-RPCDYKBN.js?v=d1ff9c50:505
+warnOnInvalidKey @ chunk-RPCDYKBN.js?v=d1ff9c50:10219
+reconcileChildrenArray @ chunk-RPCDYKBN.js?v=d1ff9c50:10235
+reconcileChildFibers2 @ chunk-RPCDYKBN.js?v=d1ff9c50:10559
+reconcileChildren @ chunk-RPCDYKBN.js?v=d1ff9c50:14292
+updateFunctionComponent @ chunk-RPCDYKBN.js?v=d1ff9c50:14606
+beginWork @ chunk-RPCDYKBN.js?v=d1ff9c50:15924
+beginWork$1 @ chunk-RPCDYKBN.js?v=d1ff9c50:19753
+performUnitOfWork @ chunk-RPCDYKBN.js?v=d1ff9c50:19198
+workLoopSync @ chunk-RPCDYKBN.js?v=d1ff9c50:19137
+renderRootSync @ chunk-RPCDYKBN.js?v=d1ff9c50:19116
+performSyncWorkOnRoot @ chunk-RPCDYKBN.js?v=d1ff9c50:18874
+flushSyncCallbacks @ chunk-RPCDYKBN.js?v=d1ff9c50:9119
+flushSync @ chunk-RPCDYKBN.js?v=d1ff9c50:18959
+scheduleRefresh @ chunk-RPCDYKBN.js?v=d1ff9c50:20004
+(anonymous) @ @react-refresh:267
+performReactRefresh @ @react-refresh:256
+(anonymous) @ @react-refresh:677
+setTimeout
+(anonymous) @ @react-refresh:666
+validateRefreshBoundaryAndEnqueueUpdate @ @react-refresh:728
+(anonymous) @ AnnouncementBar.tsx?t=1748272671635:412
+(anonymous) @ client:34
+(anonymous) @ client:218
+(anonymous) @ client:193
+queueUpdate @ client:193
+await in queueUpdate
+(anonymous) @ client:642
+handleMessage @ client:640
+(anonymous) @ client:550Understand this error
+client:223 [vite] hot updated: /src/components/layout/AnnouncementBar.tsx
+client:223 [vite] hot updated: /src/index.css?v=QNo7wm9biyRFNJZNvcEcs
+2@react-refresh:267 Warning: Encountered two children with the same key, ``. Keys should be unique so that components maintain their identity across updates. Non-unique keys may cause children to be duplicated and/or omitted — the behavior is unsupported and could change in a future version.
+    at AnimatePresence (https://c97bc9b7-d459-4d54-aa25-a500aa3482fe-00-17pkxb2ueb99z.sisko.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/framer-motion.js?v=d1ff9c50:210:26)
+    at AnnouncementBar (https://c97bc9b7-d459-4d54-aa25-a500aa3482fe-00-17pkxb2ueb99z.sisko.replit.dev/src/components/layout/AnnouncementBar.tsx?t=1748273999536:23:3)
+    at div
+    at Home (https://c97bc9b7-d459-4d54-aa25-a500aa3482fe-00-17pkxb2ueb99z.sisko.replit.dev/src/pages/Home.tsx?t=1748273876748:34:61)
+    at Route (https://c97bc9b7-d459-4d54-aa25-a500aa3482fe-00-17pkxb2ueb99z.sisko.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/wouter.js?v=d1ff9c50:280:16)
+    at Switch (https://c97bc9b7-d459-4d54-aa25-a500aa3482fe-00-17pkxb2ueb99z.sisko.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/wouter.js?v=d1ff9c50:336:17)
+    at Router
+    at AuthProvider (https://c97bc9b7-d459-4d54-aa25-a500aa3482fe-00-17pkxb2ueb99z.sisko.replit.dev/src/hooks/use-auth.tsx:32:32)
+    at QueryClientProvider (https://c97bc9b7-d459-4d54-aa25-a500aa3482fe-00-17pkxb2ueb99z.sisko.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/@tanstack_react-query.js?v=d1ff9c50:2875:3)
+    at _a (https://c97bc9b7-d459-4d54-aa25-a500aa3482fe-00-17pkxb2ueb99z.sisko.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/react-helmet-async.js?v=d1ff9c50:624:5)
+    at App
+printWarning @ chunk-RPCDYKBN.js?v=d1ff9c50:521
+error @ chunk-RPCDYKBN.js?v=d1ff9c50:505
+warnOnInvalidKey @ chunk-RPCDYKBN.js?v=d1ff9c50:10219
+reconcileChildrenArray @ chunk-RPCDYKBN.js?v=d1ff9c50:10235
+reconcileChildFibers2 @ chunk-RPCDYKBN.js?v=d1ff9c50:10559
+reconcileChildren @ chunk-RPCDYKBN.js?v=d1ff9c50:14292
+updateFunctionComponent @ chunk-RPCDYKBN.js?v=d1ff9c50:14606
+beginWork @ chunk-RPCDYKBN.js?v=d1ff9c50:15924
+beginWork$1 @ chunk-RPCDYKBN.js?v=d1ff9c50:19753
+performUnitOfWork @ chunk-RPCDYKBN.js?v=d1ff9c50:19198
+workLoopSync @ chunk-RPCDYKBN.js?v=d1ff9c50:19137
+renderRootSync @ chunk-RPCDYKBN.js?v=d1ff9c50:19116
+performSyncWorkOnRoot @ chunk-RPCDYKBN.js?v=d1ff9c50:18874
+flushSyncCallbacks @ chunk-RPCDYKBN.js?v=d1ff9c50:9119
+flushSync @ chunk-RPCDYKBN.js?v=d1ff9c50:18959
+scheduleRefresh @ chunk-RPCDYKBN.js?v=d1ff9c50:20004
+(anonymous) @ @react-refresh:267
+performReactRefresh @ @react-refresh:256
+(anonymous) @ @react-refresh:677
+setTimeout
+(anonymous) @ @react-refresh:666
+validateRefreshBoundaryAndEnqueueUpdate @ @react-refresh:728
+(anonymous) @ AnnouncementBar.tsx?t=1748273992351:412
+(anonymous) @ client:34
+(anonymous) @ client:218
+(anonymous) @ client:193
+queueUpdate @ client:193
+await in queueUpdate
+(anonymous) @ client:642
+handleMessage @ client:640
+(anonymous) @ client:550Understand this error
+client:223 [vite] hot updated: /src/components/layout/AnnouncementBar.tsx
+client:223 [vite] hot updated: /src/index.css?v=QNo7wm9biyRFNJZNvcEcs
+2@react-refresh:267 Warning: Encountered two children with the same key, ``. Keys should be unique so that components maintain their identity across updates. Non-unique keys may cause children to be duplicated and/or omitted — the behavior is unsupported and could change in a future version.
+    at AnimatePresence (https://c97bc9b7-d459-4d54-aa25-a500aa3482fe-00-17pkxb2ueb99z.sisko.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/framer-motion.js?v=d1ff9c50:210:26)
+    at AnnouncementBar (https://c97bc9b7-d459-4d54-aa25-a500aa3482fe-00-17pkxb2ueb99z.sisko.replit.dev/src/components/layout/AnnouncementBar.tsx?t=1748274003322:23:3)
+    at div
+    at Home (https://c97bc9b7-d459-4d54-aa25-a500aa3482fe-00-17pkxb2ueb99z.sisko.replit.dev/src/pages/Home.tsx?t=1748273876748:34:61)
+    at Route (https://c97bc9b7-d459-4d54-aa25-a500aa3482fe-00-17pkxb2ueb99z.sisko.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/wouter.js?v=d1ff9c50:280:16)
+    at Switch (https://c97bc9b7-d459-4d54-aa25-a500aa3482fe-00-17pkxb2ueb99z.sisko.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/wouter.js?v=d1ff9c50:336:17)
+    at Router
+    at AuthProvider (https://c97bc9b7-d459-4d54-aa25-a500aa3482fe-00-17pkxb2ueb99z.sisko.replit.dev/src/hooks/use-auth.tsx:32:32)
+    at QueryClientProvider (https://c97bc9b7-d459-4d54-aa25-a500aa3482fe-00-17pkxb2ueb99z.sisko.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/@tanstack_react-query.js?v=d1ff9c50:2875:3)
+    at _a (https://c97bc9b7-d459-4d54-aa25-a500aa3482fe-00-17pkxb2ueb99z.sisko.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/react-helmet-async.js?v=d1ff9c50:624:5)
+    at App
+printWarning @ chunk-RPCDYKBN.js?v=d1ff9c50:521
+error @ chunk-RPCDYKBN.js?v=d1ff9c50:505
+warnOnInvalidKey @ chunk-RPCDYKBN.js?v=d1ff9c50:10219
+reconcileChildrenArray @ chunk-RPCDYKBN.js?v=d1ff9c50:10235
+reconcileChildFibers2 @ chunk-RPCDYKBN.js?v=d1ff9c50:10559
+reconcileChildren @ chunk-RPCDYKBN.js?v=d1ff9c50:14292
+updateFunctionComponent @ chunk-RPCDYKBN.js?v=d1ff9c50:14606
+beginWork @ chunk-RPCDYKBN.js?v=d1ff9c50:15924
+beginWork$1 @ chunk-RPCDYKBN.js?v=d1ff9c50:19753
+performUnitOfWork @ chunk-RPCDYKBN.js?v=d1ff9c50:19198
+workLoopSync @ chunk-RPCDYKBN.js?v=d1ff9c50:19137
+renderRootSync @ chunk-RPCDYKBN.js?v=d1ff9c50:19116
+performSyncWorkOnRoot @ chunk-RPCDYKBN.js?v=d1ff9c50:18874
+flushSyncCallbacks @ chunk-RPCDYKBN.js?v=d1ff9c50:9119
+flushSync @ chunk-RPCDYKBN.js?v=d1ff9c50:18959
+scheduleRefresh @ chunk-RPCDYKBN.js?v=d1ff9c50:20004
+(anonymous) @ @react-refresh:267
+performReactRefresh @ @react-refresh:256
+(anonymous) @ @react-refresh:677
+setTimeout
+(anonymous) @ @react-refresh:666
+validateRefreshBoundaryAndEnqueueUpdate @ @react-refresh:728
+(anonymous) @ AnnouncementBar.tsx?t=1748273999536:412
+(anonymous) @ client:34
+(anonymous) @ client:218
+(anonymous) @ client:193
+queueUpdate @ client:193
+await in queueUpdate
+(anonymous) @ client:642
+handleMessage @ client:640
+(anonymous) @ client:550Understand this error
+client:223 [vite] hot updated: /src/components/layout/AnnouncementBar.tsx
+client:223 [vite] hot updated: /src/index.css?v=QNo7wm9biyRFNJZNvcEcs
+2@react-refresh:267 Warning: Encountered two children with the same key, ``. Keys should be unique so that components maintain their identity across updates. Non-unique keys may cause children to be duplicated and/or omitted — the behavior is unsupported and could change in a future version.
+    at AnimatePresence (https://c97bc9b7-d459-4d54-aa25-a500aa3482fe-00-17pkxb2ueb99z.sisko.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/framer-motion.js?v=d1ff9c50:210:26)
+    at AnnouncementBar (https://c97bc9b7-d459-4d54-aa25-a500aa3482fe-00-17pkxb2ueb99z.sisko.replit.dev/src/components/layout/AnnouncementBar.tsx?t=1748274004592:23:3)
+    at div
+    at Home (https://c97bc9b7-d459-4d54-aa25-a500aa3482fe-00-17pkxb2ueb99z.sisko.replit.dev/src/pages/Home.tsx?t=1748273876748:34:61)
+    at Route (https://c97bc9b7-d459-4d54-aa25-a500aa3482fe-00-17pkxb2ueb99z.sisko.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/wouter.js?v=d1ff9c50:280:16)
+    at Switch (https://c97bc9b7-d459-4d54-aa25-a500aa3482fe-00-17pkxb2ueb99z.sisko.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/wouter.js?v=d1ff9c50:336:17)
+    at Router
+    at AuthProvider (https://c97bc9b7-d459-4d54-aa25-a500aa3482fe-00-17pkxb2ueb99z.sisko.replit.dev/src/hooks/use-auth.tsx:32:32)
+    at QueryClientProvider (https://c97bc9b7-d459-4d54-aa25-a500aa3482fe-00-17pkxb2ueb99z.sisko.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/@tanstack_react-query.js?v=d1ff9c50:2875:3)
+    at _a (https://c97bc9b7-d459-4d54-aa25-a500aa3482fe-00-17pkxb2ueb99z.sisko.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/react-helmet-async.js?v=d1ff9c50:624:5)
+    at App
+printWarning @ chunk-RPCDYKBN.js?v=d1ff9c50:521
+error @ chunk-RPCDYKBN.js?v=d1ff9c50:505
+warnOnInvalidKey @ chunk-RPCDYKBN.js?v=d1ff9c50:10219
+reconcileChildrenArray @ chunk-RPCDYKBN.js?v=d1ff9c50:10235
+reconcileChildFibers2 @ chunk-RPCDYKBN.js?v=d1ff9c50:10559
+reconcileChildren @ chunk-RPCDYKBN.js?v=d1ff9c50:14292
+updateFunctionComponent @ chunk-RPCDYKBN.js?v=d1ff9c50:14606
+beginWork @ chunk-RPCDYKBN.js?v=d1ff9c50:15924
+beginWork$1 @ chunk-RPCDYKBN.js?v=d1ff9c50:19753
+performUnitOfWork @ chunk-RPCDYKBN.js?v=d1ff9c50:19198
+workLoopSync @ chunk-RPCDYKBN.js?v=d1ff9c50:19137
+renderRootSync @ chunk-RPCDYKBN.js?v=d1ff9c50:19116
+performSyncWorkOnRoot @ chunk-RPCDYKBN.js?v=d1ff9c50:18874
+flushSyncCallbacks @ chunk-RPCDYKBN.js?v=d1ff9c50:9119
+flushSync @ chunk-RPCDYKBN.js?v=d1ff9c50:18959
+scheduleRefresh @ chunk-RPCDYKBN.js?v=d1ff9c50:20004
+(anonymous) @ @react-refresh:267
+performReactRefresh @ @react-refresh:256
+(anonymous) @ @react-refresh:677
+setTimeout
+(anonymous) @ @react-refresh:666
+validateRefreshBoundaryAndEnqueueUpdate @ @react-refresh:728
+(anonymous) @ AnnouncementBar.tsx?t=1748274003322:412
+(anonymous) @ client:34
+(anonymous) @ client:218
+(anonymous) @ client:193
+queueUpdate @ client:193
+await in queueUpdate
+(anonymous) @ client:642
+handleMessage @ client:640
+(anonymous) @ client:550Understand this error
+chunk-RPCDYKBN.js?v=d1ff9c50:521 Warning: Encountered two children with the same key, ``. Keys should be unique so that components maintain their identity across updates. Non-unique keys may cause children to be duplicated and/or omitted — the behavior is unsupported and could change in a future version.
+    at AnimatePresence (https://c97bc9b7-d459-4d54-aa25-a500aa3482fe-00-17pkxb2ueb99z.sisko.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/framer-motion.js?v=d1ff9c50:210:26)
+    at AnnouncementBar (https://c97bc9b7-d459-4d54-aa25-a500aa3482fe-00-17pkxb2ueb99z.sisko.replit.dev/src/components/layout/AnnouncementBar.tsx?t=1748274004592:23:3)
+    at div
+    at Home (https://c97bc9b7-d459-4d54-aa25-a500aa3482fe-00-17pkxb2ueb99z.sisko.replit.dev/src/pages/Home.tsx?t=1748273876748:34:61)
+    at Route (https://c97bc9b7-d459-4d54-aa25-a500aa3482fe-00-17pkxb2ueb99z.sisko.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/wouter.js?v=d1ff9c50:280:16)
+    at Switch (https://c97bc9b7-d459-4d54-aa25-a500aa3482fe-00-17pkxb2ueb99z.sisko.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/wouter.js?v=d1ff9c50:336:17)
+    at Router
+    at AuthProvider (https://c97bc9b7-d459-4d54-aa25-a500aa3482fe-00-17pkxb2ueb99z.sisko.replit.dev/src/hooks/use-auth.tsx:32:32)
+    at QueryClientProvider (https://c97bc9b7-d459-4d54-aa25-a500aa3482fe-00-17pkxb2ueb99z.sisko.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/@tanstack_react-query.js?v=d1ff9c50:2875:3)
+    at _a (https://c97bc9b7-d459-4d54-aa25-a500aa3482fe-00-17pkxb2ueb99z.sisko.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/react-helmet-async.js?v=d1ff9c50:624:5)
+    at App
+printWarning @ chunk-RPCDYKBN.js?v=d1ff9c50:521
+error @ chunk-RPCDYKBN.js?v=d1ff9c50:505
+warnOnInvalidKey @ chunk-RPCDYKBN.js?v=d1ff9c50:10219
+reconcileChildrenArray @ chunk-RPCDYKBN.js?v=d1ff9c50:10235
+reconcileChildFibers2 @ chunk-RPCDYKBN.js?v=d1ff9c50:10559
+reconcileChildren @ chunk-RPCDYKBN.js?v=d1ff9c50:14292
+updateFunctionComponent @ chunk-RPCDYKBN.js?v=d1ff9c50:14606
+beginWork @ chunk-RPCDYKBN.js?v=d1ff9c50:15924
+beginWork$1 @ chunk-RPCDYKBN.js?v=d1ff9c50:19753
+performUnitOfWork @ chunk-RPCDYKBN.js?v=d1ff9c50:19198
+workLoopSync @ chunk-RPCDYKBN.js?v=d1ff9c50:19137
+renderRootSync @ chunk-RPCDYKBN.js?v=d1ff9c50:19116
+performConcurrentWorkOnRoot @ chunk-RPCDYKBN.js?v=d1ff9c50:18678
+workLoop @ chunk-RPCDYKBN.js?v=d1ff9c50:197
+flushWork @ chunk-RPCDYKBN.js?v=d1ff9c50:176
+performWorkUntilDeadline @ chunk-RPCDYKBN.js?v=d1ff9c50:384Understand this error
+client:223 [vite] hot updated: /src/components/layout/AnnouncementBar.tsx
+client:223 [vite] hot updated: /src/index.css?v=QNo7wm9biyRFNJZNvcEcs
+@react-refresh:267 Warning: Encountered two children with the same key, ``. Keys should be unique so that components maintain their identity across updates. Non-unique keys may cause children to be duplicated and/or omitted — the behavior is unsupported and could change in a future version.
+    at AnimatePresence (https://c97bc9b7-d459-4d54-aa25-a500aa3482fe-00-17pkxb2ueb99z.sisko.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/framer-motion.js?v=d1ff9c50:210:26)
+    at AnnouncementBar (https://c97bc9b7-d459-4d54-aa25-a500aa3482fe-00-17pkxb2ueb99z.sisko.replit.dev/src/components/layout/AnnouncementBar.tsx?t=1748274033572:23:3)
+    at div
+    at Home (https://c97bc9b7-d459-4d54-aa25-a500aa3482fe-00-17pkxb2ueb99z.sisko.replit.dev/src/pages/Home.tsx?t=1748273876748:34:61)
+    at Route (https://c97bc9b7-d459-4d54-aa25-a500aa3482fe-00-17pkxb2ueb99z.sisko.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/wouter.js?v=d1ff9c50:280:16)
+    at Switch (https://c97bc9b7-d459-4d54-aa25-a500aa3482fe-00-17pkxb2ueb99z.sisko.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/wouter.js?v=d1ff9c50:336:17)
+    at Router
+    at AuthProvider (https://c97bc9b7-d459-4d54-aa25-a500aa3482fe-00-17pkxb2ueb99z.sisko.replit.dev/src/hooks/use-auth.tsx:32:32)
+    at QueryClientProvider (https://c97bc9b7-d459-4d54-aa25-a500aa3482fe-00-17pkxb2ueb99z.sisko.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/@tanstack_react-query.js?v=d1ff9c50:2875:3)
+    at _a (https://c97bc9b7-d459-4d54-aa25-a500aa3482fe-00-17pkxb2ueb99z.sisko.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/react-helmet-async.js?v=d1ff9c50:624:5)
+    at App
+printWarning @ chunk-RPCDYKBN.js?v=d1ff9c50:521
+error @ chunk-RPCDYKBN.js?v=d1ff9c50:505
+warnOnInvalidKey @ chunk-RPCDYKBN.js?v=d1ff9c50:10219
+reconcileChildrenArray @ chunk-RPCDYKBN.js?v=d1ff9c50:10235
+reconcileChildFibers2 @ chunk-RPCDYKBN.js?v=d1ff9c50:10559
+reconcileChildren @ chunk-RPCDYKBN.js?v=d1ff9c50:14292
+updateFunctionComponent @ chunk-RPCDYKBN.js?v=d1ff9c50:14606
+beginWork @ chunk-RPCDYKBN.js?v=d1ff9c50:15924
+beginWork$1 @ chunk-RPCDYKBN.js?v=d1ff9c50:19753
+performUnitOfWork @ chunk-RPCDYKBN.js?v=d1ff9c50:19198
+workLoopSync @ chunk-RPCDYKBN.js?v=d1ff9c50:19137
+renderRootSync @ chunk-RPCDYKBN.js?v=d1ff9c50:19116
+performSyncWorkOnRoot @ chunk-RPCDYKBN.js?v=d1ff9c50:18874
+flushSyncCallbacks @ chunk-RPCDYKBN.js?v=d1ff9c50:9119
+flushSync @ chunk-RPCDYKBN.js?v=d1ff9c50:18959
+scheduleRefresh @ chunk-RPCDYKBN.js?v=d1ff9c50:20004
+(anonymous) @ @react-refresh:267
+performReactRefresh @ @react-refresh:256
+(anonymous) @ @react-refresh:677
+setTimeout
+(anonymous) @ @react-refresh:666
+validateRefreshBoundaryAndEnqueueUpdate @ @react-refresh:728
+(anonymous) @ AnnouncementBar.tsx?t=1748274004592:412
+(anonymous) @ client:34
+(anonymous) @ client:218
+(anonymous) @ client:193
+queueUpdate @ client:193
+await in queueUpdate
+(anonymous) @ client:642
+handleMessage @ client:640
+(anonymous) @ client:550Understand this error
+9chunk-RPCDYKBN.js?v=d1ff9c50:521 Warning: Encountered two children with the same key, ``. Keys should be unique so that components maintain their identity across updates. Non-unique keys may cause children to be duplicated and/or omitted — the behavior is unsupported and could change in a future version.
+    at AnimatePresence (https://c97bc9b7-d459-4d54-aa25-a500aa3482fe-00-17pkxb2ueb99z.sisko.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/framer-motion.js?v=d1ff9c50:210:26)
+    at AnnouncementBar (https://c97bc9b7-d459-4d54-aa25-a500aa3482fe-00-17pkxb2ueb99z.sisko.replit.dev/src/components/layout/AnnouncementBar.tsx?t=1748274033572:23:3)
+    at div
+    at Home (https://c97bc9b7-d459-4d54-aa25-a500aa3482fe-00-17pkxb2ueb99z.sisko.replit.dev/src/pages/Home.tsx?t=1748273876748:34:61)
+    at Route (https://c97bc9b7-d459-4d54-aa25-a500aa3482fe-00-17pkxb2ueb99z.sisko.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/wouter.js?v=d1ff9c50:280:16)
+    at Switch (https://c97bc9b7-d459-4d54-aa25-a500aa3482fe-00-17pkxb2ueb99z.sisko.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/wouter.js?v=d1ff9c50:336:17)
+    at Router
+    at AuthProvider (https://c97bc9b7-d459-4d54-aa25-a500aa3482fe-00-17pkxb2ueb99z.sisko.replit.dev/src/hooks/use-auth.tsx:32:32)
+    at QueryClientProvider (https://c97bc9b7-d459-4d54-aa25-a500aa3482fe-00-17pkxb2ueb99z.sisko.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/@tanstack_react-query.js?v=d1ff9c50:2875:3)
+    at _a (https://c97bc9b7-d459-4d54-aa25-a500aa3482fe-00-17pkxb2ueb99z.sisko.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/react-helmet-async.js?v=d1ff9c50:624:5)
+    at App
+printWarning @ chunk-RPCDYKBN.js?v=d1ff9c50:521
+error @ chunk-RPCDYKBN.js?v=d1ff9c50:505
+warnOnInvalidKey @ chunk-RPCDYKBN.js?v=d1ff9c50:10219
+reconcileChildrenArray @ chunk-RPCDYKBN.js?v=d1ff9c50:10235
+reconcileChildFibers2 @ chunk-RPCDYKBN.js?v=d1ff9c50:10559
+reconcileChildren @ chunk-RPCDYKBN.js?v=d1ff9c50:14292
+updateFunctionComponent @ chunk-RPCDYKBN.js?v=d1ff9c50:14606
+beginWork @ chunk-RPCDYKBN.js?v=d1ff9c50:15924
+beginWork$1 @ chunk-RPCDYKBN.js?v=d1ff9c50:19753
+performUnitOfWork @ chunk-RPCDYKBN.js?v=d1ff9c50:19198
+workLoopSync @ chunk-RPCDYKBN.js?v=d1ff9c50:19137
+renderRootSync @ chunk-RPCDYKBN.js?v=d1ff9c50:19116
+performConcurrentWorkOnRoot @ chunk-RPCDYKBN.js?v=d1ff9c50:18678
+workLoop @ chunk-RPCDYKBN.js?v=d1ff9c50:197
+flushWork @ chunk-RPCDYKBN.js?v=d1ff9c50:176
+performWorkUntilDeadline @ chunk-RPCDYKBN.js?v=d1ff9c50:384Understand this error
