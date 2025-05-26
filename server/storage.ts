@@ -517,7 +517,7 @@ export const storage = {
 
   async bulkCreateSubmittedCandidates(candidates: any[]) {
     return await db.insert(submittedCandidates).values(candidates).returning();
-  }
+  },
 
   async bulkDeleteSubmittedCandidates(ids: number[]) {
     const result = await db.delete(submittedCandidates)
@@ -525,7 +525,7 @@ export const storage = {
       .returning({ id: submittedCandidates.id });
 
     return result.length;
-  }
+  },
 
   // Demo Requests
   async createDemoRequest(data: InsertDemoRequest): Promise<DemoRequest> {
