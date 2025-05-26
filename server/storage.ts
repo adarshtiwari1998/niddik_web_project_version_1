@@ -536,10 +536,24 @@ export const storage = {
 
   async bulkDeleteSubmittedCandidates(ids: number[]) {
     try {
-      console.log(`Starting bulk delete for ${ids.length} candidates`);
+      console.log(`Starting bulk delete for ${ids.length} candidates with IDs:`, ids);
 
       if (ids.length === 0) {
         return { deletedCount: 0, totalRequested: 0 };
+      }
+
+      // First, let's check which IDs actually exist
+      const existingRecords = await db.query.submittedCandidates.findMany({
+        where: inArray(submittedCandidates.id, ids),
+        columns: { id: true }
+      });
+      
+      console.log(`Found ${existingRecords.length} existing records out of ${ids.length} requested IDs`);
+      console.log('Existing IDs:', existingRecords.map(r => r.id));
+
+      if (existingRecords.length === 0) {
+        console.log('No records found to delete');
+        return { deletedCount: 0, totalRequested: ids.length };
       }
 
       // Process deletion in chunks to avoid database limits
@@ -548,7 +562,7 @@ export const storage = {
 
       for (let i = 0; i < ids.length; i += chunkSize) {
         const chunk = ids.slice(i, i + chunkSize);
-        console.log(`Processing chunk ${Math.floor(i / chunkSize) + 1}: ${chunk.length} candidates`);
+        console.log(`Processing chunk ${Math.floor(i / chunkSize) + 1}: ${chunk.length} candidates with IDs:`, chunk);
 
         try {
           // Delete the chunk and count actual deletions
@@ -560,6 +574,7 @@ export const storage = {
           totalDeleted += chunkDeleted;
 
           console.log(`Chunk ${Math.floor(i / chunkSize) + 1}: deleted ${chunkDeleted} out of ${chunk.length} candidates`);
+          console.log('Deleted IDs:', result.map(r => r.id));
         } catch (chunkError) {
           console.error(`Error deleting chunk ${Math.floor(i / chunkSize) + 1}:`, chunkError);
           // Continue with next chunk instead of failing completely

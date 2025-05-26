@@ -717,14 +717,18 @@ export async function registerRoutes(app: Express): Promise<Server> {
       const validIds: number[] = [];
       const invalidIds: any[] = [];
       
+      console.log('Raw IDs received:', ids);
+      
       for (const id of ids) {
         // Handle both string and number inputs
         const numId = typeof id === 'number' ? id : parseInt(String(id), 10);
         console.log(`Processing ID: ${id} (type: ${typeof id}) -> ${numId} (type: ${typeof numId})`);
         
-        if (Number.isInteger(numId) && numId > 0 && !isNaN(numId)) {
+        // More lenient validation - just check if it's a positive number
+        if (numId && numId > 0 && !isNaN(numId)) {
           validIds.push(numId);
         } else {
+          console.log(`Invalid ID rejected: ${id} -> ${numId}`);
           invalidIds.push(id);
         }
       }
@@ -735,37 +739,13 @@ export async function registerRoutes(app: Express): Promise<Server> {
       if (validIds.length === 0) {
         return res.status(400).json({ 
           success: false, 
-          message: `Invalid candidate ID` 
+          message: "No valid candidate IDs provided" 
         });
       }
 
-      // Check which candidates actually exist in the database (similar to single delete logic)
-      const existingCandidates = [];
-      const nonExistentIds = [];
-
-      for (const id of validIds) {
-        try {
-          const candidate = await storage.getSubmittedCandidateById(id);
-          if (candidate) {
-            existingCandidates.push(id);
-          } else {
-            nonExistentIds.push(id);
-          }
-        } catch (error) {
-          console.error(`Error checking candidate ${id}:`, error);
-          nonExistentIds.push(id);
-        }
-      }
-
-      if (existingCandidates.length === 0) {
-        return res.status(404).json({
-          success: false,
-          message: `No candidates found with the provided IDs: ${validIds.join(', ')}`
-        });
-      }
-
-      // Perform bulk deletion using storage method for existing candidates only
-      const result = await storage.bulkDeleteSubmittedCandidates(existingCandidates);
+      // Perform bulk deletion using storage method directly
+      // The storage method will handle checking for existing records
+      const result = await storage.bulkDeleteSubmittedCandidates(validIds);
       
       console.log('Bulk deletion completed:', result);
 
