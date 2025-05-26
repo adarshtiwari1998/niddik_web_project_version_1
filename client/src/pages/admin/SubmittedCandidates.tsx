@@ -1585,75 +1585,6 @@ function SubmittedCandidates() {
           <Card>
             <CardHeader className="flex items-center justify-between px-6 py-4 border-b">
               <div className="flex items-center gap-4">
-                <div className="flex items-center gap-2">
-                  <AlertDialog open={bulkDeleteConfirmOpen} onOpenChange={setBulkDeleteConfirmOpen}>
-                    <AlertDialogTrigger asChild>
-                      <Button
-                        variant="destructive"
-                        size="sm"
-                        onClick={handleBulkDelete}
-                        disabled={bulkDeleteMutation.isPending || selectedCandidateIds.length === 0}
-                      >
-                        {bulkDeleteMutation.isPending ? (
-                          <>
-                            <Loader2 className="h-4 w-4 mr-2 animate-spin" />
-                            Deleting...
-                          </>
-                        ) : (
-                          <>
-                            <Trash2 className="h-4 w-4 mr-2" />
-                            Delete Selected ({selectedCandidateIds.length})
-                          </>
-                        )}
-                      </Button>
-                    </AlertDialogTrigger>
-                    <AlertDialogContent>
-                      <AlertDialogHeader>
-                        <AlertDialogTitle>Are you absolutely sure?</AlertDialogTitle>
-                        <AlertDialogDescription>
-                          This will permanently delete {bulkDeleteIds.length} candidate record{bulkDeleteIds.length > 1 ? 's' : ''}.
-                          This action cannot be undone and will remove all associated data.
-                        </AlertDialogDescription>
-                      </AlertDialogHeader>
-                      <AlertDialogFooter>
-                        <AlertDialogCancel onClick={() => setBulkDeleteConfirmOpen(false)}>
-                          Cancel
-                        </AlertDialogCancel>
-                        <AlertDialogAction 
-                          onClick={executeBulkDelete}
-                          className="bg-red-500 hover:bg-red-600"
-                          disabled={bulkDeleteMutation.isPending}
-                        >
-                          {bulkDeleteMutation.isPending ? (
-                            <>
-                              <Loader2 className="h-4 w-4 mr-2 animate-spin" />
-                              Deleting...
-                            </>
-                          ) : (
-                            `Delete ${bulkDeleteIds.length} Candidate${bulkDeleteIds.length > 1 ? 's' : ''}`
-                          )}
-                        </AlertDialogAction>
-                      </AlertDialogFooter>
-                    </AlertDialogContent>
-                  </AlertDialog>
-
-                  {selectedCandidateIds.length > 0 && !isSelectAllPages && (
-                    <Button
-                      variant="outline"
-                      size="sm"
-                      onClick={handleSelectAllPages}
-                    >
-                      Select All {candidatesData?.meta?.total || 0} Candidates
-                    </Button>
-                  )}
-
-                  {isSelectAllPages && (
-                    <div className="text-sm text-blue-600 font-medium">
-                      All {candidatesData?.meta?.total || 0} candidates selected
-                    </div>
-                  )}
-                </div>
-
                 <div className="text-sm text-muted-foreground">
                   Showing {((page - 1) * limit) + 1} to {Math.min(page * limit, candidatesData?.meta?.total || 0)} of {candidatesData?.meta?.total || 0} candidates
                   {selectedCandidateIds.length > 0 && (
@@ -1664,6 +1595,77 @@ function SubmittedCandidates() {
                 </div>
               </div>
               <div className="flex items-center gap-2">
+                {selectedCandidateIds.length > 0 && (
+                  <>
+                    <AlertDialog open={bulkDeleteConfirmOpen} onOpenChange={setBulkDeleteConfirmOpen}>
+                      <AlertDialogTrigger asChild>
+                        <Button
+                          variant="destructive"
+                          size="sm"
+                          onClick={handleBulkDelete}
+                          disabled={bulkDeleteMutation.isPending}
+                        >
+                          {bulkDeleteMutation.isPending ? (
+                            <>
+                              <Loader2 className="h-4 w-4 mr-2 animate-spin" />
+                              Deleting...
+                            </>
+                          ) : (
+                            <>
+                              <Trash2 className="h-4 w-4 mr-2" />
+                              Delete Selected ({selectedCandidateIds.length})
+                            </>
+                          )}
+                        </Button>
+                      </AlertDialogTrigger>
+                      <AlertDialogContent>
+                        <AlertDialogHeader>
+                          <AlertDialogTitle>Are you absolutely sure?</AlertDialogTitle>
+                          <AlertDialogDescription>
+                            This will permanently delete {bulkDeleteIds.length} candidate record{bulkDeleteIds.length > 1 ? 's' : ''}.
+                            This action cannot be undone and will remove all associated data.
+                          </AlertDialogDescription>
+                        </AlertDialogHeader>
+                        <AlertDialogFooter>
+                          <AlertDialogCancel onClick={() => setBulkDeleteConfirmOpen(false)}>
+                            Cancel
+                          </AlertDialogCancel>
+                          <AlertDialogAction 
+                            onClick={executeBulkDelete}
+                            className="bg-red-500 hover:bg-red-600"
+                            disabled={bulkDeleteMutation.isPending}
+                          >
+                            {bulkDeleteMutation.isPending ? (
+                              <>
+                                <Loader2 className="h-4 w-4 mr-2 animate-spin" />
+                                Deleting...
+                              </>
+                            ) : (
+                              `Delete ${bulkDeleteIds.length} Candidate${bulkDeleteIds.length > 1 ? 's' : ''}`
+                            )}
+                          </AlertDialogAction>
+                        </AlertDialogFooter>
+                      </AlertDialogContent>
+                    </AlertDialog>
+
+                    {!isSelectAllPages && (
+                      <Button
+                        variant="outline"
+                        size="sm"
+                        onClick={handleSelectAllPages}
+                      >
+                        Select All {candidatesData?.meta?.total || 0} Candidates
+                      </Button>
+                    )}
+
+                    {isSelectAllPages && (
+                      <div className="text-sm text-blue-600 font-medium">
+                        All {candidatesData?.meta?.total || 0} candidates selected
+                      </div>
+                    )}
+                  </>
+                )}
+                
                 <Button
                   variant="outline"
                   size="sm"
@@ -2153,75 +2155,6 @@ function SubmittedCandidates() {
             </CardContent>
             <CardFooter className="flex items-center justify-between px-6 py-4 border-t">
               <div className="flex items-center gap-4">
-                <div className="flex items-center gap-2">
-                  <AlertDialog open={bulkDeleteConfirmOpen} onOpenChange={setBulkDeleteConfirmOpen}>
-                    <AlertDialogTrigger asChild>
-                      <Button
-                        variant="destructive"
-                        size="sm"
-                        onClick={handleBulkDelete}
-                        disabled={bulkDeleteMutation.isPending || selectedCandidateIds.length === 0}
-                      >
-                        {bulkDeleteMutation.isPending ? (
-                          <>
-                            <Loader2 className="h-4 w-4 mr-2 animate-spin" />
-                            Deleting...
-                          </>
-                        ) : (
-                          <>
-                            <Trash2 className="h-4 w-4 mr-2" />
-                            Delete Selected ({selectedCandidateIds.length})
-                          </>
-                        )}
-                      </Button>
-                    </AlertDialogTrigger>
-                    <AlertDialogContent>
-                      <AlertDialogHeader>
-                        <AlertDialogTitle>Are you absolutely sure?</AlertDialogTitle>
-                        <AlertDialogDescription>
-                          This will permanently delete {bulkDeleteIds.length} candidate record{bulkDeleteIds.length > 1 ? 's' : ''}.
-                          This action cannot be undone and will remove all associated data.
-                        </AlertDialogDescription>
-                      </AlertDialogHeader>
-                      <AlertDialogFooter>
-                        <AlertDialogCancel onClick={() => setBulkDeleteConfirmOpen(false)}>
-                          Cancel
-                        </AlertDialogCancel>
-                        <AlertDialogAction 
-                          onClick={executeBulkDelete}
-                          className="bg-red-500 hover:bg-red-600"
-                          disabled={bulkDeleteMutation.isPending}
-                        >
-                          {bulkDeleteMutation.isPending ? (
-                            <>
-                              <Loader2 className="h-4 w-4 mr-2 animate-spin" />
-                              Deleting...
-                            </>
-                          ) : (
-                            `Delete ${bulkDeleteIds.length} Candidate${bulkDeleteIds.length > 1 ? 's' : ''}`
-                          )}
-                        </AlertDialogAction>
-                      </AlertDialogFooter>
-                    </AlertDialogContent>
-                  </AlertDialog>
-
-                  {selectedCandidateIds.length > 0 && !isSelectAllPages && (
-                    <Button
-                      variant="outline"
-                      size="sm"
-                      onClick={handleSelectAllPages}
-                    >
-                      Select All {candidatesData?.meta?.total || 0} Candidates
-                    </Button>
-                  )}
-
-                  {isSelectAllPages && (
-                    <div className="text-sm text-blue-600 font-medium">
-                      All {candidatesData?.meta?.total || 0} candidates selected
-                    </div>
-                  )}
-                </div>
-
                 <div className="text-sm text-muted-foreground">
                   Showing {((page - 1) * limit) + 1} to {Math.min(page * limit, candidatesData?.meta?.total || 0)} of {candidatesData?.meta?.total || 0} candidates
                   {selectedCandidateIds.length > 0 && (
@@ -2232,6 +2165,77 @@ function SubmittedCandidates() {
                 </div>
               </div>
               <div className="flex items-center gap-2">
+                {selectedCandidateIds.length > 0 && (
+                  <>
+                    <AlertDialog open={bulkDeleteConfirmOpen} onOpenChange={setBulkDeleteConfirmOpen}>
+                      <AlertDialogTrigger asChild>
+                        <Button
+                          variant="destructive"
+                          size="sm"
+                          onClick={handleBulkDelete}
+                          disabled={bulkDeleteMutation.isPending}
+                        >
+                          {bulkDeleteMutation.isPending ? (
+                            <>
+                              <Loader2 className="h-4 w-4 mr-2 animate-spin" />
+                              Deleting...
+                            </>
+                          ) : (
+                            <>
+                              <Trash2 className="h-4 w-4 mr-2" />
+                              Delete Selected ({selectedCandidateIds.length})
+                            </>
+                          )}
+                        </Button>
+                      </AlertDialogTrigger>
+                      <AlertDialogContent>
+                        <AlertDialogHeader>
+                          <AlertDialogTitle>Are you absolutely sure?</AlertDialogTitle>
+                          <AlertDialogDescription>
+                            This will permanently delete {bulkDeleteIds.length} candidate record{bulkDeleteIds.length > 1 ? 's' : ''}.
+                            This action cannot be undone and will remove all associated data.
+                          </AlertDialogDescription>
+                        </AlertDialogHeader>
+                        <AlertDialogFooter>
+                          <AlertDialogCancel onClick={() => setBulkDeleteConfirmOpen(false)}>
+                            Cancel
+                          </AlertDialogCancel>
+                          <AlertDialogAction 
+                            onClick={executeBulkDelete}
+                            className="bg-red-500 hover:bg-red-600"
+                            disabled={bulkDeleteMutation.isPending}
+                          >
+                            {bulkDeleteMutation.isPending ? (
+                              <>
+                                <Loader2 className="h-4 w-4 mr-2 animate-spin" />
+                                Deleting...
+                              </>
+                            ) : (
+                              `Delete ${bulkDeleteIds.length} Candidate${bulkDeleteIds.length > 1 ? 's' : ''}`
+                            )}
+                          </AlertDialogAction>
+                        </AlertDialogFooter>
+                      </AlertDialogContent>
+                    </AlertDialog>
+
+                    {!isSelectAllPages && (
+                      <Button
+                        variant="outline"
+                        size="sm"
+                        onClick={handleSelectAllPages}
+                      >
+                        Select All {candidatesData?.meta?.total || 0} Candidates
+                      </Button>
+                    )}
+
+                    {isSelectAllPages && (
+                      <div className="text-sm text-blue-600 font-medium">
+                        All {candidatesData?.meta?.total || 0} candidates selected
+                      </div>
+                    )}
+                  </>
+                )}
+                
                 <Button
                   variant="outline"
                   size="sm"
@@ -2250,7 +2254,7 @@ function SubmittedCandidates() {
                   onClick={goToNextPage}
                   disabled={page >= totalPages}
                 >
-Next
+                  Next
                 </Button>
               </div>
             </CardFooter>
