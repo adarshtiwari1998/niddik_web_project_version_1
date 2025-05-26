@@ -7,6 +7,7 @@ import { Button } from "@/components/ui/button";
 import { useQuery } from "@tanstack/react-query";
 import { getQueryFn } from "@/lib/queryClient";
 import { JobListing } from "@shared/schema";
+import { cn } from "@/lib/utils";
 
 interface DropdownItem {
   label: string;

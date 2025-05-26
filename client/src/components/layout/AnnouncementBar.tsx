@@ -164,6 +164,7 @@ export default function AnnouncementBar({
             <AnimatePresence>
                 {isDrawerOpen && (
                     <motion.div
+                        key={`announcement-${currentIndex}`}
                         initial={{ x: '100%' }}
                         animate={{ x: 0 }}
                         exit={{ x: '100%' }}
