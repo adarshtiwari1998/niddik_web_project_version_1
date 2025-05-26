@@ -711,23 +711,16 @@ export async function registerRoutes(app: Express): Promise<Server> {
       }
 
       // Convert IDs to numbers and validate them (exactly like single delete)
-      const numericIds = ids.map(id => parseInt(String(id), 10));
-
-      // Check for invalid IDs (exactly like single delete)
-      for (const id of numericIds) {
-        if (isNaN(id)) {
+      const numericIds = [];
+      for (const id of ids) {
+        const numericId = parseInt(String(id), 10);
+        if (isNaN(numericId)) {
           return res.status(400).json({ 
             success: false, 
             message: "Invalid candidate ID" 
           });
         }
-      }
-
-      if (numericIds.length === 0) {
-        return res.status(400).json({ 
-          success: false, 
-          message: "No valid candidate IDs provided" 
-        });
+        numericIds.push(numericId);
       }
 
       // Perform bulk deletion directly (same as single delete - no existence check)
