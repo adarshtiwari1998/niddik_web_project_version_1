@@ -49,6 +49,8 @@ export async function apiRequest(
   url: string,
   data?: unknown | undefined,
 ): Promise<Response> {
+  console.log(`Making ${method} request to ${url}`, data ? { data } : '');
+  
   const res = await fetch(url, {
     method,
     headers: {
@@ -59,6 +61,14 @@ export async function apiRequest(
     body: data ? JSON.stringify(data) : undefined,
     credentials: "include",
   });
+
+  if (!res.ok) {
+    console.error(`Request failed: ${method} ${url}`, {
+      status: res.status,
+      statusText: res.statusText,
+      headers: Object.fromEntries(res.headers.entries())
+    });
+  }
 
   await throwIfResNotOk(res);
   return res;

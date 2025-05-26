@@ -708,7 +708,9 @@ export async function registerRoutes(app: Express): Promise<Server> {
         isArray: Array.isArray(ids),
         length: Array.isArray(ids) ? ids.length : 0,
         firstFewIds: Array.isArray(ids) ? ids.slice(0, 5) : 'N/A',
-        body: req.body
+        allIds: ids,
+        body: req.body,
+        requestHeaders: req.headers
       });
 
       if (!ids || !Array.isArray(ids) || ids.length === 0) {
@@ -723,16 +725,28 @@ export async function registerRoutes(app: Express): Promise<Server> {
       const validIds: number[] = [];
       
       for (const id of ids) {
-        const numId = typeof id === 'string' ? parseInt(id, 10) : Number(id);
+        // Handle both string and number inputs
+        let numId: number;
         
+        if (typeof id === 'string') {
+          numId = parseInt(id, 10);
+        } else if (typeof id === 'number') {
+          numId = id;
+        } else {
+          console.warn('Skipping invalid ID type:', id, 'type:', typeof id);
+          continue;
+        }
+        
+        // Validate the numeric ID
         if (!isNaN(numId) && numId > 0 && Number.isInteger(numId)) {
           validIds.push(numId);
         } else {
-          console.warn('Skipping invalid ID:', id, 'type:', typeof id);
+          console.warn('Skipping invalid ID value:', id, 'converted to:', numId);
         }
       }
 
       console.log('ID validation results:', { 
+        originalIds: ids,
         total: ids.length, 
         valid: validIds.length,
         validIds: validIds.slice(0, 10) // Log first 10 for debugging
@@ -741,16 +755,27 @@ export async function registerRoutes(app: Express): Promise<Server> {
       if (validIds.length === 0) {
         return res.status(400).json({ 
           success: false, 
-          message: "No valid candidate IDs provided" 
+          message: "No valid candidate IDs provided",
+          receivedIds: ids
         });
       }
 
       // Check if candidates exist before attempting deletion
       console.log('Checking existence for IDs:', validIds.slice(0, 10));
-      const existingCandidates = await db
-        .select({ id: submittedCandidates.id })
-        .from(submittedCandidates)
-        .where(inArray(submittedCandidates.id, validIds));
+      let existingCandidates;
+      try {
+        existingCandidates = await db
+          .select({ id: submittedCandidates.id })
+          .from(submittedCandidates)
+          .where(inArray(submittedCandidates.id, validIds));
+      } catch (dbError) {
+        console.error('Database error during existence check:', dbError);
+        return res.status(500).json({
+          success: false,
+          message: "Database error during candidate lookup",
+          error: dbError instanceof Error ? dbError.message : 'Unknown database error'
+        });
+      }
 
       const existingIds = existingCandidates.map(c => c.id);
       const nonExistentIds = validIds.filter(id => !existingIds.includes(id));
