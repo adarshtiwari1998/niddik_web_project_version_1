@@ -197,7 +197,10 @@ export default function CareerPage() {
                   <div className="flex items-center">
                     <Clock className="h-4 w-4 mr-2" />
                     <span>
-                      {format(new Date(job.createdAt), "MMM dd, yyyy")}
+                      {job.createdAt && !isNaN(new Date(job.createdAt).getTime()) 
+                        ? format(new Date(job.createdAt), "MMM dd, yyyy")
+                        : "Recently posted"
+                      }
                     </span>
                   </div>
                 </div>
