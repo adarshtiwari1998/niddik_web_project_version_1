@@ -356,66 +356,212 @@ export default function SearchPage() {
         </Card>
 
         {/* Results */}
-        {searchTerm && (
-          <div className="max-w-4xl mx-auto">
-            <div className="mb-6">
-              <h2 className="text-2xl font-semibold mb-2">
-                Search Results for "{searchTerm}"
-              </h2>
-              <p className="text-gray-600">
-                Found {filteredResults.length} result{filteredResults.length !== 1 ? 's' : ''}
-                {selectedCategory !== "all" && ` in ${selectedCategory}`}
-              </p>
-            </div>
+        <div className="max-w-4xl mx-auto">
+          {searchTerm ? (
+            <>
+              <div className="mb-6">
+                <h2 className="text-2xl font-semibold mb-2">
+                  Search Results for "{searchTerm}"
+                </h2>
+                <p className="text-gray-600">
+                  Found {filteredResults.length} result{filteredResults.length !== 1 ? 's' : ''}
+                  {selectedCategory !== "all" && ` in ${selectedCategory}`}
+                </p>
+              </div>
 
-            {filteredResults.length === 0 ? (
-              <Card>
-                <CardContent className="p-8 text-center">
-                  <div className="text-gray-500 mb-4">
-                    <Search className="w-16 h-16 mx-auto mb-4 opacity-50" />
-                    <h3 className="text-xl font-semibold mb-2">No results found</h3>
-                    <p>Try adjusting your search terms or browse our categories.</p>
-                  </div>
-                </CardContent>
-              </Card>
-            ) : (
-              <div className="space-y-4">
-                {filteredResults.map((result) => (
-                  <Card key={result.id} className="hover:shadow-lg transition-shadow">
-                    <CardContent className="p-6">
-                      <Link href={result.url}>
-                        <div className="flex items-start justify-between group cursor-pointer">
-                          <div className="flex-1">
-                            <div className="flex items-center gap-3 mb-2">
-                              <h3 className="text-xl font-semibold text-andela-dark group-hover:text-andela-green transition-colors">
-                                {result.title}
-                              </h3>
-                              <Badge className={getTypeBadgeColor(result.type)}>
-                                {result.type}
-                              </Badge>
-                              {result.category && (
-                                <Badge variant="outline" className="text-xs">
-                                  {result.category}
+              {filteredResults.length === 0 ? (
+                <Card>
+                  <CardContent className="p-8 text-center">
+                    <div className="text-gray-500 mb-4">
+                      <Search className="w-16 h-16 mx-auto mb-4 opacity-50" />
+                      <h3 className="text-xl font-semibold mb-2">No results found</h3>
+                      <p>Try adjusting your search terms or browse our categories.</p>
+                    </div>
+                  </CardContent>
+                </Card>
+              ) : (
+                <div className="space-y-4">
+                  {filteredResults.map((result) => (
+                    <Card key={result.id} className="hover:shadow-lg transition-shadow">
+                      <CardContent className="p-6">
+                        <Link href={result.url}>
+                          <div className="flex items-start justify-between group cursor-pointer">
+                            <div className="flex-1">
+                              <div className="flex items-center gap-3 mb-2">
+                                <h3 className="text-xl font-semibold text-andela-dark group-hover:text-andela-green transition-colors">
+                                  {result.title}
+                                </h3>
+                                <Badge className={getTypeBadgeColor(result.type)}>
+                                  {result.type}
                                 </Badge>
-                              )}
-                            </div>
-                            <p className="text-gray-600 leading-relaxed">
-                              {result.description}
-                            </p>
-                            <div className="flex items-center mt-3 text-andela-green group-hover:text-andela-dark transition-colors">
-                              <span className="text-sm font-medium">Learn more</span>
-                              <ChevronRight className="w-4 h-4 ml-1" />
+                                {result.category && (
+                                  <Badge variant="outline" className="text-xs">
+                                    {result.category}
+                                  </Badge>
+                                )}
+                              </div>
+                              <p className="text-gray-600 leading-relaxed">
+                                {result.description}
+                              </p>
+                              <div className="flex items-center mt-3 text-andela-green group-hover:text-andela-dark transition-colors">
+                                <span className="text-sm font-medium">Learn more</span>
+                                <ChevronRight className="w-4 h-4 ml-1" />
+                              </div>
                             </div>
                           </div>
+                        </Link>
+                      </CardContent>
+                    </Card>
+                  ))}
+                </div>
+              )}
+            </>
+          ) : (
+            <>
+              {/* Popular Categories */}
+              <div className="mb-8">
+                <h2 className="text-2xl font-semibold mb-4">Popular Categories</h2>
+                <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+                  <Card className="hover:shadow-lg transition-shadow cursor-pointer">
+                    <CardContent className="p-4 text-center">
+                      <Link href="/careers">
+                        <div className="mb-2">
+                          <div className="w-12 h-12 bg-blue-100 rounded-lg flex items-center justify-center mx-auto mb-3">
+                            <span className="text-blue-600 text-xl">💼</span>
+                          </div>
+                          <h3 className="font-semibold text-sm">Jobs</h3>
+                          <p className="text-xs text-gray-500 mt-1">Career opportunities</p>
                         </div>
                       </Link>
                     </CardContent>
                   </Card>
-                ))}
+                  
+                  <Card className="hover:shadow-lg transition-shadow cursor-pointer">
+                    <CardContent className="p-4 text-center">
+                      <Link href="/services">
+                        <div className="mb-2">
+                          <div className="w-12 h-12 bg-green-100 rounded-lg flex items-center justify-center mx-auto mb-3">
+                            <span className="text-green-600 text-xl">🔧</span>
+                          </div>
+                          <h3 className="font-semibold text-sm">Services</h3>
+                          <p className="text-xs text-gray-500 mt-1">Our solutions</p>
+                        </div>
+                      </Link>
+                    </CardContent>
+                  </Card>
+                  
+                  <Card className="hover:shadow-lg transition-shadow cursor-pointer">
+                    <CardContent className="p-4 text-center">
+                      <Link href="/facts-and-trends">
+                        <div className="mb-2">
+                          <div className="w-12 h-12 bg-purple-100 rounded-lg flex items-center justify-center mx-auto mb-3">
+                            <span className="text-purple-600 text-xl">📊</span>
+                          </div>
+                          <h3 className="font-semibold text-sm">Insights</h3>
+                          <p className="text-xs text-gray-500 mt-1">Industry trends</p>
+                        </div>
+                      </Link>
+                    </CardContent>
+                  </Card>
+                  
+                  <Card className="hover:shadow-lg transition-shadow cursor-pointer">
+                    <CardContent className="p-4 text-center">
+                      <Link href="/about-us">
+                        <div className="mb-2">
+                          <div className="w-12 h-12 bg-orange-100 rounded-lg flex items-center justify-center mx-auto mb-3">
+                            <span className="text-orange-600 text-xl">🏢</span>
+                          </div>
+                          <h3 className="font-semibold text-sm">Company</h3>
+                          <p className="text-xs text-gray-500 mt-1">About Niddik</p>
+                        </div>
+                      </Link>
+                    </CardContent>
+                  </Card>
+                </div>
               </div>
-            )}
-          </div>
-        )}
+
+              {/* Active Job Listings */}
+              {jobsData?.data && jobsData.data.length > 0 && (
+                <div className="mb-8">
+                  <div className="flex justify-between items-center mb-4">
+                    <h2 className="text-2xl font-semibold">Latest Job Opportunities</h2>
+                    <Link href="/careers">
+                      <Button variant="outline" className="text-sm">
+                        View All Jobs
+                        <ChevronRight className="w-4 h-4 ml-1" />
+                      </Button>
+                    </Link>
+                  </div>
+                  <div className="grid md:grid-cols-2 gap-4">
+                    {jobsData.data.slice(0, 6).map((job) => (
+                      <Card key={job.id} className="hover:shadow-lg transition-shadow">
+                        <CardContent className="p-6">
+                          <Link href={`/jobs/${job.id}`}>
+                            <div className="group cursor-pointer">
+                              <div className="flex items-center gap-3 mb-2">
+                                <h3 className="text-lg font-semibold text-andela-dark group-hover:text-andela-green transition-colors">
+                                  {job.title}
+                                </h3>
+                                {job.featured && (
+                                  <Badge className="bg-amber-500 hover:bg-amber-600 text-xs">Featured</Badge>
+                                )}
+                                <Badge variant="outline" className="text-xs">Job</Badge>
+                              </div>
+                              <p className="text-gray-600 text-sm mb-3">
+                                {job.company} • {job.location} • {job.jobType}
+                              </p>
+                              <div className="flex items-center text-andela-green group-hover:text-andela-dark transition-colors">
+                                <span className="text-sm font-medium">Apply Now</span>
+                                <ChevronRight className="w-4 h-4 ml-1" />
+                              </div>
+                            </div>
+                          </Link>
+                        </CardContent>
+                      </Card>
+                    ))}
+                  </div>
+                </div>
+              )}
+
+              {/* Popular Links */}
+              <div>
+                <h2 className="text-2xl font-semibold mb-4">Popular Links</h2>
+                <div className="grid md:grid-cols-2 gap-4">
+                  {allSearchableContent.slice(0, 8).map((item) => (
+                    <Card key={item.id} className="hover:shadow-lg transition-shadow">
+                      <CardContent className="p-6">
+                        <Link href={item.url}>
+                          <div className="group cursor-pointer">
+                            <div className="flex items-center gap-3 mb-2">
+                              <h3 className="text-lg font-semibold text-andela-dark group-hover:text-andela-green transition-colors">
+                                {item.title}
+                              </h3>
+                              <Badge className={getTypeBadgeColor(item.type)}>
+                                {item.type}
+                              </Badge>
+                              {item.category && (
+                                <Badge variant="outline" className="text-xs">
+                                  {item.category}
+                                </Badge>
+                              )}
+                            </div>
+                            <p className="text-gray-600 text-sm leading-relaxed mb-3">
+                              {item.description}
+                            </p>
+                            <div className="flex items-center text-andela-green group-hover:text-andela-dark transition-colors">
+                              <span className="text-sm font-medium">Learn more</span>
+                              <ChevronRight className="w-4 h-4 ml-1" />
+                            </div>
+                          </div>
+                        </Link>
+                      </CardContent>
+                    </Card>
+                  ))}
+                </div>
+              </div>
+            </>
+          )}
+        </div>
       </Container>
       <Footer />
     </div>

@@ -300,37 +300,110 @@ const Navbar: React.FC<NavbarProps> = ({ hasAnnouncementAbove = true }) => {
                       onChange={(e) => setSearchTerm(e.target.value)}
                     />
                   </form>
-                  {searchResults.length > 0 && (
-                    <div className="mt-2">
-                      <div className="text-xs text-gray-500 mb-2 px-1">
-                        Found {searchResults.length} result{searchResults.length !== 1 ? 's' : ''}
+                  {searchTerm ? (
+                    searchResults.length > 0 ? (
+                      <div className="mt-2">
+                        <div className="text-xs text-gray-500 mb-2 px-1">
+                          Found {searchResults.length} result{searchResults.length !== 1 ? 's' : ''}
+                        </div>
+                        <div className="max-h-60 overflow-y-auto space-y-1">
+                          {searchResults.map((result, index) => (
+                            <div key={index} className="block py-2 px-1 hover:bg-gray-50 rounded transition-colors cursor-pointer">
+                              <Link 
+                                href={result.href || "#"}
+                                onClick={() => {
+                                  setIsSearchOpen(false);
+                                  setSearchTerm("");
+                                }}
+                                className="block w-full text-left"
+                              >
+                                <div className="flex flex-col">
+                                  <span className="font-medium text-sm">{result.label}</span>
+                                  {result.type === "child" && result.parent && (
+                                    <span className="text-xs text-gray-500">in {result.parent}</span>
+                                  )}
+                                  {result.type === "job" && result.description && (
+                                    <span className="text-xs text-gray-500">{result.description}</span>
+                                  )}
+                                  {result.type === "job" && (
+                                    <span className="text-xs text-andela-green font-medium">Job Opening</span>
+                                  )}
+                                </div>
+                              </Link>
+                            </div>
+                          ))}
+                        </div>
                       </div>
-                      <div className="max-h-60 overflow-y-auto space-y-1">
-                        {searchResults.map((result, index) => (
-                          <div key={index} className="block py-2 px-1 hover:bg-gray-50 rounded transition-colors cursor-pointer">
-                            <Link 
-                              href={result.href || "#"}
-                              onClick={() => {
-                                setIsSearchOpen(false);
-                                setSearchTerm("");
-                              }}
-                              className="block w-full text-left"
-                            >
-                              <div className="flex flex-col">
-                                <span className="font-medium text-sm">{result.label}</span>
-                                {result.type === "child" && result.parent && (
-                                  <span className="text-xs text-gray-500">in {result.parent}</span>
-                                )}
-                                {result.type === "job" && result.description && (
-                                  <span className="text-xs text-gray-500">{result.description}</span>
-                                )}
-                                {result.type === "job" && (
-                                  <span className="text-xs text-andela-green font-medium">Job Opening</span>
-                                )}
-                              </div>
-                            </Link>
-                          </div>
-                        ))}
+                    ) : (
+                      <div className="mt-2 text-center py-4">
+                        <div className="text-sm text-gray-500">No results found</div>
+                        <div className="text-xs text-gray-400 mt-1">Try different keywords</div>
+                      </div>
+                    )
+                  ) : (
+                    <div className="mt-2">
+                      <div className="text-xs text-gray-500 mb-2 px-1">Popular searches</div>
+                      <div className="space-y-1">
+                        <div className="block py-2 px-1 hover:bg-gray-50 rounded transition-colors cursor-pointer">
+                          <Link 
+                            href="/careers"
+                            onClick={() => {
+                              setIsSearchOpen(false);
+                              setSearchTerm("");
+                            }}
+                            className="block w-full text-left"
+                          >
+                            <div className="flex flex-col">
+                              <span className="font-medium text-sm">Job Opportunities</span>
+                              <span className="text-xs text-gray-500">Browse all available positions</span>
+                            </div>
+                          </Link>
+                        </div>
+                        <div className="block py-2 px-1 hover:bg-gray-50 rounded transition-colors cursor-pointer">
+                          <Link 
+                            href="/services"
+                            onClick={() => {
+                              setIsSearchOpen(false);
+                              setSearchTerm("");
+                            }}
+                            className="block w-full text-left"
+                          >
+                            <div className="flex flex-col">
+                              <span className="font-medium text-sm">Our Services</span>
+                              <span className="text-xs text-gray-500">Recruitment solutions</span>
+                            </div>
+                          </Link>
+                        </div>
+                        <div className="block py-2 px-1 hover:bg-gray-50 rounded transition-colors cursor-pointer">
+                          <Link 
+                            href="/adaptive-hiring"
+                            onClick={() => {
+                              setIsSearchOpen(false);
+                              setSearchTerm("");
+                            }}
+                            className="block w-full text-left"
+                          >
+                            <div className="flex flex-col">
+                              <span className="font-medium text-sm">Adaptive Hiring</span>
+                              <span className="text-xs text-gray-500">AI-driven recruiting</span>
+                            </div>
+                          </Link>
+                        </div>
+                        <div className="block py-2 px-1 hover:bg-gray-50 rounded transition-colors cursor-pointer">
+                          <Link 
+                            href="/request-demo"
+                            onClick={() => {
+                              setIsSearchOpen(false);
+                              setSearchTerm("");
+                            }}
+                            className="block w-full text-left"
+                          >
+                            <div className="flex flex-col">
+                              <span className="font-medium text-sm">Request Demo</span>
+                              <span className="text-xs text-gray-500">See our platform in action</span>
+                            </div>
+                          </Link>
+                        </div>
                       </div>
                     </div>
                   )}
