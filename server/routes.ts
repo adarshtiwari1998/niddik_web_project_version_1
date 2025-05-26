@@ -135,6 +135,41 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
+  // Categories API Endpoints
+  app.get('/api/categories', async (req, res) => {
+    try {
+      const type = req.query.type as string;
+      const categories = await storage.getCategories(type);
+      return res.status(200).json({ success: true, data: categories });
+    } catch (error) {
+      console.error('Error fetching categories:', error);
+      return res.status(500).json({ 
+        success: false, 
+        message: "Internal server error" 
+      });
+    }
+  });
+
+  app.get('/api/categories/:id', async (req, res) => {
+    try {
+      const id = parseInt(req.params.id);
+      const category = await storage.getCategoryById(id);
+      if (!category) {
+        return res.status(404).json({ 
+          success: false, 
+          message: "Category not found" 
+        });
+      }
+      return res.status(200).json({ success: true, data: category });
+    } catch (error) {
+      console.error('Error fetching category:', error);
+      return res.status(500).json({ 
+        success: false, 
+        message: "Internal server error" 
+      });
+    }
+  });
+
   // Job Listings API Endpoints
 
   // Get featured job listings

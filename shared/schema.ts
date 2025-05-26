@@ -265,7 +265,42 @@ export const demoRequestSchema = createInsertSchema(demoRequests, {
 export type DemoRequest = typeof demoRequests.$inferSelect;
 export type InsertDemoRequest = z.infer<typeof demoRequestSchema>;
 
+// Categories table for organizing job listings, services, etc.
+export const categories = pgTable("categories", {
+  id: serial("id").primaryKey(),
+  name: text("name").notNull().unique(),
+  slug: text("slug").notNull().unique(),
+  description: text("description"),
+  type: text("type").notNull(), // 'job', 'service', 'industry', etc.
+  parentId: integer("parent_id").references(() => categories.id),
+  isActive: boolean("is_active").notNull().default(true),
+  sortOrder: integer("sort_order").notNull().default(0),
+  createdAt: timestamp("created_at").defaultNow().notNull(),
+  updatedAt: timestamp("updated_at").defaultNow().notNull(),
+});
 
+export const categoriesRelations = relations(categories, ({ one, many }) => ({
+  parent: one(categories, {
+    fields: [categories.parentId],
+    references: [categories.id],
+    relationName: "parentChild"
+  }),
+  children: many(categories, {
+    relationName: "parentChild"
+  }),
+}));
+
+export const categorySchema = createInsertSchema(categories, {
+  name: (schema) => schema.min(2, "Category name must be at least 2 characters"),
+  slug: (schema) => schema.min(2, "Category slug must be at least 2 characters"),
+  type: (schema) => schema.min(2, "Category type is required"),
+  description: (schema) => schema.optional(),
+  parentId: (schema) => schema.optional(),
+  sortOrder: (schema) => schema.optional(),
+});
+
+export type Category = typeof categories.$inferSelect;
+export type InsertCategory = z.infer<typeof categorySchema>;
 
 
 export const adminSessions = pgTable("admin_sessions", {

@@ -8,6 +8,7 @@ import {
   users,
   submittedCandidates,
   demoRequests,
+  categories,
   InsertContactSubmission,
   ContactSubmission,
   Testimonial,
@@ -21,7 +22,9 @@ import {
   SubmittedCandidate,
   InsertSubmittedCandidate,
   DemoRequest,
-  InsertDemoRequest
+  InsertDemoRequest,
+  Category,
+  InsertCategory
 } from "@shared/schema";
 import { eq, desc, and, like, or, asc, inArray, sql } from "drizzle-orm";
 
@@ -105,6 +108,50 @@ export const storage = {
     return await db.query.clients.findFirst({
       where: eq(clients.id, id)
     });
+  },
+
+  // Categories
+  async getCategories(type?: string): Promise<Category[]> {
+    if (type) {
+      return await db.query.categories.findMany({
+        where: and(eq(categories.type, type), eq(categories.isActive, true)),
+        orderBy: [asc(categories.sortOrder), asc(categories.name)]
+      });
+    }
+    return await db.query.categories.findMany({
+      where: eq(categories.isActive, true),
+      orderBy: [asc(categories.sortOrder), asc(categories.name)]
+    });
+  },
+
+  async getCategoryById(id: number): Promise<Category | undefined> {
+    return await db.query.categories.findFirst({
+      where: eq(categories.id, id)
+    });
+  },
+
+  async getCategoryBySlug(slug: string): Promise<Category | undefined> {
+    return await db.query.categories.findFirst({
+      where: eq(categories.slug, slug)
+    });
+  },
+
+  async createCategory(data: InsertCategory): Promise<Category> {
+    const [category] = await db.insert(categories).values(data).returning();
+    return category;
+  },
+
+  async updateCategory(id: number, data: Partial<InsertCategory>): Promise<Category | undefined> {
+    const [category] = await db.update(categories)
+      .set({ ...data, updatedAt: new Date() })
+      .where(eq(categories.id, id))
+      .returning();
+    return category;
+  },
+
+  async deleteCategory(id: number): Promise<boolean> {
+    const result = await db.delete(categories).where(eq(categories.id, id));
+    return result.rowCount > 0;
   },
 
   // Job Listings
