@@ -537,11 +537,11 @@ export const storage = {
   async bulkDeleteSubmittedCandidates(ids: number[]) {
     try {
       console.log(`Starting bulk delete for ${ids.length} candidates`);
-      
+
       if (ids.length === 0) {
         return { deletedCount: 0, totalRequested: 0 };
       }
-      
+
       // Process deletion in chunks to avoid database limits
       const chunkSize = 50; // Smaller chunk size for better reliability
       let totalDeleted = 0;
@@ -557,7 +557,7 @@ export const storage = {
 
           const chunkDeleted = result.length;
           totalDeleted += chunkDeleted;
-          
+
           console.log(`Chunk ${Math.floor(i / chunkSize) + 1} deleted: ${chunkDeleted} candidates`);
         } catch (chunkError) {
           console.error(`Error deleting chunk ${Math.floor(i / chunkSize) + 1}:`, chunkError);
@@ -567,14 +567,6 @@ export const storage = {
 
       console.log(`Bulk delete completed: ${totalDeleted} of ${ids.length} candidates deleted`);
       return { deletedCount: totalDeleted, totalRequested: ids.length };
-    } catch (error) {
-      console.error('Bulk delete error:', error);
-      throw error;
-    }
-  },</old_str>
-
-      console.log(`Bulk delete completed. Total deleted: ${totalDeleted}`);
-      return totalDeleted;
     } catch (error) {
       console.error('Bulk delete error:', error);
       throw error;
