@@ -108,8 +108,8 @@ export default function ProfilePage() {
       location: user?.location || "",
       city: user?.city || "",
       state: user?.state || "",
-      country: z.string().optional(),
-      zipCode: z.string().optional(),
+      country: user?.country || "",
+      zipCode: user?.zipCode || "",
     },
   });
 
@@ -129,20 +129,27 @@ export default function ProfilePage() {
       // Get the current form values
       const currentValues = profileForm.getValues();
       
+      // Ensure all values are strings or empty strings
+      const safeStringValue = (value: any) => {
+        if (value === null || value === undefined) return "";
+        if (typeof value === "object") return "";
+        return String(value);
+      };
+      
       profileForm.reset({
-        fullName: currentValues.fullName || user.fullName || "",
-        email: currentValues.email || user.email || "",
-        phone: currentValues.phone || user.phone || "",
-        experience: currentValues.experience || user.experience || "",
-        noticePeriod: currentValues.noticePeriod || user.noticePeriod || "Immediately",
-        currentCtc: currentValues.currentCtc || user.currentCtc || "",
-        expectedCtc: currentValues.expectedCtc || user.expectedCtc || "",
-        skills: currentValues.skills || user.skills || "",
-        location: currentValues.location || user.location || "",
-        city: currentValues.city || user.city || "",
-        state: currentValues.state || user.state || "",
-        country: currentValues.country || user.country || "",
-        zipCode: currentValues.zipCode || user.zipCode || "",
+        fullName: safeStringValue(currentValues.fullName || user.fullName),
+        email: safeStringValue(currentValues.email || user.email),
+        phone: safeStringValue(currentValues.phone || user.phone),
+        experience: safeStringValue(currentValues.experience || user.experience),
+        noticePeriod: safeStringValue(currentValues.noticePeriod || user.noticePeriod) || "Immediately",
+        currentCtc: safeStringValue(currentValues.currentCtc || user.currentCtc),
+        expectedCtc: safeStringValue(currentValues.expectedCtc || user.expectedCtc),
+        skills: safeStringValue(currentValues.skills || user.skills),
+        location: safeStringValue(currentValues.location || user.location),
+        city: safeStringValue(currentValues.city || user.city),
+        state: safeStringValue(currentValues.state || user.state),
+        country: safeStringValue(currentValues.country || user.country),
+        zipCode: safeStringValue(currentValues.zipCode || user.zipCode),
       });
     }
   }, [user, profileForm]);
