@@ -1,0 +1,64 @@
+ailed to load resource: the server responded with a status of 500 (Internal Server Error)Understand this error
+contact-submissions:1 
+            
+            
+           Failed to load resource: the server responded with a status of 500 (Internal Server Error)Understand this error
+queryClient.ts:119 
+            
+            
+           GET https://c97bc9b7-d459-4d54-aa25-a500aa3482fe-00-17pkxb2ueb99z.sisko.replit.dev/api/contact-submissions 500 (Internal Server Error)
+(anonymous) @ queryClient.ts:119
+fetchFn @ @tanstack_react-query.js?v=d1ff9c50:844
+run @ @tanstack_react-query.js?v=d1ff9c50:494
+(anonymous) @ @tanstack_react-query.js?v=d1ff9c50:519Understand this error
+queryClient.ts:119 
+            
+            
+           GET https://c97bc9b7-d459-4d54-aa25-a500aa3482fe-00-17pkxb2ueb99z.sisko.replit.dev/api/contact-submissions 500 (Internal Server Error)
+(anonymous) @ queryClient.ts:119
+fetchFn @ @tanstack_react-query.js?v=d1ff9c50:844
+run @ @tanstack_react-query.js?v=d1ff9c50:494
+start @ @tanstack_react-query.js?v=d1ff9c50:536
+fetch @ @tanstack_react-query.js?v=d1ff9c50:931
+executeFetch_fn @ @tanstack_react-query.js?v=d1ff9c50:2238
+fetch @ @tanstack_react-query.js?v=d1ff9c50:2049
+refetch @ @tanstack_react-query.js?v=d1ff9c50:2039
+onFocus @ @tanstack_react-query.js?v=d1ff9c50:752
+(anonymous) @ @tanstack_react-query.js?v=d1ff9c50:1117
+(anonymous) @ @tanstack_react-query.js?v=d1ff9c50:1116
+batch @ @tanstack_react-query.js?v=d1ff9c50:584
+onFocus @ @tanstack_react-query.js?v=d1ff9c50:1115
+(anonymous) @ @tanstack_react-query.js?v=d1ff9c50:1634
+await in (anonymous)
+(anonymous) @ @tanstack_react-query.js?v=d1ff9c50:313
+onFocus @ @tanstack_react-query.js?v=d1ff9c50:312
+(anonymous) @ @tanstack_react-query.js?v=d1ff9c50:299
+listener @ @tanstack_react-query.js?v=d1ff9c50:270Understand this error
+queryClient.ts:119 
+            
+            
+           GET https://c97bc9b7-d459-4d54-aa25-a500aa3482fe-00-17pkxb2ueb99z.sisko.replit.dev/api/contact-submissions 500 (Internal Server Error)
+(anonymous) @ queryClient.ts:119
+fetchFn @ @tanstack_react-query.js?v=d1ff9c50:844
+run @ @tanstack_react-query.js?v=d1ff9c50:494
+(anonymous) @ @tanstack_react-query.js?v=d1ff9c50:519
+Promise.then
+(anonymous) @ @tanstack_react-query.js?v=d1ff9c50:515
+Promise.catch
+run @ @tanstack_react-query.js?v=d1ff9c50:498
+start @ @tanstack_react-query.js?v=d1ff9c50:536
+fetch @ @tanstack_react-query.js?v=d1ff9c50:931
+executeFetch_fn @ @tanstack_react-query.js?v=d1ff9c50:2238
+fetch @ @tanstack_react-query.js?v=d1ff9c50:2049
+refetch @ @tanstack_react-query.js?v=d1ff9c50:2039
+onFocus @ @tanstack_react-query.js?v=d1ff9c50:752
+(anonymous) @ @tanstack_react-query.js?v=d1ff9c50:1117
+(anonymous) @ @tanstack_react-query.js?v=d1ff9c50:1116
+batch @ @tanstack_react-query.js?v=d1ff9c50:584
+onFocus @ @tanstack_react-query.js?v=d1ff9c50:1115
+(anonymous) @ @tanstack_react-query.js?v=d1ff9c50:1634
+await in (anonymous)
+(anonymous) @ @tanstack_react-query.js?v=d1ff9c50:313
+onFocus @ @tanstack_react-query.js?v=d1ff9c50:312
+(anonymous) @ @tanstack_react-query.js?v=d1ff9c50:299
+listener @ @tanstack_react-query.js?v=d1ff9c50:270Understand this error
