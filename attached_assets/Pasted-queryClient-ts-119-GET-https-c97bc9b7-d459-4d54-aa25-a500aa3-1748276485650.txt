@@ -1,0 +1,127 @@
+queryClient.ts:119 
+            
+            
+           GET https://c97bc9b7-d459-4d54-aa25-a500aa3482fe-00-17pkxb2ueb99z.sisko.replit.dev/api/admin/contact-submissions 500 (Internal Server Error)
+(anonymous) @ queryClient.ts:119
+fetchFn @ @tanstack_react-query.js?v=d1ff9c50:844
+run @ @tanstack_react-query.js?v=d1ff9c50:494
+start @ @tanstack_react-query.js?v=d1ff9c50:536
+fetch @ @tanstack_react-query.js?v=d1ff9c50:931
+executeFetch_fn @ @tanstack_react-query.js?v=d1ff9c50:2238
+onSubscribe @ @tanstack_react-query.js?v=d1ff9c50:1942
+subscribe @ @tanstack_react-query.js?v=d1ff9c50:24
+(anonymous) @ @tanstack_react-query.js?v=d1ff9c50:3099
+subscribeToStore @ chunk-RPCDYKBN.js?v=d1ff9c50:11984
+commitHookEffectListMount @ chunk-RPCDYKBN.js?v=d1ff9c50:16915
+commitPassiveMountOnFiber @ chunk-RPCDYKBN.js?v=d1ff9c50:18156
+commitPassiveMountEffects_complete @ chunk-RPCDYKBN.js?v=d1ff9c50:18129
+commitPassiveMountEffects_begin @ chunk-RPCDYKBN.js?v=d1ff9c50:18119
+commitPassiveMountEffects @ chunk-RPCDYKBN.js?v=d1ff9c50:18109
+flushPassiveEffectsImpl @ chunk-RPCDYKBN.js?v=d1ff9c50:19490
+flushPassiveEffects @ chunk-RPCDYKBN.js?v=d1ff9c50:19447
+commitRootImpl @ chunk-RPCDYKBN.js?v=d1ff9c50:19416
+commitRoot @ chunk-RPCDYKBN.js?v=d1ff9c50:19277
+performSyncWorkOnRoot @ chunk-RPCDYKBN.js?v=d1ff9c50:18895
+flushSyncCallbacks @ chunk-RPCDYKBN.js?v=d1ff9c50:9119
+(anonymous) @ chunk-RPCDYKBN.js?v=d1ff9c50:18627
+setTimeout
+defaultScheduler @ @tanstack_react-query.js?v=d1ff9c50:546
+flush @ @tanstack_react-query.js?v=d1ff9c50:570
+batch @ @tanstack_react-query.js?v=d1ff9c50:588
+dispatch_fn @ @tanstack_react-query.js?v=d1ff9c50:1001
+setData @ @tanstack_react-query.js?v=d1ff9c50:699
+onSuccess @ @tanstack_react-query.js?v=d1ff9c50:902
+resolve @ @tanstack_react-query.js?v=d1ff9c50:456
+Promise.then
+run @ @tanstack_react-query.js?v=d1ff9c50:498
+start @ @tanstack_react-query.js?v=d1ff9c50:536
+fetch @ @tanstack_react-query.js?v=d1ff9c50:931
+executeFetch_fn @ @tanstack_react-query.js?v=d1ff9c50:2238
+onSubscribe @ @tanstack_react-query.js?v=d1ff9c50:1942
+subscribe @ @tanstack_react-query.js?v=d1ff9c50:24
+(anonymous) @ @tanstack_react-query.js?v=d1ff9c50:3099
+subscribeToStore @ chunk-RPCDYKBN.js?v=d1ff9c50:11984
+commitHookEffectListMount @ chunk-RPCDYKBN.js?v=d1ff9c50:16915
+commitPassiveMountOnFiber @ chunk-RPCDYKBN.js?v=d1ff9c50:18156
+commitPassiveMountEffects_complete @ chunk-RPCDYKBN.js?v=d1ff9c50:18129
+commitPassiveMountEffects_begin @ chunk-RPCDYKBN.js?v=d1ff9c50:18119
+commitPassiveMountEffects @ chunk-RPCDYKBN.js?v=d1ff9c50:18109
+flushPassiveEffectsImpl @ chunk-RPCDYKBN.js?v=d1ff9c50:19490
+flushPassiveEffects @ chunk-RPCDYKBN.js?v=d1ff9c50:19447
+performSyncWorkOnRoot @ chunk-RPCDYKBN.js?v=d1ff9c50:18868
+flushSyncCallbacks @ chunk-RPCDYKBN.js?v=d1ff9c50:9119
+commitRootImpl @ chunk-RPCDYKBN.js?v=d1ff9c50:19432
+commitRoot @ chunk-RPCDYKBN.js?v=d1ff9c50:19277
+finishConcurrentRender @ chunk-RPCDYKBN.js?v=d1ff9c50:18805
+performConcurrentWorkOnRoot @ chunk-RPCDYKBN.js?v=d1ff9c50:18718
+workLoop @ chunk-RPCDYKBN.js?v=d1ff9c50:197
+flushWork @ chunk-RPCDYKBN.js?v=d1ff9c50:176
+performWorkUntilDeadline @ chunk-RPCDYKBN.js?v=d1ff9c50:384Understand this error
+queryClient.ts:119 
+            
+            
+           GET https://c97bc9b7-d459-4d54-aa25-a500aa3482fe-00-17pkxb2ueb99z.sisko.replit.dev/api/admin/contact-submissions 500 (Internal Server Error)
+(anonymous) @ queryClient.ts:119
+fetchFn @ @tanstack_react-query.js?v=d1ff9c50:844
+run @ @tanstack_react-query.js?v=d1ff9c50:494
+(anonymous) @ @tanstack_react-query.js?v=d1ff9c50:519
+Promise.then
+(anonymous) @ @tanstack_react-query.js?v=d1ff9c50:515
+Promise.catch
+run @ @tanstack_react-query.js?v=d1ff9c50:498
+start @ @tanstack_react-query.js?v=d1ff9c50:536
+fetch @ @tanstack_react-query.js?v=d1ff9c50:931
+executeFetch_fn @ @tanstack_react-query.js?v=d1ff9c50:2238
+onSubscribe @ @tanstack_react-query.js?v=d1ff9c50:1942
+subscribe @ @tanstack_react-query.js?v=d1ff9c50:24
+(anonymous) @ @tanstack_react-query.js?v=d1ff9c50:3099
+subscribeToStore @ chunk-RPCDYKBN.js?v=d1ff9c50:11984
+commitHookEffectListMount @ chunk-RPCDYKBN.js?v=d1ff9c50:16915
+commitPassiveMountOnFiber @ chunk-RPCDYKBN.js?v=d1ff9c50:18156
+commitPassiveMountEffects_complete @ chunk-RPCDYKBN.js?v=d1ff9c50:18129
+commitPassiveMountEffects_begin @ chunk-RPCDYKBN.js?v=d1ff9c50:18119
+commitPassiveMountEffects @ chunk-RPCDYKBN.js?v=d1ff9c50:18109
+flushPassiveEffectsImpl @ chunk-RPCDYKBN.js?v=d1ff9c50:19490
+flushPassiveEffects @ chunk-RPCDYKBN.js?v=d1ff9c50:19447
+commitRootImpl @ chunk-RPCDYKBN.js?v=d1ff9c50:19416
+commitRoot @ chunk-RPCDYKBN.js?v=d1ff9c50:19277
+performSyncWorkOnRoot @ chunk-RPCDYKBN.js?v=d1ff9c50:18895
+flushSyncCallbacks @ chunk-RPCDYKBN.js?v=d1ff9c50:9119
+(anonymous) @ chunk-RPCDYKBN.js?v=d1ff9c50:18627
+setTimeout
+defaultScheduler @ @tanstack_react-query.js?v=d1ff9c50:546
+flush @ @tanstack_react-query.js?v=d1ff9c50:570
+batch @ @tanstack_react-query.js?v=d1ff9c50:588
+dispatch_fn @ @tanstack_react-query.js?v=d1ff9c50:1001
+setData @ @tanstack_react-query.js?v=d1ff9c50:699
+onSuccess @ @tanstack_react-query.js?v=d1ff9c50:902
+resolve @ @tanstack_react-query.js?v=d1ff9c50:456
+Promise.then
+run @ @tanstack_react-query.js?v=d1ff9c50:498
+start @ @tanstack_react-query.js?v=d1ff9c50:536
+fetch @ @tanstack_react-query.js?v=d1ff9c50:931
+executeFetch_fn @ @tanstack_react-query.js?v=d1ff9c50:2238
+onSubscribe @ @tanstack_react-query.js?v=d1ff9c50:1942
+subscribe @ @tanstack_react-query.js?v=d1ff9c50:24
+(anonymous) @ @tanstack_react-query.js?v=d1ff9c50:3099
+subscribeToStore @ chunk-RPCDYKBN.js?v=d1ff9c50:11984
+commitHookEffectListMount @ chunk-RPCDYKBN.js?v=d1ff9c50:16915
+commitPassiveMountOnFiber @ chunk-RPCDYKBN.js?v=d1ff9c50:18156
+commitPassiveMountEffects_complete @ chunk-RPCDYKBN.js?v=d1ff9c50:18129
+commitPassiveMountEffects_begin @ chunk-RPCDYKBN.js?v=d1ff9c50:18119
+commitPassiveMountEffects @ chunk-RPCDYKBN.js?v=d1ff9c50:18109
+flushPassiveEffectsImpl @ chunk-RPCDYKBN.js?v=d1ff9c50:19490
+flushPassiveEffects @ chunk-RPCDYKBN.js?v=d1ff9c50:19447
+performSyncWorkOnRoot @ chunk-RPCDYKBN.js?v=d1ff9c50:18868
+flushSyncCallbacks @ chunk-RPCDYKBN.js?v=d1ff9c50:9119
+commitRootImpl @ chunk-RPCDYKBN.js?v=d1ff9c50:19432
+commitRoot @ chunk-RPCDYKBN.js?v=d1ff9c50:19277
+finishConcurrentRender @ chunk-RPCDYKBN.js?v=d1ff9c50:18805
+performConcurrentWorkOnRoot @ chunk-RPCDYKBN.js?v=d1ff9c50:18718
+workLoop @ chunk-RPCDYKBN.js?v=d1ff9c50:197
+flushWork @ chunk-RPCDYKBN.js?v=d1ff9c50:176
+performWorkUntilDeadline @ chunk-RPCDYKBN.js?v=d1ff9c50:384Understand this error
+queryClient.ts:119 
+            
+            
+           GET https://c97bc9b7-d459-4d54-aa25-a500aa3482fe-00-17pkxb2ueb99z.sisko.replit.dev/api/admin/contact-submissions 500 (Internal Server Error)
