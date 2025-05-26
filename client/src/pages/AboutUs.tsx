@@ -303,7 +303,7 @@ As Abhishek's career progressed, he took on increasingly senior leadership roles
               <div className="space-y-4 text-andela-gray">
                 <h3 className="text-xl font-semibold text-andela-dark">Using Technology & People Skills To Create Productive Teams</h3>
                 <p>
-                  Our journey is deeply rooted in a legacy passed down from my grandfather, <a href="https://www.washingtontechnology.com/1998/08/anstec-inc/332231/" target="_blank"  rel="no-follow">Late Shri Satyendra Prasad Shrivastava</a>. A true visionary, he was a recipient of the 1996 Ernst & Young Entrepreneur of the Year Award, the 1994 KPMG Peat Marwick High - Tech Entrepreneur Award, and the 1994 Small Business Person of the Year award for the Washington area.
+                  Our journey is deeply rooted in a legacy passed down from my grandfather, <a href="https://www.washingtontechnology.com/1998/08/anstec-inc/332231/" target="_blank" className="text-andela-green"   rel="no-follow">Late Shri Satyendra Prasad Shrivastava</a>. A true visionary, he was a recipient of the 1996 Ernst & Young Entrepreneur of the Year Award, the 1994 KPMG Peat Marwick High - Tech Entrepreneur Award, and the 1994 Small Business Person of the Year award for the Washington area.
 
                 </p>
                 <p>
