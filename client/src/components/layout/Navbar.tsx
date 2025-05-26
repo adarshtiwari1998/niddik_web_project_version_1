@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react";
 import { Link, useLocation } from "wouter";
-import { Menu, X, ChevronDown } from "lucide-react";
+import { Menu, X, ChevronDown, Search } from "lucide-react";
 import { cn } from "@/lib/utils";
 import Logo from "@/components/ui/logo";
 import Container from "@/components/ui/container";
@@ -88,6 +88,9 @@ const Navbar: React.FC<NavbarProps> = ({ hasAnnouncementAbove = true }) => {
   const [isScrolled, setIsScrolled] = useState(false);
   const [isTransparent, setIsTransparent] = useState(true);
   const [mobileDropdown, setMobileDropdown] = useState(-1);
+  const [isSearchOpen, setIsSearchOpen] = useState(false);
+  const [searchTerm, setSearchTerm] = useState("");
+  const [searchResults, setSearchResults] = useState([]);
 
   // Check if we're on the home page
   const isHomePage = location === "/";
@@ -112,6 +115,22 @@ const Navbar: React.FC<NavbarProps> = ({ hasAnnouncementAbove = true }) => {
     window.addEventListener("scroll", handleScroll);
     return () => window.removeEventListener("scroll", handleScroll);
   }, [hasAnnouncementAbove, isHomePage]);
+
+  // Basic search functionality (replace with your actual search logic)
+  useEffect(() => {
+    if (searchTerm) {
+      // Simulate a search API call or local filtering
+      const results = navItems.filter(item =>
+        item.label.toLowerCase().includes(searchTerm.toLowerCase()) ||
+        (item.dropdown && item.dropdown.some(dropdownItem =>
+          dropdownItem.label.toLowerCase().includes(searchTerm.toLowerCase())
+        ))
+      );
+      setSearchResults(results);
+    } else {
+      setSearchResults([]);
+    }
+  }, [searchTerm]);
 
   return (
     <header className={cn(
@@ -184,44 +203,59 @@ const Navbar: React.FC<NavbarProps> = ({ hasAnnouncementAbove = true }) => {
 
           {/* CTA Buttons */}
           <div className="hidden lg:flex items-center space-x-4 text-nowrap">
-            {/* <div className="relative group">
-							<div className="hover:text-andela-green font-medium transition-colors flex items-center">
-								<span>Sign In</span>
-								<ChevronDown className="ml-1 w-4 h-4" />
-							</div>
-							<div className="absolute left-0 mt-2 w-52 rounded-lg shadow-xl bg-white p-4 opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-300 transform origin-top-left z-50">
-								<div className="block py-2 hover:text-andela-green transition-colors">
-									<Link href="/admin">
-										Sign in as Admin/Member
-									</Link>
-								</div>
-								<div className="block py-2 hover:text-andela-green transition-colors">
-									<Link href="/auth">
-										Sign in as Candidate
-									</Link>
-								</div>
-							</div>
-						</div> */}
             <div className="relative group">
               <div className="bg-andela-green hover:bg-opacity-90 transition-colors text-white px-4 py-2 rounded-md font-medium flex items-center">
                 <Link href="/request-demo" className="text-white text-sm">Hire Talent</Link>
-                {/* <ChevronDown className="ml-1 w-4 h-4 text-white" /> */}
               </div>
-              {/* <div className="absolute right-0 mt-2 w-48 rounded-lg shadow-xl bg-white p-4 opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-300 transform origin-top-right z-50">
-                <div className="block py-2 hover:text-andela-green transition-colors">
-                  <Link href="/request-demo" 	className="text-sm">
-                    Request Demo
-                  </Link>
-                </div>
-                <div className="block py-2 hover:text-andela-green transition-colors">
-                  <Link href="#" 	className="text-sm">
-                    Contact Sales
-                  </Link>
-                </div>
-              </div> */}
             </div>
+
+            {/* Search Icon and Dropdown */}
+            <div className="relative group">
+              <button
+                onClick={() => setIsSearchOpen(!isSearchOpen)}
+                className={cn(
+                  "hover:text-andela-green font-medium transition-colors",
+                  isTransparent ? "text-white" : "text-andela-dark"
+                )}
+              >
+                <Search className="w-5 h-5" />
+              </button>
+
+              {isSearchOpen && (
+                <div className="absolute right-0 mt-2 w-64 rounded-lg shadow-xl bg-white p-4 opacity-100 visible transition-all duration-300 transform origin-top-right z-50">
+                  <input
+                    type="text"
+                    placeholder="Search..."
+                    className="w-full px-3 py-2 border rounded-md focus:ring focus:ring-andela-green"
+                    value={searchTerm}
+                    onChange={(e) => setSearchTerm(e.target.value)}
+                  />
+                  {searchResults.length > 0 && (
+                    <div className="mt-2">
+                      {searchResults.map((result, index) => (
+                        <div key={index} className="block py-2 hover:text-andela-green transition-colors">
+                          <Link href={result.href || "#"}>
+                            {result.label}
+                          </Link>
+                        </div>
+                      ))}
+                    </div>
+                  )}
+                </div>
+              )}
+            </div>
+
             <div className="border border-andela-green text-andela-green hover:bg-andela-green hover:text-white px-4 py-2 rounded-md font-medium flex items-center">
-              <Link href="/careers" className="text-andela-green hover:text-white text-sm">Apply as Talent</Link>
+              <Link 
+                href="/careers" 
+                className={cn(
+                  "text-sm",
+                  isTransparent ? "text-white" : "text-andela-green",
+                  "hover:text-white transition-colors"
+                )}
+              >
+                Apply as Talent
+              </Link>
             </div>
           </div>
 
