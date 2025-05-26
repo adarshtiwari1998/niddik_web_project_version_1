@@ -345,6 +345,25 @@ export default function Candidates() {
     return filtered;
   }, [applicationsData?.data, search]);
 
+  // Fetch analytics data
+  const { data: analyticsData, isLoading: isAnalyticsLoading, error: analyticsError } = useQuery<AnalyticsData[]>({
+    queryKey: ['/api/admin/analytics'],
+    queryFn: async () => {
+      const res = await fetch(`/api/admin/analytics`, {
+        headers: {
+          'Cache-Control': 'no-cache',
+          'Pragma': 'no-cache'
+        }
+      });
+      if (!res.ok) throw new Error("Failed to fetch analytics data");
+      return res.json();
+    },
+    refetchInterval: 30000, // Refetch every 30 seconds
+    refetchOnMount: true,
+    refetchOnWindowFocus: true,
+    staleTime: 0, // Consider data stale immediately
+  });
+
   // Client-side filtering of analytics data based on search term
   const filteredAnalyticsData = useMemo(() => {
     if (!analyticsData) return [];
@@ -393,25 +412,6 @@ export default function Candidates() {
 
   // Calculate total pages based on filtered results
   const totalPages = Math.ceil(filteredApplications.length / pageSize);
-
-    // Fetch analytics data
-    const { data: analyticsData, isLoading: isAnalyticsLoading, error: analyticsError } = useQuery<AnalyticsData[]>({
-      queryKey: ['/api/admin/analytics'],
-      queryFn: async () => {
-        const res = await fetch(`/api/admin/analytics`, {
-          headers: {
-            'Cache-Control': 'no-cache',
-            'Pragma': 'no-cache'
-          }
-        });
-        if (!res.ok) throw new Error("Failed to fetch analytics data");
-        return res.json();
-      },
-      refetchInterval: 30000, // Refetch every 30 seconds
-      refetchOnMount: true,
-      refetchOnWindowFocus: true,
-      staleTime: 0, // Consider data stale immediately
-    });
 
   // Format date to a readable string
   const formatDate = (dateString: string | Date) => {
