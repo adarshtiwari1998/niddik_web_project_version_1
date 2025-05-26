@@ -720,14 +720,12 @@ export async function registerRoutes(app: Express): Promise<Server> {
         });
       }
 
-      // Perform bulk deletion (just like single delete calls storage method)
-      const result = await storage.bulkDeleteSubmittedCandidates(numericIds);
+      // Perform bulk deletion (just like single delete calls storage method directly)
+      await storage.bulkDeleteSubmittedCandidates(numericIds);
 
       return res.status(200).json({
         success: true,
-        message: `Successfully deleted ${result.deletedCount} candidate${result.deletedCount !== 1 ? 's' : ''}`,
-        deletedCount: result.deletedCount,
-        totalRequested: result.totalRequested
+        message: "Candidates deleted successfully"
       });
 
     } catch (error) {
