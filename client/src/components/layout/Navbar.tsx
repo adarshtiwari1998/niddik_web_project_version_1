@@ -85,17 +85,11 @@ const navItems: NavItem[] = [
 const Navbar: React.FC<NavbarProps> = ({ hasAnnouncementAbove = true }) => {
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const [isScrolled, setIsScrolled] = useState(false);
-  const [isTransparent, setIsTransparent] = useState(true);
   const [mobileDropdown, setMobileDropdown] = useState(-1);
 
   useEffect(() => {
     const handleScroll = () => {
-      const scrollY = window.scrollY;
-      setIsScrolled(scrollY > 10);
-      
-      // Assume hero section is about 600px height, adjust as needed
-      const heroSectionHeight = 600;
-      setIsTransparent(scrollY < heroSectionHeight);
+      setIsScrolled(window.scrollY > 10);
     };
 
     handleScroll();
@@ -106,10 +100,9 @@ const Navbar: React.FC<NavbarProps> = ({ hasAnnouncementAbove = true }) => {
 
   return (
     <header className={cn(
-      "fixed w-full z-40 transition-all duration-300",
+      "fixed w-full bg-white z-40 transition-all duration-300",
       hasAnnouncementAbove ? "top-[40px]" : "top-0",
-      isTransparent ? "bg-transparent" : "bg-white",
-      isScrolled && !isTransparent ? "shadow-md" : isTransparent ? "" : "shadow-sm",
+      isScrolled ? "shadow-md" : "shadow-sm",
       "transition-all duration-300"
     )}>
       <Container>
@@ -136,17 +129,11 @@ const Navbar: React.FC<NavbarProps> = ({ hasAnnouncementAbove = true }) => {
                   <div className="flex items-center">
                     <Link 
                       href={item.href || "#"} 
-                      className={cn(
-                        "group-hover:text-andela-green font-medium transition-colors",
-                        isTransparent ? "text-white" : "text-andela-dark"
-                      )}
+                      className="text-andela-dark group-hover:text-andela-green font-medium transition-colors"
                     >
                       {item.label}
                     </Link>
-                    <ChevronDown className={cn(
-                      "ml-1 w-4 h-4 group-hover:text-andela-green",
-                      isTransparent ? "text-white" : "text-andela-dark"
-                    )} />
+                    <ChevronDown className="ml-1 w-4 h-4 text-andela-dark group-hover:text-andela-green" />
                   </div>
                   <div className="absolute left-0 mt-2 w-64 rounded-lg shadow-xl bg-white p-6 opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-300 transform origin-top-left z-50">
                     {item.dropdown.map((dropdownItem, idx) => (
@@ -159,10 +146,7 @@ const Navbar: React.FC<NavbarProps> = ({ hasAnnouncementAbove = true }) => {
                   </div>
                 </div>
               ) : (
-                <div key={index} className={cn(
-                  "hover:text-andela-green font-medium transition-colors whitespace-nowrap",
-                  isTransparent ? "text-white" : "text-andela-dark"
-                )}>
+                <div key={index} className="text-andela-dark hover:text-andela-green font-medium transition-colors whitespace-nowrap">
                   <Link href={item.href || "#"}>
                     {item.label}
                   </Link>
@@ -219,10 +203,7 @@ const Navbar: React.FC<NavbarProps> = ({ hasAnnouncementAbove = true }) => {
             className="lg:hidden flex items-center"
             onClick={() => setIsMobileMenuOpen(true)}
           >
-            <Menu className={cn(
-              "w-6 h-6",
-              isTransparent ? "text-white" : "text-andela-dark"
-            )} />
+            <Menu className="w-6 h-6" />
           </button>
         </div>
       </Container>
