@@ -189,7 +189,7 @@ const AdminDashboard = () => {
             <TabsTrigger value="account" className="whitespace-nowrap">Account Settings</TabsTrigger>
             <TabsTrigger value="password" className="whitespace-nowrap">Change Password</TabsTrigger>
           </TabsList>
-        </div></TabsList>
+        </div>
 
         <TabsContent value="overview">
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
