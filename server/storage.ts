@@ -23,7 +23,7 @@ import {
   DemoRequest,
   InsertDemoRequest
 } from "@shared/schema";
-import { eq, desc, and, like, or, asc, inArray } from "drizzle-orm";
+import { eq, desc, and, like, or, asc, inArray, sql } from "drizzle-orm";
 
 export const storage = {
   // Contact form submissions
@@ -313,10 +313,11 @@ export const storage = {
     }
 
     if (search) {
+      const searchTerm = search.toLowerCase();
       const userApplications = await db.query.users.findMany({
         where: or(
-          like(users.fullName, `%${search}%`),
-          like(users.email, `%${search}%`)
+          sql`LOWER(${users.fullName}) LIKE ${`%${searchTerm}%`}`,
+          sql`LOWER(${users.email}) LIKE ${`%${searchTerm}%`}`
         ),
         with: {
           applications: true
@@ -411,21 +412,22 @@ export const storage = {
     }
 
     if (search) {
+      const searchTerm = search.toLowerCase();
       whereConditions.push(
         or(
-          like(submittedCandidates.candidateName, `%${search}%`),
-          like(submittedCandidates.emailId, `%${search}%`),
-          like(submittedCandidates.skills, `%${search}%`),
-          like(submittedCandidates.client, `%${search}%`),
-          like(submittedCandidates.contactNo, `%${search}%`),
-          like(submittedCandidates.location, `%${search}%`),
-          like(submittedCandidates.experience, `%${search}%`),
-          like(submittedCandidates.status, `%${search}%`),
-          like(submittedCandidates.poc, `%${search}%`),
-          like(submittedCandidates.sourcedBy, `%${search}%`),
-          like(submittedCandidates.currentCtc, `%${search}%`),
-          like(submittedCandidates.expectedCtc, `%${search}%`),
-          like(submittedCandidates.noticePeriod, `%${search}%`)
+          sql`LOWER(${submittedCandidates.candidateName}) LIKE ${`%${searchTerm}%`}`,
+          sql`LOWER(${submittedCandidates.emailId}) LIKE ${`%${searchTerm}%`}`,
+          sql`LOWER(${submittedCandidates.skills}) LIKE ${`%${searchTerm}%`}`,
+          sql`LOWER(${submittedCandidates.client}) LIKE ${`%${searchTerm}%`}`,
+          sql`LOWER(${submittedCandidates.contactNo}) LIKE ${`%${searchTerm}%`}`,
+          sql`LOWER(${submittedCandidates.location}) LIKE ${`%${searchTerm}%`}`,
+          sql`LOWER(${submittedCandidates.experience}) LIKE ${`%${searchTerm}%`}`,
+          sql`LOWER(${submittedCandidates.status}) LIKE ${`%${searchTerm}%`}`,
+          sql`LOWER(${submittedCandidates.poc}) LIKE ${`%${searchTerm}%`}`,
+          sql`LOWER(${submittedCandidates.sourcedBy}) LIKE ${`%${searchTerm}%`}`,
+          sql`LOWER(${submittedCandidates.currentCtc}) LIKE ${`%${searchTerm}%`}`,
+          sql`LOWER(${submittedCandidates.expectedCtc}) LIKE ${`%${searchTerm}%`}`,
+          sql`LOWER(${submittedCandidates.noticePeriod}) LIKE ${`%${searchTerm}%`}`
         )
       );
     }
