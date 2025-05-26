@@ -50,8 +50,8 @@ const InfiniteMarquee = ({ children, pauseOnHover = true, speed = 15 }: {
         {/* Duplicate content with unique keys */}
         <div className="marquee-content-duplicate">
           {React.Children.toArray(children).map((child, i) => 
-            React.isValidElement(child) && child.props.key ? 
-              React.cloneElement(child, { key: `dup-${child.props.key}` }) : 
+            React.isValidElement(child) ? 
+              React.cloneElement(child, { key: `dup-${i}` }) : 
               child
           )}
         </div>
