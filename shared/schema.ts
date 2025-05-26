@@ -118,14 +118,28 @@ export const jobListings = pgTable("job_listings", {
   skills: text("skills").notNull(), // Comma-separated list of skills
 });
 
-export const jobListingSchema = createInsertSchema(jobListings, {
-  title: (schema) => schema.min(5, "Job title must be at least 5 characters"),
-  company: (schema) => schema.min(2, "Company name is required"),
-  location: (schema) => schema.min(2, "Location is required"),
-  description: (schema) => schema.min(50, "Job description must be detailed"),
-  requirements: (schema) => schema.min(30, "Job requirements must be detailed"),
-  category: (schema) => schema.min(2, "Category is required"),
-  skills: (schema) => schema.min(3, "Skills are required")
+export const jobListingSchema = z.object({
+  id: z.number().optional(),
+  title: z.string().min(1, "Title is required"),
+  company: z.string().min(1, "Company is required"),
+  location: z.string().min(1, "Location is required"),
+  jobType: z.string().min(1, "Job type is required"),
+  experienceLevel: z.string().min(1, "Experience level is required"),
+  salary: z.string().min(1, "Salary is required"),
+  description: z.string().min(1, "Description is required"),
+  requirements: z.string().min(1, "Requirements are required"),
+  benefits: z.string().optional(),
+  applicationUrl: z.string().optional(),
+  contactEmail: z.string().optional(),
+  status: z.string().default("active"),
+  featured: z.boolean().default(false),
+  urgent: z.boolean().default(false),
+  priority: z.boolean().default(false),
+  isOpen: z.boolean().default(false),
+  postedDate: z.union([z.string(), z.date()]).optional(),
+  expiryDate: z.union([z.string(), z.date()]).optional(),
+  category: z.string().min(1, "Category is required"),
+  skills: z.string().min(1, "Skills are required"),
 });
 
 export type JobListing = typeof jobListings.$inferSelect;
@@ -293,4 +307,3 @@ export type AdminSession = typeof adminSessions.$inferSelect;
 export type InsertAdminSession = typeof adminSessions.$inferInsert;
 export type Session = typeof sessions.$inferSelect;
 export type InsertSession = typeof sessions.$inferInsert;
-

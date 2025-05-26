@@ -21,6 +21,7 @@ import 'dotenv/config';
 import { Pool } from 'pg';
 import { drizzle } from 'drizzle-orm/node-postgres';
 import * as schema from "@shared/schema";
+import { integer, sqliteTable, sql, text } from "drizzle-orm/sqlite-core";
 
 const DATABASE_URL = process.env.DATABASE_URL;
 
@@ -45,3 +46,27 @@ pool.on('error', (err) => {
 
 export const db = drizzle(pool, { schema });
 export { pool };
+
+export const jobListings = sqliteTable("job_listings", {
+  id: integer("id").primaryKey({ autoIncrement: true }),
+  title: text("title").notNull(),
+  company: text("company").notNull(),
+  location: text("location").notNull(),
+  jobType: text("job_type").notNull(),
+  experienceLevel: text("experience_level").notNull(),
+  salary: text("salary").notNull(),
+  description: text("description").notNull(),
+  requirements: text("requirements").notNull(),
+  benefits: text("benefits"),
+  applicationUrl: text("application_url"),
+  contactEmail: text("contact_email"),
+  status: text("status").notNull().default("active"),
+  featured: integer("featured", { mode: "boolean" }).default(false),
+  urgent: integer("urgent", { mode: "boolean" }).default(false),
+  priority: integer("priority", { mode: "boolean" }).default(false),
+  isOpen: integer("is_open", { mode: "boolean" }).default(false),
+  postedDate: integer("posted_date", { mode: "timestamp" }).default(sql`(unixepoch())`),
+  expiryDate: integer("expiry_date", { mode: "timestamp" }),
+  category: text("category").notNull(),
+  skills: text("skills").notNull(),
+});
