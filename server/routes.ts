@@ -725,7 +725,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
       // Convert IDs to numbers and validate them (exactly like single delete)
       const numericIds = [];
       for (const id of ids) {
-        console.log('Processing ID:', id, 'type:', typeof id);
+        console.log('Processing bulk delete ID:', id, 'type:', typeof id);
         const numericId = parseInt(String(id), 10);
         console.log('Converted to numeric:', numericId, 'isNaN:', isNaN(numericId));
         if (isNaN(numericId)) {

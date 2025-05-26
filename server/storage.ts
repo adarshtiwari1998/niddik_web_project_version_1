@@ -536,20 +536,29 @@ export const storage = {
 
   async bulkDeleteSubmittedCandidates(ids: number[]) {
     console.log(`Starting bulk delete for ${ids.length} candidates with IDs:`, ids);
+    console.log('IDs types:', ids.map(id => typeof id));
+    console.log('IDs values:', ids);
 
     if (ids.length === 0) {
       return { deletedCount: 0, totalRequested: 0 };
     }
 
-    // Simply delete all records with the provided IDs, just like single delete
-    const result = await db.delete(submittedCandidates)
-      .where(inArray(submittedCandidates.id, ids))
-      .returning({ id: submittedCandidates.id });
+    try {
+      // Simply delete all records with the provided IDs, just like single delete
+      console.log('Executing delete query with IDs:', ids);
+      const result = await db.delete(submittedCandidates)
+        .where(inArray(submittedCandidates.id, ids))
+        .returning({ id: submittedCandidates.id });
 
-    const deletedCount = result.length;
-    console.log(`Bulk delete completed: ${deletedCount} of ${ids.length} candidates deleted`);
+      const deletedCount = result.length;
+      console.log(`Bulk delete completed: ${deletedCount} of ${ids.length} candidates deleted`);
+      console.log('Deleted IDs:', result.map(r => r.id));
 
-    return { deletedCount, totalRequested: ids.length };
+      return { deletedCount, totalRequested: ids.length };
+    } catch (error) {
+      console.error('Error in bulk delete storage function:', error);
+      throw error;
+    }
   },
 
   // Demo Requests
