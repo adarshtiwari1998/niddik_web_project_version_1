@@ -104,7 +104,7 @@ const Hero = () => {
   };
 
   return (
-    <section className="relative overflow-hidden min-h-screen flex flex-col">
+    <section className="relative overflow-hidden h-screen flex flex-col">
       {/* Video Background with Fallback */}
       <div className="absolute inset-0 w-full h-full z-0">
         {/* Fallback Image - always present, hidden when video loads */}
@@ -125,6 +125,7 @@ const Hero = () => {
           className={`hero-video object-cover w-full h-full absolute inset-0 transition-opacity duration-300 ${isVideoLoaded && !showFallback ? 'opacity-100' : 'opacity-0'}`}
           onLoadedData={handleVideoLoaded}
           onError={handleVideoError}
+          style={{ minHeight: '100vh', objectPosition: 'center center' }}
         >
           <source src="https://res.cloudinary.com/dhanz6zty/video/upload/v1748266865/Project_05-09_4K_MEDIUM_FR30_1_1_e8eetm.mp4" type="video/mp4" />
           Your browser does not support the video tag.
@@ -135,7 +136,7 @@ const Hero = () => {
       </div>
       
       {/* Main Content */}
-      <div className="relative z-20 flex-grow flex items-center pt-24">
+      <div className="relative z-20 flex-grow flex items-center pt-32 pb-8">
         <Container>
           <div className="flex flex-col md:flex-row items-center justify-between">
             {/* Left-aligned text container */}
@@ -222,9 +223,9 @@ const Hero = () => {
       </div>
       
       {/* Key Points Section */}
-      <div className="relative z-20 pb-12 mt-auto">
+      <div className="relative z-20 pb-0 mt-auto">
         <Container>
-          <div className="bg-white rounded-lg shadow-xl py-8 px-6 md:px-10 -mb-20 relative z-30">
+          <div className="bg-white rounded-lg shadow-xl py-8 px-6 md:px-10 mb-0 relative z-30">
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 md:gap-10">
               {keyPoints.map((point, index) => (
                 <motion.div
@@ -253,7 +254,7 @@ const Hero = () => {
       
       {/* Modern floating highlight badge */}
       <motion.div 
-        className="absolute top-32 right-8 bg-white/10 backdrop-blur-md p-4 rounded-lg shadow-lg z-30 max-w-xs hidden md:block border border-white/20"
+        className="absolute top-40 right-8 bg-white/10 backdrop-blur-md p-4 rounded-lg shadow-lg z-30 max-w-xs hidden md:block border border-white/20"
         initial={{ opacity: 0, x: 50 }}
         animate={{ opacity: 1, x: 0 }}
         transition={{ duration: 0.8, delay: 1 }}
