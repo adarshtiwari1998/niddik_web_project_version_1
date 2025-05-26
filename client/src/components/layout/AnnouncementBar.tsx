@@ -70,7 +70,7 @@ export default function AnnouncementBar({
                    </div>
 
                    {/* Buttons Container */}
-                   <div className="flex items-center space-x-2">
+                   <div className="hidden md:flex items-center space-x-2">
                        {/* Sign In Button (Opens Drawer) */}
                        <div className="relative group z-50">
                            <div 
