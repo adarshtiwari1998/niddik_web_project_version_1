@@ -770,11 +770,12 @@ export const storage = {
     }
 
     if (search) {
-      const searchCondition = or(
-        like(users.candidateName, `%${search}%`),
-        like(users.email, `%${search}%`)
+      query = query.where(
+        or(
+          like(users.candidateName, `%${search}%`),
+          like(users.email, `%${search}%`)
+        )
       );
-      whereConditions.push(searchCondition);
     }
 
     const applications = await query.limit(limit).offset(offset);

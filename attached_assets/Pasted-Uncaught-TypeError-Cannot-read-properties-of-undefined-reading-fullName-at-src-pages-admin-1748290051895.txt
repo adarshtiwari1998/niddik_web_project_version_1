@@ -1,7 +1,7 @@
 Uncaught TypeError: Cannot read properties of undefined (reading 'fullName')
-    at Candidates.tsx:545:51
+    at /src/pages/admin/Candidates.tsx?t=1748290021134:1069:44
     at Array.map (<anonymous>)
-    at Candidates (Candidates.tsx:536:35)
+    at Candidates (/src/pages/admin/Candidates.tsx?t=1748290021134:1059:72)
     at renderWithHooks (chunk-RPCDYKBN.js?v=d1ff9c50:11548:26)
     at updateFunctionComponent (chunk-RPCDYKBN.js?v=d1ff9c50:14582:28)
     at beginWork (chunk-RPCDYKBN.js?v=d1ff9c50:15924:22)
@@ -11,7 +11,7 @@ Uncaught TypeError: Cannot read properties of undefined (reading 'fullName')
     at beginWork$1 (chunk-RPCDYKBN.js?v=d1ff9c50:19765:15)Understand this error
 chunk-RPCDYKBN.js?v=d1ff9c50:14032 The above error occurred in the <Candidates> component:
 
-    at Candidates (https://c97bc9b7-d459-4d54-aa25-a500aa3482fe-00-17pkxb2ueb99z.sisko.replit.dev/src/pages/admin/Candidates.tsx?t=1748290583987:585:20)
+    at Candidates (https://c97bc9b7-d459-4d54-aa25-a500aa3482fe-00-17pkxb2ueb99z.sisko.replit.dev/src/pages/admin/Candidates.tsx?t=1748290021134:585:20)
     at ProtectedRoute (https://c97bc9b7-d459-4d54-aa25-a500aa3482fe-00-17pkxb2ueb99z.sisko.replit.dev/src/lib/protected-route.tsx:22:45)
     at Switch (https://c97bc9b7-d459-4d54-aa25-a500aa3482fe-00-17pkxb2ueb99z.sisko.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/wouter.js?v=d1ff9c50:336:17)
     at Router
@@ -24,13 +24,13 @@ Consider adding an error boundary to your tree to customize error handling behav
 Visit https://reactjs.org/link/error-boundaries to learn more about error boundaries.
 logCapturedError @ chunk-RPCDYKBN.js?v=d1ff9c50:14032Understand this error
 chunk-RPCDYKBN.js?v=d1ff9c50:9129 Uncaught TypeError: Cannot read properties of undefined (reading 'fullName')
-    at Candidates.tsx:545:51
+    at /src/pages/admin/Candidates.tsx?t=1748290021134:1069:44
     at Array.map (<anonymous>)
-    at Candidates (Candidates.tsx:536:35)
+    at Candidates (/src/pages/admin/Candidates.tsx?t=1748290021134:1059:72)
     at renderWithHooks (chunk-RPCDYKBN.js?v=d1ff9c50:11548:26)
     at updateFunctionComponent (chunk-RPCDYKBN.js?v=d1ff9c50:14582:28)
     at beginWork (chunk-RPCDYKBN.js?v=d1ff9c50:15924:22)
     at beginWork$1 (chunk-RPCDYKBN.js?v=d1ff9c50:19753:22)
     at performUnitOfWork (chunk-RPCDYKBN.js?v=d1ff9c50:19198:20)
     at workLoopSync (chunk-RPCDYKBN.js?v=d1ff9c50:19137:13)
-    at renderRootSync (chunk-RPCDYKBN.js?v=d1ff9c50:19116:15)Understand this error
+    at renderRootSync (chunk-RPCDYKBN.js?v=d1ff9c50:19116:15)
