@@ -458,7 +458,7 @@ export default function Candidates() {
                   <Search className="absolute left-2.5 top-2.5 h-4 w-4 text-muted-foreground" />
                   <Input
                     type="search"
-                    placeholder="Search by name or email..."
+                    placeholder="Search by name, email, date (YYYY-MM-DD), or skills..."
                     value={search}
                     onChange={(e) => setSearch(e.target.value)}
                     className="pl-8"
@@ -527,6 +527,7 @@ export default function Candidates() {
                         <TableHead>CTC</TableHead>
                         <TableHead>Expected CTC</TableHead>
                         <TableHead>Skills</TableHead>
+                        <TableHead>Application Date</TableHead>
                         <TableHead>Cover Letter/Note</TableHead>
                         <TableHead>Status</TableHead>
                         <TableHead>Actions</TableHead>
@@ -546,6 +547,9 @@ export default function Candidates() {
                                 <ExternalLink className="h-3 w-3" />
                               </button>
                               <div className="text-xs text-muted-foreground">{application.job.title}</div>
+                              <div className="text-xs text-gray-500">
+                                Applied: {formatDate(application.appliedDate || application.createdAt)}
+                              </div>
                             </div>
                           </TableCell>
                           <TableCell>
@@ -584,6 +588,14 @@ export default function Candidates() {
                             <div className="max-w-[250px]">
                               <span className="text-xs text-gray-600">
                                 {application.skills || 'Not specified'}
+                              </span>
+                            </div>
+                          </TableCell>
+                          <TableCell>
+                            <div className="flex items-center">
+                              <Calendar className="h-3 w-3 mr-1" />
+                              <span className="text-sm">
+                                {formatDate(application.appliedDate || application.createdAt)}
                               </span>
                             </div>
                           </TableCell>

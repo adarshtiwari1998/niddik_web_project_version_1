@@ -788,3 +788,39 @@ export const storage = {
     return { applications, total };
   },
 };
+
+export async function getJobApplicationsWithDetails(
+  page: number = 1,
+  limit: number = 10,
+  search?: string,
+  status?: string
+): Promise<{ data: any[], meta: { total: number; page: number; limit: number; pages: number } }> {
+  const offset = (page - 1) * limit;
+
+  // Build where conditions
+  const whereConditions: any[] = [];
+
+  // Add search condition
+  if (search) {
+    const searchTerm = search.toLowerCase();
+    whereConditions.push(
+      or(
+        sql`LOWER(${users.fullName}) LIKE ${`%${searchTerm}%`}`,
+        sql`LOWER(${users.email}) LIKE ${`%${searchTerm}%`}`,
+        sql`LOWER(${users.phone}) LIKE ${`%${searchTerm}%`}`,
+        sql`LOWER(${users.location}) LIKE ${`%${searchTerm}%`}`,
+        sql`LOWER(${users.skills}) LIKE ${`%${searchTerm}%`}`,
+        sql`LOWER(${jobListings.title}) LIKE ${`%${searchTerm}%`}`,
+        sql`LOWER(${jobListings.company}) LIKE ${`%${searchTerm}%`}`,
+        sql`LOWER(${jobListings.location}) LIKE ${`%${searchTerm}%`}`,
+        sql`LOWER(${jobApplications.skills}) LIKE ${`%${searchTerm}%`}`,
+        sql`LOWER(${jobApplications.coverLetter}) LIKE ${`%${searchTerm}%`}`,
+        // Add application date search
+        sql`DATE(${jobApplications.appliedDate}) = ${searchTerm}`,
+        sql`STRFTIME('%Y-%m-%d', ${jobApplications.appliedDate}) LIKE ${`%${searchTerm}%`}`,
+        sql`STRFTIME('%m/%d/%Y', ${jobApplications.appliedDate}) LIKE ${`%${searchTerm}%`}`,
+        sql`STRFTIME('%d/%m/%Y', ${jobApplications.appliedDate}) LIKE ${`%${searchTerm}%`}`
+      )
+    );
+  }
+}
