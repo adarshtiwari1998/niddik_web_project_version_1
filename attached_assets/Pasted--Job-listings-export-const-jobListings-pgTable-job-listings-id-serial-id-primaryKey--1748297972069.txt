@@ -1,0 +1,45 @@
+// Job listings
+export const jobListings = pgTable("job_listings", {
+  id: serial("id").primaryKey(),
+  title: text("title").notNull(),
+  company: text("company").notNull(),
+  location: text("location").notNull(),
+  jobType: text("job_type").notNull(), // Full-time, Part-time, Contract, etc.
+  experienceLevel: text("experience_level").notNull(), // Entry, Mid, Senior, etc.
+  salary: text("salary").notNull(), // Salary range or specifics
+  description: text("description").notNull(),
+  requirements: text("requirements").notNull(),
+  benefits: text("benefits"),
+  applicationUrl: text("application_url"),
+  contactEmail: text("contact_email"),
+  status: text("status").notNull().default("active"), // active, filled, expired
+  featured: boolean("featured").notNull().default(false),
+  postedDate: text("posted_date").notNull(),
+  expiryDate: text("expiry_date"),
+  category: text("category").notNull(), // Technology, Design, Marketing, etc.
+  skills: text("skills").notNull(), // Comma-separated list of skills
+});
+
+export const jobListingSchema = z.object({
+  id: z.number().optional(),
+  title: z.string().min(1, "Title is required"),
+  company: z.string().min(1, "Company is required"),
+  location: z.string().min(1, "Location is required"),
+  jobType: z.string().min(1, "Job type is required"),
+  experienceLevel: z.string().min(1, "Experience level is required"),
+  salary: z.string().min(1, "Salary is required"),
+  description: z.string().min(1, "Description is required"),
+  requirements: z.string().min(1, "Requirements are required"),
+  benefits: z.string().optional(),
+  applicationUrl: z.string().optional(),
+  contactEmail: z.string().optional(),
+  status: z.string().default("active"),
+  featured: z.boolean().default(false),
+  urgent: z.boolean().default(false),
+  priority: z.boolean().default(false),
+  isOpen: z.boolean().default(false),
+  postedDate: z.union([z.string(), z.date()]).optional(),
+  expiryDate: z.union([z.string(), z.date()]).optional(),
+  category: z.string().min(1, "Category is required"),
+  skills: z.string().min(1, "Skills are required"),
+});
