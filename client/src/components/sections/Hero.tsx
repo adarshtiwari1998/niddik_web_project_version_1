@@ -327,10 +327,10 @@ const Hero = () => {
       )}
 
       {/* Key Points Section - Now positioned below marquee */}
-      <div className="relative z-20 pb-0">
-        <Container>
-          <div className="bg-white/95 backdrop-blur-sm rounded-t-2xl shadow-2xl py-8 px-6 md:px-10 mb-0 relative z-30 border border-gray-100">
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 md:gap-8">
+              <div className="relative z-20 pb-12 mt-auto">
+                <Container>
+                  <div className="bg-white rounded-lg shadow-xl py-8 px-6 md:px-10 -mb-20 relative z-30">
+                    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 md:gap-10">
               {keyPoints.map((point, index) => (
                 <motion.div
                   key={index}
