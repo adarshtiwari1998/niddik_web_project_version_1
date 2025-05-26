@@ -135,12 +135,13 @@ export const storage = {
     let whereConditions = [];
 
     if (search) {
+      const searchTerm = search.toLowerCase();
       whereConditions.push(
         or(
-          like(jobListings.title, `%${search}%`),
-          like(jobListings.company, `%${search}%`),
-          like(jobListings.description, `%${search}%`),
-          like(jobListings.skills, `%${search}%`)
+          sql`LOWER(${jobListings.title}) LIKE ${`%${searchTerm}%`}`,
+          sql`LOWER(${jobListings.company}) LIKE ${`%${searchTerm}%`}`,
+          sql`LOWER(${jobListings.description}) LIKE ${`%${searchTerm}%`}`,
+          sql`LOWER(${jobListings.skills}) LIKE ${`%${searchTerm}%`}`
         )
       );
     }
