@@ -66,7 +66,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
   });
 
   // Admin API: Get all contact submissions
-  app.get('/api/contact-submissions', async (req: AuthenticatedRequest, res) => {
+  app.get('/api/admin/contact-submissions', async (req: AuthenticatedRequest, res) => {
     try {
       // Check if user is authenticated and is an admin
       if (!req.isAuthenticated() || req.user?.role !== 'admin') {

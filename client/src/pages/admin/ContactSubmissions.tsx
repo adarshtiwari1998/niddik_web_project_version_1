@@ -11,8 +11,6 @@ import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@
 import { Search, Mail, Building, Calendar, Filter, RefreshCw } from "lucide-react";
 import { format } from "date-fns";
 import AdminLayout from "@/components/layout/AdminLayout";
-import Navbar from "@/components/layout/Navbar";
-import Footer from "@/components/layout/Footer";
 
 interface ContactSubmission {
   id: number;
@@ -33,8 +31,8 @@ const ContactSubmissions = () => {
 
   // Fetch contact submissions
   const { data: submissionsData, isLoading, error, refetch } = useQuery({
-    queryKey: ['/api/contact-submissions', { page: currentPage, limit: itemsPerPage, search: searchTerm, interest: interestFilter }],
-    queryFn: getQueryFn({ on401: "ignore" }),
+    queryKey: ['/api/admin/contact-submissions', { page: currentPage, limit: itemsPerPage, search: searchTerm, interest: interestFilter }],
+    queryFn: getQueryFn({ on401: "throw" }),
   });
 
   const submissions = submissionsData?.data || [];
@@ -80,47 +78,32 @@ const ContactSubmissions = () => {
 
   if (isLoading) {
     return (
-      <div className="min-h-screen bg-gray-50">
-        <Navbar />
-        <div className="pt-20">
-          <AdminLayout title="Contact Submissions" description="Manage and review contact form submissions from your website">
-            <div className="flex items-center justify-center h-64">
-              <div className="text-center">
-                <RefreshCw className="h-8 w-8 animate-spin mx-auto mb-4" />
-                <p>Loading contact submissions...</p>
-              </div>
-            </div>
-          </AdminLayout>
+      <AdminLayout title="Contact Submissions" description="Manage and review contact form submissions from your website">
+        <div className="flex items-center justify-center h-64">
+          <div className="text-center">
+            <RefreshCw className="h-8 w-8 animate-spin mx-auto mb-4" />
+            <p>Loading contact submissions...</p>
+          </div>
         </div>
-        <Footer />
-      </div>
+      </AdminLayout>
     );
   }
 
   if (error) {
     return (
-      <div className="min-h-screen bg-gray-50">
-        <Navbar />
-        <div className="pt-20">
-          <AdminLayout title="Contact Submissions" description="Manage and review contact form submissions from your website">
-            <div className="flex items-center justify-center h-64">
-              <div className="text-center">
-                <p className="text-red-600 mb-4">Error loading contact submissions</p>
-                <Button onClick={() => refetch()}>Try Again</Button>
-              </div>
-            </div>
-          </AdminLayout>
+      <AdminLayout title="Contact Submissions" description="Manage and review contact form submissions from your website">
+        <div className="flex items-center justify-center h-64">
+          <div className="text-center">
+            <p className="text-red-600 mb-4">Error loading contact submissions</p>
+            <Button onClick={() => refetch()}>Try Again</Button>
+          </div>
         </div>
-        <Footer />
-      </div>
+      </AdminLayout>
     );
   }
 
   return (
-    <div className="min-h-screen bg-gray-50">
-      <Navbar />
-      <div className="pt-20">
-        <AdminLayout title="Contact Submissions" description="Manage and review contact form submissions from your website">
+    <AdminLayout title="Contact Submissions" description="Manage and review contact form submissions from your website">
           <div className="space-y-6">
             <div className="flex justify-between items-center">
               <div>
@@ -276,11 +259,8 @@ const ContactSubmissions = () => {
               </CardContent>
             </Card>
           </div>
-        </AdminLayout>
-      </div>
-      <Footer />
-    </div>
-  );
-};
+      </AdminLayout>
+    );
+  };
 
 export default ContactSubmissions;
