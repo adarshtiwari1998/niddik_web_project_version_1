@@ -1,0 +1,61 @@
+handleBulkDelete called with selected IDs: [23]
+SubmittedCandidates.tsx:916 Valid IDs for deletion: [23]
+SubmittedCandidates.tsx:941 Executing bulk delete for IDs: [23]
+SubmittedCandidates.tsx:446 Starting bulk delete with IDs: [23]
+SubmittedCandidates.tsx:457 Valid IDs for deletion: [23]
+SubmittedCandidates.tsx:465 Request payload: {
+  "ids": [
+    23
+  ]
+}
+queryClient.ts:50 === API REQUEST (DELETE) ===
+queryClient.ts:51 Method: DELETE
+queryClient.ts:52 URL: /api/submitted-candidates/bulk
+queryClient.ts:53 Data: {ids: Array(1)}
+queryClient.ts:54 Data type: object
+queryClient.ts:58 === BULK DELETE REQUEST ===
+queryClient.ts:59 Is bulk delete: true
+queryClient.ts:61 IDs array: [23]
+queryClient.ts:62 IDs array length: 1
+queryClient.ts:63 First few IDs: [23]
+queryClient.ts:64 IDs types: ['number']
+queryClient.ts:80 Request body: {"ids":[23]}
+queryClient.ts:82 Bulk delete request body length: 12
+queryClient.ts:88 Final config: {method: 'DELETE', headers: {…}, credentials: 'include', body: '{"ids":[23]}'}
+queryClient.ts:91 
+            
+            
+           DELETE https://c97bc9b7-d459-4d54-aa25-a500aa3482fe-00-17pkxb2ueb99z.sisko.replit.dev/api/submitted-candidates/bulk 400 (Bad Request)
+apiRequest @ queryClient.ts:91
+mutationFn @ SubmittedCandidates.tsx:467
+fn @ @tanstack_react-query.js?v=d1ff9c50:1197
+run @ @tanstack_react-query.js?v=d1ff9c50:494
+start @ @tanstack_react-query.js?v=d1ff9c50:536
+execute @ @tanstack_react-query.js?v=d1ff9c50:1233
+await in execute
+mutate @ @tanstack_react-query.js?v=d1ff9c50:2649
+(anonymous) @ @tanstack_react-query.js?v=d1ff9c50:3377
+executeBulkDelete @ SubmittedCandidates.tsx:943
+handleEvent @ chunk-4PI3B2OT.js?v=d1ff9c50:14
+callCallback2 @ chunk-RPCDYKBN.js?v=d1ff9c50:3674
+invokeGuardedCallbackDev @ chunk-RPCDYKBN.js?v=d1ff9c50:3699
+invokeGuardedCallback @ chunk-RPCDYKBN.js?v=d1ff9c50:3733
+invokeGuardedCallbackAndCatchFirstError @ chunk-RPCDYKBN.js?v=d1ff9c50:3736
+executeDispatch @ chunk-RPCDYKBN.js?v=d1ff9c50:7014
+processDispatchQueueItemsInOrder @ chunk-RPCDYKBN.js?v=d1ff9c50:7034
+processDispatchQueue @ chunk-RPCDYKBN.js?v=d1ff9c50:7043
+dispatchEventsForPlugins @ chunk-RPCDYKBN.js?v=d1ff9c50:7051
+(anonymous) @ chunk-RPCDYKBN.js?v=d1ff9c50:7174
+batchedUpdates$1 @ chunk-RPCDYKBN.js?v=d1ff9c50:18913
+batchedUpdates @ chunk-RPCDYKBN.js?v=d1ff9c50:3579
+dispatchEventForPluginEventSystem @ chunk-RPCDYKBN.js?v=d1ff9c50:7173
+dispatchEventWithEnableCapturePhaseSelectiveHydrationWithoutDiscreteEventReplay @ chunk-RPCDYKBN.js?v=d1ff9c50:5478
+dispatchEvent @ chunk-RPCDYKBN.js?v=d1ff9c50:5472
+dispatchDiscreteEvent @ chunk-RPCDYKBN.js?v=d1ff9c50:5449Understand this error
+queryClient.ts:94 Response received: Response {type: 'basic', url: 'https://c97bc9b7-d459-4d54-aa25-a500aa3482fe-00-17…9z.sisko.replit.dev/api/submitted-candidates/bulk', redirected: false, status: 400, ok: false, …}
+queryClient.ts:95 Response status: 400
+queryClient.ts:96 Response ok: false
+queryClient.ts:99 === BULK DELETE RESPONSE ===
+queryClient.ts:103 Response text: {"success":false,"message":"Invalid candidate ID"}
+SubmittedCandidates.tsx:516 Bulk delete failed: Error: Invalid candidate ID
+    at Object.mutationFn (SubmittedCandidates.tsx:479:15)
