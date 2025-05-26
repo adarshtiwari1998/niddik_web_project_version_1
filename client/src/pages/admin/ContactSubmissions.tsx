@@ -31,7 +31,7 @@ const ContactSubmissions = () => {
   // Fetch contact submissions
   const { data: submissionsData, isLoading, error, refetch } = useQuery({
     queryKey: ['/api/admin/contact-submissions', { page: currentPage, limit: itemsPerPage, search: searchTerm, interest: interestFilter }],
-    queryFn: getQueryFn(),
+    queryFn: getQueryFn({ on401: "ignore" }),
   });
 
   const submissions = submissionsData?.data || [];
