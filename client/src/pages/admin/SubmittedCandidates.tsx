@@ -1124,6 +1124,10 @@ function SubmittedCandidates() {
   const [sortField, setSortField] = useState<string>('candidateName');
   const [sortDirection, setSortDirection] = useState<'asc' | 'desc'>('asc');
 
+  // Analytics sorting state
+  const [statusSortBy, setStatusSortBy] = useState<'count_desc' | 'count_asc' | 'name_asc' | 'name_desc'>('count_desc');
+  const [clientSortBy, setClientSortBy] = useState<'count_desc' | 'count_asc' | 'name_asc' | 'name_desc'>('count_desc');
+
   const handleSort = (field: string) => {
     if (sortField === field) {
       setSortDirection(sortDirection === 'asc' ? 'desc' : 'asc');
@@ -1158,6 +1162,47 @@ function SubmittedCandidates() {
       return 0;
     });
   }, [candidatesData?.data, sortField, sortDirection]);
+
+  // Sort analytics data
+  const sortedStatusData = useMemo(() => {
+    if (!analyticsData?.data?.statusCounts) return [];
+
+    const entries = Object.entries(analyticsData.data.statusCounts);
+    return entries.sort(([nameA, countA], [nameB, countB]) => {
+      switch (statusSortBy) {
+        case 'count_desc':
+          return (countB as number) - (countA as number);
+        case 'count_asc':
+          return (countA as number) - (countB as number);
+        case 'name_asc':
+          return nameA.localeCompare(nameB);
+        case 'name_desc':
+          return nameB.localeCompare(nameA);
+        default:
+          return (countB as number) - (countA as number);
+      }
+    });
+  }, [analyticsData?.data?.statusCounts, statusSortBy]);
+
+  const sortedClientData = useMemo(() => {
+    if (!analyticsData?.data?.clientCounts) return [];
+
+    const entries = Object.entries(analyticsData.data.clientCounts);
+    return entries.sort(([nameA, countA], [nameB, countB]) => {
+      switch (clientSortBy) {
+        case 'count_desc':
+          return (countB as number) - (countA as number);
+        case 'count_asc':
+          return (countA as number) - (countB as number);
+        case 'name_asc':
+          return nameA.localeCompare(nameB);
+        case 'name_desc':
+          return nameB.localeCompare(nameA);
+        default:
+          return (countB as number) - (countA as number);
+      }
+    });
+  }, [analyticsData?.data?.clientCounts, clientSortBy]);
 
   return (
     <AdminLayout title="Submitted Candidates" description="Manage candidate submissions to clients">
@@ -2122,13 +2167,28 @@ Next
               <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                 <Card>
                   <CardHeader>
-                    <CardTitle>Status Distribution</CardTitle>
-                    <CardDescription>Breakdown of candidates by current status</CardDescription>
+                    <div className="flex items-center justify-between">
+                      <div>
+                        <CardTitle>Status Distribution</CardTitle>
+                        <CardDescription>Breakdown of candidates by current status</CardDescription>
+                      </div>
+                      <Select value={statusSortBy} onValueChange={(value: any) => setStatusSortBy(value)}>
+                        <SelectTrigger className="w-[160px]">
+                          <SelectValue placeholder="Sort by" />
+                        </SelectTrigger>
+                        <SelectContent>
+                          <SelectItem value="count_desc">Count (High to Low)</SelectItem>
+                          <SelectItem value="count_asc">Count (Low to High)</SelectItem>
+                          <SelectItem value="name_asc">Name (A to Z)</SelectItem>
+                          <SelectItem value="name_desc">Name (Z to A)</SelectItem>
+                        </SelectContent>
+                      </Select>
+                    </div>
                   </CardHeader>
                   <CardContent>
                     <div className="max-h-96 overflow-y-auto pr-2">
                       <div className="space-y-4">
-                        {Object.entries(analyticsData.data.statusCounts).map(([status, count]) => (
+                        {sortedStatusData.map(([status, count]) => (
                           <div key={`status-${status}`} className="flex items-center justify-between">
                             <div className="flex items-center gap-2">
                               <StatusBadge status={status} />
@@ -2143,21 +2203,34 @@ Next
 
                 <Card>
                   <CardHeader>
-                    <CardTitle>Top Clients</CardTitle>
-                    <CardDescription>Clients with most candidate submissions</CardDescription>
+                    <div className="flex items-center justify-between">
+                      <div>
+                        <CardTitle>Top Clients</CardTitle>
+                        <CardDescription>Clients with most candidate submissions</CardDescription>
+                      </div>
+                      <Select value={clientSortBy} onValueChange={(value: any) => setClientSortBy(value)}>
+                        <SelectTrigger className="w-[160px]">
+                          <SelectValue placeholder="Sort by" />
+                        </SelectTrigger>
+                        <SelectContent>
+                          <SelectItem value="count_desc">Count (High to Low)</SelectItem>
+                          <SelectItem value="count_asc">Count (Low to High)</SelectItem>
+                          <SelectItem value="name_asc">Name (A to Z)</SelectItem>
+                          <SelectItem value="name_desc">Name (Z to A)</SelectItem>
+                        </SelectContent>
+                      </Select>
+                    </div>
                   </CardHeader>
                   <CardContent>
                     <div className="max-h-96 overflow-y-auto pr-2">
                       <div className="space-y-4">
-                        {Object.entries(analyticsData.data.clientCounts || {})
-                          .sort(([, a], [, b]) => (b as number) - (a as number))
-                          .map(([client, count]) => (
-                            <div key={client} className="flex items-center justify-between">
-                              <div className="font-medium truncate max-w-xs" title={client}>{client}</div>
-                              <div className="text-sm text-muted-foreground flex-shrink-0">{count as number} candidates</div>
-                            </div>
-                          ))}
-                        {(!analyticsData.data.clientCounts || Object.keys(analyticsData.data.clientCounts).length === 0) && (
+                        {sortedClientData.map(([client, count]) => (
+                          <div key={client} className="flex items-center justify-between">
+                            <div className="font-medium truncate max-w-xs" title={client}>{client}</div>
+                            <div className="text-sm text-muted-foreground flex-shrink-0">{count as number} candidates</div>
+                          </div>
+                        ))}
+                        {sortedClientData.length === 0 && (
                           <div className="text-center py-4 text-sm text-muted-foreground">
                             No client data available
                           </div>
