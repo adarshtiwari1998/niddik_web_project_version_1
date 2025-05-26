@@ -21,8 +21,6 @@ import { setupAuth } from "./auth";
 import { resumeUpload } from "./cloudinary";
 import { scrypt, randomBytes, timingSafeEqual } from "crypto";
 import { promisify } from "util";
-import jwt from 'jsonwebtoken';
-import { adminUsers } from "../db/schema";
 
 const scryptAsync = promisify(scrypt);
 
@@ -2380,52 +2378,6 @@ app.get("/api/admin/check", async (req: Request, res: Response) => {
     return res.status(500).json({ error: "Internal server error" });
   }
 });
-
-  // Get job listings with filters
-  app.get("/api/job-listings", async (req, res) => {
-    try {
-      const { 
-        page = 1, 
-        limit = 10, 
-        search = "", 
-        category, 
-        experienceLevel, 
-        jobType, 
-        status = 'active', // Default to active for public API
-        featured,
-        priority 
-      } = req.query;
-
-      const result = await storage.getJobListings({
-        page,
-        limit,
-        search,
-        category,
-        experienceLevel,
-        jobType,
-        status: String(status), // Always apply status filter
-        featured,
-        priority
-      });
-
-      res.json({
-        success: true,
-        data: result.jobListings,
-        meta: {
-          total: result.total,
-          page,
-          limit,
-          pages: Math.ceil(result.total / limit)
-        }
-      });
-    } catch (error) {
-      console.error("Error fetching job listings:", error);
-      res.status(500).json({ 
-        success: false, 
-        error: "Failed to fetch job listings" 
-      });
-    }
-  });
 
   const httpServer = createServer(app);
   return httpServer;

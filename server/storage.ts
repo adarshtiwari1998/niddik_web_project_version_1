@@ -133,25 +133,25 @@ export const storage = {
       priority
     } = options;
 
-    // Build where conditions
-    const whereConditions = [];
-    let conditionCount = 0;
+    // Build the where conditions
+    let whereConditions = [];
 
     if (search) {
+      const searchTerm = search.toLowerCase();
       whereConditions.push(
         or(
-          sql`LOWER(${jobListings.title}) LIKE ${`%${search}%`}`,
-          sql`LOWER(${jobListings.company}) LIKE ${`%${search}%`}`,
-          sql`LOWER(${jobListings.description}) LIKE ${`%${search}%`}`,
-          sql`LOWER(${jobListings.skills}) LIKE ${`%${search}%`}`,
-          sql`LOWER(${jobListings.location}) LIKE ${`%${search}%`}`,
-          sql`LOWER(${jobListings.category}) LIKE ${`%${search}%`}`,
-          sql`LOWER(${jobListings.jobType}) LIKE ${`%${search}%`}`,
-          sql`LOWER(${jobListings.experienceLevel}) LIKE ${`%${search}%`}`,
-          sql`LOWER(${jobListings.salary}) LIKE ${`%${search}%`}`,
-          sql`LOWER(${jobListings.requirements}) LIKE ${`%${search}%`}`,
-          sql`LOWER(${jobListings.benefits}) LIKE ${`%${search}%`}`,
-          sql`LOWER(${jobListings.status}) LIKE ${`%${search}%`}`
+          sql`LOWER(${jobListings.title}) LIKE ${`%${searchTerm}%`}`,
+          sql`LOWER(${jobListings.company}) LIKE ${`%${searchTerm}%`}`,
+          sql`LOWER(${jobListings.description}) LIKE ${`%${searchTerm}%`}`,
+          sql`LOWER(${jobListings.skills}) LIKE ${`%${searchTerm}%`}`,
+          sql`LOWER(${jobListings.location}) LIKE ${`%${searchTerm}%`}`,
+          sql`LOWER(${jobListings.category}) LIKE ${`%${searchTerm}%`}`,
+          sql`LOWER(${jobListings.jobType}) LIKE ${`%${searchTerm}%`}`,
+          sql`LOWER(${jobListings.experienceLevel}) LIKE ${`%${searchTerm}%`}`,
+          sql`LOWER(${jobListings.salary}) LIKE ${`%${searchTerm}%`}`,
+          sql`LOWER(${jobListings.requirements}) LIKE ${`%${searchTerm}%`}`,
+          sql`LOWER(${jobListings.benefits}) LIKE ${`%${searchTerm}%`}`,
+          sql`LOWER(${jobListings.status}) LIKE ${`%${searchTerm}%`}`
         )
       );
     }
@@ -168,9 +168,9 @@ export const storage = {
       whereConditions.push(eq(jobListings.jobType, jobType));
     }
 
-    // Always apply status filter - default to 'active' if not specified
-    const jobStatus = status || 'active';
-    whereConditions.push(eq(jobListings.status, jobStatus));
+    if (status !== undefined && status !== null) {
+      whereConditions.push(eq(jobListings.status, status));
+    }
 
     if (featured !== undefined) {
       whereConditions.push(eq(jobListings.featured, featured));
@@ -216,7 +216,7 @@ export const storage = {
       where: whereCondition
     });
     const totalCount = result.length;
-
+    
     console.log('Total jobs found:', totalCount);
     console.log('Jobs status distribution:', result.map(job => ({ id: job.id, status: job.status })));
 
