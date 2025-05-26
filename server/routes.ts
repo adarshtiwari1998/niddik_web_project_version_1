@@ -728,7 +728,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
       console.log('Calling storage.bulkDeleteSubmittedCandidates...');
       const result = await storage.bulkDeleteSubmittedCandidates(numericIds);
       
-      console.log('Bulk deletion completed:', result);
+      console.log('Bulk deletion completed successfully:', result);
 
       return res.status(200).json({
         success: true,
@@ -744,9 +744,9 @@ export async function registerRoutes(app: Express): Promise<Server> {
       console.error('Error message:', error instanceof Error ? error.message : 'Unknown error');
       console.error('Error details:', error);
 
-      return res.status(400).json({ 
+      return res.status(500).json({ 
         success: false, 
-        message: error instanceof Error ? error.message : "Unknown error occurred during bulk delete",
+        message: "Internal server error during bulk delete",
         error: error instanceof Error ? error.message : 'Unknown error'
       });
     }

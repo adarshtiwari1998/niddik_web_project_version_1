@@ -535,30 +535,30 @@ export const storage = {
   },
 
   async bulkDeleteSubmittedCandidates(ids: number[]) {
+    console.log(`Starting bulk delete for ${ids.length} candidates with IDs:`, ids);
+    console.log('ID types:', ids.map(id => ({ id, type: typeof id, isInteger: Number.isInteger(id) })));
+
+    if (ids.length === 0) {
+      console.log('No IDs provided');
+      return { deletedCount: 0, totalRequested: 0 };
+    }
+
+    // Validate all IDs are positive integers
+    const invalidIds = ids.filter(id => !Number.isInteger(id) || id <= 0);
+    if (invalidIds.length > 0) {
+      console.log('Invalid IDs found:', invalidIds);
+      console.log('Filtering out invalid IDs and continuing with valid ones');
+    }
+
+    // Filter to only valid IDs
+    const validIds = ids.filter(id => Number.isInteger(id) && id > 0);
+    
+    if (validIds.length === 0) {
+      console.log('No valid IDs to process');
+      return { deletedCount: 0, totalRequested: ids.length };
+    }
+
     try {
-      console.log(`Starting bulk delete for ${ids.length} candidates with IDs:`, ids);
-      console.log('ID types:', ids.map(id => ({ id, type: typeof id, isInteger: Number.isInteger(id) })));
-
-      if (ids.length === 0) {
-        return { deletedCount: 0, totalRequested: 0 };
-      }
-
-      // Validate all IDs are positive integers
-      const invalidIds = ids.filter(id => !Number.isInteger(id) || id <= 0);
-      if (invalidIds.length > 0) {
-        console.error('Invalid IDs found:', invalidIds);
-        // Don't throw error, just filter out invalid IDs and continue
-        console.log('Filtering out invalid IDs and continuing with valid ones');
-      }
-
-      // Filter to only valid IDs
-      const validIds = ids.filter(id => Number.isInteger(id) && id > 0);
-      
-      if (validIds.length === 0) {
-        console.log('No valid IDs to process');
-        return { deletedCount: 0, totalRequested: ids.length };
-      }
-
       // First, let's check which IDs actually exist
       console.log('Checking for existing records...');
       const existingRecords = await db.query.submittedCandidates.findMany({
@@ -568,7 +568,11 @@ export const storage = {
       
       console.log(`Found ${existingRecords.length} existing records out of ${validIds.length} valid IDs`);
       console.log('Existing IDs:', existingRecords.map(r => r.id));
-      console.log('Missing IDs:', validIds.filter(id => !existingRecords.some(r => r.id === id)));
+      
+      const missingIds = validIds.filter(id => !existingRecords.some(r => r.id === id));
+      if (missingIds.length > 0) {
+        console.log('Missing IDs (not found in database):', missingIds);
+      }
 
       if (existingRecords.length === 0) {
         console.log('No existing records found to delete');
@@ -595,7 +599,7 @@ export const storage = {
           const chunkDeleted = result.length;
           totalDeleted += chunkDeleted;
 
-          console.log(`Chunk ${Math.floor(i / chunkSize) + 1}: deleted ${chunkDeleted} out of ${chunk.length} candidates`);
+          console.log(`Chunk ${Math.floor(i / chunkSize) + 1}: successfully deleted ${chunkDeleted} out of ${chunk.length} candidates`);
           console.log('Deleted IDs:', result.map(r => r.id));
         } catch (chunkError) {
           console.error(`Error deleting chunk ${Math.floor(i / chunkSize) + 1}:`, chunkError);
@@ -604,11 +608,12 @@ export const storage = {
         }
       }
 
-      console.log(`Bulk delete completed: ${totalDeleted} of ${ids.length} candidates deleted`);
+      console.log(`Bulk delete completed successfully: ${totalDeleted} of ${ids.length} candidates deleted`);
       return { deletedCount: totalDeleted, totalRequested: ids.length };
     } catch (error) {
-      console.error('Bulk delete error:', error);
-      throw error;
+      console.error('Bulk delete database error:', error);
+      // Return a failed result instead of throwing
+      return { deletedCount: 0, totalRequested: ids.length, error: error instanceof Error ? error.message : 'Database error' };
     }
   },
 
