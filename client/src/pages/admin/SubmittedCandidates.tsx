@@ -183,6 +183,10 @@ function SubmittedCandidates() {
   const [search, setSearch] = useState("");
   const [statusFilter, setStatusFilter] = useState<string>("all_statuses");
   const [clientFilter, setClientFilter] = useState<string>("all_clients");
+    // Add state for new filters
+    const [sourcedByFilter, setSourcedByFilter] = useState<string>("all_sourced_by");
+    const [pocFilter, setPocFilter] = useState<string>("all_pocs");
+    const [marginFilter, setMarginFilter] = useState<string>("all_margins");
   const [isAddDialogOpen, setIsAddDialogOpen] = useState(false);
   const [isEditDialogOpen, setIsEditDialogOpen] = useState(false);
   const [selectedCandidate, setSelectedCandidate] = useState<SubmittedCandidate | null>(null);
@@ -311,7 +315,7 @@ function SubmittedCandidates() {
 
   // Query to fetch submitted candidates
   const { data: candidatesData, isLoading: isLoadingCandidates, refetch: refetchCandidates } = useQuery({
-    queryKey: ['/api/submitted-candidates', page, limit, search, statusFilter, clientFilter],
+    queryKey: ['/api/submitted-candidates', page, limit, search, statusFilter, clientFilter, sourcedByFilter, pocFilter, marginFilter],
     queryFn: async () => {
       const queryParams = new URLSearchParams({
         page: page.toString(),
@@ -697,7 +701,7 @@ function SubmittedCandidates() {
           const hasData = Object.values(row).some(value => 
             value && value.toString().trim() && value.toString().trim() !== ''
           );
-          
+
           if (!hasData) {
             return null;
           }
@@ -741,7 +745,7 @@ function SubmittedCandidates() {
           const hasValidEmail = row.emailId && !row.emailId.includes('@example.com');
           const hasValidClient = row.client !== 'Default Client';
           const hasValidPoc = row.poc !== 'Default POC';
-          
+
           // Require at least name and email OR client and poc
           return (hasValidName && hasValidEmail) || (hasValidClient && hasValidPoc);
         });
@@ -894,14 +898,14 @@ function SubmittedCandidates() {
   const handleSelectApplicant = (applicant: any) => {
     // Check if applicant is already selected
     const isAlreadySelected = selectedApplicants.some(selected => selected.emailId === applicant.emailId);
-    
+
     if (isAlreadySelected) {
       // Remove from selected if already selected
       setSelectedApplicants(prev => prev.filter(selected => selected.emailId !== applicant.emailId));
     } else {
       // Add to selected applicants
       setSelectedApplicants(prev => [...prev, applicant]);
-      
+
       // Set the candidate data for inline editing
       setNewCandidateData({
         ...applicant,
@@ -933,7 +937,7 @@ function SubmittedCandidates() {
     const value = e.target.value;
     setSearch(value);
     setPage(1); // Reset to first page on search
-    
+
     // Auto-search after typing (debounced by React Query)
     setTimeout(() => {
       if (search !== value) {
@@ -982,6 +986,9 @@ function SubmittedCandidates() {
         ...(search && { search }),
         ...(statusFilter !== "all_statuses" && { status: statusFilter }),
         ...(clientFilter !== "all_clients" && { client: clientFilter }),
+        ...(sourcedByFilter !== "all_sourced_by" && { sourcedBy: sourcedByFilter }),
+        ...(pocFilter !== "all_pocs" && { poc: pocFilter }),
+        ...(marginFilter !== "all_margins" && { margin: marginFilter }),
       });
 
       const res = await apiRequest("GET", `/api/submitted-candidates?${queryParams}`);
@@ -1100,10 +1107,23 @@ function SubmittedCandidates() {
   const clients: string[] = allCandidatesData?.data ? 
     Array.from(new Set(allCandidatesData.data.map((c: SubmittedCandidate) => c.client))).filter(Boolean) as string[] : 
     [];
-  
+
   const allStatuses: string[] = allCandidatesData?.data ? 
     Array.from(new Set(allCandidatesData.data.map((c: SubmittedCandidate) => c.status))).filter(Boolean) as string[] : 
     [];
+
+      // Get unique source by, poc and margin from all candidates data for filters
+      const allSourcedBy: string[] = allCandidatesData?.data ?
+      Array.from(new Set(allCandidatesData.data.map((c: SubmittedCandidate) => c.sourcedBy))).filter(Boolean) as string[] :
+      [];
+  
+    const allPocs: string[] = allCandidatesData?.data ?
+      Array.from(new Set(allCandidatesData.data.map((c: SubmittedCandidate) => c.poc))).filter(Boolean) as string[] :
+      [];
+  
+      const allMargins: string[] = allCandidatesData?.data ?
+      Array.from(new Set(allCandidatesData.data.map((c: SubmittedCandidate) => c.marginPerHour))).filter(Boolean) as string[] :
+      [];
 
   // Pagination controls
   const totalPages = candidatesData?.meta?.pages || 1;
@@ -1567,6 +1587,67 @@ function SubmittedCandidates() {
               </SelectContent>
             </Select>
 
+                        {/* New Filter Options */}
+                        <Select
+                            value={sourcedByFilter}
+                            onValueChange={(value) => {
+                                setSourcedByFilter(value);
+                                setPage(1);
+                            }}
+                        >
+                            <SelectTrigger className="w-[180px]">
+                                <SelectValue placeholder="Filter by Sourced By" />
+                            </SelectTrigger>
+                            <SelectContent>
+                                <SelectItem value="all_sourced_by">All Sourced By</SelectItem>
+                                {allSourcedBy.map((sourcedBy: string, index: number) => (
+                                    <SelectItem key={`sourcedBy-${index}`} value={sourcedBy}>
+                                        {sourcedBy}
+                                    </SelectItem>
+                                ))}
+                            </SelectContent>
+                        </Select>
+
+                        <Select
+                            value={pocFilter}
+                            onValueChange={(value) => {
+                                setPocFilter(value);
+                                setPage(1);
+                            }}
+                        >
+                            <SelectTrigger className="w-[180px]">
+                                <SelectValue placeholder="Filter by POC" />
+                            </SelectTrigger>
+                            <SelectContent>
+                                <SelectItem value="all_pocs">All POCs</SelectItem>
+                                {allPocs.map((poc: string, index: number) => (
+                                    <SelectItem key={`poc-${index}`} value={poc}>
+                                        {poc}
+                                    </SelectItem>
+                                ))}
+                            </SelectContent>
+                        </Select>
+
+                        <Select
+                            value={marginFilter}
+                            onValueChange={(value) => {
+                                setMarginFilter(value);
+                                setPage(1);
+                            }}
+                        >
+                            <SelectTrigger className="w-[180px]">
+                                <SelectValue placeholder="Filter by Margin/hr" />
+                            </SelectTrigger>
+                            <SelectContent>
+                                <SelectItem value="all_margins">All Margins</SelectItem>
+                                {allMargins.map((margin: string, index: number) => (
+                                    <SelectItem key={`margin-${index}`} value={margin}>
+                                        {margin}
+                                    </SelectItem>
+                                ))}
+                            </SelectContent>
+                        </Select>
+
             <Select
               value={limit.toString()}
               onValueChange={handlePageSizeChange}
@@ -1665,7 +1746,7 @@ function SubmittedCandidates() {
                     )}
                   </>
                 )}
-                
+
                 <Button
                   variant="outline"
                   size="sm"
@@ -2042,6 +2123,9 @@ function SubmittedCandidates() {
                             onClick={() => {
                               setStatusFilter("all_statuses");
                               setClientFilter("all_clients");
+                                                                setSourcedByFilter("all_sourced_by");
+                                setPocFilter("all_pocs");
+                                setMarginFilter("all_margins");
                               setSearch("");
                             }}
                           >
@@ -2235,7 +2319,7 @@ function SubmittedCandidates() {
                     )}
                   </>
                 )}
-                
+
                 <Button
                   variant="outline"
                   size="sm"
@@ -2517,6 +2601,7 @@ function SubmittedCandidates() {
                   render={({ field }) => (
                     <FormItem>
                       <FormLabel>Current CTC *</FormLabel>
+                      <replit_final_file>
                       <FormControl>
                         <Input placeholder="Current salary" {...field} />
                       </FormControl>

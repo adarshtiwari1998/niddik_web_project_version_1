@@ -390,6 +390,9 @@ export const storage = {
       status?: string;
       search?: string;
       client?: string;
+      sourcedBy?: string;
+      poc?: string;
+      margin?: string;
     } = {}
   ): Promise<{ candidates: SubmittedCandidate[]; total: number }> {
     const { 
@@ -397,7 +400,10 @@ export const storage = {
       limit = 10, 
       status,
       search = "",
-      client
+      client,
+      sourcedBy,
+      poc,
+      margin
     } = options;
 
     // Build the where conditions
@@ -409,6 +415,37 @@ export const storage = {
 
     if (client && client !== 'all_clients') {
       whereConditions.push(eq(submittedCandidates.client, client));
+    }
+
+    if (sourcedBy && sourcedBy !== 'all_sourced_by') {
+      whereConditions.push(eq(submittedCandidates.sourcedBy, sourcedBy));
+    }
+
+    if (poc && poc !== 'all_pocs') {
+      whereConditions.push(eq(submittedCandidates.poc, poc));
+    }
+
+    if (margin && margin !== 'all_margins') {
+      // Parse margin range and filter accordingly
+      const marginRanges: { [key: string]: { min: number; max: number } } = {
+        "0-10": { min: 0, max: 10 },
+        "10-20": { min: 10, max: 20 },
+        "20-30": { min: 20, max: 30 },
+        "30-50": { min: 30, max: 50 },
+        "50+": { min: 50, max: 999999 }
+      };
+
+      const range = marginRanges[margin];
+      if (range) {
+        whereConditions.push(
+          and(
+            sql`CAST(${submittedCandidates.marginPerHour} AS DECIMAL) >= ${range.min}`,
+            range.max === 999999 
+              ? sql`CAST(${submittedCandidates.marginPerHour} AS DECIMAL) >= ${range.min}`
+              : sql`CAST(${submittedCandidates.marginPerHour} AS DECIMAL) < ${range.max}`
+          )
+        );
+      }
     }
 
     if (search) {

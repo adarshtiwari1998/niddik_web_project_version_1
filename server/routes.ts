@@ -376,13 +376,19 @@ export async function registerRoutes(app: Express): Promise<Server> {
       const search = req.query.search as string;
       const status = req.query.status as string;
       const client = req.query.client as string;
+      const sourcedBy = req.query.sourcedBy as string;
+      const poc = req.query.poc as string;
+      const margin = req.query.margin as string;
 
       const result = await storage.getAllSubmittedCandidates({
         page,
         limit,
         search,
         status,
-        client
+        client,
+        sourcedBy,
+        poc,
+        margin
       });
 
       return res.status(200).json({ 
