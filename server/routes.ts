@@ -719,49 +719,30 @@ export async function registerRoutes(app: Express): Promise<Server> {
         });
       }
 
-      // Convert and validate IDs more thoroughly
+      // Convert and validate IDs - simplified approach
       const validIds: number[] = [];
-      const invalidIds: any[] = [];
-
-      ids.forEach((id, index) => {
-        let numId: number;
+      
+      for (const id of ids) {
+        const numId = typeof id === 'string' ? parseInt(id, 10) : Number(id);
         
-        if (typeof id === 'string') {
-          numId = parseInt(id, 10);
-        } else if (typeof id === 'number') {
-          numId = id;
+        if (!isNaN(numId) && numId > 0 && Number.isInteger(numId)) {
+          validIds.push(numId);
         } else {
-          invalidIds.push({ index, value: id, reason: 'Invalid type (not string or number)' });
-          return;
+          console.warn('Skipping invalid ID:', id, 'type:', typeof id);
         }
-
-        if (isNaN(numId) || numId <= 0 || !Number.isInteger(numId)) {
-          invalidIds.push({ index, value: id, reason: 'Invalid number (NaN, <= 0, or not integer)' });
-          return;
-        }
-
-        validIds.push(numId);
-      });
+      }
 
       console.log('ID validation results:', { 
         total: ids.length, 
-        valid: validIds.length, 
-        invalid: invalidIds.length,
-        validIds: validIds.slice(0, 10), // Log first 10 for debugging
-        invalidIds
+        valid: validIds.length,
+        validIds: validIds.slice(0, 10) // Log first 10 for debugging
       });
 
       if (validIds.length === 0) {
         return res.status(400).json({ 
           success: false, 
-          message: "No valid candidate IDs provided",
-          details: { invalidIds }
+          message: "No valid candidate IDs provided" 
         });
-      }
-
-      if (invalidIds.length > 0) {
-        console.warn(`Found ${invalidIds.length} invalid IDs:`, invalidIds);
-        // Don't fail the request, just proceed with valid IDs
       }
 
       // Check if candidates exist before attempting deletion
