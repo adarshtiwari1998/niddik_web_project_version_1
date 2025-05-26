@@ -58,7 +58,7 @@ const SimpleJobMarquee = ({ jobs }: { jobs: Job[] }) => {
   const duplicatedJobs = [...jobs, ...jobs, ...jobs];
 
   return (
-    <div className="py-6 bg-gradient-to-r from-andela-green/5 via-white/50 to-andela-green/5 border-t border-andela-green/10">
+    <div className="py-6 bg-gradient-to-r from-andela-green/5 via-white/50 to-andela-green/5  border-andela-green/10">
       {/* Header */}
       <div className="text-center mb-4">
         <div className="inline-flex items-center gap-2 bg-white/80 backdrop-blur-sm px-4 py-2 rounded-full shadow-sm border border-andela-green/20">
@@ -94,7 +94,7 @@ const SimpleJobMarquee = ({ jobs }: { jobs: Job[] }) => {
       <div className="text-center mt-4">
         <Link 
           href="/careers" 
-          className="inline-flex items-center gap-2 text-sm text-andela-green hover:text-andela-green/80 font-medium transition-colors duration-300"
+          className="inline-flex items-center gap-2 text-sm text-white hover:text-andela-green/80 font-medium transition-colors duration-300"
         >
           <span>View All {jobs.length} Open Positions</span>
           <ArrowRight className="h-4 w-4" />
@@ -353,10 +353,10 @@ const Hero = () => {
       )}
 
       {/* Key Points Section - Now positioned below marquee */}
-              <div className="relative z-20 pb-12 mt-auto">
-                <Container>
-                  <div className="bg-white rounded-lg shadow-xl py-8 px-6 md:px-10 -mb-20 relative z-30">
-                    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 md:gap-10">
+                      <div className="relative z-20 pb-12 mt-auto">
+                        <Container>
+                          <div className="bg-white rounded-lg shadow-xl py-8 px-6 md:px-10 -mb-20 relative z-30">
+                            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 md:gap-10">
               {keyPoints.map((point, index) => (
                 <motion.div
                   key={index}
