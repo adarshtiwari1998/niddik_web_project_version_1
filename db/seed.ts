@@ -54,6 +54,15 @@ async function seed() {
         is_active BOOLEAN NOT NULL DEFAULT TRUE
       );
 
+      CREATE TABLE IF NOT EXISTS contact_submissions (
+        id SERIAL PRIMARY KEY,
+        full_name TEXT NOT NULL,
+        email TEXT NOT NULL,
+        company TEXT NOT NULL,
+        interest TEXT NOT NULL,
+        created_at TIMESTAMP NOT NULL DEFAULT NOW()
+      );
+
       CREATE TABLE IF NOT EXISTS testimonials (
         id SERIAL PRIMARY KEY,
         name TEXT NOT NULL,
@@ -314,6 +323,50 @@ async function seed() {
       console.log(`Added ${jobListingsData.length} job listings`);
     } else {
       console.log("Job listings already exist, skipping seeding");
+    }
+
+    // Seed contact submissions
+    console.log("Seeding contact submissions...");
+    const contactSubmissionsData = [
+      {
+        fullName: "John Smith",
+        email: "john.smith@techcorp.com",
+        company: "TechCorp Solutions",
+        interest: "Full RPO"
+      },
+      {
+        fullName: "Sarah Johnson",
+        email: "sarah.j@innovatetech.com",
+        company: "InnovateTech",
+        interest: "On-Demand"
+      },
+      {
+        fullName: "Michael Brown",
+        email: "m.brown@digitalstartup.com",
+        company: "Digital Startup Inc",
+        interest: "Hybrid RPO"
+      },
+      {
+        fullName: "Emily Davis",
+        email: "emily.davis@healthtech.com",
+        company: "HealthTech Solutions",
+        interest: "Contingent"
+      },
+      {
+        fullName: "David Wilson",
+        email: "d.wilson@financeplus.com",
+        company: "Finance Plus",
+        interest: "Web App Solutions"
+      }
+    ];
+
+    // Check if contact submissions already exist
+    const existingContactSubmissions = await db.query.contactSubmissions.findMany();
+    if (existingContactSubmissions.length === 0) {
+      await db.insert(contactSubmissions).values(contactSubmissionsData);
+      console.log(`Added ${contactSubmissionsData.length} contact submissions`);
+    } else {
+      console.log("Contact submissions already exist, skipping seeding");
     }
 
     // Seed admin user in users table
