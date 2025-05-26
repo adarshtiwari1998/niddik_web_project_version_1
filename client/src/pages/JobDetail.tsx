@@ -415,39 +415,115 @@ const handleResumeRemove = async () => {
 
               {/* Benefits */}
               {job.benefits && (
-                <Card>
-                  <CardHeader>
-                    <CardTitle>Benefits</CardTitle>
-                  </CardHeader>
-                  <CardContent>
-                    <div className="prose dark:prose-invert max-w-none">
-                      <div className="whitespace-pre-line">
-                        {job.benefits.includes('.') ? (
-                          job.benefits.split(/\d+\./).map((item, index) => {
-                            if (index === 0) {
-                              // First part before any numbering
-                              return item.trim() && (
-                                <p key={index} className="mb-4">
+                <div className="relative">
+                  {/* Section Header with Gradient Background */}
+                  <div className="relative mb-8 p-8 rounded-2xl bg-gradient-to-r from-blue-500/10 via-purple-500/10 to-green-500/10 border border-blue-200/30 dark:border-blue-800/30 overflow-hidden">
+                    <div className="absolute inset-0 bg-gradient-to-r from-blue-500/5 to-purple-500/5 opacity-50"></div>
+                    <div className="relative z-10">
+                      <div className="flex items-center gap-3 mb-3">
+                        <div className="w-10 h-10 rounded-full bg-gradient-to-r from-blue-500 to-purple-600 flex items-center justify-center">
+                          <svg className="w-5 h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1" />
+                          </svg>
+                        </div>
+                        <h2 className="text-2xl font-bold bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent">
+                          What's in it for you?
+                        </h2>
+                      </div>
+                      <p className="text-muted-foreground">Discover the amazing benefits and perks that come with this role</p>
+                    </div>
+                  </div>
+
+                  {/* Benefits Grid */}
+                  <div className="grid gap-4">
+                    {job.benefits.includes('.') ? (
+                      job.benefits.split(/\d+\./).map((item, index) => {
+                        if (index === 0) {
+                          // First part before any numbering - show as intro text
+                          return item.trim() && (
+                            <div key={index} className="mb-6 p-6 rounded-xl bg-gradient-to-r from-amber-50 to-orange-50 dark:from-amber-950/20 dark:to-orange-950/20 border border-amber-200/50 dark:border-amber-800/30">
+                              <div className="flex items-start gap-3">
+                                <div className="w-8 h-8 rounded-full bg-gradient-to-r from-amber-400 to-orange-500 flex items-center justify-center flex-shrink-0 mt-1">
+                                  <svg className="w-4 h-4 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+                                  </svg>
+                                </div>
+                                <p className="text-gray-700 dark:text-gray-300 leading-relaxed">{item.trim()}</p>
+                              </div>
+                            </div>
+                          );
+                        }
+                        
+                        return item.trim() && (
+                          <div 
+                            key={index} 
+                            className="group relative p-6 rounded-xl bg-white dark:bg-gray-900/50 border border-gray-200/60 dark:border-gray-700/60 hover:border-blue-300/60 dark:hover:border-blue-600/40 transition-all duration-300 hover:shadow-lg hover:shadow-blue-500/10 dark:hover:shadow-blue-500/20"
+                          >
+                            {/* Hover Effect Background */}
+                            <div className="absolute inset-0 bg-gradient-to-r from-blue-500/0 to-purple-500/0 group-hover:from-blue-500/5 group-hover:to-purple-500/5 rounded-xl transition-all duration-300"></div>
+                            
+                            <div className="relative z-10 flex items-start gap-4">
+                              {/* Dynamic Benefit Icon */}
+                              <div className="flex-shrink-0 w-12 h-12 rounded-full bg-gradient-to-r from-blue-500 to-purple-600 flex items-center justify-center group-hover:scale-110 transition-transform duration-300">
+                                <span className="text-white font-bold text-lg">{index}</span>
+                              </div>
+                              
+                              {/* Benefit Content */}
+                              <div className="flex-1 pt-1">
+                                <p className="text-gray-800 dark:text-gray-200 leading-relaxed font-medium group-hover:text-blue-700 dark:group-hover:text-blue-300 transition-colors duration-300">
                                   {item.trim()}
                                 </p>
-                              );
-                            }
-                            return item.trim() && (
-                              <div key={index} className="mb-3">
-                                <div className="flex items-start gap-2">
-                                  <span className="font-semibold text-primary mt-0.5">{index}.</span>
-                                  <span className="flex-1">{item.trim()}</span>
-                                </div>
                               </div>
-                            );
-                          })
-                        ) : (
-                          <p>{job.benefits}</p>
-                        )}
+                              
+                              {/* Arrow Icon */}
+                              <div className="flex-shrink-0 opacity-0 group-hover:opacity-100 transition-opacity duration-300">
+                                <svg className="w-5 h-5 text-blue-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
+                                </svg>
+                              </div>
+                            </div>
+                            
+                            {/* Bottom Gradient Line */}
+                            <div className="absolute bottom-0 left-6 right-6 h-0.5 bg-gradient-to-r from-blue-500/0 via-blue-500/60 to-purple-500/0 opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
+                          </div>
+                        );
+                      })
+                    ) : (
+                      <div className="p-6 rounded-xl bg-white dark:bg-gray-900/50 border border-gray-200/60 dark:border-gray-700/60">
+                        <div className="flex items-start gap-4">
+                          <div className="w-12 h-12 rounded-full bg-gradient-to-r from-green-500 to-blue-600 flex items-center justify-center">
+                            <svg className="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
+                            </svg>
+                          </div>
+                          <p className="text-gray-800 dark:text-gray-200 leading-relaxed pt-2">{job.benefits}</p>
+                        </div>
                       </div>
+                    )}
+                  </div>
+
+                  {/* Bottom Call-to-Action */}
+                  <div className="mt-8 p-6 rounded-xl bg-gradient-to-r from-green-50 to-blue-50 dark:from-green-950/20 dark:to-blue-950/20 border border-green-200/50 dark:border-green-800/30">
+                    <div className="flex items-center justify-between">
+                      <div className="flex items-center gap-3">
+                        <div className="w-10 h-10 rounded-full bg-gradient-to-r from-green-500 to-blue-600 flex items-center justify-center">
+                          <svg className="w-5 h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364 6.364l-.707-.707M6.343 6.343l-.707-.707m12.728 0l-.707.707M6.343 17.657l-.707.707M16 12a4 4 0 11-8 0 4 4 0 018 0z" />
+                          </svg>
+                        </div>
+                        <div>
+                          <p className="font-semibold text-gray-800 dark:text-gray-200">Ready to unlock these benefits?</p>
+                          <p className="text-sm text-gray-600 dark:text-gray-400">Join our team and start enjoying these perks today</p>
+                        </div>
+                      </div>
+                      {!hasApplied && (
+                        <Button onClick={handleApply} className="bg-gradient-to-r from-green-500 to-blue-600 hover:from-green-600 hover:to-blue-700 text-white font-semibold px-6 py-2 rounded-lg shadow-lg hover:shadow-xl transition-all duration-300">
+                          Apply Now
+                        </Button>
+                      )}
                     </div>
-                  </CardContent>
-                </Card>
+                  </div>
+                </div>
               )}
             </div>
 
