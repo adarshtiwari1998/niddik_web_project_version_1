@@ -1017,7 +1017,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
         size: file.size
       });
 
-      // If user is authenticated, update their profile with the resume URL```tool_code
+      // If user is authenticated, update their profile with the resume URL
       if (req.isAuthenticated() && req.user) {
         await db.update(users)
           .set({ resumeUrl: file.path })
@@ -1960,7 +1960,6 @@ app.put('/api/profile', async (req: AuthenticatedRequest, res) => {
           skills: updateData.skills,
           location: updateData.location,
           city: updateData.city,
-```tool_code
           state: updateData.state,
           country: updateData.country,
           zipCode: updateData.zip_code
