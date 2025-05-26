@@ -171,6 +171,14 @@ html, body {
   }
 }
 
+/* Navbar transparent blur effects */
+.navbar-transparent-blur {
+  background: rgba(255, 255, 255, 0.1);
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+}
+
 /* Ensure backdrop blur works consistently */
 .backdrop-blur-sm {
   backdrop-filter: blur(8px);

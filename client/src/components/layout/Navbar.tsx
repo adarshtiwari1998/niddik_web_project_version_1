@@ -109,13 +109,14 @@ const Navbar: React.FC<NavbarProps> = ({ hasAnnouncementAbove = true }) => {
   const isAdminPage = location.startsWith("/admin");
   const isAuthPage = location.startsWith("/auth");
   const isCandidatePage = location.startsWith("/candidate");
+  const isHomePage = location === "/";
 
   useEffect(() => {
     const handleScroll = () => {
       const scrollY = window.scrollY;
-      setIsScrolled(scrollY > 50); // Start white background sooner
+      setIsScrolled(scrollY > 50);
 
-      // Apply transparency logic to all pages except admin, auth, and candidate pages
+      // Apply transparency logic
       if (isAdminPage || isAuthPage || isCandidatePage) {
         // On admin, auth, and candidate pages, always use white background
         setIsTransparent(false);
@@ -129,7 +130,7 @@ const Navbar: React.FC<NavbarProps> = ({ hasAnnouncementAbove = true }) => {
 
     window.addEventListener("scroll", handleScroll);
     return () => window.removeEventListener("scroll", handleScroll);
-  }, [hasAnnouncementAbove, isAdminPage, isAuthPage, isCandidatePage]);
+  }, [hasAnnouncementAbove, isAdminPage, isAuthPage, isCandidatePage, isHomePage]);
 
   // Fetch job listings for search
   const { data: jobsData } = useQuery<{ data: JobListing[], meta: { total: number, pages: number } }>({
@@ -200,7 +201,10 @@ const Navbar: React.FC<NavbarProps> = ({ hasAnnouncementAbove = true }) => {
       "fixed w-full z-40",
       hasAnnouncementAbove ? "top-[40px]" : "top-0",
       isTransparent 
-        ? "bg-transparent" 
+        ? (isHomePage 
+            ? "bg-transparent" 
+            : "bg-transparent backdrop-blur-md"
+          )
         : "bg-white/95 backdrop-blur-md border-b border-gray-200/50",
       isScrolled ? "shadow-lg" : "",
       "transition-all duration-500 ease-in-out"
@@ -231,17 +235,21 @@ const Navbar: React.FC<NavbarProps> = ({ hasAnnouncementAbove = true }) => {
                       href={item.href || "#"} 
                       className={cn(
                         "group-hover:text-andela-green font-medium transition-colors",
-                        isTransparent ? "text-andela-dark" : "text-andela-dark"
+                        isTransparent 
+                          ? (isHomePage ? "text-white" : "text-andela-dark")
+                          : "text-andela-dark"
                       )}
                     >
                       {item.label}
                     </Link>
                     <ChevronDown className={cn(
                       "ml-1 w-4 h-4 group-hover:text-andela-green transition-colors",
-                      isTransparent ? "text-andela-dark" : "text-andela-dark"
+                      isTransparent 
+                        ? (isHomePage ? "text-white" : "text-andela-dark")
+                        : "text-andela-dark"
                     )} />
                   </div>
-                  <div className="absolute left-0 mt-2 w-64 rounded-lg shadow-xl bg-white p-6 opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-300 transform origin-top-left z-50">
+                  <div className="absolute left-0 mt-2 w-64 rounded-lg shadow-xl bg-white/95 backdrop-blur-md p-6 opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-300 transform origin-top-left z-50 border border-gray-200/20">
                     {item.dropdown.map((dropdownItem, idx) => (
                       <div key={idx} className="block py-2 hover:text-andela-green transition-colors">
                         <Link href={dropdownItem.href}>
@@ -254,7 +262,9 @@ const Navbar: React.FC<NavbarProps> = ({ hasAnnouncementAbove = true }) => {
               ) : (
                 <div key={index} className={cn(
                   "hover:text-andela-green font-medium transition-colors whitespace-nowrap",
-                  isTransparent ? "text-andela-dark" : "text-andela-dark"
+                  isTransparent 
+                    ? (isHomePage ? "text-white" : "text-andela-dark")
+                    : "text-andela-dark"
                 )}>
                   <Link href={item.href || "#"}>
                     {item.label}
@@ -278,14 +288,16 @@ const Navbar: React.FC<NavbarProps> = ({ hasAnnouncementAbove = true }) => {
                 onClick={() => setIsSearchOpen(!isSearchOpen)}
                 className={cn(
                   "hover:text-andela-green font-medium transition-colors",
-                  isTransparent ? "text-andela-dark" : "text-andela-dark"
+                  isTransparent 
+                    ? (isHomePage ? "text-white" : "text-andela-dark")
+                    : "text-andela-dark"
                 )}
               >
                 <Search className="w-5 h-5" />
               </button>
 
               {isSearchOpen && (
-                <div className="absolute right-0 mt-2 w-64 rounded-lg shadow-xl bg-white p-4 opacity-100 visible transition-all duration-300 transform origin-top-right z-50">
+                <div className="absolute right-0 mt-2 w-64 rounded-lg shadow-xl bg-white/95 backdrop-blur-md p-4 opacity-100 visible transition-all duration-300 transform origin-top-right z-50 border border-gray-200/20">
                   <form onSubmit={(e) => {
                     e.preventDefault();
                     if (searchTerm.trim()) {
@@ -413,13 +425,19 @@ const Navbar: React.FC<NavbarProps> = ({ hasAnnouncementAbove = true }) => {
               )}
             </div>
 
-            <div className="border border-andela-green text-andela-green hover:bg-andela-green hover:text-white px-4 py-2 rounded-md font-medium flex items-center">
+            <div className={cn(
+              "border px-4 py-2 rounded-md font-medium flex items-center transition-colors",
+              isTransparent && isHomePage
+                ? "border-white text-white hover:bg-white hover:text-andela-dark"
+                : "border-andela-green text-andela-green hover:bg-andela-green hover:text-white"
+            )}>
               <Link 
                 href="/careers" 
                 className={cn(
-                  "text-sm",
-                  isTransparent ? "text-andela-green" : "text-andela-green",
-                  "hover:text-white transition-colors"
+                  "text-sm transition-colors",
+                  isTransparent && isHomePage
+                    ? "text-white hover:text-andela-dark"
+                    : "text-andela-green hover:text-white"
                 )}
               >
                 Apply as Talent
@@ -434,7 +452,9 @@ const Navbar: React.FC<NavbarProps> = ({ hasAnnouncementAbove = true }) => {
           >
             <Menu className={cn(
               "w-6 h-6 transition-colors",
-              isTransparent ? "text-andela-dark" : "text-andela-dark"
+              isTransparent 
+                ? (isHomePage ? "text-white" : "text-andela-dark")
+                : "text-andela-dark"
             )} />
           </button>
         </div>
