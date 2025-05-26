@@ -784,16 +784,16 @@ const handleResumeRemove = async () => {
                       <img 
                         src="https://c97bc9b7-d459-4d54-aa25-a500aa3482fe-00-17pkxb2ueb99z.sisko.replit.dev/images/niddik_logo.png"
                         alt="Niddik Logo"
-                        className="w-16 h-16 object-contain"
+                        className="w-16 h-16 object-contain flex-shrink-0"
                       />
-                      <div>
-                        <CardTitle className="text-2xl">About Niddik</CardTitle>
+                      <div className="flex-1 min-w-0">
+                        <CardTitle className="text-xl">About Niddik</CardTitle>
                         <CardDescription className="mt-1">
                           <a 
                             href="https://www.linkedin.com/company/niddik/"
                             target="_blank"
                             rel="noopener noreferrer"
-                            className="text-blue-600 hover:text-blue-800 hover:underline flex items-center gap-1"
+                            className="text-blue-600 hover:text-blue-800 hover:underline flex items-center gap-1 text-sm"
                           >
                             View on LinkedIn <ExternalLink className="h-3 w-3" />
                           </a>
@@ -803,77 +803,77 @@ const handleResumeRemove = async () => {
                   </CardHeader>
                   <CardContent className="space-y-6">
                     {/* Key Metrics Grid */}
-                    <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-                      <div className="text-center p-4 bg-gradient-to-br from-blue-50 to-indigo-50 dark:from-blue-950/20 dark:to-indigo-950/20 rounded-lg border border-blue-200/50 dark:border-blue-800/30">
-                        <div className="text-2xl font-bold text-blue-600 dark:text-blue-400">5</div>
+                    <div className="grid grid-cols-2 gap-3">
+                      <div className="text-center p-3 bg-gradient-to-br from-blue-50 to-indigo-50 dark:from-blue-950/20 dark:to-indigo-950/20 rounded-lg border border-blue-200/50 dark:border-blue-800/30">
+                        <div className="text-xl font-bold text-blue-600 dark:text-blue-400">5</div>
                         <div className="text-xs text-muted-foreground mt-1">US, IN, UK</div>
-                        <div className="text-sm font-medium mt-1">Core Technology Markets</div>
+                        <div className="text-xs font-medium mt-1 leading-tight">Core Technology Markets</div>
                       </div>
                       
-                      <div className="text-center p-4 bg-gradient-to-br from-green-50 to-emerald-50 dark:from-green-950/20 dark:to-emerald-950/20 rounded-lg border border-green-200/50 dark:border-green-800/30">
-                        <div className="text-2xl font-bold text-green-600 dark:text-green-400">92%</div>
-                        <div className="text-sm font-medium mt-1">Talent Retention</div>
+                      <div className="text-center p-3 bg-gradient-to-br from-green-50 to-emerald-50 dark:from-green-950/20 dark:to-emerald-950/20 rounded-lg border border-green-200/50 dark:border-green-800/30">
+                        <div className="text-xl font-bold text-green-600 dark:text-green-400">92%</div>
+                        <div className="text-xs font-medium mt-1 leading-tight">Talent Retention</div>
                         <div className="text-xs text-muted-foreground mt-1">After one year</div>
                       </div>
                       
-                      <div className="text-center p-4 bg-gradient-to-br from-purple-50 to-violet-50 dark:from-purple-950/20 dark:to-violet-950/20 rounded-lg border border-purple-200/50 dark:border-purple-800/30">
-                        <div className="text-2xl font-bold text-purple-600 dark:text-purple-400">7-14</div>
+                      <div className="text-center p-3 bg-gradient-to-br from-purple-50 to-violet-50 dark:from-purple-950/20 dark:to-violet-950/20 rounded-lg border border-purple-200/50 dark:border-purple-800/30">
+                        <div className="text-xl font-bold text-purple-600 dark:text-purple-400">7-14</div>
                         <div className="text-xs text-muted-foreground mt-1">Days</div>
-                        <div className="text-sm font-medium mt-1">Average Time to Hire</div>
+                        <div className="text-xs font-medium mt-1 leading-tight">Average Time to Hire</div>
                       </div>
                       
-                      <div className="text-center p-4 bg-gradient-to-br from-amber-50 to-orange-50 dark:from-amber-950/20 dark:to-orange-950/20 rounded-lg border border-amber-200/50 dark:border-amber-800/30">
-                        <div className="text-2xl font-bold text-amber-600 dark:text-amber-400">10K+</div>
-                        <div className="text-sm font-medium mt-1">Successful Placements</div>
+                      <div className="text-center p-3 bg-gradient-to-br from-amber-50 to-orange-50 dark:from-amber-950/20 dark:to-orange-950/20 rounded-lg border border-amber-200/50 dark:border-amber-800/30">
+                        <div className="text-xl font-bold text-amber-600 dark:text-amber-400">10K+</div>
+                        <div className="text-xs font-medium mt-1 leading-tight">Successful Placements</div>
                         <div className="text-xs text-muted-foreground mt-1">Made</div>
                       </div>
                     </div>
 
                     {/* Additional Stats */}
-                    <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+                    <div className="grid grid-cols-2 gap-3">
                       <div className="text-center p-3 bg-muted/30 rounded-lg">
-                        <div className="text-xl font-bold text-primary">4</div>
-                        <div className="text-sm font-medium">Empaneled Customers</div>
+                        <div className="text-lg font-bold text-primary">4</div>
+                        <div className="text-xs font-medium leading-tight">Empaneled Customers</div>
                       </div>
                       
                       <div className="text-center p-3 bg-muted/30 rounded-lg">
-                        <div className="text-xl font-bold text-primary">12+</div>
-                        <div className="text-sm font-medium">Placements</div>
+                        <div className="text-lg font-bold text-primary">12+</div>
+                        <div className="text-xs font-medium leading-tight">Placements</div>
                       </div>
                       
                       <div className="text-center p-3 bg-muted/30 rounded-lg">
-                        <div className="text-xl font-bold text-primary">10K+</div>
-                        <div className="text-sm font-medium">Communities</div>
+                        <div className="text-lg font-bold text-primary">10K+</div>
+                        <div className="text-xs font-medium leading-tight">Communities</div>
                       </div>
                       
                       <div className="text-center p-3 bg-muted/30 rounded-lg">
-                        <div className="text-xl font-bold text-primary">500K+</div>
-                        <div className="text-sm font-medium">Talent Pools</div>
+                        <div className="text-lg font-bold text-primary">500K+</div>
+                        <div className="text-xs font-medium leading-tight">Talent Pools</div>
                       </div>
                     </div>
 
                     {/* Performance Improvements */}
-                    <div className="bg-gradient-to-r from-green-50 to-blue-50 dark:from-green-950/20 dark:to-blue-950/20 p-6 rounded-xl border border-green-200/50 dark:border-green-800/30">
-                      <h4 className="font-semibold text-lg mb-4 text-center">Performance Improvements</h4>
-                      <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+                    <div className="bg-gradient-to-r from-green-50 to-blue-50 dark:from-green-950/20 dark:to-blue-950/20 p-4 rounded-xl border border-green-200/50 dark:border-green-800/30">
+                      <h4 className="font-semibold text-base mb-3 text-center">Performance Improvements</h4>
+                      <div className="grid grid-cols-2 gap-3">
                         <div className="text-center">
-                          <div className="text-2xl font-bold text-green-600 dark:text-green-400">30%</div>
-                          <div className="text-sm font-medium">Optimize Recruiting Spend</div>
+                          <div className="text-lg font-bold text-green-600 dark:text-green-400">30%</div>
+                          <div className="text-xs font-medium leading-tight">Optimize Recruiting Spend</div>
                         </div>
                         
                         <div className="text-center">
-                          <div className="text-2xl font-bold text-blue-600 dark:text-blue-400">40%</div>
-                          <div className="text-sm font-medium">Improvement in Response %</div>
+                          <div className="text-lg font-bold text-blue-600 dark:text-blue-400">40%</div>
+                          <div className="text-xs font-medium leading-tight">Improvement in Response %</div>
                         </div>
                         
                         <div className="text-center">
-                          <div className="text-2xl font-bold text-purple-600 dark:text-purple-400">50%</div>
-                          <div className="text-sm font-medium">Decrease in Time to Submit</div>
+                          <div className="text-lg font-bold text-purple-600 dark:text-purple-400">50%</div>
+                          <div className="text-xs font-medium leading-tight">Decrease in Time to Submit</div>
                         </div>
                         
                         <div className="text-center">
-                          <div className="text-2xl font-bold text-amber-600 dark:text-amber-400">70%</div>
-                          <div className="text-sm font-medium">Increase in Talent Quality</div>
+                          <div className="text-lg font-bold text-amber-600 dark:text-amber-400">70%</div>
+                          <div className="text-xs font-medium leading-tight">Increase in Talent Quality</div>
                         </div>
                       </div>
                     </div>
@@ -881,13 +881,13 @@ const handleResumeRemove = async () => {
                     <Separator />
 
                     {/* Company Story */}
-                    <div className="space-y-4">
-                      <h4 className="font-semibold text-lg">Our Story</h4>
-                      <div className="prose dark:prose-invert max-w-none text-sm leading-relaxed">
-                        <p className="mb-4">
+                    <div className="space-y-3">
+                      <h4 className="font-semibold text-base">Our Story</h4>
+                      <div className="text-xs leading-relaxed text-muted-foreground space-y-2">
+                        <p>
                           Our journey is deeply rooted in a legacy passed down from my grandfather, Late Shri Satyendra Prasad Shrivastava. A true visionary, he was a recipient of the 1996 Ernst & Young Entrepreneur of the Year Award, the 1994 KPMG Peat Marwick High-Tech Entrepreneur Award, and the 1994 Small Business Person of the Year award for the Washington area.
                         </p>
-                        <p className="mb-4">
+                        <p>
                           His achievements were a constant source of inspiration, yet in the early days, I was held back. A lack of awareness and corporate experience meant that it took me over two decades to finally embark on my own entrepreneurial path.
                         </p>
                         <p>
