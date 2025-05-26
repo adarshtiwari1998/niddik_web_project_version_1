@@ -871,4 +871,852 @@ function SubmittedCandidates() {
                             <TableHead>Name</TableHead>
                             <TableHead>Email</TableHead>
                             <TableHead>Skills</TableHead>
-                            <TableHead>
+                            <TableHead>Location</TableHead>
+                            <TableHead>Actions</TableHead>
+                          </TableRow>
+                        </TableHeader>
+                        <TableBody>
+                          {filteredApplicants?.map((applicant: any) => (
+                            <TableRow key={applicant.id}>
+                              <TableCell>{applicant.candidateName}</TableCell>
+                              <TableCell>{applicant.emailId}</TableCell>
+                              <TableCell>{applicant.skills}</TableCell>
+                              <TableCell>{applicant.location}</TableCell>
+                              <TableCell>
+                                <Button
+                                  size="sm"
+                                  onClick={() => handleSelectApplicant(applicant)}
+                                >
+                                  Select
+                                </Button>
+                              </TableCell>
+                            </TableRow>
+                          ))}
+                        </TableBody>
+                      </Table>
+                    )}
+                  </div>
+                </DialogContent>
+              </Dialog>
+
+              <Dialog open={isImportDialogOpen} onOpenChange={setIsImportDialogOpen}>
+                <DialogTrigger asChild>
+                  <Button variant="outline">
+                    <Upload className="h-4 w-4 mr-2" />
+                    Import CSV
+                  </Button>
+                </DialogTrigger>
+                <DialogContent className="max-w-4xl">
+                  <DialogHeader>
+                    <DialogTitle>Import Candidates from CSV</DialogTitle>
+                    <DialogDescription>
+                      Upload a CSV file with candidate data. Required columns: candidate name, email, client, poc, skills, experience, notice period, location, current ctc, expected ctc, contact no, status
+                    </DialogDescription>
+                  </DialogHeader>
+
+                  {!isPreviewMode ? (
+                    <div className="space-y-4">
+                      <div className="border-2 border-dashed border-gray-300 rounded-lg p-6">
+                        <Input
+                          type="file"
+                          accept=".csv"
+                          onChange={handleFileImport}
+                          className="w-full"
+                        />
+                        <p className="text-sm text-muted-foreground mt-2">
+                          Select a CSV file to upload
+                        </p>
+                      </div>
+                    </div>
+                  ) : (
+                    <div className="space-y-4">
+                      <div className="flex items-center justify-between">
+                        <p className="text-sm">
+                          Preview: {importData.length} candidates ready to import
+                        </p>
+                        <div className="flex gap-2">
+                          <Button
+                            variant="outline"
+                            onClick={() => {
+                              setIsPreviewMode(false);
+                              setImportData([]);
+                            }}
+                          >
+                            Cancel
+                          </Button>
+                          <Button
+                            onClick={handleImportSubmit}
+                            disabled={importMutation.isPending || isUploading}
+                          >
+                            {isUploading ? (
+                              <>
+                                <Loader2 className="h-4 w-4 mr-2 animate-spin" />
+                                Importing ({uploadProgress}%)
+                              </>
+                            ) : (
+                              <>
+                                <Check className="h-4 w-4 mr-2" />
+                                Import All
+                              </>
+                            )}
+                          </Button>
+                        </div>
+                      </div>
+
+                      <div className="max-h-[400px] overflow-auto">
+                        <Table>
+                          <TableHeader>
+                            <TableRow>
+                              <TableHead>Name</TableHead>
+                              <TableHead>Email</TableHead>
+                              <TableHead>Client</TableHead>
+                              <TableHead>Skills</TableHead>
+                              <TableHead>Status</TableHead>
+                            </TableRow>
+                          </TableHeader>
+                          <TableBody>
+                            {importData.slice(0, 10).map((candidate, index) => (
+                              <TableRow key={index}>
+                                <TableCell>{candidate.candidateName}</TableCell>
+                                <TableCell>{candidate.emailId}</TableCell>
+                                <TableCell>{candidate.client}</TableCell>
+                                <TableCell>{candidate.skills}</TableCell>
+                                <TableCell>{candidate.status}</TableCell>
+                              </TableRow>
+                            ))}
+                          </TableBody>
+                        </Table>
+                        {importData.length > 10 && (
+                          <p className="text-sm text-muted-foreground mt-2">
+                            ... and {importData.length - 10} more candidates
+                          </p>
+                        )}
+                      </div>
+                    </div>
+                  )}
+                </DialogContent>
+              </Dialog>
+            </div>
+
+            {/* Search and Filter Controls */}
+            <div className="flex flex-col md:flex-row gap-4 items-center">
+              <form onSubmit={handleSearchSubmit} className="flex gap-2 flex-1">
+                <div className="relative flex-1">
+                  <Search className="absolute left-2.5 top-2.5 h-4 w-4 text-muted-foreground" />
+                  <Input
+                    placeholder="Search by name, email, client, or skills..."
+                    className="pl-8"
+                    value={search}
+                    onChange={handleSearchChange}
+                  />
+                </div>
+                <Button type="submit" variant="outline">
+                  <Filter className="h-4 w-4 mr-2" />
+                  Search
+                </Button>
+              </form>
+
+              <div className="flex gap-2">
+                <Select value={statusFilter} onValueChange={setStatusFilter}>
+                  <SelectTrigger className="w-[180px]">
+                    <SelectValue placeholder="Filter by status" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    {statusOptions.map((option) => (
+                      <SelectItem key={option.value} value={option.value}>
+                        {option.label}
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+
+                <Select value={clientFilter} onValueChange={setClientFilter}>
+                  <SelectTrigger className="w-[180px]">
+                    <SelectValue placeholder="Filter by client" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="all_clients">All Clients</SelectItem>
+                    {clients.map((client) => (
+                      <SelectItem key={client} value={client}>
+                        {client}
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+              </div>
+            </div>
+          </div>
+
+          {/* Bulk Actions */}
+          {showBulkActions && (
+            <div className="bg-muted p-3 rounded-md flex items-center justify-between">
+              <span className="text-sm">
+                {selectedCandidates.size} candidate{selectedCandidates.size !== 1 ? 's' : ''} selected
+              </span>
+              <div className="flex gap-2">
+                <Button
+                  variant="outline"
+                  size="sm"
+                  onClick={() => {
+                    setSelectedCandidates(new Set());
+                    setIsSelectAllChecked(false);
+                    setShowBulkActions(false);
+                  }}
+                >
+                  Clear Selection
+                </Button>
+                <AlertDialog>
+                  <AlertDialogTrigger asChild>
+                    <Button variant="destructive" size="sm">
+                      <Trash2 className="h-4 w-4 mr-2" />
+                      Delete Selected
+                    </Button>
+                  </AlertDialogTrigger>
+                  <AlertDialogContent>
+                    <AlertDialogHeader>
+                      <AlertDialogTitle>Confirm Bulk Deletion</AlertDialogTitle>
+                      <AlertDialogDescription>
+                        Are you sure you want to delete {selectedCandidates.size} selected candidate{selectedCandidates.size !== 1 ? 's' : ''}? This action cannot be undone.
+                      </AlertDialogDescription>
+                    </AlertDialogHeader>
+                    <AlertDialogFooter>
+                      <AlertDialogCancel>Cancel</AlertDialogCancel>
+                      <AlertDialogAction
+                        onClick={handleBulkDelete}
+                        className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
+                      >
+                        Delete {selectedCandidates.size} Candidate{selectedCandidates.size !== 1 ? 's' : ''}
+                      </AlertDialogAction>
+                    </AlertDialogFooter>
+                  </AlertDialogContent>
+                </AlertDialog>
+              </div>
+            </div>
+          )}
+
+          {/* Candidates Table */}
+          <Card>
+            <CardHeader>
+              <CardTitle>Submitted Candidates</CardTitle>
+              <CardDescription>
+                {candidatesData?.meta ? 
+                  `Showing ${((candidatesData.meta.page - 1) * candidatesData.meta.limit) + 1}-${Math.min(candidatesData.meta.page * candidatesData.meta.limit, candidatesData.meta.total)} of ${candidatesData.meta.total} candidates` :
+                  'Loading candidates...'
+                }
+              </CardDescription>
+            </CardHeader>
+            <CardContent>
+              {isLoadingCandidates ? (
+                <div className="flex flex-col items-center justify-center py-8">
+                  <Loader2 className="h-8 w-8 animate-spin text-primary mb-2" />
+                  <p className="text-sm text-muted-foreground">Loading candidates...</p>
+                </div>
+              ) : candidatesData?.data?.length === 0 ? (
+                <div className="text-center py-8">
+                  <p className="text-muted-foreground">No candidates found</p>
+                </div>
+              ) : (
+                <div className="overflow-x-auto">
+                  <Table>
+                    <TableHeader>
+                      <TableRow>
+                        <TableHead className="w-[50px]">
+                          <Checkbox
+                            checked={isSelectAllChecked}
+                            onCheckedChange={handleSelectAll}
+                          />
+                        </TableHead>
+                        <TableHead>Submission Date</TableHead>
+                        <TableHead>Candidate</TableHead>
+                        <TableHead>Client/POC</TableHead>
+                        <TableHead>Skills</TableHead>
+                        <TableHead>Experience</TableHead>
+                        <TableHead>Location</TableHead>
+                        <TableHead>CTC</TableHead>
+                        <TableHead>Status</TableHead>
+                        <TableHead className="text-right">Actions</TableHead>
+                      </TableRow>
+                    </TableHeader>
+                    <TableBody>
+                      {/* Inline Add Row */}
+                      {isAddingInline && (
+                        <TableRow className="bg-muted/50">
+                          <TableCell>
+                            <div className="flex gap-1">
+                              <Button
+                                size="sm"
+                                variant="ghost"
+                                onClick={handleAddInline}
+                                disabled={createMutation.isPending}
+                              >
+                                {createMutation.isPending ? (
+                                  <Loader2 className="h-4 w-4 animate-spin" />
+                                ) : (
+                                  <Check className="h-4 w-4" />
+                                )}
+                              </Button>
+                              <Button
+                                size="sm"
+                                variant="ghost"
+                                onClick={() => {
+                                  setIsAddingInline(false);
+                                  setNewCandidateData({
+                                    submissionDate: new Date().toISOString().split('T')[0],
+                                    status: 'new'
+                                  });
+                                }}
+                              >
+                                <X className="h-4 w-4" />
+                              </Button>
+                            </div>
+                          </TableCell>
+                          <TableCell>
+                            <Input
+                              type="date"
+                              value={newCandidateData.submissionDate || ''}
+                              onChange={(e) => handleInlineFieldChange('submissionDate', e.target.value)}
+                              className="h-8"
+                            />
+                          </TableCell>
+                          <TableCell>
+                            <div className="space-y-2">
+                              <Input
+                                placeholder="Candidate Name*"
+                                value={newCandidateData.candidateName || ''}
+                                onChange={(e) => handleInlineFieldChange('candidateName', e.target.value)}
+                                className="h-8"
+                              />
+                              <Input
+                                placeholder="Email*"
+                                type="email"
+                                value={newCandidateData.emailId || ''}
+                                onChange={(e) => handleInlineFieldChange('emailId', e.target.value)}
+                                className="h-8"
+                              />
+                              <Input
+                                placeholder="Contact No*"
+                                value={newCandidateData.contactNo || ''}
+                                onChange={(e) => handleInlineFieldChange('contactNo', e.target.value)}
+                                className="h-8"
+                              />
+                              <Input
+                                placeholder="Sourced By*"
+                                value={newCandidateData.sourcedBy || ''}
+                                onChange={(e) => handleInlineFieldChange('sourcedBy', e.target.value)}
+                                className="h-8"
+                              />
+                            </div>
+                          </TableCell>
+                          <TableCell>
+                            <div className="space-y-2">
+                              <Input
+                                placeholder="Client*"
+                                value={newCandidateData.client || ''}
+                                onChange={(e) => handleInlineFieldChange('client', e.target.value)}
+                                className="h-8"
+                              />
+                              <Input
+                                placeholder="POC*"
+                                value={newCandidateData.poc || ''}
+                                onChange={(e) => handleInlineFieldChange('poc', e.target.value)}
+                                className="h-8"
+                              />
+                            </div>
+                          </TableCell>
+                          <TableCell>
+                            <Input
+                              placeholder="Skills*"
+                              value={newCandidateData.skills || ''}
+                              onChange={(e) => handleInlineFieldChange('skills', e.target.value)}
+                              className="h-8"
+                            />
+                          </TableCell>
+                          <TableCell>
+                            <div className="space-y-2">
+                              <Input
+                                placeholder="Experience*"
+                                value={newCandidateData.experience || ''}
+                                onChange={(e) => handleInlineFieldChange('experience', e.target.value)}
+                                className="h-8"
+                              />
+                              <Input
+                                placeholder="Notice Period*"
+                                value={newCandidateData.noticePeriod || ''}
+                                onChange={(e) => handleInlineFieldChange('noticePeriod', e.target.value)}
+                                className="h-8"
+                              />
+                            </div>
+                          </TableCell>
+                          <TableCell>
+                            <Input
+                              placeholder="Location*"
+                              value={newCandidateData.location || ''}
+                              onChange={(e) => handleInlineFieldChange('location', e.target.value)}
+                              className="h-8"
+                            />
+                          </TableCell>
+                          <TableCell>
+                            <div className="space-y-2">
+                              <Input
+                                placeholder="Current CTC*"
+                                value={newCandidateData.currentCtc || ''}
+                                onChange={(e) => handleInlineFieldChange('currentCtc', e.target.value)}
+                                className="h-8"
+                              />
+                              <Input
+                                placeholder="Expected CTC*"
+                                value={newCandidateData.expectedCtc || ''}
+                                onChange={(e) => handleInlineFieldChange('expectedCtc', e.target.value)}
+                                className="h-8"
+                              />
+                              <Input
+                                placeholder="Bill Rate"
+                                value={newCandidateData.billRate || ''}
+                                onChange={(e) => handleInlineFieldChange('billRate', e.target.value)}
+                                className="h-8"
+                              />
+                              <Input
+                                placeholder="Pay Rate"
+                                value={newCandidateData.payRate || ''}
+                                onChange={(e) => handleInlineFieldChange('payRate', e.target.value)}
+                                className="h-8"
+                              />
+                            </div>
+                          </TableCell>
+                          <TableCell>
+                            <Select 
+                              value={newCandidateData.status || 'new'} 
+                              onValueChange={(value) => handleInlineFieldChange('status', value)}
+                            >
+                              <SelectTrigger className="h-8">
+                                <SelectValue />
+                              </SelectTrigger>
+                              <SelectContent>
+                                {statusOptions.slice(1).map((option) => (
+                                  <SelectItem key={option.value} value={option.value}>
+                                    {option.label}
+                                  </SelectItem>
+                                ))}
+                              </SelectContent>
+                            </Select>
+                          </TableCell>
+                          <TableCell></TableCell>
+                        </TableRow>
+                      )}
+
+                      {/* Existing Candidates */}
+                      {candidatesData?.data?.map((candidate: SubmittedCandidate) => (
+                        <TableRow key={candidate.id}>
+                          <TableCell>
+                            <Checkbox
+                              checked={selectedCandidates.has(candidate.id)}
+                              onCheckedChange={(checked) => handleSelectCandidate(candidate.id, !!checked)}
+                            />
+                          </TableCell>
+                          <TableCell>
+                            {candidate.submissionDate ? 
+                              new Date(candidate.submissionDate).toLocaleDateString() : 
+                              'N/A'
+                            }
+                          </TableCell>
+                          <TableCell>
+                            <div className="space-y-1">
+                              <div className="font-medium">{candidate.candidateName}</div>
+                              <div className="text-sm text-muted-foreground">{candidate.emailId}</div>
+                              <div className="text-sm text-muted-foreground">{candidate.contactNo}</div>
+                            </div>
+                          </TableCell>
+                          <TableCell>
+                            <div className="space-y-1">
+                              <div className="font-medium">{candidate.client}</div>
+                              <div className="text-sm text-muted-foreground">POC: {candidate.poc}</div>
+                            </div>
+                          </TableCell>
+                          <TableCell>
+                            <div className="max-w-[200px] text-sm">
+                              {candidate.skills.length > 50 ? 
+                                `${candidate.skills.substring(0, 50)}...` : 
+                                candidate.skills
+                              }
+                            </div>
+                          </TableCell>
+                          <TableCell>
+                            <div className="space-y-1">
+                              <div className="text-sm">{candidate.experience}</div>
+                              <div className="text-xs text-muted-foreground">
+                                Notice: {candidate.noticePeriod}
+                              </div>
+                            </div>
+                          </TableCell>
+                          <TableCell>{candidate.location}</TableCell>
+                          <TableCell>
+                            <div className="space-y-1 text-sm">
+                              <div>Current: {candidate.currentCtc}</div>
+                              <div>Expected: {candidate.expectedCtc}</div>
+                              {candidate.billRate && candidate.payRate && (
+                                <>
+                                  <div className="text-xs text-muted-foreground">
+                                    Bill: ${candidate.billRate} | Pay: ${candidate.payRate}
+                                  </div>
+                                  <div className="text-xs text-green-600">
+                                    Margin: ${candidate.marginPerHour}/hr
+                                  </div>
+                                </>
+                              )}
+                            </div>
+                          </TableCell>
+                          <TableCell>
+                            <StatusBadge status={candidate.status} />
+                          </TableCell>
+                          <TableCell className="text-right">
+                            <div className="flex justify-end gap-2">
+                              <Button
+                                variant="ghost"
+                                size="sm"
+                                onClick={() => initializeEditForm(candidate)}
+                                disabled={editDialogLoading}
+                              >
+                                {editDialogLoading ? (
+                                  <Loader2 className="h-4 w-4 animate-spin" />
+                                ) : (
+                                  <Edit className="h-4 w-4" />
+                                )}
+                              </Button>
+
+                              <AlertDialog>
+                                <AlertDialogTrigger asChild>
+                                  <Button variant="ghost" size="sm">
+                                    <Trash2 className="h-4 w-4" />
+                                  </Button>
+                                </AlertDialogTrigger>
+                                <AlertDialogContent>
+                                  <AlertDialogHeader>
+                                    <AlertDialogTitle>Confirm Deletion</AlertDialogTitle>
+                                    <AlertDialogDescription>
+                                      Are you sure you want to delete candidate "{candidate.candidateName}"? This action cannot be undone.
+                                    </AlertDialogDescription>
+                                  </AlertDialogHeader>
+                                  <AlertDialogFooter>
+                                    <AlertDialogCancel>Cancel</AlertDialogCancel>
+                                    <AlertDialogAction
+                                      onClick={() => deleteMutation.mutate(candidate.id)}
+                                      className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
+                                    >
+                                      Delete
+                                    </AlertDialogAction>
+                                  </AlertDialogFooter>
+                                </AlertDialogContent>
+                              </AlertDialog>
+                            </div>
+                          </TableCell>
+                        </TableRow>
+                      ))}
+                    </TableBody>
+                  </Table>
+                </div>
+              )}
+
+              {/* Pagination */}
+              {candidatesData?.meta && candidatesData.meta.pages > 1 && (
+                <div className="flex items-center justify-between mt-4">
+                  <div className="text-sm text-muted-foreground">
+                    Page {candidatesData.meta.page} of {candidatesData.meta.pages}
+                  </div>
+                  <div className="flex gap-2">
+                    <Button
+                      variant="outline"
+                      size="sm"
+                      onClick={goToPrevPage}
+                      disabled={page <= 1}
+                    >
+                      Previous
+                    </Button>
+                    <Button
+                      variant="outline"
+                      size="sm"
+                      onClick={goToNextPage}
+                      disabled={page >= totalPages}
+                    >
+                      Next
+                    </Button>
+                  </div>
+                </div>
+              )}
+            </CardContent>
+          </Card>
+
+          {/* Edit Dialog */}
+          <Dialog open={isEditDialogOpen} onOpenChange={setIsEditDialogOpen}>
+            <DialogContent className="max-w-4xl max-h-[90vh] overflow-y-auto">
+              <DialogHeader>
+                <DialogTitle>Edit Candidate</DialogTitle>
+                <DialogDescription>
+                  Update candidate information and submission details
+                </DialogDescription>
+              </DialogHeader>
+
+              <Form {...form}>
+                <form onSubmit={form.handleSubmit(onSubmitEdit)} className="space-y-6">
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <FormField
+                      control={form.control}
+                      name="candidateName"
+                      render={({ field }) => (
+                        <FormItem>
+                          <FormLabel>Candidate Name</FormLabel>
+                          <FormControl>
+                            <Input {...field} />
+                          </FormControl>
+                          <FormMessage />
+                        </FormItem>
+                      )}
+                    />
+
+                    <FormField
+                      control={form.control}
+                      name="emailId"
+                      render={({ field }) => (
+                        <FormItem>
+                          <FormLabel>Email</FormLabel>
+                          <FormControl>
+                            <Input type="email" {...field} />
+                          </FormControl>
+                          <FormMessage />
+                        </FormItem>
+                      )}
+                    />
+
+                    <FormField
+                      control={form.control}
+                      name="contactNo"
+                      render={({ field }) => (
+                        <FormItem>
+                          <FormLabel>Contact Number</FormLabel>
+                          <FormControl>
+                            <Input {...field} />
+                          </FormControl>
+                          <FormMessage />
+                        </FormItem>
+                      )}
+                    />
+
+                    <FormField
+                      control={form.control}
+                      name="location"
+                      render={({ field }) => (
+                        <FormItem>
+                          <FormLabel>Location</FormLabel>
+                          <FormControl>
+                            <Input {...field} />
+                          </FormControl>
+                          <FormMessage />
+                        </FormItem>
+                      )}
+                    />
+
+                    <FormField
+                      control={form.control}
+                      name="client"
+                      render={({ field }) => (
+                        <FormItem>
+                          <FormLabel>Client</FormLabel>
+                          <FormControl>
+                            <Input {...field} />
+                          </FormControl>
+                          <FormMessage />
+                        </FormItem>
+                      )}
+                    />
+
+                    <FormField
+                      control={form.control}
+                      name="poc"
+                      render={({ field }) => (
+                        <FormItem>
+                          <FormLabel>POC</FormLabel>
+                          <FormControl>
+                            <Input {...field} />
+                          </FormControl>
+                          <FormMessage />
+                        </FormItem>
+                      )}
+                    />
+
+                    <FormField
+                      control={form.control}
+                      name="experience"
+                      render={({ field }) => (
+                        <FormItem>
+                          <FormLabel>Experience</FormLabel>
+                          <FormControl>
+                            <Input {...field} />
+                          </FormControl>
+                          <FormMessage />
+                        </FormItem>
+                      )}
+                    />
+
+                    <FormField
+                      control={form.control}
+                      name="noticePeriod"
+                      render={({ field }) => (
+                        <FormItem>
+                          <FormLabel>Notice Period</FormLabel>
+                          <FormControl>
+                            <Input {...field} />
+                          </FormControl>
+                          <FormMessage />
+                        </FormItem>
+                      )}
+                    />
+
+                    <FormField
+                      control={form.control}
+                      name="currentCtc"
+                      render={({ field }) => (
+                        <FormItem>
+                          <FormLabel>Current CTC</FormLabel>
+                          <FormControl>
+                            <Input {...field} />
+                          </FormControl>
+                          <FormMessage />
+                        </FormItem>
+                      )}
+                    />
+
+                    <FormField
+                      control={form.control}
+                      name="expectedCtc"
+                      render={({ field }) => (
+                        <FormItem>
+                          <FormLabel>Expected CTC</FormLabel>
+                          <FormControl>
+                            <Input {...field} />
+                          </FormControl>
+                          <FormMessage />
+                        </FormItem>
+                      )}
+                    />
+
+                    <FormField
+                      control={form.control}
+                      name="billRate"
+                      render={({ field }) => (
+                        <FormItem>
+                          <FormLabel>Bill Rate (per hour)</FormLabel>
+                          <FormControl>
+                            <Input type="number" step="0.01" {...field} />
+                          </FormControl>
+                          <FormMessage />
+                        </FormItem>
+                      )}
+                    />
+
+                    <FormField
+                      control={form.control}
+                      name="payRate"
+                      render={({ field }) => (
+                        <FormItem>
+                          <FormLabel>Pay Rate (per hour)</FormLabel>
+                          <FormControl>
+                            <Input type="number" step="0.01" {...field} />
+                          </FormControl>
+                          <FormMessage />
+                        </FormItem>
+                      )}
+                    />
+                  </div>
+
+                  {/* Auto-calculated fields */}
+                  {(marginPerHour !== "0" || profitPerMonth !== "0") && (
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4 p-4 bg-muted rounded-lg">
+                      <div>
+                        <Label>Margin per Hour (Auto-calculated)</Label>
+                        <Input value={`$${marginPerHour}`} disabled />
+                      </div>
+                      <div>
+                        <Label>Profit per Month (Auto-calculated)</Label>
+                        <Input value={`$${profitPerMonth}`} disabled />
+                      </div>
+                    </div>
+                  )}
+
+                  <FormField
+                    control={form.control}
+                    name="skills"
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormLabel>Skills</FormLabel>
+                        <FormControl>
+                          <Textarea {...field} />
+                        </FormControl>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
+
+                  <FormField
+                    control={form.control}
+                    name="status"
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormLabel>Status</FormLabel>
+                        <FormControl>
+                          <Textarea 
+                            {...field} 
+                            placeholder="Enter detailed status information..."
+                          />
+                        </FormControl>
+                        <FormDescription>
+                          You can enter detailed status information including progress notes
+                        </FormDescription>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
+
+                  <DialogFooter>
+                    <Button
+                      type="button"
+                      variant="outline"
+                      onClick={() => setIsEditDialogOpen(false)}
+                    >
+                      Cancel
+                    </Button>
+                    <Button type="submit" disabled={updateMutation.isPending}>
+                      {updateMutation.isPending ? (
+                        <>
+                          <Loader2 className="h-4 w-4 mr-2 animate-spin" />
+                          Updating...
+                        </>
+                      ) : (
+                        "Update Candidate"
+                      )}
+                    </Button>
+                  </DialogFooter>
+                </form>
+              </Form>
+            </DialogContent>
+          </Dialog>
+        </TabsContent>
+
+        <TabsContent value="analytics" className="space-y-4">
+          {isLoadingAnalytics ? (
+            <div className="flex flex-col items-center justify-center py-12">
+              <Loader2 className="h-8 w-8 animate-spin text-primary mb-2" />
+              <p className="text-sm text-muted-foreground">Loading analytics...</p>
+            </div>
+          ) : analyticsData ? (
+            <AnalyticsCard data={analyticsData} />
+          ) : (
+            <div className="text-center py-8">
+              <p className="text-muted-foreground">No analytics data available</p>
+            </div>
+          )}
+        </TabsContent>
+      </Tabs>
+    </AdminLayout>
+  );
+}
+
+export default SubmittedCandidates;
