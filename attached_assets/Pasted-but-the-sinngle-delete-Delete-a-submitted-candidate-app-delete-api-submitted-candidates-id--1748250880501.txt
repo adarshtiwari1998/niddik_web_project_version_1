@@ -1,0 +1,116 @@
+but the sinngle delete
+
+// Delete a submitted candidate
+  app.delete('/api/submitted-candidates/:id', async (req: AuthenticatedRequest, res: Response) => {
+    try {
+      // Check if user is authenticated and is an admin
+      if (!req.isAuthenticated() || req.user?.role !== 'admin') {
+        return res.status(403).json({ 
+          success: false, 
+          message: "Unauthorized access" 
+        });
+      }
+
+      const id = parseInt(req.params.id);
+      if (isNaN(id)) {
+        return res.status(400).json({ 
+          success: false, 
+          message: "Invalid candidate ID" 
+        });
+      }
+
+      // Ensure the candidate exists
+      const existingCandidate = await storage.getSubmittedCandidateById(id);
+      if (!existingCandidate) {
+        return res.status(404).json({ 
+          success: false, 
+          message: "Candidate not found" 
+        });
+      }
+
+      await storage.deleteSubmittedCandidate(id);
+      return res.status(200).json({ 
+        success: true, 
+        message: "Candidate deleted successfully" 
+      });
+    } catch (error) {
+      console.error('Error deleting submitted candidate:', error);
+      return res.status(500).json({ 
+        success: false, 
+        message: "Internal server error" 
+      });
+    }
+  });
+
+  have
+
+ / :id
+
+ in the api route but in delete
+
+
+   // Bulk delete submitted candidates
+  // Bulk delete submitted candidates
+  app.delete('/api/submitted-candidates/bulk', async (req: AuthenticatedRequest, res: Response) => {
+    try {
+      // Check authentication (same as single delete)
+      if (!req.isAuthenticated() || req.user?.role !== 'admin') {
+        return res.status(403).json({ 
+          success: false, 
+          message: "Unauthorized access" 
+        });
+      }
+
+      const { ids } = req.body;
+
+      // Basic validation (same pattern as single delete)
+      if (!ids || !Array.isArray(ids) || ids.length === 0) {
+        return res.status(400).json({ 
+          success: false, 
+          message: "Invalid request: 'ids' must be a non-empty array" 
+        });
+      }
+
+      // Convert IDs to numbers and validate them (exactly like single delete)
+      const numericIds = ids.map(id => parseInt(String(id), 10));
+
+      // Check for invalid IDs (exactly like single delete)
+      for (const id of numericIds) {
+        if (isNaN(id)) {
+          return res.status(400).json({ 
+            success: false, 
+            message: "Invalid candidate ID" 
+          });
+        }
+      }
+
+      if (numericIds.length === 0) {
+        return res.status(400).json({ 
+          success: false, 
+          message: "No valid candidate IDs provided" 
+        });
+      }
+
+      // Perform bulk deletion directly (same as single delete - no existence check)
+      await storage.bulkDeleteSubmittedCandidates(numericIds);
+
+      return res.status(200).json({
+        success: true,
+        message: "Candidates deleted successfully"
+      });
+
+    } catch (error) {
+      console.error('Error deleting submitted candidates:', error);
+      return res.status(500).json({ 
+        success: false, 
+        message: "Internal server error" 
+      });
+    }
+  });
+
+
+see 
+
+  app.delete('/api/submitted-candidates/bulk', async (req: AuthenticatedRequest, res: Response) => {
+  `
+  

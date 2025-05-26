@@ -953,7 +953,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
       console.log('File uploaded successfully:', {
         path: file.path,
         filename: file.originalname,
-        size: file.size```python
+        size: file.size
       });
 
       // If user is authenticated, update their profile with the resume URL
@@ -1897,8 +1897,7 @@ app.put('/api/profile', async (req: AuthenticatedRequest, res) => {
           currentCtc: updateData.current_ctc,
           expectedCtc: updateData.expected_ctc,
           skills: updateData.skills,
-          location```python
-: updateData.location,
+          location: updateData.location,
           city: updateData.city,
           state: updateData.state,
           country: updateData.country,
