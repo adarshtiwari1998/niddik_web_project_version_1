@@ -710,10 +710,18 @@ export async function registerRoutes(app: Express): Promise<Server> {
         });
       }
 
-      // Convert IDs to numbers and validate them (same as single delete)
-      const numericIds = ids
-        .map(id => parseInt(String(id), 10))
-        .filter(id => !isNaN(id) && id > 0);
+      // Convert IDs to numbers and validate them (exactly like single delete)
+      const numericIds = ids.map(id => parseInt(String(id), 10));
+
+      // Check for invalid IDs (exactly like single delete)
+      for (const id of numericIds) {
+        if (isNaN(id)) {
+          return res.status(400).json({ 
+            success: false, 
+            message: "Invalid candidate ID" 
+          });
+        }
+      }
 
       if (numericIds.length === 0) {
         return res.status(400).json({ 
@@ -945,7 +953,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
       console.log('File uploaded successfully:', {
         path: file.path,
         filename: file.originalname,
-        size: file.size
+        size: file.size```python
       });
 
       // If user is authenticated, update their profile with the resume URL
@@ -1889,7 +1897,8 @@ app.put('/api/profile', async (req: AuthenticatedRequest, res) => {
           currentCtc: updateData.current_ctc,
           expectedCtc: updateData.expected_ctc,
           skills: updateData.skills,
-          location: updateData.location,
+          location```python
+: updateData.location,
           city: updateData.city,
           state: updateData.state,
           country: updateData.country,
