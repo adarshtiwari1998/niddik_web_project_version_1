@@ -300,7 +300,7 @@ const handleResumeRemove = async () => {
     );
   }
 
-  if (error || !job) {
+  if (error || !job || (job.status !== 'active' && user?.role !== 'admin')) {
     return (
       <div className="container mx-auto py-12 px-4 md:px-6 text-center">
         <h1 className="text-2xl font-bold mb-4">Job Not Found</h1>
