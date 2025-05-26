@@ -1,0 +1,89 @@
+
+/* Job Marquee Styles */
+.job-marquee-container {
+  position: relative;
+  width: 100%;
+  overflow: hidden;
+  mask: linear-gradient(
+    90deg,
+    transparent 0%,
+    black 5%,
+    black 95%,
+    transparent 100%
+  );
+  -webkit-mask: linear-gradient(
+    90deg,
+    transparent 0%,
+    black 5%,
+    black 95%,
+    transparent 100%
+  );
+}
+
+.job-marquee-content {
+  display: flex;
+  animation: jobMarquee 80s linear infinite;
+  width: fit-content;
+}
+
+.job-marquee-duplicate {
+  display: flex;
+}
+
+@keyframes jobMarquee {
+  0% {
+    transform: translateX(0);
+  }
+  100% {
+    transform: translateX(-50%);
+  }
+}
+
+/* Job Card Styles */
+.job-card {
+  flex-shrink: 0;
+  transition: all 0.3s ease;
+}
+
+.job-card:hover {
+  z-index: 10;
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+  .job-marquee-content {
+    animation-duration: 60s;
+  }
+  
+  .job-card {
+    min-width: 280px;
+  }
+}
+
+/* Smooth hover effects */
+.job-marquee-container:hover .job-marquee-content {
+  animation-play-state: paused;
+}
+
+/* Additional visual enhancements */
+.line-clamp-1 {
+  display: -webkit-box;
+  -webkit-line-clamp: 1;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+
+/* Gradient border effect on hover */
+.job-card:hover .job-card-inner {
+  background: linear-gradient(145deg, #ffffff 0%, #f8fafc 100%);
+}
+
+/* Floating animation for urgency badges */
+@keyframes float {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-2px); }
+}
+
+.job-card:hover [class*="animate-pulse"] {
+  animation: float 2s ease-in-out infinite;
+}
