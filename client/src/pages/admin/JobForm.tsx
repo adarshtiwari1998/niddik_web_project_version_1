@@ -60,6 +60,9 @@ const formSchema = z.object({
   contactEmail: z.string().email("Must be a valid email").optional().or(z.literal("")),
   status: z.string(),
   featured: z.boolean().default(false),
+  urgent: z.boolean().default(false),
+  priority: z.boolean().default(false),
+  isOpen: z.boolean().default(false),
   expiryDate: z.date().optional(),
   category: z.string().min(2, "Category is required"),
   skills: z.string().min(3, "Skills are required"),
@@ -128,6 +131,9 @@ export default function JobForm() {
             contactEmail: job.contactEmail || "",
             status: job.status || "active",
             featured: Boolean(job.featured),
+            urgent: Boolean(job.urgent),
+            priority: Boolean(job.priority),
+            isOpen: Boolean(job.isOpen),
             category: job.category,
             skills: job.skills,
             expiryDate: job.expiryDate ? new Date(job.expiryDate) : undefined,
@@ -169,6 +175,9 @@ export default function JobForm() {
         contactEmail: "",
         status: "active",
         featured: false,
+        urgent: false,
+        priority: false,
+        isOpen: false,
         category: "Administrative",
         skills: "",
       };
@@ -201,6 +210,9 @@ export default function JobForm() {
         contactEmail: job.contactEmail || "",
         status: job.status,
         featured: Boolean(job.featured),
+        urgent: Boolean(job.urgent),
+        priority: Boolean(job.priority),
+        isOpen: Boolean(job.isOpen),
         category: job.category,
         skills: job.skills,
         expiryDate: job.expiryDate ? new Date(job.expiryDate) : undefined,
@@ -716,6 +728,89 @@ export default function JobForm() {
                             <FormLabel>Featured Listing</FormLabel>
                             <FormDescription>
                               Featured listings appear at the top of the job board.
+                            </FormDescription>
+                          </div>
+                          <FormControl>
+                            <Switch
+                              checked={field.value}
+                              onCheckedChange={field.onChange}
+                            />
+                          </FormControl>
+                          <FormMessage />
+                        </FormItem>
+                      )}
+                    />
+                  </div>
+
+                  <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                    <FormField
+                      control={form.control}
+                      name="urgent"
+                      render={({ field }) => (
+                        <FormItem className="flex flex-row items-center justify-between space-x-3 space-y-0 rounded-md border p-4">
+                          <div className="space-y-1">
+                            <FormLabel className="flex items-center gap-2">
+                              <span className="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium bg-red-100 text-red-800">
+                                Urgent
+                              </span>
+                              Job
+                            </FormLabel>
+                            <FormDescription>
+                              Mark this job as urgent for immediate hiring.
+                            </FormDescription>
+                          </div>
+                          <FormControl>
+                            <Switch
+                              checked={field.value}
+                              onCheckedChange={field.onChange}
+                            />
+                          </FormControl>
+                          <FormMessage />
+                        </FormItem>
+                      )}
+                    />
+
+                    <FormField
+                      control={form.control}
+                      name="priority"
+                      render={({ field }) => (
+                        <FormItem className="flex flex-row items-center justify-between space-x-3 space-y-0 rounded-md border p-4">
+                          <div className="space-y-1">
+                            <FormLabel className="flex items-center gap-2">
+                              <span className="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium bg-yellow-100 text-yellow-800">
+                                Priority
+                              </span>
+                              Job
+                            </FormLabel>
+                            <FormDescription>
+                              Mark this job as priority for faster processing.
+                            </FormDescription>
+                          </div>
+                          <FormControl>
+                            <Switch
+                              checked={field.value}
+                              onCheckedChange={field.onChange}
+                            />
+                          </FormControl>
+                          <FormMessage />
+                        </FormItem>
+                      )}
+                    />
+
+                    <FormField
+                      control={form.control}
+                      name="isOpen"
+                      render={({ field }) => (
+                        <FormItem className="flex flex-row items-center justify-between space-x-3 space-y-0 rounded-md border p-4">
+                          <div className="space-y-1">
+                            <FormLabel className="flex items-center gap-2">
+                              <span className="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium bg-green-100 text-green-800">
+                                Open
+                              </span>
+                              Position
+                            </FormLabel>
+                            <FormDescription>
+                              Mark this position as actively open for applications.
                             </FormDescription>
                           </div>
                           <FormControl>
