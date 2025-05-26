@@ -1,4 +1,3 @@
-
 import { useState } from "react";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { getQueryFn } from "@/lib/queryClient";
@@ -107,7 +106,7 @@ const ContactSubmissions = () => {
           <div className="space-y-6">
             <div className="flex justify-between items-center">
               <div>
-              
+
               </div>
               <Button onClick={() => refetch()} variant="outline">
                 <RefreshCw className="h-4 w-4 mr-2" />
