@@ -200,7 +200,7 @@ const Navbar: React.FC<NavbarProps> = ({ hasAnnouncementAbove = true }) => {
       "fixed w-full z-40",
       hasAnnouncementAbove ? "top-[40px]" : "top-0",
       isTransparent 
-        ? "bg-black/20 backdrop-blur-sm border-b border-white/10" 
+        ? "bg-white/10 backdrop-blur-sm border-b border-white/20" 
         : "bg-white/95 backdrop-blur-md border-b border-gray-200/50",
       isScrolled ? "shadow-lg" : "",
       "transition-all duration-500 ease-in-out"
