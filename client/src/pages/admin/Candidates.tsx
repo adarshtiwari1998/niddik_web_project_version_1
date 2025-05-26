@@ -281,6 +281,11 @@ export default function Candidates() {
   const [statusFilter, setStatusFilter] = useState<string>("all_statuses");
   const pageSize = 10;
 
+  // Reset page when search or filter changes
+  useEffect(() => {
+    setPage(1);
+  }, [search, statusFilter]);
+
   const [analyticsSearch, setAnalyticsSearch] = useState("");
   const [analyticsStatusFilter, setAnalyticsStatusFilter] = useState<string>("all_statuses");
   const [sortBy, setSortBy] = useState<string>("applications_desc");
@@ -321,19 +326,28 @@ export default function Candidates() {
   }>({
     queryKey: ['/api/admin/applications', page, search, statusFilter],
     queryFn: async () => {
-      const res = await fetch(`/api/admin/applications?${buildQueryParams()}`, {
+      const queryParams = buildQueryParams();
+      console.log('Fetching applications with params:', queryParams);
+      const res = await fetch(`/api/admin/applications?${queryParams}`, {
         headers: {
           'Cache-Control': 'no-cache',
           'Pragma': 'no-cache'
         }
       });
-      if (!res.ok) throw new Error("Failed to fetch applications");
-      return res.json();
+      if (!res.ok) {
+        const errorText = await res.text();
+        console.error('API Error:', errorText);
+        throw new Error(`Failed to fetch applications: ${res.status} ${errorText}`);
+      }
+      const result = await res.json();
+      console.log('API Response:', result);
+      return result;
     },
     refetchInterval: 20000, // Refetch every 20 seconds
     refetchOnMount: true,
     refetchOnWindowFocus: true,
     staleTime: 0, // Consider data stale immediately
+    retry: 1,
   });
 
     // Fetch analytics data
@@ -508,10 +522,30 @@ export default function Candidates() {
             <CardContent>
               {isLoading ? (
                 <div className="py-8 text-center">Loading applications...</div>
+              ) : error ? (
+                <div className="py-8 text-center">
+                  <p className="text-red-500 mb-2">Error loading applications</p>
+                  <p className="text-sm text-muted-foreground mb-4">{error instanceof Error ? error.message : 'Unknown error occurred'}</p>
+                  <Button onClick={() => queryClient.invalidateQueries({ queryKey: ['/api/admin/applications'] })}>
+                    Retry
+                  </Button>
+                </div>
               ) : !data?.data || data.data.length === 0 ? (
                 <div className="py-8 text-center">
                   <p className="text-muted-foreground">No applications found</p>
                   <p className="text-sm text-muted-foreground mt-1">Try adjusting your filters</p>
+                  {(search || statusFilter !== "all_statuses") && (
+                    <Button 
+                      variant="link" 
+                      onClick={() => {
+                        setSearch("");
+                        setStatusFilter("all_statuses");
+                      }}
+                      className="mt-2"
+                    >
+                      Clear all filters
+                    </Button>
+                  )}
                 </div>
               ) : (
                 <div className="overflow-x-auto">
