@@ -537,12 +537,21 @@ export const storage = {
   async bulkDeleteSubmittedCandidates(ids: number[]) {
     try {
       console.log(`Starting bulk delete for ${ids.length} candidates with IDs:`, ids);
+      console.log('ID types:', ids.map(id => ({ id, type: typeof id, isInteger: Number.isInteger(id) })));
 
       if (ids.length === 0) {
         return { deletedCount: 0, totalRequested: 0 };
       }
 
+      // Validate all IDs are positive integers
+      const invalidIds = ids.filter(id => !Number.isInteger(id) || id <= 0);
+      if (invalidIds.length > 0) {
+        console.error('Invalid IDs found:', invalidIds);
+        throw new Error(`Invalid candidate IDs: ${invalidIds.join(', ')}`);
+      }
+
       // First, let's check which IDs actually exist
+      console.log('Checking for existing records...');
       const existingRecords = await db.query.submittedCandidates.findMany({
         where: inArray(submittedCandidates.id, ids),
         columns: { id: true }
@@ -550,6 +559,7 @@ export const storage = {
       
       console.log(`Found ${existingRecords.length} existing records out of ${ids.length} requested IDs`);
       console.log('Existing IDs:', existingRecords.map(r => r.id));
+      console.log('Missing IDs:', ids.filter(id => !existingRecords.some(r => r.id === id)));
 
       if (existingRecords.length === 0) {
         console.log('No records found to delete');

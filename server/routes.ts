@@ -697,6 +697,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
     try {
       // Check authentication
       if (!req.isAuthenticated() || req.user?.role !== 'admin') {
+        console.log('Authentication failed');
         return res.status(403).json({ 
           success: false, 
           message: "Unauthorized access" 
@@ -707,6 +708,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
 
       // Validate request structure
       if (!ids || !Array.isArray(ids) || ids.length === 0) {
+        console.log('Invalid request structure:', { ids, isArray: Array.isArray(ids), length: ids?.length });
         return res.status(400).json({ 
           success: false, 
           message: "Invalid request: 'ids' must be a non-empty array" 
@@ -714,13 +716,16 @@ export async function registerRoutes(app: Express): Promise<Server> {
       }
 
       console.log('Raw IDs received:', ids);
+      console.log('ID types:', ids.map(id => ({ id, type: typeof id })));
       
       // Convert IDs to numbers without validation
       const numericIds = ids.map(id => typeof id === 'number' ? id : parseInt(String(id), 10));
       
       console.log('Converted IDs for deletion:', numericIds);
+      console.log('Converted ID types:', numericIds.map(id => ({ id, type: typeof id, isNaN: isNaN(id) })));
 
       // Perform bulk deletion using storage method directly
+      console.log('Calling storage.bulkDeleteSubmittedCandidates...');
       const result = await storage.bulkDeleteSubmittedCandidates(numericIds);
       
       console.log('Bulk deletion completed:', result);
@@ -735,11 +740,13 @@ export async function registerRoutes(app: Express): Promise<Server> {
 
     } catch (error) {
       console.error('=== BULK DELETE ERROR ===');
+      console.error('Error type:', error?.constructor?.name);
+      console.error('Error message:', error instanceof Error ? error.message : 'Unknown error');
       console.error('Error details:', error);
 
-      return res.status(500).json({ 
+      return res.status(400).json({ 
         success: false, 
-        message: "Invalid candidate ID",
+        message: error instanceof Error ? error.message : "Unknown error occurred during bulk delete",
         error: error instanceof Error ? error.message : 'Unknown error'
       });
     }
