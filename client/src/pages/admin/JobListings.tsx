@@ -228,12 +228,29 @@ export default function JobListings() {
                   {data?.data.map((job) => (
                     <TableRow key={job.id}>
                       <TableCell className="font-medium">
-                        <div className="flex items-center">
+                        <div className="flex items-center flex-wrap gap-2">
                           <FileText className="h-4 w-4 mr-2 text-primary" />
                           <span>{job.title}</span>
-                          {job.featured && (
-                            <Badge className="ml-2" variant="outline">Featured</Badge>
-                          )}
+                          <div className="flex gap-1">
+                            {job.featured && (
+                              <Badge className="text-xs" variant="outline">Featured</Badge>
+                            )}
+                            {job.urgent && (
+                              <Badge className="text-xs bg-red-100 text-red-800 hover:bg-red-200" variant="outline">
+                                • Urgent
+                              </Badge>
+                            )}
+                            {job.priority && (
+                              <Badge className="text-xs bg-yellow-100 text-yellow-800 hover:bg-yellow-200" variant="outline">
+                                • Priority
+                              </Badge>
+                            )}
+                            {job.isOpen && (
+                              <Badge className="text-xs bg-green-100 text-green-800 hover:bg-green-200" variant="outline">
+                                • Open
+                              </Badge>
+                            )}
+                          </div>
                         </div>
                         <div className="text-xs text-muted-foreground mt-1">{job.company}</div>
                       </TableCell>
