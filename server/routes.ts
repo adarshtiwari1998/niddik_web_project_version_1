@@ -747,9 +747,10 @@ export async function registerRoutes(app: Express): Promise<Server> {
 
       return res.status(200).json({ 
         success: true, 
-        message: `Successfully deleted ${deleteResults.count} candidate(s)`,
-        count: deleteResults.count,
-        deletedIds: deleteResults.deletedIds
+        message: `Successfully deleted ${deleteResults.deletedCount} candidate(s)`,
+        count: deleteResults.deletedCount,
+        deletedCount: deleteResults.deletedCount,
+        totalRequested: deleteResults.totalRequested
       });
     } catch (error) {
       console.error('Error in bulk delete submitted candidates:', error);
