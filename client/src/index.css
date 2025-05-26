@@ -202,26 +202,6 @@ html, body {
   box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
 }
 
-/* Mobile admin layout fixes */
-@media (max-width: 640px) {
-  /* Ensure mobile admin content doesn't overlap with header */
-  .admin-main-content {
-    padding-top: 73px !important;
-  }
-  
-  /* Mobile sidebar adjustments */
-  .admin-sidebar {
-    top: 73px !important;
-    height: calc(100vh - 73px) !important;
-  }
-  
-  /* Mobile header height adjustment */
-  .admin-header {
-    height: 73px !important;
-    padding: 8px 12px !important;
-  }
-}
-
 .animate-slide-up {
   animation: slideUp 0.5s ease-out;
 }
