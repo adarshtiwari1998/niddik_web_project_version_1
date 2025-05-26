@@ -221,7 +221,7 @@ const Hero = () => {
   };
 
   return (
-    <section className="relative overflow-hidden h-screen md:h-[110vh] flex flex-col">
+    <section className="relative overflow-hidden h-screen md:h-[120vh] sm:h-[120vh] flex flex-col">
       {/* Video Background with Fallback */}
       <div className="absolute inset-0 w-full h-full z-0">
         {/* Fallback Image - always present, hidden when video loads */}
