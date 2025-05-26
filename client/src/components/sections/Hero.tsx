@@ -355,25 +355,25 @@ const Hero = () => {
       {/* Key Points Section - Now positioned below marquee */}
                       <div className="relative z-20 pb-12 mt-auto">
                         <Container>
-                          <div className="bg-white rounded-lg shadow-xl py-8 px-6 md:px-10 -mb-20 relative z-30">
-                            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 md:gap-10">
+                          <div className="bg-white rounded-lg shadow-xl py-6 md:py-8 px-4 md:px-10 -mb-20 relative z-30">
+                            <div className="grid grid-cols-2 md:grid-cols-2 lg:grid-cols-4 gap-3 md:gap-10">
               {keyPoints.map((point, index) => (
                 <motion.div
                   key={index}
-                  className="flex items-start gap-4 group hover:bg-andela-green/5 p-4 rounded-xl transition-all duration-300"
+                  className="flex flex-col md:flex-row items-center md:items-start gap-2 md:gap-4 group hover:bg-andela-green/5 p-2 md:p-4 rounded-xl transition-all duration-300 text-center md:text-left"
                   custom={index}
                   initial="hidden"
                   animate="visible"
                   variants={slideUp}
                 >
-                  <div className="bg-andela-green/10 group-hover:bg-andela-green/20 p-3 rounded-full flex-shrink-0 transition-all duration-300">
-                    <div className="text-andela-green group-hover:scale-110 transition-transform duration-300">
+                  <div className="bg-andela-green/10 group-hover:bg-andela-green/20 p-2 md:p-3 rounded-full flex-shrink-0 transition-all duration-300">
+                    <div className="text-andela-green group-hover:scale-110 transition-transform duration-300 w-4 h-4 md:w-6 md:h-6">
                       {point.icon}
                     </div>
                   </div>
-                  <div>
-                    <h3 className="font-bold text-lg mb-2 text-gray-800 group-hover:text-andela-green transition-colors duration-300">{point.title}</h3>
-                    <p className="text-gray-600 text-sm leading-relaxed">{point.description}</p>
+                  <div className="min-w-0">
+                    <h3 className="font-bold text-xs md:text-lg mb-1 md:mb-2 text-gray-800 group-hover:text-andela-green transition-colors duration-300 leading-tight">{point.title}</h3>
+                    <p className="text-gray-600 text-xs md:text-sm leading-relaxed hidden md:block">{point.description}</p>
                   </div>
                 </motion.div>
               ))}
