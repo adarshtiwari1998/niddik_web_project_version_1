@@ -240,7 +240,7 @@ export default function MyApplications() {
         <Card>
           <CardContent className="py-10 text-center">
             <p>You haven't applied to any jobs yet.</p>
-            <Link href="/jobs">
+            <Link href="/careers">
               <Button className="mt-4">
                 Browse Jobs
               </Button>
