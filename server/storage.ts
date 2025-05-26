@@ -426,7 +426,7 @@ export const storage = {
     }
 
     if (margin && margin !== 'all_margins') {
-      // Parse margin range and filter accordingly
+      // Check if it's a predefined range or exact value
       const marginRanges: { [key: string]: { min: number; max: number } } = {
         "0-10": { min: 0, max: 10 },
         "10-20": { min: 10, max: 20 },
@@ -437,6 +437,7 @@ export const storage = {
 
       const range = marginRanges[margin];
       if (range) {
+        // Handle predefined ranges
         whereConditions.push(
           and(
             sql`CAST(${submittedCandidates.marginPerHour} AS DECIMAL) >= ${range.min}`,
@@ -445,6 +446,14 @@ export const storage = {
               : sql`CAST(${submittedCandidates.marginPerHour} AS DECIMAL) < ${range.max}`
           )
         );
+      } else {
+        // Handle exact margin value match
+        const exactMargin = parseFloat(margin);
+        if (!isNaN(exactMargin)) {
+          whereConditions.push(
+            sql`CAST(${submittedCandidates.marginPerHour} AS DECIMAL) = ${exactMargin}`
+          );
+        }
       }
     }
 

@@ -323,6 +323,9 @@ function SubmittedCandidates() {
         ...(search && { search }),
         ...(statusFilter !== "all_statuses" && { status: statusFilter }),
         ...(clientFilter !== "all_clients" && { client: clientFilter }),
+        ...(sourcedByFilter !== "all_sourced_by" && { sourcedBy: sourcedByFilter }),
+        ...(pocFilter !== "all_pocs" && { poc: pocFilter }),
+        ...(marginFilter !== "all_margins" && { margin: marginFilter }),
       });
 
       const res = await apiRequest("GET", `/api/submitted-candidates?${queryParams}`);
@@ -1640,9 +1643,11 @@ function SubmittedCandidates() {
                             </SelectTrigger>
                             <SelectContent>
                                 <SelectItem value="all_margins">All Margins</SelectItem>
-                                {allMargins.map((margin: string, index: number) => (
+                                {allMargins
+                                    .sort((a, b) => parseFloat(a) - parseFloat(b))
+                                    .map((margin: string, index: number) => (
                                     <SelectItem key={`margin-${index}`} value={margin}>
-                                        {margin}
+                                        ${margin}
                                     </SelectItem>
                                 ))}
                             </SelectContent>
