@@ -428,7 +428,7 @@ const Navbar: React.FC<NavbarProps> = ({ hasAnnouncementAbove = true }) => {
             <div className={cn(
               "border px-4 py-2 rounded-md font-medium flex items-center transition-colors",
               isTransparent && isHomePage
-                ? "border-white text-white hover:bg-white hover:text-andela-dark"
+                ? "border-white text-white hover:bg-white/20 hover:backdrop-blur-sm"
                 : "border-andela-green text-andela-green hover:bg-andela-green hover:text-white"
             )}>
               <Link 
@@ -436,7 +436,7 @@ const Navbar: React.FC<NavbarProps> = ({ hasAnnouncementAbove = true }) => {
                 className={cn(
                   "text-sm transition-colors",
                   isTransparent && isHomePage
-                    ? "text-white hover:text-andela-dark"
+                    ? "text-white hover:text-white"
                     : "text-andela-green hover:text-white"
                 )}
               >
