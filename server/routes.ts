@@ -739,14 +739,14 @@ export async function registerRoutes(app: Express): Promise<Server> {
         });
       }
 
-      // Check which candidates exist in database
-      console.log('Checking existence for IDs:', validIds);
-      const existingCandidates = await db
-        .select({ id: submittedCandidates.id })
-        .from(submittedCandidates)
-        .where(inArray(submittedCandidates.id, validIds));
-
-      const existingIds = existingCandidates.map(c => c.id);
+      // Check which candidates exist using the same method as single delete
+      const existingIds: number[] = [];
+      for (const id of validIds) {
+        const existingCandidate = await storage.getSubmittedCandidateById(id);
+        if (existingCandidate) {
+          existingIds.push(id);
+        }
+      }
       
       console.log('Existence check results:', {
         requestedCount: validIds.length,
@@ -755,41 +755,46 @@ export async function registerRoutes(app: Express): Promise<Server> {
       });
 
       if (existingIds.length === 0) {
-        return res.status(404).json({
+        return res.status(400).json({
           success: false,
-          message: "No candidates found with the provided IDs"
+          message: "Invalid candidate ID"
         });
       }
 
-      // Perform bulk delete directly with Drizzle
-      console.log(`Starting deletion of ${existingIds.length} candidates`);
-      
-      const deleteResult = await db
-        .delete(submittedCandidates)
-        .where(inArray(submittedCandidates.id, existingIds))
-        .returning({ id: submittedCandidates.id });
+      // Delete candidates one by one using the same method as single delete
+      let deletedCount = 0;
+      const failedIds: number[] = [];
 
-      const deletedCount = deleteResult.length;
+      for (const id of existingIds) {
+        try {
+          await storage.deleteSubmittedCandidate(id);
+          deletedCount++;
+        } catch (error) {
+          console.error(`Failed to delete candidate ${id}:`, error);
+          failedIds.push(id);
+        }
+      }
 
       console.log('Bulk delete completed:', {
         requested: validIds.length,
         found: existingIds.length,
-        deleted: deletedCount
+        deleted: deletedCount,
+        failed: failedIds.length
       });
 
-      const responseMessage = deletedCount === validIds.length 
-        ? `Successfully deleted ${deletedCount} candidates`
-        : `Successfully deleted ${deletedCount} out of ${validIds.length} candidates`;
+      if (failedIds.length > 0) {
+        return res.status(207).json({
+          success: true,
+          message: `Partially successful: deleted ${deletedCount} out of ${existingIds.length} candidates`,
+          count: deletedCount,
+          failedIds: failedIds
+        });
+      }
 
       return res.status(200).json({ 
         success: true, 
-        message: responseMessage,
-        count: deletedCount,
-        details: {
-          deletedCount,
-          requestedCount: validIds.length,
-          foundCount: existingIds.length
-        }
+        message: `Successfully deleted ${deletedCount} candidate${deletedCount > 1 ? 's' : ''}`,
+        count: deletedCount
       });
     } catch (error) {
       console.error('Error bulk deleting submitted candidates:', error);
