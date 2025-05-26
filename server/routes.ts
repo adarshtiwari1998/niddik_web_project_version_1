@@ -689,17 +689,11 @@ export async function registerRoutes(app: Express): Promise<Server> {
   });
 
   // Bulk delete submitted candidates
-  app.post('/api/submitted-candidates/bulk-delete', async (req: AuthenticatedRequest, res: Response) => {
+  app.delete('/api/submitted-candidates/bulk', async (req, res) => {
     try {
-      // Check if user is authenticated and is an admin
-      if (!req.isAuthenticated() || req.user?.role !== 'admin') {
-        return res.status(403).json({ 
-          success: false, 
-          message: "Unauthorized access" 
-        });
-      }
-
       const { ids } = req.body;
+
+      console.log('Bulk delete request received:', { ids, type: typeof ids, isArray: Array.isArray(ids) });
 
       if (!Array.isArray(ids) || ids.length === 0) {
         return res.status(400).json({ 
@@ -708,18 +702,30 @@ export async function registerRoutes(app: Express): Promise<Server> {
         });
       }
 
-      // Validate that all IDs are numbers
-      const validIds = ids.filter(id => typeof id === 'number' && !isNaN(id));
-      if (validIds.length !== ids.length) {
+      // Convert string IDs to numbers and validate
+      const validIds = ids
+        .map(id => {
+          const numId = typeof id === 'string' ? parseInt(id, 10) : id;
+          return typeof numId === 'number' && !isNaN(numId) ? numId : null;
+        })
+        .filter(id => id !== null);
+
+      console.log('Valid IDs for deletion:', validIds);
+
+      if (validIds.length === 0) {
         return res.status(400).json({ 
           success: false, 
-          message: "All IDs must be valid numbers." 
+          message: "No valid candidate IDs provided." 
         });
+      }
+
+      if (validIds.length !== ids.length) {
+        console.warn(`Some IDs were invalid. Received: ${ids.length}, Valid: ${validIds.length}`);
       }
 
       // Delete candidates by IDs
       const deletedCount = await storage.bulkDeleteSubmittedCandidates(validIds);
-      
+
       return res.status(200).json({ 
         success: true, 
         message: `${deletedCount} candidates deleted successfully`,
@@ -943,7 +949,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
         size: file.size
       });
 
-      // If user is authenticated, update their profile with the resume URL
+      // If user is authenticated, update their profile with the resume URL```tool_code
       if (req.isAuthenticated() && req.user) {
         await db.update(users)
           .set({ resumeUrl: file.path })
@@ -996,7 +1002,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
       // Calculate pagination
       const total = filteredApplications.length;
       const startIndex = (page - 1) * limit
-     
+
 const endIndex = page * limit;
       const paginatedApplications = filteredApplications.slice(startIndex, endIndex);
 
@@ -1207,7 +1213,7 @@ const endIndex = page * limit;
           applications: userApps.map(app => {
             // Get job title from the job listings
             const jobTitle = app.jobId ? (jobTitleMap.get(app.jobId) || `Job ID: ${app.jobId}`) : 'Unknown Job';
-            
+
             return {
               id: app.applicationId,
               jobId: app.jobId,
@@ -1886,6 +1892,7 @@ app.put('/api/profile', async (req: AuthenticatedRequest, res) => {
           skills: updateData.skills,
           location: updateData.location,
           city: updateData.city,
+```tool_code
           state: updateData.state,
           country: updateData.country,
           zipCode: updateData.zip_code
@@ -1932,7 +1939,7 @@ app.put('/api/profile', async (req: AuthenticatedRequest, res) => {
       if (existingRequest) {
         return res.status(400).json({
           success: false,
-          
+
 message: "A demo request with this email already exists",
           existingRequest: {
             id: existingRequest.id,

@@ -813,7 +813,27 @@ function SubmittedCandidates() {
       });
       return;
     }
-    bulkDeleteMutation.mutate(selectedCandidateIds);
+    
+    // Ensure all IDs are valid numbers
+    const validIds = selectedCandidateIds.filter(id => id && typeof id === 'number' && !isNaN(id));
+    
+    if (validIds.length === 0) {
+      toast({
+        title: "Invalid Selection",
+        description: "No valid candidates selected for deletion",
+        variant: "destructive",
+      });
+      return;
+    }
+    
+    if (validIds.length !== selectedCandidateIds.length) {
+      toast({
+        title: "Warning",
+        description: `Only ${validIds.length} out of ${selectedCandidateIds.length} selected candidates are valid`,
+      });
+    }
+    
+    bulkDeleteMutation.mutate(validIds);
   };
 
   // Update select all state when current page data changes
