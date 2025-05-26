@@ -257,7 +257,13 @@ function SubmittedCandidates() {
   // Reset form values when selected candidate changes
   useEffect(() => {
     if (selectedCandidate) {
+      const submissionDate = selectedCandidate.submissionDate 
+        ? new Date(selectedCandidate.submissionDate).toISOString().split('T')[0] 
+        : new Date().toISOString().split('T')[0];
+        
       form.reset({
+        submissionDate: submissionDate,
+        sourcedBy: selectedCandidate.sourcedBy || '',
         candidateName: selectedCandidate.candidateName,
         emailId: selectedCandidate.emailId,
         location: selectedCandidate.location,
@@ -274,6 +280,7 @@ function SubmittedCandidates() {
         payRate: selectedCandidate.payRate?.toString() || "",
         marginPerHour: selectedCandidate.marginPerHour?.toString() || "",
         profitPerMonth: selectedCandidate.profitPerMonth?.toString() || "",
+        salaryInLacs: selectedCandidate.salaryInLacs || "",
       });
     }
   }, [selectedCandidate, form]);
@@ -1707,41 +1714,43 @@ function SubmittedCandidates() {
           </div>
 
           <Card>
-            <CardHeader className="flex items-center justify-between px-6 py-4 border-b">
-              <div className="flex items-center gap-4">
+            <CardHeader className="px-4 py-4 border-b space-y-4">
+              <div className="flex flex-col space-y-2">
                 <div className="text-sm text-muted-foreground">
                   Showing {((page - 1) * limit) + 1} to {Math.min(page * limit, candidatesData?.meta?.total || 0)} of {candidatesData?.meta?.total || 0} candidates
                   {selectedCandidateIds.length > 0 && (
-                    <span className="ml-2 text-blue-600">
-                      • {selectedCandidateIds.length} selected
+                    <span className="block sm:inline sm:ml-2 text-blue-600">
+                      {selectedCandidateIds.length} selected
                     </span>
                   )}
                 </div>
               </div>
-              <div className="flex items-center gap-2">
-                {selectedCandidateIds.length > 0 && (
-                  <>
-                    <AlertDialog open={bulkDeleteConfirmOpen} onOpenChange={setBulkDeleteConfirmOpen}>
-                      <AlertDialogTrigger asChild>
-                        <Button
-                          variant="destructive"
-                          size="sm"
-                          onClick={handleBulkDelete}
-                          disabled={bulkDeleteMutation.isPending}
-                        >
-                          {bulkDeleteMutation.isPending ? (
-                            <>
-                              <Loader2 className="h-4 w-4 mr-2 animate-spin" />
-                              Deleting...
-                            </>
-                          ) : (
-                            <>
-                              <Trash2 className="h-4 w-4 mr-2" />
-                              Delete Selected ({selectedCandidateIds.length})
-                            </>
-                          )}
-                        </Button>
-                      </AlertDialogTrigger>
+              
+              {selectedCandidateIds.length > 0 && (
+                <div className="flex flex-col sm:flex-row gap-2">
+                  <AlertDialog open={bulkDeleteConfirmOpen} onOpenChange={setBulkDeleteConfirmOpen}>
+                    <AlertDialogTrigger asChild>
+                      <Button
+                        variant="destructive"
+                        size="sm"
+                        onClick={handleBulkDelete}
+                        disabled={bulkDeleteMutation.isPending}
+                        className="w-full sm:w-auto"
+                      >
+                        {bulkDeleteMutation.isPending ? (
+                          <>
+                            <Loader2 className="h-4 w-4 mr-2 animate-spin" />
+                            Deleting...
+                          </>
+                        ) : (
+                          <>
+                            <Trash2 className="h-4 w-4 mr-2" />
+                            <span className="hidden sm:inline">Delete Selected ({selectedCandidateIds.length})</span>
+                            <span className="sm:hidden">Delete ({selectedCandidateIds.length})</span>
+                          </>
+                        )}
+                      </Button>
+                    </AlertDialogTrigger>
                       <AlertDialogContent>
                         <AlertDialogHeader>
                           <AlertDialogTitle>Are you absolutely sure?</AlertDialogTitle>
@@ -1773,43 +1782,50 @@ function SubmittedCandidates() {
                     </AlertDialog>
 
                     {!isSelectAllPages && (
-                      <Button
-                        variant="outline"
-                        size="sm"
-                        onClick={handleSelectAllPages}
-                      >
-                        Select All {candidatesData?.meta?.total || 0} Candidates
-                      </Button>
-                    )}
+                    <Button
+                      variant="outline"
+                      size="sm"
+                      onClick={handleSelectAllPages}
+                      className="w-full sm:w-auto"
+                    >
+                      <span className="hidden sm:inline">Select All {candidatesData?.meta?.total || 0} Candidates</span>
+                      <span className="sm:hidden">Select All ({candidatesData?.meta?.total || 0})</span>
+                    </Button>
+                  )}
 
-                    {isSelectAllPages && (
-                      <div className="text-sm text-blue-600 font-medium">
-                        All {candidatesData?.meta?.total || 0} candidates selected
-                      </div>
-                    )}
-                  </>
-                )}
-
-                <Button
-                  variant="outline"
-                  size="sm"
-                  onClick={goToPrevPage}
-                  disabled={page <= 1}
-                >
-                  Previous
-                </Button>
-                <div className="flex items-center gap-1">
-                  <span className="text-sm font-medium">{page}</span>
-                  <span className="text-sm text-muted-foreground">of {totalPages}</span>
+                  {isSelectAllPages && (
+                    <div className="text-sm text-blue-600 font-medium text-center sm:text-left">
+                      All {candidatesData?.meta?.total || 0} candidates selected
+                    </div>
+                  )}
                 </div>
-                <Button
-                  variant="outline"
-                  size="sm"
-                  onClick={goToNextPage}
-                  disabled={page >= totalPages}
-                >
-                  Next
-                </Button>
+              )}
+              
+              <div className="flex flex-col sm:flex-row items-center justify-between gap-4">
+                <div className="flex items-center gap-2 w-full sm:w-auto">
+                  <Button
+                    variant="outline"
+                    size="sm"
+                    onClick={goToPrevPage}
+                    disabled={page <= 1}
+                    className="flex-1 sm:flex-none"
+                  >
+                    Previous
+                  </Button>
+                  <div className="flex items-center gap-1 px-4">
+                    <span className="text-sm font-medium">{page}</span>
+                    <span className="text-sm text-muted-foreground">of {totalPages}</span>
+                  </div>
+                  <Button
+                    variant="outline"
+                    size="sm"
+                    onClick={goToNextPage}
+                    disabled={page >= totalPages}
+                    className="flex-1 sm:flex-none"
+                  >
+                    Next
+                  </Button>
+                </div>
               </div>
             </CardHeader>
             <CardContent className="p-0">
@@ -2280,109 +2296,41 @@ function SubmittedCandidates() {
               </Table>
               </div>
             </CardContent>
-            <CardFooter className="flex items-center justify-between px-6 py-4 border-t">
-              <div className="flex items-center gap-4">
-                <div className="text-sm text-muted-foreground">
+            <CardFooter className="px-4 py-4 border-t">
+              <div className="flex flex-col sm:flex-row items-center justify-between gap-4 w-full">
+                <div className="text-sm text-muted-foreground text-center sm:text-left">
                   Showing {((page - 1) * limit) + 1} to {Math.min(page * limit, candidatesData?.meta?.total || 0)} of {candidatesData?.meta?.total || 0} candidates
                   {selectedCandidateIds.length > 0 && (
-                    <span className="ml-2 text-blue-600">
-                      • {selectedCandidateIds.length} selected
+                    <span className="block sm:inline sm:ml-2 text-blue-600">
+                      {selectedCandidateIds.length} selected
                     </span>
                   )}
                 </div>
-              </div>
-              <div className="flex items-center gap-2">
-                {selectedCandidateIds.length > 0 && (
-                  <>
-                    <AlertDialog open={bulkDeleteConfirmOpen} onOpenChange={setBulkDeleteConfirmOpen}>
-                      <AlertDialogTrigger asChild>
-                        <Button
-                          variant="destructive"
-                          size="sm"
-                          onClick={handleBulkDelete}
-                          disabled={bulkDeleteMutation.isPending}
-                        >
-                          {bulkDeleteMutation.isPending ? (
-                            <>
-                              <Loader2 className="h-4 w-4 mr-2 animate-spin" />
-                              Deleting...
-                            </>
-                          ) : (
-                            <>
-                              <Trash2 className="h-4 w-4 mr-2" />
-                              Delete Selected ({selectedCandidateIds.length})
-                            </>
-                          )}
-                        </Button>
-                      </AlertDialogTrigger>
-                      <AlertDialogContent>
-                        <AlertDialogHeader>
-                          <AlertDialogTitle>Are you absolutely sure?</AlertDialogTitle>
-                          <AlertDialogDescription>
-                            This will permanently delete {bulkDeleteIds.length} candidate record{bulkDeleteIds.length > 1 ? 's' : ''}.
-                            This action cannot be undone and will remove all associated data.
-                          </AlertDialogDescription>
-                        </AlertDialogHeader>
-                        <AlertDialogFooter>
-                          <AlertDialogCancel onClick={() => setBulkDeleteConfirmOpen(false)}>
-                            Cancel
-                          </AlertDialogCancel>
-                          <AlertDialogAction 
-                            onClick={executeBulkDelete}
-                            className="bg-red-500 hover:bg-red-600"
-                            disabled={bulkDeleteMutation.isPending}
-                          >
-                            {bulkDeleteMutation.isPending ? (
-                              <>
-                                <Loader2 className="h-4 w-4 mr-2 animate-spin" />
-                                Deleting...
-                              </>
-                            ) : (
-                              `Delete ${bulkDeleteIds.length} Candidate${bulkDeleteIds.length > 1 ? 's' : ''}`
-                            )}
-                          </AlertDialogAction>
-                        </AlertDialogFooter>
-                      </AlertDialogContent>
-                    </AlertDialog>
-
-                    {!isSelectAllPages && (
-                      <Button
-                        variant="outline"
-                        size="sm"
-                        onClick={handleSelectAllPages}
-                      >
-                        Select All {candidatesData?.meta?.total || 0} Candidates
-                      </Button>
-                    )}
-
-                    {isSelectAllPages && (
-                      <div className="text-sm text-blue-600 font-medium">
-                        All {candidatesData?.meta?.total || 0} candidates selected
-                      </div>
-                    )}
-                  </>
-                )}
-
-                <Button
-                  variant="outline"
-                  size="sm"
-                  onClick={goToPrevPage}
-                  disabled={page <= 1}
-                >
-                  Previous
-                </Button>
-                <div className="flex items-center gap-1">
-                  <span className="text-sm font-medium">{page}</span>
-                  <span className="text-sm text-muted-foreground">of {totalPages}</span>
+                
+                <div className="flex items-center gap-2 w-full sm:w-auto">
+                  <Button
+                    variant="outline"
+                    size="sm"
+                    onClick={goToPrevPage}
+                    disabled={page <= 1}
+                    className="flex-1 sm:flex-none"
+                  >
+                    Previous
+                  </Button>
+                  <div className="flex items-center gap-1 px-4">
+                    <span className="text-sm font-medium">{page}</span>
+                    <span className="text-sm text-muted-foreground">of {totalPages}</span>
+                  </div>
+                  <Button
+                    variant="outline"
+                    size="sm"
+                    onClick={goToNextPage}
+                    disabled={page >= totalPages}
+                    className="flex-1 sm:flex-none"
+                  >
+                    Next
+                  </Button>
                 </div>
-                <Button
-                  variant="outline"
-                  size="sm"
-                  onClick={goToNextPage}
-                  disabled={page >= totalPages}
-                >
-                  Next
-                </Button>
               </div>
             </CardFooter>
           </Card>
@@ -2819,13 +2767,13 @@ function SubmittedCandidates() {
             <Form {...form}>
               <form onSubmit={form.handleSubmit(onSubmitEdit)} className="space-y-6">
 
-<div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+<div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
                 <FormField
                   control={form.control}
-                  name="sourcedBy"
+                  name="submissionDate"
                   render={({ field }) => (
                     <FormItem>
-                      <FormLabel>Sourced By</FormLabel>
+                      <FormLabel>Submission Date</FormLabel>
                       <FormControl>
                         <Input 
                           type="date" 
@@ -2835,6 +2783,24 @@ function SubmittedCandidates() {
                             const value = e.target.value || new Date().toISOString().split('T')[0];
                             field.onChange(value);
                           }}
+                        />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+
+                <FormField
+                  control={form.control}
+                  name="sourcedBy"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>Sourced By</FormLabel>
+                      <FormControl>
+                        <Input 
+                          placeholder="Recruiter name"
+                          {...field}
+                          value={field.value || selectedCandidate?.sourcedBy || ''}
                         />
                       </FormControl>
                       <FormMessage />
@@ -3092,12 +3058,12 @@ function SubmittedCandidates() {
       );
     }}
   />
-                <div className="col-span-2">
+                <div className="lg:col-span-2">
                   <Card className="bg-muted/40">
                     <CardHeader className="pb-3">
                       <CardTitle className="text-base">Rate Information</CardTitle>
                     </CardHeader>
-                    <CardContent className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                    <CardContent className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
                       <FormField
                         control={form.control}
                         name="billRate"
