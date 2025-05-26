@@ -739,39 +739,37 @@ export async function registerRoutes(app: Express): Promise<Server> {
         });
       }
 
-      // Check which candidates exist using the same method as single delete
-      const existingIds: number[] = [];
-      for (const id of validIds) {
-        const existingCandidate = await storage.getSubmittedCandidateById(id);
-        if (existingCandidate) {
-          existingIds.push(id);
-        }
-      }
-      
-      console.log('Existence check results:', {
-        requestedCount: validIds.length,
-        foundCount: existingIds.length,
-        existingIds: existingIds
-      });
-
-      if (existingIds.length === 0) {
-        return res.status(400).json({
-          success: false,
-          message: "Invalid candidate ID"
-        });
-      }
-
-      // Delete candidates one by one using the same method as single delete
+      // Use bulk delete method from storage
       let deletedCount = 0;
       const failedIds: number[] = [];
 
-      for (const id of existingIds) {
-        try {
-          await storage.deleteSubmittedCandidate(id);
-          deletedCount++;
-        } catch (error) {
-          console.error(`Failed to delete candidate ${id}:`, error);
-          failedIds.push(id);
+      try {
+        // Use the existing bulk delete method
+        await storage.bulkDeleteSubmittedCandidates(validIds);
+        deletedCount = validIds.length;
+        
+        console.log('Bulk delete completed successfully:', {
+          requested: validIds.length,
+          deleted: deletedCount
+        });
+      } catch (error) {
+        console.error('Bulk delete failed, falling back to individual deletes:', error);
+        
+        // Fallback: delete one by one
+        for (const id of validIds) {
+          try {
+            const existingCandidate = await storage.getSubmittedCandidateById(id);
+            if (existingCandidate) {
+              await storage.deleteSubmittedCandidate(id);
+              deletedCount++;
+            } else {
+              console.log(`Candidate ${id} not found, skipping`);
+              failedIds.push(id);
+            }
+          } catch (deleteError) {
+            console.error(`Failed to delete candidate ${id}:`, deleteError);
+            failedIds.push(id);
+          }
         }
       }
 

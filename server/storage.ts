@@ -538,6 +538,10 @@ export const storage = {
     try {
       console.log(`Starting bulk delete for ${ids.length} candidates`);
       
+      if (ids.length === 0) {
+        return { deletedCount: 0, totalRequested: 0 };
+      }
+      
       // Process deletion in chunks to avoid database limits
       const chunkSize = 50; // Smaller chunk size for better reliability
       let totalDeleted = 0;
@@ -560,6 +564,14 @@ export const storage = {
           throw chunkError; // Don't continue if there's an error
         }
       }
+
+      console.log(`Bulk delete completed: ${totalDeleted} of ${ids.length} candidates deleted`);
+      return { deletedCount: totalDeleted, totalRequested: ids.length };
+    } catch (error) {
+      console.error('Bulk delete error:', error);
+      throw error;
+    }
+  },</old_str>
 
       console.log(`Bulk delete completed. Total deleted: ${totalDeleted}`);
       return totalDeleted;
