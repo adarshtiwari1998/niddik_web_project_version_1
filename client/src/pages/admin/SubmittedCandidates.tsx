@@ -430,52 +430,76 @@ function SubmittedCandidates() {
     // Mutation to delete multiple candidates in bulk
     const bulkDeleteMutation = useMutation({
     mutationFn: async (ids: number[]) => {
-      console.log('Sending bulk delete request with IDs:', ids);
+      console.log('Starting bulk delete with IDs:', ids);
 
-      // Ensure all IDs are valid integers
+      // Validate and clean IDs
       const validIds = ids
-        .map(id => Number(id))
-        .filter(id => Number.isInteger(id) && id > 0);
+        .map(id => {
+          const numId = Number(id);
+          return Number.isInteger(numId) && numId > 0 ? numId : null;
+        })
+        .filter((id): id is number => id !== null);
       
-      console.log('Valid IDs after processing:', validIds);
+      console.log('Valid IDs for deletion:', validIds);
 
       if (validIds.length === 0) {
-        throw new Error('No valid candidate IDs to delete');
+        throw new Error('No valid candidate IDs selected for deletion');
       }
 
+      // Create request body
       const requestBody = { ids: validIds };
-      console.log('Sending request body:', JSON.stringify(requestBody));
+      console.log('Request payload:', JSON.stringify(requestBody, null, 2));
 
-      const res = await apiRequest("DELETE", `/api/submitted-candidates/bulk`, requestBody);
-      const responseData = await res.json();
+      try {
+        const res = await apiRequest("DELETE", `/api/submitted-candidates/bulk`, requestBody);
+        
+        // Always parse response
+        let responseData;
+        try {
+          responseData = await res.json();
+        } catch (parseError) {
+          console.error('Failed to parse response:', parseError);
+          throw new Error(`Server response could not be parsed. Status: ${res.status}`);
+        }
 
-      console.log('Response status:', res.status);
-      console.log('Response data:', responseData);
+        console.log('Server response:', res.status, responseData);
 
-      if (!res.ok) {
-        throw new Error(responseData.message || `HTTP ${res.status}: Failed to delete candidates`);
+        if (!res.ok) {
+          const errorMessage = responseData?.message || `HTTP ${res.status}: ${res.statusText}`;
+          throw new Error(errorMessage);
+        }
+
+        return responseData;
+      } catch (networkError) {
+        console.error('Network error during bulk delete:', networkError);
+        throw new Error('Network error: ' + (networkError instanceof Error ? networkError.message : 'Unknown error'));
       }
-      return responseData;
     },
     onSuccess: (data) => {
-      console.log('Bulk delete successful:', data);
+      console.log('Bulk delete completed successfully:', data);
+      const deletedCount = data.count || data.deletedCount || 0;
+      
       toast({
-        title: "Success",
-        description: data.message || `${data.count || 'Some'} candidates have been deleted successfully`,
+        title: "Bulk Delete Successful",
+        description: `Successfully deleted ${deletedCount} candidate${deletedCount > 1 ? 's' : ''}`,
       });
+      
+      // Reset selection state
       setSelectedCandidateIds([]);
       setIsSelectAllChecked(false);
       setIsSelectAllPages(false);
       setBulkDeleteConfirmOpen(false);
       setBulkDeleteIds([]);
+      
+      // Refresh data
       queryClient.invalidateQueries({ queryKey: ['/api/submitted-candidates'] });
       queryClient.invalidateQueries({ queryKey: ['/api/submitted-candidates/analytics/summary'] });
     },
     onError: (error: Error) => {
-      console.error('Bulk delete error:', error);
+      console.error('Bulk delete failed:', error);
       toast({
-        title: "Delete Failed",
-        description: error.message || "An unexpected error occurred while deleting candidates",
+        title: "Bulk Delete Failed",
+        description: error.message || "Failed to delete selected candidates. Please try again.",
         variant: "destructive",
       });
       setBulkDeleteConfirmOpen(false);
@@ -828,28 +852,36 @@ function SubmittedCandidates() {
   const handleSelectCandidate = (candidateId: number, checked: boolean) => {
     console.log("Selecting candidate:", candidateId, "type:", typeof candidateId, "checked:", checked);
 
-    // Validate that candidateId is a valid number
-    if (!candidateId || typeof candidateId !== 'number' || isNaN(candidateId) || candidateId <= 0) {
+    // Convert to number and validate
+    const numId = Number(candidateId);
+    if (!numId || isNaN(numId) || numId <= 0) {
       console.error("Invalid candidate ID provided:", candidateId);
       return;
     }
 
     if (checked) {
-      // Ensure we don't add duplicates and that the ID is valid
-      if (!selectedCandidateIds.includes(candidateId)) {
-        setSelectedCandidateIds(prev => [...prev, candidateId]);
-        console.log("Added candidate ID:", candidateId);
-      }
+      // Ensure we don't add duplicates
+      setSelectedCandidateIds(prev => {
+        if (!prev.includes(numId)) {
+          console.log("Added candidate ID:", numId);
+          return [...prev, numId];
+        }
+        return prev;
+      });
     } else {
-      setSelectedCandidateIds(prev => prev.filter(id => id !== candidateId));
+      setSelectedCandidateIds(prev => {
+        console.log("Removed candidate ID:", numId);
+        return prev.filter(id => id !== numId);
+      });
       setIsSelectAllChecked(false);
       setIsSelectAllPages(false);
-      console.log("Removed candidate ID:", candidateId);
     }
   };
 
   // Handle bulk delete with confirmation
   const handleBulkDelete = () => {
+    console.log("handleBulkDelete called with selected IDs:", selectedCandidateIds);
+
     if (selectedCandidateIds.length === 0) {
       toast({
         title: "No Selection",
@@ -859,18 +891,12 @@ function SubmittedCandidates() {
       return;
     }
 
-    console.log("Selected IDs for bulk delete:", selectedCandidateIds);
-
-    // Ensure all IDs are valid numbers and convert them properly
+    // Validate all selected IDs
     const validIds = selectedCandidateIds
-      .map(id => {
-        // Convert to number if it's a string
-        const numId = typeof id === 'string' ? parseInt(id, 10) : id;
-        return typeof numId === 'number' && !isNaN(numId) && numId > 0 ? numId : null;
-      })
-      .filter(id => id !== null) as number[];
+      .map(id => Number(id))
+      .filter(id => Number.isInteger(id) && id > 0);
 
-    console.log("Valid IDs after processing:", validIds);
+    console.log("Valid IDs for deletion:", validIds);
 
     if (validIds.length === 0) {
       toast({
@@ -882,24 +908,25 @@ function SubmittedCandidates() {
     }
 
     if (validIds.length !== selectedCandidateIds.length) {
-      console.warn(`ID mismatch: Selected ${selectedCandidateIds.length}, Valid ${validIds.length}`);
       toast({
-        title: "Warning",
-        description: `Only ${validIds.length} out of ${selectedCandidateIds.length} selected candidates are valid`,
+        title: "Warning", 
+        description: `${validIds.length} of ${selectedCandidateIds.length} selected candidates are valid for deletion`,
       });
     }
 
-    // Store valid IDs for confirmation dialog
+    // Store valid IDs and show confirmation
     setBulkDeleteIds(validIds);
     setBulkDeleteConfirmOpen(true);
   };
 
   // Execute bulk delete after confirmation
   const executeBulkDelete = () => {
+    console.log("Executing bulk delete for IDs:", bulkDeleteIds);
     if (bulkDeleteIds.length > 0) {
       bulkDeleteMutation.mutate(bulkDeleteIds);
+    } else {
+      console.error("No IDs to delete");
       setBulkDeleteConfirmOpen(false);
-      setBulkDeleteIds([]);
     }
   };
 
@@ -1564,11 +1591,12 @@ function SubmittedCandidates() {
                          <TableCell className="w-10">
                           <input
                             type="checkbox"
-                            checked={selectedCandidateIds.includes(candidate.id)}
+                            checked={selectedCandidateIds.includes(Number(candidate.id))}
                             onChange={(e) => {
-                              console.log("Checkbox changed for candidate:", candidate.id, "type:", typeof candidate.id, "checked:", e.target.checked);
-                              if (candidate.id && typeof candidate.id === 'number') {
-                                handleSelectCandidate(candidate.id, e.target.checked);
+                              const candidateId = Number(candidate.id);
+                              console.log("Checkbox changed for candidate:", candidateId, "checked:", e.target.checked);
+                              if (candidateId && candidateId > 0) {
+                                handleSelectCandidate(candidateId, e.target.checked);
                               } else {
                                 console.error("Invalid candidate ID:", candidate.id);
                               }
