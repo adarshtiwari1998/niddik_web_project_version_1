@@ -691,13 +691,9 @@ export async function registerRoutes(app: Express): Promise<Server> {
 
   // Bulk delete submitted candidates
   app.delete('/api/submitted-candidates/bulk', async (req: AuthenticatedRequest, res: Response) => {
-    console.log('=== BULK DELETE REQUEST START ===');
-    console.log('Request body:', JSON.stringify(req.body, null, 2));
-
     try {
-      // Check authentication
+      // Check authentication (same as single delete)
       if (!req.isAuthenticated() || req.user?.role !== 'admin') {
-        console.log('Authentication failed');
         return res.status(403).json({ 
           success: false, 
           message: "Unauthorized access" 
@@ -706,48 +702,38 @@ export async function registerRoutes(app: Express): Promise<Server> {
 
       const { ids } = req.body;
 
-      // Validate request structure
+      // Basic validation (same pattern as single delete)
       if (!ids || !Array.isArray(ids) || ids.length === 0) {
-        console.log('Invalid request structure:', { ids, isArray: Array.isArray(ids), length: ids?.length });
         return res.status(400).json({ 
           success: false, 
           message: "Invalid request: 'ids' must be a non-empty array" 
         });
       }
 
-      console.log('Raw IDs received:', ids);
-      console.log('ID types:', ids.map(id => ({ id, type: typeof id })));
-      
-      // Convert IDs to numbers without validation
-      const numericIds = ids.map(id => typeof id === 'number' ? id : parseInt(String(id), 10));
-      
-      console.log('Converted IDs for deletion:', numericIds);
-      console.log('Converted ID types:', numericIds.map(id => ({ id, type: typeof id, isNaN: isNaN(id) })));
+      // Convert and validate IDs
+      const numericIds = ids.map(id => {
+        const parsed = parseInt(String(id), 10);
+        if (isNaN(parsed)) {
+          throw new Error(`Invalid candidate ID: ${id}`);
+        }
+        return parsed;
+      });
 
-      // Perform bulk deletion using storage method directly
-      console.log('Calling storage.bulkDeleteSubmittedCandidates...');
+      // Perform bulk deletion
       const result = await storage.bulkDeleteSubmittedCandidates(numericIds);
-      
-      console.log('Bulk deletion completed successfully:', result);
 
       return res.status(200).json({
         success: true,
         message: `Successfully deleted ${result.deletedCount} candidate${result.deletedCount !== 1 ? 's' : ''}`,
-        count: result.deletedCount,
         deletedCount: result.deletedCount,
-        totalRequested: numericIds.length
+        totalRequested: result.totalRequested
       });
 
     } catch (error) {
-      console.error('=== BULK DELETE ERROR ===');
-      console.error('Error type:', error?.constructor?.name);
-      console.error('Error message:', error instanceof Error ? error.message : 'Unknown error');
-      console.error('Error details:', error);
-
+      console.error('Error in bulk delete:', error);
       return res.status(500).json({ 
         success: false, 
-        message: "Internal server error during bulk delete",
-        error: error instanceof Error ? error.message : 'Unknown error'
+        message: error instanceof Error ? error.message : "Internal server error"
       });
     }
   });
