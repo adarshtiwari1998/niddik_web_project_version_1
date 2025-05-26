@@ -864,8 +864,7 @@ function SubmittedCandidates() {
                   <div className="max-h-[400px] overflow-auto">
                     {isLoadingApplicants ? (
                       <div className="flex flex-col items-center justify-center py-8">
-                        <Loader2```typescript
- className="h-8 w-8 animate-spin text-primary mb-2" />
+                        <Loader2 className="h-8 w-8 animate-spin text-primary mb-2" />
                         <p className="text-sm text-muted-foreground">Loading applicants...</p>
                       </div>
                     ) : applicantsData?.data?.length === 0 ? (
@@ -1205,6 +1204,9 @@ function SubmittedCandidates() {
                   {/* Inline add candidate row */}
                   {isAddingInline && (
                     <TableRow className="bg-muted/30">
+                      <TableCell className="w-10">
+                        {/* Empty checkbox cell for inline add row */}
+                      </TableCell>
                       {/* Sourced By (Date Picker) */}
                       <TableCell>
                         <Input 
