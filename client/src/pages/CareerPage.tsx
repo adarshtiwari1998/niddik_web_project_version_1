@@ -193,7 +193,7 @@ export default function CareerPage() {
                   </div>
                   <div className="flex flex-col gap-1 ml-4">
                     {job.featured && (
-                      <Badge className="bg-gradient-to-r from-amber-500 to-orange-500 hover:from-amber-600 hover:to-orange-600 text-white px-3 py-1 text-xs font-semibold shadow-lg">
+                      <Badge className="bg-gradient-to-r from-yellow-400 to-amber-500 hover:from-yellow-500 hover:to-amber-600 text-white px-3 py-1 text-xs font-semibold shadow-lg">
                         ⭐ Featured
                       </Badge>
                     )}
@@ -203,7 +203,7 @@ export default function CareerPage() {
                       </Badge>
                     )}
                     {job.priority && (
-                      <Badge className="bg-gradient-to-r from-orange-500 to-yellow-500 hover:from-orange-600 hover:to-yellow-600 text-white px-3 py-1 text-xs font-semibold shadow-lg">
+                      <Badge className="bg-gradient-to-r from-purple-500 to-indigo-600 hover:from-purple-600 hover:to-indigo-700 text-white px-3 py-1 text-xs font-semibold shadow-lg">
                         ⚡ Priority Role
                       </Badge>
                     )}
