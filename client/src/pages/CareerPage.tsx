@@ -17,6 +17,7 @@ import { JobListing } from "@shared/schema";
 import { Briefcase, Clock, MapPin, Search, Filter, Loader2 } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 import CareersLayout from "@/components/careers/CareersLayout";
+import { format } from "date-fns";
 
 export default function CareerPage() {
   const [search, setSearch] = useState("");
@@ -184,7 +185,7 @@ export default function CareerPage() {
                 </div>
               </CardHeader>
               <CardContent className="flex-grow">
-                <div className="space-y-3 text-sm text-muted-foreground">
+                <div className="space-y-3 text-sm text-muted-foreground mb-4">
                   <div className="flex items-center">
                     <MapPin className="h-4 w-4 mr-2" />
                     <span>{job.location}</span>
@@ -196,12 +197,13 @@ export default function CareerPage() {
                   <div className="flex items-center">
                     <Clock className="h-4 w-4 mr-2" />
                     <span>
-                      Recently added
+                      {format(new Date(job.createdAt), "MMM dd, yyyy")}
                     </span>
                   </div>
                 </div>
-
-                <p className="mt-4 text-sm line-clamp-3">{job.description}</p>
+                <div className="text-sm text-gray-600 leading-relaxed">
+                  <p className="line-clamp-3">{job.description}</p>
+                </div>
               </CardContent>
               <CardFooter>
                 <Link href={`/jobs/${job.id}`}>
