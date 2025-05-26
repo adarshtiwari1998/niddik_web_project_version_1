@@ -798,7 +798,7 @@ function SubmittedCandidates() {
   // Handle individual candidate selection
   const handleSelectCandidate = (candidateId: number, checked: boolean) => {
     console.log("Selecting candidate:", candidateId, "checked:", checked);
-    
+
     if (checked) {
       // Ensure we don't add duplicates and that the ID is valid
       if (candidateId && !selectedCandidateIds.includes(candidateId)) {
@@ -821,9 +821,9 @@ function SubmittedCandidates() {
       });
       return;
     }
-    
+
     console.log("Selected IDs for bulk delete:", selectedCandidateIds);
-    
+
     // Ensure all IDs are valid numbers and convert them properly
     const validIds = selectedCandidateIds
       .map(id => {
@@ -832,9 +832,9 @@ function SubmittedCandidates() {
         return typeof numId === 'number' && !isNaN(numId) && numId > 0 ? numId : null;
       })
       .filter(id => id !== null);
-    
+
     console.log("Valid IDs after processing:", validIds);
-    
+
     if (validIds.length === 0) {
       toast({
         title: "Invalid Selection",
@@ -843,7 +843,7 @@ function SubmittedCandidates() {
       });
       return;
     }
-    
+
     if (validIds.length !== selectedCandidateIds.length) {
       console.warn(`ID mismatch: Selected ${selectedCandidateIds.length}, Valid ${validIds.length}`);
       toast({
@@ -851,7 +851,7 @@ function SubmittedCandidates() {
         description: `Only ${validIds.length} out of ${selectedCandidateIds.length} selected candidates are valid`,
       });
     }
-    
+
     bulkDeleteMutation.mutate(validIds);
   };
 
@@ -1255,6 +1255,7 @@ function SubmittedCandidates() {
                           onChange={(e) => handleSelectAll(e.target.checked)}
                         />
                       </TableHead>
+                      <TableHead className="min-w-[50px]">ID</TableHead>
                       <TableHead className="min-w-[150px]">Sourced By</TableHead>
                       <TableHead className="min-w-[150px]">Client</TableHead>
                       <TableHead className="min-w-[150px]">POC</TableHead>
@@ -1283,6 +1284,7 @@ function SubmittedCandidates() {
                       <TableCell className="w-10">
                         {/* Empty checkbox cell for inline add row */}
                       </TableCell>
+                      <TableCell></TableCell>
                       {/* Sourced By (Date Picker) */}
                       <TableCell>
                         <Input 
@@ -1485,14 +1487,14 @@ function SubmittedCandidates() {
 
                   {isLoadingCandidates ? (
                     <TableRow>
-                      <TableCell colSpan={9} className="h-24 text-center">
+                      <TableCell colSpan={10} className="h-24 text-center">
                         <Loader2 className="h-6 w-6 animate-spin mx-auto" />
                         <span className="text-sm text-muted-foreground mt-2 block">Loading candidates...</span>
                       </TableCell>
                     </TableRow>
                   ) : candidatesData?.data?.length === 0 ? (
                     <TableRow>
-                      <TableCell colSpan={9} className="h-24 text-center">
+                      <TableCell colSpan={10} className="h-24 text-center">
                         <div className="flex flex-col items-center justify-center">
                           <p className="text-muted-foreground">No candidates found</p>
                           <Button 
@@ -1521,6 +1523,7 @@ function SubmittedCandidates() {
                             }}
                           />
                         </TableCell>
+                        <TableCell>{candidate.id}</TableCell>
                         <TableCell>{candidate.sourcedBy || '-'}</TableCell>
                         <TableCell>{candidate.client || '-'}</TableCell>
                         <TableCell>{candidate.poc || '-'}</TableCell>
@@ -1619,7 +1622,7 @@ function SubmittedCandidates() {
                       </>
                     )}
                   </Button>
-                  
+
                   {selectedCandidateIds.length > 0 && !isSelectAllPages && (
                     <Button
                       variant="outline"
@@ -1629,14 +1632,14 @@ function SubmittedCandidates() {
                       Select All {candidatesData?.meta?.total || 0} Candidates
                     </Button>
                   )}
-                  
+
                   {isSelectAllPages && (
                     <div className="text-sm text-blue-600 font-medium">
                       All {candidatesData?.meta?.total || 0} candidates selected
                     </div>
                   )}
                 </div>
-                
+
                 <div className="text-sm text-muted-foreground">
                   Showing {candidatesData?.data?.length || 0} of {candidatesData?.meta?.total || 0} candidates
                   {selectedCandidateIds.length > 0 && (
@@ -1755,6 +1758,7 @@ function SubmittedCandidates() {
                   name="candidateName"
                   render={({ field }) => (
                     <FormItem>
+                      ```typescript
                       <FormLabel>Candidate Name *</FormLabel>
                       <FormControl>
                         <Input placeholder="Full name" {...field} />
