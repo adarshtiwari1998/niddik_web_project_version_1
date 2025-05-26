@@ -1,5 +1,6 @@
 import { useState, useEffect } from "react";
 import { useLocation, Link } from "wouter";
+import { useQuery } from "@tanstack/react-query";
 import { Search, Filter, ChevronRight } from "lucide-react";
 import Container from "@/components/ui/container";
 import { Button } from "@/components/ui/button";
@@ -9,6 +10,9 @@ import { Badge } from "@/components/ui/badge";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import Navbar from "@/components/layout/Navbar";
 import Footer from "@/components/layout/Footer";
+import AnnouncementBar from "@/components/layout/AnnouncementBar";
+import { getQueryFn } from "@/lib/queryClient";
+import { JobListing } from "@shared/schema";
 
 interface SearchResult {
   id: string;
@@ -215,25 +219,6 @@ const allSearchableContent: SearchResult[] = [
   },
 ];
 
-// Fetch job listings
-const { data: jobsData } = useQuery<{ data: JobListing[], meta: { total: number, pages: number } }>({
-  queryKey: ['/api/job-listings', { status: 'active' }],
-  queryFn: getQueryFn({ on401: "ignore" }),
-});
-
-// Convert job listings to search results format
-const jobSearchResults: SearchResult[] = jobsData?.data?.map(job => ({
-  id: `job-${job.id}`,
-  title: job.title,
-  description: `${job.company} • ${job.location} • ${job.jobType} • ${job.experienceLevel}`,
-  url: `/jobs/${job.id}`,
-  type: 'career' as const,
-  category: 'Jobs'
-})) || [];
-
-// Combine static content with job listings
-const allSearchableContentWithJobs = [...allSearchableContent, ...jobSearchResults];
-
 const getTypeBadgeColor = (type: string) => {
   switch (type) {
     case 'service':
@@ -253,6 +238,25 @@ export default function SearchPage() {
   const [filteredResults, setFilteredResults] = useState<SearchResult[]>([]);
   const [selectedCategory, setSelectedCategory] = useState<string>("all");
 
+  // Fetch job listings
+  const { data: jobsData } = useQuery<{ data: JobListing[], meta: { total: number, pages: number } }>({
+    queryKey: ['/api/job-listings', { status: 'active' }],
+    queryFn: getQueryFn({ on401: "ignore" }),
+  });
+
+  // Convert job listings to search results format
+  const jobSearchResults: SearchResult[] = jobsData?.data?.map(job => ({
+    id: `job-${job.id}`,
+    title: job.title,
+    description: `${job.company} • ${job.location} • ${job.jobType} • ${job.experienceLevel}`,
+    url: `/jobs/${job.id}`,
+    type: 'career' as const,
+    category: 'Jobs'
+  })) || [];
+
+  // Combine static content with job listings
+  const allSearchableContentWithJobs = [...allSearchableContent, ...jobSearchResults];
+
   // Extract query from URL
   useEffect(() => {
     const urlParams = new URLSearchParams(window.location.search);
@@ -270,7 +274,7 @@ export default function SearchPage() {
     }
 
     const searchLower = searchTerm.toLowerCase();
-    const filtered = allSearchableContent.filter(item => {
+    const filtered = allSearchableContentWithJobs.filter(item => {
       const matchesSearch = 
         item.title.toLowerCase().includes(searchLower) ||
         item.description.toLowerCase().includes(searchLower) ||
@@ -282,7 +286,7 @@ export default function SearchPage() {
     });
 
     setFilteredResults(filtered);
-  }, [searchTerm, selectedCategory]);
+  }, [searchTerm, selectedCategory, jobSearchResults]);
 
   const handleSearch = (e: React.FormEvent) => {
     e.preventDefault();
@@ -293,10 +297,11 @@ export default function SearchPage() {
     }
   };
 
-  const categories = Array.from(new Set(allSearchableContent.map(item => item.category).filter(Boolean)));
+  const categories = Array.from(new Set(allSearchableContentWithJobs.map(item => item.category).filter(Boolean)));
 
   return (
     <div className="min-h-screen bg-gray-50">
+      <AnnouncementBar />
       <Navbar />
       <Container className="py-12 mt-20">
         {/* Header */}
@@ -333,13 +338,16 @@ export default function SearchPage() {
                   <SelectTrigger className="w-48">
                     <SelectValue placeholder="All Categories" />
                   </SelectTrigger>
-                  <SelectContent>
-                    <SelectItem value="all">All Categories</SelectItem>
-                    {categories.map((category) => (
-                      <SelectItem key={category} value={category}>
-                        {category}
-                      </SelectItem>
-                    ))}
+                  <SelectContent className="max-h-60 overflow-y-auto">
+                    <SelectItem value="all">All Categories ({allSearchableContentWithJobs.length})</SelectItem>
+                    {categories.map((category) => {
+                      const count = allSearchableContentWithJobs.filter(item => item.category === category).length;
+                      return (
+                        <SelectItem key={category} value={category}>
+                          {category} ({count})
+                        </SelectItem>
+                      );
+                    })}
                   </SelectContent>
                 </Select>
               </div>
