@@ -539,14 +539,14 @@ export default function Candidates() {
                           <TableCell>
                             <div className="space-y-1">
                               <button
-                                onClick={() => handleViewUserDetails(application.user.email)}
+                                onClick={() => handleViewUserDetails(application.user?.email || '')}
                                 className="font-medium text-blue-600 hover:text-blue-800 hover:underline flex items-center gap-1 text-left"
                                 title="View user details"
                               >
-                                {application.user.fullName}
+                                {application.user?.fullName || 'Unknown User'}
                                 <ExternalLink className="h-3 w-3" />
                               </button>
-                              <div className="text-xs text-muted-foreground">{application.job.title}</div>
+                              <div className="text-xs text-muted-foreground">{application.job?.title || 'Unknown Job'}</div>
                               <div className="text-xs text-gray-500">
                                 Applied: {formatDate(application.appliedDate || application.createdAt)}
                               </div>
@@ -555,33 +555,33 @@ export default function Candidates() {
                           <TableCell>
                             <div className="flex items-center">
                               <Phone className="h-3 w-3 mr-1" />
-                              {application.user.phone || "-"}
+                              {application.user?.phone || "-"}
                             </div>
                           </TableCell>
                           <TableCell>
                             <div className="flex items-center">
                               <Mail className="h-3 w-3 mr-1" />
-                              {application.user.email}
+                              {application.user?.email || "-"}
                             </div>
                           </TableCell>
-                          <TableCell>{application.user.experience || "-"}</TableCell>
+                          <TableCell>{application.user?.experience || "-"}</TableCell>
                           <TableCell>
                             <div className="flex items-center">
                               <Calendar className="h-3 w-3 mr-1" />
-                              {application.user.noticePeriod || "Immediately"}
+                              {application.user?.noticePeriod || "Immediately"}
                             </div>
                           </TableCell>
-                          <TableCell>{application.user.location || application.job.location || "-"}</TableCell>
+                          <TableCell>{application.user?.location || application.job?.location || "-"}</TableCell>
                           <TableCell>
                             <div className="flex items-center">
                               <DollarSign className="h-3 w-3 mr-1" />
-                              {application.user.currentCtc || "-"}
+                              {application.user?.currentCtc || "-"}
                             </div>
                           </TableCell>
                           <TableCell>
                             <div className="flex items-center">
                               <DollarSign className="h-3 w-3 mr-1" />
-                              {application.user.expectedCtc || "-"}
+                              {application.user?.expectedCtc || "-"}
                             </div>
                           </TableCell>
                           <TableCell>
@@ -677,7 +677,8 @@ export default function Candidates() {
                               <Button
                                 variant="outline"
                                 size="sm"
-                                onClick={() => window.location.href = `mailto:${application.user.email}`}
+                                onClick={() => window.location.href = `mailto:${application.user?.email || ''}`}
+                                disabled={!application.user?.email}
                               >
                                 <Mail className="h-4 w-4" />
                                 <span className="sr-only">Email</span>
