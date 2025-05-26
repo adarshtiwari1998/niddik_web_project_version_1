@@ -217,12 +217,16 @@ function SubmittedCandidates() {
     const bill = parseFloat(billRate || "0");
     const pay = parseFloat(payRate || "0");
 
+    console.log(`Calculating margin: Bill=${bill}, Pay=${pay}`);
+
     if (isNaN(bill) || isNaN(pay)) {
       return { marginPerHour: "0", profitPerMonth: "0" };
     }
 
     const margin = (bill - pay).toFixed(2);
     const profit = ((bill - pay) * 160).toFixed(2); // 160 hours per month
+
+    console.log(`Result: Margin=${margin}, Profit=${profit}`);
 
     return { marginPerHour: margin, profitPerMonth: profit };
   };
