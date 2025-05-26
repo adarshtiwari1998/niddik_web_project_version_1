@@ -58,6 +58,24 @@ const Hero = () => {
     return () => clearTimeout(timeoutId);
   }, [isVideoLoaded]);
 
+  useEffect(() => {
+    // Ensure video loops properly
+    const video = videoRef.current;
+    if (video && isVideoLoaded) {
+      const handleVideoEnd = () => {
+        video.currentTime = 0;
+        video.play();
+      };
+
+      // Add additional loop enforcement
+      video.addEventListener('ended', handleVideoEnd);
+      
+      return () => {
+        video.removeEventListener('ended', handleVideoEnd);
+      };
+    }
+  }, [isVideoLoaded]);
+
   const handleVideoLoaded = () => {
     setIsVideoLoaded(true);
   };
@@ -77,9 +95,17 @@ const Hero = () => {
             loop
             muted
             playsInline
+            preload="auto"
             className={`hero-video object-cover w-full h-full ${isVideoLoaded ? 'opacity-100' : 'opacity-0'} transition-opacity duration-500`}
             onLoadedData={handleVideoLoaded}
             onError={handleVideoError}
+            onEnded={() => {
+              // Force restart if loop fails
+              if (videoRef.current) {
+                videoRef.current.currentTime = 0;
+                videoRef.current.play();
+              }
+            }}
           >
             <source src="https://res.cloudinary.com/dhanz6zty/video/upload/v1748266865/Project_05-09_4K_MEDIUM_FR30_1_1_e8eetm.mp4" type="video/mp4" />
             Your browser does not support the video tag.
