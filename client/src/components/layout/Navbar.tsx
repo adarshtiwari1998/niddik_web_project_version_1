@@ -200,7 +200,7 @@ const Navbar: React.FC<NavbarProps> = ({ hasAnnouncementAbove = true }) => {
       "fixed w-full z-40",
       hasAnnouncementAbove ? "top-[40px]" : "top-0",
       isTransparent 
-        ? "bg-white/10 backdrop-blur-sm border-b border-white/20" 
+        ? "bg-transparent" 
         : "bg-white/95 backdrop-blur-md border-b border-gray-200/50",
       isScrolled ? "shadow-lg" : "",
       "transition-all duration-500 ease-in-out"
@@ -231,14 +231,14 @@ const Navbar: React.FC<NavbarProps> = ({ hasAnnouncementAbove = true }) => {
                       href={item.href || "#"} 
                       className={cn(
                         "group-hover:text-andela-green font-medium transition-colors",
-                        isTransparent ? "text-white" : "text-andela-dark"
+                        isTransparent ? "text-andela-dark" : "text-andela-dark"
                       )}
                     >
                       {item.label}
                     </Link>
                     <ChevronDown className={cn(
                       "ml-1 w-4 h-4 group-hover:text-andela-green transition-colors",
-                      isTransparent ? "text-white" : "text-andela-dark"
+                      isTransparent ? "text-andela-dark" : "text-andela-dark"
                     )} />
                   </div>
                   <div className="absolute left-0 mt-2 w-64 rounded-lg shadow-xl bg-white p-6 opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-300 transform origin-top-left z-50">
@@ -254,7 +254,7 @@ const Navbar: React.FC<NavbarProps> = ({ hasAnnouncementAbove = true }) => {
               ) : (
                 <div key={index} className={cn(
                   "hover:text-andela-green font-medium transition-colors whitespace-nowrap",
-                  isTransparent ? "text-white" : "text-andela-dark"
+                  isTransparent ? "text-andela-dark" : "text-andela-dark"
                 )}>
                   <Link href={item.href || "#"}>
                     {item.label}
@@ -278,7 +278,7 @@ const Navbar: React.FC<NavbarProps> = ({ hasAnnouncementAbove = true }) => {
                 onClick={() => setIsSearchOpen(!isSearchOpen)}
                 className={cn(
                   "hover:text-andela-green font-medium transition-colors",
-                  isTransparent ? "text-white" : "text-andela-dark"
+                  isTransparent ? "text-andela-dark" : "text-andela-dark"
                 )}
               >
                 <Search className="w-5 h-5" />
@@ -418,7 +418,7 @@ const Navbar: React.FC<NavbarProps> = ({ hasAnnouncementAbove = true }) => {
                 href="/careers" 
                 className={cn(
                   "text-sm",
-                  isTransparent ? "text-white" : "text-andela-green",
+                  isTransparent ? "text-andela-green" : "text-andela-green",
                   "hover:text-white transition-colors"
                 )}
               >
@@ -434,7 +434,7 @@ const Navbar: React.FC<NavbarProps> = ({ hasAnnouncementAbove = true }) => {
           >
             <Menu className={cn(
               "w-6 h-6 transition-colors",
-              isTransparent ? "text-white" : "text-andela-dark"
+              isTransparent ? "text-andela-dark" : "text-andela-dark"
             )} />
           </button>
         </div>
