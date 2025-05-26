@@ -32,6 +32,11 @@ export default function CareerPage() {
     queryFn: getQueryFn({ on401: "throw" }),
   });
 
+  // Get unique values for filter options from available jobs
+  const availableCategories = Array.from(new Set(data?.data.map(job => job.category).filter(Boolean))) || [];
+  const availableJobTypes = Array.from(new Set(data?.data.map(job => job.jobType).filter(Boolean))) || [];
+  const availableExperienceLevels = Array.from(new Set(data?.data.map(job => job.experienceLevel).filter(Boolean))) || [];
+
   // Filter the data client-side for real-time search
   const filteredJobs = data?.data.filter((job) => {
     const matchesSearch = search.trim() === '' || 
@@ -90,28 +95,9 @@ export default function CareerPage() {
                   </SelectTrigger>
                   <SelectContent>
                     <SelectItem value="all_categories">All Categories</SelectItem>
-                    <SelectItem value="Administrative">Administrative</SelectItem>
-                    <SelectItem value="Agriculture">Agriculture</SelectItem>
-                    <SelectItem value="AI & Machine Learning">AI & Machine Learning</SelectItem>
-                    <SelectItem value="Construction & Trades">Construction & Trades</SelectItem>
-                    <SelectItem value="Corporate Affairs">Corporate Affairs</SelectItem>
-                    <SelectItem value="Creative & Media">Creative & Media</SelectItem>
-                    <SelectItem value="Customer Success">Customer Success</SelectItem>
-                    <SelectItem value="Data Science & Analytics">Data Science & Analytics</SelectItem>
-                    <SelectItem value="Design & Creative">Design & Creative</SelectItem>
-                    <SelectItem value="Education & Training">Education & Training</SelectItem>
-                    <SelectItem value="Engineering & Architecture">Engineering & Architecture</SelectItem>
-                    <SelectItem value="Finance & Accounting">Finance & Accounting</SelectItem>
-                    <SelectItem value="Healthcare, Pharmaceutical & Medical">Healthcare, Pharmaceutical & Medical</SelectItem>
-                    <SelectItem value="Hospitality & Tourism">Hospitality & Tourism</SelectItem>
-                    <SelectItem value="HR & Recruiting">HR & Recruiting</SelectItem>
-                    <SelectItem value="IT & Networking">IT & Networking</SelectItem>
-                    <SelectItem value="Legal & Law Enforcement">Legal & Law Enforcement</SelectItem>
-                    <SelectItem value="Manufacturing">Manufacturing</SelectItem>
-                    <SelectItem value="Sales & Marketing">Sales & Marketing</SelectItem>
-                    <SelectItem value="Science & Research">Science & Research</SelectItem>
-                    <SelectItem value="Web, Mobile, & Software Development">Web, Mobile, & Software Development</SelectItem>
-                    <SelectItem value="Writing">Writing</SelectItem>
+                    {availableCategories.map(cat => (
+                      <SelectItem key={cat} value={cat}>{cat}</SelectItem>
+                    ))}
                   </SelectContent>
                 </Select>
 
@@ -121,10 +107,11 @@ export default function CareerPage() {
                   </SelectTrigger>
                   <SelectContent>
                     <SelectItem value="all_types">All Types</SelectItem>
-                    <SelectItem value="full-time">Full-time</SelectItem>
-                    <SelectItem value="part-time">Part-time</SelectItem>
-                    <SelectItem value="contract">Contract</SelectItem>
-                    <SelectItem value="internship">Internship</SelectItem>
+                    {availableJobTypes.map(type => (
+                      <SelectItem key={type} value={type}>
+                        {type.charAt(0).toUpperCase() + type.slice(1)}
+                      </SelectItem>
+                    ))}
                   </SelectContent>
                 </Select>
 
@@ -134,10 +121,11 @@ export default function CareerPage() {
                   </SelectTrigger>
                   <SelectContent>
                     <SelectItem value="all_levels">All Levels</SelectItem>
-                    <SelectItem value="entry">Entry Level</SelectItem>
-                    <SelectItem value="mid">Mid Level</SelectItem>
-                    <SelectItem value="senior">Senior Level</SelectItem>
-                    <SelectItem value="executive">Executive</SelectItem>
+                    {availableExperienceLevels.map(level => (
+                      <SelectItem key={level} value={level}>
+                        {level.charAt(0).toUpperCase() + level.slice(1)} Level
+                      </SelectItem>
+                    ))}
                   </SelectContent>
                 </Select>
               </div>
