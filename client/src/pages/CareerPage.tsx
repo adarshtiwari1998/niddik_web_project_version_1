@@ -26,7 +26,13 @@ export default function CareerPage() {
   const [experienceLevel, setExperienceLevel] = useState("all_levels");
 
   const { data, isLoading, error } = useQuery<{ data: JobListing[], meta: { total: number, pages: number } }>({
-    queryKey: ['/api/job-listings', { search, category, jobType, experienceLevel, status: 'active' }],
+    queryKey: ['/api/job-listings', { 
+      search: search.trim(), 
+      category: category === 'all_categories' ? '' : category,
+      jobType: jobType === 'all_types' ? '' : jobType,
+      experienceLevel: experienceLevel === 'all_levels' ? '' : experienceLevel,
+      status: 'active' 
+    }],
     queryFn: getQueryFn({ on401: "throw" }),
   });
 
@@ -194,16 +200,7 @@ export default function CareerPage() {
                     <Briefcase className="h-4 w-4 mr-2" />
                     <span className="capitalize">{job.jobType}</span>
                   </div>
-                  <div className="flex items-center">
-                    <Clock className="h-4 w-4 mr-2" />
-                    <span>
-                      {job.postedDate && !isNaN(new Date(job.postedDate).getTime()) 
-                        ? format(new Date(job.postedDate), "MMM dd, yyyy")
-                        : "Recently posted"
-                      }
-                    </span>
                   </div>
-                </div>
                 
                 {/* Job Summary Section */}
                 <div className="space-y-2 text-sm mb-4 p-3 bg-gray-50 dark:bg-gray-800 rounded-md">
