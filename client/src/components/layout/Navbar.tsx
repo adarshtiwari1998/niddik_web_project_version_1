@@ -92,7 +92,7 @@ const Navbar: React.FC<NavbarProps> = ({ hasAnnouncementAbove = true }) => {
     const handleScroll = () => {
       const scrollY = window.scrollY;
       setIsScrolled(scrollY > 10);
-      
+
       // Assume hero section is about 600px height, adjust as needed
       const heroSectionHeight = 600;
       setIsTransparent(scrollY < heroSectionHeight);
@@ -111,7 +111,7 @@ const Navbar: React.FC<NavbarProps> = ({ hasAnnouncementAbove = true }) => {
       isTransparent ? "bg-transparent" : "bg-white/80 backdrop-blur-md",
       isScrolled && !isTransparent ? "shadow-md" : isTransparent ? "" : "shadow-sm",
       "transition-all duration-300"
-    )}></header>
+    )}>
       <Container>
         <div className="flex justify-between items-center py-4">
           {/* Logo with slogan */}
@@ -226,6 +226,7 @@ const Navbar: React.FC<NavbarProps> = ({ hasAnnouncementAbove = true }) => {
           </button>
         </div>
       </Container>
+    </header>
 
       {/* Mobile Menu Backdrop */}
       {isMobileMenuOpen && (
@@ -365,7 +366,7 @@ const Navbar: React.FC<NavbarProps> = ({ hasAnnouncementAbove = true }) => {
           </div>
         </nav>
       </div>
-    </header>
+    
   );
 };
 
