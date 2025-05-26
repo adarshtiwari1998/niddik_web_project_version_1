@@ -535,11 +535,38 @@ export const storage = {
   },
 
   async bulkDeleteSubmittedCandidates(ids: number[]) {
-    const result = await db.delete(submittedCandidates)
-      .where(inArray(submittedCandidates.id, ids))
-      .returning({ id: submittedCandidates.id });
+    try {
+      console.log(`Starting bulk delete for ${ids.length} candidates`);
+      
+      // Process deletion in chunks to avoid database limits
+      const chunkSize = 100;
+      let totalDeleted = 0;
 
-    return result.length;
+      for (let i = 0; i < ids.length; i += chunkSize) {
+        const chunk = ids.slice(i, i + chunkSize);
+        console.log(`Deleting chunk ${Math.floor(i / chunkSize) + 1}: ${chunk.length} candidates`);
+
+        try {
+          const result = await db.delete(submittedCandidates)
+            .where(inArray(submittedCandidates.id, chunk))
+            .returning({ id: submittedCandidates.id });
+
+          const chunkDeleted = result.length;
+          totalDeleted += chunkDeleted;
+          
+          console.log(`Chunk ${Math.floor(i / chunkSize) + 1} deleted: ${chunkDeleted} candidates`);
+        } catch (chunkError) {
+          console.error(`Error deleting chunk ${Math.floor(i / chunkSize) + 1}:`, chunkError);
+          // Continue with next chunk instead of failing completely
+        }
+      }
+
+      console.log(`Bulk delete completed. Total deleted: ${totalDeleted}`);
+      return totalDeleted;
+    } catch (error) {
+      console.error('Bulk delete error:', error);
+      throw error;
+    }
   },
 
   // Demo Requests

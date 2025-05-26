@@ -7,6 +7,7 @@ import {
   jobApplicationSchema,
   jobApplications,
   jobListings,
+  submittedCandidates,
   submittedCandidateSchema,
   demoRequestSchema,
   demoRequests,
@@ -689,11 +690,24 @@ export async function registerRoutes(app: Express): Promise<Server> {
   });
 
   // Bulk delete submitted candidates
-  app.delete('/api/submitted-candidates/bulk', async (req, res) => {
+  app.delete('/api/submitted-candidates/bulk', async (req: AuthenticatedRequest, res: Response) => {
     try {
+      // Check if user is authenticated and is an admin
+      if (!req.isAuthenticated() || req.user?.role !== 'admin') {
+        return res.status(403).json({ 
+          success: false, 
+          message: "Unauthorized access" 
+        });
+      }
+
       const { ids } = req.body;
 
-      console.log('Bulk delete request received:', { ids, type: typeof ids, isArray: Array.isArray(ids) });
+      console.log('Bulk delete request received:', { 
+        ids, 
+        type: typeof ids, 
+        isArray: Array.isArray(ids),
+        length: Array.isArray(ids) ? ids.length : 0
+      });
 
       if (!Array.isArray(ids) || ids.length === 0) {
         return res.status(400).json({ 
@@ -702,40 +716,94 @@ export async function registerRoutes(app: Express): Promise<Server> {
         });
       }
 
-      // Convert string IDs to numbers and validate
-      const validIds = ids
-        .map(id => {
-          const numId = typeof id === 'string' ? parseInt(id, 10) : id;
-          return typeof numId === 'number' && !isNaN(numId) ? numId : null;
-        })
-        .filter(id => id !== null);
+      // Convert and validate IDs more thoroughly
+      const validIds: number[] = [];
+      const invalidIds: any[] = [];
 
-      console.log('Valid IDs for deletion:', validIds);
+      ids.forEach((id, index) => {
+        let numId: number;
+        
+        if (typeof id === 'string') {
+          numId = parseInt(id, 10);
+        } else if (typeof id === 'number') {
+          numId = id;
+        } else {
+          invalidIds.push({ index, value: id, reason: 'Invalid type' });
+          return;
+        }
+
+        if (isNaN(numId) || numId <= 0 || !Number.isInteger(numId)) {
+          invalidIds.push({ index, value: id, reason: 'Invalid number' });
+          return;
+        }
+
+        validIds.push(numId);
+      });
+
+      console.log('ID validation results:', { 
+        total: ids.length, 
+        valid: validIds.length, 
+        invalid: invalidIds.length,
+        validIds,
+        invalidIds
+      });
 
       if (validIds.length === 0) {
         return res.status(400).json({ 
           success: false, 
-          message: "No valid candidate IDs provided." 
+          message: "No valid candidate IDs provided.",
+          details: { invalidIds }
         });
       }
 
-      if (validIds.length !== ids.length) {
-        console.warn(`Some IDs were invalid. Received: ${ids.length}, Valid: ${validIds.length}`);
+      if (invalidIds.length > 0) {
+        console.warn(`Found ${invalidIds.length} invalid IDs:`, invalidIds);
       }
 
-      // Delete candidates by IDs
-      const deletedCount = await storage.bulkDeleteSubmittedCandidates(validIds);
+      // Check if candidates exist before attempting deletion
+      const existingCandidates = await db
+        .select({ id: submittedCandidates.id })
+        .from(submittedCandidates)
+        .where(inArray(submittedCandidates.id, validIds));
+
+      const existingIds = existingCandidates.map(c => c.id);
+      const nonExistentIds = validIds.filter(id => !existingIds.includes(id));
+
+      console.log('Existence check:', {
+        validIds,
+        existingIds,
+        nonExistentIds
+      });
+
+      if (existingIds.length === 0) {
+        return res.status(404).json({
+          success: false,
+          message: "No candidates found with the provided IDs."
+        });
+      }
+
+      // Delete candidates by IDs using chunked approach
+      const deletedCount = await storage.bulkDeleteSubmittedCandidates(existingIds);
+
+      const responseMessage = nonExistentIds.length > 0 
+        ? `${deletedCount} candidates deleted successfully. ${nonExistentIds.length} candidates were not found.`
+        : `${deletedCount} candidates deleted successfully`;
 
       return res.status(200).json({ 
         success: true, 
-        message: `${deletedCount} candidates deleted successfully`,
-        count: deletedCount
+        message: responseMessage,
+        count: deletedCount,
+        details: {
+          deletedCount,
+          nonExistentIds: nonExistentIds.length > 0 ? nonExistentIds : undefined
+        }
       });
     } catch (error) {
       console.error('Error bulk deleting submitted candidates:', error);
       return res.status(500).json({ 
         success: false, 
-        message: "Internal server error" 
+        message: "Internal server error",
+        error: error instanceof Error ? error.message : 'Unknown error'
       });
     }
   });
