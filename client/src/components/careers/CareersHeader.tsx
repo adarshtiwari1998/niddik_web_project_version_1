@@ -90,7 +90,20 @@ export default function CareersHeader() {
               <Link href="/about-us" className="text-sm font-medium hover:text-primary">
                 About Us
               </Link>
-              {user && (
+              {user && user.role === 'admin' && (
+                <>
+                  <Link href="/admin/jobs" className="text-sm font-medium hover:text-primary">
+                    Manage Job Listings
+                  </Link>
+                  <Link href="/admin/candidates" className="text-sm font-medium hover:text-primary">
+                    Candidates
+                  </Link>
+                  <Link href="/admin/submitted-candidates" className="text-sm font-medium hover:text-primary">
+                    Submitted Candidates
+                  </Link>
+                </>
+              )}
+              {user && user.role !== 'admin' && (
                 <Link href="/candidate/applications" className="text-sm font-medium hover:text-primary">
                   My Applications
                 </Link>
@@ -259,7 +272,60 @@ export default function CareersHeader() {
                     >
                       About Us
                     </Link>
-                    {user && (
+                    {user && user.role === 'admin' && (
+                      <>
+                        <Link 
+                          href="/admin/dashboard" 
+                          className="px-2 py-1 text-lg font-medium hover:text-primary"
+                          onClick={() => setMobileMenuOpen(false)}
+                        >
+                          Dashboard
+                        </Link>
+                        <Link 
+                          href="/admin/jobs" 
+                          className="px-2 py-1 text-lg font-medium hover:text-primary"
+                          onClick={() => setMobileMenuOpen(false)}
+                        >
+                          Manage Job Listings
+                        </Link>
+                        <Link 
+                          href="/admin/candidates" 
+                          className="px-2 py-1 text-lg font-medium hover:text-primary"
+                          onClick={() => setMobileMenuOpen(false)}
+                        >
+                          Candidates
+                        </Link>
+                        <Link 
+                          href="/admin/submitted-candidates" 
+                          className="px-2 py-1 text-lg font-medium hover:text-primary"
+                          onClick={() => setMobileMenuOpen(false)}
+                        >
+                          Submitted Candidates
+                        </Link>
+                        <Link 
+                          href="/admin/users" 
+                          className="px-2 py-1 text-lg font-medium hover:text-primary"
+                          onClick={() => setMobileMenuOpen(false)}
+                        >
+                          Users Management
+                        </Link>
+                        <Link 
+                          href="/admin/demo-requests" 
+                          className="px-2 py-1 text-lg font-medium hover:text-primary"
+                          onClick={() => setMobileMenuOpen(false)}
+                        >
+                          Demo Requests
+                        </Link>
+                        <Link 
+                          href="/admin/contact-submissions" 
+                          className="px-2 py-1 text-lg font-medium hover:text-primary"
+                          onClick={() => setMobileMenuOpen(false)}
+                        >
+                          Contact Submissions
+                        </Link>
+                      </>
+                    )}
+                    {user && user.role !== 'admin' && (
                       <>
                         <Link 
                           href="/candidate/dashboard" 
