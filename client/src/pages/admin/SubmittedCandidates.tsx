@@ -440,7 +440,7 @@ function SubmittedCandidates() {
     },
   });
 
-    // Mutation to delete multiple candidates in bulk
+    // Mutation to delete multiple candidates in bulk using single delete API
     const bulkDeleteMutation = useMutation({
     mutationFn: async (ids: number[]) => {
       console.log('Starting bulk delete with IDs:', ids);
@@ -460,29 +460,49 @@ function SubmittedCandidates() {
         throw new Error('No valid candidate IDs selected for deletion');
       }
 
-      // Create request body
-      const requestBody = { ids: validIds };
-      console.log('Request payload:', JSON.stringify(requestBody, null, 2));
-
-      const res = await apiRequest("DELETE", `/api/submitted-candidates/bulk`, requestBody);
-      
-      // Check if response is ok first
-      if (!res.ok) {
-        let errorMessage = 'Failed to delete candidates';
-        try {
-          const errorData = await res.json();
-          errorMessage = errorData?.message || errorMessage;
-        } catch (parseError) {
-          console.error('Failed to parse error response:', parseError);
-          errorMessage = `HTTP ${res.status}: ${res.statusText}`;
+      // Delete each candidate individually using the single delete API
+      const deletePromises = validIds.map(async (id) => {
+        console.log(`Deleting candidate ID: ${id}`);
+        const res = await apiRequest("DELETE", `/api/submitted-candidates/${id}`);
+        
+        if (!res.ok) {
+          let errorMessage = `Failed to delete candidate ${id}`;
+          try {
+            const errorData = await res.json();
+            errorMessage = errorData?.message || errorMessage;
+          } catch (parseError) {
+            console.error(`Failed to parse error response for ID ${id}:`, parseError);
+            errorMessage = `HTTP ${res.status}: ${res.statusText} for candidate ${id}`;
+          }
+          throw new Error(errorMessage);
         }
-        throw new Error(errorMessage);
+        
+        const responseData = await res.json();
+        console.log(`Successfully deleted candidate ${id}:`, responseData);
+        return { id, success: true };
+      });
+
+      // Wait for all deletions to complete
+      const results = await Promise.allSettled(deletePromises);
+      
+      // Check for any failures
+      const failures = results.filter(result => result.status === 'rejected');
+      const successes = results.filter(result => result.status === 'fulfilled');
+
+      if (failures.length > 0) {
+        console.error('Some deletions failed:', failures);
+        const failureMessages = failures.map(failure => 
+          failure.status === 'rejected' ? failure.reason.message : 'Unknown error'
+        );
+        throw new Error(`Failed to delete ${failures.length} candidates: ${failureMessages.join(', ')}`);
       }
 
-      // Parse successful response
-      const responseData = await res.json();
-      console.log('Server response:', res.status, responseData);
-      return responseData;
+      console.log(`Successfully deleted ${successes.length} candidates`);
+      return { 
+        count: successes.length, 
+        deletedCount: successes.length,
+        success: true 
+      };
     },
     onSuccess: (data) => {
       console.log('Bulk delete completed successfully:', data);
