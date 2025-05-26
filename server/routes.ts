@@ -707,27 +707,15 @@ export async function registerRoutes(app: Express): Promise<Server> {
         type: typeof ids, 
         isArray: Array.isArray(ids),
         length: Array.isArray(ids) ? ids.length : 0,
+        firstFewIds: Array.isArray(ids) ? ids.slice(0, 5) : 'N/A',
         body: req.body
       });
 
-      if (!ids) {
+      if (!ids || !Array.isArray(ids) || ids.length === 0) {
+        console.log('Invalid request structure:', { ids, isArray: Array.isArray(ids), length: ids?.length });
         return res.status(400).json({ 
           success: false, 
-          message: "Missing 'ids' field in request body" 
-        });
-      }
-
-      if (!Array.isArray(ids)) {
-        return res.status(400).json({ 
-          success: false, 
-          message: "Field 'ids' must be an array" 
-        });
-      }
-
-      if (ids.length === 0) {
-        return res.status(400).json({ 
-          success: false, 
-          message: "Array 'ids' cannot be empty" 
+          message: "Invalid request: 'ids' must be a non-empty array" 
         });
       }
 
@@ -773,6 +761,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
 
       if (invalidIds.length > 0) {
         console.warn(`Found ${invalidIds.length} invalid IDs:`, invalidIds);
+        // Don't fail the request, just proceed with valid IDs
       }
 
       // Check if candidates exist before attempting deletion

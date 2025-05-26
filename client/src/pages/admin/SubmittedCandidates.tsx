@@ -23,6 +23,7 @@ import { Textarea } from "@/components/ui/textarea";
 import Papa from 'papaparse';
 import React from 'react';
 import { useLocation, Link } from "wouter";
+import { Checkbox } from "@/components/ui/checkbox";
 
 // Define the type for a submitted candidate
 type SubmittedCandidate = {
@@ -431,22 +432,22 @@ function SubmittedCandidates() {
     mutationFn: async (ids: number[]) => {
       console.log('Sending bulk delete request with IDs:', ids);
       console.log('IDs validation:', ids.map(id => ({ id, type: typeof id, isValid: typeof id === 'number' && !isNaN(id) && id > 0 })));
-      
+
       // Final validation before sending
       const validIds = ids.filter(id => typeof id === 'number' && !isNaN(id) && id > 0);
       if (validIds.length === 0) {
         throw new Error('No valid candidate IDs to delete');
       }
-      
+
       const requestBody = { ids: validIds };
       console.log('Request body:', JSON.stringify(requestBody));
-      
+
       const res = await apiRequest("DELETE", `/api/submitted-candidates/bulk`, requestBody);
-      
+
       console.log('Response status:', res.status);
       const responseData = await res.json();
       console.log('Response data:', responseData);
-      
+
       if (!res.ok) {
         throw new Error(responseData.message || `HTTP ${res.status}: Failed to delete candidates`);
       }
@@ -1747,7 +1748,7 @@ function SubmittedCandidates() {
                   onClick={goToNextPage}
                   disabled={page >= totalPages}
                 >
-                  Next
+Next
                 </Button>
               </div>
             </CardFooter>
