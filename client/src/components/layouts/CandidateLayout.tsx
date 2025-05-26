@@ -77,7 +77,7 @@ export default function CandidateLayout({ children, activeTab = "" }: CandidateL
                   alt="NiDDiK Logo" 
                   className="h-10" 
                 />
-                <div className="text-[10px] text-gray-500 mt-0.5">Connecting People, Changing Lives</div>
+                
               </div>
             </Link>
             <span className="text-sm text-muted-foreground border-l pl-4">Candidate Portal</span>

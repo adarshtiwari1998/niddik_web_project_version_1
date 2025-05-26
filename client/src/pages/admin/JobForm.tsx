@@ -136,7 +136,7 @@ export default function JobForm() {
           console.error("Error fetching job data:", error);
           return {
             title: "",
-            company: "Niddik",
+            company: "NIDDIK (An IT Division of NIDDIKKARE LLP)",
             location: "",
             jobType: "Full-time",
             experienceLevel: "Mid",
@@ -157,7 +157,7 @@ export default function JobForm() {
       // Default values for new job
       return {
         title: "",
-        company: "Niddik",
+        company: "NIDDIK (An IT Division of NIDDIKKARE LLP)",
         location: "",
         jobType: "Full-time",
         experienceLevel: "Mid",
