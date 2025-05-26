@@ -370,5 +370,5 @@ const Navbar: React.FC<NavbarProps> = ({ hasAnnouncementAbove = true }) => {
     
   );
 };
-
+    
 export default Navbar;
