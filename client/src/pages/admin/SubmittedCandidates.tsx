@@ -432,10 +432,11 @@ function SubmittedCandidates() {
     mutationFn: async (ids: number[]) => {
       console.log('Starting bulk delete with IDs:', ids);
 
-      // Validate and clean IDs
+      // Validate and clean IDs more strictly
       const validIds = ids
+        .filter(id => id != null && id !== undefined)
         .map(id => {
-          const numId = Number(id);
+          const numId = parseInt(String(id), 10);
           return Number.isInteger(numId) && numId > 0 ? numId : null;
         })
         .filter((id): id is number => id !== null);
@@ -450,30 +451,25 @@ function SubmittedCandidates() {
       const requestBody = { ids: validIds };
       console.log('Request payload:', JSON.stringify(requestBody, null, 2));
 
-      try {
-        const res = await apiRequest("DELETE", `/api/submitted-candidates/bulk`, requestBody);
-        
-        // Always parse response
-        let responseData;
+      const res = await apiRequest("DELETE", `/api/submitted-candidates/bulk`, requestBody);
+      
+      // Check if response is ok first
+      if (!res.ok) {
+        let errorMessage = 'Failed to delete candidates';
         try {
-          responseData = await res.json();
+          const errorData = await res.json();
+          errorMessage = errorData?.message || errorMessage;
         } catch (parseError) {
-          console.error('Failed to parse response:', parseError);
-          throw new Error(`Server response could not be parsed. Status: ${res.status}`);
+          console.error('Failed to parse error response:', parseError);
+          errorMessage = `HTTP ${res.status}: ${res.statusText}`;
         }
-
-        console.log('Server response:', res.status, responseData);
-
-        if (!res.ok) {
-          const errorMessage = responseData?.message || `HTTP ${res.status}: ${res.statusText}`;
-          throw new Error(errorMessage);
-        }
-
-        return responseData;
-      } catch (networkError) {
-        console.error('Network error during bulk delete:', networkError);
-        throw new Error('Network error: ' + (networkError instanceof Error ? networkError.message : 'Unknown error'));
+        throw new Error(errorMessage);
       }
+
+      // Parse successful response
+      const responseData = await res.json();
+      console.log('Server response:', res.status, responseData);
+      return responseData;
     },
     onSuccess: (data) => {
       console.log('Bulk delete completed successfully:', data);
@@ -860,10 +856,10 @@ function SubmittedCandidates() {
   const handleSelectCandidate = (candidateId: number, checked: boolean) => {
     console.log("Selecting candidate:", candidateId, "type:", typeof candidateId, "checked:", checked);
 
-    // Convert to number and validate
-    const numId = Number(candidateId);
-    if (!numId || isNaN(numId) || numId <= 0) {
-      console.error("Invalid candidate ID provided:", candidateId);
+    // Convert to number and validate more strictly
+    const numId = parseInt(String(candidateId), 10);
+    if (!Number.isInteger(numId) || numId <= 0) {
+      console.error("Invalid candidate ID provided:", candidateId, "converted to:", numId);
       return;
     }
 
@@ -1599,14 +1595,14 @@ function SubmittedCandidates() {
                          <TableCell className="w-10">
                           <input
                             type="checkbox"
-                            checked={selectedCandidateIds.includes(Number(candidate.id))}
+                            checked={selectedCandidateIds.includes(parseInt(String(candidate.id), 10))}
                             onChange={(e) => {
-                              const candidateId = Number(candidate.id);
-                              console.log("Checkbox changed for candidate:", candidateId, "checked:", e.target.checked);
-                              if (candidateId && candidateId > 0) {
+                              const candidateId = parseInt(String(candidate.id), 10);
+                              console.log("Checkbox changed for candidate:", candidateId, "checked:", e.target.checked, "original ID:", candidate.id);
+                              if (Number.isInteger(candidateId) && candidateId > 0) {
                                 handleSelectCandidate(candidateId, e.target.checked);
                               } else {
-                                console.error("Invalid candidate ID:", candidate.id);
+                                console.error("Invalid candidate ID:", candidate.id, "converted to:", candidateId);
                               }
                             }}
                           />

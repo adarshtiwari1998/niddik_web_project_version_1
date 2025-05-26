@@ -715,19 +715,24 @@ export async function registerRoutes(app: Express): Promise<Server> {
 
       // Convert and validate IDs
       const validIds: number[] = [];
+      const invalidIds: any[] = [];
+      
       for (const id of ids) {
-        const numId = Number(id);
+        const numId = parseInt(String(id), 10);
         if (Number.isInteger(numId) && numId > 0) {
           validIds.push(numId);
+        } else {
+          invalidIds.push(id);
         }
       }
 
       console.log('Valid IDs for deletion:', validIds);
+      console.log('Invalid IDs rejected:', invalidIds);
 
       if (validIds.length === 0) {
         return res.status(400).json({ 
           success: false, 
-          message: "No valid candidate IDs provided" 
+          message: `No valid candidate IDs provided. Invalid IDs: ${invalidIds.join(', ')}` 
         });
       }
 
