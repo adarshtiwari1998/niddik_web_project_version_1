@@ -91,93 +91,90 @@ export default function AdminLayout({ children, title, description }: AdminLayou
 
       {/* Admin Header */}
       <header className="bg-white dark:bg-gray-800 shadow-sm border-b fixed top-0 left-0 right-0 z-50">
-        <div className="px-4 py-3 flex justify-between items-center">
-          <div className="flex items-center">
+        <div className="px-3 sm:px-4 py-2 sm:py-3 flex justify-between items-center">
+          <div className="flex items-center min-w-0 flex-1">
             {/* Sidebar Toggle Button */}
             <Button
               variant="ghost"
               size="sm"
               onClick={toggleSidebar}
-              className="mr-3 p-2 hover:bg-gray-100 dark:hover:bg-gray-700"
+              className="mr-2 sm:mr-3 p-1.5 sm:p-2 hover:bg-gray-100 dark:hover:bg-gray-700 flex-shrink-0"
             >
-              {isCollapsed ? <Menu className="h-5 w-5" /> : <X className="h-5 w-5" />}
+              {isCollapsed ? <Menu className="h-4 w-4 sm:h-5 sm:w-5" /> : <X className="h-4 w-4 sm:h-5 sm:w-5" />}
             </Button>
 
             <Link href="/admin/dashboard">
-              <div className="flex flex-col cursor-pointer">
-                <div className="flex items-center">
-                  <img 
-                    src="/images/niddik_logo.png" 
-                    alt="Niddik Logo" 
-                    className="h-10 mr-2" 
-                  />
-                  <h1 className="text-xl font-bold">Admin</h1>
-                </div>
-                {/* <p className="text-sm text-gray-500 ml-1">Connecting People, Changing Lives</p> */}
+              <div className="flex items-center cursor-pointer min-w-0">
+                <img 
+                  src="/images/niddik_logo.png" 
+                  alt="Niddik Logo" 
+                  className="h-7 sm:h-10 mr-1 sm:mr-2 flex-shrink-0" 
+                />
+                <h1 className="text-lg sm:text-xl font-bold truncate">Admin</h1>
               </div>
             </Link>
           </div>
 
-          <div className="flex items-center">
-            <div className="flex items-center mr-4">
+          <div className="flex items-center flex-shrink-0">
+            <div className="hidden sm:flex items-center mr-4">
               <span className="w-3 h-3 bg-green-600 rounded-full mr-2"></span>
               <span className="text-sm font-medium">Admin Area</span>
             </div>
-            <Button variant="ghost" onClick={handleLogout}>
-              <LogOut className="h-4 w-4 mr-2" />
-              Sign Out
+            <Button variant="ghost" onClick={handleLogout} size="sm" className="p-1.5 sm:p-2">
+              <LogOut className="h-4 w-4 sm:mr-2" />
+              <span className="hidden sm:inline">Sign Out</span>
             </Button>
           </div>
         </div>
       </header>
 
-      <div className="flex pt-[88px]">
+      <div className="flex pt-[72px] sm:pt-[88px]">
         {/* Collapsible Sidebar */}
-        <div className={`${isCollapsed ? 'w-16' : 'w-[276px]'} fixed left-0 top-[88px] h-[calc(100vh-88px)] transition-all duration-300 ease-in-out z-40 bg-white dark:bg-gray-800 border-r border-gray-200 dark:border-gray-700`}>
+        <div className={`${isCollapsed ? 'w-12 sm:w-16' : 'w-64 sm:w-[276px]'} fixed left-0 top-[72px] sm:top-[88px] h-[calc(100vh-72px)] sm:h-[calc(100vh-88px)] transition-all duration-300 ease-in-out z-40 bg-white dark:bg-gray-800 border-r border-gray-200 dark:border-gray-700`}>
           <div className="h-full overflow-y-auto">
-            <div className={`p-4 border-b border-gray-200 dark:border-gray-700 ${isCollapsed ? 'px-2' : ''}`}>
+            <div className={`p-2 sm:p-4 border-b border-gray-200 dark:border-gray-700 ${isCollapsed ? 'px-1 sm:px-2' : ''}`}>
               {!isCollapsed && (
                 <>
-                  <h2 className="text-lg font-semibold">Admin Menu</h2>
-                  <p className="text-sm text-muted-foreground">Manage your talent platform</p>
+                  <h2 className="text-base sm:text-lg font-semibold">Admin Menu</h2>
+                  <p className="text-xs sm:text-sm text-muted-foreground">Manage your talent platform</p>
                 </>
               )}
               {isCollapsed && (
                 <div className="flex justify-center">
-                  <Shield className="h-6 w-6 text-primary" />
+                  <Shield className="h-5 w-5 sm:h-6 sm:w-6 text-primary" />
                 </div>
               )}
             </div>
 
-            <nav className="p-2">
+            <nav className="p-1 sm:p-2">
               {/* Dashboard */}
               <div 
                 onClick={handleDashboardNavigation}
-                className={`flex items-center px-3 py-2 mb-1 rounded-md transition-colors cursor-pointer ${
+                className={`flex items-center px-2 sm:px-3 py-1.5 sm:py-2 mb-1 rounded-md transition-colors cursor-pointer ${
                   (location === "/admin/dashboard" && !window.location.search.includes('tab='))
                     ? "bg-primary/10 text-primary" 
                     : "hover:bg-gray-100 dark:hover:bg-gray-700"
                 } ${isCollapsed ? 'justify-center' : ''}`}
                 title={isCollapsed ? "Dashboard" : ""}
               >
-                <User className="h-5 w-5" />
-                {!isCollapsed && <span className="ml-3">Dashboard</span>}
+                <User className="h-4 w-4 sm:h-5 sm:w-5" />
+                {!isCollapsed && <span className="ml-2 sm:ml-3 text-sm sm:text-base">Dashboard</span>}
               </div>
 
               {/* Manage Job Listings */}
               <Link href="/admin/jobs">
-                <div className={`flex items-center px-3 py-2 mb-1 rounded-md transition-colors cursor-pointer ${
+                <div className={`flex items-center px-2 sm:px-3 py-1.5 sm:py-2 mb-1 rounded-md transition-colors cursor-pointer ${
                   location === "/admin/jobs" 
                     ? "bg-primary/10 text-primary" 
                     : "hover:bg-gray-100 dark:hover:bg-gray-700"
                 } ${isCollapsed ? 'justify-center' : ''}`}
                 title={isCollapsed ? "Manage Job Listings" : ""}
                 >
-                  <FileText className="h-5 w-5" />
+                  <FileText className="h-4 w-4 sm:h-5 sm:w-5" />
                   {!isCollapsed && (
                     <>
-                      <span className="ml-3">Manage Job Listings</span>
-                      <ChevronRight className="h-4 w-4 ml-auto" />
+                      <span className="ml-2 sm:ml-3 text-sm sm:text-base">Manage Job Listings</span>
+                      <ChevronRight className="h-3 w-3 sm:h-4 sm:w-4 ml-auto" />
                     </>
                   )}
                 </div>
@@ -185,18 +182,18 @@ export default function AdminLayout({ children, title, description }: AdminLayou
 
               {/* Candidates */}
               <Link href="/admin/candidates">
-                <div className={`flex items-center px-3 py-2 mb-1 rounded-md transition-colors cursor-pointer ${
+                <div className={`flex items-center px-2 sm:px-3 py-1.5 sm:py-2 mb-1 rounded-md transition-colors cursor-pointer ${
                   location === "/admin/candidates" 
                     ? "bg-primary/10 text-primary" 
                     : "hover:bg-gray-100 dark:hover:bg-gray-700"
                 } ${isCollapsed ? 'justify-center' : ''}`}
                 title={isCollapsed ? "Candidates" : ""}
                 >
-                  <User className="h-5 w-5" />
+                  <User className="h-4 w-4 sm:h-5 sm:w-5" />
                   {!isCollapsed && (
                     <>
-                      <span className="ml-3">Candidates</span>
-                      <ChevronRight className="h-4 w-4 ml-auto" />
+                      <span className="ml-2 sm:ml-3 text-sm sm:text-base">Candidates</span>
+                      <ChevronRight className="h-3 w-3 sm:h-4 sm:w-4 ml-auto" />
                     </>
                   )}
                 </div>
@@ -204,18 +201,18 @@ export default function AdminLayout({ children, title, description }: AdminLayou
 
               {/* Submitted Candidates */}
               <Link href="/admin/submitted-candidates">
-                <div className={`flex items-center px-3 py-2 mb-1 rounded-md transition-colors cursor-pointer ${
+                <div className={`flex items-center px-2 sm:px-3 py-1.5 sm:py-2 mb-1 rounded-md transition-colors cursor-pointer ${
                   location === "/admin/submitted-candidates" 
                     ? "bg-primary/10 text-primary" 
                     : "hover:bg-gray-100 dark:hover:bg-gray-700"
                 } ${isCollapsed ? 'justify-center' : ''}`}
                 title={isCollapsed ? "Submitted Candidates" : ""}
                 >
-                  <FileText className="h-5 w-5" />
+                  <FileText className="h-4 w-4 sm:h-5 sm:w-5" />
                   {!isCollapsed && (
                     <>
-                      <span className="ml-3">Submitted Candidates</span>
-                      <ChevronRight className="h-4 w-4 ml-auto" />
+                      <span className="ml-2 sm:ml-3 text-sm sm:text-base">Submitted Candidates</span>
+                      <ChevronRight className="h-3 w-3 sm:h-4 sm:w-4 ml-auto" />
                     </>
                   )}
                 </div>
@@ -223,18 +220,18 @@ export default function AdminLayout({ children, title, description }: AdminLayou
 
               {/* Users Management */}
               <Link href="/admin/users">
-                <div className={`flex items-center px-3 py-2 mb-1 rounded-md transition-colors cursor-pointer ${
+                <div className={`flex items-center px-2 sm:px-3 py-1.5 sm:py-2 mb-1 rounded-md transition-colors cursor-pointer ${
                   location === "/admin/users" 
                     ? "bg-primary/10 text-primary" 
                     : "hover:bg-gray-100 dark:hover:bg-gray-700"
                 } ${isCollapsed ? 'justify-center' : ''}`}
                 title={isCollapsed ? "Users Management" : ""}
                 >
-                  <User className="h-5 w-5" />
+                  <User className="h-4 w-4 sm:h-5 sm:w-5" />
                   {!isCollapsed && (
                     <>
-                      <span className="ml-3">Users Management</span>
-                      <ChevronRight className="h-4 w-4 ml-auto" />
+                      <span className="ml-2 sm:ml-3 text-sm sm:text-base">Users Management</span>
+                      <ChevronRight className="h-3 w-3 sm:h-4 sm:w-4 ml-auto" />
                     </>
                   )}
                 </div>
@@ -242,18 +239,18 @@ export default function AdminLayout({ children, title, description }: AdminLayou
 
               {/* Demo Requests */}
               <Link href="/admin/demo-requests">
-                <div className={`flex items-center px-3 py-2 mb-1 rounded-md transition-colors cursor-pointer ${
+                <div className={`flex items-center px-2 sm:px-3 py-1.5 sm:py-2 mb-1 rounded-md transition-colors cursor-pointer ${
                   location === "/admin/demo-requests" 
                     ? "bg-primary/10 text-primary" 
                     : "hover:bg-gray-100 dark:hover:bg-gray-700"
                 } ${isCollapsed ? 'justify-center' : ''}`}
                 title={isCollapsed ? "Demo Requests" : ""}
                 >
-                  <CalendarClock className="h-5 w-5" />
+                  <CalendarClock className="h-4 w-4 sm:h-5 sm:w-5" />
                   {!isCollapsed && (
                     <>
-                      <span className="ml-3">Demo Requests</span>
-                      <ChevronRight className="h-4 w-4 ml-auto" />
+                      <span className="ml-2 sm:ml-3 text-sm sm:text-base">Demo Requests</span>
+                      <ChevronRight className="h-3 w-3 sm:h-4 sm:w-4 ml-auto" />
                     </>
                   )}
                 </div>
@@ -261,18 +258,18 @@ export default function AdminLayout({ children, title, description }: AdminLayou
 
               {/* Contact Submissions */}
               <Link href="/admin/contact-submissions">
-                <div className={`flex items-center px-3 py-2 mb-1 rounded-md transition-colors cursor-pointer ${
+                <div className={`flex items-center px-2 sm:px-3 py-1.5 sm:py-2 mb-1 rounded-md transition-colors cursor-pointer ${
                   location === "/admin/contact-submissions" 
                     ? "bg-primary/10 text-primary" 
                     : "hover:bg-gray-100 dark:hover:bg-gray-700"
                 } ${isCollapsed ? 'justify-center' : ''}`}
                 title={isCollapsed ? "Contact Submissions" : ""}
                 >
-                  <Mail className="h-5 w-5" />
+                  <Mail className="h-4 w-4 sm:h-5 sm:w-5" />
                   {!isCollapsed && (
                     <>
-                      <span className="ml-3">Contact Submissions</span>
-                      <ChevronRight className="h-4 w-4 ml-auto" />
+                      <span className="ml-2 sm:ml-3 text-sm sm:text-base">Contact Submissions</span>
+                      <ChevronRight className="h-3 w-3 sm:h-4 sm:w-4 ml-auto" />
                     </>
                   )}
                 </div>
@@ -281,15 +278,15 @@ export default function AdminLayout({ children, title, description }: AdminLayou
               {/* Account Settings */}
               <div 
                 onClick={handleAccountSettingsNavigation}
-                className={`flex items-center px-3 py-2 mb-1 rounded-md transition-colors cursor-pointer ${
+                className={`flex items-center px-2 sm:px-3 py-1.5 sm:py-2 mb-1 rounded-md transition-colors cursor-pointer ${
                   (location === "/admin/dashboard" && window.location.search.includes('tab=account'))
                     ? "bg-primary/10 text-primary" 
                     : "hover:bg-gray-100 dark:hover:bg-gray-700"
                 } ${isCollapsed ? 'justify-center' : ''}`}
                 title={isCollapsed ? "Account Settings" : ""}
               >
-                <Settings className="h-5 w-5" />
-                {!isCollapsed && <span className="ml-3">Account Settings</span>}
+                <Settings className="h-4 w-4 sm:h-5 sm:w-5" />
+                {!isCollapsed && <span className="ml-2 sm:ml-3 text-sm sm:text-base">Account Settings</span>}
               </div>
             </nav>
           </div>
@@ -297,25 +294,17 @@ export default function AdminLayout({ children, title, description }: AdminLayou
 
         {/* Main Content */}
         <div className={`flex-1 transition-all duration-300 ease-in-out`} style={{
-          marginLeft: isCollapsed ? '64px' : '276px',
-          width: isCollapsed ? 'calc(100% - 64px)' : 'calc(100% - 276px)'
+          marginLeft: isCollapsed ? '48px' : '256px',
+          width: isCollapsed ? 'calc(100% - 48px)' : 'calc(100% - 256px)'
         }}>
           {/* Page Header */}
-          <header className="bg-white dark:bg-gray-800 border-b border-gray-200 dark:border-gray-700 px-6 py-4">
+          <header className="bg-white dark:bg-gray-800 border-b border-gray-200 dark:border-gray-700 px-3 sm:px-6 py-3 sm:py-4">
             <div className="flex items-center justify-between">
-              <div className="flex items-center gap-4">
-                <Button
-                  variant="ghost"
-                  size="icon"
-                  onClick={() => setIsCollapsed(!isCollapsed)}
-                  className="lg:hidden"
-                >
-                  <Menu className="h-5 w-5" />
-                </Button>
-                <div>
-                  <h1 className="text-2xl font-bold text-gray-900 dark:text-white">{title}</h1>
+              <div className="flex items-center gap-2 sm:gap-4 min-w-0">
+                <div className="min-w-0 flex-1">
+                  <h1 className="text-lg sm:text-2xl font-bold text-gray-900 dark:text-white truncate">{title}</h1>
                   {description && (
-                    <p className="text-sm text-gray-600 dark:text-gray-400 mt-1">{description}</p>
+                    <p className="text-xs sm:text-sm text-gray-600 dark:text-gray-400 mt-1 truncate">{description}</p>
                   )}
                 </div>
               </div>
@@ -323,7 +312,7 @@ export default function AdminLayout({ children, title, description }: AdminLayou
           </header>
 
           {/* Content */}
-          <main className="p-6 bg-gray-50 dark:bg-gray-900 min-h-[calc(100vh-161px)] w-full">
+          <main className="p-3 sm:p-6 bg-gray-50 dark:bg-gray-900 min-h-[calc(100vh-145px)] sm:min-h-[calc(100vh-161px)] w-full">
             <div className="w-full max-w-none">
               {children}
             </div>
