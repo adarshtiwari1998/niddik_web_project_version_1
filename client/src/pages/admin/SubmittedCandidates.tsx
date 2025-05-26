@@ -751,7 +751,10 @@ function SubmittedCandidates() {
   const handleSelectAll = (checked: boolean) => {
     setIsSelectAllChecked(checked);
     if (checked) {
-      const currentPageIds = candidatesData?.data?.map((candidate: SubmittedCandidate) => candidate.id) || [];
+      const currentPageIds = candidatesData?.data
+        ?.map((candidate: SubmittedCandidate) => candidate.id)
+        .filter(id => id && typeof id === 'number' && !isNaN(id)) || [];
+      console.log("Selecting all current page IDs:", currentPageIds);
       setSelectedCandidateIds(currentPageIds);
     } else {
       setSelectedCandidateIds([]);
@@ -794,8 +797,13 @@ function SubmittedCandidates() {
 
   // Handle individual candidate selection
   const handleSelectCandidate = (candidateId: number, checked: boolean) => {
+    console.log("Selecting candidate:", candidateId, "checked:", checked);
+    
     if (checked) {
-      setSelectedCandidateIds(prev => [...prev, candidateId]);
+      // Ensure we don't add duplicates and that the ID is valid
+      if (candidateId && !selectedCandidateIds.includes(candidateId)) {
+        setSelectedCandidateIds(prev => [...prev, candidateId]);
+      }
     } else {
       setSelectedCandidateIds(prev => prev.filter(id => id !== candidateId));
       setIsSelectAllChecked(false);
@@ -814,8 +822,18 @@ function SubmittedCandidates() {
       return;
     }
     
-    // Ensure all IDs are valid numbers
-    const validIds = selectedCandidateIds.filter(id => id && typeof id === 'number' && !isNaN(id));
+    console.log("Selected IDs for bulk delete:", selectedCandidateIds);
+    
+    // Ensure all IDs are valid numbers and convert them properly
+    const validIds = selectedCandidateIds
+      .map(id => {
+        // Convert to number if it's a string
+        const numId = typeof id === 'string' ? parseInt(id, 10) : id;
+        return typeof numId === 'number' && !isNaN(numId) && numId > 0 ? numId : null;
+      })
+      .filter(id => id !== null);
+    
+    console.log("Valid IDs after processing:", validIds);
     
     if (validIds.length === 0) {
       toast({
@@ -827,6 +845,7 @@ function SubmittedCandidates() {
     }
     
     if (validIds.length !== selectedCandidateIds.length) {
+      console.warn(`ID mismatch: Selected ${selectedCandidateIds.length}, Valid ${validIds.length}`);
       toast({
         title: "Warning",
         description: `Only ${validIds.length} out of ${selectedCandidateIds.length} selected candidates are valid`,
@@ -1496,7 +1515,10 @@ function SubmittedCandidates() {
                           <input
                             type="checkbox"
                             checked={selectedCandidateIds.includes(candidate.id)}
-                            onChange={(e) => handleSelectCandidate(candidate.id, e.target.checked)}
+                            onChange={(e) => {
+                              console.log("Checkbox changed for candidate:", candidate.id, "checked:", e.target.checked);
+                              handleSelectCandidate(candidate.id, e.target.checked);
+                            }}
                           />
                         </TableCell>
                         <TableCell>{candidate.sourcedBy || '-'}</TableCell>
