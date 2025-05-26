@@ -436,7 +436,44 @@ const handleResumeRemove = async () => {
 
                   {/* Benefits Grid */}
                   <div className="grid gap-4">
-                    {job.benefits.includes('.') ? (
+                    {job.benefits.split('\n').filter(item => item.trim()).length > 1 ? (
+                      // Handle benefits that are separated by newlines or contain bullet points
+                      job.benefits.split('\n').filter(item => item.trim()).map((item, index) => (
+                        <div 
+                          key={index} 
+                          className="group relative p-6 rounded-xl bg-white dark:bg-gray-900/50 border border-gray-200/60 dark:border-gray-700/60 hover:border-blue-300/60 dark:hover:border-blue-600/40 transition-all duration-300 hover:shadow-lg hover:shadow-blue-500/10 dark:hover:shadow-blue-500/20"
+                        >
+                          {/* Hover Effect Background */}
+                          <div className="absolute inset-0 bg-gradient-to-r from-blue-500/0 to-purple-500/0 group-hover:from-blue-500/5 group-hover:to-purple-500/5 rounded-xl transition-all duration-300"></div>
+                          
+                          <div className="relative z-10 flex items-start gap-4">
+                            {/* Dynamic Benefit Icon */}
+                            <div className="flex-shrink-0 w-8 h-8 rounded-full bg-gradient-to-r from-blue-500 to-purple-600 flex items-center justify-center group-hover:scale-110 transition-transform duration-300">
+                              <svg className="w-4 h-4 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
+                              </svg>
+                            </div>
+                            
+                            {/* Benefit Content */}
+                            <div className="flex-1 pt-1">
+                              <p className="text-gray-800 dark:text-gray-200 leading-relaxed font-medium group-hover:text-blue-700 dark:group-hover:text-blue-300 transition-colors duration-300">
+                                {item.trim().replace(/^[-•]\s*/, '')}
+                              </p>
+                            </div>
+                            
+                            {/* Arrow Icon */}
+                            <div className="flex-shrink-0 opacity-0 group-hover:opacity-100 transition-opacity duration-300">
+                              <svg className="w-5 h-5 text-blue-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
+                              </svg>
+                            </div>
+                          </div>
+                          
+                          {/* Bottom Gradient Line */}
+                          <div className="absolute bottom-0 left-6 right-6 h-0.5 bg-gradient-to-r from-blue-500/0 via-blue-500/60 to-purple-500/0 opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
+                        </div>
+                      ))
+                    ) : job.benefits.includes('.') ? (
                       job.benefits.split(/\d+\./).map((item, index) => {
                         if (index === 0) {
                           // First part before any numbering - show as intro text
@@ -489,14 +526,15 @@ const handleResumeRemove = async () => {
                         );
                       })
                     ) : (
+                      // Single benefit item
                       <div className="p-6 rounded-xl bg-white dark:bg-gray-900/50 border border-gray-200/60 dark:border-gray-700/60">
                         <div className="flex items-start gap-4">
-                          <div className="w-12 h-12 rounded-full bg-gradient-to-r from-green-500 to-blue-600 flex items-center justify-center">
-                            <svg className="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                          <div className="w-8 h-8 rounded-full bg-gradient-to-r from-green-500 to-blue-600 flex items-center justify-center">
+                            <svg className="w-4 h-4 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
                             </svg>
                           </div>
-                          <p className="text-gray-800 dark:text-gray-200 leading-relaxed pt-2">{job.benefits}</p>
+                          <p className="text-gray-800 dark:text-gray-200 leading-relaxed pt-1">{job.benefits}</p>
                         </div>
                       </div>
                     )}
@@ -576,7 +614,7 @@ const handleResumeRemove = async () => {
                     <p className="text-sm font-medium mb-1">Posted On</p>
                     <div className="flex items-center text-muted-foreground">
                       <Calendar className="h-4 w-4 mr-2" />
-                      <span>Recently</span>
+                      <span>{job.postedDate ? format(new Date(job.postedDate), "MMM dd, yyyy") : "Recently"}</span>
                     </div>
                   </div>
                 </CardContent>
