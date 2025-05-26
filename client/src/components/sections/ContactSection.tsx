@@ -72,7 +72,7 @@ const ContactSection = () => {
               <p className="text-andela-gray mb-8">
                 Connect with us today and discover how Niddik can help you find the perfect tech talent for your needs.
               </p>
-              
+
               <Form {...form}>
                 <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
                   <FormField
@@ -92,7 +92,7 @@ const ContactSection = () => {
                       </FormItem>
                     )}
                   />
-                  
+
                   <FormField
                     control={form.control}
                     name="email"
@@ -111,7 +111,7 @@ const ContactSection = () => {
                       </FormItem>
                     )}
                   />
-                  
+
                   <FormField
                     control={form.control}
                     name="company"
@@ -129,7 +129,7 @@ const ContactSection = () => {
                       </FormItem>
                     )}
                   />
-                  
+
                   <FormField
                     control={form.control}
                     name="interest"
@@ -153,7 +153,7 @@ const ContactSection = () => {
                       </FormItem>
                     )}
                   />
-                  
+
                   <Button 
                     type="submit" 
                     className="w-full bg-andela-green hover:bg-opacity-90 transition-colors text-white py-3 rounded-md font-medium"
@@ -164,11 +164,11 @@ const ContactSection = () => {
                 </form>
               </Form>
             </div>
-            
+
             <div className="bg-andela-dark p-8 lg:p-12 text-white flex flex-col justify-between">
               <div>
                 <h3 className="text-2xl font-bold mb-6">Contact Information</h3>
-                
+
                 <div className="space-y-6">
                   <div className="flex items-start">
                     <div className="bg-andela-green/20 p-3 rounded-full mr-4">
@@ -179,7 +179,7 @@ const ContactSection = () => {
                       <a href="mailto:info@niddik.com" className="text-gray-300 hover:text-white transition-colors">info@niddik.com</a>
                     </div>
                   </div>
-                  
+
                   <div className="flex items-start">
                     <div className="bg-andela-green/20 p-3 rounded-full mr-4">
                       <MapPin className="text-andela-green" />
@@ -189,7 +189,7 @@ const ContactSection = () => {
                       <p className="text-gray-300">Platina Heights, Sector 59, Noida - 201301</p>
                     </div>
                   </div>
-                  
+
                   <div className="flex items-start">
                     <div className="bg-andela-green/20 p-3 rounded-full mr-4">
                       <Globe className="text-andela-green" />
@@ -202,7 +202,7 @@ const ContactSection = () => {
                   </div>
                 </div>
               </div>
-              
+
               <div className="mt-12">
                 <p className="font-medium mb-4">Follow Us</p>
                 <div className="flex space-x-4">

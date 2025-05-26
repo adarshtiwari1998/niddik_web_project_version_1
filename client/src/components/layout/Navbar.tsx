@@ -108,10 +108,10 @@ const Navbar: React.FC<NavbarProps> = ({ hasAnnouncementAbove = true }) => {
     <header className={cn(
       "fixed w-full z-40 transition-all duration-300",
       hasAnnouncementAbove ? "top-[40px]" : "top-0",
-      isTransparent ? "bg-transparent" : "bg-white",
+      isTransparent ? "bg-transparent" : "bg-white/80 backdrop-blur-md",
       isScrolled && !isTransparent ? "shadow-md" : isTransparent ? "" : "shadow-sm",
       "transition-all duration-300"
-    )}>
+    )}></header>
       <Container>
         <div className="flex justify-between items-center py-4">
           {/* Logo with slogan */}
@@ -148,7 +148,7 @@ const Navbar: React.FC<NavbarProps> = ({ hasAnnouncementAbove = true }) => {
                       isTransparent ? "text-white" : "text-andela-dark"
                     )} />
                   </div>
-                  <div className="absolute left-0 mt-2 w-64 rounded-lg shadow-xl bg-white p-6 opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-300 transform origin-top-left z-50">
+                  <div className="absolute left-0 mt-2 w-64 rounded-lg shadow-xl bg-white/90 backdrop-blur-md border border-white/20 p-6 opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-300 transform origin-top-left z-50">
                     {item.dropdown.map((dropdownItem, idx) => (
                       <div key={idx} className="block py-2 hover:text-andela-green transition-colors">
                         <Link href={dropdownItem.href}>
@@ -237,7 +237,7 @@ const Navbar: React.FC<NavbarProps> = ({ hasAnnouncementAbove = true }) => {
 
       {/* Mobile Menu */}
       <div className={cn(
-        "fixed top-0 left-0 h-full w-4/5 bg-white shadow-xl z-[99999] p-6 overflow-y-auto mobile-menu",
+        "fixed top-0 left-0 h-full w-4/5 bg-white/95 backdrop-blur-xl shadow-xl border-r border-white/20 z-[99999] p-6 overflow-y-auto mobile-menu",
         isMobileMenuOpen && "open"
       )}>
         <div className="flex justify-between items-center mb-8">

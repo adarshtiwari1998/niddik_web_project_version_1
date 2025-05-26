@@ -33,11 +33,26 @@ const Home = () => {
         onVisibilityChange={handleAnnouncementVisibilityChange}
       />
       <Navbar hasAnnouncementAbove={isAnnouncementVisible} />
-      
+
       {/* Add minimal padding to account for fixed elements */}
       <div className={`${isAnnouncementVisible ? 'pt-[80px]' : 'pt-[40px]'} transition-all duration-300`}>
         <main>
-          <Hero />
+          {/* Hero Section */}
+          <section className="relative min-h-screen flex items-center justify-center overflow-hidden">
+            {/* Background Video */}
+            <video
+              autoPlay
+              muted
+              loop
+              playsInline
+              className="absolute inset-0 w-full h-full object-cover hero-video"
+            >
+              <source src="/hero-video.mp4" type="video/mp4" />
+            </video>
+
+            {/* Overlay with subtle blur effect */}
+            <div className="absolute inset-0 bg-black/40 backdrop-blur-[1px]"></div>
+          </section>
           <TrustedCompanies />
           <FocusScrollSection />
           <BenefitsStrengthsShowcase />
