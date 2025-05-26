@@ -377,12 +377,9 @@ export const storage = {
   },
 
   async getSubmittedCandidateById(id: number): Promise<SubmittedCandidate | undefined> {
-    console.log(`[STORAGE] Looking for candidate with ID: ${id} (type: ${typeof id})`);
-    const result = await db.query.submittedCandidates.findFirst({
+    return await db.query.submittedCandidates.findFirst({
       where: eq(submittedCandidates.id, id)
     });
-    console.log(`[STORAGE] Query result for ID ${id}:`, result ? `Found: ${result.candidateName}` : 'Not found');
-    return result;
   },
 
   async getAllSubmittedCandidates(
