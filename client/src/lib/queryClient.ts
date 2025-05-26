@@ -44,35 +44,21 @@ async function throwIfResNotOk(res: Response) {
   }
 }
 
-export async function apiRequest(
-  method: string,
-  url: string,
-  data?: unknown | undefined,
-): Promise<Response> {
-  console.log(`Making ${method} request to ${url}`, data ? { data } : '');
-  
-  const res = await fetch(url, {
+export const apiRequest = async (method: string, url: string, data?: any) => {
+  const config: RequestInit = {
     method,
     headers: {
-            "Content-Type": "application/json",
-            ...(getAuthToken() ? { Authorization: `Bearer ${getAuthToken()}` } : {}),
-            'Cache-Control': 'no-cache',
-        },
-    body: data ? JSON.stringify(data) : undefined,
-    credentials: "include",
-  });
+      'Content-Type': 'application/json',
+    },
+    credentials: 'include',
+  };
 
-  if (!res.ok) {
-    console.error(`Request failed: ${method} ${url}`, {
-      status: res.status,
-      statusText: res.statusText,
-      headers: Object.fromEntries(res.headers.entries())
-    });
+  if (data && (method === 'POST' || method === 'PUT' || method === 'PATCH' || method === 'DELETE')) {
+    config.body = JSON.stringify(data);
   }
 
-  await throwIfResNotOk(res);
-  return res;
-}
+  return fetch(url, config);
+};
 
 type UnauthorizedBehavior = "returnNull" | "throw";
 export const getQueryFn: <T>(options: {
