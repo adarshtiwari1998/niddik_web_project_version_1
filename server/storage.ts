@@ -539,7 +539,7 @@ export const storage = {
       console.log(`Starting bulk delete for ${ids.length} candidates`);
       
       // Process deletion in chunks to avoid database limits
-      const chunkSize = 100;
+      const chunkSize = 50; // Smaller chunk size for better reliability
       let totalDeleted = 0;
 
       for (let i = 0; i < ids.length; i += chunkSize) {
@@ -557,7 +557,7 @@ export const storage = {
           console.log(`Chunk ${Math.floor(i / chunkSize) + 1} deleted: ${chunkDeleted} candidates`);
         } catch (chunkError) {
           console.error(`Error deleting chunk ${Math.floor(i / chunkSize) + 1}:`, chunkError);
-          // Continue with next chunk instead of failing completely
+          throw chunkError; // Don't continue if there's an error
         }
       }
 

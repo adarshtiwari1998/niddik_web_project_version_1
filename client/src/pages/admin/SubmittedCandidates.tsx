@@ -431,21 +431,25 @@ function SubmittedCandidates() {
     const bulkDeleteMutation = useMutation({
     mutationFn: async (ids: number[]) => {
       console.log('Sending bulk delete request with IDs:', ids);
-      console.log('IDs validation:', ids.map(id => ({ id, type: typeof id, isValid: typeof id === 'number' && !isNaN(id) && id > 0 })));
 
-      // Final validation before sending
-      const validIds = ids.filter(id => typeof id === 'number' && !isNaN(id) && id > 0);
+      // Ensure all IDs are valid integers
+      const validIds = ids
+        .map(id => Number(id))
+        .filter(id => Number.isInteger(id) && id > 0);
+      
+      console.log('Valid IDs after processing:', validIds);
+
       if (validIds.length === 0) {
         throw new Error('No valid candidate IDs to delete');
       }
 
       const requestBody = { ids: validIds };
-      console.log('Request body:', JSON.stringify(requestBody));
+      console.log('Sending request body:', JSON.stringify(requestBody));
 
       const res = await apiRequest("DELETE", `/api/submitted-candidates/bulk`, requestBody);
+      const responseData = await res.json();
 
       console.log('Response status:', res.status);
-      const responseData = await res.json();
       console.log('Response data:', responseData);
 
       if (!res.ok) {

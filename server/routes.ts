@@ -706,110 +706,80 @@ export async function registerRoutes(app: Express): Promise<Server> {
         ids, 
         type: typeof ids, 
         isArray: Array.isArray(ids),
-        length: Array.isArray(ids) ? ids.length : 0,
-        firstFewIds: Array.isArray(ids) ? ids.slice(0, 5) : 'N/A',
-        allIds: ids,
-        body: req.body,
-        requestHeaders: req.headers
+        length: Array.isArray(ids) ? ids.length : 0
       });
 
+      // Validate request structure
       if (!ids || !Array.isArray(ids) || ids.length === 0) {
-        console.log('Invalid request structure:', { ids, isArray: Array.isArray(ids), length: ids?.length });
         return res.status(400).json({ 
           success: false, 
           message: "Invalid request: 'ids' must be a non-empty array" 
         });
       }
 
-      // Convert and validate IDs - simplified approach
+      // Convert all IDs to numbers and validate
       const validIds: number[] = [];
-      
       for (const id of ids) {
-        // Handle both string and number inputs
-        let numId: number;
-        
-        if (typeof id === 'string') {
-          numId = parseInt(id, 10);
-        } else if (typeof id === 'number') {
-          numId = id;
-        } else {
-          console.warn('Skipping invalid ID type:', id, 'type:', typeof id);
-          continue;
-        }
-        
-        // Validate the numeric ID
-        if (!isNaN(numId) && numId > 0 && Number.isInteger(numId)) {
+        const numId = Number(id);
+        if (Number.isInteger(numId) && numId > 0) {
           validIds.push(numId);
-        } else {
-          console.warn('Skipping invalid ID value:', id, 'converted to:', numId);
         }
       }
 
       console.log('ID validation results:', { 
-        originalIds: ids,
-        total: ids.length, 
-        valid: validIds.length,
-        validIds: validIds.slice(0, 10) // Log first 10 for debugging
+        originalCount: ids.length, 
+        validCount: validIds.length,
+        validIds: validIds
       });
 
       if (validIds.length === 0) {
         return res.status(400).json({ 
           success: false, 
-          message: "No valid candidate IDs provided",
-          receivedIds: ids
+          message: "No valid candidate IDs provided"
         });
       }
 
-      // Check if candidates exist before attempting deletion
-      console.log('Checking existence for IDs:', validIds.slice(0, 10));
-      let existingCandidates;
-      try {
-        existingCandidates = await db
-          .select({ id: submittedCandidates.id })
-          .from(submittedCandidates)
-          .where(inArray(submittedCandidates.id, validIds));
-      } catch (dbError) {
-        console.error('Database error during existence check:', dbError);
-        return res.status(500).json({
-          success: false,
-          message: "Database error during candidate lookup",
-          error: dbError instanceof Error ? dbError.message : 'Unknown database error'
-        });
-      }
+      // Check which candidates exist in database
+      console.log('Checking existence for IDs:', validIds);
+      const existingCandidates = await db
+        .select({ id: submittedCandidates.id })
+        .from(submittedCandidates)
+        .where(inArray(submittedCandidates.id, validIds));
 
       const existingIds = existingCandidates.map(c => c.id);
-      const nonExistentIds = validIds.filter(id => !existingIds.includes(id));
-
+      
       console.log('Existence check results:', {
         requestedCount: validIds.length,
         foundCount: existingIds.length,
-        notFoundCount: nonExistentIds.length,
-        existingIds: existingIds.slice(0, 10), // Log first 10
-        nonExistentIds: nonExistentIds.slice(0, 10) // Log first 10
+        existingIds: existingIds
       });
 
       if (existingIds.length === 0) {
         return res.status(404).json({
           success: false,
-          message: "No candidates found with the provided IDs",
-          details: { requestedIds: validIds, foundCount: 0 }
+          message: "No candidates found with the provided IDs"
         });
       }
 
-      // Delete candidates by IDs using chunked approach
+      // Perform bulk delete directly with Drizzle
       console.log(`Starting deletion of ${existingIds.length} candidates`);
-      const deletedCount = await storage.bulkDeleteSubmittedCandidates(existingIds);
+      
+      const deleteResult = await db
+        .delete(submittedCandidates)
+        .where(inArray(submittedCandidates.id, existingIds))
+        .returning({ id: submittedCandidates.id });
 
-      const responseMessage = nonExistentIds.length > 0 
-        ? `Successfully deleted ${deletedCount} candidates. ${nonExistentIds.length} candidates were not found.`
-        : `Successfully deleted ${deletedCount} candidates`;
+      const deletedCount = deleteResult.length;
 
       console.log('Bulk delete completed:', {
         requested: validIds.length,
         found: existingIds.length,
-        deleted: deletedCount,
-        notFound: nonExistentIds.length
+        deleted: deletedCount
       });
+
+      const responseMessage = deletedCount === validIds.length 
+        ? `Successfully deleted ${deletedCount} candidates`
+        : `Successfully deleted ${deletedCount} out of ${validIds.length} candidates`;
 
       return res.status(200).json({ 
         success: true, 
@@ -818,9 +788,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
         details: {
           deletedCount,
           requestedCount: validIds.length,
-          foundCount: existingIds.length,
-          notFoundCount: nonExistentIds.length,
-          nonExistentIds: nonExistentIds.length > 0 ? nonExistentIds : undefined
+          foundCount: existingIds.length
         }
       });
     } catch (error) {
