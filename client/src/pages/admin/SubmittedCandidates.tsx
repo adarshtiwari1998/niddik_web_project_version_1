@@ -13,7 +13,6 @@ import { Badge } from "@/components/ui/badge";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle, AlertDialogTrigger } from "@/components/ui/alert-dialog";
 import { Loader2, Edit, Trash2, Info, Plus, Download, Upload, Filter, Search, FileSpreadsheet, Check, X } from "lucide-react";
-import { Checkbox } from "@/components/ui/checkbox";
 import { formatDistanceToNow } from "date-fns";
 import { apiRequest } from "@/lib/queryClient";
 import { useForm, SubmitHandler } from "react-hook-form";
@@ -182,16 +181,9 @@ function SubmittedCandidates() {
   const [isImportDialogOpen, setIsImportDialogOpen] = useState(false);
   const [importData, setImportData] = useState<any[]>([]);
   const [isPreviewMode, setIsPreviewMode] = useState(false);
-  const [uploadProgress, setUploadProgress] = useState(0);
-  const [isUploading, setIsUploading] = useState(false);
   const [applicantSearch, setApplicantSearch] = useState("");
   const [isApplicantsDialogOpen, setIsApplicantsDialogOpen] = useState(false);
   const [editDialogLoading, setEditDialogLoading] = useState(false);
-
-  // Bulk selection state
-  const [selectedCandidates, setSelectedCandidates] = useState<Set<number>>(new Set());
-  const [isSelectAllChecked, setIsSelectAllChecked] = useState(false);
-  const [showBulkActions, setShowBulkActions] = useState(false);
 
   // Calculate margin and profit based on bill rate and pay rate
   const calculateMarginAndProfit = (billRate: string, payRate: string) => {
@@ -422,60 +414,10 @@ function SubmittedCandidates() {
     },
   });
 
-  // Mutation to bulk delete candidates
-  const bulkDeleteMutation = useMutation({
-    mutationFn: async (ids: number[]) => {
-      const res = await apiRequest("POST", "/api/submitted-candidates/bulk-delete", { ids });
-      if (!res.ok) {
-        const errorData = await res.json();
-        throw new Error(errorData.message || "Failed to delete candidates");
-      }
-      return await res.json();
-    },
-    onSuccess: (data) => {
-      toast({
-        title: "Success",
-        description: `${data.count} candidates have been deleted successfully`,
-      });
-      setSelectedCandidates(new Set());
-      setIsSelectAllChecked(false);
-      setShowBulkActions(false);
-      queryClient.invalidateQueries({ queryKey: ['/api/submitted-candidates'] });
-      queryClient.invalidateQueries({ queryKey: ['/api/submitted-candidates/analytics/summary'] });
-    },
-    onError: (error: Error) => {
-      toast({
-        title: "Error",
-        description: error.message,
-        variant: "destructive",
-      });
-    },
-  });
-
   // Mutation to import candidates in bulk
   const importMutation = useMutation({
     mutationFn: async (data: any[]) => {
-      setIsUploading(true);
-      setUploadProgress(0);
-
-      // Simulate upload progress
-      const simulateProgress = (progress: number) => {
-        return new Promise(resolve => {
-          setTimeout(() => {
-            setUploadProgress(progress);
-            resolve(void 0);
-          }, 100);
-        });
-      };
-
-      // Simulate upload process with progress updates
-      for (let i = 10; i <= 100; i += 10) {
-        await simulateProgress(i);
-      }
-
       const res = await apiRequest("POST", "/api/submitted-candidates/bulk", { candidates: data });
-      setIsUploading(false);
-
       if (!res.ok) {
         const errorData = await res.json();
         throw new Error(errorData.message || "Failed to import candidates");
@@ -490,8 +432,6 @@ function SubmittedCandidates() {
       setImportData([]);
       setIsImportDialogOpen(false);
       setIsPreviewMode(false);
-      setUploadProgress(0);
-      setIsUploading(false);
       queryClient.invalidateQueries({ queryKey: ['/api/submitted-candidates'] });
       queryClient.invalidateQueries({ queryKey: ['/api/submitted-candidates/analytics/summary'] });
     },
@@ -501,8 +441,6 @@ function SubmittedCandidates() {
         description: error.message,
         variant: "destructive",
       });
-      setIsUploading(false);
-      setUploadProgress(0);
     },
   });
 
@@ -719,39 +657,6 @@ function SubmittedCandidates() {
     setIsAddingInline(true);
   };
 
-  // Bulk selection handlers
-  const handleSelectCandidate = (candidateId: number, checked: boolean) => {
-    const newSelected = new Set(selectedCandidates);
-    if (checked) {
-      newSelected.add(candidateId);
-    } else {
-      newSelected.delete(candidateId);
-    }
-    setSelectedCandidates(newSelected);
-    setShowBulkActions(newSelected.size > 0);
-
-    // Update select all checkbox state
-    const totalCandidates = candidatesData?.data?.length || 0;
-    setIsSelectAllChecked(newSelected.size === totalCandidates && totalCandidates > 0);
-  };
-
-  const handleSelectAll = (checked: boolean) => {
-    if (checked) {
-      const allIds = new Set(candidatesData?.data?.map((c: SubmittedCandidate) => c.id) || []);
-      setSelectedCandidates(allIds);
-      setShowBulkActions(allIds.size > 0);
-    } else {
-      setSelectedCandidates(new Set());
-      setShowBulkActions(false);
-    }
-    setIsSelectAllChecked(checked);
-  };
-
-  const handleBulkDelete = () => {
-    const idsArray = Array.from(selectedCandidates);
-    bulkDeleteMutation.mutate(idsArray);
-  };
-
   // Form submit handlers
   const onSubmitAdd: SubmitHandler<CandidateFormValues> = (data) => {
     createMutation.mutate(data);
@@ -871,21 +776,24 @@ function SubmittedCandidates() {
                             <TableHead>Name</TableHead>
                             <TableHead>Email</TableHead>
                             <TableHead>Skills</TableHead>
+                            <TableHead>Experience</TableHead>
                             <TableHead>Location</TableHead>
-                            <TableHead>Actions</TableHead>
+                            <TableHead className="text-right">Actions</TableHead>
                           </TableRow>
                         </TableHeader>
                         <TableBody>
-                          {filteredApplicants?.map((applicant: any) => (
-                            <TableRow key={applicant.id}>
+                          {(filteredApplicants || []).map((applicant: any, index: number) => (
+                            <TableRow key={`applicant-${index}`}>
                               <TableCell>{applicant.candidateName}</TableCell>
                               <TableCell>{applicant.emailId}</TableCell>
-                              <TableCell>{applicant.skills}</TableCell>
+                              <TableCell className="max-w-[200px] truncate">{applicant.skills}</TableCell>
+                              <TableCell>{applicant.experience}</TableCell>
                               <TableCell>{applicant.location}</TableCell>
-                              <TableCell>
+                              <TableCell className="text-right">
                                 <Button
-                                  size="sm"
                                   onClick={() => handleSelectApplicant(applicant)}
+                                  size="sm"
+                                  variant="outline"
                                 >
                                   Select
                                 </Button>
@@ -896,759 +804,1371 @@ function SubmittedCandidates() {
                       </Table>
                     )}
                   </div>
+
+                  <DialogFooter>
+                    <Button variant="outline" onClick={() => setIsApplicantsDialogOpen(false)}>
+                      Cancel
+                    </Button>
+                  </DialogFooter>
                 </DialogContent>
               </Dialog>
 
               <Dialog open={isImportDialogOpen} onOpenChange={setIsImportDialogOpen}>
                 <DialogTrigger asChild>
                   <Button variant="outline">
-                    <Upload className="h-4 w-4 mr-2" />
-                    Import CSV
+                    <FileSpreadsheet className="h-4 w-4 mr-2" />
+                    Import from Sheet
                   </Button>
                 </DialogTrigger>
-                <DialogContent className="max-w-4xl">
-                  <DialogHeader>
+                <DialogContent className="max-w-3xl max-h-[80vh] overflow-y-auto">
+
+              <DialogHeader>
+                <div className="flex items-center justify-between">
+                  <div>
                     <DialogTitle>Import Candidates from CSV</DialogTitle>
                     <DialogDescription>
-                      Upload a CSV file with candidate data. Required columns: candidate name, email, client, poc, skills, experience, notice period, location, current ctc, expected ctc, contact no, status
+                      Upload a CSV file with candidate data to bulk import.
                     </DialogDescription>
-                  </DialogHeader>
+                  </div>
+                  <a 
+                    href="https://res.cloudinary.com/dhanz6zty/raw/upload/v1748032463/Import_from_Sheet___Niddik_-_Sheet1_1_ujofic.csv"
+                    target="_blank"
+                    className="text-sm text-primary hover:underline"
+                  >
+                    View Sample Format
+                  </a>
+                </div>
+              </DialogHeader>
 
                   {!isPreviewMode ? (
-                    <div className="space-y-4">
-                      <div className="border-2 border-dashed border-gray-300 rounded-lg p-6">
+                    <div className="py-4">
+                      <div 
+                        className="border-2 border-dashed border-gray-300 rounded-lg p-8 text-center transition-colors duration-200 ease-in-out"
+                        onDragOver={(e) => {
+                          e.preventDefault();
+                          e.stopPropagation();
+                          e.currentTarget.classList.add('border-primary');
+                        }}
+                        onDragLeave={(e) => {
+                          e.preventDefault();
+                          e.stopPropagation();
+                          e.currentTarget.classList.remove('border-primary');
+                        }}
+                        onDrop={(e) => {
+                          e.preventDefault();
+                          e.stopPropagation();
+                          e.currentTarget.classList.remove('border-primary');
+
+                          const files = Array.from(e.dataTransfer.files);
+                          const csvFile = files.find(file => file.name.endsWith('.csv'));
+
+                          if (csvFile) {
+                            // Create a synthetic event object
+                            const syntheticEvent = {
+                              target: {
+                                files: [csvFile]
+                              }
+                            } as React.ChangeEvent<HTMLInputElement>;
+
+                            handleFileImport(syntheticEvent);
+                                                    } else {
+                            toast({
+                              title: "Invalid file format",
+                              description: "Please upload only CSV files",
+                              variant: "destructive"
+                            });
+                          }
+                        }}
+                      >
                         <Input
                           type="file"
                           accept=".csv"
                           onChange={handleFileImport}
-                          className="w-full"
+                          className="hidden"
+                          id="file-upload"
                         />
-                        <p className="text-sm text-muted-foreground mt-2">
-                          Select a CSV file to upload
-                        </p>
+                        <label htmlFor="file-upload" className="cursor-pointer">
+                          <Upload className="h-12 w-12 mx-auto text-gray-400" />
+                          <p className="mt-2 text-sm text-gray-600">Click to upload or drag and drop</p>
+                          <p className="text-xs text-gray-500">CSV files only</p>
+                        </label>
                       </div>
                     </div>
                   ) : (
-                    <div className="space-y-4">
-                      <div className="flex items-center justify-between">
-                        <p className="text-sm">
-                          Preview: {importData.length} candidates ready to import
-                        </p>
-                        <div className="flex gap-2">
-                          <Button
-                            variant="outline"
-                            onClick={() => {
-                              setIsPreviewMode(false);
-                              setImportData([]);
-                            }}
-                          >
-                            Cancel
-                          </Button>
-                          <Button
-                            onClick={handleImportSubmit}
-                            disabled={importMutation.isPending || isUploading}
-                          >
-                            {isUploading ? (
-                              <>
-                                <Loader2 className="h-4 w-4 mr-2 animate-spin" />
-                                Importing ({uploadProgress}%)
-                              </>
-                            ) : (
-                              <>
-                                <Check className="h-4 w-4 mr-2" />
-                                Import All
-                              </>
-                            )}
-                          </Button>
-                        </div>
-                      </div>
-
-                      <div className="max-h-[400px] overflow-auto">
+                    <div className="py-4 max-h-[500px] overflow-auto">
+                      <h3 className="text-lg font-medium mb-2">Preview ({importData.length} records)</h3>
+                      <div className="border rounded">
                         <Table>
                           <TableHeader>
                             <TableRow>
-                              <TableHead>Name</TableHead>
-                              <TableHead>Email</TableHead>
+                              <TableHead>Sourced By</TableHead>
                               <TableHead>Client</TableHead>
+                              <TableHead>POC</TableHead>
                               <TableHead>Skills</TableHead>
+                              <TableHead>Candidate Name</TableHead>
+                              <TableHead>Contact No</TableHead>
+                              <TableHead>Email ID</TableHead>
+                              <TableHead>Experience</TableHead>
+                              <TableHead>Notice Period</TableHead>
+                              <TableHead>Location</TableHead>
+                              <TableHead>Current CTC</TableHead>
+                              <TableHead>Expected CTC</TableHead>
+                              <TableHead>Bill Rate</TableHead>
+                              <TableHead>Pay Rate</TableHead>
+                              <TableHead>Margin/Hour</TableHead>
+                              <TableHead>Profit/Month</TableHead>
                               <TableHead>Status</TableHead>
+                              <TableHead>Salary (Lacs)</TableHead>
                             </TableRow>
                           </TableHeader>
                           <TableBody>
-                            {importData.slice(0, 10).map((candidate, index) => (
-                              <TableRow key={index}>
-                                <TableCell>{candidate.candidateName}</TableCell>
-                                <TableCell>{candidate.emailId}</TableCell>
-                                <TableCell>{candidate.client}</TableCell>
-                                <TableCell>{candidate.skills}</TableCell>
-                                <TableCell>{candidate.status}</TableCell>
+                            {importData.slice(0, 5).map((item: Record<string, string>, rowIndex: number) => (
+                              <TableRow key={`preview-${rowIndex}`}>
+                                <TableCell>{item.sourced_by || item.sourcedBy || ""}</TableCell>
+                                <TableCell>{item.client || ""}</TableCell>
+                                <TableCell>{item.poc || ""}</TableCell>
+                                <TableCell>{item.skills || ""}</TableCell>
+                                <TableCell>{item.candidate_name || item.candidateName || ""}</TableCell>
+                                <TableCell>{item.contact_no || item.contactNo || ""}</TableCell>
+                                <TableCell>{item.email_id || item.emailId || ""}</TableCell>
+                                <TableCell>{item.experience || ""}</TableCell>
+                                <TableCell>{item.notice_period || item.noticePeriod || ""}</TableCell>
+                                <TableCell>{item.location || ""}</TableCell>
+                                <TableCell>{item.current_ctc || item.currentCtc || ""}</TableCell>
+                                <TableCell>{item.expected_ctc || item.expectedCtc || ""}</TableCell>
+                                <TableCell>{item.bill_rate || item.billRate || ""}</TableCell>
+                                <TableCell>{item.pay_rate || item.payRate || item['pay/hr'] || ""}</TableCell>
+                                <TableCell>{item.margin_per_hour || ""}</TableCell>
+                                <TableCell>{item.profit_per_month || ""}</TableCell>
+                                <TableCell>{item.status || ""}</TableCell>
+                                <TableCell>{item.salary_in_lacs || item.salaryInLacs || ""}</TableCell>
                               </TableRow>
                             ))}
+                            {importData.length > 5 && (
+                              <TableRow>
+                                <TableCell colSpan={4} className="text-center text-muted-foreground">
+                                  ...and {importData.length - 5} more records
+                                </TableCell>
+                              </TableRow>
+                            )}
                           </TableBody>
                         </Table>
-                        {importData.length > 10 && (
-                          <p className="text-sm text-muted-foreground mt-2">
-                            ... and {importData.length - 10} more candidates
-                          </p>
-                        )}
                       </div>
                     </div>
                   )}
+
+                  <DialogFooter>
+                    <Button variant="outline" onClick={() => {
+                      setIsPreviewMode(false);
+                      if (!isPreviewMode) setIsImportDialogOpen(false);
+                    }}>
+                      {isPreviewMode ? "Back" : "Cancel"}
+                    </Button>
+                    {isPreviewMode && (
+                      <Button 
+                        onClick={handleImportSubmit} 
+                        disabled={importMutation.isPending}
+                      >
+                        {importMutation.isPending ? (
+                          <>
+                            <Loader2 className="w-4 h-4 mr-2 animate-spin" />
+                            Importing...
+                          </>
+                        ) : (
+                          "Import Candidates"
+                                                )}
+                      </Button>
+                    )}
+                  </DialogFooter>
                 </DialogContent>
               </Dialog>
             </div>
 
-            {/* Search and Filter Controls */}
-            <div className="flex flex-col md:flex-row gap-4 items-center">
-              <form onSubmit={handleSearchSubmit} className="flex gap-2 flex-1">
-                <div className="relative flex-1">
+            <div className="flex flex-col sm:flex-row gap-2 w-full md:w-auto">          <form onSubmit={handleSearchSubmit} className="flex gap-2 w-full">
+                <div className="relative flex-grow">
                   <Search className="absolute left-2.5 top-2.5 h-4 w-4 text-muted-foreground" />
                   <Input
-                    placeholder="Search by name, email, client, or skills..."
+                    type="search"
+                    placeholder="Search candidates..."
                     className="pl-8"
                     value={search}
                     onChange={handleSearchChange}
                   />
                 </div>
-                <Button type="submit" variant="outline">
-                  <Filter className="h-4 w-4 mr-2" />
-                  Search
-                </Button>
+                <Button type="submit" variant="secondary">Search</Button>
               </form>
-
-              <div className="flex gap-2">
-                <Select value={statusFilter} onValueChange={setStatusFilter}>
-                  <SelectTrigger className="w-[180px]">
-                    <SelectValue placeholder="Filter by status" />
-                  </SelectTrigger>
-                  <SelectContent>
-                    {statusOptions.map((option) => (
-                      <SelectItem key={option.value} value={option.value}>
-                        {option.label}
-                      </SelectItem>
-                    ))}
-                  </SelectContent>
-                </Select>
-
-                <Select value={clientFilter} onValueChange={setClientFilter}>
-                  <SelectTrigger className="w-[180px]">
-                    <SelectValue placeholder="Filter by client" />
-                  </SelectTrigger>
-                  <SelectContent>
-                    <SelectItem value="all_clients">All Clients</SelectItem>
-                    {clients.map((client) => (
-                      <SelectItem key={client} value={client}>
-                        {client}
-                      </SelectItem>
-                    ))}
-                  </SelectContent>
-                </Select>
-              </div>
             </div>
           </div>
 
-          {/* Bulk Actions */}
-          {showBulkActions && (
-            <div className="bg-muted p-3 rounded-md flex items-center justify-between">
-              <span className="text-sm">
-                {selectedCandidates.size} candidate{selectedCandidates.size !== 1 ? 's' : ''} selected
-              </span>
-              <div className="flex gap-2">
+          <div className="flex flex-wrap gap-2 mb-4">
+            <Select
+              value={statusFilter}
+              onValueChange={(value) => {
+                setStatusFilter(value);
+                setPage(1);
+              }}
+            >
+              <SelectTrigger className="w-[180px]">
+                <SelectValue placeholder="Filter by status" />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="all_statuses">All Statuses</SelectItem>
+                {/* Get unique statuses from candidates data */}
+                {candidatesData?.data ? 
+                  Array.from(new Set(candidatesData.data.map((c: SubmittedCandidate) => c.status)))
+                    .filter(Boolean)
+                    .sort()
+                    .map((status: string) => (
+                      <SelectItem key={status} value={status}>{status}</SelectItem>
+                    ))
+                  : statusOptions.map((option) => (
+                      <SelectItem key={option.value} value={option.value}>
+                        {option.label}
+                      </SelectItem>
+                    ))
+                }
+              </SelectContent>
+            </Select>
+
+            <Select
+              value={clientFilter}
+              onValueChange={(value) => {
+                setClientFilter(value);
+                setPage(1);
+              }}
+            >
+              <SelectTrigger className="w-[180px]">
+                <SelectValue placeholder="Filter by client" />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="all_clients">All Clients</SelectItem>
+                {clients.map((client: string, index: number) => (
+                  <SelectItem key={`client-${index}-${client}`} value={client}>
+                    {client}
+                  </SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
+          </div>
+
+          <Card>
+            <CardContent className="p-0">
+              <div className="relative overflow-x-auto">
+                <Table className="min-w-[1500px]">
+                  <TableHeader>
+                    <TableRow>
+                      <TableHead className="min-w-[150px]">Sourced By</TableHead>
+                      <TableHead className="min-w-[150px]">Client</TableHead>
+                      <TableHead className="min-w-[150px]">POC</TableHead>
+                      <TableHead className="min-w-[180px]">Skills</TableHead>
+                      <TableHead className="sticky left-0 bg-background z-20 min-w-[200px]">Candidate Name</TableHead>
+                      <TableHead className="min-w-[150px]">Contact No</TableHead>
+                      <TableHead className="min-w-[180px]">Email ID</TableHead>
+                      <TableHead className="min-w-[120px]">Experience</TableHead>
+                      <TableHead className="min-w-[120px]">Notice Period</TableHead>
+                      <TableHead className="min-w-[120px]">Location</TableHead>
+                      <TableHead className="min-w-[120px]">Current CTC</TableHead>
+                      <TableHead className="min-w-[120px]">Expected CTC</TableHead>
+                      <TableHead className="min-w-[120px]">Bill Rate ($$)</TableHead>
+                      <TableHead className="min-w-[120px]">Pay/hr</TableHead>
+                      <TableHead className="min-w-[120px]">Margin/hr</TableHead>
+                      <TableHead className="min-w-[120px]">Profit/Month</TableHead>
+                      <TableHead className="min-w-[180px]">Status</TableHead>
+                      <TableHead className="min-w-[120px]">Salary (Lacs)</TableHead>
+                      <TableHead className="sticky right-0 bg-background z-20 min-w-[100px] text-right">Actions</TableHead>
+                    </TableRow>
+                  </TableHeader>
+                <TableBody>
+                  {/* Inline add candidate row */}
+                  {isAddingInline && (
+                    <TableRow className="bg-muted/30">
+                      {/* Sourced By (Date Picker) */}
+                      <TableCell>
+                        <Input 
+                          type="date"
+                          placeholder="Sourced By"
+                          className="w-full"
+                          value={newCandidateData.sourcedBy || ''}
+                          onChange={(e) => handleInlineFieldChange('sourcedBy', e.target.value)}
+                        />
+                      </TableCell>
+
+                      {/* Client */}
+                      <TableCell>
+                        <Input 
+                          placeholder="Client"
+                          className="w-full"
+                          value={newCandidateData.client || ''}
+                          onChange={(e) => handleInlineFieldChange('client', e.target.value)}
+                        />
+                      </TableCell>
+
+                      {/* POC */}
+                      <TableCell>
+                        <Input 
+                          placeholder="POC"
+                          className="w-full"
+                          value={newCandidateData.poc || ''}
+                          onChange={(e) => handleInlineFieldChange('poc', e.target.value)}
+                        />
+                      </TableCell>
+
+                      {/* Skills */}
+                      <TableCell>
+                        <Input
+                          placeholder="Skills (comma-separated)"
+                          className="w-full"
+                          value={newCandidateData.skills || ''}
+                          onChange={(e) => handleInlineFieldChange('skills', e.target.value)}
+                        />
+                      </TableCell>
+
+                      {/* Candidate Name */}
+                      <TableCell className="sticky left-0 bg-muted/30 z-20">
+                        <Input 
+                          placeholder="Candidate name"
+                          className="w-full"
+                          value={newCandidateData.candidateName || ''}
+                          onChange={(e) => handleInlineFieldChange('candidateName', e.target.value)}
+                        />
+                      </TableCell>
+
+                      {/* Contact No */}
+                      <TableCell>
+                        <Input 
+                          placeholder="Contact Number"
+                          className="w-full"
+                          value={newCandidateData.contactNo || ''}
+                          onChange={(e) => handleInlineFieldChange('contactNo', e.target.value)}
+                        />
+                      </TableCell>
+
+                      {/* Email ID */}
+                      <TableCell>
+                        <Input 
+                          placeholder="Email address"
+                          className="w-full"
+                          value={newCandidateData.emailId || ''}
+                          onChange={(e) => handleInlineFieldChange('emailId', e.target.value)}
+                        />
+                      </TableCell>
+
+                      {/* Experience */}
+                      <TableCell>
+                        <Input 
+                          placeholder="Experience (years)"
+                          className="w-full"
+                          value={newCandidateData.experience || ''}
+                          onChange={(e) => handleInlineFieldChange('experience', e.target.value)}
+                        />
+                      </TableCell>
+
+                      {/* Notice Period */}
+                      <TableCell>
+                        <Input 
+                          placeholder="Notice period"
+                          className="w-full"
+                          value={newCandidateData.noticePeriod || ''}
+                          onChange={(e) => handleInlineFieldChange('noticePeriod', e.target.value)}
+                        />
+                      </TableCell>
+
+                      {/* Location */}
+                      <TableCell>
+                        <Input 
+                          placeholder="Location"
+                          className="w-full"
+                          value={newCandidateData.location || ''}
+                          onChange={(e) => handleInlineFieldChange('location', e.target.value)}
+                        />
+                      </TableCell>
+
+                      {/* Current CTC */}
+                      <TableCell>
+                        <Input 
+                          placeholder="Current CTC"
+                          className="w-full"
+                          value={newCandidateData.currentCtc || ''}
+                          onChange={(e) => handleInlineFieldChange('currentCtc', e.target.value)}
+                        />
+                      </TableCell>
+
+                      {/* Expected CTC */}
+                      <TableCell>
+                        <Input 
+                          placeholder="Expected CTC"
+                          className="w-full"
+                          value={newCandidateData.expectedCtc || ''}
+                          onChange={(e) => handleInlineFieldChange('expectedCtc', e.target.value)}
+                        />
+                      </TableCell>
+
+                      {/* Bill Rate */}
+                      <TableCell>
+                        <Input 
+                          placeholder="Bill rate"
+                          className="w-full"
+                          type="number"
+                          value={newCandidateData.billRate || ''}
+                          onChange={(e) => handleInlineFieldChange('billRate', e.target.value)}
+                        />
+                      </TableCell>
+
+                      {/* Pay Rate */}
+                      <TableCell>
+                        <Input 
+                          placeholder="Pay rate"
+                          className="w-full"
+                          type="number"
+                          value={newCandidateData.payRate || ''}
+                          onChange={(e) => handleInlineFieldChange('payRate', e.target.value)}
+                        />
+                      </TableCell>
+
+                      {/* Margin/hr */}
+                      <TableCell>
+                        <div className="text-muted-foreground text-sm">Auto-calculated</div>
+                      </TableCell>
+
+                      {/* Profit/Month */}
+                      <TableCell>
+                        <div className="text-muted-foreground text-sm">Auto-calculated</div>
+                      </TableCell>
+
+                      {/* Status */}
+                      <TableCell>
+                        <textarea 
+                          placeholder="Status"
+                          className="w-full px-3 py-2 border rounded-md border-input bg-background text-sm ring-offset-background"
+                          rows={2}
+                          value={newCandidateData.status || ''}
+                          onChange={(e) => handleInlineFieldChange('status', e.target.value)}
+                        />
+                      </TableCell>
+
+                      {/* Salary (Lacs) */}
+                      <TableCell>
+                        <Input 
+                          placeholder="Salary (Lacs)"
+                          className="w-full"
+                          value={newCandidateData.salaryInLacs || ''}
+                          onChange={(e) => handleInlineFieldChange('salaryInLacs', e.target.value)}
+                        />
+                      </TableCell>
+
+                      <TableCell className="sticky right-0 bg-muted/30 z-20 text-right">
+                        <div className="flex justify-end gap-2">
+                          <Button
+                            onClick={handleAddInline}
+                            variant="ghost"
+                            size="icon"
+                            disabled={createMutation.isPending}
+                          >
+                            {createMutation.isPending ? (
+                              <Loader2 className="h-4 w-4 animate-spin" />
+                            ) : (
+                              <Check className="h-4 w-4 text-green-500" />
+                            )}
+                          </Button>
+                          <Button
+                            onClick={() => setIsAddingInline(false)}
+                            variant="ghost"
+                            size="icon"
+                          >
+                            <X className="h-4 w-4 text-red-500" />
+                          </Button>
+                        </div>
+                      </TableCell>
+                    </TableRow>
+                  )}
+
+                  {isLoadingCandidates ? (
+                    <TableRow>
+                      <TableCell colSpan={9} className="h-24 text-center">
+                        <Loader2 className="h-6 w-6 animate-spin mx-auto" />
+                        <span className="text-sm text-muted-foreground mt-2 block">Loading candidates...</span>
+                      </TableCell>
+                    </TableRow>
+                  ) : candidatesData?.data?.length === 0 ? (
+                    <TableRow>
+                      <TableCell colSpan={9} className="h-24 text-center">
+                        <div className="flex flex-col items-center justify-center">
+                          <p className="text-muted-foreground">No candidates found</p>
+                          <Button 
+                            variant="link" 
+                            onClick={() => {
+                              setStatusFilter("all_statuses");
+                              setClientFilter("all_clients");
+                              setSearch("");
+                            }}
+                          >
+                            Clear filters
+                          </Button>
+                        </div>
+                      </TableCell>
+                    </TableRow>
+                  ) : (
+                    candidatesData?.data?.map((candidate: SubmittedCandidate) => (
+                      <TableRow key={candidate.id}>
+                        <TableCell>{candidate.sourcedBy || '-'}</TableCell>
+                        <TableCell>{candidate.client || '-'}</TableCell>
+                        <TableCell>{candidate.poc || '-'}</TableCell>
+                        <TableCell>
+                          <div className="max-w-[150px] truncate" title={candidate.skills}>
+                            {candidate.skills}
+                          </div>
+                        </TableCell>
+                        <TableCell className="sticky left-0 bg-background z-20">
+                          <div className="font-medium">{candidate.candidateName}</div>
+                        </TableCell>
+                        <TableCell>{candidate.contactNo || '-'}</TableCell>
+                        <TableCell>{candidate.emailId || '-'}</TableCell>
+                        <TableCell>{candidate.experience || '-'}</TableCell>
+                        <TableCell>{candidate.noticePeriod || '-'}</TableCell>
+                        <TableCell>{candidate.location || '-'}</TableCell>
+                        <TableCell>{candidate.currentCtc || '-'}</TableCell>
+                        <TableCell>{candidate.expectedCtc || '-'}</TableCell>
+                        <TableCell>${candidate.billRate || '-'}</TableCell>
+                        <TableCell>${candidate.payRate || '-'}</TableCell>
+                        <TableCell>${candidate.marginPerHour || '-'}</TableCell>
+                        <TableCell>${candidate.profitPerMonth || '-'}</TableCell>
+                        <TableCell>
+                          <StatusBadge status={candidate.status} />
+                        </TableCell>
+                        <TableCell>{candidate.salaryInLacs || '-'}</TableCell>
+                        <TableCell className="sticky right-0 bg-background z-20 text-right">
+                          <div className="flex justify-end gap-2">
+                            <Button 
+                              variant="ghost" 
+                              size="icon"
+                              onClick={() => initializeEditForm(candidate)}
+                            >
+                              <Edit className="h-4 w-4" />
+                            </Button>
+
+                            <AlertDialog>
+                              <AlertDialogTrigger asChild>
+                                <Button variant="ghost" size="icon">
+                                  <Trash2 className="h-4 w-4 text-red-500" />
+                                </Button>
+                              </AlertDialogTrigger>
+                              <AlertDialogContent>
+                                <AlertDialogHeader>
+                                  <AlertDialogTitle>Are you sure?</AlertDialogTitle>
+                                  <AlertDialogDescription>
+                                    This will permanently delete the candidate record for {candidate.candidateName}.
+                                    This action cannot be undone.
+                                  </AlertDialogDescription>
+                                </AlertDialogHeader>
+                                <AlertDialogFooter>
+                                  <AlertDialogCancel>Cancel</AlertDialogCancel>
+                                  <AlertDialogAction 
+                                    onClick={() => deleteMutation.mutate(candidate.id)}
+                                    className="bg-red-500 hover:bg-red-600"
+                                  >
+                                    {deleteMutation.isPending ? (
+                                      <>
+                                        <Loader2 className="h-4 w-4 mr-2 animate-spin" />
+                                        Deleting
+                                      </>
+                                    ) : (
+                                      "Delete"
+                                    )}
+                                  </AlertDialogAction>
+                                </AlertDialogFooter>
+                              </AlertDialogContent>
+                            </AlertDialog>
+                          </div>
+                        </TableCell>
+                      </TableRow>
+                    ))
+                  )}
+                </TableBody>
+              </Table>
+              </div>
+            </CardContent>
+            <CardFooter className="flex items-center justify-between px-6 py-4 border-t">
+              <div className="text-sm text-muted-foreground">
+                Showing {candidatesData?.data?.length || 0} of {candidatesData?.meta?.total || 0} candidates
+              </div>
+              <div className="flex items-center gap-2">
                 <Button
                   variant="outline"
                   size="sm"
-                  onClick={() => {
-                    setSelectedCandidates(new Set());
-                    setIsSelectAllChecked(false);
-                    setShowBulkActions(false);
-                  }}
+                  onClick={goToPrevPage}
+                  disabled={page <= 1}
                 >
-                  Clear Selection
+                  Previous
                 </Button>
-                <AlertDialog>
-                  <AlertDialogTrigger asChild>
-                    <Button variant="destructive" size="sm">
-                      <Trash2 className="h-4 w-4 mr-2" />
-                      Delete Selected
-                    </Button>
-                  </AlertDialogTrigger>
-                  <AlertDialogContent>
-                    <AlertDialogHeader>
-                      <AlertDialogTitle>Confirm Bulk Deletion</AlertDialogTitle>
-                      <AlertDialogDescription>
-                        Are you sure you want to delete {selectedCandidates.size} selected candidate{selectedCandidates.size !== 1 ? 's' : ''}? This action cannot be undone.
-                      </AlertDialogDescription>
-                    </AlertDialogHeader>
-                    <AlertDialogFooter>
-                      <AlertDialogCancel>Cancel</AlertDialogCancel>
-                      <AlertDialogAction
-                        onClick={handleBulkDelete}
-                        className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
-                      >
-                        Delete {selectedCandidates.size} Candidate{selectedCandidates.size !== 1 ? 's' : ''}
-                      </AlertDialogAction>
-                    </AlertDialogFooter>
-                  </AlertDialogContent>
-                </AlertDialog>
+                <div className="flex items-center gap-1">
+                  <span className="text-sm font-medium">{page}</span>
+                  <span className="text-sm text-muted-foreground">of {totalPages}</span>
+                </div>
+                <Button
+                  variant="outline"
+                  size="sm"
+                  onClick={goToNextPage}
+                  disabled={page >= totalPages}
+                >
+                  Next
+                </Button>
               </div>
+            </CardFooter>
+          </Card>
+        </TabsContent>
+
+        <TabsContent value="analytics" className="space-y-6">
+          {isLoadingAnalytics ? (
+            <div className="flex flex-col items-center justify-center py-12">
+              <Loader2 className="h-8 w-8 animate-spin text-primary" />
+              <p className="mt-2 text-muted-foreground">Loading analytics data...</p>
+            </div>
+          ) : analyticsData?.data ? (
+            <>
+              <AnalyticsCard data={analyticsData.data} />
+
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <Card>
+                  <CardHeader>
+                    <CardTitle>Status Distribution</CardTitle>
+                    <CardDescription>Breakdown of candidates by current status</CardDescription>
+                  </CardHeader>
+                  <CardContent>
+                    <div className="space-y-4">
+                      {Object.entries(analyticsData.data.statusCounts).map(([status, count]) => (
+                        <div key={`status-${status}`} className="flex items-center justify-between">
+                          <div className="flex items-center gap-2">
+                            <StatusBadge status={status} />
+                          </div>
+                          <div className="text-sm font-medium">{count as number}</div>
+                        </div>
+                      ))}
+                    </div>
+                  </CardContent>
+                </Card>
+
+                <Card>
+                  <CardHeader>
+                    <CardTitle>Top Clients</CardTitle>
+                    <CardDescription>Clients with most candidate submissions</CardDescription>
+                  </CardHeader>
+                  <CardContent>
+                    <div className="space-y-4">
+                      {Object.entries(analyticsData.data.clientCounts || {})
+                        .sort(([, a], [, b]) => (b as number) - (a as number))
+                        .slice(0, 5)
+                        .map(([client, count]) => (
+                          <div key={client} className="flex items-center justify-between">
+                            <div className="font-medium">{client}</div>
+                            <div className="text-sm text-muted-foreground">{count as number} candidates</div>
+                          </div>
+                        ))}
+                      {(!analyticsData.data.clientCounts || Object.keys(analyticsData.data.clientCounts).length === 0) && (
+                        <div className="text-center py-4 text-sm text-muted-foreground">
+                          No client data available
+                        </div>
+                      )}
+                    </div>
+                  </CardContent>
+                </Card>
+              </div>
+            </>
+          ) : (
+            <div className="flex flex-col items-center justify-center py-12">
+              <Info className="h-12 w-12 text-muted-foreground" />
+              <p className="mt-2 text-muted-foreground">No analytics data available</p>
             </div>
           )}
+        </TabsContent>
+      </Tabs>
 
-          {/* Candidates Table */}
-          <Card>
-            <CardHeader>
-              <CardTitle>Submitted Candidates</CardTitle>
-              <CardDescription>
-                {candidatesData?.meta ? 
-                  `Showing ${((candidatesData.meta.page - 1) * candidatesData.meta.limit) + 1}-${Math.min(candidatesData.meta.page * candidatesData.meta.limit, candidatesData.meta.total)} of ${candidatesData.meta.total} candidates` :
-                  'Loading candidates...'
-                }
-              </CardDescription>
-            </CardHeader>
-            <CardContent>
-              {isLoadingCandidates ? (
-                <div className="flex flex-col items-center justify-center py-8">
-                  <Loader2 className="h-8 w-8 animate-spin text-primary mb-2" />
-                  <p className="text-sm text-muted-foreground">Loading candidates...</p>
-                </div>
-              ) : candidatesData?.data?.length === 0 ? (
-                <div className="text-center py-8">
-                  <p className="text-muted-foreground">No candidates found</p>
-                </div>
-              ) : (
-                <div className="overflow-x-auto">
-                  <Table>
-                    <TableHeader>
-                      <TableRow>
-                        <TableHead className="w-[50px]">
-                          <Checkbox
-                            checked={isSelectAllChecked}
-                            onCheckedChange={handleSelectAll}
-                          />
-                        </TableHead>
-                        <TableHead>Submission Date</TableHead>
-                        <TableHead>Candidate</TableHead>
-                        <TableHead>Client/POC</TableHead>
-                        <TableHead>Skills</TableHead>
-                        <TableHead>Experience</TableHead>
-                        <TableHead>Location</TableHead>
-                        <TableHead>CTC</TableHead>
-                        <TableHead>Status</TableHead>
-                        <TableHead className="text-right">Actions</TableHead>
-                      </TableRow>
-                    </TableHeader>
-                    <TableBody>
-                      {/* Inline Add Row */}
-                      {isAddingInline && (
-                        <TableRow className="bg-muted/50">
-                          <TableCell>
-                            <div className="flex gap-1">
-                              <Button
-                                size="sm"
-                                variant="ghost"
-                                onClick={handleAddInline}
-                                disabled={createMutation.isPending}
-                              >
-                                {createMutation.isPending ? (
-                                  <Loader2 className="h-4 w-4 animate-spin" />
-                                ) : (
-                                  <Check className="h-4 w-4" />
-                                )}
-                              </Button>
-                              <Button
-                                size="sm"
-                                variant="ghost"
-                                onClick={() => {
-                                  setIsAddingInline(false);
-                                  setNewCandidateData({
-                                    submissionDate: new Date().toISOString().split('T')[0],
-                                    status: 'new'
-                                  });
-                                }}
-                              >
-                                <X className="h-4 w-4" />
-                              </Button>
-                            </div>
-                          </TableCell>
-                          <TableCell>
-                            <Input
-                              type="date"
-                              value={newCandidateData.submissionDate || ''}
-                              onChange={(e) => handleInlineFieldChange('submissionDate', e.target.value)}
-                              className="h-8"
-                            />
-                          </TableCell>
-                          <TableCell>
-                            <div className="space-y-2">
-                              <Input
-                                placeholder="Candidate Name*"
-                                value={newCandidateData.candidateName || ''}
-                                onChange={(e) => handleInlineFieldChange('candidateName', e.target.value)}
-                                className="h-8"
-                              />
-                              <Input
-                                placeholder="Email*"
-                                type="email"
-                                value={newCandidateData.emailId || ''}
-                                onChange={(e) => handleInlineFieldChange('emailId', e.target.value)}
-                                className="h-8"
-                              />
-                              <Input
-                                placeholder="Contact No*"
-                                value={newCandidateData.contactNo || ''}
-                                onChange={(e) => handleInlineFieldChange('contactNo', e.target.value)}
-                                className="h-8"
-                              />
-                              <Input
-                                placeholder="Sourced By*"
-                                value={newCandidateData.sourcedBy || ''}
-                                onChange={(e) => handleInlineFieldChange('sourcedBy', e.target.value)}
-                                className="h-8"
-                              />
-                            </div>
-                          </TableCell>
-                          <TableCell>
-                            <div className="space-y-2">
-                              <Input
-                                placeholder="Client*"
-                                value={newCandidateData.client || ''}
-                                onChange={(e) => handleInlineFieldChange('client', e.target.value)}
-                                className="h-8"
-                              />
-                              <Input
-                                placeholder="POC*"
-                                value={newCandidateData.poc || ''}
-                                onChange={(e) => handleInlineFieldChange('poc', e.target.value)}
-                                className="h-8"
-                              />
-                            </div>
-                          </TableCell>
-                          <TableCell>
-                            <Input
-                              placeholder="Skills*"
-                              value={newCandidateData.skills || ''}
-                              onChange={(e) => handleInlineFieldChange('skills', e.target.value)}
-                              className="h-8"
-                            />
-                          </TableCell>
-                          <TableCell>
-                            <div className="space-y-2">
-                              <Input
-                                placeholder="Experience*"
-                                value={newCandidateData.experience || ''}
-                                onChange={(e) => handleInlineFieldChange('experience', e.target.value)}
-                                className="h-8"
-                              />
-                              <Input
-                                placeholder="Notice Period*"
-                                value={newCandidateData.noticePeriod || ''}
-                                onChange={(e) => handleInlineFieldChange('noticePeriod', e.target.value)}
-                                className="h-8"
-                              />
-                            </div>
-                          </TableCell>
-                          <TableCell>
-                            <Input
-                              placeholder="Location*"
-                              value={newCandidateData.location || ''}
-                              onChange={(e) => handleInlineFieldChange('location', e.target.value)}
-                              className="h-8"
-                            />
-                          </TableCell>
-                          <TableCell>
-                            <div className="space-y-2">
-                              <Input
-                                placeholder="Current CTC*"
-                                value={newCandidateData.currentCtc || ''}
-                                onChange={(e) => handleInlineFieldChange('currentCtc', e.target.value)}
-                                className="h-8"
-                              />
-                              <Input
-                                placeholder="Expected CTC*"
-                                value={newCandidateData.expectedCtc || ''}
-                                onChange={(e) => handleInlineFieldChange('expectedCtc', e.target.value)}
-                                className="h-8"
-                              />
-                              <Input
-                                placeholder="Bill Rate"
-                                value={newCandidateData.billRate || ''}
-                                onChange={(e) => handleInlineFieldChange('billRate', e.target.value)}
-                                className="h-8"
-                              />
-                              <Input
-                                placeholder="Pay Rate"
-                                value={newCandidateData.payRate || ''}
-                                onChange={(e) => handleInlineFieldChange('payRate', e.target.value)}
-                                className="h-8"
-                              />
-                            </div>
-                          </TableCell>
-                          <TableCell>
-                            <Select 
-                              value={newCandidateData.status || 'new'} 
-                              onValueChange={(value) => handleInlineFieldChange('status', value)}
-                            >
-                              <SelectTrigger className="h-8">
-                                <SelectValue />
-                              </SelectTrigger>
-                              <SelectContent>
-                                {statusOptions.slice(1).map((option) => (
-                                  <SelectItem key={option.value} value={option.value}>
-                                    {option.label}
-                                  </SelectItem>
-                                ))}
-                              </SelectContent>
-                            </Select>
-                          </TableCell>
-                          <TableCell></TableCell>
-                        </TableRow>
-                      )}
+      {/* Add Candidate Dialog */}
+      <Dialog open={isAddDialogOpen} onOpenChange={setIsAddDialogOpen}>
+        <DialogContent className="max-w-3xl max-h-[80vh] overflow-y-auto">
+          <DialogHeader>
+            <DialogTitle>Add New Candidate</DialogTitle>
+            <DialogDescription>
+              Enter the details of the candidate you want to add to the system.
+            </DialogDescription>
+          </DialogHeader>
 
-                      {/* Existing Candidates */}
-                      {candidatesData?.data?.map((candidate: SubmittedCandidate) => (
-                        <TableRow key={candidate.id}>
-                          <TableCell>
-                            <Checkbox
-                              checked={selectedCandidates.has(candidate.id)}
-                              onCheckedChange={(checked) => handleSelectCandidate(candidate.id, !!checked)}
-                            />
-                          </TableCell>
-                          <TableCell>
-                            {candidate.submissionDate ? 
-                              new Date(candidate.submissionDate).toLocaleDateString() : 
-                              'N/A'
-                            }
-                          </TableCell>
-                          <TableCell>
-                            <div className="space-y-1">
-                              <div className="font-medium">{candidate.candidateName}</div>
-                              <div className="text-sm text-muted-foreground">{candidate.emailId}</div>
-                              <div className="text-sm text-muted-foreground">{candidate.contactNo}</div>
-                            </div>
-                          </TableCell>
-                          <TableCell>
-                            <div className="space-y-1">
-                              <div className="font-medium">{candidate.client}</div>
-                              <div className="text-sm text-muted-foreground">POC: {candidate.poc}</div>
-                            </div>
-                          </TableCell>
-                          <TableCell>
-                            <div className="max-w-[200px] text-sm">
-                              {candidate.skills.length > 50 ? 
-                                `${candidate.skills.substring(0, 50)}...` : 
-                                candidate.skills
-                              }
-                            </div>
-                          </TableCell>
-                          <TableCell>
-                            <div className="space-y-1">
-                              <div className="text-sm">{candidate.experience}</div>
-                              <div className="text-xs text-muted-foreground">
-                                Notice: {candidate.noticePeriod}
-                              </div>
-                            </div>
-                          </TableCell>
-                          <TableCell>{candidate.location}</TableCell>
-                          <TableCell>
-                            <div className="space-y-1 text-sm">
-                              <div>Current: {candidate.currentCtc}</div>
-                              <div>Expected: {candidate.expectedCtc}</div>
-                              {candidate.billRate && candidate.payRate && (
-                                <>
-                                  <div className="text-xs text-muted-foreground">
-                                    Bill: ${candidate.billRate} | Pay: ${candidate.payRate}
-                                  </div>
-                                  <div className="text-xs text-green-600">
-                                    Margin: ${candidate.marginPerHour}/hr
-                                  </div>
-                                </>
-                              )}
-                            </div>
-                          </TableCell>
-                          <TableCell>
-                            <StatusBadge status={candidate.status} />
-                          </TableCell>
-                          <TableCell className="text-right">
-                            <div className="flex justify-end gap-2">
-                              <Button
-                                variant="ghost"
-                                size="sm"
-                                onClick={() => initializeEditForm(candidate)}
-                                disabled={editDialogLoading}
-                              >
-                                {editDialogLoading ? (
-                                  <Loader2 className="h-4 w-4 animate-spin" />
-                                ) : (
-                                  <Edit className="h-4 w-4" />
-                                )}
-                              </Button>
-
-                              <AlertDialog>
-                                <AlertDialogTrigger asChild>
-                                  <Button variant="ghost" size="sm">
-                                    <Trash2 className="h-4 w-4" />
-                                  </Button>
-                                </AlertDialogTrigger>
-                                <AlertDialogContent>
-                                  <AlertDialogHeader>
-                                    <AlertDialogTitle>Confirm Deletion</AlertDialogTitle>
-                                    <AlertDialogDescription>
-                                      Are you sure you want to delete candidate "{candidate.candidateName}"? This action cannot be undone.
-                                    </AlertDialogDescription>
-                                  </AlertDialogHeader>
-                                  <AlertDialogFooter>
-                                    <AlertDialogCancel>Cancel</AlertDialogCancel>
-                                    <AlertDialogAction
-                                      onClick={() => deleteMutation.mutate(candidate.id)}
-                                      className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
-                                    >
-                                      Delete
-                                    </AlertDialogAction>
-                                  </AlertDialogFooter>
-                                </AlertDialogContent>
-                              </AlertDialog>
-                            </div>
-                          </TableCell>
-                        </TableRow>
-                      ))}
-                    </TableBody>
-                  </Table>
-                </div>
-              )}
-
-              {/* Pagination */}
-              {candidatesData?.meta && candidatesData.meta.pages > 1 && (
-                <div className="flex items-center justify-between mt-4">
-                  <div className="text-sm text-muted-foreground">
-                    Page {candidatesData.meta.page} of {candidatesData.meta.pages}
-                  </div>
-                  <div className="flex gap-2">
-                    <Button
-                      variant="outline"
-                      size="sm"
-                      onClick={goToPrevPage}
-                      disabled={page <= 1}
-                    >
-                      Previous
-                    </Button>
-                    <Button
-                      variant="outline"
-                      size="sm"
-                      onClick={goToNextPage}
-                      disabled={page >= totalPages}
-                    >
-                      Next
-                    </Button>
-                  </div>
-                </div>
-              )}
-            </CardContent>
-          </Card>
-
-          {/* Edit Dialog */}
-          <Dialog open={isEditDialogOpen} onOpenChange={setIsEditDialogOpen}>
-            <DialogContent className="max-w-4xl max-h-[90vh] overflow-y-auto">
-              <DialogHeader>
-                <DialogTitle>Edit Candidate</DialogTitle>
-                <DialogDescription>
-                  Update candidate information and submission details
-                </DialogDescription>
-              </DialogHeader>
-
-              <Form {...form}>
-                <form onSubmit={form.handleSubmit(onSubmitEdit)} className="space-y-6">
-                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                    <FormField
-                      control={form.control}
-                      name="candidateName"
-                      render={({ field }) => (
-                        <FormItem>
-                          <FormLabel>Candidate Name</FormLabel>
-                          <FormControl>
-                            <Input {...field} />
-                          </FormControl>
-                          <FormMessage />
-                        </FormItem>
-                      )}
-                    />
-
-                    <FormField
-                      control={form.control}
-                      name="emailId"
-                      render={({ field }) => (
-                        <FormItem>
-                          <FormLabel>Email</FormLabel>
-                          <FormControl>
-                            <Input type="email" {...field} />
-                          </FormControl>
-                          <FormMessage />
-                        </FormItem>
-                      )}
-                    />
-
-                    <FormField
-                      control={form.control}
-                      name="contactNo"
-                      render={({ field }) => (
-                        <FormItem>
-                          <FormLabel>Contact Number</FormLabel>
-                          <FormControl>
-                            <Input {...field} />
-                          </FormControl>
-                          <FormMessage />
-                        </FormItem>
-                      )}
-                    />
-
-                    <FormField
-                      control={form.control}
-                      name="location"
-                      render={({ field }) => (
-                        <FormItem>
-                          <FormLabel>Location</FormLabel>
-                          <FormControl>
-                            <Input {...field} />
-                          </FormControl>
-                          <FormMessage />
-                        </FormItem>
-                      )}
-                    />
-
-                    <FormField
-                      control={form.control}
-                      name="client"
-                      render={({ field }) => (
-                        <FormItem>
-                          <FormLabel>Client</FormLabel>
-                          <FormControl>
-                            <Input {...field} />
-                          </FormControl>
-                          <FormMessage />
-                        </FormItem>
-                      )}
-                    />
-
-                    <FormField
-                      control={form.control}
-                      name="poc"
-                      render={({ field }) => (
-                        <FormItem>
-                          <FormLabel>POC</FormLabel>
-                          <FormControl>
-                            <Input {...field} />
-                          </FormControl>
-                          <FormMessage />
-                        </FormItem>
-                      )}
-                    />
-
-                    <FormField
-                      control={form.control}
-                      name="experience"
-                      render={({ field }) => (
-                        <FormItem>
-                          <FormLabel>Experience</FormLabel>
-                          <FormControl>
-                            <Input {...field} />
-                          </FormControl>
-                          <FormMessage />
-                        </FormItem>
-                      )}
-                    />
-
-                    <FormField
-                      control={form.control}
-                      name="noticePeriod"
-                      render={({ field }) => (
-                        <FormItem>
-                          <FormLabel>Notice Period</FormLabel>
-                          <FormControl>
-                            <Input {...field} />
-                          </FormControl>
-                          <FormMessage />
-                        </FormItem>
-                      )}
-                    />
-
-                    <FormField
-                      control={form.control}
-                      name="currentCtc"
-                      render={({ field }) => (
-                        <FormItem>
-                          <FormLabel>Current CTC</FormLabel>
-                          <FormControl>
-                            <Input {...field} />
-                          </FormControl>
-                          <FormMessage />
-                        </FormItem>
-                      )}
-                    />
-
-                    <FormField
-                      control={form.control}
-                      name="expectedCtc"
-                      render={({ field }) => (
-                        <FormItem>
-                          <FormLabel>Expected CTC</FormLabel>
-                          <FormControl>
-                            <Input {...field} />
-                          </FormControl>
-                          <FormMessage />
-                        </FormItem>
-                      )}
-                    />
-
-                    <FormField
-                      control={form.control}
-                      name="billRate"
-                      render={({ field }) => (
-                        <FormItem>
-                          <FormLabel>Bill Rate (per hour)</FormLabel>
-                          <FormControl>
-                            <Input type="number" step="0.01" {...field} />
-                          </FormControl>
-                          <FormMessage />
-                        </FormItem>
-                      )}
-                    />
-
-                    <FormField
-                      control={form.control}
-                      name="payRate"
-                      render={({ field }) => (
-                        <FormItem>
-                          <FormLabel>Pay Rate (per hour)</FormLabel>
-                          <FormControl>
-                            <Input type="number" step="0.01" {...field} />
-                          </FormControl>
-                          <FormMessage />
-                        </FormItem>
-                      )}
-                    />
-                  </div>
-
-                  {/* Auto-calculated fields */}
-                  {(marginPerHour !== "0" || profitPerMonth !== "0") && (
-                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4 p-4 bg-muted rounded-lg">
-                      <div>
-                        <Label>Margin per Hour (Auto-calculated)</Label>
-                        <Input value={`$${marginPerHour}`} disabled />
-                      </div>
-                      <div>
-                        <Label>Profit per Month (Auto-calculated)</Label>
-                        <Input value={`$${profitPerMonth}`} disabled />
-                      </div>
-                    </div>
+          <Form {...form}>
+            <form onSubmit={form.handleSubmit(onSubmitAdd)} className="space-y-6">
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <FormField
+                  control={form.control}
+                  name="candidateName"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>Candidate Name *</FormLabel>
+                      <FormControl>
+                        <Input placeholder="Full name" {...field} />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
                   )}
+                />
 
+                <FormField
+                  control={form.control}
+                  name="emailId"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>Email ID *</FormLabel>
+                      <FormControl>
+                        <Input type="email" placeholder="Email address" {...field} />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+
+                <FormField
+                  control={form.control}
+                  name="contactNo"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>Contact Number *</FormLabel>
+                      <FormControl>
+                        <Input placeholder="Phone number" {...field} />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+
+                <FormField
+                  control={form.control}
+                  name="submissionDate"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>Submission Date</FormLabel>
+                      <FormControl>
+                        <Input type="date" {...field} />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+
+                <FormField
+                  control={form.control}
+                  name="client"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>Client *</FormLabel>
+                      <FormControl>
+                        <Input placeholder="Client company name" {...field} />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+
+                <FormField
+                  control={form.control}
+                  name="poc"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>POC *</FormLabel>
+                      <FormControl>
+                        <Input placeholder="Point of contact" {...field} />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+
+                <FormField
+                  control={form.control}
+                  name="sourcedBy"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>Sourced By *</FormLabel>
+                      <FormControl>
+                        <Input placeholder="Recruiter name" {...field} />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+
+                <FormField
+                  control={form.control}
+                  name="location"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>Location *</FormLabel>
+                      <FormControl>
+                        <Input placeholder="Candidate location" {...field} />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+
+                <FormField
+                  control={form.control}
+                  name="experience"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>Experience (years) *</FormLabel>
+                      <FormControl>
+                        <Input placeholder="Years of experience" {...field} />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+
+                <FormField
+                  control={form.control}
+                  name="noticePeriod"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>Notice Period *</FormLabel>
+                      <FormControl>
+                        <Input placeholder="e.g., Immediate, 30 days" {...field} />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+
+                <FormField
+                  control={form.control}
+                  name="currentCtc"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>Current CTC *</FormLabel>
+                      <FormControl>
+                        <Input placeholder="Current salary" {...field} />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+
+                <FormField
+                  control={form.control}
+                  name="expectedCtc"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>Expected CTC *</FormLabel>
+                      <FormControl>
+                        <Input placeholder="Expected salary" {...field} />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+
+                <FormField
+                  control={form.control}
+                  name="salaryInLacs"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>Salary (Lacs)</FormLabel>
+                      <FormControl>
+                        <Input placeholder="Annual salary in lacs" {...field} />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+
+                <FormField
+                  control={form.control}
+                  name="status"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>Status *</FormLabel>
+                      <Select 
+                        onValueChange={field.onChange} 
+                        defaultValue={field.value}
+                      >
+                        <FormControl>
+                          <SelectTrigger>
+                            <SelectValue placeholder="Select status" />
+                          </SelectTrigger>
+                        </FormControl>
+                        <SelectContent>
+                          <SelectItem value="new">New</SelectItem>
+                          <SelectItem value="submitted to client">Submitted to Client</SelectItem>
+                          <SelectItem value="scheduled for interview">Scheduled for Interview</SelectItem>
+                          <SelectItem value="rejected">Rejected</SelectItem>
+                          <SelectItem value="selected">Selected</SelectItem>
+                        </SelectContent>
+                      </Select>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+
+                <div className="space-y-4 md:col-span-2">
                   <FormField
                     control={form.control}
                     name="skills"
                     render={({ field }) => (
                       <FormItem>
-                        <FormLabel>Skills</FormLabel>
+                        <FormLabel>Skills *</FormLabel>
                         <FormControl>
-                          <Textarea {...field} />
+                          <Input placeholder="Comma-separated skills" {...field} />
+                        </FormControl>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
+                </div>
+
+                <div className="md:col-span-2">
+                  <Card className="bg-muted/40">
+                    <CardHeader className="pb-3">
+                      <CardTitle className="text-base">Rate Information</CardTitle>
+                    </CardHeader>
+                    <CardContent className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                      <FormField
+                        control={form.control}
+                        name="billRate"
+                        render={({ field }) => (
+                          <FormItem>
+                            <FormLabel>Bill Rate ($)</FormLabel>
+                            <FormControl>
+                              <Input 
+                                type="number" 
+                                step="0.01" 
+                                placeholder="Client bill rate"
+                                {...field}
+                              />
+                            </FormControl>
+                            <FormMessage />
+                          </FormItem>
+                        )}
+                      />
+
+                      <FormField
+                        control={form.control}
+                        name="payRate"
+                        render={({ field }) => (
+                          <FormItem>
+                            <FormLabel>Pay Rate ($)</FormLabel>
+                            <FormControl>
+                              <Input 
+                                type="number" 
+                                step="0.01" 
+                                placeholder="Candidate pay rate"
+                                {...field}
+                              />
+                            </FormControl>
+                            <FormMessage />
+                          </FormItem>
+                        )}
+                      />
+
+                      <div>
+                        <div className="space-y-2">
+                          <Label>Margin/hr ($)</Label>
+                          <Input value={marginPerHour} readOnly disabled className="bg-muted" />
+                          <div className="text-xs text-muted-foreground">
+                            Monthly profit: ${profitPerMonth}
+                          </div>
+                        </div>
+                      </div>
+                    </CardContent>
+                  </Card>
+                </div>
+              </div>
+
+              <DialogFooter>
+                <Button variant="outline" type="button" onClick={() => setIsAddDialogOpen(false)}>
+                  Cancel
+                </Button>
+                <Button type="submit" disabled={createMutation.isPending}>
+                  {createMutation.isPending ? (
+                    <>
+                      <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                      Saving...
+                    </>
+                  ) : (
+                    "Add Candidate"
+                  )}
+                </Button>
+              </DialogFooter>
+            </form>
+          </Form>
+        </DialogContent>
+      </Dialog>
+
+      {/* Edit Candidate Dialog */}
+      <Dialog open={isEditDialogOpen} onOpenChange={setIsEditDialogOpen}>
+        <DialogContent className="max-w-3xl max-h-[80vh] overflow-y-auto">
+          <DialogHeader>
+            <DialogTitle>Edit Candidate</DialogTitle>
+            <DialogDescription>
+              Update the details of this candidate.
+            </DialogDescription>
+          </DialogHeader>
+          {editDialogLoading ? (
+            <div className="flex flex-col items-center justify-center py-8">
+              <Loader2 className="h-6 w-6 animate-spin mx-auto" />
+              <span className="text-sm text-muted-foreground mt-2 block">Loading candidate data...</span>
+            </div>
+          ) : (
+            <Form {...form}>
+              <form onSubmit={form.handleSubmit(onSubmitEdit)} className="space-y-6">
+
+<div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <FormField
+                  control={form.control}
+                  name="sourcedBy"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>Sourced By</FormLabel>
+                      <FormControl>
+                        <Input 
+                          type="date" 
+                          {...field}
+                          value={field.value || selectedCandidate?.sourcedBy || new Date().toISOString().split('T')[0]}
+                          onChange={(e) => {
+                            const value = e.target.value || new Date().toISOString().split('T')[0];
+                            field.onChange(value);
+                          }}
+                        />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+
+                <FormField
+                  control={form.control}
+                  name="client"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>Client *</FormLabel>
+                      <FormControl>
+                        <Input {...field} />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+
+                <FormField
+                  control={form.control}
+                  name="poc"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>POC *</FormLabel>
+                      <FormControl>
+                        <Input {...field} />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+
+                <FormField
+                  control={form.control}
+                  name="candidateName"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>Candidate Name *</FormLabel>
+                      <FormControl>
+                        <Input {...field} />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+
+                <FormField
+                  control={form.control}
+                  name="contactNo"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>Contact Number *</FormLabel>
+                      <FormControl>
+                        <Input {...field} />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+
+                <FormField
+                  control={form.control}
+                  name="emailId"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>Email ID *</FormLabel>
+                      <FormControl>
+                        <Input {...field} />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+
+                <FormField
+                  control={form.control}
+                  name="location"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>Location *</FormLabel>
+                      <FormControl>
+                        <Input {...field} />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+
+                <FormField
+                  control={form.control}
+                  name="experience"
+                  render={({ field}) => (
+                    <FormItem>
+                      <FormLabel>Experience (years) *</FormLabel>
+                      <FormControl><Input {...field} />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+
+                <FormField
+                  control={form.control}
+                  name="noticePeriod"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>Notice Period *</FormLabel>
+                      <FormControl>
+                        <Input {...field} />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+
+                <FormField
+                  control={form.control}
+                  name="currentCtc"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>Current CTC *</FormLabel>
+                      <FormControl>
+                        <Input {...field} />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+
+                <FormField
+                  control={form.control}
+                  name="expectedCtc"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>Expected CTC *</FormLabel>
+                      <FormControl>
+                        <Input {...field} />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+
+                <FormField
+                  control={form.control}
+                  name="skills"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>Skills *</FormLabel>
+                      <FormControl>
+                        <Input {...field} />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+
+                <FormField
+                  control={form.control}
+                  name="salaryInLacs"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>Salary (Lacs)</FormLabel>
+                      <FormControl>
+                        <Input {...field} value={field.value || selectedCandidate?.salaryInLacs || ''} />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+
+  <FormField
+    control={form.control}
+    name="status"
+    render={({ field }) => {
+      const [isCustom, setIsCustom] = useState(false);
+      const [customValue, setCustomValue] = useState("");
+
+      useEffect(() => {
+        if (field.value && !["new", "submitted to client", "scheduled for interview", "rejected", "selected"].includes(field.value)) {
+          setIsCustom(true);
+          setCustomValue(field.value);
+        }
+      }, [field.value]);
+
+      return (
+        <FormItem>
+          <FormLabel>Status *</FormLabel>
+          {!isCustom ? (
+            <Select
+              onValueChange={(value) => {
+                if (value === "custom") {
+                  setIsCustom(true);
+                } else {
+                  field.onChange(value);
+                }
+              }}
+              value={field.value}
+            >
+              <FormControl>
+                <SelectTrigger>
+                  <SelectValue placeholder="Select status" />
+                </SelectTrigger>
+              </FormControl>
+              <SelectContent>
+                {candidatesData?.data ? (
+                  <>
+                    {Array.from(new Set(candidatesData.data.map((c: SubmittedCandidate) => c.status)))
+                      .filter(Boolean)
+                      .sort()
+                      .map((status: string) => (
+                        <SelectItem key={status} value={status}>{status}</SelectItem>
+                      ))}
+                    <SelectItem value="custom">+ Add Custom Status</SelectItem>
+                  </>
+                ) : (
+                  <>
+                    <SelectItem value="new">New</SelectItem>
+                    <SelectItem value="submitted to client">Submitted to Client</SelectItem>
+                    <SelectItem value="scheduled for interview">Scheduled for Interview</SelectItem>
+                    <SelectItem value="rejected">Rejected</SelectItem>
+                    <SelectItem value="selected">Selected</SelectItem>
+                    <SelectItem value="custom">+ Add Custom Status</SelectItem>
+                  </>
+                )}
+              </SelectContent>
+            </Select>
+          ) : (
+            <div className="flex gap-2">
+              <Input
+                value={customValue}
+                onChange={(e) => {
+                  setCustomValue(e.target.value);
+                  field.onChange(e.target.value);
+                }}
+                placeholder="Enter custom status"
+              />
+              <Button
+                type="button"
+                variant="outline"
+                size="icon"
+                onClick={() => {
+                  setIsCustom(false);
+                  field.onChange("new");
+                }}
+              >
+                <X className="h-4 w-4" />
+              </Button>
+            </div>
+          )}
+          <FormMessage />
+        </FormItem>
+      );
+    }}
+  />
+                <div className="col-span-2">
+                  <Card className="bg-muted/40">
+                    <CardHeader className="pb-3">
+                      <CardTitle className="text-base">Rate Information</CardTitle>
+                    </CardHeader>
+                    <CardContent className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                      <FormField
+                        control={form.control}
+                        name="billRate"
+                        render={({ field }) => (
+                          <FormItem>
+                            <FormLabel>Bill Rate ($)</FormLabel>
+                            <FormControl>
+                              <Input 
+                                type="number" 
+                                step="0.01" 
+                                placeholder="Client bill rate"
+                                {...field}
+                                value={field.value || selectedCandidate?.billRate || ''}
+                              />
+                            </FormControl>
+                            <FormMessage />
+                          </FormItem>
+                        )}
+                      />
+
+                      <FormField
+                        control={form.control}
+                        name="payRate"
+                        render={({ field }) => (
+                          <FormItem>
+                            <FormLabel>Pay Rate ($)</FormLabel>
+                            <FormControl>
+                              <Input 
+                                type="number" 
+                                step="0.01" 
+                                placeholder="Candidate pay rate"
+                                {...field}
+                                value={field.value || selectedCandidate?.payRate || ''}
+                              />
+                            </FormControl>
+                            <FormMessage />
+                          </FormItem>
+                        )}
+                      />
+
+                      <div>
+                        <Label>Calculated Values</Label>
+                        <div className="mt-2 space-y-2">
+                          <div className="text-sm">
+                            <span className="font-medium">Margin/hr: </span> 
+                            <span>${marginPerHour}</span>
+                          </div>
+                          <div className="text-sm">
+                            <span className="font-medium">Profit/Month: </span>
+                            <span>${profitPerMonth}</span>
+                          </div>
+                        </div>
+                      </div>
+                    </CardContent>
+                  </Card>
+                </div>
+
+
+
+                 {/* <FormField
+                    control={form.control}
+                    name="billRate"
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormLabel>Bill Rate ($)</FormLabel>
+                        <FormControl>
+                          <Input
+                            type="number"
+                            step="0.01"
+                            placeholder="Client bill rate"
+                            {...field}
+                          />
                         </FormControl>
                         <FormMessage />
                       </FormItem>
@@ -1657,64 +2177,47 @@ function SubmittedCandidates() {
 
                   <FormField
                     control={form.control}
-                    name="status"
+                    name="payRate"
                     render={({ field }) => (
                       <FormItem>
-                        <FormLabel>Status</FormLabel>
+                        <FormLabel>Pay Rate ($)</FormLabel>
                         <FormControl>
-                          <Textarea 
-                            {...field} 
-                            placeholder="Enter detailed status information..."
+                          <Input
+                            type="number"
+                            step="0.01"
+                            placeholder="Candidate pay rate"
+                            {...field}
                           />
                         </FormControl>
-                        <FormDescription>
-                          You can enter detailed status information including progress notes
-                        </FormDescription>
                         <FormMessage />
                       </FormItem>
                     )}
-                  />
+                  /> */}
+                </div>
 
-                  <DialogFooter>
-                    <Button
-                      type="button"
-                      variant="outline"
-                      onClick={() => setIsEditDialogOpen(false)}
-                    >
-                      Cancel
-                    </Button>
-                    <Button type="submit" disabled={updateMutation.isPending}>
-                      {updateMutation.isPending ? (
-                        <>
-                          <Loader2 className="h-4 w-4 mr-2 animate-spin" />
-                          Updating...
-                        </>
-                      ) : (
-                        "Update Candidate"
-                      )}
-                    </Button>
-                  </DialogFooter>
-                </form>
-              </Form>
-            </DialogContent>
-          </Dialog>
-        </TabsContent>
-
-        <TabsContent value="analytics" className="space-y-4">
-          {isLoadingAnalytics ? (
-            <div className="flex flex-col items-center justify-center py-12">
-              <Loader2 className="h-8 w-8 animate-spin text-primary mb-2" />
-              <p className="text-sm text-muted-foreground">Loading analytics...</p>
-            </div>
-          ) : analyticsData ? (
-            <AnalyticsCard data={analyticsData} />
-          ) : (
-            <div className="text-center py-8">
-              <p className="text-muted-foreground">No analytics data available</p>
-            </div>
-          )}
-        </TabsContent>
-      </Tabs>
+              <DialogFooter>
+                <Button variant="outline" type="button" onClick={() => {
+                  setIsEditDialogOpen(false);
+                  setSelectedCandidate(null);
+                }}>
+                  Cancel
+                </Button>
+                <Button type="submit" disabled={updateMutation.isPending}>
+                  {updateMutation.isPending ? (
+                    <>
+                      <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                      Saving...
+                    </>
+                  ) : (
+                    "Update Candidate"
+                  )}
+                </Button>
+              </DialogFooter>
+            </form>
+          </Form>
+      )}
+        </DialogContent>
+      </Dialog>
     </AdminLayout>
   );
 }
