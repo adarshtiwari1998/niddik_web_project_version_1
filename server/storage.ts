@@ -516,7 +516,22 @@ export const storage = {
   },
 
   async bulkCreateSubmittedCandidates(candidates: any[]) {
-    return await db.insert(submittedCandidates).values(candidates).returning();
+    try {
+      // Process in smaller batches to avoid database timeout
+      const batchSize = 100;
+      const results = [];
+      
+      for (let i = 0; i < candidates.length; i += batchSize) {
+        const batch = candidates.slice(i, i + batchSize);
+        const batchResult = await db.insert(submittedCandidates).values(batch).returning();
+        results.push(...batchResult);
+      }
+      
+      return results;
+    } catch (error) {
+      console.error('Bulk insert error:', error);
+      throw error;
+    }
   },
 
   async bulkDeleteSubmittedCandidates(ids: number[]) {
