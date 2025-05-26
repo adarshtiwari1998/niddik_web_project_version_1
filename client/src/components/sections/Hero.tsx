@@ -45,7 +45,7 @@ const keyPoints = [
 const Hero = () => {
   const videoRef = useRef<HTMLVideoElement>(null);
   const [isVideoLoaded, setIsVideoLoaded] = useState(false);
-  const [showFallback, setShowFallback] = useState(false);
+  const [showFallback, setShowFallback] = useState(true); // Start with fallback visible
 
   useEffect(() => {
     // Set a timeout to check if video loads within a reasonable time
@@ -59,25 +59,44 @@ const Hero = () => {
   }, [isVideoLoaded]);
 
   useEffect(() => {
-    // Ensure video loops properly
+    // Ensure video loops seamlessly
     const video = videoRef.current;
-    if (video && isVideoLoaded) {
+    if (video) {
       const handleVideoEnd = () => {
+        // Immediately restart without any delay
         video.currentTime = 0;
-        video.play();
+        video.play().catch(console.error);
       };
 
-      // Add additional loop enforcement
+      const handleCanPlay = () => {
+        // Video is ready to play, hide fallback
+        setIsVideoLoaded(true);
+        setShowFallback(false);
+        video.play().catch(console.error);
+      };
+
+      const handleTimeUpdate = () => {
+        // For extra seamless looping, restart slightly before the end
+        if (video.duration && video.currentTime >= video.duration - 0.1) {
+          video.currentTime = 0;
+        }
+      };
+
       video.addEventListener('ended', handleVideoEnd);
+      video.addEventListener('canplay', handleCanPlay);
+      video.addEventListener('timeupdate', handleTimeUpdate);
       
       return () => {
         video.removeEventListener('ended', handleVideoEnd);
+        video.removeEventListener('canplay', handleCanPlay);
+        video.removeEventListener('timeupdate', handleTimeUpdate);
       };
     }
-  }, [isVideoLoaded]);
+  }, []);
 
   const handleVideoLoaded = () => {
     setIsVideoLoaded(true);
+    setShowFallback(false);
   };
 
   const handleVideoError = () => {
@@ -88,38 +107,28 @@ const Hero = () => {
     <section className="relative overflow-hidden min-h-screen flex flex-col">
       {/* Video Background with Fallback */}
       <div className="absolute inset-0 w-full h-full z-0">
-        {!showFallback ? (
-          <video
-            ref={videoRef}
-            autoPlay
-            loop
-            muted
-            playsInline
-            preload="auto"
-            className={`hero-video object-cover w-full h-full ${isVideoLoaded ? 'opacity-100' : 'opacity-0'} transition-opacity duration-500`}
-            onLoadedData={handleVideoLoaded}
-            onError={handleVideoError}
-            onEnded={() => {
-              // Force restart if loop fails
-              if (videoRef.current) {
-                videoRef.current.currentTime = 0;
-                videoRef.current.play();
-              }
-            }}
-          >
-            <source src="https://res.cloudinary.com/dhanz6zty/video/upload/v1748266865/Project_05-09_4K_MEDIUM_FR30_1_1_e8eetm.mp4" type="video/mp4" />
-            Your browser does not support the video tag.
-          </video>
-        ) : null}
+        {/* Fallback Image - always present, hidden when video loads */}
+        <img 
+          src="https://images.unsplash.com/photo-1522071820081-009f0129c71c?auto=format&fit=crop&w=2000&q=80" 
+          alt="Diverse tech team collaborating" 
+          className={`object-cover w-full h-full transition-opacity duration-300 ${showFallback ? 'opacity-100' : 'opacity-0'}`}
+        />
         
-        {/* Fallback Image (shown if video fails to load) */}
-        {(showFallback || !isVideoLoaded) && (
-          <img 
-            src="https://images.unsplash.com/photo-1522071820081-009f0129c71c?auto=format&fit=crop&w=2000&q=80" 
-            alt="Diverse tech team collaborating" 
-            className="object-cover w-full h-full"
-          />
-        )}
+        {/* Video element - always present */}
+        <video
+          ref={videoRef}
+          autoPlay
+          loop
+          muted
+          playsInline
+          preload="auto"
+          className={`hero-video object-cover w-full h-full absolute inset-0 transition-opacity duration-300 ${isVideoLoaded && !showFallback ? 'opacity-100' : 'opacity-0'}`}
+          onLoadedData={handleVideoLoaded}
+          onError={handleVideoError}
+        >
+          <source src="https://res.cloudinary.com/dhanz6zty/video/upload/v1748266865/Project_05-09_4K_MEDIUM_FR30_1_1_e8eetm.mp4" type="video/mp4" />
+          Your browser does not support the video tag.
+        </video>
         
         {/* Gradient Overlay - more sophisticated than a simple dark overlay */}
         <div className="absolute inset-0 bg-gradient-to-r from-black via-black/60 to-transparent z-10"></div>
