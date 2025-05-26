@@ -148,7 +148,7 @@ export default function JobForm() {
             contactEmail: "",
             status: "active",
             featured: false,
-            category: "Engineering",
+            category: "Engineering & Architecture",
             skills: "",
           };
         }
@@ -169,7 +169,7 @@ export default function JobForm() {
         contactEmail: "",
         status: "active",
         featured: false,
-        category: "Engineering",
+        category: "Engineering & Architecture",
         skills: "",
       };
     },
@@ -457,17 +457,28 @@ export default function JobForm() {
                               </SelectTrigger>
                             </FormControl>
                             <SelectContent>
-                              <SelectItem value="Engineering">Engineering</SelectItem>
-                              <SelectItem value="Design">Design</SelectItem>
-                              <SelectItem value="Product">Product</SelectItem>
-                              <SelectItem value="Marketing">Marketing</SelectItem>
-                              <SelectItem value="Sales">Sales</SelectItem>
+                              <SelectItem value="Administrative">Administrative</SelectItem>
+                              <SelectItem value="Agriculture">Agriculture</SelectItem>
+                              <SelectItem value="AI & Machine Learning">AI & Machine Learning</SelectItem>
+                              <SelectItem value="Construction & Trades">Construction & Trades</SelectItem>
+                              <SelectItem value="Corporate Affairs">Corporate Affairs</SelectItem>
+                              <SelectItem value="Creative & Media">Creative & Media</SelectItem>
                               <SelectItem value="Customer Success">Customer Success</SelectItem>
-                              <SelectItem value="Operations">Operations</SelectItem>
-                              <SelectItem value="Finance">Finance</SelectItem>
-                              <SelectItem value="HR">HR</SelectItem>
-                              <SelectItem value="Legal">Legal</SelectItem>
-                              <SelectItem value="Other">Other</SelectItem>
+                              <SelectItem value="Data Science & Analytics">Data Science & Analytics</SelectItem>
+                              <SelectItem value="Design & Creative">Design & Creative</SelectItem>
+                              <SelectItem value="Education & Training">Education & Training</SelectItem>
+                              <SelectItem value="Engineering & Architecture">Engineering & Architecture</SelectItem>
+                              <SelectItem value="Finance & Accounting">Finance & Accounting</SelectItem>
+                              <SelectItem value="Healthcare, Pharmaceutical & Medical">Healthcare, Pharmaceutical & Medical</SelectItem>
+                              <SelectItem value="Hospitality & Tourism">Hospitality & Tourism</SelectItem>
+                              <SelectItem value="HR & Recruiting">HR & Recruiting</SelectItem>
+                              <SelectItem value="IT & Networking">IT & Networking</SelectItem>
+                              <SelectItem value="Legal & Law Enforcement">Legal & Law Enforcement</SelectItem>
+                              <SelectItem value="Manufacturing">Manufacturing</SelectItem>
+                              <SelectItem value="Sales & Marketing">Sales & Marketing</SelectItem>
+                              <SelectItem value="Science & Research">Science & Research</SelectItem>
+                              <SelectItem value="Web, Mobile, & Software Development">Web, Mobile, & Software Development</SelectItem>
+                              <SelectItem value="Writing">Writing</SelectItem>
                             </SelectContent>
                           </Select>
                           <FormMessage />

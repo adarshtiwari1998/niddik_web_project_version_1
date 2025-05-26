@@ -245,7 +245,7 @@ async function seed() {
         featured: true,
         postedDate: new Date(),
         expiryDate: new Date(Date.now() + 30 * 24 * 60 * 60 * 1000),
-        category: "Engineering",
+        category: "Web, Mobile, & Software Development",
         skills: "React, JavaScript, TypeScript, Redux, GraphQL",
       },
       {
@@ -283,7 +283,7 @@ async function seed() {
         featured: true,
         postedDate: new Date(Date.now() - 5 * 24 * 60 * 60 * 1000),
         expiryDate: new Date(Date.now() + 25 * 24 * 60 * 60 * 1000),
-        category: "Engineering",
+        category: "IT & Networking",
         skills: "AWS, Docker, Kubernetes, Terraform, CI/CD, Linux",
       },
       {
