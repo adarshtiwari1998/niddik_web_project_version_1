@@ -743,27 +743,42 @@ export async function registerRoutes(app: Express): Promise<Server> {
       const existingCandidates = [];
       const nonExistentIds = [];
 
+      console.log('=== CHECKING CANDIDATE EXISTENCE ===');
       for (const id of validIds) {
         try {
           console.log(`Checking if candidate ${id} exists...`);
           const candidate = await storage.getSubmittedCandidateById(id);
+          console.log(`Query result for ID ${id}:`, candidate ? 'FOUND' : 'NOT FOUND');
           if (candidate) {
-            console.log(`Candidate ${id} exists:`, candidate.candidateName);
+            console.log(`✓ Candidate ${id} exists: ${candidate.candidateName} (${candidate.emailId})`);
             existingCandidates.push(id);
           } else {
-            console.log(`Candidate ${id} does not exist`);
+            console.log(`✗ Candidate ${id} does not exist in database`);
             nonExistentIds.push(id);
           }
         } catch (error) {
-          console.error(`Error checking candidate ${id}:`, error);
+          console.error(`✗ Error checking candidate ${id}:`, error);
           nonExistentIds.push(id);
         }
       }
 
+      console.log('=== EXISTENCE CHECK RESULTS ===');
       console.log('Existing candidates:', existingCandidates);
       console.log('Non-existent IDs:', nonExistentIds);
 
       if (existingCandidates.length === 0) {
+        console.log('=== NO EXISTING CANDIDATES FOUND ===');
+        console.log('All requested IDs:', validIds);
+        console.log('Non-existent:', nonExistentIds);
+        
+        // Let's also try to query the database directly to see what's there
+        try {
+          const allCandidates = await storage.getAllSubmittedCandidates({ page: 1, limit: 100 });
+          console.log('All candidates in database:', allCandidates.candidates.map(c => ({ id: c.id, name: c.candidateName })));
+        } catch (dbError) {
+          console.error('Error fetching all candidates:', dbError);
+        }
+        
         return res.status(400).json({
           success: false,
           message: "Invalid candidate ID"
