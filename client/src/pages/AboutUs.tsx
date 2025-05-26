@@ -303,17 +303,16 @@ As Abhishek's career progressed, he took on increasingly senior leadership roles
               <div className="space-y-4 text-andela-gray">
                 <h3 className="text-xl font-semibold text-andela-dark">Using Technology & People Skills To Create Productive Teams</h3>
                 <p>
-                  People & Companies across the world are unique to be defined in words or skillsets, hence good recruiting is a complex task which only specialised teams can successfully navigate.
+                  Our journey is deeply rooted in a legacy passed down from my grandfather, Late <a href="https://www.washingtontechnology.com/1998/08/anstec-inc/332231/"  rel="no-follow" target="_blank"></a>Shri Satyendra Prasad Shrivastava. A true visionary, he was a recipient of the 1996 Ernst & Young Entrepreneur of the Year Award, the 1994 KPMG Peat Marwick High - Tech Entrepreneur Award, and the 1994 Small Business Person of the Year award for the Washington area.
+
                 </p>
                 <p>
-                  In a world that is becoming more virtual, where interactions can feel impersonal, we remain mindful that there is always a person on the other side. Our belief is that making a difference stems from individuals collaborating to assist others. It's the human connection, even in an increasingly digital landscape, that defines our approach and drives positive change.
+                  His achievements were a constant source of inspiration, yet in the early days, I was held back. A lack of awareness and corporate experience meant that it took me over two decades to finally embark on my own entrepreneurial path.
                 </p>
                 <p>
-                  We bring together talent and technology to enable limitless possibilities for our clients, colleagues, and communities. Our conviction rests in the idea that tools and technologies reach their pinnacle when they enhance the ingenuity, expertise, insight, and creativity of the individuals utilizing them.
+                  But his spirit never faded. I carried his stories, his values, and his entrepreneurial drive with me. And now, fueled by that long - standing inspiration, we've built this company. We aim to honor his legacy by creating something meaningful, just as he did in his time.
                 </p>
-                <p>
-                  People are the heartbeat of our approach, while modern technologies serve as the driving force propelling us forward.
-                </p>
+              
               </div>
             </motion.div>
             <motion.div variants={itemVariants} className="relative">
