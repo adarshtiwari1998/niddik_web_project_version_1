@@ -547,31 +547,43 @@ export const storage = {
       const invalidIds = ids.filter(id => !Number.isInteger(id) || id <= 0);
       if (invalidIds.length > 0) {
         console.error('Invalid IDs found:', invalidIds);
-        throw new Error(`Invalid candidate IDs: ${invalidIds.join(', ')}`);
+        // Don't throw error, just filter out invalid IDs and continue
+        console.log('Filtering out invalid IDs and continuing with valid ones');
+      }
+
+      // Filter to only valid IDs
+      const validIds = ids.filter(id => Number.isInteger(id) && id > 0);
+      
+      if (validIds.length === 0) {
+        console.log('No valid IDs to process');
+        return { deletedCount: 0, totalRequested: ids.length };
       }
 
       // First, let's check which IDs actually exist
       console.log('Checking for existing records...');
       const existingRecords = await db.query.submittedCandidates.findMany({
-        where: inArray(submittedCandidates.id, ids),
+        where: inArray(submittedCandidates.id, validIds),
         columns: { id: true }
       });
       
-      console.log(`Found ${existingRecords.length} existing records out of ${ids.length} requested IDs`);
+      console.log(`Found ${existingRecords.length} existing records out of ${validIds.length} valid IDs`);
       console.log('Existing IDs:', existingRecords.map(r => r.id));
-      console.log('Missing IDs:', ids.filter(id => !existingRecords.some(r => r.id === id)));
+      console.log('Missing IDs:', validIds.filter(id => !existingRecords.some(r => r.id === id)));
 
       if (existingRecords.length === 0) {
-        console.log('No records found to delete');
+        console.log('No existing records found to delete');
         return { deletedCount: 0, totalRequested: ids.length };
       }
 
+      // Only delete existing records
+      const existingIds = existingRecords.map(r => r.id);
+      
       // Process deletion in chunks to avoid database limits
       const chunkSize = 50;
       let totalDeleted = 0;
 
-      for (let i = 0; i < ids.length; i += chunkSize) {
-        const chunk = ids.slice(i, i + chunkSize);
+      for (let i = 0; i < existingIds.length; i += chunkSize) {
+        const chunk = existingIds.slice(i, i + chunkSize);
         console.log(`Processing chunk ${Math.floor(i / chunkSize) + 1}: ${chunk.length} candidates with IDs:`, chunk);
 
         try {
