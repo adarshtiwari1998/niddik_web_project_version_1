@@ -1546,153 +1546,164 @@ function SubmittedCandidates() {
             </div>
           </div>
 
-          <div className="flex flex-wrap gap-2 mb-4">
-            <Select
-              value={statusFilter}
-              onValueChange={(value) => {
-                setStatusFilter(value);
-                setPage(1);
-              }}
-            >
-              <SelectTrigger className="w-[180px]">
-                <SelectValue placeholder="Filter by status" />
-              </SelectTrigger>
-              <SelectContent>
-                <SelectItem value="all_statuses">All Statuses</SelectItem>
-                {allStatuses.length > 0 ? 
-                  allStatuses
-                    .sort()
-                    .map((status: string) => (
-                      <SelectItem key={status} value={status}>{status}</SelectItem>
-                    ))
-                  : statusOptions.slice(1).map((option) => (
-                      <SelectItem key={option.value} value={option.value}>
-                        {option.label}
+          {/* Filter Controls */}
+          <div className="space-y-4 mb-6">
+            <div>
+              <h3 className="text-sm font-medium text-muted-foreground mb-2">Filters</h3>
+              <div className="flex flex-wrap gap-2">
+                <Select
+                  value={statusFilter}
+                  onValueChange={(value) => {
+                    setStatusFilter(value);
+                    setPage(1);
+                  }}
+                >
+                  <SelectTrigger className="w-[180px]">
+                    <SelectValue placeholder="All Statuses" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="all_statuses">All Statuses</SelectItem>
+                    {allStatuses.length > 0 ? 
+                      allStatuses
+                        .sort()
+                        .map((status: string) => (
+                          <SelectItem key={status} value={status}>{status}</SelectItem>
+                        ))
+                      : statusOptions.slice(1).map((option) => (
+                          <SelectItem key={option.value} value={option.value}>
+                            {option.label}
+                          </SelectItem>
+                        ))
+                    }
+                  </SelectContent>
+                </Select>
+
+                <Select
+                  value={clientFilter}
+                  onValueChange={(value) => {
+                    setClientFilter(value);
+                    setPage(1);
+                  }}
+                >
+                  <SelectTrigger className="w-[180px]">
+                    <SelectValue placeholder="All Clients" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="all_clients">All Clients</SelectItem>
+                    {clients.map((client: string, index: number) => (
+                      <SelectItem key={`client-${index}-${client}`} value={client}>
+                        {client}
                       </SelectItem>
-                    ))
-                }
-              </SelectContent>
-            </Select>
+                    ))}
+                  </SelectContent>
+                </Select>
 
-            <Select
-              value={clientFilter}
-              onValueChange={(value) => {
-                setClientFilter(value);
-                setPage(1);
-              }}
-            >
-              <SelectTrigger className="w-[180px]">
-                <SelectValue placeholder="Filter by client" />
-              </SelectTrigger>
-              <SelectContent>
-                <SelectItem value="all_clients">All Clients</SelectItem>
-                {clients.map((client: string, index: number) => (
-                  <SelectItem key={`client-${index}-${client}`} value={client}>
-                    {client}
-                  </SelectItem>
-                ))}
-              </SelectContent>
-            </Select>
+                <Select
+                  value={sourcedByFilter}
+                  onValueChange={(value) => {
+                    setSourcedByFilter(value);
+                    setPage(1);
+                  }}
+                >
+                  <SelectTrigger className="w-[180px]">
+                    <SelectValue placeholder="All Sourced By" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="all_sourced_by">All Sourced By</SelectItem>
+                    {allSourcedBy.map((sourcedBy: string, index: number) => (
+                      <SelectItem key={`sourcedBy-${index}`} value={sourcedBy}>
+                        {sourcedBy}
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
 
-                        {/* New Filter Options */}
-                        <Select
-                            value={sourcedByFilter}
-                            onValueChange={(value) => {
-                                setSourcedByFilter(value);
-                                setPage(1);
-                            }}
-                        >
-                            <SelectTrigger className="w-[180px]">
-                                <SelectValue placeholder="Filter by Sourced By" />
-                            </SelectTrigger>
-                            <SelectContent>
-                                <SelectItem value="all_sourced_by">All Sourced By</SelectItem>
-                                {allSourcedBy.map((sourcedBy: string, index: number) => (
-                                    <SelectItem key={`sourcedBy-${index}`} value={sourcedBy}>
-                                        {sourcedBy}
-                                    </SelectItem>
-                                ))}
-                            </SelectContent>
-                        </Select>
+                <Select
+                  value={pocFilter}
+                  onValueChange={(value) => {
+                    setPocFilter(value);
+                    setPage(1);
+                  }}
+                >
+                  <SelectTrigger className="w-[180px]">
+                    <SelectValue placeholder="All POCs" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="all_pocs">All POCs</SelectItem>
+                    {allPocs.map((poc: string, index: number) => (
+                      <SelectItem key={`poc-${index}`} value={poc}>
+                        {poc}
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
 
-                        <Select
-                            value={pocFilter}
-                            onValueChange={(value) => {
-                                setPocFilter(value);
-                                setPage(1);
-                            }}
-                        >
-                            <SelectTrigger className="w-[180px]">
-                                <SelectValue placeholder="Filter by POC" />
-                            </SelectTrigger>
-                            <SelectContent>
-                                <SelectItem value="all_pocs">All POCs</SelectItem>
-                                {allPocs.map((poc: string, index: number) => (
-                                    <SelectItem key={`poc-${index}`} value={poc}>
-                                        {poc}
-                                    </SelectItem>
-                                ))}
-                            </SelectContent>
-                        </Select>
+                <Select
+                  value={marginFilter}
+                  onValueChange={(value) => {
+                    setMarginFilter(value);
+                    setPage(1);
+                  }}
+                >
+                  <SelectTrigger className="w-[180px]">
+                    <SelectValue placeholder="All Margins" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="all_margins">All Margins</SelectItem>
+                    {allMargins
+                      .sort((a, b) => parseFloat(a) - parseFloat(b))
+                      .map((margin: string, index: number) => (
+                        <SelectItem key={`margin-${index}`} value={margin}>
+                          ${margin}
+                        </SelectItem>
+                      ))}
+                  </SelectContent>
+                </Select>
+              </div>
+            </div>
 
-                        <Select
-                            value={marginFilter}
-                            onValueChange={(value) => {
-                                setMarginFilter(value);
-                                setPage(1);
-                            }}
-                        >
-                            <SelectTrigger className="w-[180px]">
-                                <SelectValue placeholder="Filter by Margin/hr" />
-                            </SelectTrigger>
-                            <SelectContent>
-                                <SelectItem value="all_margins">All Margins</SelectItem>
-                                {allMargins
-                                    .sort((a, b) => parseFloat(a) - parseFloat(b))
-                                    .map((margin: string, index: number) => (
-                                    <SelectItem key={`margin-${index}`} value={margin}>
-                                        ${margin}
-                                    </SelectItem>
-                                ))}
-                            </SelectContent>
-                        </Select>
+            {/* Sorting and Display Controls */}
+            <div>
+              <h3 className="text-sm font-medium text-muted-foreground mb-2">Sort & Display</h3>
+              <div className="flex flex-wrap gap-2">
+                <Select
+                  value={`${sortField}_${sortDirection}`}
+                  onValueChange={(value) => {
+                    const [field, direction] = value.split('_');
+                    setSortField(field);
+                    setSortDirection(direction as 'asc' | 'desc');
+                  }}
+                >
+                  <SelectTrigger className="w-[180px]">
+                    <SelectValue placeholder="Sort by" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="candidateName_asc">Name A-Z</SelectItem>
+                    <SelectItem value="candidateName_desc">Name Z-A</SelectItem>
+                    <SelectItem value="submissionDate_desc">Newest First</SelectItem>
+                    <SelectItem value="submissionDate_asc">Oldest First</SelectItem>
+                    <SelectItem value="client_asc">Client A-Z</SelectItem>
+                    <SelectItem value="client_desc">Client Z-A</SelectItem>
+                    <SelectItem value="status_asc">Status A-Z</SelectItem>
+                    <SelectItem value="status_desc">Status Z-A</SelectItem>
+                  </SelectContent>
+                </Select>
 
-            <Select
-              value={limit.toString()}
-              onValueChange={handlePageSizeChange}
-            >
-              <SelectTrigger className="w-[120px]">
-                <SelectValue placeholder="Page size" />
-              </SelectTrigger>
-              <SelectContent>
-                <SelectItem value="10">10 per page</SelectItem>
-                <SelectItem value="50">50 per page</SelectItem>
-                <SelectItem value="100">100 per page</SelectItem>
-              </SelectContent>
-            </Select>
-
-            <Select
-              value={`${sortField}_${sortDirection}`}
-              onValueChange={(value) => {
-                const [field, direction] = value.split('_');
-                setSortField(field);
-                setSortDirection(direction as 'asc' | 'desc');
-              }}
-            >
-              <SelectTrigger className="w-[180px]">
-                <SelectValue placeholder="Sort by" />
-              </SelectTrigger>
-              <SelectContent>
-                <SelectItem value="candidateName_asc">Name A-Z</SelectItem>
-                <SelectItem value="candidateName_desc">Name Z-A</SelectItem>
-                <SelectItem value="submissionDate_desc">Newest First</SelectItem>
-                <SelectItem value="submissionDate_asc">Oldest First</SelectItem>
-                <SelectItem value="client_asc">Client A-Z</SelectItem>
-                <SelectItem value="client_desc">Client Z-A</SelectItem>
-                <SelectItem value="status_asc">Status A-Z</SelectItem>
-                <SelectItem value="status_desc">Status Z-A</SelectItem>
-              </SelectContent>
-            </Select>
+                <Select
+                  value={limit.toString()}
+                  onValueChange={handlePageSizeChange}
+                >
+                  <SelectTrigger className="w-[120px]">
+                    <SelectValue placeholder="Page size" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="10">10 per page</SelectItem>
+                    <SelectItem value="50">50 per page</SelectItem>
+                    <SelectItem value="100">100 per page</SelectItem>
+                  </SelectContent>
+                </Select>
+              </div>
+            </div>
           </div>
 
           <Card>
