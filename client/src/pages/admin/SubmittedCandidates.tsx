@@ -176,7 +176,10 @@ function SubmittedCandidates() {
 
   // State for filters, pagination, and form dialogs
   const [page, setPage] = useState(1);
-  const [limit, setLimit] = useState(10);
+  const [limit, setLimit] = useState(() => {
+    const savedLimit = localStorage.getItem('submittedCandidates_pageSize');
+    return savedLimit ? parseInt(savedLimit, 10) : 10;
+  });
   const [search, setSearch] = useState("");
   const [statusFilter, setStatusFilter] = useState<string>("all_statuses");
   const [clientFilter, setClientFilter] = useState<string>("all_clients");
@@ -937,6 +940,14 @@ function SubmittedCandidates() {
     refetchCandidates();
   };
 
+  // Handle page size change
+  const handlePageSizeChange = (newLimit: string) => {
+    const limitValue = parseInt(newLimit, 10);
+    setLimit(limitValue);
+    setPage(1); // Reset to first page when changing page size
+    localStorage.setItem('submittedCandidates_pageSize', newLimit);
+  };
+
   // Handle select all checkbox
   const handleSelectAll = (checked: boolean) => {
     setIsSelectAllChecked(checked);
@@ -1501,6 +1512,20 @@ function SubmittedCandidates() {
                 ))}
               </SelectContent>
             </Select>
+
+            <Select
+              value={limit.toString()}
+              onValueChange={handlePageSizeChange}
+            >
+              <SelectTrigger className="w-[120px]">
+                <SelectValue placeholder="Page size" />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="10">10 per page</SelectItem>
+                <SelectItem value="50">50 per page</SelectItem>
+                <SelectItem value="100">100 per page</SelectItem>
+              </SelectContent>
+            </Select>
           </div>
 
           <Card>
@@ -1946,7 +1971,7 @@ function SubmittedCandidates() {
                 </div>
 
                 <div className="text-sm text-muted-foreground">
-                  Showing {candidatesData?.data?.length || 0} of {candidatesData?.meta?.total || 0} candidates
+                  Showing {((page - 1) * limit) + 1} to {Math.min(page * limit, candidatesData?.meta?.total || 0)} of {candidatesData?.meta?.total || 0} candidates
                   {selectedCandidateIds.length > 0 && (
                     <span className="ml-2 text-blue-600">
                       • {selectedCandidateIds.length} selected
