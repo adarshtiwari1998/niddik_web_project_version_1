@@ -116,16 +116,37 @@ const Navbar: React.FC<NavbarProps> = ({ hasAnnouncementAbove = true }) => {
     return () => window.removeEventListener("scroll", handleScroll);
   }, [hasAnnouncementAbove, isHomePage]);
 
-  // Basic search functionality (replace with your actual search logic)
+  // Enhanced search functionality that includes individual dropdown items
   useEffect(() => {
     if (searchTerm) {
-      // Simulate a search API call or local filtering
-      const results = navItems.filter(item =>
-        item.label.toLowerCase().includes(searchTerm.toLowerCase()) ||
-        (item.dropdown && item.dropdown.some(dropdownItem =>
-          dropdownItem.label.toLowerCase().includes(searchTerm.toLowerCase())
-        ))
-      );
+      const results = [];
+      
+      // Search through all nav items and their dropdown items
+      navItems.forEach(item => {
+        // Check if parent item matches
+        if (item.label.toLowerCase().includes(searchTerm.toLowerCase())) {
+          results.push({
+            label: item.label,
+            href: item.href || "#",
+            type: "parent"
+          });
+        }
+        
+        // Check dropdown items
+        if (item.dropdown) {
+          item.dropdown.forEach(dropdownItem => {
+            if (dropdownItem.label.toLowerCase().includes(searchTerm.toLowerCase())) {
+              results.push({
+                label: dropdownItem.label,
+                href: dropdownItem.href,
+                type: "child",
+                parent: item.label
+              });
+            }
+          });
+        }
+      });
+      
       setSearchResults(results);
     } else {
       setSearchResults([]);
@@ -247,7 +268,12 @@ const Navbar: React.FC<NavbarProps> = ({ hasAnnouncementAbove = true }) => {
                             onClick={() => setIsSearchOpen(false)}
                             className="block w-full text-left"
                           >
-                            {result.label}
+                            <div className="flex flex-col">
+                              <span className="font-medium">{result.label}</span>
+                              {result.type === "child" && result.parent && (
+                                <span className="text-xs text-gray-500">in {result.parent}</span>
+                              )}
+                            </div>
                           </Link>
                         </div>
                       ))}
