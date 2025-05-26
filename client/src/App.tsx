@@ -23,6 +23,7 @@ import ProfilePage from "@/pages/ProfilePage";
 import JobApplication from "@/pages/JobApplication";
 import CandidateDashboard from "@/pages/CandidateDashboard";
 import RequestDemo from "@/pages/RequestDemo";
+import ContactUs from "@/pages/ContactUs";
 
 // Admin Pages
 import AdminLogin from "@/pages/admin/AdminLogin";
@@ -89,6 +90,7 @@ function Router() {
             <Route path="/partners/non-it" component={NonITPartners} />
             <Route path="/partners/healthcare" component={HealthcarePartners} />
             <Route path="/search" component={SearchPage} />
+            <Route path="/contact" component={ContactUs} />
 
             {/* Company Routes */}
             <Route path="/about-us" component={AboutUs} />
