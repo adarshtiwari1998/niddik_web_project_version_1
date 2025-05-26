@@ -731,18 +731,60 @@ export async function registerRoutes(app: Express): Promise<Server> {
         });
       }
 
-      // Perform bulk deletion using storage method
-      const result = await storage.bulkDeleteSubmittedCandidates(validIds);
+      // Check which candidates actually exist in the database
+      const existingCandidates = [];
+      const nonExistentIds = [];
+
+      for (const id of validIds) {
+        try {
+          const candidate = await storage.getSubmittedCandidateById(id);
+          if (candidate) {
+            existingCandidates.push(id);
+          } else {
+            nonExistentIds.push(id);
+          }
+        } catch (error) {
+          console.error(`Error checking candidate ${id}:`, error);
+          nonExistentIds.push(id);
+        }
+      }
+
+      console.log('Existing candidates:', existingCandidates);
+      console.log('Non-existent IDs:', nonExistentIds);
+
+      if (existingCandidates.length === 0) {
+        return res.status(404).json({
+          success: false,
+          message: "None of the specified candidates were found",
+          nonExistentIds
+        });
+      }
+
+      // Perform bulk deletion using storage method for existing candidates only
+      const result = await storage.bulkDeleteSubmittedCandidates(existingCandidates);
       
       console.log('Bulk deletion completed:', result);
 
-      return res.status(200).json({
-        success: true,
-        message: `Successfully deleted ${result.deletedCount} candidate${result.deletedCount !== 1 ? 's' : ''}`,
-        count: result.deletedCount,
-        deletedCount: result.deletedCount,
-        totalRequested: result.totalRequested
-      });
+      // Prepare response based on results
+      if (nonExistentIds.length > 0) {
+        return res.status(207).json({
+          success: true,
+          message: `Partially successful: deleted ${result.deletedCount} of ${validIds.length} candidates`,
+          count: result.deletedCount,
+          deletedCount: result.deletedCount,
+          totalRequested: validIds.length,
+          nonExistentIds,
+          partialSuccess: true
+        });
+      } else {
+        return res.status(200).json({
+          success: true,
+          message: `Successfully deleted ${result.deletedCount} candidate${result.deletedCount !== 1 ? 's' : ''}`,
+          count: result.deletedCount,
+          deletedCount: result.deletedCount,
+          totalRequested: validIds.length
+        });
+      }
 
     } catch (error) {
       console.error('=== BULK DELETE ERROR ===');

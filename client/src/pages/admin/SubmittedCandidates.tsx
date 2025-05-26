@@ -479,10 +479,18 @@ function SubmittedCandidates() {
       console.log('Bulk delete completed successfully:', data);
       const deletedCount = data.count || data.deletedCount || 0;
       
-      toast({
-        title: "Bulk Delete Successful",
-        description: `Successfully deleted ${deletedCount} candidate${deletedCount > 1 ? 's' : ''}`,
-      });
+      // Handle partial success (status 207)
+      if (data.partialSuccess && data.nonExistentIds?.length > 0) {
+        toast({
+          title: "Partial Success",
+          description: `Deleted ${deletedCount} candidates. ${data.nonExistentIds.length} candidates were not found.`,
+        });
+      } else {
+        toast({
+          title: "Bulk Delete Successful",
+          description: `Successfully deleted ${deletedCount} candidate${deletedCount > 1 ? 's' : ''}`,
+        });
+      }
       
       // Reset selection state
       setSelectedCandidateIds([]);
