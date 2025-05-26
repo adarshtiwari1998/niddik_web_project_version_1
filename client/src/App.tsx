@@ -1,5 +1,5 @@
-import React from 'react';
-import { Route, Switch } from "wouter";
+import React, { useEffect } from 'react';
+import { Route, Switch, useLocation } from "wouter";
 import { QueryClientProvider } from "@tanstack/react-query";
 import { queryClient } from "./lib/queryClient";
 import { Toaster } from "@/components/ui/toaster";
@@ -49,9 +49,22 @@ import ITPartners from './pages/ITPartners';
 import NonITPartners from './pages/NonITPartners';
 import HealthcarePartners from './pages/HealthcarePartners';
 
+// Component to handle scroll restoration
+function ScrollToTop() {
+    const [location] = useLocation();
+    
+    useEffect(() => {
+        window.scrollTo(0, 0);
+    }, [location]);
+    
+    return null;
+}
+
 function Router() {
     return (
-        <Switch>
+        <>
+            <ScrollToTop />
+            <Switch>
             {/* Public Routes */}
             <Route path="/" component={Home} />
             <Route path="/landing" component={LandingPage} />
@@ -115,6 +128,7 @@ function Router() {
             {/* 404 - Not Found */}
             <Route component={NotFound} />
         </Switch>
+        </>
     );
 }
 
