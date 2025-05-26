@@ -27,18 +27,28 @@ export default function CareerPage() {
 
   const { data, isLoading, error } = useQuery<{ data: JobListing[], meta: { total: number, pages: number } }>({
     queryKey: ['/api/job-listings', { 
-      search: search.trim(), 
-      category: category === 'all_categories' ? '' : category,
-      jobType: jobType === 'all_types' ? '' : jobType,
-      experienceLevel: experienceLevel === 'all_levels' ? '' : experienceLevel,
       status: 'active' 
     }],
     queryFn: getQueryFn({ on401: "throw" }),
   });
 
+  // Filter the data client-side for real-time search
+  const filteredJobs = data?.data.filter((job) => {
+    const matchesSearch = search.trim() === '' || 
+      job.title.toLowerCase().includes(search.toLowerCase()) ||
+      job.description.toLowerCase().includes(search.toLowerCase()) ||
+      job.company.toLowerCase().includes(search.toLowerCase());
+    
+    const matchesCategory = category === 'all_categories' || job.category === category;
+    const matchesJobType = jobType === 'all_types' || job.jobType === jobType;
+    const matchesExperienceLevel = experienceLevel === 'all_levels' || job.experienceLevel === experienceLevel;
+    
+    return matchesSearch && matchesCategory && matchesJobType && matchesExperienceLevel;
+  }) || [];
+
   const handleSearch = (e: React.FormEvent) => {
     e.preventDefault();
-    // The query will auto-refresh with the state changes
+    // Filtering is now handled automatically by the filteredJobs computation
   };
 
   const clearFilters = () => {
@@ -149,7 +159,7 @@ export default function CareerPage() {
           <h2 className="text-2xl font-bold">Available Positions</h2>
           {data && (
             <p className="text-muted-foreground">
-              Showing {data.data.length} of {data.meta.total} opportunities
+              Showing {filteredJobs.length} of {data.meta.total} opportunities
             </p>
           )}
         </div>
@@ -168,7 +178,7 @@ export default function CareerPage() {
           </div>
         )}
 
-        {!isLoading && !error && data?.data.length === 0 && (
+        {!isLoading && !error && filteredJobs.length === 0 && (
           <div className="text-center py-12">
             <h3 className="text-xl font-medium mb-2">No jobs match your criteria</h3>
             <p className="text-muted-foreground mb-6">Try adjusting your filters or search terms</p>
@@ -177,7 +187,7 @@ export default function CareerPage() {
         )}
 
         <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
-          {!isLoading && !error && data?.data.map((job) => (
+          {!isLoading && !error && filteredJobs.map((job) => (
             <Card key={job.id} className="h-full flex flex-col">
               <CardHeader>
                 <div className="flex justify-between items-start">
