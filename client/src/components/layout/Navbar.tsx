@@ -92,7 +92,7 @@ const Navbar: React.FC<NavbarProps> = ({ hasAnnouncementAbove = true }) => {
     const handleScroll = () => {
       const scrollY = window.scrollY;
       setIsScrolled(scrollY > 10);
-      
+
       // Assume hero section is about 600px height, adjust as needed
       const heroSectionHeight = 600;
       setIsTransparent(scrollY < heroSectionHeight);
@@ -108,7 +108,7 @@ const Navbar: React.FC<NavbarProps> = ({ hasAnnouncementAbove = true }) => {
     <header className={cn(
       "fixed w-full z-40",
       hasAnnouncementAbove ? "top-[40px]" : "top-0",
-      isTransparent ? "bg-white/10 backdrop-blur-md" : "bg-white/90 backdrop-blur-md",
+      isTransparent ? "backdrop-blur-sm" : "bg-white/90 backdrop-blur-sm",
       isScrolled ? "shadow-md" : "shadow-sm",
       "transition-all duration-300"
     )}>
