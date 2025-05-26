@@ -105,21 +105,23 @@ const Navbar: React.FC<NavbarProps> = ({ hasAnnouncementAbove = true }) => {
   const [searchResults, setSearchResults] = useState<SearchResult[]>([]);
   const searchRef = useRef<HTMLDivElement>(null);
 
-  // Check if we're on the home page
-  const isHomePage = location === "/";
+  // Check if we're on specific pages that should have white background
+  const isAdminPage = location.startsWith("/admin");
+  const isAuthPage = location.startsWith("/auth");
+  const isCandidatePage = location.startsWith("/candidate");
 
   useEffect(() => {
     const handleScroll = () => {
       const scrollY = window.scrollY;
       setIsScrolled(scrollY > 50); // Start white background sooner
 
-      // Only apply transparency logic on home page
-      if (isHomePage) {
-        // Make it less transparent sooner for better visibility
-        setIsTransparent(scrollY < 100);
-      } else {
-        // On other pages, always use white background
+      // Apply transparency logic to all pages except admin, auth, and candidate pages
+      if (isAdminPage || isAuthPage || isCandidatePage) {
+        // On admin, auth, and candidate pages, always use white background
         setIsTransparent(false);
+      } else {
+        // On all other pages, make it transparent at the top and solid when scrolled
+        setIsTransparent(scrollY < 100);
       }
     };
 
@@ -127,7 +129,7 @@ const Navbar: React.FC<NavbarProps> = ({ hasAnnouncementAbove = true }) => {
 
     window.addEventListener("scroll", handleScroll);
     return () => window.removeEventListener("scroll", handleScroll);
-  }, [hasAnnouncementAbove, isHomePage]);
+  }, [hasAnnouncementAbove, isAdminPage, isAuthPage, isCandidatePage]);
 
   // Fetch job listings for search
   const { data: jobsData } = useQuery<{ data: JobListing[], meta: { total: number, pages: number } }>({
@@ -197,7 +199,7 @@ const Navbar: React.FC<NavbarProps> = ({ hasAnnouncementAbove = true }) => {
     <header className={cn(
       "fixed w-full z-40",
       hasAnnouncementAbove ? "top-[40px]" : "top-0",
-      isHomePage && isTransparent 
+      isTransparent 
         ? "bg-black/20 backdrop-blur-sm border-b border-white/10" 
         : "bg-white/95 backdrop-blur-md border-b border-gray-200/50",
       isScrolled ? "shadow-lg" : "",
