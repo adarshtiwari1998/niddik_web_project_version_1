@@ -1,0 +1,132 @@
+GET https://c97bc9b7-d459-4d54-aa25-a500aa3482fe-00-17pkxb2ueb99z.sisko.replit.dev/api/contact-submissions 500 (Internal Server Error)
+(anonymous) @ queryClient.ts:119
+fetchFn @ @tanstack_react-query.js?v=d1ff9c50:844
+run @ @tanstack_react-query.js?v=d1ff9c50:494
+start @ @tanstack_react-query.js?v=d1ff9c50:536
+fetch @ @tanstack_react-query.js?v=d1ff9c50:931
+executeFetch_fn @ @tanstack_react-query.js?v=d1ff9c50:2238
+setOptions @ @tanstack_react-query.js?v=d1ff9c50:1999
+(anonymous) @ @tanstack_react-query.js?v=d1ff9c50:3109
+commitHookEffectListMount @ chunk-RPCDYKBN.js?v=d1ff9c50:16915
+commitPassiveMountOnFiber @ chunk-RPCDYKBN.js?v=d1ff9c50:18156
+commitPassiveMountEffects_complete @ chunk-RPCDYKBN.js?v=d1ff9c50:18129
+commitPassiveMountEffects_begin @ chunk-RPCDYKBN.js?v=d1ff9c50:18119
+commitPassiveMountEffects @ chunk-RPCDYKBN.js?v=d1ff9c50:18109
+flushPassiveEffectsImpl @ chunk-RPCDYKBN.js?v=d1ff9c50:19490
+flushPassiveEffects @ chunk-RPCDYKBN.js?v=d1ff9c50:19447
+commitRootImpl @ chunk-RPCDYKBN.js?v=d1ff9c50:19416
+commitRoot @ chunk-RPCDYKBN.js?v=d1ff9c50:19277
+performSyncWorkOnRoot @ chunk-RPCDYKBN.js?v=d1ff9c50:18895
+flushSyncCallbacks @ chunk-RPCDYKBN.js?v=d1ff9c50:9119
+flushSync @ chunk-RPCDYKBN.js?v=d1ff9c50:18959
+scheduleRefresh @ chunk-RPCDYKBN.js?v=d1ff9c50:20004
+(anonymous) @ @react-refresh:267
+performReactRefresh @ @react-refresh:256
+(anonymous) @ @react-refresh:677
+setTimeout
+(anonymous) @ @react-refresh:666
+validateRefreshBoundaryAndEnqueueUpdate @ @react-refresh:728
+(anonymous) @ ContactSubmissions.tsx:576
+(anonymous) @ client:34
+(anonymous) @ client:218
+(anonymous) @ client:193
+queueUpdate @ client:193
+await in queueUpdate
+(anonymous) @ client:642
+handleMessage @ client:640
+(anonymous) @ client:550Understand this error
+queryClient.ts:119 
+            
+            
+           GET https://c97bc9b7-d459-4d54-aa25-a500aa3482fe-00-17pkxb2ueb99z.sisko.replit.dev/api/contact-submissions 500 (Internal Server Error)
+(anonymous) @ queryClient.ts:119
+fetchFn @ @tanstack_react-query.js?v=d1ff9c50:844
+run @ @tanstack_react-query.js?v=d1ff9c50:494
+(anonymous) @ @tanstack_react-query.js?v=d1ff9c50:519
+Promise.then
+(anonymous) @ @tanstack_react-query.js?v=d1ff9c50:515
+Promise.catch
+run @ @tanstack_react-query.js?v=d1ff9c50:498
+start @ @tanstack_react-query.js?v=d1ff9c50:536
+fetch @ @tanstack_react-query.js?v=d1ff9c50:931
+executeFetch_fn @ @tanstack_react-query.js?v=d1ff9c50:2238
+setOptions @ @tanstack_react-query.js?v=d1ff9c50:1999
+(anonymous) @ @tanstack_react-query.js?v=d1ff9c50:3109
+commitHookEffectListMount @ chunk-RPCDYKBN.js?v=d1ff9c50:16915
+commitPassiveMountOnFiber @ chunk-RPCDYKBN.js?v=d1ff9c50:18156
+commitPassiveMountEffects_complete @ chunk-RPCDYKBN.js?v=d1ff9c50:18129
+commitPassiveMountEffects_begin @ chunk-RPCDYKBN.js?v=d1ff9c50:18119
+commitPassiveMountEffects @ chunk-RPCDYKBN.js?v=d1ff9c50:18109
+flushPassiveEffectsImpl @ chunk-RPCDYKBN.js?v=d1ff9c50:19490
+flushPassiveEffects @ chunk-RPCDYKBN.js?v=d1ff9c50:19447
+commitRootImpl @ chunk-RPCDYKBN.js?v=d1ff9c50:19416
+commitRoot @ chunk-RPCDYKBN.js?v=d1ff9c50:19277
+performSyncWorkOnRoot @ chunk-RPCDYKBN.js?v=d1ff9c50:18895
+flushSyncCallbacks @ chunk-RPCDYKBN.js?v=d1ff9c50:9119
+flushSync @ chunk-RPCDYKBN.js?v=d1ff9c50:18959
+scheduleRefresh @ chunk-RPCDYKBN.js?v=d1ff9c50:20004
+(anonymous) @ @react-refresh:267
+performReactRefresh @ @react-refresh:256
+(anonymous) @ @react-refresh:677
+setTimeout
+(anonymous) @ @react-refresh:666
+validateRefreshBoundaryAndEnqueueUpdate @ @react-refresh:728
+(anonymous) @ ContactSubmissions.tsx:576
+(anonymous) @ client:34
+(anonymous) @ client:218
+(anonymous) @ client:193
+queueUpdate @ client:193
+await in queueUpdate
+(anonymous) @ client:642
+handleMessage @ client:640
+(anonymous) @ client:550Understand this error
+queryClient.ts:119 
+            
+            
+           GET https://c97bc9b7-d459-4d54-aa25-a500aa3482fe-00-17pkxb2ueb99z.sisko.replit.dev/api/contact-submissions 500 (Internal Server Error)
+(anonymous) @ queryClient.ts:119
+fetchFn @ @tanstack_react-query.js?v=d1ff9c50:844
+run @ @tanstack_react-query.js?v=d1ff9c50:494
+(anonymous) @ @tanstack_react-query.js?v=d1ff9c50:519
+Promise.then
+(anonymous) @ @tanstack_react-query.js?v=d1ff9c50:515
+Promise.catch
+run @ @tanstack_react-query.js?v=d1ff9c50:498
+(anonymous) @ @tanstack_react-query.js?v=d1ff9c50:519
+Promise.then
+(anonymous) @ @tanstack_react-query.js?v=d1ff9c50:515
+Promise.catch
+run @ @tanstack_react-query.js?v=d1ff9c50:498
+start @ @tanstack_react-query.js?v=d1ff9c50:536
+fetch @ @tanstack_react-query.js?v=d1ff9c50:931
+executeFetch_fn @ @tanstack_react-query.js?v=d1ff9c50:2238
+setOptions @ @tanstack_react-query.js?v=d1ff9c50:1999
+(anonymous) @ @tanstack_react-query.js?v=d1ff9c50:3109
+commitHookEffectListMount @ chunk-RPCDYKBN.js?v=d1ff9c50:16915
+commitPassiveMountOnFiber @ chunk-RPCDYKBN.js?v=d1ff9c50:18156
+commitPassiveMountEffects_complete @ chunk-RPCDYKBN.js?v=d1ff9c50:18129
+commitPassiveMountEffects_begin @ chunk-RPCDYKBN.js?v=d1ff9c50:18119
+commitPassiveMountEffects @ chunk-RPCDYKBN.js?v=d1ff9c50:18109
+flushPassiveEffectsImpl @ chunk-RPCDYKBN.js?v=d1ff9c50:19490
+flushPassiveEffects @ chunk-RPCDYKBN.js?v=d1ff9c50:19447
+commitRootImpl @ chunk-RPCDYKBN.js?v=d1ff9c50:19416
+commitRoot @ chunk-RPCDYKBN.js?v=d1ff9c50:19277
+performSyncWorkOnRoot @ chunk-RPCDYKBN.js?v=d1ff9c50:18895
+flushSyncCallbacks @ chunk-RPCDYKBN.js?v=d1ff9c50:9119
+flushSync @ chunk-RPCDYKBN.js?v=d1ff9c50:18959
+scheduleRefresh @ chunk-RPCDYKBN.js?v=d1ff9c50:20004
+(anonymous) @ @react-refresh:267
+performReactRefresh @ @react-refresh:256
+(anonymous) @ @react-refresh:677
+setTimeout
+(anonymous) @ @react-refresh:666
+validateRefreshBoundaryAndEnqueueUpdate @ @react-refresh:728
+(anonymous) @ ContactSubmissions.tsx:576
+(anonymous) @ client:34
+(anonymous) @ client:218
+(anonymous) @ client:193
+queueUpdate @ client:193
+await in queueUpdate
+(anonymous) @ client:642
+handleMessage @ client:640
+(anonymous) @ client:550Understand this error
