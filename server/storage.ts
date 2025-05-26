@@ -416,7 +416,16 @@ export const storage = {
           like(submittedCandidates.candidateName, `%${search}%`),
           like(submittedCandidates.emailId, `%${search}%`),
           like(submittedCandidates.skills, `%${search}%`),
-          like(submittedCandidates.client, `%${search}%`)
+          like(submittedCandidates.client, `%${search}%`),
+          like(submittedCandidates.contactNo, `%${search}%`),
+          like(submittedCandidates.location, `%${search}%`),
+          like(submittedCandidates.experience, `%${search}%`),
+          like(submittedCandidates.status, `%${search}%`),
+          like(submittedCandidates.poc, `%${search}%`),
+          like(submittedCandidates.sourcedBy, `%${search}%`),
+          like(submittedCandidates.currentCtc, `%${search}%`),
+          like(submittedCandidates.expectedCtc, `%${search}%`),
+          like(submittedCandidates.noticePeriod, `%${search}%`)
         )
       );
     }

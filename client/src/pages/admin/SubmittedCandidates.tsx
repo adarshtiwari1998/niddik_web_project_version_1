@@ -928,9 +928,18 @@ function SubmittedCandidates() {
     importMutation.mutate(importData);
   };
 
-  // Handle search input
+  // Handle search input with debouncing
   const handleSearchChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    setSearch(e.target.value);
+    const value = e.target.value;
+    setSearch(value);
+    setPage(1); // Reset to first page on search
+    
+    // Auto-search after typing (debounced by React Query)
+    setTimeout(() => {
+      if (search !== value) {
+        refetchCandidates();
+      }
+    }, 300);
   };
 
   // Handle search submit
@@ -1454,7 +1463,7 @@ function SubmittedCandidates() {
                   <Search className="absolute left-2.5 top-2.5 h-4 w-4 text-muted-foreground" />
                   <Input
                     type="search"
-                    placeholder="Search candidates..."
+                    placeholder="Search by name, email, client, skills, location, status..."
                     className="pl-8"
                     value={search}
                     onChange={handleSearchChange}
@@ -1541,25 +1550,120 @@ function SubmittedCandidates() {
                           onChange={(e) => handleSelectAll(e.target.checked)}
                         />
                       </TableHead>
-                      <TableHead className="min-w-[50px]">ID</TableHead>
-                      <TableHead className="min-w-[150px]">Sourced By</TableHead>
-                      <TableHead className="min-w-[150px]">Client</TableHead>
-                      <TableHead className="min-w-[150px]">POC</TableHead>
-                      <TableHead className="min-w-[180px]">Skills</TableHead>
-                      <TableHead className="sticky left-0 bg-background z-20 min-w-[200px]">Candidate Name</TableHead>
-                      <TableHead className="min-w-[150px]">Contact No</TableHead>
-                      <TableHead className="min-w-[180px]">Email ID</TableHead>
-                      <TableHead className="min-w-[120px]">Experience</TableHead>
-                      <TableHead className="min-w-[120px]">Notice Period</TableHead>
-                      <TableHead className="min-w-[120px]">Location</TableHead>
-                      <TableHead className="min-w-[120px]">Current CTC</TableHead>
-                      <TableHead className="min-w-[120px]">Expected CTC</TableHead>
-                      <TableHead className="min-w-[120px]">Bill Rate ($$)</TableHead>
-                      <TableHead className="min-w-[120px]">Pay/hr</TableHead>
-                      <TableHead className="min-w-[120px]">Margin/hr</TableHead>
-                      <TableHead className="min-w-[120px]">Profit/Month</TableHead>
-                      <TableHead className="min-w-[180px]">Status</TableHead>
-                      <TableHead className="min-w-[120px]">Salary (Lacs)</TableHead>
+                      <TableHead 
+                        className="min-w-[50px] cursor-pointer hover:bg-muted/50" 
+                        onClick={() => handleSort('id')}
+                      >
+                        ID {sortField === 'id' && (sortDirection === 'asc' ? '↑' : '↓')}
+                      </TableHead>
+                      <TableHead 
+                        className="min-w-[150px] cursor-pointer hover:bg-muted/50"
+                        onClick={() => handleSort('sourcedBy')}
+                      >
+                        Sourced By {sortField === 'sourcedBy' && (sortDirection === 'asc' ? '↑' : '↓')}
+                      </TableHead>
+                      <TableHead 
+                        className="min-w-[150px] cursor-pointer hover:bg-muted/50"
+                        onClick={() => handleSort('client')}
+                      >
+                        Client {sortField === 'client' && (sortDirection === 'asc' ? '↑' : '↓')}
+                      </TableHead>
+                      <TableHead 
+                        className="min-w-[150px] cursor-pointer hover:bg-muted/50"
+                        onClick={() => handleSort('poc')}
+                      >
+                        POC {sortField === 'poc' && (sortDirection === 'asc' ? '↑' : '↓')}
+                      </TableHead>
+                      <TableHead 
+                        className="min-w-[180px] cursor-pointer hover:bg-muted/50"
+                        onClick={() => handleSort('skills')}
+                      >
+                        Skills {sortField === 'skills' && (sortDirection === 'asc' ? '↑' : '↓')}
+                      </TableHead>
+                      <TableHead 
+                        className="sticky left-0 bg-background z-20 min-w-[200px] cursor-pointer hover:bg-muted/50"
+                        onClick={() => handleSort('candidateName')}
+                      >
+                        Candidate Name {sortField === 'candidateName' && (sortDirection === 'asc' ? '↑' : '↓')}
+                      </TableHead>
+                      <TableHead 
+                        className="min-w-[150px] cursor-pointer hover:bg-muted/50"
+                        onClick={() => handleSort('contactNo')}
+                      >
+                        Contact No {sortField === 'contactNo' && (sortDirection === 'asc' ? '↑' : '↓')}
+                      </TableHead>
+                      <TableHead 
+                        className="min-w-[180px] cursor-pointer hover:bg-muted/50"
+                        onClick={() => handleSort('emailId')}
+                      >
+                        Email ID {sortField === 'emailId' && (sortDirection === 'asc' ? '↑' : '↓')}
+                      </TableHead>
+                      <TableHead 
+                        className="min-w-[120px] cursor-pointer hover:bg-muted/50"
+                        onClick={() => handleSort('experience')}
+                      >
+                        Experience {sortField === 'experience' && (sortDirection === 'asc' ? '↑' : '↓')}
+                      </TableHead>
+                      <TableHead 
+                        className="min-w-[120px] cursor-pointer hover:bg-muted/50"
+                        onClick={() => handleSort('noticePeriod')}
+                      >
+                        Notice Period {sortField === 'noticePeriod' && (sortDirection === 'asc' ? '↑' : '↓')}
+                      </TableHead>
+                      <TableHead 
+                        className="min-w-[120px] cursor-pointer hover:bg-muted/50"
+                        onClick={() => handleSort('location')}
+                      >
+                        Location {sortField === 'location' && (sortDirection === 'asc' ? '↑' : '↓')}
+                      </TableHead>
+                      <TableHead 
+                        className="min-w-[120px] cursor-pointer hover:bg-muted/50"
+                        onClick={() => handleSort('currentCtc')}
+                      >
+                        Current CTC {sortField === 'currentCtc' && (sortDirection === 'asc' ? '↑' : '↓')}
+                      </TableHead>
+                      <TableHead 
+                        className="min-w-[120px] cursor-pointer hover:bg-muted/50"
+                        onClick={() => handleSort('expectedCtc')}
+                      >
+                        Expected CTC {sortField === 'expectedCtc' && (sortDirection === 'asc' ? '↑' : '↓')}
+                      </TableHead>
+                      <TableHead 
+                        className="min-w-[120px] cursor-pointer hover:bg-muted/50"
+                        onClick={() => handleSort('billRate')}
+                      >
+                        Bill Rate ($$) {sortField === 'billRate' && (sortDirection === 'asc' ? '↑' : '↓')}
+                      </TableHead>
+                      <TableHead 
+                        className="min-w-[120px] cursor-pointer hover:bg-muted/50"
+                        onClick={() => handleSort('payRate')}
+                      >
+                        Pay/hr {sortField === 'payRate' && (sortDirection === 'asc' ? '↑' : '↓')}
+                      </TableHead>
+                      <TableHead 
+                        className="min-w-[120px] cursor-pointer hover:bg-muted/50"
+                        onClick={() => handleSort('marginPerHour')}
+                      >
+                        Margin/hr {sortField === 'marginPerHour' && (sortDirection === 'asc' ? '↑' : '↓')}
+                      </TableHead>
+                      <TableHead 
+                        className="min-w-[120px] cursor-pointer hover:bg-muted/50"
+                        onClick={() => handleSort('profitPerMonth')}
+                      >
+                        Profit/Month {sortField === 'profitPerMonth' && (sortDirection === 'asc' ? '↑' : '↓')}
+                      </TableHead>
+                      <TableHead 
+                        className="min-w-[180px] cursor-pointer hover:bg-muted/50"
+                        onClick={() => handleSort('status')}
+                      >
+                        Status {sortField === 'status' && (sortDirection === 'asc' ? '↑' : '↓')}
+                      </TableHead>
+                      <TableHead 
+                        className="min-w-[120px] cursor-pointer hover:bg-muted/50"
+                        onClick={() => handleSort('salaryInLacs')}
+                      >
+                        Salary (Lacs) {sortField === 'salaryInLacs' && (sortDirection === 'asc' ? '↑' : '↓')}
+                      </TableHead>
                       <TableHead className="sticky right-0 bg-background z-20 min-w-[100px] text-right">Actions</TableHead>
                     </TableRow>
                   </TableHeader>
