@@ -2601,7 +2601,6 @@ function SubmittedCandidates() {
                   render={({ field }) => (
                     <FormItem>
                       <FormLabel>Current CTC *</FormLabel>
-                      <replit_final_file>
                       <FormControl>
                         <Input placeholder="Current salary" {...field} />
                       </FormControl>
@@ -2611,7 +2610,8 @@ function SubmittedCandidates() {
                 />
 
                 <FormField
-                  control={form.control}name="expectedCtc"
+                  control={form.control}
+                  name="expectedCtc"
                   render={({ field }) => (
                     <FormItem>
                       <FormLabel>Expected CTC *</FormLabel>
