@@ -7,7 +7,8 @@ import {
   Calendar, 
   ChevronDown, 
   Clock,
-  X 
+  X,
+  Building
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { 
@@ -134,15 +135,51 @@ export default function CareersHeader() {
                     {user.role === 'admin' ? (
                       <>
                         <DropdownMenuItem asChild>
-                          <Link href="/admin/dashboard?tab=account" className="cursor-pointer w-full">
+                          <Link href="/admin/dashboard" className="cursor-pointer w-full">
                             <User className="mr-2 h-4 w-4" />
-                            Account Settings
+                            Dashboard
+                          </Link>
+                        </DropdownMenuItem>
+                        <DropdownMenuItem asChild>
+                          <Link href="/admin/jobs" className="cursor-pointer w-full">
+                            <Building className="mr-2 h-4 w-4" />
+                            Manage Job Listings
                           </Link>
                         </DropdownMenuItem>
                         <DropdownMenuItem asChild>
                           <Link href="/admin/candidates" className="cursor-pointer w-full">
+                            <User className="mr-2 h-4 w-4" />
+                            Candidates
+                          </Link>
+                        </DropdownMenuItem>
+                        <DropdownMenuItem asChild>
+                          <Link href="/admin/submitted-candidates" className="cursor-pointer w-full">
+                            <Building className="mr-2 h-4 w-4" />
+                            Submitted Candidates
+                          </Link>
+                        </DropdownMenuItem>
+                        <DropdownMenuItem asChild>
+                          <Link href="/admin/users" className="cursor-pointer w-full">
+                            <User className="mr-2 h-4 w-4" />
+                            Users Management
+                          </Link>
+                        </DropdownMenuItem>
+                        <DropdownMenuItem asChild>
+                          <Link href="/admin/demo-requests" className="cursor-pointer w-full">
                             <Calendar className="mr-2 h-4 w-4" />
-                            Manage Candidates
+                            Demo Requests
+                          </Link>
+                        </DropdownMenuItem>
+                        <DropdownMenuItem asChild>
+                          <Link href="/admin/contact-submissions" className="cursor-pointer w-full">
+                            <Building className="mr-2 h-4 w-4" />
+                            Contact Submissions
+                          </Link>
+                        </DropdownMenuItem>
+                        <DropdownMenuItem asChild>
+                          <Link href="/admin/dashboard?tab=account" className="cursor-pointer w-full">
+                            <User className="mr-2 h-4 w-4" />
+                            Account Settings
                           </Link>
                         </DropdownMenuItem>
                       </>
