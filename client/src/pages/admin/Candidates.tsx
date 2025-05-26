@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useMemo } from "react";
 import { useQuery, useMutation } from "@tanstack/react-query";
 import { queryClient } from "@/lib/queryClient";
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
@@ -30,6 +30,7 @@ import {
   ChartBar,
   ChartPie
 } from "lucide-react";
+import { Loader2 } from "lucide-react";
 import {
   Dialog,
   DialogContent,
@@ -309,19 +310,11 @@ export default function Candidates() {
     };
 
   // Fetch job applications data
-  const { data, isLoading, error } = useQuery<{ 
-    success: boolean; 
-    data: ApplicationWithDetails[];
-    meta: { 
-      total: number;
-      page: number;
-      limit: number;
-      pages: number;
-    }
-  }>({
-    queryKey: ['/api/admin/applications', page, search, statusFilter],
+  const { data: applicationsData, isLoading, error } = useQuery({
+    queryKey: ['/api/admin/applications', statusFilter],
     queryFn: async () => {
-      const res = await fetch(`/api/admin/applications?${buildQueryParams()}`, {
+      const queryParams = buildQueryParams();
+      const res = await fetch(`/api/admin/applications?${queryParams}`, {
         headers: {
           'Cache-Control': 'no-cache',
           'Pragma': 'no-cache'
@@ -335,6 +328,40 @@ export default function Candidates() {
     refetchOnWindowFocus: true,
     staleTime: 0, // Consider data stale immediately
   });
+
+  // Client-side filtering of applications based on search term
+  const filteredApplications = useMemo(() => {
+    if (!applicationsData?.data) return [];
+
+    let filtered = applicationsData.data;
+
+    // Apply search filter
+    if (search) {
+      const searchLower = search.toLowerCase();
+      filtered = filtered.filter((application: any) => 
+        application.user?.fullName?.toLowerCase().includes(searchLower) ||
+        application.user?.email?.toLowerCase().includes(searchLower) ||
+        application.user?.phone?.toLowerCase().includes(searchLower) ||
+        application.user?.skills?.toLowerCase().includes(searchLower) ||
+        application.user?.location?.toLowerCase().includes(searchLower) ||
+        application.job?.title?.toLowerCase().includes(searchLower) ||
+        application.job?.company?.toLowerCase().includes(searchLower) ||
+        application.status?.toLowerCase().includes(searchLower)
+      );
+    }
+
+    return filtered;
+  }, [applicationsData?.data, search]);
+
+  // Client-side pagination
+  const paginatedApplications = useMemo(() => {
+    const startIndex = (page - 1) * pageSize;
+    const endIndex = startIndex + pageSize;
+    return filteredApplications.slice(startIndex, endIndex);
+  }, [filteredApplications, page, pageSize]);
+
+  // Calculate total pages based on filtered results
+  const totalPages = Math.ceil(filteredApplications.length / pageSize);
 
     // Fetch analytics data
     const { data: analyticsData, isLoading: isAnalyticsLoading, error: analyticsError } = useQuery<AnalyticsData[]>({
@@ -425,6 +452,12 @@ export default function Candidates() {
   };
 
   // Redirect to login if not authenticated or not an admin
+  const handleSearch = (e: React.FormEvent) => {
+    e.preventDefault();
+    setPage(1); // Reset to first page when searching
+    // No API call needed since we're filtering client-side
+  };
+
   if (!user || user.role !== "admin") {
     return null; // The ProtectedRoute component will handle redirection
   }
@@ -502,13 +535,18 @@ export default function Candidates() {
             <CardHeader className="pb-0">
               <CardTitle>Job Applications</CardTitle>
               <CardDescription>
-                {data?.meta?.total || 0} applications found
+                {applicationsData?.data?.length} applications found
               </CardDescription>
             </CardHeader>
             <CardContent>
               {isLoading ? (
-                <div className="py-8 text-center">Loading applications...</div>
-              ) : !data?.data || data.data.length === 0 ? (
+                <TableRow>
+                  <TableCell colSpan={9} className="h-24 text-center">
+                    <Loader2 className="h-6 w-6 animate-spin mx-auto" />
+                    <span className="text-sm text-muted-foreground mt-2 block">Loading applications...</span>
+                  </TableCell>
+                </TableRow>
+              ) : paginatedApplications?.length === 0 ? (
                 <div className="py-8 text-center">
                   <p className="text-muted-foreground">No applications found</p>
                   <p className="text-sm text-muted-foreground mt-1">Try adjusting your filters</p>
@@ -534,7 +572,7 @@ export default function Candidates() {
                       </TableRow>
                     </TableHeader>
                     <TableBody>
-                      {data?.data.map((application) => (
+                      {paginatedApplications?.map((application: any) => (
                         <TableRow key={application.id}>
                           <TableCell>
                             <div className="space-y-1">
@@ -692,33 +730,37 @@ export default function Candidates() {
                 </div>
               )}
             </CardContent>
-            {data?.meta && data.meta.pages > 1 && (
-              <CardFooter className="flex justify-between items-center">
-                <div className="text-sm text-muted-foreground">
-                  Page {page} of {data.meta.pages}
-                </div>
-                <div className="flex gap-2">
-                  <Button
-                    variant="outline"
-                    size="sm"
-                    onClick={() => setPage(p => Math.max(1, p - 1))}
-                    disabled={page === 1}
-                  >
-                    <ChevronLeft className="h-4 w-4" />
-                    Previous
-                  </Button>
-                  <Button
-                    variant="outline"
-                    size="sm"
-                    onClick={() => setPage(p => Math.min(data.meta.pages, p + 1))}
-                    disabled={page >= data.meta.pages}
-                  >
-                    Next
-                    <ChevronRight className="h-4 w-4" />
-                  </Button>
-                </div>
-              </CardFooter>
+             <CardFooter className="flex justify-between items-center">
+          <div className="text-sm text-muted-foreground">
+            Showing {((page - 1) * pageSize) + 1} to {Math.min(page * pageSize, filteredApplications.length)} of {filteredApplications.length} applications
+            {search && applicationsData?.data && (
+              <span className="text-blue-600 ml-2">
+                (filtered from {applicationsData.data.length} total)
+              </span>
             )}
+          </div>
+          <div className="flex items-center gap-2">
+            <Button
+              variant="outline"
+              size="sm"
+              onClick={() => setPage(p => Math.max(1, p - 1))}
+              disabled={page === 1}
+            >
+              <ChevronLeft className="h-4 w-4 mr-1" /> Previous
+            </Button>
+            <span className="text-sm">
+              Page {page} of {totalPages}
+            </span>
+            <Button
+              variant="outline"
+              size="sm"
+              onClick={() => setPage(p => Math.min(totalPages, p + 1))}
+              disabled={page >= totalPages}
+            >
+              Next <ChevronRight className="h-4 w-4 ml-1" />
+            </Button>
+          </div>
+        </CardFooter>
           </Card>
         </TabsContent>
 
