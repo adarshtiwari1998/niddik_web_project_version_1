@@ -931,7 +931,7 @@ const handleResumeRemove = async () => {
                       <h4 className="font-semibold text-base">Our Story</h4>
                       <div className="text-xs leading-relaxed text-muted-foreground space-y-2">
                         <p>
-                          Our journey is deeply rooted in a legacy passed down from my grandfather, Late Shri Satyendra Prasad Shrivastava. A true visionary, he was a recipient of the 1996 Ernst & Young Entrepreneur of the Year Award, the 1994 KPMG Peat Marwick High-Tech Entrepreneur Award, and the 1994 Small Business Person of the Year award for the Washington area.
+                          Our journey is deeply rooted in a legacy passed down from my grandfather, <a href="https://www.washingtontechnology.com/1998/08/anstec-inc/332231/" target="_blank"  rel="no-follow">Late Shri Satyendra Prasad Shrivastava</a>. A true visionary, he was a recipient of the 1996 Ernst & Young Entrepreneur of the Year Award, the 1994 KPMG Peat Marwick High-Tech Entrepreneur Award, and the 1994 Small Business Person of the Year award for the Washington area.
                         </p>
                         <p>
                           His achievements were a constant source of inspiration, yet in the early days, I was held back. A lack of awareness and corporate experience meant that it took me over two decades to finally embark on my own entrepreneurial path.
