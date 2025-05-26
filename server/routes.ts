@@ -688,6 +688,52 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
+  // Bulk delete submitted candidates
+  app.post('/api/submitted-candidates/bulk-delete', async (req: AuthenticatedRequest, res: Response) => {
+    try {
+      // Check if user is authenticated and is an admin
+      if (!req.isAuthenticated() || req.user?.role !== 'admin') {
+        return res.status(403).json({ 
+          success: false, 
+          message: "Unauthorized access" 
+        });
+      }
+
+      const { ids } = req.body;
+
+      if (!Array.isArray(ids) || ids.length === 0) {
+        return res.status(400).json({ 
+          success: false, 
+          message: "Invalid data. Expected a non-empty array of IDs." 
+        });
+      }
+
+      // Validate that all IDs are numbers
+      const validIds = ids.filter(id => typeof id === 'number' && !isNaN(id));
+      if (validIds.length !== ids.length) {
+        return res.status(400).json({ 
+          success: false, 
+          message: "All IDs must be valid numbers." 
+        });
+      }
+
+      // Delete candidates by IDs
+      const deletedCount = await storage.bulkDeleteSubmittedCandidates(validIds);
+      
+      return res.status(200).json({ 
+        success: true, 
+        message: `${deletedCount} candidates deleted successfully`,
+        count: deletedCount
+      });
+    } catch (error) {
+      console.error('Error bulk deleting submitted candidates:', error);
+      return res.status(500).json({ 
+        success: false, 
+        message: "Internal server error" 
+      });
+    }
+  });
+
   // Job Application API Endpoints
 
   // Apply for a job (requires authentication, handles both file upload and existing resume URL)

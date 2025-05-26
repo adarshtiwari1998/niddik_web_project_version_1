@@ -13,6 +13,7 @@ import { Badge } from "@/components/ui/badge";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle, AlertDialogTrigger } from "@/components/ui/alert-dialog";
 import { Loader2, Edit, Trash2, Info, Plus, Download, Upload, Filter, Search, FileSpreadsheet, Check, X } from "lucide-react";
+import { Checkbox } from "@/components/ui/checkbox";
 import { formatDistanceToNow } from "date-fns";
 import { apiRequest } from "@/lib/queryClient";
 import { useForm, SubmitHandler } from "react-hook-form";
@@ -184,6 +185,11 @@ function SubmittedCandidates() {
   const [applicantSearch, setApplicantSearch] = useState("");
   const [isApplicantsDialogOpen, setIsApplicantsDialogOpen] = useState(false);
   const [editDialogLoading, setEditDialogLoading] = useState(false);
+  
+  // Bulk selection state
+  const [selectedCandidates, setSelectedCandidates] = useState<Set<number>>(new Set());
+  const [isSelectAllChecked, setIsSelectAllChecked] = useState(false);
+  const [showBulkActions, setShowBulkActions] = useState(false);
 
   // Calculate margin and profit based on bill rate and pay rate
   const calculateMarginAndProfit = (billRate: string, payRate: string) => {
@@ -402,6 +408,36 @@ function SubmittedCandidates() {
         title: "Success",
         description: "Candidate has been deleted successfully",
       });
+      queryClient.invalidateQueries({ queryKey: ['/api/submitted-candidates'] });
+      queryClient.invalidateQueries({ queryKey: ['/api/submitted-candidates/analytics/summary'] });
+    },
+    onError: (error: Error) => {
+      toast({
+        title: "Error",
+        description: error.message,
+        variant: "destructive",
+      });
+    },
+  });
+
+  // Mutation to bulk delete candidates
+  const bulkDeleteMutation = useMutation({
+    mutationFn: async (ids: number[]) => {
+      const res = await apiRequest("POST", "/api/submitted-candidates/bulk-delete", { ids });
+      if (!res.ok) {
+        const errorData = await res.json();
+        throw new Error(errorData.message || "Failed to delete candidates");
+      }
+      return await res.json();
+    },
+    onSuccess: (data) => {
+      toast({
+        title: "Success",
+        description: `${data.count} candidates have been deleted successfully`,
+      });
+      setSelectedCandidates(new Set());
+      setIsSelectAllChecked(false);
+      setShowBulkActions(false);
       queryClient.invalidateQueries({ queryKey: ['/api/submitted-candidates'] });
       queryClient.invalidateQueries({ queryKey: ['/api/submitted-candidates/analytics/summary'] });
     },
@@ -655,6 +691,39 @@ function SubmittedCandidates() {
     });
     setIsApplicantsDialogOpen(false);
     setIsAddingInline(true);
+  };
+
+  // Bulk selection handlers
+  const handleSelectCandidate = (candidateId: number, checked: boolean) => {
+    const newSelected = new Set(selectedCandidates);
+    if (checked) {
+      newSelected.add(candidateId);
+    } else {
+      newSelected.delete(candidateId);
+    }
+    setSelectedCandidates(newSelected);
+    setShowBulkActions(newSelected.size > 0);
+    
+    // Update select all checkbox state
+    const totalCandidates = candidatesData?.data?.length || 0;
+    setIsSelectAllChecked(newSelected.size === totalCandidates && totalCandidates > 0);
+  };
+
+  const handleSelectAll = (checked: boolean) => {
+    if (checked) {
+      const allIds = new Set(candidatesData?.data?.map((c: SubmittedCandidate) => c.id) || []);
+      setSelectedCandidates(allIds);
+      setShowBulkActions(allIds.size > 0);
+    } else {
+      setSelectedCandidates(new Set());
+      setShowBulkActions(false);
+    }
+    setIsSelectAllChecked(checked);
+  };
+
+  const handleBulkDelete = () => {
+    const idsArray = Array.from(selectedCandidates);
+    bulkDeleteMutation.mutate(idsArray);
   };
 
   // Form submit handlers
@@ -1000,6 +1069,69 @@ function SubmittedCandidates() {
             </div>
           </div>
 
+          {/* Bulk Actions Bar */}
+          {showBulkActions && (
+            <div className="bg-blue-50 border border-blue-200 rounded-lg p-4 mb-4 flex items-center justify-between">
+              <div className="flex items-center gap-4">
+                <span className="text-sm text-blue-700 font-medium">
+                  {selectedCandidates.size} candidate{selectedCandidates.size !== 1 ? 's' : ''} selected
+                </span>
+                <Button
+                  variant="outline"
+                  size="sm"
+                  onClick={() => {
+                    setSelectedCandidates(new Set());
+                    setIsSelectAllChecked(false);
+                    setShowBulkActions(false);
+                  }}
+                >
+                  Clear selection
+                </Button>
+              </div>
+              <div className="flex items-center gap-2">
+                <AlertDialog>
+                  <AlertDialogTrigger asChild>
+                    <Button
+                      variant="destructive"
+                      size="sm"
+                      disabled={bulkDeleteMutation.isPending}
+                    >
+                      {bulkDeleteMutation.isPending ? (
+                        <>
+                          <Loader2 className="h-4 w-4 mr-2 animate-spin" />
+                          Deleting...
+                        </>
+                      ) : (
+                        <>
+                          <Trash2 className="h-4 w-4 mr-2" />
+                          Delete Selected
+                        </>
+                      )}
+                    </Button>
+                  </AlertDialogTrigger>
+                  <AlertDialogContent>
+                    <AlertDialogHeader>
+                      <AlertDialogTitle>Are you sure?</AlertDialogTitle>
+                      <AlertDialogDescription>
+                        This will permanently delete {selectedCandidates.size} candidate{selectedCandidates.size !== 1 ? 's' : ''}. 
+                        This action cannot be undone.
+                      </AlertDialogDescription>
+                    </AlertDialogHeader>
+                    <AlertDialogFooter>
+                      <AlertDialogCancel>Cancel</AlertDialogCancel>
+                      <AlertDialogAction 
+                        onClick={handleBulkDelete}
+                        className="bg-red-500 hover:bg-red-600"
+                      >
+                        Delete {selectedCandidates.size} Candidate{selectedCandidates.size !== 1 ? 's' : ''}
+                      </AlertDialogAction>
+                    </AlertDialogFooter>
+                  </AlertDialogContent>
+                </AlertDialog>
+              </div>
+            </div>
+          )}
+
           <div className="flex flex-wrap gap-2 mb-4">
             <Select
               value={statusFilter}
@@ -1057,6 +1189,14 @@ function SubmittedCandidates() {
                 <Table className="min-w-[1500px]">
                   <TableHeader>
                     <TableRow>
+                      <TableHead className="w-12">
+                        <input
+                          type="checkbox"
+                          checked={isSelectAllChecked}
+                          onChange={(e) => handleSelectAll(e.target.checked)}
+                          className="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 rounded focus:ring-blue-500 focus:ring-2"
+                        />
+                      </TableHead>
                       <TableHead className="min-w-[150px]">Sourced By</TableHead>
                       <TableHead className="min-w-[150px]">Client</TableHead>
                       <TableHead className="min-w-[150px]">POC</TableHead>
@@ -1082,6 +1222,10 @@ function SubmittedCandidates() {
                   {/* Inline add candidate row */}
                   {isAddingInline && (
                     <TableRow className="bg-muted/30">
+                      {/* Checkbox column */}
+                      <TableCell className="w-12">
+                        <div className="w-4 h-4"></div>
+                      </TableCell>
                       {/* Sourced By (Date Picker) */}
                       <TableCell>
                         <Input 
@@ -1284,14 +1428,14 @@ function SubmittedCandidates() {
 
                   {isLoadingCandidates ? (
                     <TableRow>
-                      <TableCell colSpan={9} className="h-24 text-center">
+                      <TableCell colSpan={20} className="h-24 text-center">
                         <Loader2 className="h-6 w-6 animate-spin mx-auto" />
                         <span className="text-sm text-muted-foreground mt-2 block">Loading candidates...</span>
                       </TableCell>
                     </TableRow>
                   ) : candidatesData?.data?.length === 0 ? (
                     <TableRow>
-                      <TableCell colSpan={9} className="h-24 text-center">
+                      <TableCell colSpan={20} className="h-24 text-center">
                         <div className="flex flex-col items-center justify-center">
                           <p className="text-muted-foreground">No candidates found</p>
                           <Button 
@@ -1300,6 +1444,9 @@ function SubmittedCandidates() {
                               setStatusFilter("all_statuses");
                               setClientFilter("all_clients");
                               setSearch("");
+                              setSelectedCandidates(new Set());
+                              setIsSelectAllChecked(false);
+                              setShowBulkActions(false);
                             }}
                           >
                             Clear filters
@@ -1310,6 +1457,14 @@ function SubmittedCandidates() {
                   ) : (
                     candidatesData?.data?.map((candidate: SubmittedCandidate) => (
                       <TableRow key={candidate.id}>
+                        <TableCell className="w-12">
+                          <input
+                            type="checkbox"
+                            checked={selectedCandidates.has(candidate.id)}
+                            onChange={(e) => handleSelectCandidate(candidate.id, e.target.checked)}
+                            className="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 rounded focus:ring-blue-500 focus:ring-2"
+                          />
+                        </TableCell>
                         <TableCell>{candidate.sourcedBy || '-'}</TableCell>
                         <TableCell>{candidate.client || '-'}</TableCell>
                         <TableCell>{candidate.poc || '-'}</TableCell>

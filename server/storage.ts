@@ -23,7 +23,7 @@ import {
   DemoRequest,
   InsertDemoRequest
 } from "@shared/schema";
-import { eq, desc, and, like, or, asc } from "drizzle-orm";
+import { eq, desc, and, like, or, asc, inArray } from "drizzle-orm";
 
 export const storage = {
   // Contact form submissions
@@ -31,29 +31,29 @@ export const storage = {
     const [submission] = await db.insert(contactSubmissions).values(data).returning();
     return submission;
   },
-  
+
   async getContactSubmissions(): Promise<ContactSubmission[]> {
     return await db.query.contactSubmissions.findMany({
       orderBy: (submissions, { desc }) => [desc(submissions.createdAt)]
     });
   },
-  
+
   // Testimonials
   async getTestimonials(): Promise<Testimonial[]> {
     return await db.query.testimonials.findMany();
   },
-  
+
   async getTestimonialById(id: number): Promise<Testimonial | undefined> {
     return await db.query.testimonials.findFirst({
       where: eq(testimonials.id, id)
     });
   },
-  
+
   // Clients
   async getClients(): Promise<Client[]> {
     return await db.query.clients.findMany();
   },
-  
+
   async getClientById(id: number): Promise<Client | undefined> {
     return await db.query.clients.findFirst({
       where: eq(clients.id, id)
@@ -86,7 +86,7 @@ export const storage = {
 
     // Build the where conditions
     let whereConditions = [];
-    
+
     if (search) {
       whereConditions.push(
         or(
@@ -160,7 +160,7 @@ export const storage = {
       .set(data)
       .where(eq(jobListings.id, id))
       .returning();
-    
+
     return updatedJobListing;
   },
 
@@ -217,7 +217,7 @@ export const storage = {
       .set(data)
       .where(eq(users.id, id))
       .returning();
-    
+
     return updatedUser;
   },
 
@@ -227,7 +227,7 @@ export const storage = {
       .set({ password })
       .where(eq(users.id, id))
       .returning();
-    
+
     return updatedUser;
   },
 
@@ -286,7 +286,7 @@ export const storage = {
       })
       .where(eq(jobApplications.id, id))
       .returning();
-    
+
     return updatedApplication;
   },
 
@@ -307,7 +307,7 @@ export const storage = {
 
     // Build the where conditions
     let whereConditions = [];
-    
+
     if (status) {
       whereConditions.push(eq(jobApplications.status, status));
     }
@@ -322,12 +322,12 @@ export const storage = {
           applications: true
         }
       });
-      
+
       if (userApplications.length > 0) {
         const applicationIds = userApplications.flatMap(user => 
           user.applications.map(app => app.id)
         );
-        
+
         if (applicationIds.length > 0) {
           return {
             applications: userApplications.flatMap(user => user.applications),
@@ -401,7 +401,7 @@ export const storage = {
 
     // Build the where conditions
     let whereConditions = [];
-    
+
     if (status && status !== 'all_statuses') {
       whereConditions.push(eq(submittedCandidates.status, status));
     }
@@ -458,7 +458,7 @@ export const storage = {
       .set(updatedData)
       .where(eq(submittedCandidates.id, id))
       .returning();
-    
+
     return updatedCandidate;
   },
 
@@ -487,7 +487,7 @@ export const storage = {
     // Get status counts
     const statusCounts: Record<string, number> = {};
     const clientCounts: Record<string, number> = {};
-    
+
     allCandidates.forEach(candidate => {
       // Count by status
       const status = candidate.status;
@@ -496,7 +496,7 @@ export const storage = {
       } else {
         statusCounts[status]++;
       }
-      
+
       // Count by client
       if (candidate.client) {
         if (!clientCounts[candidate.client]) {
@@ -515,12 +515,18 @@ export const storage = {
     };
   },
 
-  async bulkCreateSubmittedCandidates(candidates: InsertSubmittedCandidate[]): Promise<SubmittedCandidate[]> {
-    if (candidates.length === 0) return [];
-    const result = await db.insert(submittedCandidates).values(candidates).returning();
-    return result;
-  },
-  
+  async bulkCreateSubmittedCandidates(candidates: any[]) {
+    return await db.insert(submittedCandidates).values(candidates).returning();
+  }
+
+  async bulkDeleteSubmittedCandidates(ids: number[]) {
+    const result = await db.delete(submittedCandidates)
+      .where(inArray(submittedCandidates.id, ids))
+      .returning({ id: submittedCandidates.id });
+
+    return result.length;
+  }
+
   // Demo Requests
   async createDemoRequest(data: InsertDemoRequest): Promise<DemoRequest> {
     const [demoRequest] = await db.insert(demoRequests).values({
@@ -530,19 +536,19 @@ export const storage = {
     }).returning();
     return demoRequest;
   },
-  
+
   async getDemoRequestById(id: number): Promise<DemoRequest | undefined> {
     return await db.query.demoRequests.findFirst({
       where: eq(demoRequests.id, id)
     });
   },
-  
+
   async getDemoRequestByEmail(email: string): Promise<DemoRequest | undefined> {
     return await db.query.demoRequests.findFirst({
       where: eq(demoRequests.workEmail, email)
     });
   },
-  
+
   async getAllDemoRequests(
     options: {
       page?: number;
@@ -558,7 +564,7 @@ export const storage = {
 
     // Build the where conditions
     let whereConditions = [];
-    
+
     if (status && status !== 'all_statuses') {
       whereConditions.push(eq(demoRequests.status, status));
     }
@@ -587,7 +593,7 @@ export const storage = {
       total: totalCount
     };
   },
-  
+
   async updateDemoRequest(id: number, data: Partial<DemoRequest>): Promise<DemoRequest | undefined> {
     // Update the updatedAt timestamp
     const updatedData = {
@@ -600,10 +606,10 @@ export const storage = {
       .set(updatedData)
       .where(eq(demoRequests.id, id))
       .returning();
-    
+
     return updatedRequest;
   },
-  
+
   async deleteDemoRequest(id: number): Promise<void> {
     await db
       .delete(demoRequests)
