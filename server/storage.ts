@@ -32,6 +32,53 @@ export const storage = {
     return submission;
   },
 
+  async getAllContactSubmissions(params: {
+    page: number;
+    limit: number;
+    search?: string;
+    interest?: string;
+  }): Promise<{ submissions: ContactSubmission[]; total: number }> {
+    const { page, limit, search, interest } = params;
+    const offset = (page - 1) * limit;
+
+    // Build where conditions
+    let whereConditions = [];
+
+    if (search) {
+      const searchPattern = `%${search}%`;
+      whereConditions.push(
+        or(
+          ilike(contactSubmissions.fullName, searchPattern),
+          ilike(contactSubmissions.email, searchPattern),
+          ilike(contactSubmissions.company, searchPattern)
+        )
+      );
+    }
+
+    if (interest && interest !== 'all') {
+      whereConditions.push(eq(contactSubmissions.interest, interest));
+    }
+
+    // Get total count
+    const countResult = await db
+      .select({ total: count() })
+      .from(contactSubmissions)
+      .where(whereConditions.length > 0 ? and(...whereConditions) : undefined);
+
+    const total = countResult[0]?.total || 0;
+
+    // Get paginated submissions
+    const submissions = await db
+      .select()
+      .from(contactSubmissions)
+      .where(whereConditions.length > 0 ? and(...whereConditions) : undefined)
+      .orderBy(desc(contactSubmissions.createdAt))
+      .limit(limit)
+      .offset(offset);
+
+    return { submissions, total };
+  },
+
   async getContactSubmissions(): Promise<ContactSubmission[]> {
     return await db.query.contactSubmissions.findMany({
       orderBy: (submissions, { desc }) => [desc(submissions.createdAt)]

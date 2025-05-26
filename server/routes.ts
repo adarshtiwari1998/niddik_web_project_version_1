@@ -65,6 +65,48 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
+  // Admin API: Get all contact submissions
+  app.get('/api/admin/contact-submissions', async (req: AuthenticatedRequest, res) => {
+    try {
+      // Check if user is authenticated and is an admin
+      if (!req.isAuthenticated() || req.user?.role !== 'admin') {
+        return res.status(403).json({
+          success: false,
+          message: "Unauthorized"
+        });
+      }
+
+      const page = req.query.page ? parseInt(req.query.page as string) : 1;
+      const limit = req.query.limit ? parseInt(req.query.limit as string) : 10;
+      const search = req.query.search as string;
+      const interest = req.query.interest as string;
+
+      const result = await storage.getAllContactSubmissions({
+        page,
+        limit,
+        search,
+        interest
+      });
+
+      return res.status(200).json({
+        success: true,
+        data: result.submissions,
+        meta: {
+          total: result.total,
+          page,
+          limit,
+          pages: Math.ceil(result.total / limit)
+        }
+      });
+    } catch (error) {
+      console.error('Error fetching contact submissions:', error);
+      return res.status(500).json({
+        success: false,
+        message: "Internal server error"
+      });
+    }
+  });
+
   // API endpoint to get testimonials
   app.get('/api/testimonials', async (req, res) => {
     try {

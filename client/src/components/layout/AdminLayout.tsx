@@ -1,10 +1,9 @@
-
 import { ReactNode, useState, useEffect } from "react";
 import { Link, useLocation } from "wouter";
 import { useAuth } from "@/hooks/use-auth";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { User, FileText, Settings, ChevronRight, LogOut, Shield, Loader2, CalendarClock, Menu, X } from "lucide-react";
+import { User, FileText, Settings, ChevronRight, LogOut, Shield, Loader2, CalendarClock, Menu, X, Mail } from "lucide-react";
 import { LoadingScreen } from "@/components/ui/loading-screen";
 
 interface AdminLayoutProps {
@@ -254,6 +253,25 @@ export default function AdminLayout({ children, title, description }: AdminLayou
                   {!isCollapsed && (
                     <>
                       <span className="ml-3">Demo Requests</span>
+                      <ChevronRight className="h-4 w-4 ml-auto" />
+                    </>
+                  )}
+                </div>
+              </Link>
+
+              {/* Contact Submissions */}
+              <Link href="/admin/contact-submissions">
+                <div className={`flex items-center px-3 py-2 mb-1 rounded-md transition-colors cursor-pointer ${
+                  location === "/admin/contact-submissions" 
+                    ? "bg-primary/10 text-primary" 
+                    : "hover:bg-gray-100 dark:hover:bg-gray-700"
+                } ${isCollapsed ? 'justify-center' : ''}`}
+                title={isCollapsed ? "Contact Submissions" : ""}
+                >
+                  <Mail className="h-5 w-5" />
+                  {!isCollapsed && (
+                    <>
+                      <span className="ml-3">Contact Submissions</span>
                       <ChevronRight className="h-4 w-4 ml-auto" />
                     </>
                   )}
