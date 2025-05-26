@@ -312,7 +312,7 @@ export default function AdminLayout({ children, title, description }: AdminLayou
           </header>
 
           {/* Content */}
-          <main className="px-4 py-3 sm:p-6 bg-gray-50 dark:bg-gray-900 min-h-[calc(100vh-145px)] sm:min-h-[calc(100vh-161px)] w-full">
+          <main className="px-6 py-4 sm:px-8 sm:py-6 bg-gray-50 dark:bg-gray-900 min-h-[calc(100vh-145px)] sm:min-h-[calc(100vh-161px)] w-full">
             <div className="w-full max-w-none">
               {children}
             </div>
