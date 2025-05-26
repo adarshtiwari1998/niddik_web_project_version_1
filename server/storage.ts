@@ -177,18 +177,23 @@ export const storage = {
     }
 
     if (priority && priority !== 'all_priorities') {
+      console.log('Applying priority filter:', priority); // Debug log
       switch (priority) {
         case 'urgent':
           whereConditions.push(eq(jobListings.urgent, true));
+          console.log('Added urgent filter condition'); // Debug log
           break;
         case 'priority':
           whereConditions.push(eq(jobListings.priority, true));
+          console.log('Added priority filter condition'); // Debug log
           break;
         case 'open':
           whereConditions.push(eq(jobListings.isOpen, true));
+          console.log('Added open filter condition'); // Debug log
           break;
         case 'featured':
           whereConditions.push(eq(jobListings.featured, true));
+          console.log('Added featured filter condition'); // Debug log
           break;
       }
     }

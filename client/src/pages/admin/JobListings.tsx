@@ -51,7 +51,10 @@ export default function JobListings() {
     if (search) params.append("search", search);
     if (statusFilter && statusFilter !== "all_statuses") params.append("status", statusFilter);
     if (categoryFilter && categoryFilter !== "all_categories") params.append("category", categoryFilter);
-    if (priorityFilter && priorityFilter !== "all_priorities") params.append("priority", priorityFilter);
+    if (priorityFilter && priorityFilter !== "all_priorities") {
+      params.append("priority", priorityFilter);
+      console.log('Priority filter added:', priorityFilter); // Debug log
+    }
 
     return params.toString();
   };
@@ -59,7 +62,9 @@ export default function JobListings() {
   const { data, isLoading, error } = useQuery<{ data: JobListing[], meta: { total: number, pages: number } }>({
     queryKey: ['/api/job-listings', page, search, statusFilter, categoryFilter, priorityFilter],
     queryFn: async () => {
-      const res = await fetch(`/api/job-listings?${buildQueryParams()}`);
+      const queryParams = buildQueryParams();
+      console.log('Query params being sent:', queryParams); // Debug log
+      const res = await fetch(`/api/job-listings?${queryParams}`);
       if (!res.ok) throw new Error("Failed to fetch job listings");
       return res.json();
     },
