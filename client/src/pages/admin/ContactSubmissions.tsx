@@ -10,6 +10,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { Search, Mail, Building, Calendar, Filter, RefreshCw } from "lucide-react";
 import { format } from "date-fns";
+import AdminLayout from "@/components/layout/AdminLayout";
 
 interface ContactSubmission {
   id: number;
@@ -77,182 +78,188 @@ const ContactSubmissions = () => {
 
   if (isLoading) {
     return (
-      <div className="flex items-center justify-center h-64">
-        <div className="text-center">
-          <RefreshCw className="h-8 w-8 animate-spin mx-auto mb-4" />
-          <p>Loading contact submissions...</p>
+      <AdminLayout title="Contact Submissions" description="Manage and review contact form submissions from your website">
+        <div className="flex items-center justify-center h-64">
+          <div className="text-center">
+            <RefreshCw className="h-8 w-8 animate-spin mx-auto mb-4" />
+            <p>Loading contact submissions...</p>
+          </div>
         </div>
-      </div>
+      </AdminLayout>
     );
   }
 
   if (error) {
     return (
-      <div className="flex items-center justify-center h-64">
-        <div className="text-center">
-          <p className="text-red-600 mb-4">Error loading contact submissions</p>
-          <Button onClick={() => refetch()}>Try Again</Button>
+      <AdminLayout title="Contact Submissions" description="Manage and review contact form submissions from your website">
+        <div className="flex items-center justify-center h-64">
+          <div className="text-center">
+            <p className="text-red-600 mb-4">Error loading contact submissions</p>
+            <Button onClick={() => refetch()}>Try Again</Button>
+          </div>
         </div>
-      </div>
+      </AdminLayout>
     );
   }
 
   return (
-    <div className="space-y-6">
-      <div className="flex justify-between items-center">
-        <div>
-          <h1 className="text-3xl font-bold tracking-tight">Contact Submissions</h1>
-          <p className="text-muted-foreground">
-            Manage and review contact form submissions from your website
-          </p>
-        </div>
-        <Button onClick={() => refetch()} variant="outline">
-          <RefreshCw className="h-4 w-4 mr-2" />
-          Refresh
-        </Button>
-      </div>
-
-      {/* Stats Cards */}
-      <div className="grid gap-4 md:grid-cols-4">
-        <Card>
-          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium">Total Submissions</CardTitle>
-            <Mail className="h-4 w-4 text-muted-foreground" />
-          </CardHeader>
-          <CardContent>
-            <div className="text-2xl font-bold">{totalSubmissions}</div>
-          </CardContent>
-        </Card>
-        <Card>
-          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium">Hiring Inquiries</CardTitle>
-            <Building className="h-4 w-4 text-muted-foreground" />
-          </CardHeader>
-          <CardContent>
-            <div className="text-2xl font-bold">
-              {submissions.filter((s: ContactSubmission) => s.interest === "hiring").length}
-            </div>
-          </CardContent>
-        </Card>
-        <Card>
-          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium">Talent Applications</CardTitle>
-            <Building className="h-4 w-4 text-muted-foreground" />
-          </CardHeader>
-          <CardContent>
-            <div className="text-2xl font-bold">
-              {submissions.filter((s: ContactSubmission) => s.interest === "joining").length}
-            </div>
-          </CardContent>
-        </Card>
-        <Card>
-          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium">Enterprise Inquiries</CardTitle>
-            <Building className="h-4 w-4 text-muted-foreground" />
-          </CardHeader>
-          <CardContent>
-            <div className="text-2xl font-bold">
-              {submissions.filter((s: ContactSubmission) => s.interest === "enterprise").length}
-            </div>
-          </CardContent>
-        </Card>
-      </div>
-
-      {/* Filters */}
-      <Card>
-        <CardHeader>
-          <CardTitle className="text-lg">Filters</CardTitle>
-        </CardHeader>
-        <CardContent>
-          <div className="flex gap-4 flex-wrap">
-            <div className="flex-1 min-w-[200px]">
-              <div className="relative">
-                <Search className="absolute left-2 top-2.5 h-4 w-4 text-muted-foreground" />
-                <Input
-                  placeholder="Search by name, email, or company..."
-                  value={searchTerm}
-                  onChange={(e) => setSearchTerm(e.target.value)}
-                  className="pl-8"
-                />
-              </div>
-            </div>
-            <Select value={interestFilter} onValueChange={setInterestFilter}>
-              <SelectTrigger className="w-[200px]">
-                <Filter className="h-4 w-4 mr-2" />
-                <SelectValue placeholder="Filter by interest" />
-              </SelectTrigger>
-              <SelectContent>
-                <SelectItem value="all">All Interests</SelectItem>
-                <SelectItem value="hiring">Hiring Talent</SelectItem>
-                <SelectItem value="joining">Joining as Talent</SelectItem>
-                <SelectItem value="enterprise">Enterprise Solutions</SelectItem>
-                <SelectItem value="other">Other</SelectItem>
-              </SelectContent>
-            </Select>
+    <AdminLayout title="Contact Submissions" description="Manage and review contact form submissions from your website">
+      <div className="space-y-6">
+        <div className="flex justify-between items-center">
+          <div>
+            <h1 className="text-3xl font-bold tracking-tight">Contact Submissions</h1>
+            <p className="text-muted-foreground">
+              Manage and review contact form submissions from your website
+            </p>
           </div>
-        </CardContent>
-      </Card>
+          <Button onClick={() => refetch()} variant="outline">
+            <RefreshCw className="h-4 w-4 mr-2" />
+            Refresh
+          </Button>
+        </div>
 
-      {/* Submissions Table */}
-      <Card>
-        <CardHeader>
-          <CardTitle>Contact Submissions ({filteredSubmissions.length})</CardTitle>
-          <CardDescription>
-            All contact form submissions from your website
-          </CardDescription>
-        </CardHeader>
-        <CardContent>
-          <div className="rounded-md border">
-            <Table>
-              <TableHeader>
-                <TableRow>
-                  <TableHead>Full Name</TableHead>
-                  <TableHead>Email</TableHead>
-                  <TableHead>Company</TableHead>
-                  <TableHead>Interest</TableHead>
-                  <TableHead>Submitted</TableHead>
-                </TableRow>
-              </TableHeader>
-              <TableBody>
-                {filteredSubmissions.length === 0 ? (
+        {/* Stats Cards */}
+        <div className="grid gap-4 md:grid-cols-4">
+          <Card>
+            <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+              <CardTitle className="text-sm font-medium">Total Submissions</CardTitle>
+              <Mail className="h-4 w-4 text-muted-foreground" />
+            </CardHeader>
+            <CardContent>
+              <div className="text-2xl font-bold">{totalSubmissions}</div>
+            </CardContent>
+          </Card>
+          <Card>
+            <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+              <CardTitle className="text-sm font-medium">Hiring Inquiries</CardTitle>
+              <Building className="h-4 w-4 text-muted-foreground" />
+            </CardHeader>
+            <CardContent>
+              <div className="text-2xl font-bold">
+                {submissions.filter((s: ContactSubmission) => s.interest === "hiring").length}
+              </div>
+            </CardContent>
+          </Card>
+          <Card>
+            <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+              <CardTitle className="text-sm font-medium">Talent Applications</CardTitle>
+              <Building className="h-4 w-4 text-muted-foreground" />
+            </CardHeader>
+            <CardContent>
+              <div className="text-2xl font-bold">
+                {submissions.filter((s: ContactSubmission) => s.interest === "joining").length}
+              </div>
+            </CardContent>
+          </Card>
+          <Card>
+            <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+              <CardTitle className="text-sm font-medium">Enterprise Inquiries</CardTitle>
+              <Building className="h-4 w-4 text-muted-foreground" />
+            </CardHeader>
+            <CardContent>
+              <div className="text-2xl font-bold">
+                {submissions.filter((s: ContactSubmission) => s.interest === "enterprise").length}
+              </div>
+            </CardContent>
+          </Card>
+        </div>
+
+        {/* Filters */}
+        <Card>
+          <CardHeader>
+            <CardTitle className="text-lg">Filters</CardTitle>
+          </CardHeader>
+          <CardContent>
+            <div className="flex gap-4 flex-wrap">
+              <div className="flex-1 min-w-[200px]">
+                <div className="relative">
+                  <Search className="absolute left-2 top-2.5 h-4 w-4 text-muted-foreground" />
+                  <Input
+                    placeholder="Search by name, email, or company..."
+                    value={searchTerm}
+                    onChange={(e) => setSearchTerm(e.target.value)}
+                    className="pl-8"
+                  />
+                </div>
+              </div>
+              <Select value={interestFilter} onValueChange={setInterestFilter}>
+                <SelectTrigger className="w-[200px]">
+                  <Filter className="h-4 w-4 mr-2" />
+                  <SelectValue placeholder="Filter by interest" />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="all">All Interests</SelectItem>
+                  <SelectItem value="hiring">Hiring Talent</SelectItem>
+                  <SelectItem value="joining">Joining as Talent</SelectItem>
+                  <SelectItem value="enterprise">Enterprise Solutions</SelectItem>
+                  <SelectItem value="other">Other</SelectItem>
+                </SelectContent>
+              </Select>
+            </div>
+          </CardContent>
+        </Card>
+
+        {/* Submissions Table */}
+        <Card>
+          <CardHeader>
+            <CardTitle>Contact Submissions ({filteredSubmissions.length})</CardTitle>
+            <CardDescription>
+              All contact form submissions from your website
+            </CardDescription>
+          </CardHeader>
+          <CardContent>
+            <div className="rounded-md border">
+              <Table>
+                <TableHeader>
                   <TableRow>
-                    <TableCell colSpan={5} className="h-24 text-center">
-                      No contact submissions found.
-                    </TableCell>
+                    <TableHead>Full Name</TableHead>
+                    <TableHead>Email</TableHead>
+                    <TableHead>Company</TableHead>
+                    <TableHead>Interest</TableHead>
+                    <TableHead>Submitted</TableHead>
                   </TableRow>
-                ) : (
-                  filteredSubmissions.map((submission: ContactSubmission) => (
-                    <TableRow key={submission.id}>
-                      <TableCell className="font-medium">{submission.fullName}</TableCell>
-                      <TableCell>
-                        <a
-                          href={`mailto:${submission.email}`}
-                          className="text-blue-600 hover:text-blue-800 hover:underline"
-                        >
-                          {submission.email}
-                        </a>
-                      </TableCell>
-                      <TableCell>{submission.company}</TableCell>
-                      <TableCell>
-                        <Badge className={getInterestBadgeColor(submission.interest)}>
-                          {formatInterest(submission.interest)}
-                        </Badge>
-                      </TableCell>
-                      <TableCell>
-                        <div className="flex items-center">
-                          <Calendar className="h-4 w-4 mr-2 text-muted-foreground" />
-                          {format(new Date(submission.createdAt), "MMM dd, yyyy")}
-                        </div>
+                </TableHeader>
+                <TableBody>
+                  {filteredSubmissions.length === 0 ? (
+                    <TableRow>
+                      <TableCell colSpan={5} className="h-24 text-center">
+                        No contact submissions found.
                       </TableCell>
                     </TableRow>
-                  ))
-                )}
-              </TableBody>
-            </Table>
-          </div>
-        </CardContent>
-      </Card>
-    </div>
+                  ) : (
+                    filteredSubmissions.map((submission: ContactSubmission) => (
+                      <TableRow key={submission.id}>
+                        <TableCell className="font-medium">{submission.fullName}</TableCell>
+                        <TableCell>
+                          <a
+                            href={`mailto:${submission.email}`}
+                            className="text-blue-600 hover:text-blue-800 hover:underline"
+                          >
+                            {submission.email}
+                          </a>
+                        </TableCell>
+                        <TableCell>{submission.company}</TableCell>
+                        <TableCell>
+                          <Badge className={getInterestBadgeColor(submission.interest)}>
+                            {formatInterest(submission.interest)}
+                          </Badge>
+                        </TableCell>
+                        <TableCell>
+                          <div className="flex items-center">
+                            <Calendar className="h-4 w-4 mr-2 text-muted-foreground" />
+                            {format(new Date(submission.createdAt), "MMM dd, yyyy")}
+                          </div>
+                        </TableCell>
+                      </TableRow>
+                    ))
+                  )}
+                </TableBody>
+              </Table>
+            </div>
+          </CardContent>
+        </Card>
+      </div>
+    </AdminLayout>
   );
 };
 
