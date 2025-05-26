@@ -12,7 +12,6 @@ import FocusScrollSection from "@/components/sections/FocusScrollSection";
 import ContactSection from "@/components/sections/ContactSection";
 import BenefitsStrengthsShowcase from "@/components/sections/BenefitsStrengthsShowcase";
 import ServicesShowcase from "@/components/sections/ServicesShowcase";
-import JobMarquee from "@/components/sections/JobMarquee";
 import AnnouncementBar from "@/components/layout/AnnouncementBar";
 
 const Home = () => {
@@ -39,7 +38,6 @@ const Home = () => {
       <div className={`${isAnnouncementVisible ? 'pt-[40px] md:pt-[40px]' : 'pt-[40px] md:pt-0'} transition-all duration-300`} style={{ background: 'none', backgroundColor: 'transparent' }}>
         <main>
           <Hero />
-          <JobMarquee />
           <TrustedCompanies />
           <FocusScrollSection />
           <BenefitsStrengthsShowcase />

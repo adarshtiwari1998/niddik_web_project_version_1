@@ -1,6 +1,6 @@
 import { Link } from "wouter";
 import { motion } from "framer-motion";
-import { Check, MonitorSmartphone, Globe, Award, Zap } from "lucide-react";
+import { Check, MonitorSmartphone, Globe, Award, Zap, ArrowRight } from "lucide-react";
 import Container from "@/components/ui/container";
 import { useEffect, useRef, useState } from "react";
 
@@ -16,6 +16,58 @@ const slideUp = {
     y: 0,
     transition: { duration: 0.5, delay: custom * 0.1 }
   })
+};
+
+interface Job {
+  id: number;
+  title: string;
+}
+
+// Simple Job Marquee Component
+const SimpleJobMarquee = ({ jobs }: { jobs: Job[] }) => {
+  const [isPaused, setIsPaused] = useState(false);
+  
+  const marqueeStyle = {
+    display: 'flex',
+    animation: isPaused ? 'none' : 'simpleMarquee 60s linear infinite',
+    whiteSpace: 'nowrap' as const,
+  };
+
+  useEffect(() => {
+    // Add CSS animation for marquee
+    const style = document.createElement('style');
+    style.textContent = `
+      @keyframes simpleMarquee {
+        0% { transform: translateX(100%); }
+        100% { transform: translateX(-100%); }
+      }
+    `;
+    document.head.appendChild(style);
+    return () => document.head.removeChild(style);
+  }, []);
+
+  if (!jobs.length) return null;
+
+  return (
+    <div 
+      className="overflow-hidden bg-andela-green/10 py-3"
+      onMouseEnter={() => setIsPaused(true)}
+      onMouseLeave={() => setIsPaused(false)}
+    >
+      <div style={marqueeStyle}>
+        {jobs.map((job, index) => (
+          <Link 
+            key={job.id} 
+            href={`/jobs/${job.id}`}
+            className="inline-flex items-center px-6 py-2 mx-4 bg-white rounded-full shadow-sm hover:shadow-md transition-all duration-300 hover:scale-105 whitespace-nowrap"
+          >
+            <span className="text-andela-green font-medium">{job.title}</span>
+            <ArrowRight className="h-4 w-4 ml-2 text-andela-green" />
+          </Link>
+        ))}
+      </div>
+    </div>
+  );
 };
 
 // Key points for the section below the hero
@@ -46,6 +98,7 @@ const Hero = () => {
   const videoRef = useRef<HTMLVideoElement>(null);
   const [isVideoLoaded, setIsVideoLoaded] = useState(false);
   const [showFallback, setShowFallback] = useState(true); // Start with fallback visible
+  const [jobs, setJobs] = useState<Job[]>([]);
 
   useEffect(() => {
     // Set a timeout to check if video loads within a reasonable time
@@ -57,6 +110,36 @@ const Hero = () => {
 
     return () => clearTimeout(timeoutId);
   }, [isVideoLoaded]);
+
+  useEffect(() => {
+    // Fetch jobs for marquee
+    const fetchJobs = async () => {
+      try {
+        const response = await fetch('/api/job-listings');
+        if (response.ok) {
+          const data = await response.json();
+          // Only keep id and title for simplified marquee
+          const simplifiedJobs = data.data.map((job: any) => ({
+            id: job.id,
+            title: job.title
+          }));
+          setJobs(simplifiedJobs);
+        }
+      } catch (error) {
+        console.error('Failed to fetch jobs:', error);
+        // Fallback demo data
+        setJobs([
+          { id: 1, title: "Senior Full Stack Developer" },
+          { id: 2, title: "DevOps Engineer" },
+          { id: 3, title: "Frontend React Developer" },
+          { id: 4, title: "Backend Node.js Developer" },
+          { id: 5, title: "Mobile App Developer" }
+        ]);
+      }
+    };
+
+    fetchJobs();
+  }, []);
 
   useEffect(() => {
     // Ensure video loops seamlessly
@@ -251,6 +334,22 @@ const Hero = () => {
           </div>
         </Container>
       </div>
+
+      {/* Live Jobs Marquee */}
+      {jobs.length > 0 && (
+        <div className="relative z-20">
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            transition={{ duration: 0.6, delay: 0.8 }}
+          >
+            <div className="text-center py-2 bg-andela-green/5">
+              <span className="text-sm font-medium text-andela-green">🔥 Live Opportunities</span>
+            </div>
+            <SimpleJobMarquee jobs={jobs} />
+          </motion.div>
+        </div>
+      )}
       
       {/* Modern floating highlight badge */}
       <motion.div 
