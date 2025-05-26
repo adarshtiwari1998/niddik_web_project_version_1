@@ -23,13 +23,13 @@ interface Job {
   title: string;
 }
 
-// Simple Job Marquee Component
+// Enhanced Job Marquee Component
 const SimpleJobMarquee = ({ jobs }: { jobs: Job[] }) => {
   const [isPaused, setIsPaused] = useState(false);
   
   const marqueeStyle = {
     display: 'flex',
-    animation: isPaused ? 'none' : 'simpleMarquee 60s linear infinite',
+    animation: isPaused ? 'none' : 'simpleMarquee 40s linear infinite',
     whiteSpace: 'nowrap' as const,
   };
 
@@ -50,19 +50,21 @@ const SimpleJobMarquee = ({ jobs }: { jobs: Job[] }) => {
 
   return (
     <div 
-      className="overflow-hidden bg-andela-green/10 py-3"
+      className="overflow-hidden bg-gradient-to-r from-andela-green/5 via-andela-green/10 to-andela-green/5 py-4 border-t border-andela-green/20"
       onMouseEnter={() => setIsPaused(true)}
       onMouseLeave={() => setIsPaused(false)}
     >
       <div style={marqueeStyle}>
-        {jobs.map((job, index) => (
+        {/* Duplicate jobs for seamless loop */}
+        {[...jobs, ...jobs].map((job, index) => (
           <Link 
-            key={job.id} 
+            key={`${job.id}-${index}`} 
             href={`/jobs/${job.id}`}
-            className="inline-flex items-center px-6 py-2 mx-4 bg-white rounded-full shadow-sm hover:shadow-md transition-all duration-300 hover:scale-105 whitespace-nowrap"
+            className="inline-flex items-center px-8 py-3 mx-6 bg-white rounded-full shadow-lg hover:shadow-xl transition-all duration-300 hover:scale-105 hover:-translate-y-1 whitespace-nowrap border border-andela-green/20 hover:border-andela-green/40"
           >
-            <span className="text-andela-green font-medium">{job.title}</span>
-            <ArrowRight className="h-4 w-4 ml-2 text-andela-green" />
+            <div className="w-2 h-2 bg-andela-green rounded-full mr-3 animate-pulse"></div>
+            <span className="text-andela-green font-semibold text-sm">{job.title}</span>
+            <ArrowRight className="h-4 w-4 ml-3 text-andela-green" />
           </Link>
         ))}
       </div>
@@ -305,28 +307,47 @@ const Hero = () => {
         </Container>
       </div>
       
-      {/* Key Points Section */}
-      <div className="relative z-20 pb-0 mt-auto">
+      {/* Live Jobs Marquee */}
+      {jobs.length > 0 && (
+        <div className="relative z-20 mt-auto">
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            transition={{ duration: 0.6, delay: 0.8 }}
+          >
+            <div className="text-center py-3 bg-gradient-to-r from-andela-green/10 to-transparent">
+              <div className="inline-flex items-center gap-2 bg-andela-green/20 backdrop-blur-sm px-4 py-2 rounded-full">
+                <div className="w-2 h-2 bg-orange-500 rounded-full animate-pulse"></div>
+                <span className="text-sm font-semibold text-andela-green">🔥 Live Opportunities</span>
+              </div>
+            </div>
+            <SimpleJobMarquee jobs={jobs} />
+          </motion.div>
+        </div>
+      )}
+
+      {/* Key Points Section - Now positioned below marquee */}
+      <div className="relative z-20 pb-0">
         <Container>
-          <div className="bg-white rounded-lg shadow-xl py-8 px-6 md:px-10 mb-0 relative z-30">
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 md:gap-10">
+          <div className="bg-white/95 backdrop-blur-sm rounded-t-2xl shadow-2xl py-8 px-6 md:px-10 mb-0 relative z-30 border border-gray-100">
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 md:gap-8">
               {keyPoints.map((point, index) => (
                 <motion.div
                   key={index}
-                  className="flex items-start gap-4"
+                  className="flex items-start gap-4 group hover:bg-andela-green/5 p-4 rounded-xl transition-all duration-300"
                   custom={index}
                   initial="hidden"
                   animate="visible"
                   variants={slideUp}
                 >
-                  <div className="bg-andela-green/10 p-3 rounded-full flex-shrink-0">
-                    <div className="text-andela-green">
+                  <div className="bg-andela-green/10 group-hover:bg-andela-green/20 p-3 rounded-full flex-shrink-0 transition-all duration-300">
+                    <div className="text-andela-green group-hover:scale-110 transition-transform duration-300">
                       {point.icon}
                     </div>
                   </div>
                   <div>
-                    <h3 className="font-semibold text-lg mb-1">{point.title}</h3>
-                    <p className="text-andela-gray text-sm">{point.description}</p>
+                    <h3 className="font-bold text-lg mb-2 text-gray-800 group-hover:text-andela-green transition-colors duration-300">{point.title}</h3>
+                    <p className="text-gray-600 text-sm leading-relaxed">{point.description}</p>
                   </div>
                 </motion.div>
               ))}
@@ -334,22 +355,6 @@ const Hero = () => {
           </div>
         </Container>
       </div>
-
-      {/* Live Jobs Marquee */}
-      {jobs.length > 0 && (
-        <div className="relative z-20">
-          <motion.div
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            transition={{ duration: 0.6, delay: 0.8 }}
-          >
-            <div className="text-center py-2 bg-andela-green/5">
-              <span className="text-sm font-medium text-andela-green">🔥 Live Opportunities</span>
-            </div>
-            <SimpleJobMarquee jobs={jobs} />
-          </motion.div>
-        </div>
-      )}
       
       {/* Modern floating highlight badge */}
       <motion.div 
