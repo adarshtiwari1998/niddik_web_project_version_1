@@ -79,7 +79,7 @@ export default function CareersHeader() {
                   alt="NiDDiK Logo" 
                   className="h-10" 
                 />
-                <div className="text-[10px] text-gray-500 mt-0.5">Connecting People, Changing Lives</div>
+                {/* <div className="text-[10px] text-gray-500 mt-0.5">Connecting People, Changing Lives</div> */}
               </div>
             </Link>
             <nav className="hidden md:flex gap-6">
