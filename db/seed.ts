@@ -1,5 +1,5 @@
 import { db, pool } from "./index";
-import { testimonials, clients, jobListings, users, contactSubmissions, jobApplications, submittedCandidates, demoRequests, categories } from "@shared/schema";
+import { testimonials, clients, jobListings, users, contactSubmissions, jobApplications, submittedCandidates, demoRequests } from "@shared/schema";
 import { scrypt, randomBytes } from "crypto";
 import { promisify } from "util";
 import { sql } from "drizzle-orm";
@@ -147,19 +147,6 @@ async function seed() {
         updated_at TIMESTAMP NOT NULL DEFAULT NOW(),
         scheduled_date TIMESTAMP,
         admin_notes TEXT
-      );
-
-      CREATE TABLE IF NOT EXISTS categories (
-        id SERIAL PRIMARY KEY,
-        name TEXT NOT NULL UNIQUE,
-        slug TEXT NOT NULL UNIQUE,
-        description TEXT,
-        type TEXT NOT NULL,
-        parent_id INTEGER REFERENCES categories(id),
-        is_active BOOLEAN NOT NULL DEFAULT TRUE,
-        sort_order INTEGER NOT NULL DEFAULT 0,
-        created_at TIMESTAMP NOT NULL DEFAULT NOW(),
-        updated_at TIMESTAMP NOT NULL DEFAULT NOW()
       );
     `);
 
@@ -352,113 +339,6 @@ async function seed() {
       console.log("IMPORTANT: Change this password after first login for security!");
     } else {
       console.log("Admin user already exists, skipping seeding.");
-    }
-
-    // Seed categories
-    console.log("Seeding categories...");
-    const categoriesData = [
-      {
-        name: "Technology",
-        slug: "technology",
-        description: "Software development, engineering, and tech roles",
-        type: "job",
-        sortOrder: 1,
-      },
-      {
-        name: "Frontend Development",
-        slug: "frontend-development",
-        description: "UI/UX, React, Vue, Angular development",
-        type: "job",
-        parentId: null, // Will be set after Technology is inserted
-        sortOrder: 1,
-      },
-      {
-        name: "Backend Development",
-        slug: "backend-development",
-        description: "Server-side development, APIs, databases",
-        type: "job",
-        parentId: null, // Will be set after Technology is inserted
-        sortOrder: 2,
-      },
-      {
-        name: "Design",
-        slug: "design",
-        description: "UI/UX Design, Graphic Design, Product Design",
-        type: "job",
-        sortOrder: 2,
-      },
-      {
-        name: "Marketing",
-        slug: "marketing",
-        description: "Digital marketing, content, growth",
-        type: "job",
-        sortOrder: 3,
-      },
-      {
-        name: "Healthcare",
-        slug: "healthcare",
-        description: "Medical, nursing, pharmaceutical roles",
-        type: "industry",
-        sortOrder: 1,
-      },
-      {
-        name: "Finance",
-        slug: "finance",
-        description: "Banking, accounting, financial services",
-        type: "industry",
-        sortOrder: 2,
-      },
-      {
-        name: "RPO Services",
-        slug: "rpo-services",
-        description: "Recruitment Process Outsourcing solutions",
-        type: "service",
-        sortOrder: 1,
-      },
-      {
-        name: "Consulting",
-        slug: "consulting",
-        description: "Business and technical consulting services",
-        type: "service",
-        sortOrder: 2,
-      },
-    ];
-
-    // Check if categories already exist
-    const existingCategories = await db.query.categories.findMany();
-    if (existingCategories.length === 0) {
-      // Insert parent categories first
-      const parentCategories = categoriesData.filter(cat => !cat.parentId);
-      const insertedParents = await db.insert(categories).values(parentCategories).returning();
-      
-      // Update child categories with correct parent IDs
-      const technologyParent = insertedParents.find(cat => cat.slug === 'technology');
-      if (technologyParent) {
-        const childCategories = [
-          {
-            name: "Frontend Development",
-            slug: "frontend-development",
-            description: "UI/UX, React, Vue, Angular development",
-            type: "job",
-            parentId: technologyParent.id,
-            sortOrder: 1,
-          },
-          {
-            name: "Backend Development",
-            slug: "backend-development",
-            description: "Server-side development, APIs, databases",
-            type: "job",
-            parentId: technologyParent.id,
-            sortOrder: 2,
-          },
-        ];
-        
-        await db.insert(categories).values(childCategories);
-      }
-      
-      console.log(`Added ${parentCategories.length} parent categories and child categories`);
-    } else {
-      console.log("Categories already exist, skipping seeding");
     }
 
     console.log("Seeding completed successfully!");
