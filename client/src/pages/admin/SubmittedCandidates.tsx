@@ -108,19 +108,23 @@ const StatusBadge = ({ status }: { status: string }) => {
     variant = "default";
   }
 
-  // Get the display text - show only first 15 chars in badge if longer
-  const displayText = status.length > 15 ? `${status.substring(0, 15)}...` : status;
+  // For shorter statuses, show them directly in the badge
+  if (status.length <= 20) {
+    return (
+      <Badge variant={variant} className="whitespace-nowrap" title={status}>
+        {status}
+      </Badge>
+    );
+  }
+
+  // For longer statuses, show truncated version with tooltip
+  const displayText = `${status.substring(0, 17)}...`;
 
   return (
     <div className="max-w-[200px]">
-      <Badge variant={variant} className="whitespace-nowrap overflow-hidden text-ellipsis">
+      <Badge variant={variant} className="whitespace-nowrap overflow-hidden text-ellipsis" title={status}>
         {displayText}
       </Badge>
-      {status.length > 15 && (
-        <div className="text-xs text-muted-foreground mt-1 whitespace-normal">
-          {status}
-        </div>
-      )}
     </div>
   );
 };
