@@ -299,15 +299,7 @@ export default function Candidates() {
     return params.toString();
   };
 
-    // Build query parameters for analytics API request
-    const buildAnalyticsQueryParams = () => {
-      const params = new URLSearchParams();
-      if (analyticsSearch) params.append("search", analyticsSearch);
-      if (analyticsStatusFilter && analyticsStatusFilter !== "all_statuses") params.append("status", analyticsStatusFilter);
-      if (sortBy) params.append("sortBy", sortBy);
-
-      return params.toString();
-    };
+    
 
   // Fetch job applications data
   const { data: applicationsData, isLoading, error } = useQuery({
@@ -353,6 +345,45 @@ export default function Candidates() {
     return filtered;
   }, [applicationsData?.data, search]);
 
+  // Client-side filtering of analytics data based on search term
+  const filteredAnalyticsData = useMemo(() => {
+    if (!analyticsData) return [];
+
+    let filtered = analyticsData;
+
+    // Apply search filter
+    if (analyticsSearch) {
+      const searchLower = analyticsSearch.toLowerCase();
+      filtered = filtered.filter((user: AnalyticsData) => 
+        user.userName?.toLowerCase().includes(searchLower) ||
+        user.userEmail?.toLowerCase().includes(searchLower)
+      );
+    }
+
+    // Apply status filter
+    if (analyticsStatusFilter && analyticsStatusFilter !== "all_statuses") {
+      filtered = filtered.filter((user: AnalyticsData) => {
+        return user.statuses[analyticsStatusFilter as keyof typeof user.statuses] > 0;
+      });
+    }
+
+    // Apply sorting
+    return [...filtered].sort((a, b) => {
+      switch (sortBy) {
+        case 'applications_desc':
+          return b.applicationsCount - a.applicationsCount;
+        case 'applications_asc':
+          return a.applicationsCount - b.applicationsCount;
+        case 'latest_desc':
+          return new Date(b.latestApplicationDate).getTime() - new Date(a.latestApplicationDate).getTime();
+        case 'name_asc':
+          return a.userName.localeCompare(b.userName);
+        default:
+          return b.applicationsCount - a.applicationsCount;
+      }
+    });
+  }, [analyticsData, analyticsSearch, analyticsStatusFilter, sortBy]);
+
   // Client-side pagination
   const paginatedApplications = useMemo(() => {
     const startIndex = (page - 1) * pageSize;
@@ -365,9 +396,9 @@ export default function Candidates() {
 
     // Fetch analytics data
     const { data: analyticsData, isLoading: isAnalyticsLoading, error: analyticsError } = useQuery<AnalyticsData[]>({
-      queryKey: ['/api/admin/analytics', analyticsSearch, analyticsStatusFilter, sortBy],
+      queryKey: ['/api/admin/analytics'],
       queryFn: async () => {
-        const res = await fetch(`/api/admin/analytics?${buildAnalyticsQueryParams()}`, {
+        const res = await fetch(`/api/admin/analytics`, {
           headers: {
             'Cache-Control': 'no-cache',
             'Pragma': 'no-cache'
@@ -767,8 +798,8 @@ export default function Candidates() {
         <TabsContent value="analytics" className="space-y-6">
           {analyticsData ? (
             <>
-              <AnalyticsOverview data={analyticsData} />
-              <StatusDistributionCard data={analyticsData} />
+              <AnalyticsOverview data={filteredAnalyticsData} />
+              <StatusDistributionCard data={filteredAnalyticsData} />
 
               <Card className="mb-6">
                 <CardHeader className="pb-3">
@@ -836,13 +867,13 @@ export default function Candidates() {
               </Card>
 
               <UserApplicationsTable 
-                data={analyticsData} 
+                data={filteredAnalyticsData} 
                 onViewDetails={setSelectedUserEmail}
               />
 
               <UserDetailModal 
                 userEmail={selectedUserEmail} 
-                data={analyticsData} 
+                data={filteredAnalyticsData} 
                 onClose={() => setSelectedUserEmail(null)}
               />
             </>
