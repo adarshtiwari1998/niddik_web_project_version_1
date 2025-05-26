@@ -458,7 +458,7 @@ export default function Candidates() {
                   <Search className="absolute left-2.5 top-2.5 h-4 w-4 text-muted-foreground" />
                   <Input
                     type="search"
-                    placeholder="Search by name or email..."
+                    placeholder="Search by name, email, phone, skills, job title, company..."
                     value={search}
                     onChange={(e) => setSearch(e.target.value)}
                     className="pl-8"
