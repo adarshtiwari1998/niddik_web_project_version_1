@@ -120,12 +120,9 @@ const Navbar: React.FC<NavbarProps> = ({ hasAnnouncementAbove = true }) => {
       if (isAdminPage || isAuthPage || isCandidatePage) {
         // On admin, auth, and candidate pages, always use white background
         setIsTransparent(false);
-      } else if (isHomePage) {
-        // On home page, always start transparent and become solid when scrolled
-        setIsTransparent(scrollY < 50);
       } else {
-        // On all other pages, make it transparent at the top and solid when scrolled
-        setIsTransparent(scrollY < 100);
+        // On all pages (including home), start transparent and become solid when scrolled
+        setIsTransparent(scrollY < 50);
       }
     };
 
@@ -204,10 +201,7 @@ const Navbar: React.FC<NavbarProps> = ({ hasAnnouncementAbove = true }) => {
       "fixed w-full z-40",
       hasAnnouncementAbove ? "top-[40px]" : "top-0",
       isTransparent 
-        ? (isHomePage 
-            ? "bg-transparent" 
-            : "bg-transparent backdrop-blur-sm"
-          )
+        ? "bg-transparent"
         : "bg-white/95 backdrop-blur-md border-b border-gray-200/50",
       isScrolled && !isTransparent ? "shadow-lg" : "",
       "transition-all duration-300 ease-in-out"
