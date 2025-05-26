@@ -216,7 +216,7 @@ const Navbar: React.FC<NavbarProps> = ({ hasAnnouncementAbove = true }) => {
 
           {/* Mobile Menu Button */}
           <button 
-            className="lg:hidden flex items-center"
+            className="lg:hidden flex items-center z-50"
             onClick={() => setIsMobileMenuOpen(true)}
           >
             <Menu className={cn(
@@ -227,9 +227,17 @@ const Navbar: React.FC<NavbarProps> = ({ hasAnnouncementAbove = true }) => {
         </div>
       </Container>
 
+      {/* Mobile Menu Backdrop */}
+      {isMobileMenuOpen && (
+        <div 
+          className="fixed inset-0 bg-black bg-opacity-50 z-[99998]"
+          onClick={() => setIsMobileMenuOpen(false)}
+        />
+      )}
+
       {/* Mobile Menu */}
       <div className={cn(
-        "fixed top-0 left-0 h-full w-4/5 bg-white shadow-xl z-[9999] p-6 overflow-y-auto mobile-menu",
+        "fixed top-0 left-0 h-full w-4/5 bg-white shadow-xl z-[99999] p-6 overflow-y-auto mobile-menu",
         isMobileMenuOpen && "open"
       )}>
         <div className="flex justify-between items-center mb-8">
