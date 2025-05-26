@@ -863,34 +863,28 @@ export async function getJobApplicationsWithDetails(
       appliedDate: jobApplications.appliedDate,
       lastUpdated: jobApplications.lastUpdated,
       createdAt: jobApplications.createdAt,
-      // User data
-      user: {
-        id: users.id,
-        fullName: users.fullName,
-        email: users.email,
-        phone: users.phone,
-        experience: users.experience,
-        noticePeriod: users.noticePeriod,
-        currentCtc: users.currentCtc,
-        expectedCtc: users.expectedCtc,
-        location: users.location,
-        city: users.city,
-        country: users.country,
-        zipCode: users.zipCode,
-        skills: users.skills
-      },
-      // Job data
-      job: {
-        id: jobListings.id,
-        title: jobListings.title,
-        company: jobListings.company,
-        location: jobListings.location,
-        jobType: jobListings.jobType,
-        salary: jobListings.salary,
-        category: jobListings.category,
-        experienceLevel: jobListings.experienceLevel,
-        postedDate: jobListings.postedDate
-      }
+      // User data fields directly
+      userFullName: users.fullName,
+      userEmail: users.email,
+      userPhone: users.phone,
+      userExperience: users.experience,
+      userNoticePeriod: users.noticePeriod,
+      userCurrentCtc: users.currentCtc,
+      userExpectedCtc: users.expectedCtc,
+      userLocation: users.location,
+      userCity: users.city,
+      userCountry: users.country,
+      userZipCode: users.zipCode,
+      userSkills: users.skills,
+      // Job data fields directly
+      jobTitle: jobListings.title,
+      jobCompany: jobListings.company,
+      jobLocation: jobListings.location,
+      jobType: jobListings.jobType,
+      jobSalary: jobListings.salary,
+      jobCategory: jobListings.category,
+      jobExperienceLevel: jobListings.experienceLevel,
+      jobPostedDate: jobListings.postedDate
     })
     .from(jobApplications)
     .leftJoin(users, eq(jobApplications.userId, users.id))
@@ -900,8 +894,53 @@ export async function getJobApplicationsWithDetails(
     .limit(limit)
     .offset(offset);
 
+  // Transform the results to match the expected structure
+  const transformedApplications = applications.map(app => ({
+    id: app.id,
+    jobId: app.jobId,
+    userId: app.userId,
+    status: app.status,
+    coverLetter: app.coverLetter,
+    resumeUrl: app.resumeUrl,
+    experience: app.experience,
+    skills: app.skills,
+    education: app.education,
+    additionalInfo: app.additionalInfo,
+    billRate: app.billRate,
+    payRate: app.payRate,
+    appliedDate: app.appliedDate,
+    lastUpdated: app.lastUpdated,
+    createdAt: app.createdAt,
+    user: {
+      id: app.userId,
+      fullName: app.userFullName || 'Unknown User',
+      email: app.userEmail || '',
+      phone: app.userPhone || '',
+      experience: app.userExperience || '',
+      noticePeriod: app.userNoticePeriod || '',
+      currentCtc: app.userCurrentCtc || '',
+      expectedCtc: app.userExpectedCtc || '',
+      location: app.userLocation || '',
+      city: app.userCity || '',
+      country: app.userCountry || '',
+      zipCode: app.userZipCode || '',
+      skills: app.userSkills || ''
+    },
+    job: {
+      id: app.jobId,
+      title: app.jobTitle || 'Unknown Job',
+      company: app.jobCompany || '',
+      location: app.jobLocation || '',
+      jobType: app.jobType || '',
+      salary: app.jobSalary || '',
+      category: app.jobCategory || '',
+      experienceLevel: app.jobExperienceLevel || '',
+      postedDate: app.jobPostedDate || ''
+    }
+  }));
+
   return {
-    data: applications,
+    data: transformedApplications,
     meta: {
       total,
       page,
