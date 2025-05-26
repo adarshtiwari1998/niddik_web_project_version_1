@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import { Link } from "wouter";
+import { Link, useLocation } from "wouter";
 import { Menu, X, ChevronDown } from "lucide-react";
 import { cn } from "@/lib/utils";
 import Logo from "@/components/ui/logo";
@@ -83,34 +83,45 @@ const navItems: NavItem[] = [
 ];
 
 const Navbar: React.FC<NavbarProps> = ({ hasAnnouncementAbove = true }) => {
+  const [location] = useLocation();
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const [isScrolled, setIsScrolled] = useState(false);
   const [isTransparent, setIsTransparent] = useState(true);
   const [mobileDropdown, setMobileDropdown] = useState(-1);
 
+  // Check if we're on the home page
+  const isHomePage = location === "/";
+
   useEffect(() => {
     const handleScroll = () => {
       const scrollY = window.scrollY;
-      setIsScrolled(scrollY > 10);
+      setIsScrolled(scrollY > 50); // Start white background sooner
 
-      // Assume hero section is about 600px height, adjust as needed
-      const heroSectionHeight = 600;
-      setIsTransparent(scrollY < heroSectionHeight);
+      // Only apply transparency logic on home page
+      if (isHomePage) {
+        // Make it less transparent sooner for better visibility
+        setIsTransparent(scrollY < 100);
+      } else {
+        // On other pages, always use white background
+        setIsTransparent(false);
+      }
     };
 
     handleScroll();
 
     window.addEventListener("scroll", handleScroll);
     return () => window.removeEventListener("scroll", handleScroll);
-  }, [hasAnnouncementAbove]);
+  }, [hasAnnouncementAbove, isHomePage]);
 
   return (
     <header className={cn(
       "fixed w-full z-40",
       hasAnnouncementAbove ? "top-[40px]" : "top-0",
-      isTransparent ? "bg-black/10 backdrop-blur-md" : "bg-white/90 backdrop-blur-sm",
-      isScrolled ? "shadow-md" : "shadow-sm",
-      "transition-all duration-300"
+      isHomePage && isTransparent 
+        ? "bg-black/20 backdrop-blur-sm border-b border-white/10" 
+        : "bg-white/95 backdrop-blur-md border-b border-gray-200/50",
+      isScrolled ? "shadow-lg" : "",
+      "transition-all duration-500 ease-in-out"
     )}>
       <Container>
         <div className="flex justify-between items-center py-4">
