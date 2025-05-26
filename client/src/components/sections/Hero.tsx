@@ -81,7 +81,7 @@ const Hero = () => {
             onLoadedData={handleVideoLoaded}
             onError={handleVideoError}
           >
-            <source src="https://res.cloudinary.com/dhanz6zty/video/upload/v1746298068/Project_03-26_4K_HIGH_FR60_26mb_fxvo0l.mp4" type="video/mp4" />
+            <source src="https://res.cloudinary.com/dhanz6zty/video/upload/v1748266865/Project_05-09_4K_MEDIUM_FR30_1_1_e8eetm.mp4" type="video/mp4" />
             Your browser does not support the video tag.
           </video>
         ) : null}
