@@ -7,6 +7,8 @@ import { Input } from "@/components/ui/input";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Badge } from "@/components/ui/badge";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+import Navbar from "@/components/layout/Navbar";
+import Footer from "@/components/layout/Footer";
 
 interface SearchResult {
   id: string;
@@ -276,7 +278,8 @@ export default function SearchPage() {
 
   return (
     <div className="min-h-screen bg-gray-50">
-      <Container className="py-12">
+      <Navbar />
+      <Container className="py-12 mt-20">
         {/* Header */}
         <div className="text-center mb-8">
           <h1 className="text-4xl font-bold mb-4">Search</h1>
@@ -387,6 +390,7 @@ export default function SearchPage() {
           </div>
         )}
       </Container>
+      <Footer />
     </div>
   );
 }
