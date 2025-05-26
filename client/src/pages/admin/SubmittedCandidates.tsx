@@ -1,7 +1,3 @@
-The code is modified to include state variables for tracking upload progress and upload status during bulk import operations.
-```
-
-```replit_final_file
 import { useState, useMemo, useEffect } from "react";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { useToast } from "@/hooks/use-toast";
