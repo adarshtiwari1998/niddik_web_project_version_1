@@ -11,6 +11,8 @@ import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@
 import { Search, Mail, Building, Calendar, Filter, RefreshCw } from "lucide-react";
 import { format } from "date-fns";
 import AdminLayout from "@/components/layout/AdminLayout";
+import Navbar from "@/components/layout/Navbar";
+import Footer from "@/components/layout/Footer";
 
 interface ContactSubmission {
   id: number;
@@ -31,7 +33,7 @@ const ContactSubmissions = () => {
 
   // Fetch contact submissions
   const { data: submissionsData, isLoading, error, refetch } = useQuery({
-    queryKey: ['/api/admin/contact-submissions', { page: currentPage, limit: itemsPerPage, search: searchTerm, interest: interestFilter }],
+    queryKey: ['/api/contact-submissions', { page: currentPage, limit: itemsPerPage, search: searchTerm, interest: interestFilter }],
     queryFn: getQueryFn({ on401: "ignore" }),
   });
 
@@ -76,35 +78,64 @@ const ContactSubmissions = () => {
     }
   };
 
+  
+
+  return (
+    <div className="min-h-screen bg-gray-50">
+      <Navbar />
+      <div className="pt-20">
+        <AdminLayout title="Contact Submissions" description="Manage and review contact form submissions from your website">
+          <div className="space-y-6"></div>
+        </AdminLayout>
+      </div>
+      <Footer />
+    </div>
+  );
+
   if (isLoading) {
     return (
-      <AdminLayout title="Contact Submissions" description="Manage and review contact form submissions from your website">
-        <div className="flex items-center justify-center h-64">
-          <div className="text-center">
-            <RefreshCw className="h-8 w-8 animate-spin mx-auto mb-4" />
-            <p>Loading contact submissions...</p>
-          </div>
+      <div className="min-h-screen bg-gray-50">
+        <Navbar />
+        <div className="pt-20">
+          <AdminLayout title="Contact Submissions" description="Manage and review contact form submissions from your website">
+            <div className="flex items-center justify-center h-64">
+              <div className="text-center">
+                <RefreshCw className="h-8 w-8 animate-spin mx-auto mb-4" />
+                <p>Loading contact submissions...</p>
+              </div>
+            </div>
+          </AdminLayout>
         </div>
-      </AdminLayout>
+        <Footer />
+      </div>
     );
   }
 
   if (error) {
     return (
-      <AdminLayout title="Contact Submissions" description="Manage and review contact form submissions from your website">
-        <div className="flex items-center justify-center h-64">
-          <div className="text-center">
-            <p className="text-red-600 mb-4">Error loading contact submissions</p>
-            <Button onClick={() => refetch()}>Try Again</Button>
-          </div>
+      <div className="min-h-screen bg-gray-50">
+        <Navbar />
+        <div className="pt-20">
+          <AdminLayout title="Contact Submissions" description="Manage and review contact form submissions from your website">
+            <div className="flex items-center justify-center h-64">
+              <div className="text-center">
+                <p className="text-red-600 mb-4">Error loading contact submissions</p>
+                <Button onClick={() => refetch()}>Try Again</Button>
+              </div>
+            </div>
+          </AdminLayout>
         </div>
-      </AdminLayout>
+        <Footer />
+      </div>
     );
   }
 
   return (
-    <AdminLayout title="Contact Submissions" description="Manage and review contact form submissions from your website">
-      <div className="space-y-6">
+    <div className="min-h-screen bg-gray-50">
+      <Navbar />
+      <div className="pt-20">
+        <AdminLayout title="Contact Submissions" description="Manage and review contact form submissions from your website">
+          <div className="space-y-6">
         <div className="flex justify-between items-center">
           <div>
             <h1 className="text-3xl font-bold tracking-tight">Contact Submissions</h1>
@@ -258,8 +289,11 @@ const ContactSubmissions = () => {
             </div>
           </CardContent>
         </Card>
+          </div>
+        </AdminLayout>
       </div>
-    </AdminLayout>
+      <Footer />
+    </div>
   );
 };
 
