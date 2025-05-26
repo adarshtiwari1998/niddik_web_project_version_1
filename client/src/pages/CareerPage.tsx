@@ -187,13 +187,32 @@ export default function CareerPage() {
             <Card key={job.id} className="h-full flex flex-col">
               <CardHeader>
                 <div className="flex justify-between items-start">
-                  <div>
+                  <div className="flex-1">
                     <CardTitle className="text-xl">{job.title}</CardTitle>
                     <CardDescription className="mt-1">{job.company}</CardDescription>
                   </div>
-                  {job.featured && (
-                    <Badge className="bg-amber-500 hover:bg-amber-600">Featured</Badge>
-                  )}
+                  <div className="flex flex-col gap-1 ml-4">
+                    {job.featured && (
+                      <Badge className="bg-amber-500 hover:bg-amber-600 text-white text-xs px-2 py-1">
+                        Featured
+                      </Badge>
+                    )}
+                    {job.urgent && (
+                      <Badge className="bg-red-500 hover:bg-red-600 text-white text-xs px-2 py-1 animate-pulse">
+                        🔥 Urgent
+                      </Badge>
+                    )}
+                    {job.priority && (
+                      <Badge className="bg-orange-500 hover:bg-orange-600 text-white text-xs px-2 py-1">
+                        ⚡ Priority
+                      </Badge>
+                    )}
+                    {job.isOpen && (
+                      <Badge className="bg-green-500 hover:bg-green-600 text-white text-xs px-2 py-1">
+                        ✓ Open
+                      </Badge>
+                    )}
+                  </div>
                 </div>
               </CardHeader>
               <CardContent className="flex-grow">

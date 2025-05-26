@@ -329,7 +329,7 @@ const handleResumeRemove = async () => {
           <div className="flex flex-col md:flex-row justify-between gap-6 mb-8">
             <div>
               <h1 className="text-3xl font-bold mb-2">{job.title}</h1>
-              <div className="flex flex-wrap items-center gap-2 text-muted-foreground">
+              <div className="flex flex-wrap items-center gap-2 text-muted-foreground mb-4">
                 <div className="flex items-center">
                   <Building className="h-4 w-4 mr-1" />
                   <span>{job.company}</span>
@@ -344,11 +344,29 @@ const handleResumeRemove = async () => {
                   <Briefcase className="h-4 w-4 mr-1" />
                   <span className="capitalize">{job.jobType}</span>
                 </div>
+              </div>
+              
+              {/* Job Status Badges */}
+              <div className="flex flex-wrap gap-2 mb-4">
                 {job.featured && (
-                  <>
-                    <span>•</span>
-                    <Badge className="bg-amber-500 hover:bg-amber-600">Featured</Badge>
-                  </>
+                  <Badge className="bg-gradient-to-r from-amber-500 to-orange-500 hover:from-amber-600 hover:to-orange-600 text-white px-3 py-1 text-sm font-semibold shadow-lg">
+                    ⭐ Featured
+                  </Badge>
+                )}
+                {job.urgent && (
+                  <Badge className="bg-gradient-to-r from-red-500 to-red-600 hover:from-red-600 hover:to-red-700 text-white px-3 py-1 text-sm font-semibold shadow-lg animate-pulse">
+                    🔥 Urgent Hiring
+                  </Badge>
+                )}
+                {job.priority && (
+                  <Badge className="bg-gradient-to-r from-orange-500 to-yellow-500 hover:from-orange-600 hover:to-yellow-600 text-white px-3 py-1 text-sm font-semibold shadow-lg">
+                    ⚡ Priority Role
+                  </Badge>
+                )}
+                {job.isOpen && (
+                  <Badge className="bg-gradient-to-r from-green-500 to-green-600 hover:from-green-600 hover:to-green-700 text-white px-3 py-1 text-sm font-semibold shadow-lg">
+                    ✅ Actively Hiring
+                  </Badge>
                 )}
               </div>
             </div>
@@ -687,6 +705,34 @@ const handleResumeRemove = async () => {
                   <CardTitle>Job Summary</CardTitle>
                 </CardHeader>
                 <CardContent className="space-y-4">
+                  {/* Status Overview */}
+                  {(job.featured || job.urgent || job.priority || job.isOpen) && (
+                    <div className="space-y-2">
+                      <p className="text-sm font-medium">Position Status</p>
+                      <div className="flex flex-wrap gap-1">
+                        {job.featured && (
+                          <Badge variant="outline" className="text-xs bg-amber-50 text-amber-700 border-amber-200">
+                            Featured
+                          </Badge>
+                        )}
+                        {job.urgent && (
+                          <Badge variant="outline" className="text-xs bg-red-50 text-red-700 border-red-200">
+                            Urgent
+                          </Badge>
+                        )}
+                        {job.priority && (
+                          <Badge variant="outline" className="text-xs bg-orange-50 text-orange-700 border-orange-200">
+                            Priority
+                          </Badge>
+                        )}
+                        {job.isOpen && (
+                          <Badge variant="outline" className="text-xs bg-green-50 text-green-700 border-green-200">
+                            Open
+                          </Badge>
+                        )}
+                      </div>
+                    </div>
+                  )}
                   <div>
                     <p className="text-sm font-medium mb-1">Location</p>
                     <div className="flex items-center text-muted-foreground">
