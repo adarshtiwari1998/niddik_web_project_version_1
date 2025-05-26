@@ -54,7 +54,14 @@ export default function JobDetail() {
   const { data: userApplicationsData } = useQuery<{ success: boolean; data: any[] }>({
     queryKey: ['/api/my-applications'],
     queryFn: getQueryFn({ on401: "returnNull" }),
-    enabled: !!user
+    enabled: !!user && user.role !== 'admin'
+  });
+
+  // Fetch application count for admin users
+  const { data: applicationCountData } = useQuery<{ success: boolean; count: number }>({
+    queryKey: [`/api/admin/job-applications-count/${jobId}`],
+    queryFn: getQueryFn({ on401: "throw" }),
+    enabled: !!user && user.role === 'admin' && !isNaN(jobId)
   });
 
   // Determine if user has already applied to this job (excluding withdrawn applications)
@@ -244,6 +251,16 @@ const handleResumeRemove = async () => {
 
   // Apply for job function
   const handleApply = () => {
+    // Admin users shouldn't apply for jobs
+    if (user?.role === 'admin') {
+      toast({
+        title: "Admin account",
+        description: "Admin users cannot apply for jobs",
+        variant: "default"
+      });
+      return;
+    }
+
     // If user has already applied, don't do anything
     if (hasApplied) {
       toast({
@@ -336,7 +353,16 @@ const handleResumeRemove = async () => {
               </div>
             </div>
             <div className="flex items-start">
-              {hasApplied ? (
+              {user?.role === 'admin' ? (
+                <div className="text-right">
+                  <div className="text-2xl font-bold text-primary">
+                    {applicationCountData?.count || 0}
+                  </div>
+                  <div className="text-sm text-muted-foreground">
+                    {applicationCountData?.count === 1 ? 'Application' : 'Applications'}
+                  </div>
+                </div>
+              ) : hasApplied ? (
                 <Button disabled variant="outline" size="lg" className="gap-2">
                   <CheckCircle className="h-4 w-4" />
                   Applied {applicationDate ? `on ${applicationDate}` : ''}
@@ -554,7 +580,13 @@ const handleResumeRemove = async () => {
                           <p className="text-sm text-gray-600 dark:text-gray-400">Join our team and start enjoying these perks today</p>
                         </div>
                       </div>
-                      {!hasApplied && (
+                      {user?.role === 'admin' ? (
+                        <div className="text-center">
+                          <div className="text-lg font-semibold text-primary">
+                            {applicationCountData?.count || 0} Applications Received
+                          </div>
+                        </div>
+                      ) : !hasApplied && (
                         <Button onClick={handleApply} className="bg-gradient-to-r from-green-500 to-blue-600 hover:from-green-600 hover:to-blue-700 text-white font-semibold px-6 py-2 rounded-lg shadow-lg hover:shadow-xl transition-all duration-300">
                           Apply Now
                         </Button>
@@ -619,7 +651,20 @@ const handleResumeRemove = async () => {
                   </div>
                 </CardContent>
                 <CardFooter>
-                  {hasApplied ? (
+                  {user?.role === 'admin' ? (
+                    <Card className="w-full">
+                      <CardContent className="pt-6">
+                        <div className="text-center">
+                          <div className="text-3xl font-bold text-primary mb-2">
+                            {applicationCountData?.count || 0}
+                          </div>
+                          <div className="text-sm text-muted-foreground">
+                            {applicationCountData?.count === 1 ? 'Candidate Applied' : 'Candidates Applied'}
+                          </div>
+                        </div>
+                      </CardContent>
+                    </Card>
+                  ) : hasApplied ? (
                     <Button disabled variant="outline" className="w-full gap-2">
                       <CheckCircle className="h-4 w-4" />
                       Applied {applicationDate ? `on ${applicationDate}` : ''}

@@ -698,7 +698,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
- 
+
   // Apply for a job (requires authentication, handles both file upload and existing resume URL)
   app.post('/api/job-applications', resumeUpload.single('resume'), async (req, res) => {
     try {
@@ -1023,6 +1023,31 @@ const endIndex = page * limit;
     } catch (error) {
       console.error('Error withdrawing application:', error);
       return res.status(500).json({ success: false, message: 'Failed to withdraw application' });
+    }
+  });
+
+  // Get job application count for specific job (admin only)
+  app.get("/api/admin/job-applications-count/:jobId", async (req: AuthenticatedRequest, res) => {
+    try {
+      if (!req.isAuthenticated() || req.user?.role !== 'admin') {
+        return res.status(403).json({ success: false, message: "Admin access required" });
+      }
+
+      const jobId = parseInt(req.params.jobId);
+      if (isNaN(jobId)) {
+        return res.status(400).json({ success: false, message: "Invalid job ID" });
+      }
+
+      const countResult = await db
+        .select({ count: count() })
+        .from(jobApplications)
+        .where(eq(jobApplications.jobId, jobId));
+
+      const count = countResult[0]?.count || 0;
+      res.json({ success: true, count });
+    } catch (error) {
+      console.error("Error fetching job application count:", error);
+      res.status(500).json({ success: false, message: "Internal server error" });
     }
   });
 
@@ -1894,8 +1919,7 @@ app.put('/api/profile', async (req: AuthenticatedRequest, res) => {
       if (existingRequest) {
         return res.status(400).json({
           success: false,
-
-message: "A demo request with this email already exists",
+          message: "A demo request with this email already exists",
           existingRequest: {
             id: existingRequest.id,
             status: existingRequest.status,
@@ -2319,7 +2343,7 @@ app.get("/api/admin/check", async (req: Request, res: Response) => {
 
     // Return user data without password
     const { password, ...userData } = user;
-    return res.json(adminData);
+    return res.json(userData);
   } catch (error) {
     console.error("Error checking admin status:", error);
     return res.status(500).json({ error: "Internal server error" });
