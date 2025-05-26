@@ -81,6 +81,17 @@ export default function JobListings() {
   if (data?.data.some(job => job.isOpen)) availablePriorities.push({ value: "open", label: "Open" });
   if (data?.data.some(job => job.featured)) availablePriorities.push({ value: "featured", label: "Featured" });
 
+  console.log('Current priority filter:', priorityFilter);
+  console.log('Available priorities:', availablePriorities);
+  console.log('Jobs data:', data?.data.map(job => ({ 
+    id: job.id, 
+    title: job.title, 
+    urgent: job.urgent, 
+    priority: job.priority, 
+    isOpen: job.isOpen, 
+    featured: job.featured 
+  })));
+
   const handleDeleteJob = async (id: number) => {
     if (!confirm("Are you sure you want to delete this job listing?")) return;
 

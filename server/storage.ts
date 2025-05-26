@@ -181,19 +181,22 @@ export const storage = {
       switch (priority) {
         case 'urgent':
           whereConditions.push(eq(jobListings.urgent, true));
-          console.log('Added urgent filter condition'); // Debug log
+          console.log('Added urgent filter condition - filtering for urgent = true'); // Debug log
           break;
         case 'priority':
           whereConditions.push(eq(jobListings.priority, true));
-          console.log('Added priority filter condition'); // Debug log
+          console.log('Added priority filter condition - filtering for priority = true'); // Debug log
           break;
         case 'open':
           whereConditions.push(eq(jobListings.isOpen, true));
-          console.log('Added open filter condition'); // Debug log
+          console.log('Added open filter condition - filtering for isOpen = true'); // Debug log
           break;
         case 'featured':
           whereConditions.push(eq(jobListings.featured, true));
-          console.log('Added featured filter condition'); // Debug log
+          console.log('Added featured filter condition - filtering for featured = true'); // Debug log
+          break;
+        default:
+          console.log('Unknown priority filter value:', priority);
           break;
       }
     }
@@ -216,6 +219,16 @@ export const storage = {
       limit,
       offset: (page - 1) * limit,
     });
+
+    console.log('Query results count:', jobListingsResult.length);
+    console.log('Priority filter results:', jobListingsResult.map(job => ({
+      id: job.id,
+      title: job.title,
+      urgent: job.urgent,
+      priority: job.priority,
+      isOpen: job.isOpen,
+      featured: job.featured
+    })));
 
     return {
       jobListings: jobListingsResult,
