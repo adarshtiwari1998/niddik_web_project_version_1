@@ -453,35 +453,58 @@ function SubmittedCandidates() {
     },
   });
 
-  // Mutation to import candidates in bulk
+  // Mutation to import candidates in bulk with batch processing
   const importMutation = useMutation({
     mutationFn: async (data: any[]) => {
       setIsUploading(true);
       setUploadProgress(0);
 
-      // Simulate upload progress
-      const simulateProgress = (progress: number) => {
-        return new Promise(resolve => {
-          setTimeout(() => {
-            setUploadProgress(progress);
-            resolve(void 0);
-          }, 100);
-        });
-      };
+      const batchSize = 20; // Process 20 records at a time
+      const totalBatches = Math.ceil(data.length / batchSize);
+      let successCount = 0;
+      let failedBatches = [];
 
-      // Simulate upload process with progress updates
-      for (let i = 10; i <= 100; i += 10) {
-        await simulateProgress(i);
+      try {
+        for (let i = 0; i < totalBatches; i++) {
+          const startIndex = i * batchSize;
+          const endIndex = Math.min(startIndex + batchSize, data.length);
+          const batch = data.slice(startIndex, endIndex);
+
+          try {
+            const res = await apiRequest("POST", "/api/submitted-candidates/bulk", { candidates: batch });
+            
+            if (!res.ok) {
+              const errorData = await res.json();
+              failedBatches.push({ batch: i + 1, error: errorData.message });
+            } else {
+              const result = await res.json();
+              successCount += result.count || batch.length;
+            }
+          } catch (batchError) {
+            failedBatches.push({ batch: i + 1, error: batchError.message });
+          }
+
+          // Update progress
+          const progress = Math.round(((i + 1) / totalBatches) * 100);
+          setUploadProgress(progress);
+
+          // Small delay to prevent overwhelming the server
+          if (i < totalBatches - 1) {
+            await new Promise(resolve => setTimeout(resolve, 200));
+          }
+        }
+
+        setIsUploading(false);
+
+        if (failedBatches.length > 0) {
+          throw new Error(`${successCount} candidates imported successfully. ${failedBatches.length} batches failed.`);
+        }
+
+        return { count: successCount, totalBatches, message: `Successfully imported ${successCount} candidates in ${totalBatches} batches` };
+      } catch (error) {
+        setIsUploading(false);
+        throw error;
       }
-
-      const res = await apiRequest("POST", "/api/submitted-candidates/bulk", { candidates: data });
-      setIsUploading(false);
-
-      if (!res.ok) {
-        const errorData = await res.json();
-        throw new Error(errorData.message || "Failed to import candidates");
-      }
-      return await res.json();
     },
     onSuccess: (data) => {
       toast({
@@ -871,7 +894,7 @@ function SubmittedCandidates() {
                           <TableRow>
                             <TableHead>Name</TableHead>
                             <TableHead>Email</TableHead>
-                            <TableHead                            <TableHead>Skills</TableHead>
+                            <TableHead>Skills</TableHead>
                             <TableHead>Location</TableHead>
                             <TableHead>Actions</TableHead>
                           </TableRow>
@@ -972,7 +995,11 @@ function SubmittedCandidates() {
                             </div>
                             <Progress value={uploadProgress} className="w-full" />
                             <p className="text-xs text-muted-foreground">
-                              Processing batch {Math.ceil((uploadProgress / 100) * Math.ceil(importData.length / 20))} of {Math.ceil(importData.length / 20)}
+                              Processing batch {Math.ceil((uploadProgress / 100) * Math.ceil(importData.length / 20))} of {Math.ceil(importData.length / 20)} 
+                              ({importData.length} total records, 20 per batch)
+                            </p>
+                            <p className="text-xs text-blue-600">
+                              Please wait while we process your upload in the background...
                             </p>
                           </div>
                         )}

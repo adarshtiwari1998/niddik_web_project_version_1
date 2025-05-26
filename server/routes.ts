@@ -634,10 +634,10 @@ export async function registerRoutes(app: Express): Promise<Server> {
       }
 
       // Limit batch size to prevent payload issues
-      if (candidates.length > 25) {
+      if (candidates.length > 20) {
         return res.status(400).json({ 
           success: false, 
-          message: "Batch size too large. Maximum 25 candidates per batch." 
+          message: "Batch size too large. Maximum 20 candidates per batch to ensure reliable processing." 
         });
       }
 
