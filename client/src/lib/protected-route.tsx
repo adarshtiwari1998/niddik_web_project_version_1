@@ -1,5 +1,5 @@
 
-import { useEffect } from "react";
+import { useEffect, startTransition } from "react";
 import { useLocation } from "wouter";
 import { useAuth } from "@/hooks/use-auth";
 import { LoadingScreen } from "@/components/ui/loading-screen";
@@ -10,37 +10,40 @@ interface ProtectedRouteProps {
 }
 
 export function ProtectedRoute({ component: Component, requiredRole }: ProtectedRouteProps) {
-  const { user, isLoading } = useAuth();
+  const { user, isLoading, error } = useAuth();
   const [, setLocation] = useLocation();
 
   useEffect(() => {
-    // Only redirect after loading is complete and we have a definitive auth state
-    if (!isLoading) {
-      if (!user) {
-        const redirectPath = requiredRole === "admin" 
-          ? `/admin/login?redirect=${encodeURIComponent(window.location.pathname)}`
-          : `/auth?redirect=${encodeURIComponent(window.location.pathname)}`;
-        setLocation(redirectPath);
-        return;
-      }
+    // Use startTransition to avoid suspense errors during navigation
+    if (!isLoading && !error) {
+      startTransition(() => {
+        if (!user) {
+          const redirectPath = requiredRole === "admin" 
+            ? `/admin/login?redirect=${encodeURIComponent(window.location.pathname)}`
+            : `/auth?redirect=${encodeURIComponent(window.location.pathname)}`;
+          setLocation(redirectPath);
+          return;
+        }
 
-      if (user && requiredRole && user.role !== requiredRole) {
-        const redirectPath = user.role === "admin" ? "/admin" : "/candidate/dashboard";
-        setLocation(redirectPath);
-      }
+        if (user && requiredRole && user.role !== requiredRole) {
+          const redirectPath = user.role === "admin" ? "/admin" : "/candidate/dashboard";
+          setLocation(redirectPath);
+        }
+      });
     }
-  }, [user, isLoading, requiredRole, setLocation]);
+  }, [user, isLoading, error, requiredRole, setLocation]);
 
-  // Always show loading screen while authentication state is being determined
-  if (isLoading) {
+  // Show loading screen while authentication state is being determined or if there's an error
+  if (isLoading || error) {
     return <LoadingScreen />;
   }
 
-  // Don't render anything if user is not authenticated or doesn't have required role
+  // Don't render anything if user is not authenticated
   if (!user) {
     return <LoadingScreen />;
   }
 
+  // Don't render anything if user doesn't have required role
   if (requiredRole && user.role !== requiredRole) {
     return <LoadingScreen />;
   }

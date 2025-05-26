@@ -4,6 +4,7 @@ import { QueryClientProvider } from "@tanstack/react-query";
 import { queryClient } from "./lib/queryClient";
 import { Toaster } from "@/components/ui/toaster";
 import { HelmetProvider } from 'react-helmet-async';
+import { ErrorBoundary } from "@/components/ui/error-boundary";
 import NotFound from "@/pages/not-found";
 import Home from "@/pages/Home";
 import ServiceDetail from "@/pages/ServiceDetail";
@@ -140,12 +141,14 @@ function App() {
     return (
         <HelmetProvider>
             <QueryClientProvider client={queryClient}>
-                <AuthProvider>
-                    <Router />
-                    {window.location.pathname.startsWith('/admin') || 
-                     window.location.pathname.startsWith('/candidate') ? null : <StickyPopup />}
-                    <Toaster />
-                </AuthProvider>
+                <ErrorBoundary>
+                    <AuthProvider>
+                        <Router />
+                        {window.location.pathname.startsWith('/admin') || 
+                         window.location.pathname.startsWith('/candidate') ? null : <StickyPopup />}
+                        <Toaster />
+                    </AuthProvider>
+                </ErrorBoundary>
             </QueryClientProvider>
         </HelmetProvider>
     );
