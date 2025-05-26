@@ -1670,6 +1670,29 @@ function SubmittedCandidates() {
                 <SelectItem value="100">100 per page</SelectItem>
               </SelectContent>
             </Select>
+
+            <Select
+              value={`${sortField}_${sortDirection}`}
+              onValueChange={(value) => {
+                const [field, direction] = value.split('_');
+                setSortField(field);
+                setSortDirection(direction as 'asc' | 'desc');
+              }}
+            >
+              <SelectTrigger className="w-[180px]">
+                <SelectValue placeholder="Sort by" />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="candidateName_asc">Name A-Z</SelectItem>
+                <SelectItem value="candidateName_desc">Name Z-A</SelectItem>
+                <SelectItem value="submissionDate_desc">Newest First</SelectItem>
+                <SelectItem value="submissionDate_asc">Oldest First</SelectItem>
+                <SelectItem value="client_asc">Client A-Z</SelectItem>
+                <SelectItem value="client_desc">Client Z-A</SelectItem>
+                <SelectItem value="status_asc">Status A-Z</SelectItem>
+                <SelectItem value="status_desc">Status Z-A</SelectItem>
+              </SelectContent>
+            </Select>
           </div>
 
           <Card>
@@ -2796,7 +2819,7 @@ function SubmittedCandidates() {
                         <Input 
                           type="date" 
                           {...field}
-                          value={field.value || selectedCandidate?.sourcedBy || new Date().toISOString().split('T')[0]}
+                          value={field.value || (selectedCandidate?.submissionDate ? new Date(selectedCandidate.submissionDate).toISOString().split('T')[0] : new Date().toISOString().split('T')[0])}
                           onChange={(e) => {
                             const value = e.target.value || new Date().toISOString().split('T')[0];
                             field.onChange(value);
