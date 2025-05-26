@@ -183,11 +183,13 @@ const AdminDashboard = () => {
       </div>
       
       <Tabs value={activeTab} onValueChange={handleTabChange}>
-        <TabsList className="mb-6">
-          <TabsTrigger value="overview">Dashboard Overview</TabsTrigger>
-          <TabsTrigger value="account">Account Settings</TabsTrigger>
-          <TabsTrigger value="password">Change Password</TabsTrigger>
-        </TabsList>
+        <div className="mb-6 overflow-x-auto">
+          <TabsList className="w-full min-w-fit flex-nowrap">
+            <TabsTrigger value="overview" className="whitespace-nowrap">Dashboard Overview</TabsTrigger>
+            <TabsTrigger value="account" className="whitespace-nowrap">Account Settings</TabsTrigger>
+            <TabsTrigger value="password" className="whitespace-nowrap">Change Password</TabsTrigger>
+          </TabsList>
+        </div></TabsList>
 
         <TabsContent value="overview">
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
