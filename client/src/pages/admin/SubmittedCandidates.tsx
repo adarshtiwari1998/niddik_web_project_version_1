@@ -403,12 +403,25 @@ function SubmittedCandidates() {
   // Mutation to delete a candidate
   const deleteMutation = useMutation({
     mutationFn: async (id: number) => {
+      console.log('=== SINGLE DELETE MUTATION ===');
+      console.log('Candidate ID to delete:', id);
+      console.log('ID type:', typeof id);
+      console.log('URL being called:', `/api/submitted-candidates/${id}`);
+      
       const res = await apiRequest("DELETE", `/api/submitted-candidates/${id}`);
+      
+      console.log('Response status:', res.status);
+      console.log('Response ok:', res.ok);
+      
       if (!res.ok) {
         const errorData = await res.json();
+        console.log('Error response data:', errorData);
         throw new Error(errorData.message || "Failed to delete candidate");
       }
-      return await res.json();
+      
+      const responseData = await res.json();
+      console.log('Success response data:', responseData);
+      return responseData;
     },
     onSuccess: () => {
       toast({
@@ -1661,7 +1674,14 @@ function SubmittedCandidates() {
                                 <AlertDialogFooter>
                                   <AlertDialogCancel>Cancel</AlertDialogCancel>
                                   <AlertDialogAction 
-                                    onClick={() => deleteMutation.mutate(candidate.id)}
+                                    onClick={() => {
+                                      console.log('=== DELETE BUTTON CLICKED ===');
+                                      console.log('Candidate object:', candidate);
+                                      console.log('Candidate ID:', candidate.id);
+                                      console.log('Candidate ID type:', typeof candidate.id);
+                                      console.log('Candidate name:', candidate.candidateName);
+                                      deleteMutation.mutate(candidate.id);
+                                    }}
                                     className="bg-red-500 hover:bg-red-600"
                                   >
                                     {deleteMutation.isPending ? (

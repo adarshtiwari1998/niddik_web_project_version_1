@@ -45,6 +45,15 @@ async function throwIfResNotOk(res: Response) {
 }
 
 export const apiRequest = async (method: string, url: string, data?: any) => {
+  // Log request details for DELETE operations
+  if (method === 'DELETE') {
+    console.log('=== API REQUEST (DELETE) ===');
+    console.log('Method:', method);
+    console.log('URL:', url);
+    console.log('Data:', data);
+    console.log('Data type:', typeof data);
+  }
+
   const config: RequestInit = {
     method,
     headers: {
@@ -55,9 +64,22 @@ export const apiRequest = async (method: string, url: string, data?: any) => {
 
   if (data && (method === 'POST' || method === 'PUT' || method === 'PATCH' || method === 'DELETE')) {
     config.body = JSON.stringify(data);
+    if (method === 'DELETE') {
+      console.log('Request body:', config.body);
+    }
   }
 
-  return fetch(url, config);
+  if (method === 'DELETE') {
+    console.log('Final config:', config);
+  }
+
+  const response = await fetch(url, config);
+  
+  if (method === 'DELETE') {
+    console.log('Response received:', response);
+  }
+
+  return response;
 };
 
 type UnauthorizedBehavior = "returnNull" | "throw";
