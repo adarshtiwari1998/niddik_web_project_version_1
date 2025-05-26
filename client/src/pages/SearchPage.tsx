@@ -215,6 +215,25 @@ const allSearchableContent: SearchResult[] = [
   },
 ];
 
+// Fetch job listings
+const { data: jobsData } = useQuery<{ data: JobListing[], meta: { total: number, pages: number } }>({
+  queryKey: ['/api/job-listings', { status: 'active' }],
+  queryFn: getQueryFn({ on401: "ignore" }),
+});
+
+// Convert job listings to search results format
+const jobSearchResults: SearchResult[] = jobsData?.data?.map(job => ({
+  id: `job-${job.id}`,
+  title: job.title,
+  description: `${job.company} • ${job.location} • ${job.jobType} • ${job.experienceLevel}`,
+  url: `/jobs/${job.id}`,
+  type: 'career' as const,
+  category: 'Jobs'
+})) || [];
+
+// Combine static content with job listings
+const allSearchableContentWithJobs = [...allSearchableContent, ...jobSearchResults];
+
 const getTypeBadgeColor = (type: string) => {
   switch (type) {
     case 'service':
