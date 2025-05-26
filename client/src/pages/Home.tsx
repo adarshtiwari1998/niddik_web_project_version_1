@@ -35,7 +35,7 @@ const Home = () => {
       <Navbar hasAnnouncementAbove={isAnnouncementVisible} />
       
       {/* Add minimal padding to account for fixed elements - no background for transparency */}
-      <div className={`${isAnnouncementVisible ? 'pt-[80px]' : 'pt-[40px]'} transition-all duration-300 bg-transparent`}>
+      <div className={`${isAnnouncementVisible ? 'pt-[80px]' : 'pt-[40px]'} transition-all duration-300`} style={{ background: 'none', backgroundColor: 'transparent' }}>
         <main>
           <Hero />
           <TrustedCompanies />
