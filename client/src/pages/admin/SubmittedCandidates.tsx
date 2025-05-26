@@ -645,24 +645,24 @@ function SubmittedCandidates() {
           return;
         }
 
-        const mappedData = results.data.map((row: any) => ({
-          submissionDate: row.submissionDate || new Date().toISOString().split('T')[0],
-          sourcedBy: row.sourcedBy || 'CSV Import',
-          client: row.client || '',
-          poc: row.poc || '',
-          skills: row.skills || '',
-          candidateName: row.candidateName || '',
-          contactNo: row.contactNo || '',
-          emailId: row.emailId || '',
-          experience: row.experience || '',
-          noticePeriod: row.noticePeriod || '',
-          location: row.location || '',
-          currentCtc: row.currentCtc || '',
-          expectedCtc: row.expectedCtc || '',
-          billRate: row.billRate || '0',
-          payRate: row.payRate || '0',
-          status: row.status || 'new',
-          salaryInLacs: row.salaryInLacs || ''
+        const mappedData = results.data.map((row: any, index: number) => ({
+          submissionDate: row.submissionDate || row['submission date'] || new Date().toISOString().split('T')[0],
+          sourcedBy: row.sourcedBy || row['sourced by'] || 'CSV Import',
+          client: row.client || row.Client || 'Default Client',
+          poc: row.poc || row.POC || 'Default POC',
+          skills: row.skills || row.Skills || 'Not specified',
+          candidateName: row.candidateName || row['candidate name'] || row['Candidate Name'] || `Candidate ${index + 1}`,
+          contactNo: row.contactNo || row['contact no'] || row['Contact No'] || 'Not provided',
+          emailId: row.emailId || row['email id'] || row['Email ID'] || `candidate${index + 1}@example.com`,
+          experience: row.experience || row.Experience || 'Not specified',
+          noticePeriod: row.noticePeriod || row['notice period'] || row['Notice Period'] || 'Not specified',
+          location: row.location || row.Location || 'Not specified',
+          currentCtc: row.currentCtc || row['current ctc'] || row['Current CTC'] || '',
+          expectedCtc: row.expectedCtc || row['expected ctc'] || row['Expected CTC'] || '',
+          billRate: row.billRate || row['bill rate'] || row['Bill Rate'] || '0',
+          payRate: row.payRate || row['pay rate'] || row['Pay Rate'] || row['pay/hr'] || '0',
+          status: row.status || row.Status || 'new',
+          salaryInLacs: row.salaryInLacs || row['salary (lacs)'] || row['Salary (Lacs)'] || ''
         }));
 
         // Validate data before setting
@@ -675,11 +675,28 @@ function SubmittedCandidates() {
           return;
         }
 
-        setImportData(mappedData);
+        // Filter out rows with all empty required fields
+        const validData = mappedData.filter(row => 
+          row.candidateName && row.candidateName !== `Candidate ${mappedData.indexOf(row) + 1}` ||
+          row.emailId && !row.emailId.includes('@example.com') ||
+          row.client !== 'Default Client' ||
+          row.poc !== 'Default POC'
+        );
+
+        if (validData.length === 0) {
+          toast({
+            title: "Error",
+            description: "No valid candidate data found. Please ensure your CSV has candidate names, emails, client, and POC information.",
+            variant: "destructive",
+          });
+          return;
+        }
+
+        setImportData(validData.length > 0 ? validData : mappedData);
         setIsPreviewMode(true);
         toast({
           title: "Success",
-          description: `${mappedData.length} records loaded for preview`,
+          description: `${validData.length > 0 ? validData.length : mappedData.length} records loaded for preview`,
         });
       },
       error: (error) => {
