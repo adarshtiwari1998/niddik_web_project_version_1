@@ -108,7 +108,7 @@ const Navbar: React.FC<NavbarProps> = ({ hasAnnouncementAbove = true }) => {
     <header className={cn(
       "fixed w-full z-40",
       hasAnnouncementAbove ? "top-[40px]" : "top-0",
-      isTransparent ? "bg-white/5 backdrop-blur-sm" : "bg-white/80 backdrop-blur-sm",
+      isTransparent ? "bg-black/10 backdrop-blur-sm" : "bg-white/90 backdrop-blur-sm",
       isScrolled ? "shadow-md" : "shadow-sm",
       "transition-all duration-300"
     )}>
