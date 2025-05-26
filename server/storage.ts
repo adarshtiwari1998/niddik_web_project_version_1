@@ -541,33 +541,14 @@ export const storage = {
       return { deletedCount: 0, totalRequested: 0 };
     }
 
-    let deletedCount = 0;
-    
-    // Process each ID individually, similar to single delete
-    for (const id of ids) {
-      try {
-        console.log(`Processing deletion for candidate ID: ${id}`);
-        
-        // Check if candidate exists (same logic as single delete)
-        const existingCandidate = await db.query.submittedCandidates.findFirst({
-          where: eq(submittedCandidates.id, id)
-        });
+    // Simply delete all records with the provided IDs, just like single delete
+    const result = await db.delete(submittedCandidates)
+      .where(inArray(submittedCandidates.id, ids))
+      .returning({ id: submittedCandidates.id });
 
-        if (existingCandidate) {
-          // Delete the candidate (same logic as single delete)
-          await db.delete(submittedCandidates).where(eq(submittedCandidates.id, id));
-          deletedCount++;
-          console.log(`Successfully deleted candidate ID: ${id}`);
-        } else {
-          console.log(`Candidate ID ${id} not found, skipping`);
-        }
-      } catch (error) {
-        console.error(`Error deleting candidate ID ${id}:`, error);
-        // Continue with next ID instead of failing completely
-      }
-    }
-
+    const deletedCount = result.length;
     console.log(`Bulk delete completed: ${deletedCount} of ${ids.length} candidates deleted`);
+
     return { deletedCount, totalRequested: ids.length };
   },
 
