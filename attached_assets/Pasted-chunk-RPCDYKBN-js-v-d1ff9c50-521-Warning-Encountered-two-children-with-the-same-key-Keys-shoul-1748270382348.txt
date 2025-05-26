@@ -1,0 +1,32 @@
+chunk-RPCDYKBN.js?v=d1ff9c50:521 Warning: Encountered two children with the same key, ``. Keys should be unique so that components maintain their identity across updates. Non-unique keys may cause children to be duplicated and/or omitted — the behavior is unsupported and could change in a future version.
+    at AnimatePresence (https://c97bc9b7-d459-4d54-aa25-a500aa3482fe-00-17pkxb2ueb99z.sisko.replit.…unner/workspace/node_modules/.vite/deps/framer-motion.js?v=d1ff9c50:210:26)
+    at AnnouncementBar (https://c97bc9b7-d459-4d54-aa25-a500aa3482fe-00-17pkxb2ueb99z.sisko.replit.dev/src/components/layout/AnnouncementBar.tsx:23:3)
+    at div
+    at Home (https://c97bc9b7-d459-4d54-aa25-a500aa3482fe-00-17pkxb2ueb99z.sisko.replit.dev/src/pages/Home.tsx?t=1748270312042:34:61)
+    at Route (https://c97bc9b7-d459-4d54-aa25-a500aa3482fe-00-17pkxb2ueb99z.sisko.replit.…/home/runner/workspace/node_modules/.vite/deps/wouter.js?v=d1ff9c50:280:16)
+    at Switch (https://c97bc9b7-d459-4d54-aa25-a500aa3482fe-00-17pkxb2ueb99z.sisko.replit.…/home/runner/workspace/node_modules/.vite/deps/wouter.js?v=d1ff9c50:336:17)
+    at Router
+    at AuthProvider (https://c97bc9b7-d459-4d54-aa25-a500aa3482fe-00-17pkxb2ueb99z.sisko.replit.dev/src/hooks/use-auth.tsx:32:32)
+    at QueryClientProvider (https://c97bc9b7-d459-4d54-aa25-a500aa3482fe-00-17pkxb2ueb99z.sisko.replit.…rkspace/node_modules/.vite/deps/@tanstack_react-query.js?v=d1ff9c50:2875:3)
+    at _a (https://c97bc9b7-d459-4d54-aa25-a500aa3482fe-00-17pkxb2ueb99z.sisko.replit.…r/workspace/node_modules/.vite/deps/react-helmet-async.js?v=d1ff9c50:624:5)
+    at App
+Navbar.tsx:196 Uncaught ReferenceError: cn is not defined
+    at Navbar (Navbar.tsx:196:24)
+chunk-RPCDYKBN.js?v=d1ff9c50:14032 The above error occurred in the <Navbar> component:
+
+    at Navbar (https://c97bc9b7-d459-4d54-aa25-a500aa3482fe-00-17pkxb2ueb99z.sisko.replit.dev/src/components/layout/Navbar.tsx?t=1748270312042:86:19)
+    at div
+    at Home (https://c97bc9b7-d459-4d54-aa25-a500aa3482fe-00-17pkxb2ueb99z.sisko.replit.dev/src/pages/Home.tsx?t=1748270312042:34:61)
+    at Route (https://c97bc9b7-d459-4d54-aa25-a500aa3482fe-00-17pkxb2ueb99z.sisko.replit.…/home/runner/workspace/node_modules/.vite/deps/wouter.js?v=d1ff9c50:280:16)
+    at Switch (https://c97bc9b7-d459-4d54-aa25-a500aa3482fe-00-17pkxb2ueb99z.sisko.replit.…/home/runner/workspace/node_modules/.vite/deps/wouter.js?v=d1ff9c50:336:17)
+    at Router
+    at AuthProvider (https://c97bc9b7-d459-4d54-aa25-a500aa3482fe-00-17pkxb2ueb99z.sisko.replit.dev/src/hooks/use-auth.tsx:32:32)
+    at QueryClientProvider (https://c97bc9b7-d459-4d54-aa25-a500aa3482fe-00-17pkxb2ueb99z.sisko.replit.…rkspace/node_modules/.vite/deps/@tanstack_react-query.js?v=d1ff9c50:2875:3)
+    at _a (https://c97bc9b7-d459-4d54-aa25-a500aa3482fe-00-17pkxb2ueb99z.sisko.replit.…r/workspace/node_modules/.vite/deps/react-helmet-async.js?v=d1ff9c50:624:5)
+    at App
+
+Consider adding an error boundary to your tree to customize error handling behavior.
+Visit https://reactjs.org/link/error-boundaries to learn more about error boundaries.
+chunk-RPCDYKBN.js?v=d1ff9c50:19413 Uncaught ReferenceError: cn is not defined
+    at Navbar (Navbar.tsx:196:24)
+
