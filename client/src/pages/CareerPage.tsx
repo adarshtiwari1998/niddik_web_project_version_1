@@ -24,6 +24,7 @@ export default function CareerPage() {
   const [category, setCategory] = useState("all_categories");
   const [jobType, setJobType] = useState("all_types");
   const [experienceLevel, setExperienceLevel] = useState("all_levels");
+  const [priority, setPriority] = useState("all_priorities");
 
   const { data, isLoading, error } = useQuery<{ data: JobListing[], meta: { total: number, pages: number } }>({
     queryKey: ['/api/job-listings', { 
@@ -51,12 +52,18 @@ export default function CareerPage() {
       (job.skills && job.skills.toLowerCase().includes(searchLower)) ||
       (job.requirements && job.requirements.toLowerCase().includes(searchLower)) ||
       (job.salary && job.salary.toLowerCase().includes(searchLower));
-    
+
     const matchesCategory = category === 'all_categories' || job.category === category;
     const matchesJobType = jobType === 'all_types' || job.jobType === jobType;
     const matchesExperienceLevel = experienceLevel === 'all_levels' || job.experienceLevel === experienceLevel;
     
-    return matchesSearch && matchesCategory && matchesJobType && matchesExperienceLevel;
+    const matchesPriority = priority === 'all_priorities' ||
+      (priority === 'urgent' && job.urgent) ||
+      (priority === 'priority' && job.priority) ||
+      (priority === 'open' && job.isOpen) ||
+      (priority === 'featured' && job.featured);
+
+    return matchesSearch && matchesCategory && matchesJobType && matchesExperienceLevel && matchesPriority;
   }) || [];
 
   const handleSearch = (e: React.FormEvent) => {
@@ -69,6 +76,7 @@ export default function CareerPage() {
     setCategory("all_categories");
     setJobType("all_types");
     setExperienceLevel("all_levels");
+    setPriority("all_priorities");
   };
 
   return (
@@ -96,7 +104,7 @@ export default function CareerPage() {
                   className="pl-9"
                 />
               </div>
-              <div className="grid grid-cols-1 md:grid-cols-3 gap-4 md:w-2/3">
+              <div className="grid grid-cols-1 md:grid-cols-4 gap-4 md:w-2/3">
                 <Select value={category} onValueChange={setCategory}>
                   <SelectTrigger>
                     <SelectValue placeholder="Job Category" />
@@ -134,6 +142,19 @@ export default function CareerPage() {
                         {level.charAt(0).toUpperCase() + level.slice(1)} Level
                       </SelectItem>
                     ))}
+                  </SelectContent>
+                </Select>
+
+                <Select value={priority} onValueChange={setPriority}>
+                  <SelectTrigger>
+                    <SelectValue placeholder="Priority" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="all_priorities">All Priorities</SelectItem>
+                    <SelectItem value="urgent">Urgent</SelectItem>
+                    <SelectItem value="priority">Priority</SelectItem>
+                    <SelectItem value="open">Open</SelectItem>
+                    <SelectItem value="featured">Featured</SelectItem>
                   </SelectContent>
                 </Select>
               </div>
@@ -226,11 +247,11 @@ export default function CareerPage() {
                     <span className="capitalize">{job.jobType}</span>
                   </div>
                   </div>
-                
+
                 {/* Job Summary Section */}
                 <div className="space-y-2 text-sm mb-4 p-3 bg-gray-50 dark:bg-gray-800 rounded-md">
                   <h4 className="font-semibold text-gray-900 dark:text-gray-100 mb-2">Job Summary</h4>
-                  
+
                   <div className="grid grid-cols-1 gap-2">
                     <div className="flex items-center justify-between">
                       <div className="flex items-center text-muted-foreground">
@@ -239,17 +260,17 @@ export default function CareerPage() {
                       </div>
                       <span className="font-medium capitalize">{job.experienceLevel}</span>
                     </div>
-                    
+
                     <div className="flex items-center justify-between">
                       <span className="text-muted-foreground">Salary Range:</span>
                       <span className="font-medium">{job.salary || "Competitive"}</span>
                     </div>
-                    
+
                     <div className="flex items-center justify-between">
                       <span className="text-muted-foreground">Category:</span>
                       <span className="font-medium">{job.category}</span>
                     </div>
-                    
+
                     <div className="flex items-center justify-between">
                       <div className="flex items-center text-muted-foreground">
                         <Clock className="h-3 w-3 mr-1" />

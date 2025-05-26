@@ -41,21 +41,23 @@ export default function JobListings() {
   const [search, setSearch] = useState("");
   const [statusFilter, setStatusFilter] = useState<string>("all_statuses");
   const [categoryFilter, setCategoryFilter] = useState<string>("all_categories");
+  const [priorityFilter, setPriorityFilter] = useState<string>("all_priorities");
   const queryClient = useQueryClient();
 
   const buildQueryParams = () => {
     const params = new URLSearchParams();
     params.append("page", page.toString());
-    
+
     if (search) params.append("search", search);
     if (statusFilter && statusFilter !== "all_statuses") params.append("status", statusFilter);
     if (categoryFilter && categoryFilter !== "all_categories") params.append("category", categoryFilter);
-    
+    if (priorityFilter && priorityFilter !== "all_priorities") params.append("priority", priorityFilter);
+
     return params.toString();
   };
 
   const { data, isLoading, error } = useQuery<{ data: JobListing[], meta: { total: number, pages: number } }>({
-    queryKey: ['/api/job-listings', page, search, statusFilter, categoryFilter],
+    queryKey: ['/api/job-listings', page, search, statusFilter, categoryFilter, priorityFilter],
     queryFn: async () => {
       const res = await fetch(`/api/job-listings?${buildQueryParams()}`);
       if (!res.ok) throw new Error("Failed to fetch job listings");
@@ -65,27 +67,27 @@ export default function JobListings() {
 
   const handleDeleteJob = async (id: number) => {
     if (!confirm("Are you sure you want to delete this job listing?")) return;
-    
+
     try {
       // Get the JWT token from localStorage
       const token = localStorage.getItem('niddik_auth_token');
       const headers: HeadersInit = {};
-      
+
       if (token) {
         headers['Authorization'] = `Bearer ${token}`;
       }
-      
+
       const res = await fetch(`/api/job-listings/${id}`, {
         method: 'DELETE',
         headers,
         credentials: 'include'
       });
-      
+
       if (!res.ok) throw new Error("Failed to delete job listing");
-      
+
       // Invalidate query cache instead of refreshing the page
       queryClient.invalidateQueries({ queryKey: ['/api/job-listings'] });
-      
+
     } catch (error) {
       console.error("Error deleting job:", error);
       alert("Failed to delete job listing. Please try again.");
@@ -128,7 +130,7 @@ export default function JobListings() {
                 className="pl-8"
               />
             </div>
-            
+
             <div>
               <Select
                 value={statusFilter}
@@ -147,7 +149,7 @@ export default function JobListings() {
                 </SelectContent>
               </Select>
             </div>
-            
+
             <div>
               <Select
                 value={categoryFilter}
@@ -184,13 +186,33 @@ export default function JobListings() {
                 </SelectContent>
               </Select>
             </div>
-            
+
+            <div>
+              <Select
+                value={priorityFilter}
+                onValueChange={setPriorityFilter}
+              >
+                <SelectTrigger>
+                  <Filter className="h-4 w-4 mr-2" />
+                  <SelectValue placeholder="Priority" />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="all_priorities">All Priorities</SelectItem>
+                  <SelectItem value="urgent">Urgent</SelectItem>
+                  <SelectItem value="priority">Priority</SelectItem>
+                  <SelectItem value="open">Open</SelectItem>
+                  <SelectItem value="featured">Featured</SelectItem>
+                </SelectContent>
+              </Select>
+            </div>
+
             <Button 
               variant="outline" 
               onClick={() => {
                 setSearch("");
                 setStatusFilter("all_statuses");
                 setCategoryFilter("all_categories");
+                setPriorityFilter("all_priorities");
               }}
             >
               Clear Filters

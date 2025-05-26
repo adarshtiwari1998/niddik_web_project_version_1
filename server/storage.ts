@@ -118,6 +118,7 @@ export const storage = {
       jobType?: string;
       status?: string;
       featured?: boolean;
+      priority?: string;
     } = {}
   ): Promise<{ jobListings: JobListing[]; total: number }> {
     const { 
@@ -128,7 +129,8 @@ export const storage = {
       experienceLevel,
       jobType,
       status = "active",
-      featured
+      featured,
+      priority
     } = options;
 
     // Build the where conditions
@@ -172,6 +174,23 @@ export const storage = {
 
     if (featured !== undefined) {
       whereConditions.push(eq(jobListings.featured, featured));
+    }
+
+    if (priority && priority !== 'all_priorities') {
+      switch (priority) {
+        case 'urgent':
+          whereConditions.push(eq(jobListings.urgent, true));
+          break;
+        case 'priority':
+          whereConditions.push(eq(jobListings.priority, true));
+          break;
+        case 'open':
+          whereConditions.push(eq(jobListings.isOpen, true));
+          break;
+        case 'featured':
+          whereConditions.push(eq(jobListings.featured, true));
+          break;
+      }
     }
 
     // Create the where condition
