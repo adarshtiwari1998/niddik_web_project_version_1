@@ -102,11 +102,27 @@ async function seed() {
         urgent BOOLEAN NOT NULL DEFAULT false,
         priority BOOLEAN NOT NULL DEFAULT false,
         is_open BOOLEAN NOT NULL DEFAULT false,
-        posted_date TIMESTAMP NOT NULL DEFAULT NOW(),
-        expiry_date TIMESTAMP,
+        posted_date TEXT NOT NULL,
+        expiry_date TEXT,
         category TEXT NOT NULL,
         skills TEXT NOT NULL
       );
+
+      -- Add missing columns if they don't exist
+      DO $$ 
+      BEGIN 
+        IF NOT EXISTS (SELECT 1 FROM information_schema.columns WHERE table_name = 'job_listings' AND column_name = 'urgent') THEN
+          ALTER TABLE job_listings ADD COLUMN urgent BOOLEAN NOT NULL DEFAULT false;
+        END IF;
+        
+        IF NOT EXISTS (SELECT 1 FROM information_schema.columns WHERE table_name = 'job_listings' AND column_name = 'priority') THEN
+          ALTER TABLE job_listings ADD COLUMN priority BOOLEAN NOT NULL DEFAULT false;
+        END IF;
+        
+        IF NOT EXISTS (SELECT 1 FROM information_schema.columns WHERE table_name = 'job_listings' AND column_name = 'is_open') THEN
+          ALTER TABLE job_listings ADD COLUMN is_open BOOLEAN NOT NULL DEFAULT false;
+        END IF;
+      END $$;
 
       CREATE TABLE IF NOT EXISTS job_applications (
         id SERIAL PRIMARY KEY,
