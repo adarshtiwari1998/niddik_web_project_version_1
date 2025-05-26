@@ -525,9 +525,9 @@ export default function Candidates() {
                         <TableHead>Notice Period</TableHead>
                         <TableHead>Location</TableHead>
                         <TableHead>CTC</TableHead>
+                        <TableHead>Expected CTC</TableHead>
                         <TableHead>Skills</TableHead>
                         <TableHead>Cover Letter/Note</TableHead>
-                        <TableHead>Expected CTC</TableHead>
                         <TableHead>Status</TableHead>
                         <TableHead>Actions</TableHead>
                       </TableRow>
@@ -575,20 +575,56 @@ export default function Candidates() {
                             </div>
                           </TableCell>
                           <TableCell>
-                              <div className="max-w-[200px] overflow-hidden">
-                                <span className="text-xs text-gray-600 block truncate">
-                                  {application.skills || 'Not specified'}
-                                </span>
-                              </div>
-                            </TableCell>
-                            <TableCell>
-                              <div className="max-w-[300px] overflow-hidden">
-                                <span className="text-xs text-gray-600 block truncate" title={application.coverLetter}>
-                                  {application.coverLetter || 'No cover letter provided'}
-                                </span>
-                              </div>
-                            </TableCell>
-                            <TableCell>{application.user.expectedCtc || "-"}</TableCell>
+                            <div className="flex items-center">
+                              <DollarSign className="h-3 w-3 mr-1" />
+                              {application.user.expectedCtc || "-"}
+                            </div>
+                          </TableCell>
+                          <TableCell>
+                            <div className="max-w-[250px]">
+                              <span className="text-xs text-gray-600">
+                                {application.skills || 'Not specified'}
+                              </span>
+                            </div>
+                          </TableCell>
+                          <TableCell>
+                            <div className="max-w-[300px]">
+                              {application.coverLetter ? (
+                                <div>
+                                  <span className="text-xs text-gray-600 block">
+                                    {application.coverLetter.length > 50 
+                                      ? `${application.coverLetter.substring(0, 50)}...` 
+                                      : application.coverLetter
+                                    }
+                                  </span>
+                                  {application.coverLetter.length > 50 && (
+                                    <Dialog>
+                                      <DialogTrigger asChild>
+                                        <Button variant="link" size="sm" className="p-0 h-auto text-xs text-blue-600">
+                                          Read More
+                                        </Button>
+                                      </DialogTrigger>
+                                      <DialogContent className="max-w-2xl">
+                                        <DialogHeader>
+                                          <DialogTitle>Cover Letter</DialogTitle>
+                                          <DialogDescription>
+                                            Full cover letter from {application.user.fullName}
+                                          </DialogDescription>
+                                        </DialogHeader>
+                                        <div className="mt-4">
+                                          <p className="text-sm leading-relaxed whitespace-pre-wrap">
+                                            {application.coverLetter}
+                                          </p>
+                                        </div>
+                                      </DialogContent>
+                                    </Dialog>
+                                  )}
+                                </div>
+                              ) : (
+                                <span className="text-xs text-gray-500">No cover letter provided</span>
+                              )}
+                            </div>
+                          </TableCell>
                           <TableCell>
                             <Select
                               value={application.status}
