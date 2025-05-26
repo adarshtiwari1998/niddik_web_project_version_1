@@ -713,13 +713,16 @@ export async function registerRoutes(app: Express): Promise<Server> {
         });
       }
 
-      // Convert and validate IDs
+      // Convert and validate IDs with more robust validation
       const validIds: number[] = [];
       const invalidIds: any[] = [];
       
       for (const id of ids) {
-        const numId = parseInt(String(id), 10);
-        if (Number.isInteger(numId) && numId > 0) {
+        // Handle both string and number inputs
+        const numId = typeof id === 'number' ? id : parseInt(String(id), 10);
+        console.log(`Processing ID: ${id} (type: ${typeof id}) -> ${numId} (type: ${typeof numId})`);
+        
+        if (Number.isInteger(numId) && numId > 0 && !isNaN(numId)) {
           validIds.push(numId);
         } else {
           invalidIds.push(id);
@@ -732,7 +735,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
       if (validIds.length === 0) {
         return res.status(400).json({ 
           success: false, 
-          message: `No valid candidate IDs provided. Invalid IDs: ${invalidIds.join(', ')}` 
+          message: `Invalid candidate ID` 
         });
       }
 
@@ -742,10 +745,13 @@ export async function registerRoutes(app: Express): Promise<Server> {
 
       for (const id of validIds) {
         try {
+          console.log(`Checking if candidate ${id} exists...`);
           const candidate = await storage.getSubmittedCandidateById(id);
           if (candidate) {
+            console.log(`Candidate ${id} exists:`, candidate.candidateName);
             existingCandidates.push(id);
           } else {
+            console.log(`Candidate ${id} does not exist`);
             nonExistentIds.push(id);
           }
         } catch (error) {
@@ -758,10 +764,9 @@ export async function registerRoutes(app: Express): Promise<Server> {
       console.log('Non-existent IDs:', nonExistentIds);
 
       if (existingCandidates.length === 0) {
-        return res.status(404).json({
+        return res.status(400).json({
           success: false,
-          message: "None of the specified candidates were found",
-          nonExistentIds
+          message: "Invalid candidate ID"
         });
       }
 
@@ -797,7 +802,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
 
       return res.status(500).json({ 
         success: false, 
-        message: "Failed to delete candidates",
+        message: "Invalid candidate ID",
         error: error instanceof Error ? error.message : 'Unknown error'
       });
     }
