@@ -4,6 +4,11 @@ import { scrypt, randomBytes } from "crypto";
 import { promisify } from "util";
 import { sql } from "drizzle-orm";
 
+// Add ilike import for the contact submissions query
+function ilike(column: any, pattern: string) {
+  return sql`${column} ILIKE ${pattern}`;
+}
+
 const scryptAsync = promisify(scrypt);
 
 async function hashPassword(password: string) {

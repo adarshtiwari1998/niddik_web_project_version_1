@@ -23,7 +23,7 @@ import {
   DemoRequest,
   InsertDemoRequest
 } from "@shared/schema";
-import { eq, desc, and, like, or, asc, inArray, sql } from "drizzle-orm";
+import { eq, desc, and, like, or, asc, inArray, sql, ilike } from "drizzle-orm";
 
 export const storage = {
   // Contact form submissions
