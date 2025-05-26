@@ -710,13 +710,29 @@ export async function registerRoutes(app: Express): Promise<Server> {
         });
       }
 
-      // Convert IDs to numbers, just like single delete converts the param
-      const numericIds = ids.map(id => parseInt(String(id), 10)).filter(id => !isNaN(id));
+      // Convert IDs to numbers and validate them (same as single delete)
+      const numericIds = ids
+        .map(id => parseInt(String(id), 10))
+        .filter(id => !isNaN(id) && id > 0);
 
       if (numericIds.length === 0) {
         return res.status(400).json({ 
           success: false, 
           message: "No valid candidate IDs provided" 
+        });
+      }
+
+      // Check if all candidates exist (same validation pattern as single delete)
+      const existingCandidates = await Promise.all(
+        numericIds.map(id => storage.getSubmittedCandidateById(id))
+      );
+
+      const nonExistentIds = numericIds.filter((id, index) => !existingCandidates[index]);
+      
+      if (nonExistentIds.length > 0) {
+        return res.status(404).json({
+          success: false,
+          message: `Some candidates not found: ${nonExistentIds.join(', ')}`
         });
       }
 
