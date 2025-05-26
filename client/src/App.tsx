@@ -31,8 +31,9 @@ import JobListings from "@/pages/admin/JobListings";
 import JobForm from "@/pages/admin/JobForm";
 import Candidates from "@/pages/admin/Candidates";
 import SubmittedCandidates from "@/pages/admin/SubmittedCandidates";
-import DemoRequests from "@/pages/admin/DemoRequests";
 import Users from "@/pages/admin/Users";
+import DemoRequests from "./pages/admin/DemoRequests";
+import ContactSubmissions from "./pages/admin/ContactSubmissions";
 
 // Auth Provider
 import { AuthProvider } from "@/hooks/use-auth";
@@ -49,7 +50,7 @@ import ITPartners from './pages/ITPartners';
 import NonITPartners from './pages/NonITPartners';
 import HealthcarePartners from './pages/HealthcarePartners';
 import SearchPage from "@/pages/SearchPage";
-import { lazy } from 'react';
+import { lazy, Suspense } from "react";
 // Component to handle scroll restoration
 function ScrollToTop() {
     const [location] = useLocation();
@@ -122,8 +123,8 @@ function Router() {
             <ProtectedRoute path="/admin/candidates" component={Candidates} requiredRole="admin" />
             <ProtectedRoute path="/admin/submitted-candidates" component={SubmittedCandidates} requiredRole="admin" />
             <ProtectedRoute path="/admin/users" component={Users} requiredRole="admin" />
-            <ProtectedRoute path="/admin/demo-requests" component={lazy(() => import("./pages/admin/DemoRequests"))} />
-            <ProtectedRoute path="/admin/contact-submissions" component={lazy(() => import("./pages/admin/ContactSubmissions"))} requiredRole="admin"/>
+            <ProtectedRoute path="/admin/demo-requests" component={DemoRequests} requiredRole="admin"/>
+            <ProtectedRoute path="/admin/contact-submissions" component={ContactSubmissions} requiredRole="admin"/>
             <ProtectedRoute path="/admin/account" component={() => <AdminPasswordChange />} requiredRole="admin"/>
 
             {/* Demo Request */}
