@@ -775,7 +775,6 @@ export async function registerRoutes(app: Express): Promise<Server> {
 
       console.log('Bulk delete completed:', {
         requested: validIds.length,
-        found: existingIds.length,
         deleted: deletedCount,
         failed: failedIds.length
       });
@@ -783,7 +782,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
       if (failedIds.length > 0) {
         return res.status(207).json({
           success: true,
-          message: `Partially successful: deleted ${deletedCount} out of ${existingIds.length} candidates`,
+          message: `Partially successful: deleted ${deletedCount} out of ${validIds.length} candidates`,
           count: deletedCount,
           failedIds: failedIds
         });
