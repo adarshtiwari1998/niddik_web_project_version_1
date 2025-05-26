@@ -1,9 +1,12 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import { Link, useLocation } from "wouter";
-import { Menu, X, ChevronDown, Search } from "lucide-react";
-import { cn } from "@/lib/utils";
-import Logo from "@/components/ui/logo";
+import { Search, Menu, X, ChevronDown, ChevronRight } from "lucide-react";
 import Container from "@/components/ui/container";
+import Logo from "@/components/ui/logo";
+import { Button } from "@/components/ui/button";
+import { useQuery } from "@tanstack/react-query";
+import { getQueryFn } from "@/lib/queryClient";
+import { JobListing } from "@shared/schema";
 
 interface DropdownItem {
   label: string;
@@ -18,6 +21,14 @@ interface NavItem {
 
 interface NavbarProps {
   hasAnnouncementAbove?: boolean;
+}
+
+interface SearchResult {
+  label: string;
+  href: string;
+  type: "parent" | "child" | "job";
+  parent?: string;
+  description?: string;
 }
 
 const navItems: NavItem[] = [
@@ -90,7 +101,8 @@ const Navbar: React.FC<NavbarProps> = ({ hasAnnouncementAbove = true }) => {
   const [mobileDropdown, setMobileDropdown] = useState(-1);
   const [isSearchOpen, setIsSearchOpen] = useState(false);
   const [searchTerm, setSearchTerm] = useState("");
-  const [searchResults, setSearchResults] = useState([]);
+  const [searchResults, setSearchResults] = useState<SearchResult[]>([]);
+  const searchRef = useRef<HTMLDivElement>(null);
 
   // Check if we're on the home page
   const isHomePage = location === "/";
@@ -116,11 +128,17 @@ const Navbar: React.FC<NavbarProps> = ({ hasAnnouncementAbove = true }) => {
     return () => window.removeEventListener("scroll", handleScroll);
   }, [hasAnnouncementAbove, isHomePage]);
 
-  // Enhanced search functionality that includes individual dropdown items
+  // Fetch job listings for search
+  const { data: jobsData } = useQuery<{ data: JobListing[], meta: { total: number, pages: number } }>({
+    queryKey: ['/api/job-listings', { status: 'active' }],
+    queryFn: getQueryFn({ on401: "ignore" }),
+  });
+
+  // Enhanced search functionality that includes individual dropdown items and job listings
   useEffect(() => {
     if (searchTerm) {
       const results = [];
-      
+
       // Search through all nav items and their dropdown items
       navItems.forEach(item => {
         // Check if parent item matches
@@ -131,7 +149,7 @@ const Navbar: React.FC<NavbarProps> = ({ hasAnnouncementAbove = true }) => {
             type: "parent"
           });
         }
-        
+
         // Check dropdown items
         if (item.dropdown) {
           item.dropdown.forEach(dropdownItem => {
@@ -146,12 +164,33 @@ const Navbar: React.FC<NavbarProps> = ({ hasAnnouncementAbove = true }) => {
           });
         }
       });
-      
-      setSearchResults(results);
+
+      // Search through job listings
+      if (jobsData?.data) {
+        jobsData.data.forEach(job => {
+          const searchLower = searchTerm.toLowerCase();
+          if (
+            job.title.toLowerCase().includes(searchLower) ||
+            job.company.toLowerCase().includes(searchLower) ||
+            job.location.toLowerCase().includes(searchLower) ||
+            job.skills?.toLowerCase().includes(searchLower) ||
+            job.category?.toLowerCase().includes(searchLower)
+          ) {
+            results.push({
+              label: job.title,
+              href: `/jobs/${job.id}`,
+              type: "job",
+              description: `${job.company} • ${job.location} • ${job.jobType}`
+            });
+          }
+        });
+      }
+
+      setSearchResults(results.slice(0, 8)); // Limit to 8 results for dropdown
     } else {
       setSearchResults([]);
     }
-  }, [searchTerm]);
+  }, [searchTerm, jobsData]);
 
   return (
     <header className={cn(
@@ -261,30 +300,32 @@ const Navbar: React.FC<NavbarProps> = ({ hasAnnouncementAbove = true }) => {
                   </form>
                   {searchResults.length > 0 && (
                     <div className="mt-2">
-                      {searchResults.map((result, index) => (
-                        <div key={index} className="block py-2 hover:text-andela-green transition-colors cursor-pointer">
-                          <Link 
-                            href={result.href || "#"}
-                            onClick={() => setIsSearchOpen(false)}
-                            className="block w-full text-left"
-                          >
-                            <div className="flex flex-col">
-                              <span className="font-medium">{result.label}</span>
-                              {result.type === "child" && result.parent && (
-                                <span className="text-xs text-gray-500">in {result.parent}</span>
-                              )}
-                            </div>
-                          </Link>
-                        </div>
-                      ))}
-                      <div className="border-t mt-2 pt-2">
-                        <Link 
-                          href={`/search?q=${encodeURIComponent(searchTerm)}`}
-                          onClick={() => setIsSearchOpen(false)}
-                          className="block py-2 text-sm text-andela-green hover:text-andela-dark transition-colors"
-                        >
-                          View all results for "{searchTerm}"
-                        </Link>
+                      <div className="text-xs text-gray-500 mb-2 px-1">
+                        Found {searchResults.length} result{searchResults.length !== 1 ? 's' : ''}
+                      </div>
+                      <div className="max-h-60 overflow-y-auto space-y-1">
+                        {searchResults.map((result, index) => (
+                          <div key={index} className="block py-2 px-1 hover:bg-gray-50 rounded transition-colors cursor-pointer">
+                            <Link 
+                              href={result.href || "#"}
+                              onClick={() => setIsSearchOpen(false)}
+                              className="block w-full text-left"
+                            >
+                              <div className="flex flex-col">
+                                <span className="font-medium text-sm">{result.label}</span>
+                                {result.type === "child" && result.parent && (
+                                  <span className="text-xs text-gray-500">in {result.parent}</span>
+                                )}
+                                {result.type === "job" && result.description && (
+                                  <span className="text-xs text-gray-500">{result.description}</span>
+                                )}
+                                {result.type === "job" && (
+                                  <span className="text-xs text-andela-green font-medium">Job Opening</span>
+                                )}
+                              </div>
+                            </Link>
+                          </div>
+                        ))}
                       </div>
                     </div>
                   )}
