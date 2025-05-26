@@ -447,13 +447,10 @@ export const storage = {
           )
         );
       } else {
-        // Handle exact margin value match
-        const exactMargin = parseFloat(margin);
-        if (!isNaN(exactMargin)) {
-          whereConditions.push(
-            sql`CAST(${submittedCandidates.marginPerHour} AS DECIMAL) = ${exactMargin}`
-          );
-        }
+        // Handle exact margin value match - convert both sides to string for exact comparison
+        whereConditions.push(
+          eq(submittedCandidates.marginPerHour, margin)
+        );
       }
     }
 
