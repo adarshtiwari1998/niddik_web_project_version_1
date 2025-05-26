@@ -39,10 +39,18 @@ export default function CareerPage() {
 
   // Filter the data client-side for real-time search
   const filteredJobs = data?.data.filter((job) => {
-    const matchesSearch = search.trim() === '' || 
-      job.title.toLowerCase().includes(search.toLowerCase()) ||
-      job.description.toLowerCase().includes(search.toLowerCase()) ||
-      job.company.toLowerCase().includes(search.toLowerCase());
+    const searchLower = search.toLowerCase().trim();
+    const matchesSearch = searchLower === '' || 
+      job.title.toLowerCase().includes(searchLower) ||
+      job.description.toLowerCase().includes(searchLower) ||
+      job.company.toLowerCase().includes(searchLower) ||
+      job.location.toLowerCase().includes(searchLower) ||
+      job.category.toLowerCase().includes(searchLower) ||
+      job.experienceLevel.toLowerCase().includes(searchLower) ||
+      job.jobType.toLowerCase().includes(searchLower) ||
+      (job.skills && job.skills.toLowerCase().includes(searchLower)) ||
+      (job.requirements && job.requirements.toLowerCase().includes(searchLower)) ||
+      (job.salary && job.salary.toLowerCase().includes(searchLower));
     
     const matchesCategory = category === 'all_categories' || job.category === category;
     const matchesJobType = jobType === 'all_types' || job.jobType === jobType;
