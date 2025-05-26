@@ -190,6 +190,10 @@ function SubmittedCandidates() {
   const [uploadProgress, setUploadProgress] = useState(0);
   const [uploadMessage, setUploadMessage] = useState('');
 
+  // State for bulk actions
+  const [selectedCandidateIds, setSelectedCandidateIds] = useState<number[]>([]);
+  const [isSelectAllChecked, setIsSelectAllChecked] = useState(false);
+
   // Calculate margin and profit based on bill rate and pay rate
   const calculateMarginAndProfit = (billRate: string, payRate: string) => {
     const bill = parseFloat(billRate || "0");
@@ -419,6 +423,35 @@ function SubmittedCandidates() {
     },
   });
 
+    // Mutation to delete multiple candidates in bulk
+    const bulkDeleteMutation = useMutation({
+    mutationFn: async (ids: number[]) => {
+      const res = await apiRequest("DELETE", `/api/submitted-candidates/bulk`, { ids });
+      if (!res.ok) {
+        const errorData = await res.json();
+        throw new Error(errorData.message || "Failed to delete candidates");
+      }
+      return await res.json();
+    },
+    onSuccess: () => {
+      toast({
+        title: "Success",
+        description: "Candidates have been deleted successfully",
+      });
+      setSelectedCandidateIds([]);
+      setIsSelectAllChecked(false);
+      queryClient.invalidateQueries({ queryKey: ['/api/submitted-candidates'] });
+      queryClient.invalidateQueries({ queryKey: ['/api/submitted-candidates/analytics/summary'] });
+    },
+    onError: (error: Error) => {
+      toast({
+        title: "Error",
+        description: error.message,
+        variant: "destructive",
+      });
+    },
+  });
+
   // Mutation to import candidates in bulk
   const importMutation = useMutation({
     mutationFn: async (data: any[]) => {
@@ -428,7 +461,7 @@ function SubmittedCandidates() {
 
       for (let i = 0; i < numChunks; i++) {
         const chunk = data.slice(i * chunkSize, (i + 1) * chunkSize);
-        
+
         // Simulate upload progress
         const progress = ((i + 1) / numChunks) * 100;
         setUploadProgress(progress);
@@ -443,7 +476,7 @@ function SubmittedCandidates() {
           throw new Error(errorData.message || "Failed to import candidates"); // Stop processing on error
         }
       }
-      
+
       setUploadStatus('success');
       setUploadMessage('Candidates imported successfully!');
       return { count: data.length }; // Return total count after successful import
@@ -705,11 +738,55 @@ function SubmittedCandidates() {
     setSearch(e.target.value);
   };
 
+  // Handle search submit
   const handleSearchSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     setPage(1); // Reset to first page on search
     refetchCandidates();
   };
+
+  // Handle select all checkbox
+  const handleSelectAll = (checked: boolean) => {
+    setIsSelectAllChecked(checked);
+    if (checked) {
+      const currentPageIds = candidatesData?.data?.map((candidate: SubmittedCandidate) => candidate.id) || [];
+      setSelectedCandidateIds(currentPageIds);
+    } else {
+      setSelectedCandidateIds([]);
+    }
+  };
+
+  // Handle individual candidate selection
+  const handleSelectCandidate = (candidateId: number, checked: boolean) => {
+    if (checked) {
+      setSelectedCandidateIds(prev => [...prev, candidateId]);
+    } else {
+      setSelectedCandidateIds(prev => prev.filter(id => id !== candidateId));
+      setIsSelectAllChecked(false);
+    }
+  };
+
+  // Handle bulk delete
+  const handleBulkDelete = () => {
+    if (selectedCandidateIds.length === 0) {
+      toast({
+        title: "No Selection",
+        description: "Please select candidates to delete",
+        variant: "destructive",
+      });
+      return;
+    }
+    bulkDeleteMutation.mutate(selectedCandidateIds);
+  };
+
+  // Update select all state when current page data changes
+  useEffect(() => {
+    if (candidatesData?.data) {
+      const currentPageIds = candidatesData.data.map((candidate: SubmittedCandidate) => candidate.id);
+      const allCurrentPageSelected = currentPageIds.length > 0 && currentPageIds.every(id => selectedCandidateIds.includes(id));
+      setIsSelectAllChecked(allCurrentPageSelected);
+    }
+  }, [candidatesData?.data, selectedCandidateIds]);
 
   // Get unique client names from candidates data for filter
   const clients: string[] = candidatesData?.data ? 
@@ -787,7 +864,8 @@ function SubmittedCandidates() {
                   <div className="max-h-[400px] overflow-auto">
                     {isLoadingApplicants ? (
                       <div className="flex flex-col items-center justify-center py-8">
-                        <Loader2 className="h-8 w-8 animate-spin text-primary mb-2" />
+                        <Loader2```typescript
+ className="h-8 w-8 animate-spin text-primary mb-2" />
                         <p className="text-sm text-muted-foreground">Loading applicants...</p>
                       </div>
                     ) : applicantsData?.data?.length === 0 ? (
@@ -984,7 +1062,7 @@ function SubmittedCandidates() {
                     </div>
                   )}
 
-                  
+
                   <DialogFooter>
                     <Button 
                       variant="outline" 
@@ -1095,6 +1173,13 @@ function SubmittedCandidates() {
                 <Table className="min-w-[1500px]">
                   <TableHeader>
                     <TableRow>
+                      <TableHead className="w-10">
+                        <input
+                          type="checkbox"
+                          checked={isSelectAllChecked}
+                          onChange={(e) => handleSelectAll(e.target.checked)}
+                        />
+                      </TableHead>
                       <TableHead className="min-w-[150px]">Sourced By</TableHead>
                       <TableHead className="min-w-[150px]">Client</TableHead>
                       <TableHead className="min-w-[150px]">POC</TableHead>
@@ -1348,6 +1433,13 @@ function SubmittedCandidates() {
                   ) : (
                     candidatesData?.data?.map((candidate: SubmittedCandidate) => (
                       <TableRow key={candidate.id}>
+                         <TableCell className="w-10">
+                          <input
+                            type="checkbox"
+                            checked={selectedCandidateIds.includes(candidate.id)}
+                            onChange={(e) => handleSelectCandidate(candidate.id, e.target.checked)}
+                          />
+                        </TableCell>
                         <TableCell>{candidate.sourcedBy || '-'}</TableCell>
                         <TableCell>{candidate.client || '-'}</TableCell>
                         <TableCell>{candidate.poc || '-'}</TableCell>
@@ -1426,8 +1518,29 @@ function SubmittedCandidates() {
               </div>
             </CardContent>
             <CardFooter className="flex items-center justify-between px-6 py-4 border-t">
-              <div className="text-sm text-muted-foreground">
-                Showing {candidatesData?.data?.length || 0} of {candidatesData?.meta?.total || 0} candidates
+              <div className="flex items-center">
+                <Button
+                  variant="destructive"
+                  size="sm"
+                  onClick={handleBulkDelete}
+                  disabled={bulkDeleteMutation.isPending || selectedCandidateIds.length === 0}
+                  className="mr-4"
+                >
+                  {bulkDeleteMutation.isPending ? (
+                    <>
+                      <Loader2 className="h-4 w-4 mr-2 animate-spin" />
+                      Deleting...
+                    </>
+                  ) : (
+                    <>
+                      <Trash2 className="h-4 w-4 mr-2" />
+                      Delete Selected
+                    </>
+                  )}
+                </Button>
+                <div className="text-sm text-muted-foreground">
+                  Showing {candidatesData?.data?.length || 0} of {candidatesData?.meta?.total || 0} candidates
+                </div>
               </div>
               <div className="flex items-center gap-2">
                 <Button
@@ -1688,8 +1801,7 @@ function SubmittedCandidates() {
                 />
 
                 <FormField
-                  control={form.control}
-                  name="expectedCtc"
+                  control={form.control}name="expectedCtc"
                   render={({ field }) => (
                     <FormItem>
                       <FormLabel>Expected CTC *</FormLabel>
