@@ -358,7 +358,26 @@ const handleResumeRemove = async () => {
                 </CardHeader>
                 <CardContent>
                   <div className="prose dark:prose-invert max-w-none">
-                    <p>{job.description}</p>
+                    <div className="whitespace-pre-line">
+                      {job.description.split(/\d+\./).map((item, index) => {
+                        if (index === 0) {
+                          // First part before any numbering
+                          return item.trim() && (
+                            <p key={index} className="mb-4">
+                              {item.trim()}
+                            </p>
+                          );
+                        }
+                        return item.trim() && (
+                          <div key={index} className="mb-3">
+                            <div className="flex items-start gap-2">
+                              <span className="font-semibold text-primary mt-0.5">{index}.</span>
+                              <span className="flex-1">{item.trim()}</span>
+                            </div>
+                          </div>
+                        );
+                      })}
+                    </div>
                   </div>
                 </CardContent>
               </Card>
@@ -370,7 +389,26 @@ const handleResumeRemove = async () => {
                 </CardHeader>
                 <CardContent>
                   <div className="prose dark:prose-invert max-w-none">
-                    <p>{job.requirements}</p>
+                    <div className="whitespace-pre-line">
+                      {job.requirements.split(/\d+\./).map((item, index) => {
+                        if (index === 0) {
+                          // First part before any numbering
+                          return item.trim() && (
+                            <p key={index} className="mb-4">
+                              {item.trim()}
+                            </p>
+                          );
+                        }
+                        return item.trim() && (
+                          <div key={index} className="mb-3">
+                            <div className="flex items-start gap-2">
+                              <span className="font-semibold text-primary mt-0.5">{index}.</span>
+                              <span className="flex-1">{item.trim()}</span>
+                            </div>
+                          </div>
+                        );
+                      })}
+                    </div>
                   </div>
                 </CardContent>
               </Card>
@@ -383,7 +421,30 @@ const handleResumeRemove = async () => {
                   </CardHeader>
                   <CardContent>
                     <div className="prose dark:prose-invert max-w-none">
-                      <p>{job.benefits}</p>
+                      <div className="whitespace-pre-line">
+                        {job.benefits.includes('.') ? (
+                          job.benefits.split(/\d+\./).map((item, index) => {
+                            if (index === 0) {
+                              // First part before any numbering
+                              return item.trim() && (
+                                <p key={index} className="mb-4">
+                                  {item.trim()}
+                                </p>
+                              );
+                            }
+                            return item.trim() && (
+                              <div key={index} className="mb-3">
+                                <div className="flex items-start gap-2">
+                                  <span className="font-semibold text-primary mt-0.5">{index}.</span>
+                                  <span className="flex-1">{item.trim()}</span>
+                                </div>
+                              </div>
+                            );
+                          })
+                        ) : (
+                          <p>{job.benefits}</p>
+                        )}
+                      </div>
                     </div>
                   </CardContent>
                 </Card>
