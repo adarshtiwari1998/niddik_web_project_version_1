@@ -1,0 +1,57 @@
+Request body: {"ids":[18,19,20,21,22,23,24,25,26,16]}
+queryClient.ts:52 
+            
+            
+           DELETE https://c97bc9b7-d459-4d54-aa25-a500aa3482fe-00-17pkxb2ueb99z.sisko.replit.dev/api/submitted-candidates/bulk 400 (Bad Request)
+apiRequest @ queryClient.ts:52
+mutationFn @ SubmittedCandidates.tsx:444
+fn @ @tanstack_react-query.js?v=d1ff9c50:1197
+run @ @tanstack_react-query.js?v=d1ff9c50:494
+start @ @tanstack_react-query.js?v=d1ff9c50:536
+execute @ @tanstack_react-query.js?v=d1ff9c50:1233
+await in execute
+mutate @ @tanstack_react-query.js?v=d1ff9c50:2649
+(anonymous) @ @tanstack_react-query.js?v=d1ff9c50:3377
+executeBulkDelete @ SubmittedCandidates.tsx:895
+handleEvent @ chunk-4PI3B2OT.js?v=d1ff9c50:14
+callCallback2 @ chunk-RPCDYKBN.js?v=d1ff9c50:3674
+invokeGuardedCallbackDev @ chunk-RPCDYKBN.js?v=d1ff9c50:3699
+invokeGuardedCallback @ chunk-RPCDYKBN.js?v=d1ff9c50:3733
+invokeGuardedCallbackAndCatchFirstError @ chunk-RPCDYKBN.js?v=d1ff9c50:3736
+executeDispatch @ chunk-RPCDYKBN.js?v=d1ff9c50:7014
+processDispatchQueueItemsInOrder @ chunk-RPCDYKBN.js?v=d1ff9c50:7034
+processDispatchQueue @ chunk-RPCDYKBN.js?v=d1ff9c50:7043
+dispatchEventsForPlugins @ chunk-RPCDYKBN.js?v=d1ff9c50:7051
+(anonymous) @ chunk-RPCDYKBN.js?v=d1ff9c50:7174
+batchedUpdates$1 @ chunk-RPCDYKBN.js?v=d1ff9c50:18913
+batchedUpdates @ chunk-RPCDYKBN.js?v=d1ff9c50:3579
+dispatchEventForPluginEventSystem @ chunk-RPCDYKBN.js?v=d1ff9c50:7173
+dispatchEventWithEnableCapturePhaseSelectiveHydrationWithoutDiscreteEventReplay @ chunk-RPCDYKBN.js?v=d1ff9c50:5478
+dispatchEvent @ chunk-RPCDYKBN.js?v=d1ff9c50:5472
+dispatchDiscreteEvent @ chunk-RPCDYKBN.js?v=d1ff9c50:5449Understand this error
+SubmittedCandidates.tsx:470 Bulk delete error: Error: 400: {"success":false,"message":"Invalid candidate ID"}
+    at throwIfResNotOk (queryClient.ts:43:11)
+    at async apiRequest (queryClient.ts:63:3)
+    at async Object.mutationFn (SubmittedCandidates.tsx:444:19)
+onError @ SubmittedCandidates.tsx:470
+execute @ @tanstack_react-query.js?v=d1ff9c50:1262
+await in execute
+mutate @ @tanstack_react-query.js?v=d1ff9c50:2649
+(anonymous) @ @tanstack_react-query.js?v=d1ff9c50:3377
+executeBulkDelete @ SubmittedCandidates.tsx:895
+handleEvent @ chunk-4PI3B2OT.js?v=d1ff9c50:14
+callCallback2 @ chunk-RPCDYKBN.js?v=d1ff9c50:3674
+invokeGuardedCallbackDev @ chunk-RPCDYKBN.js?v=d1ff9c50:3699
+invokeGuardedCallback @ chunk-RPCDYKBN.js?v=d1ff9c50:3733
+invokeGuardedCallbackAndCatchFirstError @ chunk-RPCDYKBN.js?v=d1ff9c50:3736
+executeDispatch @ chunk-RPCDYKBN.js?v=d1ff9c50:7014
+processDispatchQueueItemsInOrder @ chunk-RPCDYKBN.js?v=d1ff9c50:7034
+processDispatchQueue @ chunk-RPCDYKBN.js?v=d1ff9c50:7043
+dispatchEventsForPlugins @ chunk-RPCDYKBN.js?v=d1ff9c50:7051
+(anonymous) @ chunk-RPCDYKBN.js?v=d1ff9c50:7174
+batchedUpdates$1 @ chunk-RPCDYKBN.js?v=d1ff9c50:18913
+batchedUpdates @ chunk-RPCDYKBN.js?v=d1ff9c50:3579
+dispatchEventForPluginEventSystem @ chunk-RPCDYKBN.js?v=d1ff9c50:7173
+dispatchEventWithEnableCapturePhaseSelectiveHydrationWithoutDiscreteEventReplay @ chunk-RPCDYKBN.js?v=d1ff9c50:5478
+dispatchEvent @ chunk-RPCDYKBN.js?v=d1ff9c50:5472
+dispatchDiscreteEvent @ chunk-RPCDYKBN.js?v=d1ff9c50:5449Understand this error
