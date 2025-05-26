@@ -498,25 +498,106 @@ const handleResumeRemove = async () => {
                 </CardHeader>
                 <CardContent>
                   <div className="prose dark:prose-invert max-w-none">
-                    <div className="whitespace-pre-line">
-                      {job.requirements.split(/\d+\./).map((item, index) => {
-                        if (index === 0) {
-                          // First part before any numbering
-                          return item.trim() && (
-                            <p key={index} className="mb-4">
-                              {item.trim()}
-                            </p>
+                    <div className="space-y-4">
+                      {(() => {
+                        const requirements = job.requirements;
+                        const lines = requirements.split('\n').filter(line => line.trim());
+                        const processedItems = [];
+                        let currentSection = null;
+                        
+                        lines.forEach((line, index) => {
+                          const trimmedLine = line.trim();
+                          
+                          // Check if line is a heading (contains colons and doesn't start with numbers)
+                          const isHeading = (
+                            trimmedLine.includes(':') && 
+                            !trimmedLine.match(/^\d+\./) &&
+                            (trimmedLine.toUpperCase() === trimmedLine || 
+                             trimmedLine.includes('SKILLS') ||
+                             trimmedLine.includes('REQUIREMENTS') ||
+                             trimmedLine.includes('Interpersonal') ||
+                             trimmedLine.includes('Communication') ||
+                             trimmedLine.includes('Technical') ||
+                             trimmedLine.includes('Experience') ||
+                             trimmedLine.includes('Qualifications'))
                           );
-                        }
-                        return item.trim() && (
-                          <div key={index} className="mb-3">
-                            <div className="flex items-start gap-2">
-                              <span className="font-semibold text-primary mt-0.5">{index}.</span>
-                              <span className="flex-1">{item.trim()}</span>
-                            </div>
-                          </div>
-                        );
-                      })}
+                          
+                          if (isHeading) {
+                            processedItems.push({
+                              type: 'heading',
+                              content: trimmedLine,
+                              key: `heading-${index}`
+                            });
+                          } else if (trimmedLine.match(/^\d+\./)) {
+                            // Numbered requirement
+                            const numberMatch = trimmedLine.match(/^(\d+)\.\s*(.+)/);
+                            if (numberMatch) {
+                              const [, number, content] = numberMatch;
+                              processedItems.push({
+                                type: 'numbered',
+                                number: number,
+                                content: content,
+                                key: `numbered-${index}`
+                              });
+                            }
+                          } else if (trimmedLine.length > 0) {
+                            // Regular content or continuation
+                            processedItems.push({
+                              type: 'content',
+                              content: trimmedLine,
+                              key: `content-${index}`
+                            });
+                          }
+                        });
+                        
+                        return processedItems.map((item) => {
+                          switch (item.type) {
+                            case 'heading':
+                              return (
+                                <div key={item.key} className="mt-8 mb-6 first:mt-0">
+                                  <div className="relative">
+                                    <div className="absolute inset-0 bg-gradient-to-r from-blue-500/10 to-purple-500/10 rounded-lg"></div>
+                                    <div className="relative p-4 border-l-4 border-blue-500 bg-blue-50/50 dark:bg-blue-950/20 rounded-r-lg">
+                                      <h3 className="text-xl font-bold text-gray-800 dark:text-gray-200 mb-0">
+                                        {item.content}
+                                      </h3>
+                                    </div>
+                                  </div>
+                                </div>
+                              );
+                            
+                            case 'numbered':
+                              return (
+                                <div key={item.key} className="mb-4">
+                                  <div className="flex items-start gap-3 p-4 rounded-lg border border-gray-200/60 dark:border-gray-700/60 hover:border-blue-300/60 dark:hover:border-blue-600/40 transition-all duration-200 hover:shadow-md hover:shadow-blue-500/10">
+                                    <div className="flex-shrink-0 w-8 h-8 rounded-full bg-gradient-to-r from-blue-500 to-purple-600 flex items-center justify-center text-white font-bold text-sm">
+                                      {item.number}
+                                    </div>
+                                    <div className="flex-1 pt-1">
+                                      <p className="text-gray-800 dark:text-gray-200 leading-relaxed text-base font-medium">
+                                        {item.content}
+                                      </p>
+                                    </div>
+                                  </div>
+                                </div>
+                              );
+                            
+                            case 'content':
+                              return (
+                                <div key={item.key} className="mb-3">
+                                  <div className="pl-11 pr-4">
+                                    <p className="text-gray-700 dark:text-gray-300 leading-relaxed text-base">
+                                      {item.content}
+                                    </p>
+                                  </div>
+                                </div>
+                              );
+                            
+                            default:
+                              return null;
+                          }
+                        });
+                      })()}
                     </div>
                   </div>
                 </CardContent>
