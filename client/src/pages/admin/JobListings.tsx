@@ -65,6 +65,17 @@ export default function JobListings() {
     },
   });
 
+  // Get unique values for filter options from available jobs
+  const availableStatuses = Array.from(new Set(data?.data.map(job => job.status).filter(Boolean))) || [];
+  const availableCategories = Array.from(new Set(data?.data.map(job => job.category).filter(Boolean))) || [];
+  
+  // Get priority options based on available data
+  const availablePriorities = [];
+  if (data?.data.some(job => job.urgent)) availablePriorities.push({ value: "urgent", label: "Urgent" });
+  if (data?.data.some(job => job.priority)) availablePriorities.push({ value: "priority", label: "Priority" });
+  if (data?.data.some(job => job.isOpen)) availablePriorities.push({ value: "open", label: "Open" });
+  if (data?.data.some(job => job.featured)) availablePriorities.push({ value: "featured", label: "Featured" });
+
   const handleDeleteJob = async (id: number) => {
     if (!confirm("Are you sure you want to delete this job listing?")) return;
 
@@ -142,10 +153,11 @@ export default function JobListings() {
                 </SelectTrigger>
                 <SelectContent>
                   <SelectItem value="all_statuses">All Statuses</SelectItem>
-                  <SelectItem value="active">Active</SelectItem>
-                  <SelectItem value="draft">Draft</SelectItem>
-                  <SelectItem value="expired">Expired</SelectItem>
-                  <SelectItem value="filled">Filled</SelectItem>
+                  {availableStatuses.map(status => (
+                    <SelectItem key={status} value={status}>
+                      {status.charAt(0).toUpperCase() + status.slice(1)}
+                    </SelectItem>
+                  ))}
                 </SelectContent>
               </Select>
             </div>
@@ -161,28 +173,11 @@ export default function JobListings() {
                 </SelectTrigger>
                 <SelectContent>
                   <SelectItem value="all_categories">All Categories</SelectItem>
-                  <SelectItem value="Administrative">Administrative</SelectItem>
-                  <SelectItem value="Agriculture">Agriculture</SelectItem>
-                  <SelectItem value="AI & Machine Learning">AI & Machine Learning</SelectItem>
-                  <SelectItem value="Construction & Trades">Construction & Trades</SelectItem>
-                  <SelectItem value="Corporate Affairs">Corporate Affairs</SelectItem>
-                  <SelectItem value="Creative & Media">Creative & Media</SelectItem>
-                  <SelectItem value="Customer Success">Customer Success</SelectItem>
-                  <SelectItem value="Data Science & Analytics">Data Science & Analytics</SelectItem>
-                  <SelectItem value="Design & Creative">Design & Creative</SelectItem>
-                  <SelectItem value="Education & Training">Education & Training</SelectItem>
-                  <SelectItem value="Engineering & Architecture">Engineering & Architecture</SelectItem>
-                  <SelectItem value="Finance & Accounting">Finance & Accounting</SelectItem>
-                  <SelectItem value="Healthcare, Pharmaceutical & Medical">Healthcare, Pharmaceutical & Medical</SelectItem>
-                  <SelectItem value="Hospitality & Tourism">Hospitality & Tourism</SelectItem>
-                  <SelectItem value="HR & Recruiting">HR & Recruiting</SelectItem>
-                  <SelectItem value="IT & Networking">IT & Networking</SelectItem>
-                  <SelectItem value="Legal & Law Enforcement">Legal & Law Enforcement</SelectItem>
-                  <SelectItem value="Manufacturing">Manufacturing</SelectItem>
-                  <SelectItem value="Sales & Marketing">Sales & Marketing</SelectItem>
-                  <SelectItem value="Science & Research">Science & Research</SelectItem>
-                  <SelectItem value="Web, Mobile, & Software Development">Web, Mobile, & Software Development</SelectItem>
-                  <SelectItem value="Writing">Writing</SelectItem>
+                  {availableCategories.map(category => (
+                    <SelectItem key={category} value={category}>
+                      {category}
+                    </SelectItem>
+                  ))}
                 </SelectContent>
               </Select>
             </div>
@@ -198,10 +193,11 @@ export default function JobListings() {
                 </SelectTrigger>
                 <SelectContent>
                   <SelectItem value="all_priorities">All Priorities</SelectItem>
-                  <SelectItem value="urgent">Urgent</SelectItem>
-                  <SelectItem value="priority">Priority</SelectItem>
-                  <SelectItem value="open">Open</SelectItem>
-                  <SelectItem value="featured">Featured</SelectItem>
+                  {availablePriorities.map(priority => (
+                    <SelectItem key={priority.value} value={priority.value}>
+                      {priority.label}
+                    </SelectItem>
+                  ))}
                 </SelectContent>
               </Select>
             </div>
