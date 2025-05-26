@@ -1043,8 +1043,8 @@ const endIndex = page * limit;
         .from(jobApplications)
         .where(eq(jobApplications.jobId, jobId));
 
-      const count = countResult[0]?.count || 0;
-      res.json({ success: true, count });
+      const applicationCount = countResult[0]?.count || 0;
+      res.json({ success: true, count: applicationCount });
     } catch (error) {
       console.error("Error fetching job application count:", error);
       res.status(500).json({ success: false, message: "Internal server error" });
