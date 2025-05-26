@@ -29,7 +29,8 @@ import {
   Filter, 
   Edit, 
   Trash, 
-  FileText
+  FileText,
+  Eye
 } from "lucide-react";
 import { JobListing } from "@shared/schema";
 import AdminLayout from "@/components/layout/AdminLayout";
@@ -270,6 +271,21 @@ export default function JobListings() {
                       </TableCell>
                       <TableCell className="text-right">
                         <div className="flex justify-end gap-2">
+                          <a 
+                            href={`/jobs/${job.id}`} 
+                            target="_blank" 
+                            rel="noopener noreferrer"
+                            className="inline-flex"
+                          >
+                            <Button
+                              variant="outline"
+                              size="sm"
+                              title="Preview job on website"
+                            >
+                              <Eye className="h-4 w-4" />
+                              <span className="sr-only">Preview</span>
+                            </Button>
+                          </a>
                           <Link href={`/admin/jobs/${job.id}/edit`}>
                             <Button
                               variant="outline"
