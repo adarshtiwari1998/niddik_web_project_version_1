@@ -135,7 +135,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
       const category = req.query.category as string;
       const experienceLevel = req.query.experienceLevel as string;
       const jobType = req.query.jobType as string;
-      const status = req.query.status as string || "active";
+      const status = req.query.status as string;
       const featured = req.query.featured === 'true' ? true : undefined;
       const priority = req.query.priority as string;
 

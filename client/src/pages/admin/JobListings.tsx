@@ -271,7 +271,7 @@ export default function JobListings() {
                 </TableHeader>
                 <TableBody>
                   {data?.data.map((job) => (
-                    <TableRow key={job.id}>
+                    <TableRow key={job.id} className={job.status !== "active" ? "opacity-60" : ""}>
                       <TableCell className="font-medium">
                         <div className="flex items-center flex-wrap gap-2">
                           <FileText className="h-4 w-4 mr-2 text-primary" />

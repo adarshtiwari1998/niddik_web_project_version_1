@@ -128,7 +128,7 @@ export const storage = {
       category, 
       experienceLevel,
       jobType,
-      status = "active",
+      status,
       featured,
       priority
     } = options;
