@@ -177,7 +177,13 @@ export async function registerRoutes(app: Express): Promise<Server> {
         page: 1,
         limit: 1000, // Get a large number to capture all jobs
         search: "",
-        // No filters applied to get all possible values
+        // No status filter applied to get all possible values including draft
+        status: undefined,
+        category: undefined,
+        experienceLevel: undefined,
+        jobType: undefined,
+        featured: undefined,
+        priority: undefined
       });
 
       res.json({

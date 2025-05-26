@@ -168,7 +168,7 @@ export const storage = {
       whereConditions.push(eq(jobListings.jobType, jobType));
     }
 
-    if (status !== undefined) {
+    if (status !== undefined && status !== null) {
       whereConditions.push(eq(jobListings.status, status));
     }
 
@@ -206,11 +206,19 @@ export const storage = {
       ? and(...whereConditions)
       : undefined;
 
+    console.log('Storage getJobListings called with options:', {
+      page, limit, search, category, experienceLevel, jobType, status, featured, priority
+    });
+    console.log('Where conditions:', whereConditions.length);
+
     // Count total matching records for pagination
     const result = await db.query.jobListings.findMany({
       where: whereCondition
     });
     const totalCount = result.length;
+    
+    console.log('Total jobs found:', totalCount);
+    console.log('Jobs status distribution:', result.map(job => ({ id: job.id, status: job.status })));
 
     // Get paginated job listings
     const jobListingsResult = await db.query.jobListings.findMany({
