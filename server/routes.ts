@@ -706,13 +706,28 @@ export async function registerRoutes(app: Express): Promise<Server> {
         ids, 
         type: typeof ids, 
         isArray: Array.isArray(ids),
-        length: Array.isArray(ids) ? ids.length : 0
+        length: Array.isArray(ids) ? ids.length : 0,
+        body: req.body
       });
 
-      if (!Array.isArray(ids) || ids.length === 0) {
+      if (!ids) {
         return res.status(400).json({ 
           success: false, 
-          message: "Invalid data. Expected a non-empty array of IDs." 
+          message: "Missing 'ids' field in request body" 
+        });
+      }
+
+      if (!Array.isArray(ids)) {
+        return res.status(400).json({ 
+          success: false, 
+          message: "Field 'ids' must be an array" 
+        });
+      }
+
+      if (ids.length === 0) {
+        return res.status(400).json({ 
+          success: false, 
+          message: "Array 'ids' cannot be empty" 
         });
       }
 
@@ -728,12 +743,12 @@ export async function registerRoutes(app: Express): Promise<Server> {
         } else if (typeof id === 'number') {
           numId = id;
         } else {
-          invalidIds.push({ index, value: id, reason: 'Invalid type' });
+          invalidIds.push({ index, value: id, reason: 'Invalid type (not string or number)' });
           return;
         }
 
         if (isNaN(numId) || numId <= 0 || !Number.isInteger(numId)) {
-          invalidIds.push({ index, value: id, reason: 'Invalid number' });
+          invalidIds.push({ index, value: id, reason: 'Invalid number (NaN, <= 0, or not integer)' });
           return;
         }
 
@@ -744,14 +759,14 @@ export async function registerRoutes(app: Express): Promise<Server> {
         total: ids.length, 
         valid: validIds.length, 
         invalid: invalidIds.length,
-        validIds,
+        validIds: validIds.slice(0, 10), // Log first 10 for debugging
         invalidIds
       });
 
       if (validIds.length === 0) {
         return res.status(400).json({ 
           success: false, 
-          message: "No valid candidate IDs provided.",
+          message: "No valid candidate IDs provided",
           details: { invalidIds }
         });
       }
@@ -761,6 +776,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
       }
 
       // Check if candidates exist before attempting deletion
+      console.log('Checking existence for IDs:', validIds.slice(0, 10));
       const existingCandidates = await db
         .select({ id: submittedCandidates.id })
         .from(submittedCandidates)
@@ -769,25 +785,36 @@ export async function registerRoutes(app: Express): Promise<Server> {
       const existingIds = existingCandidates.map(c => c.id);
       const nonExistentIds = validIds.filter(id => !existingIds.includes(id));
 
-      console.log('Existence check:', {
-        validIds,
-        existingIds,
-        nonExistentIds
+      console.log('Existence check results:', {
+        requestedCount: validIds.length,
+        foundCount: existingIds.length,
+        notFoundCount: nonExistentIds.length,
+        existingIds: existingIds.slice(0, 10), // Log first 10
+        nonExistentIds: nonExistentIds.slice(0, 10) // Log first 10
       });
 
       if (existingIds.length === 0) {
         return res.status(404).json({
           success: false,
-          message: "No candidates found with the provided IDs."
+          message: "No candidates found with the provided IDs",
+          details: { requestedIds: validIds, foundCount: 0 }
         });
       }
 
       // Delete candidates by IDs using chunked approach
+      console.log(`Starting deletion of ${existingIds.length} candidates`);
       const deletedCount = await storage.bulkDeleteSubmittedCandidates(existingIds);
 
       const responseMessage = nonExistentIds.length > 0 
-        ? `${deletedCount} candidates deleted successfully. ${nonExistentIds.length} candidates were not found.`
-        : `${deletedCount} candidates deleted successfully`;
+        ? `Successfully deleted ${deletedCount} candidates. ${nonExistentIds.length} candidates were not found.`
+        : `Successfully deleted ${deletedCount} candidates`;
+
+      console.log('Bulk delete completed:', {
+        requested: validIds.length,
+        found: existingIds.length,
+        deleted: deletedCount,
+        notFound: nonExistentIds.length
+      });
 
       return res.status(200).json({ 
         success: true, 
@@ -795,6 +822,9 @@ export async function registerRoutes(app: Express): Promise<Server> {
         count: deletedCount,
         details: {
           deletedCount,
+          requestedCount: validIds.length,
+          foundCount: existingIds.length,
+          notFoundCount: nonExistentIds.length,
           nonExistentIds: nonExistentIds.length > 0 ? nonExistentIds : undefined
         }
       });

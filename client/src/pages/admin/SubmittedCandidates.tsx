@@ -194,6 +194,8 @@ function SubmittedCandidates() {
   const [selectedCandidateIds, setSelectedCandidateIds] = useState<number[]>([]);
   const [isSelectAllChecked, setIsSelectAllChecked] = useState(false);
   const [isSelectAllPages, setIsSelectAllPages] = useState(false);
+  const [bulkDeleteConfirmOpen, setBulkDeleteConfirmOpen] = useState(false);
+  const [bulkDeleteIds, setBulkDeleteIds] = useState<number[]>([]);
 
   // Calculate margin and profit based on bill rate and pay rate
   const calculateMarginAndProfit = (billRate: string, payRate: string) => {
@@ -427,30 +429,44 @@ function SubmittedCandidates() {
     // Mutation to delete multiple candidates in bulk
     const bulkDeleteMutation = useMutation({
     mutationFn: async (ids: number[]) => {
-      const res = await apiRequest("DELETE", `/api/submitted-candidates/bulk`, { ids });
+      console.log('Sending bulk delete request with IDs:', ids);
+      const requestBody = { ids };
+      console.log('Request body:', JSON.stringify(requestBody));
+      
+      const res = await apiRequest("DELETE", `/api/submitted-candidates/bulk`, requestBody);
+      
+      console.log('Response status:', res.status);
+      const responseData = await res.json();
+      console.log('Response data:', responseData);
+      
       if (!res.ok) {
-        const errorData = await res.json();
-        throw new Error(errorData.message || "Failed to delete candidates");
+        throw new Error(responseData.message || `HTTP ${res.status}: Failed to delete candidates`);
       }
-      return await res.json();
+      return responseData;
     },
-    onSuccess: () => {
+    onSuccess: (data) => {
+      console.log('Bulk delete successful:', data);
       toast({
         title: "Success",
-        description: "Candidates have been deleted successfully",
+        description: data.message || `${data.count || 'Some'} candidates have been deleted successfully`,
       });
       setSelectedCandidateIds([]);
       setIsSelectAllChecked(false);
       setIsSelectAllPages(false);
+      setBulkDeleteConfirmOpen(false);
+      setBulkDeleteIds([]);
       queryClient.invalidateQueries({ queryKey: ['/api/submitted-candidates'] });
       queryClient.invalidateQueries({ queryKey: ['/api/submitted-candidates/analytics/summary'] });
     },
     onError: (error: Error) => {
+      console.error('Bulk delete error:', error);
       toast({
-        title: "Error",
-        description: error.message,
+        title: "Delete Failed",
+        description: error.message || "An unexpected error occurred while deleting candidates",
         variant: "destructive",
       });
+      setBulkDeleteConfirmOpen(false);
+      setBulkDeleteIds([]);
     },
   });
 
@@ -811,7 +827,7 @@ function SubmittedCandidates() {
     }
   };
 
-  // Handle bulk delete
+  // Handle bulk delete with confirmation
   const handleBulkDelete = () => {
     if (selectedCandidateIds.length === 0) {
       toast({
@@ -831,7 +847,7 @@ function SubmittedCandidates() {
         const numId = typeof id === 'string' ? parseInt(id, 10) : id;
         return typeof numId === 'number' && !isNaN(numId) && numId > 0 ? numId : null;
       })
-      .filter(id => id !== null);
+      .filter(id => id !== null) as number[];
 
     console.log("Valid IDs after processing:", validIds);
 
@@ -852,7 +868,18 @@ function SubmittedCandidates() {
       });
     }
 
-    bulkDeleteMutation.mutate(validIds);
+    // Store valid IDs for confirmation dialog
+    setBulkDeleteIds(validIds);
+    setBulkDeleteConfirmOpen(true);
+  };
+
+  // Execute bulk delete after confirmation
+  const executeBulkDelete = () => {
+    if (bulkDeleteIds.length > 0) {
+      bulkDeleteMutation.mutate(bulkDeleteIds);
+      setBulkDeleteConfirmOpen(false);
+      setBulkDeleteIds([]);
+    }
   };
 
   // Update select all state when current page data changes
@@ -1604,24 +1631,56 @@ function SubmittedCandidates() {
             <CardFooter className="flex items-center justify-between px-6 py-4 border-t">
               <div className="flex items-center gap-4">
                 <div className="flex items-center gap-2">
-                  <Button
-                    variant="destructive"
-                    size="sm"
-                    onClick={handleBulkDelete}
-                    disabled={bulkDeleteMutation.isPending || selectedCandidateIds.length === 0}
-                  >
-                    {bulkDeleteMutation.isPending ? (
-                      <>
-                        <Loader2 className="h-4 w-4 mr-2 animate-spin" />
-                        Deleting...
-                      </>
-                    ) : (
-                      <>
-                        <Trash2 className="h-4 w-4 mr-2" />
-                        Delete Selected ({selectedCandidateIds.length})
-                      </>
-                    )}
-                  </Button>
+                  <AlertDialog open={bulkDeleteConfirmOpen} onOpenChange={setBulkDeleteConfirmOpen}>
+                    <AlertDialogTrigger asChild>
+                      <Button
+                        variant="destructive"
+                        size="sm"
+                        onClick={handleBulkDelete}
+                        disabled={bulkDeleteMutation.isPending || selectedCandidateIds.length === 0}
+                      >
+                        {bulkDeleteMutation.isPending ? (
+                          <>
+                            <Loader2 className="h-4 w-4 mr-2 animate-spin" />
+                            Deleting...
+                          </>
+                        ) : (
+                          <>
+                            <Trash2 className="h-4 w-4 mr-2" />
+                            Delete Selected ({selectedCandidateIds.length})
+                          </>
+                        )}
+                      </Button>
+                    </AlertDialogTrigger>
+                    <AlertDialogContent>
+                      <AlertDialogHeader>
+                        <AlertDialogTitle>Are you absolutely sure?</AlertDialogTitle>
+                        <AlertDialogDescription>
+                          This will permanently delete {bulkDeleteIds.length} candidate record{bulkDeleteIds.length > 1 ? 's' : ''}.
+                          This action cannot be undone and will remove all associated data.
+                        </AlertDialogDescription>
+                      </AlertDialogHeader>
+                      <AlertDialogFooter>
+                        <AlertDialogCancel onClick={() => setBulkDeleteConfirmOpen(false)}>
+                          Cancel
+                        </AlertDialogCancel>
+                        <AlertDialogAction 
+                          onClick={executeBulkDelete}
+                          className="bg-red-500 hover:bg-red-600"
+                          disabled={bulkDeleteMutation.isPending}
+                        >
+                          {bulkDeleteMutation.isPending ? (
+                            <>
+                              <Loader2 className="h-4 w-4 mr-2 animate-spin" />
+                              Deleting...
+                            </>
+                          ) : (
+                            `Delete ${bulkDeleteIds.length} Candidate${bulkDeleteIds.length > 1 ? 's' : ''}`
+                          )}
+                        </AlertDialogAction>
+                      </AlertDialogFooter>
+                    </AlertDialogContent>
+                  </AlertDialog>
 
                   {selectedCandidateIds.length > 0 && !isSelectAllPages && (
                     <Button
