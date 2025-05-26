@@ -193,6 +193,7 @@ function SubmittedCandidates() {
   // State for bulk actions
   const [selectedCandidateIds, setSelectedCandidateIds] = useState<number[]>([]);
   const [isSelectAllChecked, setIsSelectAllChecked] = useState(false);
+  const [isSelectAllPages, setIsSelectAllPages] = useState(false);
 
   // Calculate margin and profit based on bill rate and pay rate
   const calculateMarginAndProfit = (billRate: string, payRate: string) => {
@@ -440,6 +441,7 @@ function SubmittedCandidates() {
       });
       setSelectedCandidateIds([]);
       setIsSelectAllChecked(false);
+      setIsSelectAllPages(false);
       queryClient.invalidateQueries({ queryKey: ['/api/submitted-candidates'] });
       queryClient.invalidateQueries({ queryKey: ['/api/submitted-candidates/analytics/summary'] });
     },
@@ -753,6 +755,40 @@ function SubmittedCandidates() {
       setSelectedCandidateIds(currentPageIds);
     } else {
       setSelectedCandidateIds([]);
+      setIsSelectAllPages(false);
+    }
+  };
+
+  // Handle select all pages
+  const handleSelectAllPages = async () => {
+    try {
+      // Fetch all candidate IDs across all pages
+      const queryParams = new URLSearchParams({
+        page: '1',
+        limit: candidatesData?.meta?.total?.toString() || '1000',
+        ...(search && { search }),
+        ...(statusFilter !== "all_statuses" && { status: statusFilter }),
+        ...(clientFilter !== "all_clients" && { client: clientFilter }),
+      });
+
+      const res = await apiRequest("GET", `/api/submitted-candidates?${queryParams}`);
+      if (res.ok) {
+        const allData = await res.json();
+        const allIds = allData.data?.map((candidate: SubmittedCandidate) => candidate.id) || [];
+        setSelectedCandidateIds(allIds);
+        setIsSelectAllPages(true);
+        setIsSelectAllChecked(true);
+        toast({
+          title: "Success",
+          description: `Selected all ${allIds.length} candidates across all pages`,
+        });
+      }
+    } catch (error) {
+      toast({
+        title: "Error",
+        description: "Failed to select all candidates",
+        variant: "destructive",
+      });
     }
   };
 
@@ -763,6 +799,7 @@ function SubmittedCandidates() {
     } else {
       setSelectedCandidateIds(prev => prev.filter(id => id !== candidateId));
       setIsSelectAllChecked(false);
+      setIsSelectAllPages(false);
     }
   };
 
@@ -1520,28 +1557,51 @@ function SubmittedCandidates() {
               </div>
             </CardContent>
             <CardFooter className="flex items-center justify-between px-6 py-4 border-t">
-              <div className="flex items-center">
-                <Button
-                  variant="destructive"
-                  size="sm"
-                  onClick={handleBulkDelete}
-                  disabled={bulkDeleteMutation.isPending || selectedCandidateIds.length === 0}
-                  className="mr-4"
-                >
-                  {bulkDeleteMutation.isPending ? (
-                    <>
-                      <Loader2 className="h-4 w-4 mr-2 animate-spin" />
-                      Deleting...
-                    </>
-                  ) : (
-                    <>
-                      <Trash2 className="h-4 w-4 mr-2" />
-                      Delete Selected
-                    </>
+              <div className="flex items-center gap-4">
+                <div className="flex items-center gap-2">
+                  <Button
+                    variant="destructive"
+                    size="sm"
+                    onClick={handleBulkDelete}
+                    disabled={bulkDeleteMutation.isPending || selectedCandidateIds.length === 0}
+                  >
+                    {bulkDeleteMutation.isPending ? (
+                      <>
+                        <Loader2 className="h-4 w-4 mr-2 animate-spin" />
+                        Deleting...
+                      </>
+                    ) : (
+                      <>
+                        <Trash2 className="h-4 w-4 mr-2" />
+                        Delete Selected ({selectedCandidateIds.length})
+                      </>
+                    )}
+                  </Button>
+                  
+                  {selectedCandidateIds.length > 0 && !isSelectAllPages && (
+                    <Button
+                      variant="outline"
+                      size="sm"
+                      onClick={handleSelectAllPages}
+                    >
+                      Select All {candidatesData?.meta?.total || 0} Candidates
+                    </Button>
                   )}
-                </Button>
+                  
+                  {isSelectAllPages && (
+                    <div className="text-sm text-blue-600 font-medium">
+                      All {candidatesData?.meta?.total || 0} candidates selected
+                    </div>
+                  )}
+                </div>
+                
                 <div className="text-sm text-muted-foreground">
                   Showing {candidatesData?.data?.length || 0} of {candidatesData?.meta?.total || 0} candidates
+                  {selectedCandidateIds.length > 0 && (
+                    <span className="ml-2 text-blue-600">
+                      • {selectedCandidateIds.length} selected
+                    </span>
+                  )}
                 </div>
               </div>
               <div className="flex items-center gap-2">
