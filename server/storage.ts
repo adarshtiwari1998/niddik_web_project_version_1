@@ -141,7 +141,15 @@ export const storage = {
           sql`LOWER(${jobListings.title}) LIKE ${`%${searchTerm}%`}`,
           sql`LOWER(${jobListings.company}) LIKE ${`%${searchTerm}%`}`,
           sql`LOWER(${jobListings.description}) LIKE ${`%${searchTerm}%`}`,
-          sql`LOWER(${jobListings.skills}) LIKE ${`%${searchTerm}%`}`
+          sql`LOWER(${jobListings.skills}) LIKE ${`%${searchTerm}%`}`,
+          sql`LOWER(${jobListings.location}) LIKE ${`%${searchTerm}%`}`,
+          sql`LOWER(${jobListings.category}) LIKE ${`%${searchTerm}%`}`,
+          sql`LOWER(${jobListings.jobType}) LIKE ${`%${searchTerm}%`}`,
+          sql`LOWER(${jobListings.experienceLevel}) LIKE ${`%${searchTerm}%`}`,
+          sql`LOWER(${jobListings.salary}) LIKE ${`%${searchTerm}%`}`,
+          sql`LOWER(${jobListings.requirements}) LIKE ${`%${searchTerm}%`}`,
+          sql`LOWER(${jobListings.benefits}) LIKE ${`%${searchTerm}%`}`,
+          sql`LOWER(${jobListings.status}) LIKE ${`%${searchTerm}%`}`
         )
       );
     }
