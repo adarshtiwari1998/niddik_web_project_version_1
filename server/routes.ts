@@ -713,62 +713,25 @@ export async function registerRoutes(app: Express): Promise<Server> {
         });
       }
 
-      // Convert and validate IDs with more robust validation
-      const validIds: number[] = [];
-      const invalidIds: any[] = [];
-      
       console.log('Raw IDs received:', ids);
       
-      for (const id of ids) {
-        // Handle both string and number inputs
-        const numId = typeof id === 'number' ? id : parseInt(String(id), 10);
-        console.log(`Processing ID: ${id} (type: ${typeof id}) -> ${numId} (type: ${typeof numId})`);
-        
-        // More lenient validation - just check if it's a positive number
-        if (numId && numId > 0 && !isNaN(numId)) {
-          validIds.push(numId);
-        } else {
-          console.log(`Invalid ID rejected: ${id} -> ${numId}`);
-          invalidIds.push(id);
-        }
-      }
-
-      console.log('Valid IDs for deletion:', validIds);
-      console.log('Invalid IDs rejected:', invalidIds);
-
-      if (validIds.length === 0) {
-        return res.status(400).json({ 
-          success: false, 
-          message: "No valid candidate IDs provided" 
-        });
-      }
+      // Convert IDs to numbers without validation
+      const numericIds = ids.map(id => typeof id === 'number' ? id : parseInt(String(id), 10));
+      
+      console.log('Converted IDs for deletion:', numericIds);
 
       // Perform bulk deletion using storage method directly
-      // The storage method will handle checking for existing records
-      const result = await storage.bulkDeleteSubmittedCandidates(validIds);
+      const result = await storage.bulkDeleteSubmittedCandidates(numericIds);
       
       console.log('Bulk deletion completed:', result);
 
-      // Prepare response based on results
-      if (nonExistentIds.length > 0) {
-        return res.status(207).json({
-          success: true,
-          message: `Partially successful: deleted ${result.deletedCount} of ${validIds.length} candidates`,
-          count: result.deletedCount,
-          deletedCount: result.deletedCount,
-          totalRequested: validIds.length,
-          nonExistentIds,
-          partialSuccess: true
-        });
-      } else {
-        return res.status(200).json({
-          success: true,
-          message: `Successfully deleted ${result.deletedCount} candidate${result.deletedCount !== 1 ? 's' : ''}`,
-          count: result.deletedCount,
-          deletedCount: result.deletedCount,
-          totalRequested: validIds.length
-        });
-      }
+      return res.status(200).json({
+        success: true,
+        message: `Successfully deleted ${result.deletedCount} candidate${result.deletedCount !== 1 ? 's' : ''}`,
+        count: result.deletedCount,
+        deletedCount: result.deletedCount,
+        totalRequested: numericIds.length
+      });
 
     } catch (error) {
       console.error('=== BULK DELETE ERROR ===');
