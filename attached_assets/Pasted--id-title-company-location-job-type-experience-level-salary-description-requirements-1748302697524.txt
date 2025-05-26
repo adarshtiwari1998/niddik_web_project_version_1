@@ -1,0 +1,135 @@
+"id"	"title"	"company"	"location"	"job_type"	"experience_level"	"salary"	"description"	"requirements"	"benefits"	"application_url"	"contact_email"	"status"	"featured"	"posted_date"	"expiry_date"	"category"	"skills"	"urgent"	"priority"	"is_open"
+2	"SAP Finance (FI) Consultant"	"NIDDIK (An IT Division of NIDDIKKARE LLP)"	"Bangalore (HYBRID)"	"Full-time"	"Senior"	"Rs. 22,00,000"	"Employment Type: Full Time, Permanent
+Experience: 8 to 10 years
+Notice Period: Immediate joiners to give preferences
+
+1. The role of the SAP Finance will be to provide support in SAP’s – in Financial (FI) areas for our client's global environment. 
+2. This includes driving SAP implementation activities related to these disciplines as well as performing occasional production support tasks such as executing routine configuration, specifying developments, preparing training documentation, and delivering ongoing training."	"1. S/4 HANA project experience is must
+2. Deep understanding of best practices in SAP’s Finance areas. 
+3. Ability to prepare detailed functional specifications (technical if even better) and subsequent test scripts, training documentation. 
+4. Ability to collaborate with business end users as well as other functional and technical IT members. 
+5. Proficiency in the use of Microsoft Excel to extract, analyze and process SAP data. "	"Competitive salary
+Flexible work hours
+Hybrid Engagement"		"jobs@niddik.com"	"active"	true	"2025-05-26 23:19:16.758"	"2025-06-06 19:25:21.497"	"Administrative"	"S/4 HANA Project Experience"	false	true	true
+4	"SAP Coupa Consultant"	"NIDDIK (An IT Division of NIDDIKKARE LLP)"	"REMOTE (Occasional Visit)"	"Full-time"	"Senior"	"Rs.30,00,000"	"Location: Work from Home, although occasional travel may be required. 
+Start Date: Immediate
+Experience: 8+ Years
+Type: Fulltime Direct Hire
+
+OVERVIEW:
+
+1. SAP Coupa plays a crucial role in enhancing the procurement processes of an organization through the effective implementation and optimization of the Coupa platform. 
+2. This position requires a deep understanding of the Coupa system and how it integrates with other business processes. 
+3. The consultant will work closely with cross-functional teams to identify areas for improvement, drive cost-efficiency initiatives, and ensure compliance with organizational procurement policies. 
+4. By leveraging their expertise, the Coupa Consultant helps organizations realize the full potential of their procurement capabilities and maximize their investment in the Coupa platform. 
+5. This role is vital for fostering seamless collaboration between IT, finance, and operations, thereby enhancing procurement effectiveness and supporting overall business objectives."	"SKILLS REQUIRED:
+
+1. A bachelor’s level degree from a recognized university is preferred.
+2. 8+ years of total experience with 3+ years of relevant experience in Coupa applications(procurement, sourcing, e-invoicing, and Supplier information management, Travel & Expenses, Supplier risk management).
+3. Candidate should have strong Coupa implementation experience and should be able to work independently on enhancements and configuring new features in the Coupa application.
+4. Candidate should have strong BAU support experience handling the sophisticated issues independently.
+5. As the second-level support for procurement apps, candidate should be familiar with ITIL concepts.
+6. Good understanding of SAP ECC/SAP S4 and integration elements of Coupa/Concur-SAP integration.
+7. Strong process knowledge of Procurement, Sourcing, Accounts payable, e-invoicing, and vendor master.
+8. Candidates with good experience/knowledge of Coupa APIs will be given preference.
+9. Leverage standard processes to design, implement, and support configuration /development for Source to pay, Travel & Expense business processes in Coupa and SAP Concur.
+10. Candidates with experience in other procurement cloud applications (SaaS) in addition to Coupa like SAP Concur, Onetrust TPRM, Icertis CLM will be given preference.
+11. Prior experience in DevOps Engineer, lead, or similar role within an Agile environment.
+12. Candidates with prior CPG proven experience will be given preference.
+13. Strong communication and collaborator leadership skills.
+14. Proactive approach, phenomenal teammate, quick learner with tenacity and drive to succeed.
+15. Strong planning, coordination, and engagement skills combined with the ability to handle priorities."	"Competitive salary
+Flexible work hours
+Remote work"		"jobs@niddik.com"	"active"	true	"2025-05-26 23:19:06.238"	"2025-06-01 13:55:21.497"	"Administrative"	"Coupa Applications (Procurement, Sourcing, e-Invoicing, Supplier Information Management, Travel & Expenses, and Supplier Risk Management)"	false	true	true
+6	"SAP Costing Consultant"	"NIDDIK (An IT Division of NIDDIKKARE LLP)"	"Bangalore (HYBRID)"	"Full-time"	"Senior"	"Rs. 22,00,000"	"Employment Type: Full Time, Permanent
+Experience: 8 to 10 years
+Notice Period: Immediate joiners to give preferences
+
+Key Responsibilities
+
+1. Lead and support the implementation and configuration of Product Costing and Material Ledger in an S/4HANA environment.
+2. Collaborate with finance and supply chain teams to gather requirements and design cost-effective solutions aligned with business needs.
+3. Conduct system testing, data validation, and support user training during and after implementation phases.
+4. Provide expert advice on best practices in cost management, variance analysis, and inventory valuation.
+5. Troubleshoot and resolve system issues to ensure business continuity."	"1. 8–10 years of experience in SAP controlling and costing areas.
+2. Strong hands-on experience with SAP S/4HANA, specifically in Product Costing and Material Ledger (mandatory).
+3. Deep understanding of cost flows, costing variants, overhead calculations, and inventory valuation.
+4. Ability to analyze and optimize costing processes and reporting.
+5. Excellent communication and interpersonal skills for effective stakeholder collaboration."	"Competitive salary
+Flexible work hours
+Hybrid Engagement"		"jobs@niddik.com"	"active"	true	"2025-05-26 23:18:56.816"	"2025-06-13 09:30:00"	"Administrative"	"S/4 HANA project experience (Product costing and Material ledger mandatory) "	true	false	false
+7	"SAP SAC Developers"	"NIDDIK (An IT Division of NIDDIKKARE LLP)"	"REMOTE (Anywhere in India)"	"Full-time"	"Mid"	"Rs. 18,00,000 to Rs. 20,00,000"	"Employment Type: Full Time, Permanent
+Experience: 5 to 6 years
+Notice Period: Immediate joiners to give preferences
+
+1. Minimum 5-6 years of experience in any of the reporting tools like SAP Business objects, Lumira, with 3-4 years of experience in SAC."	"SKILLS & REQUIREMENTS:
+
+1. Hands-on experience on Lumira Designer (Mandatory).
+2. Hands-on experience on SAC, designing/implementing data models, SAC Story 2.0, and analytic application scripting (Mandatory).
+3. Hands on experience in SAC Planning models.
+4. Excellent CSS Scripting abilities.
+5. Ability to exhibit and follow standard coding and naming conventions and a top- down approach.
+6. Strong hands-on experience on SAC connectivity, integration with SAP cloud connector, Authorization concept (Users, roles, team) and governance
+7. Knowledge on SAC predictive capabilities, Augmented analytics
+
+Interpersonal & Communication:
+
+1. Effective communication skills and knowledge to close communication gaps through proper channels.
+2. Excellent verbal and written communication ability to connect technical solutions to business need, problem solving skills."	"Competitive salary
+Flexible work hours
+Work from Home"		"jobs@niddik.com"	"draft"	true	"2025-05-26 23:23:57.136"	"2025-06-18 15:00:00"	"IT & Networking"	"SAC, Business Object, Lumira"	true	false	false
+8	"Sr. SAP SAC Developer"	"NIDDIK (An IT Division of NIDDIKKARE LLP)"	"REMOTE (Anywhere in India)"	"Full-time"	"Senior"	"Rs. 20,00,000 to Rs. 24,00,000"	"Employment Type: Full Time, Permanent
+Experience: 5 to 6 years
+Notice Period: Immediate joiners to give preferences
+
+1. Minimum 5-6 years of experience in any of the reporting tools like SAP Business objects, Lumira, with 7-8 years of experience in SAC."	"SKILLS & REQUIREMENTS:
+
+1. Hands-on experience on Lumira Designer (Mandatory).
+2. Hands-on experience on SAC, designing/implementing data models, SAC Story
+3.0, and analytic application scripting (Mandatory).
+Hands on experience in SAC Planning models.
+5.
+Excellent CSS Scripting abilities.
+6.
+Ability to exhibit and follow standard coding and naming conventions and a top- down approach.
+7.
+Strong hands-on experience on SAC connectivity, integration with SAP cloud connector, Authorization concept (Users, roles, team) and governance
+8.
+Knowledge on SAC predictive capabilities, Augmented analytics
+
+Interpersonal & Communication:
+9.
+Effective communication skills and knowledge to close communication gaps through proper channels.
+10.
+Excellent verbal and written communication ability to connect technical solutions to business need, problem solving skills."	"Competitive salary
+Flexible work hours
+Work from Home"		"jobs@niddik.com"	"active"	true	"2025-05-26 23:18:44.448"	"2025-06-12 02:00:00"	"IT & Networking"	"SAC, Business Object, Lumira"	false	false	true
+9	"SAP S/4 HANA Cloud Developer"	"NIDDIK (An IT Division of NIDDIKKARE LLP)"	"REMOTE (Anywhere in India)"	"Full-time"	"Entry"	"Rs. 20,00,000 to Rs. 24,00,000"	"Employment Type: Full Time, Permanent
+Experience: 7 to 8 years
+Notice Period: Immediate joiners to give preferences
+
+JOB DESCRIPTION:
+
+1.	Strong Experience in Native HANA/ HANA XSA / SAP HANA Cloud (BAS)/ SQL / S4 CDS View Extractors.											
+2.	Implementation experience, which should include at least 2 full project lifecycles in below following areas:
+==> SAP HANA Technical design.
+==> Cloud and Hybrid Architecture.
+==> Strong knowledge of SAP HANA Calculation view, SQL, Stored Procedures and Functions
+==> Strong knowledge of optimization of HANA objects								
+3.	Be responsible for solution Develop/Support in SAP HANA XSA/Cloud.			
+4.	Should Have experience in handling integration of SAP and Non-SAP systems.
+5. Good knowledge in SAP data provisioning (ODQMON).
+6. Drive continuous improvement in SAP systems and processes, staying updated with the latest SAP features and updates.	
+7. Be responsible for code reviews and provide mentorship and technical leadership to developers.
+8. Should be able to develop effective standards, best practices, procedures and key metrics to enhance operational stability of the existing HANA environments.
+9. Good to have Knowledge of Finance functional Module in S4 HANA.	
+10. Must have Effective communication skills and a proficiency of detailed documentation.
+11. Should be individual contributor and strongly handle the production issues.
+12. Organizational ability in prioritizing assignments, meeting deadlines, and handling simultaneous projects.	
+13. Ready to work in Shift.	"	"SKILLS:
+
+1. Must Have Skills (SAP HANA XSA/ HANA Cloud / Native HANA development / SQL / CDS View)
+2.	Good Knowledge on SAC / SAP S4 Finance/ ODATA /SDI
+"	"Competitive salary
+Flexible work hours
+Work from Home"		"jobs@niddik.com"	"active"	true	"2025-05-26 23:18:32.315"	"2025-06-14 15:00:00"	"IT & Networking"	"SAP HANA XSA, HANA Cloud, Native HANA development, SQL, CDS View"	false	false	true
