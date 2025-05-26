@@ -698,47 +698,6 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
-  // Admin API: Get all contact submissions
-  app.get('/api/contact-submissions', async (req: AuthenticatedRequest, res) => {
-    try {
-      // Check if user is authenticated and is an admin
-      if (!req.isAuthenticated() || req.user?.role !== 'admin') {
-        return res.status(403).json({ 
-          success: false, 
-          message: "Unauthorized access" 
-        });
-      }
-
-      const page = req.query.page ? parseInt(req.query.page as string) : 1;
-      const limit = req.query.limit ? parseInt(req.query.limit as string) : 10;
-      const search = req.query.search as string;
-      const interest = req.query.interest as string;
-
-      const result = await storage.getAllContactSubmissions({
-        page,
-        limit,
-        search,
-        interest
-      });
-
-      return res.status(200).json({
-        success: true,
-        data: result.submissions,
-        meta: {
-          total: result.total,
-          page,
-          limit,
-          pages: Math.ceil(result.total / limit)
-        }
-      });
-    } catch (error) {
-      console.error('Error fetching contact submissions:', error);
-      return res.status(500).json({
-        success: false,
-        message: "Internal server error"
-      });
-    }
-  });
   // Apply for a job (requires authentication, handles both file upload and existing resume URL)
   app.post('/api/job-applications', resumeUpload.single('resume'), async (req, res) => {
     try {
@@ -1937,8 +1896,7 @@ app.put('/api/profile', async (req: AuthenticatedRequest, res) => {
 
 message: "A demo request with this email already exists",
           existingRequest: {
-            id: existingRequest.id,
-            status: existingRequest.status,
+            id: existingRequest.id,            status: existingRequest.status,
             createdAt: existingRequest.createdAt,
             scheduledDate: existingRequest.scheduledDate
           }
@@ -2325,6 +2283,48 @@ app.get("/api/admin/check", async (req: Request, res: Response) => {
     return res.status(500).json({ error: "Internal server error" });
   }
 });
+
+  // Admin API: Get all contact submissions
+  app.get('/api/contact-submissions', async (req: AuthenticatedRequest, res) => {
+    try {
+      // Check if user is authenticated and is an admin
+      if (!req.isAuthenticated() || req.user?.role !== 'admin') {
+        return res.status(403).json({ 
+          success: false, 
+          message: "Unauthorized access" 
+        });
+      }
+
+      const page = req.query.page ? parseInt(req.query.page as string) : 1;
+      const limit = req.query.limit ? parseInt(req.query.limit as string) : 10;
+      const search = req.query.search as string;
+      const interest = req.query.interest as string;
+
+      const result = await storage.getAllContactSubmissions({
+        page,
+        limit,
+        search,
+        interest
+      });
+
+      return res.status(200).json({
+        success: true,
+        data: result.submissions,
+        meta: {
+          total: result.total,
+          page,
+          limit,
+          pages: Math.ceil(result.total / limit)
+        }
+      });
+    } catch (error) {
+      console.error('Error fetching contact submissions:', error);
+      return res.status(500).json({
+        success: false,
+        message: "Internal server error"
+      });
+    }
+  });
 
   const httpServer = createServer(app);
   return httpServer;
