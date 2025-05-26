@@ -163,6 +163,12 @@ html, body {
   }
 }
 
+/* Ensure backdrop blur works consistently */
+.backdrop-blur-md {
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+}
+
 .animate-slide-up {
   animation: slideUp 0.5s ease-out;
 }
