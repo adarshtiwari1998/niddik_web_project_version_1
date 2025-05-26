@@ -70,16 +70,26 @@ export default function JobListings() {
     },
   });
 
-  // Get unique values for filter options from available jobs
-  const availableStatuses = Array.from(new Set(data?.data.map(job => job.status).filter(Boolean))) || [];
-  const availableCategories = Array.from(new Set(data?.data.map(job => job.category).filter(Boolean))) || [];
+  // Fetch all jobs to get complete filter options
+  const { data: allJobsData } = useQuery<{ data: JobListing[] }>({
+    queryKey: ['/api/job-listings-all'],
+    queryFn: async () => {
+      const res = await fetch('/api/job-listings-all');
+      if (!res.ok) throw new Error("Failed to fetch all job listings");
+      return res.json();
+    },
+  });
+
+  // Get unique values for filter options from ALL available jobs (not just filtered ones)
+  const availableStatuses = Array.from(new Set(allJobsData?.data.map(job => job.status).filter(Boolean))) || [];
+  const availableCategories = Array.from(new Set(allJobsData?.data.map(job => job.category).filter(Boolean))) || [];
   
-  // Get priority options based on available data
+  // Get priority options based on ALL available data
   const availablePriorities = [];
-  if (data?.data.some(job => job.urgent)) availablePriorities.push({ value: "urgent", label: "Urgent" });
-  if (data?.data.some(job => job.priority)) availablePriorities.push({ value: "priority", label: "Priority" });
-  if (data?.data.some(job => job.isOpen)) availablePriorities.push({ value: "open", label: "Open" });
-  if (data?.data.some(job => job.featured)) availablePriorities.push({ value: "featured", label: "Featured" });
+  if (allJobsData?.data.some(job => job.urgent)) availablePriorities.push({ value: "urgent", label: "Urgent" });
+  if (allJobsData?.data.some(job => job.priority)) availablePriorities.push({ value: "priority", label: "Priority" });
+  if (allJobsData?.data.some(job => job.isOpen)) availablePriorities.push({ value: "open", label: "Open" });
+  if (allJobsData?.data.some(job => job.featured)) availablePriorities.push({ value: "featured", label: "Featured" });
 
   console.log('Current priority filter:', priorityFilter);
   console.log('Available priorities:', availablePriorities);

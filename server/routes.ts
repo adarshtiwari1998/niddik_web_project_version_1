@@ -126,19 +126,18 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
-  // Get all job listings (with pagination and filtering)
-  app.get('/api/job-listings', async (req, res) => {
+  // Get all job listings with pagination and filtering
+  app.get("/api/job-listings", async (req: AuthenticatedRequest, res) => {
     try {
-      const page = req.query.page ? parseInt(req.query.page as string) : 1;
-      const limit = req.query.limit ? parseInt(req.query.limit as string) : 10;
-      const search = req.query.search as string;
+      const page = parseInt(req.query.page as string) || 1;
+      const limit = parseInt(req.query.limit as string) || 10;
+      const search = req.query.search as string || "";
       const category = req.query.category as string;
       const experienceLevel = req.query.experienceLevel as string;
       const jobType = req.query.jobType as string;
       const status = req.query.status as string || "active";
-      const featured = req.query.featured !== undefined 
-        ? req.query.featured === 'true' 
-        : undefined;
+      const featured = req.query.featured === 'true' ? true : undefined;
+      const priority = req.query.priority as string;
 
       const result = await storage.getJobListings({
         page,
@@ -147,12 +146,13 @@ export async function registerRoutes(app: Express): Promise<Server> {
         category,
         experienceLevel,
         jobType,
-        status,
-        featured
+        status: (!status || status === "all_statuses") ? undefined : status,
+        featured,
+        priority: priority === "all_priorities" ? undefined : priority
       });
 
-      return res.status(200).json({ 
-        success: true, 
+      res.json({
+        success: true,
         data: result.jobListings,
         meta: {
           total: result.total,
@@ -162,10 +162,33 @@ export async function registerRoutes(app: Express): Promise<Server> {
         }
       });
     } catch (error) {
-      console.error('Error fetching job listings:', error);
-      return res.status(500).json({ 
+      console.error("Error fetching job listings:", error);
+      res.status(500).json({ 
         success: false, 
-        message: "Internal server error" 
+        error: "Failed to fetch job listings" 
+      });
+    }
+  });
+
+  // Get all job listings without filters (for filter options)
+  app.get("/api/job-listings-all", async (req: AuthenticatedRequest, res) => {
+    try {
+      const result = await storage.getJobListings({
+        page: 1,
+        limit: 1000, // Get a large number to capture all jobs
+        search: "",
+        // No filters applied to get all possible values
+      });
+
+      res.json({
+        success: true,
+        data: result.jobListings
+      });
+    } catch (error) {
+      console.error("Error fetching all job listings:", error);
+      res.status(500).json({ 
+        success: false, 
+        error: "Failed to fetch all job listings" 
       });
     }
   });

@@ -168,7 +168,7 @@ export const storage = {
       whereConditions.push(eq(jobListings.jobType, jobType));
     }
 
-    if (status) {
+    if (status !== undefined) {
       whereConditions.push(eq(jobListings.status, status));
     }
 
