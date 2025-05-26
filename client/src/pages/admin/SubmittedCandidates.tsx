@@ -320,6 +320,21 @@ function SubmittedCandidates() {
     }
   });
 
+  // Query to fetch all statuses and clients for filter dropdowns (unfiltered)
+  const { data: allCandidatesData } = useQuery({
+    queryKey: ['/api/submitted-candidates/all-options'],
+    queryFn: async () => {
+      const queryParams = new URLSearchParams({
+        page: '1',
+        limit: '1000', // Get a large number to get all unique values
+      });
+
+      const res = await apiRequest("GET", `/api/submitted-candidates?${queryParams}`);
+      if (!res.ok) throw new Error("Failed to fetch all candidates");
+      return await res.json();
+    }
+  });
+
   // Query to fetch analytics data
   const { data: analyticsData, isLoading: isLoadingAnalytics } = useQuery({
     queryKey: ['/api/submitted-candidates/analytics/summary'],
@@ -1057,9 +1072,13 @@ function SubmittedCandidates() {
     }
   }, [candidatesData?.data, selectedCandidateIds]);
 
-  // Get unique client names from candidates data for filter
-  const clients: string[] = candidatesData?.data ? 
-    Array.from(new Set(candidatesData.data.map((c: SubmittedCandidate) => c.client))).filter(Boolean) as string[] : 
+  // Get unique client names and statuses from all candidates data for filters
+  const clients: string[] = allCandidatesData?.data ? 
+    Array.from(new Set(allCandidatesData.data.map((c: SubmittedCandidate) => c.client))).filter(Boolean) as string[] : 
+    [];
+  
+  const allStatuses: string[] = allCandidatesData?.data ? 
+    Array.from(new Set(allCandidatesData.data.map((c: SubmittedCandidate) => c.status))).filter(Boolean) as string[] : 
     [];
 
   // Pagination controls
@@ -1444,15 +1463,13 @@ function SubmittedCandidates() {
               </SelectTrigger>
               <SelectContent>
                 <SelectItem value="all_statuses">All Statuses</SelectItem>
-                {/* Get unique statuses from candidates data */}
-                {candidatesData?.data ? 
-                  Array.from(new Set(candidatesData.data.map((c: SubmittedCandidate) => c.status)))
-                    .filter(Boolean)
+                {allStatuses.length > 0 ? 
+                  allStatuses
                     .sort()
                     .map((status: string) => (
                       <SelectItem key={status} value={status}>{status}</SelectItem>
                     ))
-                  : statusOptions.map((option) => (
+                  : statusOptions.slice(1).map((option) => (
                       <SelectItem key={option.value} value={option.value}>
                         {option.label}
                       </SelectItem>
@@ -2582,10 +2599,9 @@ Next
                 </SelectTrigger>
               </FormControl>
               <SelectContent>
-                {candidatesData?.data ? (
+                {allStatuses.length > 0 ? (
                   <>
-                    {Array.from(new Set(candidatesData.data.map((c: SubmittedCandidate) => c.status)))
-                      .filter(Boolean)
+                    {allStatuses
                       .sort()
                       .map((status: string) => (
                         <SelectItem key={status} value={status}>{status}</SelectItem>
