@@ -823,4 +823,90 @@ export async function getJobApplicationsWithDetails(
       )
     );
   }
+
+  // Add status condition
+  if (status && status !== "all_statuses") {
+    whereConditions.push(eq(jobApplications.status, status));
+  }
+
+  // Create the where condition
+  const whereCondition = whereConditions.length > 0
+    ? and(...whereConditions)
+    : undefined;
+
+  // Get total count first
+  const countQuery = db
+    .select({ count: count() })
+    .from(jobApplications)
+    .leftJoin(users, eq(jobApplications.userId, users.id))
+    .leftJoin(jobListings, eq(jobApplications.jobId, jobListings.id))
+    .where(whereCondition);
+
+  const totalResult = await countQuery;
+  const total = totalResult[0]?.count || 0;
+
+  // Get paginated applications with proper joins
+  const applications = await db
+    .select({
+      id: jobApplications.id,
+      jobId: jobApplications.jobId,
+      userId: jobApplications.userId,
+      status: jobApplications.status,
+      coverLetter: jobApplications.coverLetter,
+      resumeUrl: jobApplications.resumeUrl,
+      experience: jobApplications.experience,
+      skills: jobApplications.skills,
+      education: jobApplications.education,
+      additionalInfo: jobApplications.additionalInfo,
+      billRate: jobApplications.billRate,
+      payRate: jobApplications.payRate,
+      appliedDate: jobApplications.appliedDate,
+      lastUpdated: jobApplications.lastUpdated,
+      createdAt: jobApplications.createdAt,
+      // User data
+      user: {
+        id: users.id,
+        fullName: users.fullName,
+        email: users.email,
+        phone: users.phone,
+        experience: users.experience,
+        noticePeriod: users.noticePeriod,
+        currentCtc: users.currentCtc,
+        expectedCtc: users.expectedCtc,
+        location: users.location,
+        city: users.city,
+        country: users.country,
+        zipCode: users.zipCode,
+        skills: users.skills
+      },
+      // Job data
+      job: {
+        id: jobListings.id,
+        title: jobListings.title,
+        company: jobListings.company,
+        location: jobListings.location,
+        jobType: jobListings.jobType,
+        salary: jobListings.salary,
+        category: jobListings.category,
+        experienceLevel: jobListings.experienceLevel,
+        postedDate: jobListings.postedDate
+      }
+    })
+    .from(jobApplications)
+    .leftJoin(users, eq(jobApplications.userId, users.id))
+    .leftJoin(jobListings, eq(jobApplications.jobId, jobListings.id))
+    .where(whereCondition)
+    .orderBy(desc(jobApplications.appliedDate))
+    .limit(limit)
+    .offset(offset);
+
+  return {
+    data: applications,
+    meta: {
+      total,
+      page,
+      limit,
+      pages: Math.ceil(total / limit)
+    }
+  };
 }
