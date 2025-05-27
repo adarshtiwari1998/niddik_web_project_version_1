@@ -7,6 +7,8 @@ import { z } from "zod";
 import { useToast } from "@/hooks/use-toast";
 import { RectangleEllipsis, MapPin, Globe, Linkedin, Twitter, Facebook, Instagram } from "lucide-react";
 import Container from "@/components/ui/container";
+import { motion } from "framer-motion";
+import GlobalNetworkMap from "@/components/sections/GlobalNetworkMap";
 import {
   Form,
   FormControl,
@@ -98,6 +100,86 @@ export default function ContactUs() {
               <p className="text-xl text-gray-600 mb-8">
                 Ready to transform your hiring process? Get in touch with our team of experts and discover how Niddik can help you build exceptional tech teams.
               </p>
+            </div>
+          </Container>
+        </section>
+
+        {/* Global Network Map Section */}
+        <section className="py-20 bg-gray-900">
+          <Container>
+            <div className="text-center mb-12">
+              <motion.h2
+                className="text-4xl font-bold text-white mb-4"
+                initial={{ opacity: 0, y: 20 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                viewport={{ once: true }}
+                transition={{ duration: 0.6 }}
+              >
+                Our Global Network
+              </motion.h2>
+              <motion.p
+                className="text-xl text-gray-300 max-w-3xl mx-auto"
+                initial={{ opacity: 0, y: 20 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                viewport={{ once: true }}
+                transition={{ duration: 0.6, delay: 0.2 }}
+              >
+                Connected across three major technology markets - India, United States, and Canada. 
+                Our network enables seamless talent acquisition and deployment worldwide.
+              </motion.p>
+            </div>
+            
+            <motion.div
+              initial={{ opacity: 0, scale: 0.95 }}
+              whileInView={{ opacity: 1, scale: 1 }}
+              viewport={{ once: true }}
+              transition={{ duration: 0.8, delay: 0.4 }}
+            >
+              <GlobalNetworkMap />
+            </motion.div>
+
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-8 mt-16">
+              <motion.div
+                className="text-center"
+                initial={{ opacity: 0, y: 20 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                viewport={{ once: true }}
+                transition={{ duration: 0.6, delay: 0.6 }}
+              >
+                <div className="w-16 h-16 bg-orange-500/20 rounded-full flex items-center justify-center mx-auto mb-4">
+                  <MapPin className="w-8 h-8 text-orange-400" />
+                </div>
+                <h3 className="text-xl font-semibold text-white mb-2">India Hub</h3>
+                <p className="text-gray-400">Our headquarters in Noida serves as the central command for our global operations and talent pool.</p>
+              </motion.div>
+
+              <motion.div
+                className="text-center"
+                initial={{ opacity: 0, y: 20 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                viewport={{ once: true }}
+                transition={{ duration: 0.6, delay: 0.8 }}
+              >
+                <div className="w-16 h-16 bg-red-500/20 rounded-full flex items-center justify-center mx-auto mb-4">
+                  <Globe className="w-8 h-8 text-red-400" />
+                </div>
+                <h3 className="text-xl font-semibold text-white mb-2">US Market</h3>
+                <p className="text-gray-400">Strategic presence across major US tech hubs including New York, San Francisco, and Austin.</p>
+              </motion.div>
+
+              <motion.div
+                className="text-center"
+                initial={{ opacity: 0, y: 20 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                viewport={{ once: true }}
+                transition={{ duration: 0.6, delay: 1 }}
+              >
+                <div className="w-16 h-16 bg-green-500/20 rounded-full flex items-center justify-center mx-auto mb-4">
+                  <RectangleEllipsis className="w-8 h-8 text-green-400" />
+                </div>
+                <h3 className="text-xl font-semibold text-white mb-2">Canada Network</h3>
+                <p className="text-gray-400">Growing presence in Toronto, Vancouver, and Montreal connecting top Canadian talent.</p>
+              </motion.div>
             </div>
           </Container>
         </section>
