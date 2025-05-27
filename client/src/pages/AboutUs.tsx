@@ -859,13 +859,13 @@ His work has significant implications for the development of personalized medici
                   viewport={{ once: true }}
                   transition={{ duration: 0.5, delay: index * 0.1 }}
                 >
-                  <div className="aspect-square relative overflow-hidden">
+                  <div className="h-80 relative overflow-hidden flex items-center justify-center bg-gray-50">
                     <img 
                       src={member.image} 
                       alt={member.name} 
-                      className="w-full h-full object-cover object-center hover:scale-105 transition-transform duration-300"
+                      className="w-48 h-48 object-cover object-center rounded-full border-4 border-white shadow-lg hover:scale-105 transition-transform duration-300"
                     />
-                    <div className="absolute inset-0 bg-gradient-to-t from-black/50 to-transparent"></div>
+                    <div className="absolute inset-0 bg-gradient-to-t from-black/20 to-transparent"></div>
                     
                     {/* Social links */}
                     <div className="absolute bottom-4 left-0 right-0 flex justify-center gap-3">
@@ -888,33 +888,33 @@ His work has significant implications for the development of personalized medici
                     </div>
                   </div>
                   
-                  <div className="p-6">
-                    <div className="inline-block px-4 py-1 bg-andela-green/10 rounded-full text-andela-green text-sm font-medium mb-4">
+                  <div className="p-5">
+                    <div className="inline-block px-3 py-1 bg-andela-green/10 rounded-full text-andela-green text-xs font-medium mb-3">
                       {member.role}
                     </div>
                     {member.company && (
-                      <div className="text-sm text-gray-600 mb-2">{member.company}</div>
+                      <div className="text-xs text-gray-600 mb-2">{member.company}</div>
                     )}
-                    <h3 className="text-xl font-bold mb-3 text-andela-dark">{member.name}</h3>
-                    <div className="h-1 w-12 bg-andela-green/50 mb-4"></div>
+                    <h3 className="text-lg font-bold mb-2 text-andela-dark">{member.name}</h3>
+                    <div className="h-1 w-10 bg-andela-green/50 mb-3"></div>
                     
-                    <p className="text-andela-gray text-sm leading-relaxed mb-6 line-clamp-4">
+                    <p className="text-andela-gray text-xs leading-relaxed mb-4 line-clamp-3">
                       {member.bio}
                     </p>
                     
-                    <div className="flex flex-col gap-3">
+                    <div className="flex flex-col gap-2">
                       <button 
                         onClick={() => {
                           setSelectedTeamMember(index);
                           setModalOpen(true);
                         }}
-                        className="w-full bg-andela-green hover:bg-andela-dark text-white px-4 py-2 rounded-md font-medium transition-colors text-sm flex items-center justify-center"
+                        className="w-full bg-andela-green hover:bg-andela-dark text-white px-3 py-2 rounded-md font-medium transition-colors text-xs flex items-center justify-center"
                       >
-                        Read Full Bio <ExternalLink className="ml-2 h-4 w-4" />
+                        Read Full Bio <ExternalLink className="ml-1 h-3 w-3" />
                       </button>
                       <a 
                         href="#"
-                        className="w-full border-2 border-andela-green text-andela-green hover:bg-andela-green hover:text-white px-4 py-2 rounded-md font-medium transition-colors text-sm text-center"
+                        className="w-full border border-andela-green text-andela-green hover:bg-andela-green hover:text-white px-3 py-2 rounded-md font-medium transition-colors text-xs text-center"
                       >
                         Contact
                       </a>
@@ -943,7 +943,7 @@ His work has significant implications for the development of personalized medici
                 <div className="flex flex-col md:flex-row gap-8">
                   <div className="flex-shrink-0">
                     <img 
-                      src="https://res.cloudinary.com/dhanz6zty/image/upload/v1748340984/niddik-leader-ship-team-mr-abhishek_dm2jal.png" 
+                      src={teamMembers[selectedTeamMember].image} 
                       alt={teamMembers[selectedTeamMember].name}
                       className="w-full md:w-64 h-64 object-contain object-center rounded-xl shadow-md" 
                     />
