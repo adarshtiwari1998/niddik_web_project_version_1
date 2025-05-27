@@ -61,14 +61,15 @@ const CareerAdvice = () => {
             className="relative text-center mt-6"
           >
             <h1 className="text-6xl font-bold pb-6 bg-gradient-to-r from-blue-600 via-purple-600 to-indigo-600 bg-clip-text text-transparent">
-              AI-Powered Career Guidance
+              NIDDIK's Career Advice
             </h1>
             <p className="text-xl text-gray-600 max-w-3xl mx-auto mb-8">
-              Navigate your tech career with data-driven insights and AI-powered recommendations
+              At NIDDIK, we are on a mission to define what success is to each team member and the partners we work with. 
+                Whether you are a developer, engineer, manager, leader, or a stakeholder, let these serve as your starting points on your career path.
             </p>
             
             {/* NIDDIK's Career Advice - Integrated into Hero */}
-            <motion.div
+            {/* <motion.div
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.8, delay: 0.3 }}
@@ -79,7 +80,7 @@ const CareerAdvice = () => {
                 At NIDDIK, we are on a mission to define what success is to each team member and the partners we work with. 
                 Whether you are a developer, engineer, manager, leader, or a stakeholder, let these serve as your starting points on your career path.
               </p>
-            </motion.div>
+            </motion.div> */}
           </motion.div>
         </Container>
       </div>
