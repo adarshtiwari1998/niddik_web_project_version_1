@@ -209,7 +209,7 @@ const Navbar: React.FC<NavbarProps> = ({ hasAnnouncementAbove = true }) => {
       isTransparent 
         ? "bg-transparent"
         : isDarkPage 
-          ? "bg-black/95 backdrop-blur-md border-b border-gray-800/50"
+          ? "bg-white/95 backdrop-blur-md border-b border-gray-800/50"
           : "bg-white/95 backdrop-blur-md border-b border-gray-200/50",
       isScrolled && !isTransparent ? "shadow-lg" : "",
       "transition-all duration-300 ease-in-out"
