@@ -16,6 +16,8 @@ const AboutUs = () => {
       role: "CEO & Co-Founder",
       image: "https://res.cloudinary.com/dhanz6zty/image/upload/v1748340984/niddik-leader-ship-team-mr-abhishek_dm2jal.png",
       bio: "With over 20 years of experience in talent acquisition, Abhishek has established himself as a renowned expert in the field of recruitment.",
+      linkedinUrl: "https://www.linkedin.com/in/aanchal/",
+      twitterUrl: "#",
       fullBio: `Abhishek is a seasoned Talent Acquisition Professional with over 20 years of extensive experience in talent acquisition, he has established himself as a renowned expert in the field of recruitment. His impressive career trajectory, marked by progressive leadership roles and a strong academic foundation, is a testament to his dedication, passion, and commitment to excellence.
 
 Born with a natural aptitude for mathematics and computer science, Abhishek pursued his Bachelor's Degree in Applied Mathematics from the University of South Carolina (Conway) between 2000-2004. During his undergraduate studies, he also minored in Computer Science and Statistics, laying a solid foundation for his future career.
@@ -30,6 +32,8 @@ As Abhishek's career progressed, he took on increasingly senior leadership roles
       company: "NIDDIKKARE LLP",
       image: "https://res.cloudinary.com/dhanz6zty/image/upload/v1748340984/niddik-leader-ship-team-samar-husain_gczwmu.png",
       bio: "A trailblazing expert in biotechnology and life sciences, renowned for his groundbreaking work in genomics, molecular biology, and microbiology with over 25 years of experience.",
+      linkedinUrl: "#",
+      twitterUrl: "#",
       fullBio: `Dr. Samar Husain Naqvi is a trailblazing expert in biotechnology and life sciences, renowned for his groundbreaking work in genomics, molecular biology, and microbiology. With a career spanning over 25 years, he has established himself as a leading authority in the development of innovative diagnostic solutions, leveraging cutting-edge technologies to drive medical advancements.
 
 As a visionary leader, he has held pivotal roles in esteemed corporate organizations, where he has successfully spearheaded the design, development, and manufacturing of in vitro diagnostic medical devices. His expertise in navigating complex regulatory landscapes has ensured the seamless translation of research findings into clinically validated diagnostic tools, ultimately enhancing patient care and outcomes.
@@ -44,6 +48,8 @@ As a testament to his dedication and expertise, Dr. Naqvi has garnered numerous 
       company: "NIDDIKKARE LLP",
       image: "https://res.cloudinary.com/dhanz6zty/image/upload/v1748341074/niddik-leader-ship-team-dr-abhishek_jwetmz.png",
       bio: "A highly accomplished researcher and scientist with over 25 years' strong foundation in the fields of nanomedicine and biotechnology, holding a Ph.D. in Bio-Science (Nanomedicine).",
+      linkedinUrl: "#",
+      twitterUrl: "#",
       fullBio: `Dr. Abhishek Chanchal is a highly accomplished researcher and scientist with over 25 years' strong foundation in the fields of nanomedicine and biotechnology. Holding a Ph.D. in Bio-Science (Nanomedicine) from the esteemed Jamia Millia Islamia, Delhi, he has developed a profound expertise in the design, formulation, and characterization of nanoparticles for targeted drug delivery.
 
 His research focuses on harnessing the potential of nanotechnology to create innovative solutions for complex medical challenges, with a particular emphasis on improving the efficacy and safety of therapeutic interventions. With a deep understanding of the intricate interactions between nanoparticles and biological systems, he has successfully developed novel nanoscale systems that can selectively target diseased cells, reducing side effects and enhancing treatment outcomes.
@@ -870,7 +876,7 @@ His work has significant implications for the development of personalized medici
                     {/* Social links */}
                     <div className="absolute bottom-4 left-0 right-0 flex justify-center gap-3">
                       <a 
-                        href="https://www.linkedin.com/in/aanchal/" 
+                        href={member.linkedinUrl} 
                         className="w-10 h-10 bg-white rounded-full flex items-center justify-center text-andela-green hover:bg-andela-green hover:text-white transition-colors"
                       >
                         <svg className="w-5 h-5" fill="currentColor" viewBox="0 0 24 24">
@@ -878,7 +884,7 @@ His work has significant implications for the development of personalized medici
                         </svg>
                       </a>
                       <a 
-                        href="#" 
+                        href={member.twitterUrl} 
                         className="w-10 h-10 bg-white rounded-full flex items-center justify-center text-andela-green hover:bg-andela-green hover:text-white transition-colors"
                       >
                         <svg className="w-5 h-5" fill="currentColor" viewBox="0 0 24 24">
@@ -963,7 +969,7 @@ His work has significant implications for the development of personalized medici
                       <h4 className="text-lg font-semibold text-andela-dark mb-4">Connect With {teamMembers[selectedTeamMember].name}</h4>
                       <div className="flex gap-4">
                         <a 
-                          href="#" 
+                          href={teamMembers[selectedTeamMember].linkedinUrl} 
                           className="inline-flex items-center bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-md font-medium transition-colors"
                         >
                           LinkedIn
