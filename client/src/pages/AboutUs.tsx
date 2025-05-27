@@ -878,6 +878,8 @@ His work has significant implications for the development of personalized medici
                     <div className="absolute bottom-4 left-0 right-0 flex justify-center gap-3">
                       <a 
                         href={member.linkedinUrl} 
+                        target="_blank"
+                        rel="noopener noreferrer"
                         className="w-10 h-10 bg-white rounded-full flex items-center justify-center text-andela-green hover:bg-andela-green hover:text-white transition-colors"
                       >
                         <svg className="w-5 h-5" fill="currentColor" viewBox="0 0 24 24">
@@ -886,6 +888,8 @@ His work has significant implications for the development of personalized medici
                       </a>
                       <a 
                         href={member.twitterUrl} 
+                        target="_blank"
+                        rel="noopener noreferrer"
                         className="w-10 h-10 bg-white rounded-full flex items-center justify-center text-andela-green hover:bg-andela-green hover:text-white transition-colors"
                       >
                         <svg className="w-5 h-5" fill="currentColor" viewBox="0 0 24 24">
@@ -975,6 +979,8 @@ His work has significant implications for the development of personalized medici
                       <div className="flex gap-4">
                         <a 
                           href={teamMembers[selectedTeamMember].linkedinUrl} 
+                          target="_blank"
+                          rel="noopener noreferrer"
                           className="inline-flex items-center bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-md font-medium transition-colors"
                         >
                           LinkedIn
