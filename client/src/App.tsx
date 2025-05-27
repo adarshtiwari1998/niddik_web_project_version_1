@@ -40,10 +40,12 @@ import ContactSubmissions from "./pages/admin/ContactSubmissions";
 import { AuthProvider } from "@/hooks/use-auth";
 import { ProtectedRoute } from "@/lib/protected-route";
 import StickyPopup from '@/hooks/StickyPopup';
-import FactsAndTrends from './pages/FactsAndTrends';
-import HiringAdvice from './pages/HiringAdvice';
-import CorporateResponsibilities from './pages/CorporateResponsibilities';
-import CareerAdvice from './pages/CareerAdvice';
+import Insights from "./pages/Insights";
+import FactsAndTrends from "./pages/FactsAndTrends";
+import Whitepaper from "./pages/Whitepaper";
+import HiringAdvice from "./pages/HiringAdvice";
+import CareerAdvice from "./pages/CareerAdvice";
+import CorporateResponsibilities from "./pages/CorporateResponsibilities";
 import SixFactorModel from './pages/SixFactorModel';
 import AgileRecruiting from './pages/AgileRecruiting';
 import CommunityInvolvement from './pages/CommunityInvolvement';
@@ -79,6 +81,7 @@ function Router() {
             <Route path="/adaptive-hiring" component={AdaptiveHiring} />
             <Route path="/adaptive-hiring-fixed" component={AdaptiveHiringFixed} />
             <Route path="/whitepaper" component={Whitepaper} />
+            <Route path="/insights" component={Insights} />
             <Route path="/facts-and-trends" component={FactsAndTrends} />
             <Route path="/hiring-advice" component={HiringAdvice} />
             <Route path="/corporate-social-responsibilities" component={CorporateResponsibilities} />

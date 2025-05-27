@@ -36,6 +36,7 @@ const navItems: NavItem[] = [
   {
     label: "Insights",
     dropdown: [
+      { label: "AI Insights", href: "/insights" },
       { label: "Facts & Trends", href: "/facts-and-trends" },
       { label: "Whitepaper", href: "/whitepaper" },
       { label: "Hiring Advice", href: "/hiring-advice" },
