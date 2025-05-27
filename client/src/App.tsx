@@ -50,7 +50,6 @@ import Insights from "./pages/Insights";
 import FactsAndTrends from "./pages/FactsAndTrends";
 import HiringAdvice from "./pages/HiringAdvice";
 import CareerAdvice from "./pages/CareerAdvice";
-import CorporateResponsibilities from "./pages/CorporateResponsibilities";
 import SixFactorModel from './pages/SixFactorModel';
 import AgileRecruiting from './pages/AgileRecruiting';
 import CommunityInvolvement from './pages/CommunityInvolvement';
