@@ -70,43 +70,314 @@ const CareerAdvice = () => {
         </Container>
       </div>
 
-      {/* Interactive Career Path Explorer */}
-      <section className="py-20 bg-gradient-to-br from-blue-50 to-purple-50">
+      {/* NIDDIK's Career Advice Section */}
+      <section className="py-20 bg-gradient-to-br from-blue-50 to-indigo-50">
         <Container>
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            className="text-center mb-16"
+          >
+            <h2 className="text-4xl font-bold mb-6 text-gray-800">NIDDIK's Career Advice</h2>
+            <p className="text-xl text-gray-600 max-w-4xl mx-auto">
+              At NIDDIK, we are on a mission to define what success is to each team member and the partners we work with. 
+              Whether you are a developer, engineer, manager, leader, or a stakeholder, let these serve as your starting points on your career path.
+            </p>
+          </motion.div>
+
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-8 mb-16">
+            {/* For Developers and Engineers */}
+            <motion.div
+              initial={{ opacity: 0, x: -20 }}
+              whileInView={{ opacity: 1, x: 0 }}
+              className="bg-white rounded-xl p-8 shadow-lg hover:shadow-xl transition-all border border-blue-100"
+            >
+              <div className="flex items-center gap-4 mb-6">
+                <div className="p-3 rounded-lg bg-blue-50">
+                  <BrainCircuit className="w-8 h-8 text-blue-600" />
+                </div>
+                <h3 className="text-2xl font-bold text-gray-800">For Developers and Engineers</h3>
+              </div>
+              <div className="space-y-4">
+                {[
+                  {
+                    title: "Stay Up-To-Date with Industry Trends",
+                    description: "Constantly upskill to remain in demand in a rapidly changing industry."
+                  },
+                  {
+                    title: "Focus on Problem-Solving Skills",
+                    description: "Develop your problem-solving abilities to justify your proposals including intricate issues not considered 'core.'"
+                  },
+                  {
+                    title: "Collaborate with Others",
+                    description: "Develop your collaborative skills to facilitate work across multiple disciplines and technologies."
+                  },
+                  {
+                    title: "Build a Strong Portfolio",
+                    description: "A portfolio demonstrates your competencies and contributions, showing your mindset and approach to work."
+                  }
+                ].map((item, i) => (
+                  <div key={i} className="border-l-4 border-blue-500 pl-4 py-2">
+                    <h4 className="font-semibold text-gray-800 mb-1">{item.title}</h4>
+                    <p className="text-gray-600 text-sm">{item.description}</p>
+                  </div>
+                ))}
+              </div>
+            </motion.div>
+
+            {/* For Managers */}
+            <motion.div
+              initial={{ opacity: 0, x: 20 }}
+              whileInView={{ opacity: 1, x: 0 }}
+              className="bg-white rounded-xl p-8 shadow-lg hover:shadow-xl transition-all border border-green-100"
+            >
+              <div className="flex items-center gap-4 mb-6">
+                <div className="p-3 rounded-lg bg-green-50">
+                  <Users className="w-8 h-8 text-green-600" />
+                </div>
+                <h3 className="text-2xl font-bold text-gray-800">For Managers</h3>
+              </div>
+              <div className="space-y-4">
+                {[
+                  {
+                    title: "Work on Your Leadership Skills",
+                    description: "Consider highlighting two or three leadership values for prioritizing your actions for your team."
+                  },
+                  {
+                    title: "Develop Team Culture",
+                    description: "Develop a team culture for how the team will collaborate and communicate, motivating them toward a common goal."
+                  },
+                  {
+                    title: "Acknowledge Your Limitations",
+                    description: "Develop and showcase your limitations to prove there is at least one element that could mitigate uncertainty."
+                  },
+                  {
+                    title: "Empower Your Team",
+                    description: "Commit to who will take the lead while developing human potential and simplifying processes."
+                  }
+                ].map((item, i) => (
+                  <div key={i} className="border-l-4 border-green-500 pl-4 py-2">
+                    <h4 className="font-semibold text-gray-800 mb-1">{item.title}</h4>
+                    <p className="text-gray-600 text-sm">{item.description}</p>
+                  </div>
+                ))}
+              </div>
+            </motion.div>
+
+            {/* For Leaders */}
+            <motion.div
+              initial={{ opacity: 0, x: -20 }}
+              whileInView={{ opacity: 1, x: 0 }}
+              className="bg-white rounded-xl p-8 shadow-lg hover:shadow-xl transition-all border border-purple-100"
+            >
+              <div className="flex items-center gap-4 mb-6">
+                <div className="p-3 rounded-lg bg-purple-50">
+                  <Target className="w-8 h-8 text-purple-600" />
+                </div>
+                <h3 className="text-2xl font-bold text-gray-800">For Leaders</h3>
+              </div>
+              <div className="space-y-4">
+                {[
+                  {
+                    title: "Develop a Vision",
+                    description: "Create a vision for the organization and share it with your team."
+                  },
+                  {
+                    title: "Build a Talented Team",
+                    description: "Create a team that is diverse and talented and shares the vision and values."
+                  },
+                  {
+                    title: "Foster Innovation",
+                    description: "Inspire innovation and experimentation to allow growth and success to take place."
+                  },
+                  {
+                    title: "Lead by Example",
+                    description: "Model the ways and values you want from your team."
+                  }
+                ].map((item, i) => (
+                  <div key={i} className="border-l-4 border-purple-500 pl-4 py-2">
+                    <h4 className="font-semibold text-gray-800 mb-1">{item.title}</h4>
+                    <p className="text-gray-600 text-sm">{item.description}</p>
+                  </div>
+                ))}
+              </div>
+            </motion.div>
+
+            {/* For Stakeholders */}
+            <motion.div
+              initial={{ opacity: 0, x: 20 }}
+              whileInView={{ opacity: 1, x: 0 }}
+              className="bg-white rounded-xl p-8 shadow-lg hover:shadow-xl transition-all border border-orange-100"
+            >
+              <div className="flex items-center gap-4 mb-6">
+                <div className="p-3 rounded-lg bg-orange-50">
+                  <Sparkles className="w-8 h-8 text-orange-600" />
+                </div>
+                <h3 className="text-2xl font-bold text-gray-800">For Stakeholders</h3>
+              </div>
+              <div className="space-y-4">
+                {[
+                  {
+                    title: "Communicate Effectively",
+                    description: "Communicate clearly and consistently with the development team to ensure successful project delivery."
+                  },
+                  {
+                    title: "Provide Feedback",
+                    description: "Provide feedback on a regular basis to improve and grow."
+                  },
+                  {
+                    title: "Be Open-Minded",
+                    description: "Be willing to hear other ideas and perspectives."
+                  },
+                  {
+                    title: "Focus on Outcomes",
+                    description: "Focus on outcomes and results, not just process and procedures."
+                  }
+                ].map((item, i) => (
+                  <div key={i} className="border-l-4 border-orange-500 pl-4 py-2">
+                    <h4 className="font-semibold text-gray-800 mb-1">{item.title}</h4>
+                    <p className="text-gray-600 text-sm">{item.description}</p>
+                  </div>
+                ))}
+              </div>
+            </motion.div>
+          </div>
+        </Container>
+      </section>
+
+      {/* Key Takeaways Section */}
+      <section className="py-20 bg-gradient-to-br from-gray-50 to-blue-50">
+        <Container>
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            className="text-center mb-16"
+          >
+            <h2 className="text-4xl font-bold mb-6 text-gray-800">Key Takeaways</h2>
+            <p className="text-xl text-gray-600 max-w-4xl mx-auto">
+              At NIDDIK we can offer help and assistance toward your career growth and development for successful outcomes. 
+              Whether you're entering the field of development or you are an existing professional, we can help you to:
+            </p>
+          </motion.div>
+
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
             {[
               {
-                title: "AI Career Navigator",
-                description: "Personalized career path recommendations based on your skills and interests",
-                icon: <BrainCircuit className="w-8 h-8 text-purple-500" />,
-                stats: ["93% accuracy", "10K+ paths analyzed"]
+                title: "Be Curious",
+                description: "Be curious and engage in ongoing learning to remain in front of your field.",
+                icon: <Book className="w-8 h-8 text-blue-500" />,
+                color: "from-blue-50 to-blue-100"
               },
               {
-                title: "Skill Galaxy",
-                description: "Interactive visualization of in-demand tech skills and their relationships",
-                icon: <Star className="w-8 h-8 text-blue-500" />,
-                stats: ["Real-time updates", "Global skill trends"]
+                title: "Be Adaptable",
+                description: "Be adaptable and flexible to pivot when the need arises.",
+                icon: <Rocket className="w-8 h-8 text-green-500" />,
+                color: "from-green-50 to-green-100"
               },
               {
-                title: "Future Insights",
-                description: "Predictive analysis of emerging tech roles and required competencies",
-                icon: <Lightbulb className="w-8 h-8 text-indigo-500" />,
-                stats: ["5-year projections", "Industry validated"]
+                title: "Be Collaborative",
+                description: "Engaging others effectively to achieve specific goals.",
+                icon: <Users className="w-8 h-8 text-purple-500" />,
+                color: "from-purple-50 to-purple-100"
+              },
+              {
+                title: "Focus on Outcomes",
+                description: "Outcomes are much more important than process and procedures, for quality results.",
+                icon: <Target className="w-8 h-8 text-orange-500" />,
+                color: "from-orange-50 to-orange-100"
               }
-            ].map((card, index) => (
+            ].map((takeaway, index) => (
               <motion.div
                 key={index}
                 initial={{ opacity: 0, y: 20 }}
                 whileInView={{ opacity: 1, y: 0 }}
-                whileHover={{ scale: 1.02, rotateY: 5 }}
-                className="bg-white rounded-2xl p-8 shadow-lg hover:shadow-xl transition-all"
+                transition={{ delay: index * 0.1 }}
+                className={`bg-gradient-to-br ${takeaway.color} rounded-xl p-6 shadow-lg hover:shadow-xl transition-all border border-gray-200`}
               >
-                <div className="mb-6">{card.icon}</div>
-                <h3 className="text-2xl font-bold mb-4">{card.title}</h3>
-                <p className="text-gray-600 mb-6">{card.description}</p>
-                <div className="flex justify-between text-sm text-blue-600">
-                  {card.stats.map((stat, i) => (
-                    <span key={i} className="font-semibold">{stat}</span>
+                <div className="mb-4 flex justify-center">{takeaway.icon}</div>
+                <h3 className="text-xl font-bold mb-3 text-center text-gray-800">{takeaway.title}</h3>
+                <p className="text-gray-600 text-center text-sm">{takeaway.description}</p>
+              </motion.div>
+            ))}
+          </div>
+
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            className="text-center mt-16"
+          >
+            <div className="bg-white rounded-xl p-8 shadow-lg border border-gray-200">
+              <h3 className="text-2xl font-bold mb-4 text-gray-800">Ready to Start Your Journey?</h3>
+              <p className="text-gray-600 mb-6">
+                We hope these insights and advice are helpful in your career journey. If you have any questions or would like to learn more about NIDDIK, please don't hesitate to reach out!
+              </p>
+              <p className="text-sm font-semibold text-blue-600">
+                NIDDIK (AN IT DIVISION OF NIDDIKKARE)
+              </p>
+            </div>
+          </motion.div>
+        </Container>
+      </section>
+
+      {/* AI Learning Paths */}
+      <section className="py-20">
+        <Container>
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            className="text-center mb-16"
+          >
+            <h2 className="text-4xl font-bold mb-6">Personalized Learning Paths</h2>
+            <p className="text-xl text-gray-600 max-w-3xl mx-auto">
+              AI-curated learning journeys tailored to your career goals
+            </p>
+          </motion.div>
+
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+            {[
+              {
+                role: "Full-Stack Developer",
+                skills: ["React", "Node.js", "Python", "Cloud"],
+                growth: "+45% demand",
+                icon: <Zap className="w-6 h-6 text-yellow-500" />
+              },
+              {
+                role: "AI Engineer",
+                skills: ["Machine Learning", "Python", "Deep Learning"],
+                growth: "+75% demand",
+                icon: <Brain className="w-6 h-6 text-purple-500" />
+              },
+              {
+                role: "DevOps Engineer",
+                skills: ["Docker", "Kubernetes", "CI/CD"],
+                growth: "+55% demand",
+                icon: <Rocket className="w-6 h-6 text-blue-500" />
+              },
+              {
+                role: "Data Scientist",
+                skills: ["Statistics", "Python", "Big Data"],
+                growth: "+65% demand",
+                icon: <LineChart className="w-6 h-6 text-green-500" />
+              }
+            ].map((path, index) => (
+              <motion.div
+                key={index}
+                initial={{ opacity: 0, x: index % 2 === 0 ? -20 : 20 }}
+                whileInView={{ opacity: 1, x: 0 }}
+                className="bg-white rounded-xl p-6 shadow-md hover:shadow-lg transition-all border border-gray-100"
+              >
+                <div className="flex items-center gap-4 mb-4">
+                  <div className="p-3 rounded-lg bg-gray-50">{path.icon}</div>
+                  <div>
+                    <h3 className="text-xl font-bold">{path.role}</h3>
+                    <p className="text-green-600">{path.growth}</p>
+                  </div>
+                </div>
+                <div className="flex flex-wrap gap-2 mt-4">
+                  {path.skills.map((skill, i) => (
+                    <span key={i} className="px-3 py-1 bg-blue-50 text-blue-600 rounded-full text-sm">
+                      {skill}
+                    </span>
                   ))}
                 </div>
               </motion.div>
