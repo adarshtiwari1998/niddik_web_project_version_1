@@ -240,7 +240,7 @@ const Navbar: React.FC<NavbarProps> = ({ hasAnnouncementAbove = true }) => {
                         "group-hover:text-andela-green font-medium transition-colors",
                         isTransparent 
                           ? (isHomePage ? "text-white" : isDarkPage ? "text-white" : "text-andela-dark")
-                          : (isDarkPage ? "text-white" : "text-andela-dark")
+                          : (isDarkPage ? "text-w" : "text-andela-dark")
                       )}
                     >
                       {item.label}
