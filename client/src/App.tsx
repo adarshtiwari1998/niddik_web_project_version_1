@@ -37,6 +37,7 @@ import Users from "@/pages/admin/Users";
 import DemoRequests from "./pages/admin/DemoRequests";
 import ContactSubmissions from "./pages/admin/ContactSubmissions";
 import FAQs from "@/pages/FAQs";
+import Clients from "@/pages/Clients";
 
 // Auth Provider
 import { AuthProvider } from "@/hooks/use-auth";
@@ -94,6 +95,7 @@ function Router() {
             <Route path="/partners/non-it" component={NonITPartners} />
             <Route path="/partners/healthcare" component={HealthcarePartners} />
             <Route path="/search" component={SearchPage} />
+            <Route path="/clients" component={Clients} />
             <Route path="/contact" component={ContactUs} />
 
             {/* Company Routes */}
