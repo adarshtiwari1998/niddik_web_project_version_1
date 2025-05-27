@@ -56,7 +56,7 @@ const navItems: NavItem[] = [
     ]
   },
   {
-    label: "Partners",
+    label: "Client",
     dropdown: [
       { label: "IT", href: "/partners/it" },
       { label: "Non-IT", href: "/partners/non-it" },

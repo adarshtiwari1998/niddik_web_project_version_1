@@ -1,6 +1,7 @@
 
 import { motion } from "framer-motion";
 import { useState } from "react";
+import { Link } from "wouter";
 import { ChevronDown, ChevronUp, HelpCircle, Search, MessageCircle, Users, Target, Award, Trophy } from "lucide-react";
 import Container from "@/components/ui/container";
 import Navbar from "@/components/layout/Navbar";
@@ -281,6 +282,7 @@ const FAQs = () => {
             </p>
             
             <div className="flex flex-col sm:flex-row gap-6 justify-center">
+              <Link href="/contact">
               <Button 
                 size="lg" 
                 className="bg-white text-blue-600 hover:bg-blue-50 text-lg px-8 py-4 h-auto"
@@ -288,14 +290,16 @@ const FAQs = () => {
                 <MessageCircle className="mr-2 w-5 h-5" />
                 Contact Support
               </Button>
-              
+              </Link>
+               <Link href="/request-demo">
               <Button 
                 variant="outline" 
                 size="lg"
-                className="border-2 border-white/30 text-white hover:bg-white/10 hover:text-white text-lg px-8 py-4 h-auto backdrop-blur-sm"
+                className="border-2 border-white/30 text-andela-green hover:bg-white/10 hover:text-white text-lg px-8 py-4 h-auto backdrop-blur-sm"
               >
                 Request Demo
               </Button>
+               </Link>
             </div>
           </motion.div>
         </Container>
