@@ -1,15 +1,16 @@
 
-import React, { useEffect, useRef } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import { motion } from 'framer-motion';
 
 interface NetworkNode {
   id: string;
-  x: number;
-  y: number;
+  lat: number;
+  lng: number;
   label: string;
   country: string;
   size: number;
   isHub?: boolean;
+  color: string;
 }
 
 interface Connection {
@@ -20,32 +21,32 @@ interface Connection {
 
 const GlobalNetworkMap: React.FC = () => {
   const canvasRef = useRef<HTMLCanvasElement>(null);
-  const svgRef = useRef<SVGSVGElement>(null);
   const animationRef = useRef<number>();
+  const [rotation, setRotation] = useState(0);
 
-  // Define key locations for India, US, and Canada with proper geographic coordinates
+  // Define key locations with proper lat/lng coordinates
   const nodes: NetworkNode[] = [
     // India - Main Hub
-    { id: 'noida', x: 77.3, y: 28.6, label: 'Noida (HQ)', country: 'IN', size: 12, isHub: true },
-    { id: 'mumbai', x: 72.8, y: 19.0, label: 'Mumbai', country: 'IN', size: 8 },
-    { id: 'bangalore', x: 77.6, y: 12.9, label: 'Bangalore', country: 'IN', size: 8 },
-    { id: 'delhi', x: 77.2, y: 28.7, label: 'Delhi', country: 'IN', size: 7 },
+    { id: 'noida', lat: 28.6, lng: 77.3, label: 'Noida (HQ)', country: 'IN', size: 16, isHub: true, color: '#ff9800' },
+    { id: 'mumbai', lat: 19.0, lng: 72.8, label: 'Mumbai', country: 'IN', size: 12, color: '#ff9800' },
+    { id: 'bangalore', lat: 12.9, lng: 77.6, label: 'Bangalore', country: 'IN', size: 12, color: '#ff9800' },
+    { id: 'delhi', lat: 28.7, lng: 77.2, label: 'Delhi', country: 'IN', size: 10, color: '#ff9800' },
     
     // United States
-    { id: 'newyork', x: -74.0, y: 40.7, label: 'New York', country: 'US', size: 10, isHub: true },
-    { id: 'sanfrancisco', x: -122.4, y: 37.8, label: 'San Francisco', country: 'US', size: 9 },
-    { id: 'chicago', x: -87.6, y: 41.9, label: 'Chicago', country: 'US', size: 7 },
-    { id: 'austin', x: -97.7, y: 30.3, label: 'Austin', country: 'US', size: 6 },
-    { id: 'seattle', x: -122.3, y: 47.6, label: 'Seattle', country: 'US', size: 7 },
+    { id: 'newyork', lat: 40.7, lng: -74.0, label: 'New York', country: 'US', size: 14, isHub: true, color: '#f44336' },
+    { id: 'sanfrancisco', lat: 37.8, lng: -122.4, label: 'San Francisco', country: 'US', size: 12, color: '#f44336' },
+    { id: 'chicago', lat: 41.9, lng: -87.6, label: 'Chicago', country: 'US', size: 10, color: '#f44336' },
+    { id: 'austin', lat: 30.3, lng: -97.7, label: 'Austin', country: 'US', size: 9, color: '#f44336' },
+    { id: 'seattle', lat: 47.6, lng: -122.3, label: 'Seattle', country: 'US', size: 10, color: '#f44336' },
     
     // Canada
-    { id: 'toronto', x: -79.4, y: 43.7, label: 'Toronto', country: 'CA', size: 9, isHub: true },
-    { id: 'vancouver', x: -123.1, y: 49.3, label: 'Vancouver', country: 'CA', size: 7 },
-    { id: 'montreal', x: -73.6, y: 45.5, label: 'Montreal', country: 'CA', size: 6 },
-    { id: 'calgary', x: -114.1, y: 51.0, label: 'Calgary', country: 'CA', size: 5 },
+    { id: 'toronto', lat: 43.7, lng: -79.4, label: 'Toronto', country: 'CA', size: 12, isHub: true, color: '#4caf50' },
+    { id: 'vancouver', lat: 49.3, lng: -123.1, label: 'Vancouver', country: 'CA', size: 10, color: '#4caf50' },
+    { id: 'montreal', lat: 45.5, lng: -73.6, label: 'Montreal', country: 'CA', size: 9, color: '#4caf50' },
+    { id: 'calgary', lat: 51.0, lng: -114.1, label: 'Calgary', country: 'CA', size: 8, color: '#4caf50' },
   ];
 
-  // Enhanced connections showing recruitment network
+  // Network connections
   const connections: Connection[] = [
     // Primary Hub Connections (India to North America)
     { from: 'noida', to: 'newyork', animated: true },
@@ -71,42 +72,189 @@ const GlobalNetworkMap: React.FC = () => {
     { from: 'delhi', to: 'austin', animated: true },
   ];
 
-  // Convert lat/lng to SVG coordinates
-  const projectToSVG = (lng: number, lat: number, width: number, height: number) => {
-    const x = ((lng + 180) / 360) * width;
-    const y = ((90 - lat) / 180) * height;
-    return { x, y };
+  // Convert lat/lng to 3D globe coordinates
+  const latLngToXYZ = (lat: number, lng: number, radius: number, rotation: number = 0) => {
+    const phi = (90 - lat) * (Math.PI / 180);
+    const theta = (lng + rotation) * (Math.PI / 180);
+    
+    const x = radius * Math.sin(phi) * Math.cos(theta);
+    const y = radius * Math.cos(phi);
+    const z = radius * Math.sin(phi) * Math.sin(theta);
+    
+    return { x, y, z };
   };
 
-  // World map outline coordinates (simplified)
-  const worldMapPath = `
-    M 158.5 110.5 
-    C 180 95, 220 88, 280 95
-    C 320 88, 380 85, 420 90
-    C 460 95, 500 100, 540 110
-    C 580 115, 620 120, 660 125
-    L 680 140
-    C 690 160, 695 180, 700 200
-    C 705 220, 700 240, 690 260
-    C 680 280, 670 300, 650 320
-    C 630 340, 610 350, 590 360
-    C 570 370, 550 375, 530 380
-    C 510 385, 490 390, 470 385
-    C 450 380, 430 375, 410 370
-    C 390 365, 370 360, 350 355
-    C 330 350, 310 345, 290 340
-    C 270 335, 250 330, 230 325
-    C 210 320, 190 315, 170 310
-    C 150 305, 140 290, 135 270
-    C 130 250, 132 230, 135 210
-    C 138 190, 142 170, 148 150
-    C 154 130, 158.5 110.5, 158.5 110.5 Z
-  `;
+  // Project 3D coordinates to 2D screen
+  const project3DTo2D = (x: number, y: number, z: number, centerX: number, centerY: number) => {
+    const distance = 800;
+    const scale = distance / (distance + z);
+    
+    return {
+      x: centerX + x * scale,
+      y: centerY - y * scale,
+      scale: scale,
+      visible: z > -200 // Only show points on the front side of the globe
+    };
+  };
+
+  // Draw world map dots on globe
+  const drawWorldMap = (ctx: CanvasRenderContext2D, centerX: number, centerY: number, radius: number, rotation: number) => {
+    const mapData = [];
+    
+    // Generate world map dots (simplified continents)
+    // North America
+    for (let lat = 25; lat <= 70; lat += 3) {
+      for (let lng = -140; lng <= -60; lng += 4) {
+        if ((lat >= 25 && lat <= 50 && lng >= -125 && lng <= -65) || 
+            (lat >= 50 && lat <= 70 && lng >= -140 && lng <= -60)) {
+          mapData.push({ lat, lng });
+        }
+      }
+    }
+    
+    // Europe
+    for (let lat = 35; lat <= 70; lat += 3) {
+      for (let lng = -10; lng <= 40; lng += 4) {
+        mapData.push({ lat, lng });
+      }
+    }
+    
+    // Asia
+    for (let lat = 10; lat <= 70; lat += 3) {
+      for (let lng = 40; lng <= 140; lng += 4) {
+        mapData.push({ lat, lng });
+      }
+    }
+    
+    // Africa
+    for (let lat = -35; lat <= 35; lat += 3) {
+      for (let lng = -20; lng <= 50; lng += 4) {
+        mapData.push({ lat, lng });
+      }
+    }
+    
+    // Australia
+    for (let lat = -45; lat <= -10; lat += 3) {
+      for (let lng = 110; lng <= 155; lng += 4) {
+        mapData.push({ lat, lng });
+      }
+    }
+    
+    // South America
+    for (let lat = -55; lat <= 15; lat += 3) {
+      for (let lng = -80; lng <= -35; lng += 4) {
+        mapData.push({ lat, lng });
+      }
+    }
+
+    // Draw map dots
+    mapData.forEach(point => {
+      const { x, y, z } = latLngToXYZ(point.lat, point.lng, radius * 0.98, rotation);
+      const projected = project3DTo2D(x, y, z, centerX, centerY);
+      
+      if (projected.visible) {
+        const alpha = Math.max(0.1, projected.scale);
+        ctx.fillStyle = `rgba(100, 181, 246, ${alpha * 0.6})`;
+        ctx.beginPath();
+        ctx.arc(projected.x, projected.y, 1 * projected.scale, 0, Math.PI * 2);
+        ctx.fill();
+      }
+    });
+  };
+
+  // Draw connection lines on globe
+  const drawConnections = (ctx: CanvasRenderContext2D, centerX: number, centerY: number, radius: number, rotation: number, time: number) => {
+    connections.forEach((conn, index) => {
+      const fromNode = nodes.find(n => n.id === conn.from);
+      const toNode = nodes.find(n => n.id === conn.to);
+      
+      if (!fromNode || !toNode) return;
+
+      const from3D = latLngToXYZ(fromNode.lat, fromNode.lng, radius, rotation);
+      const to3D = latLngToXYZ(toNode.lat, toNode.lng, radius, rotation);
+      
+      const fromProjected = project3DTo2D(from3D.x, from3D.y, from3D.z, centerX, centerY);
+      const toProjected = project3DTo2D(to3D.x, to3D.y, to3D.z, centerX, centerY);
+
+      if (fromProjected.visible && toProjected.visible) {
+        // Draw curved connection line
+        const midX = (fromProjected.x + toProjected.x) / 2;
+        const midY = (fromProjected.y + toProjected.y) / 2;
+        const distance = Math.sqrt((toProjected.x - fromProjected.x) ** 2 + (toProjected.y - fromProjected.y) ** 2);
+        const curveHeight = distance * 0.2;
+
+        ctx.strokeStyle = conn.animated ? 'rgba(76, 175, 80, 0.8)' : 'rgba(100, 181, 246, 0.4)';
+        ctx.lineWidth = conn.animated ? 2 : 1;
+        ctx.beginPath();
+        ctx.moveTo(fromProjected.x, fromProjected.y);
+        ctx.quadraticCurveTo(midX, midY - curveHeight, toProjected.x, toProjected.y);
+        ctx.stroke();
+
+        // Animated data packets
+        if (conn.animated) {
+          const progress = ((time * 0.02 + index * 0.3) % 1);
+          const t = progress;
+          const packetX = (1 - t) * (1 - t) * fromProjected.x + 2 * (1 - t) * t * midX + t * t * toProjected.x;
+          const packetY = (1 - t) * (1 - t) * fromProjected.y + 2 * (1 - t) * t * (midY - curveHeight) + t * t * toProjected.y;
+
+          ctx.fillStyle = 'rgba(76, 175, 80, 1)';
+          ctx.beginPath();
+          ctx.arc(packetX, packetY, 3, 0, Math.PI * 2);
+          ctx.fill();
+        }
+      }
+    });
+  };
+
+  // Draw nodes on globe
+  const drawNodes = (ctx: CanvasRenderContext2D, centerX: number, centerY: number, radius: number, rotation: number, time: number) => {
+    nodes.forEach((node, index) => {
+      const { x, y, z } = latLngToXYZ(node.lat, node.lng, radius, rotation);
+      const projected = project3DTo2D(x, y, z, centerX, centerY);
+      
+      if (projected.visible) {
+        const pulsePhase = (time * 0.03 + index * 0.5) % (Math.PI * 2);
+        const pulseScale = node.isHub ? 1 + Math.sin(pulsePhase) * 0.3 : 1;
+        const nodeRadius = (node.size / 2) * projected.scale * pulseScale;
+
+        // Glow effect
+        const gradient = ctx.createRadialGradient(projected.x, projected.y, 0, projected.x, projected.y, nodeRadius * 2);
+        gradient.addColorStop(0, node.color);
+        gradient.addColorStop(0.7, node.color + '80');
+        gradient.addColorStop(1, 'transparent');
+        
+        ctx.fillStyle = gradient;
+        ctx.beginPath();
+        ctx.arc(projected.x, projected.y, nodeRadius * 2, 0, Math.PI * 2);
+        ctx.fill();
+
+        // Main node
+        ctx.fillStyle = node.color;
+        ctx.beginPath();
+        ctx.arc(projected.x, projected.y, nodeRadius, 0, Math.PI * 2);
+        ctx.fill();
+
+        // Hub ring
+        if (node.isHub) {
+          ctx.strokeStyle = 'rgba(255, 255, 255, 0.8)';
+          ctx.lineWidth = 2;
+          ctx.beginPath();
+          ctx.arc(projected.x, projected.y, nodeRadius + 2, 0, Math.PI * 2);
+          ctx.stroke();
+        }
+
+        // Inner bright core
+        ctx.fillStyle = 'rgba(255, 255, 255, 0.9)';
+        ctx.beginPath();
+        ctx.arc(projected.x, projected.y, nodeRadius * 0.4, 0, Math.PI * 2);
+        ctx.fill();
+      }
+    });
+  };
 
   useEffect(() => {
     const canvas = canvasRef.current;
-    const svg = svgRef.current;
-    if (!canvas || !svg) return;
+    if (!canvas) return;
 
     const ctx = canvas.getContext('2d');
     if (!ctx) return;
@@ -121,152 +269,61 @@ const GlobalNetworkMap: React.FC = () => {
     const animate = () => {
       ctx.clearRect(0, 0, canvas.width / 2, canvas.height / 2);
       
-      // Enhanced grid with subtle glow
-      ctx.strokeStyle = 'rgba(59, 130, 246, 0.15)';
-      ctx.lineWidth = 0.5;
-      ctx.setLineDash([1, 3]);
+      const centerX = canvas.width / 4;
+      const centerY = canvas.height / 4;
+      const radius = Math.min(centerX, centerY) * 0.7;
       
-      // Vertical grid lines
-      for (let i = 0; i <= 12; i++) {
-        const x = (i / 12) * (canvas.width / 2);
-        ctx.beginPath();
-        ctx.moveTo(x, 0);
-        ctx.lineTo(x, canvas.height / 2);
-        ctx.stroke();
-      }
+      // Auto-rotate the globe
+      const currentRotation = time * 0.5;
+      setRotation(currentRotation);
+
+      // Draw globe outline
+      ctx.strokeStyle = 'rgba(100, 181, 246, 0.3)';
+      ctx.lineWidth = 2;
+      ctx.beginPath();
+      ctx.arc(centerX, centerY, radius, 0, Math.PI * 2);
+      ctx.stroke();
+
+      // Draw grid lines (longitude and latitude)
+      ctx.strokeStyle = 'rgba(100, 181, 246, 0.1)';
+      ctx.lineWidth = 1;
       
-      // Horizontal grid lines
-      for (let i = 0; i <= 6; i++) {
-        const y = (i / 6) * (canvas.height / 2);
+      // Longitude lines
+      for (let lng = -180; lng <= 180; lng += 30) {
         ctx.beginPath();
-        ctx.moveTo(0, y);
-        ctx.lineTo(canvas.width / 2, y);
-        ctx.stroke();
-      }
-
-      ctx.setLineDash([]);
-
-      // Draw enhanced connections with multiple animation effects
-      connections.forEach((conn, index) => {
-        const fromNode = nodes.find(n => n.id === conn.from);
-        const toNode = nodes.find(n => n.id === conn.to);
-        
-        if (!fromNode || !toNode) return;
-
-        const from = projectToSVG(fromNode.x, fromNode.y, canvas.width / 2, canvas.height / 2);
-        const to = projectToSVG(toNode.x, toNode.y, canvas.width / 2, canvas.height / 2);
-
-        // Enhanced connection line with gradient
-        const gradient = ctx.createLinearGradient(from.x, from.y, to.x, to.y);
-        
-        if (conn.animated) {
-          // Animated primary connections
-          gradient.addColorStop(0, 'rgba(34, 197, 94, 0.8)');
-          gradient.addColorStop(0.5, 'rgba(59, 130, 246, 0.6)');
-          gradient.addColorStop(1, 'rgba(168, 85, 247, 0.8)');
-          ctx.strokeStyle = gradient;
-          ctx.lineWidth = 2;
-        } else {
-          // Static regional connections
-          gradient.addColorStop(0, 'rgba(59, 130, 246, 0.4)');
-          gradient.addColorStop(1, 'rgba(59, 130, 246, 0.2)');
-          ctx.strokeStyle = gradient;
-          ctx.lineWidth = 1;
-        }
-
-        ctx.beginPath();
-        ctx.moveTo(from.x, from.y);
-        ctx.lineTo(to.x, to.y);
-        ctx.stroke();
-
-        // Animated data flow for primary connections
-        if (conn.animated) {
-          const numPackets = 3;
-          for (let p = 0; p < numPackets; p++) {
-            const progress = ((time * 0.015 + index * 0.2 + p * 0.33) % 1);
-            const packetX = from.x + (to.x - from.x) * progress;
-            const packetY = from.y + (to.y - from.y) * progress;
-
-            // Glowing packet effect
-            const packetGradient = ctx.createRadialGradient(packetX, packetY, 0, packetX, packetY, 8);
-            packetGradient.addColorStop(0, 'rgba(34, 197, 94, 0.9)');
-            packetGradient.addColorStop(0.5, 'rgba(34, 197, 94, 0.5)');
-            packetGradient.addColorStop(1, 'rgba(34, 197, 94, 0)');
-            
-            ctx.fillStyle = packetGradient;
-            ctx.beginPath();
-            ctx.arc(packetX, packetY, 8, 0, Math.PI * 2);
-            ctx.fill();
-
-            // Inner bright core
-            ctx.fillStyle = 'rgba(255, 255, 255, 0.9)';
-            ctx.beginPath();
-            ctx.arc(packetX, packetY, 2, 0, Math.PI * 2);
-            ctx.fill();
+        for (let lat = -90; lat <= 90; lat += 5) {
+          const { x, y, z } = latLngToXYZ(lat, lng, radius, currentRotation);
+          const projected = project3DTo2D(x, y, z, centerX, centerY);
+          if (projected.visible) {
+            if (lat === -90) ctx.moveTo(projected.x, projected.y);
+            else ctx.lineTo(projected.x, projected.y);
           }
         }
-      });
-
-      // Enhanced nodes with better country representation
-      nodes.forEach((node, index) => {
-        const pos = projectToSVG(node.x, node.y, canvas.width / 2, canvas.height / 2);
-        
-        // Dynamic pulsing effect
-        const pulsePhase = (time * 0.025 + index * 0.4) % (Math.PI * 2);
-        const pulseScale = node.isHub ? 1 + Math.sin(pulsePhase) * 0.4 : 1 + Math.sin(pulsePhase) * 0.2;
-        const radius = (node.size / 2) * pulseScale;
-
-        // Country-specific enhanced colors
-        let nodeColor = 'rgba(59, 130, 246, 0.8)';
-        let glowColor = 'rgba(59, 130, 246, 0.3)';
-        
-        if (node.country === 'IN') {
-          nodeColor = node.isHub ? 'rgba(255, 153, 0, 1)' : 'rgba(255, 153, 0, 0.8)';
-          glowColor = 'rgba(255, 153, 0, 0.3)';
-        } else if (node.country === 'US') {
-          nodeColor = node.isHub ? 'rgba(239, 68, 68, 1)' : 'rgba(239, 68, 68, 0.8)';
-          glowColor = 'rgba(239, 68, 68, 0.3)';
-        } else if (node.country === 'CA') {
-          nodeColor = node.isHub ? 'rgba(34, 197, 94, 1)' : 'rgba(34, 197, 94, 0.8)';
-          glowColor = 'rgba(34, 197, 94, 0.3)';
-        }
-
-        // Multi-layer glow effect
-        for (let layer = 3; layer >= 1; layer--) {
-          const layerRadius = radius * (1 + layer * 0.5);
-          const opacity = 0.1 * (4 - layer);
-          
-          const layerGradient = ctx.createRadialGradient(pos.x, pos.y, 0, pos.x, pos.y, layerRadius);
-          layerGradient.addColorStop(0, nodeColor.replace(/,\s*[\d.]+\)/, `, ${opacity})`));
-          layerGradient.addColorStop(1, nodeColor.replace(/,\s*[\d.]+\)/, ', 0)'));
-          
-          ctx.fillStyle = layerGradient;
-          ctx.beginPath();
-          ctx.arc(pos.x, pos.y, layerRadius, 0, Math.PI * 2);
-          ctx.fill();
-        }
-
-        // Main node
-        ctx.fillStyle = nodeColor;
+        ctx.stroke();
+      }
+      
+      // Latitude lines
+      for (let lat = -60; lat <= 60; lat += 30) {
         ctx.beginPath();
-        ctx.arc(pos.x, pos.y, radius, 0, Math.PI * 2);
-        ctx.fill();
-
-        // Hub indicator ring
-        if (node.isHub) {
-          ctx.strokeStyle = 'rgba(255, 255, 255, 0.8)';
-          ctx.lineWidth = 2;
-          ctx.beginPath();
-          ctx.arc(pos.x, pos.y, radius + 3, 0, Math.PI * 2);
-          ctx.stroke();
+        for (let lng = -180; lng <= 180; lng += 5) {
+          const { x, y, z } = latLngToXYZ(lat, lng, radius, currentRotation);
+          const projected = project3DTo2D(x, y, z, centerX, centerY);
+          if (projected.visible) {
+            if (lng === -180) ctx.moveTo(projected.x, projected.y);
+            else ctx.lineTo(projected.x, projected.y);
+          }
         }
+        ctx.stroke();
+      }
 
-        // Inner bright core
-        ctx.fillStyle = 'rgba(255, 255, 255, 0.9)';
-        ctx.beginPath();
-        ctx.arc(pos.x, pos.y, radius * 0.3, 0, Math.PI * 2);
-        ctx.fill();
-      });
+      // Draw world map
+      drawWorldMap(ctx, centerX, centerY, radius, currentRotation);
+      
+      // Draw connections
+      drawConnections(ctx, centerX, centerY, radius, currentRotation, time);
+      
+      // Draw nodes
+      drawNodes(ctx, centerX, centerY, radius, currentRotation, time);
 
       time += 1;
       animationRef.current = requestAnimationFrame(animate);
@@ -282,19 +339,19 @@ const GlobalNetworkMap: React.FC = () => {
   }, []);
 
   return (
-    <div className="relative w-full h-[500px] bg-gradient-to-br from-gray-900 via-blue-900 to-purple-900 rounded-2xl overflow-hidden border border-gray-700">
-      {/* Animated background constellation */}
+    <div className="relative w-full h-[600px] bg-gradient-to-br from-gray-900 via-blue-900 to-purple-900 rounded-2xl overflow-hidden border border-gray-700">
+      {/* Animated background stars */}
       <div className="absolute inset-0">
-        {Array.from({ length: 80 }).map((_, i) => (
+        {Array.from({ length: 100 }).map((_, i) => (
           <motion.div
             key={i}
-            className="absolute w-1 h-1 bg-blue-400 rounded-full opacity-20"
+            className="absolute w-1 h-1 bg-blue-400 rounded-full opacity-30"
             style={{
               left: `${Math.random() * 100}%`,
               top: `${Math.random() * 100}%`,
             }}
             animate={{
-              opacity: [0.2, 0.6, 0.2],
+              opacity: [0.3, 0.8, 0.3],
               scale: [1, 1.5, 1],
             }}
             transition={{
@@ -307,36 +364,7 @@ const GlobalNetworkMap: React.FC = () => {
         ))}
       </div>
 
-      {/* World map SVG overlay */}
-      <svg
-        ref={svgRef}
-        className="absolute inset-0 w-full h-full opacity-20"
-        viewBox="0 0 800 400"
-      >
-        <defs>
-          <pattern id="worldPattern" patternUnits="userSpaceOnUse" width="50" height="50">
-            <circle cx="25" cy="25" r="1" fill="rgba(59, 130, 246, 0.3)" />
-          </pattern>
-        </defs>
-        
-        {/* Simplified continents outline */}
-        <g stroke="rgba(59, 130, 246, 0.3)" strokeWidth="1" fill="none">
-          {/* North America */}
-          <path d="M 100 80 Q 150 60 200 80 Q 250 70 280 90 Q 300 110 290 140 Q 280 170 250 180 Q 200 190 150 180 Q 120 170 100 150 Q 90 120 100 80 Z" />
-          
-          {/* Asia (India region) */}
-          <path d="M 500 120 Q 550 110 600 130 Q 620 150 610 180 Q 590 200 560 190 Q 530 185 510 170 Q 500 150 500 120 Z" />
-          
-          {/* Connection lines overlay */}
-          <g stroke="rgba(34, 197, 94, 0.2)" strokeWidth="1" strokeDasharray="2,4">
-            <line x1="180" y1="120" x2="560" y2="150" />
-            <line x1="200" y1="100" x2="580" y2="140" />
-            <line x1="220" y1="140" x2="540" y2="170" />
-          </g>
-        </g>
-      </svg>
-
-      {/* Main canvas for animations */}
+      {/* Main 3D Globe Canvas */}
       <canvas
         ref={canvasRef}
         className="absolute inset-0 w-full h-full"
@@ -346,78 +374,98 @@ const GlobalNetworkMap: React.FC = () => {
       {/* Enhanced overlay information */}
       <div className="absolute inset-0 pointer-events-none">
         {/* Country legend */}
-        <div className="absolute top-4 left-4 space-y-2">
-          <div className="flex items-center space-x-2 text-white/90 text-sm font-medium">
-            <div className="w-3 h-3 bg-orange-400 rounded-full shadow-lg"></div>
+        <div className="absolute top-6 left-6 space-y-3">
+          <motion.div 
+            className="flex items-center space-x-3 text-white/90 text-sm font-medium"
+            initial={{ opacity: 0, x: -20 }}
+            animate={{ opacity: 1, x: 0 }}
+            transition={{ delay: 0.5 }}
+          >
+            <div className="w-4 h-4 bg-orange-400 rounded-full shadow-lg border-2 border-white/50"></div>
             <span>India (HQ)</span>
-          </div>
-          <div className="flex items-center space-x-2 text-white/90 text-sm font-medium">
-            <div className="w-3 h-3 bg-red-400 rounded-full shadow-lg"></div>
+          </motion.div>
+          <motion.div 
+            className="flex items-center space-x-3 text-white/90 text-sm font-medium"
+            initial={{ opacity: 0, x: -20 }}
+            animate={{ opacity: 1, x: 0 }}
+            transition={{ delay: 0.7 }}
+          >
+            <div className="w-4 h-4 bg-red-400 rounded-full shadow-lg border-2 border-white/50"></div>
             <span>USA</span>
-          </div>
-          <div className="flex items-center space-x-2 text-white/90 text-sm font-medium">
-            <div className="w-3 h-3 bg-green-400 rounded-full shadow-lg"></div>
+          </motion.div>
+          <motion.div 
+            className="flex items-center space-x-3 text-white/90 text-sm font-medium"
+            initial={{ opacity: 0, x: -20 }}
+            animate={{ opacity: 1, x: 0 }}
+            transition={{ delay: 0.9 }}
+          >
+            <div className="w-4 h-4 bg-green-400 rounded-full shadow-lg border-2 border-white/50"></div>
             <span>Canada</span>
-          </div>
+          </motion.div>
         </div>
 
         {/* Live network status */}
-        <div className="absolute top-4 right-4">
-          <div className="flex items-center space-x-2 text-white/90 text-sm font-medium bg-black/20 backdrop-blur-sm rounded-lg px-3 py-2">
+        <motion.div 
+          className="absolute top-6 right-6"
+          initial={{ opacity: 0, y: -20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ delay: 1 }}
+        >
+          <div className="flex items-center space-x-2 text-white/90 text-sm font-medium bg-black/30 backdrop-blur-sm rounded-lg px-4 py-2 border border-white/20">
             <motion.div
               className="w-2 h-2 bg-green-400 rounded-full"
               animate={{ opacity: [1, 0.3, 1] }}
               transition={{ duration: 1.5, repeat: Infinity }}
             />
-            <span>Live Recruitment Network</span>
+            <span>Live Global Network</span>
           </div>
-        </div>
-
-        {/* Network statistics */}
-        <div className="absolute bottom-4 left-4 space-y-2">
-          <div className="text-white/80 text-xs font-medium bg-black/20 backdrop-blur-sm rounded px-2 py-1">
-            🏢 HQ: Noida, India
-          </div>
-          <div className="text-white/80 text-xs font-medium bg-black/20 backdrop-blur-sm rounded px-2 py-1">
-            🌐 Active in 13 Cities
-          </div>
-        </div>
-
-        {/* Real-time stats overlay */}
-        <motion.div
-          className="absolute bottom-1/4 right-1/4 text-center text-white"
-          initial={{ opacity: 0, scale: 0.8 }}
-          animate={{ opacity: 1, scale: 1 }}
-          transition={{ delay: 1, duration: 0.8 }}
-        >
-          <div className="text-3xl font-bold bg-gradient-to-r from-green-400 to-blue-400 bg-clip-text text-transparent">
-            150K+
-          </div>
-          <div className="text-xs opacity-80 font-medium">Global Talent Pool</div>
         </motion.div>
 
+        {/* Network statistics overlays */}
         <motion.div
-          className="absolute top-1/3 left-1/4 text-center text-white"
+          className="absolute bottom-20 right-20 text-center text-white"
           initial={{ opacity: 0, scale: 0.8 }}
           animate={{ opacity: 1, scale: 1 }}
           transition={{ delay: 1.5, duration: 0.8 }}
         >
-          <div className="text-3xl font-bold bg-gradient-to-r from-orange-400 to-red-400 bg-clip-text text-transparent">
-            24/7
+          <div className="text-4xl font-bold bg-gradient-to-r from-green-400 to-blue-400 bg-clip-text text-transparent">
+            150K+
           </div>
-          <div className="text-xs opacity-80 font-medium">Global Support</div>
+          <div className="text-sm opacity-80 font-medium">Global Talent Pool</div>
         </motion.div>
 
         <motion.div
-          className="absolute top-1/2 right-1/3 text-center text-white"
+          className="absolute top-32 left-1/4 text-center text-white"
           initial={{ opacity: 0, scale: 0.8 }}
           animate={{ opacity: 1, scale: 1 }}
           transition={{ delay: 2, duration: 0.8 }}
         >
-          <div className="text-3xl font-bold bg-gradient-to-r from-green-400 to-purple-400 bg-clip-text text-transparent">
+          <div className="text-4xl font-bold bg-gradient-to-r from-orange-400 to-red-400 bg-clip-text text-transparent">
+            24/7
+          </div>
+          <div className="text-sm opacity-80 font-medium">Global Support</div>
+        </motion.div>
+
+        <motion.div
+          className="absolute bottom-32 left-20 text-center text-white"
+          initial={{ opacity: 0, scale: 0.8 }}
+          animate={{ opacity: 1, scale: 1 }}
+          transition={{ delay: 2.5, duration: 0.8 }}
+        >
+          <div className="text-4xl font-bold bg-gradient-to-r from-green-400 to-purple-400 bg-clip-text text-transparent">
             3
           </div>
-          <div className="text-xs opacity-80 font-medium">Core Markets</div>
+          <div className="text-sm opacity-80 font-medium">Core Markets</div>
+        </motion.div>
+
+        {/* Interactive hint */}
+        <motion.div
+          className="absolute bottom-6 left-1/2 transform -translate-x-1/2 text-white/60 text-xs font-medium"
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          transition={{ delay: 3 }}
+        >
+          🌍 Interactive 3D Globe • Auto-rotating view
         </motion.div>
       </div>
     </div>
