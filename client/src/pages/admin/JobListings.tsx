@@ -64,19 +64,7 @@ export default function JobListings() {
     queryFn: async () => {
       const queryParams = buildQueryParams();
       console.log('Query params being sent:', queryParams); // Debug log
-      
-      // Get the JWT token from localStorage for admin authentication
-      const token = localStorage.getItem('niddik_auth_token');
-      const headers: HeadersInit = {};
-
-      if (token) {
-        headers['Authorization'] = `Bearer ${token}`;
-      }
-
-      const res = await fetch(`/api/job-listings?${queryParams}`, {
-        headers,
-        credentials: 'include'
-      });
+      const res = await fetch(`/api/job-listings?${queryParams}`);
       if (!res.ok) throw new Error("Failed to fetch job listings");
       return res.json();
     },

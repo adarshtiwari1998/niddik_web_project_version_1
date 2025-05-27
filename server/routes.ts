@@ -139,47 +139,6 @@ export async function registerRoutes(app: Express): Promise<Server> {
       const featured = req.query.featured === 'true' ? true : undefined;
       const priority = req.query.priority as string;
 
-      // Check if user is admin - if not, force status to be 'active' to hide draft jobs
-      let statusFilter = status;
-      let isAdmin = false;
-      
-      // Check JWT token for admin authentication
-      const authHeader = req.headers.authorization;
-      if (authHeader && authHeader.startsWith('Bearer ')) {
-        const token = authHeader.substring(7);
-        try {
-          const jwt = require('jsonwebtoken');
-          const decoded = jwt.verify(token, process.env.JWT_SECRET!) as { user: any };
-          const userId = decoded.user.id;
-          
-          // Check if this is an admin user
-          const user = await storage.getUserById(userId);
-          if (user && user.role === 'admin') {
-            isAdmin = true;
-          }
-        } catch (error) {
-          console.log("JWT verification failed for admin check");
-        }
-      }
-      
-      // Also check session-based authentication
-      if (req.user && req.user.role === 'admin') {
-        isAdmin = true;
-      }
-      
-      // For admin users, only filter by status if explicitly provided
-      if (!isAdmin) {
-        // Non-admin users can only see active jobs
-        statusFilter = 'active';
-      } else {
-        // Admin users: if no status filter specified or "all_statuses", show all
-        if (!status || status === "all_statuses") {
-          statusFilter = undefined; // Show all statuses
-        } else {
-          statusFilter = status; // Use the specific status filter
-        }
-      }
-
       const result = await storage.getJobListings({
         page,
         limit,
@@ -187,7 +146,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
         category,
         experienceLevel,
         jobType,
-        status: statusFilter,
+        status: (!status || status === "all_statuses") ? undefined : status,
         featured,
         priority: priority === "all_priorities" ? undefined : priority
       });
@@ -241,7 +200,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
   });
 
   // Get a single job listing by ID
-  app.get('/api/job-listings/:id', async (req: AuthenticatedRequest, res) => {
+  app.get('/api/job-listings/:id', async (req, res) => {
     try {
       const id = parseInt(req.params.id);
       if (isNaN(id)) {
@@ -253,14 +212,6 @@ export async function registerRoutes(app: Express): Promise<Server> {
 
       const jobListing = await storage.getJobListingById(id);
       if (!jobListing) {
-        return res.status(404).json({ 
-          success: false, 
-          message: "Job listing not found" 
-        });
-      }
-
-      // If user is not admin and job is draft, don't show it
-      if (jobListing.status === 'draft' && (!req.user || req.user.role !== 'admin')) {
         return res.status(404).json({ 
           success: false, 
           message: "Job listing not found" 
