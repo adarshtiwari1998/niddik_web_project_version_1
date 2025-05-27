@@ -22,21 +22,19 @@ const footerColumns: FooterColumn[] = [
   {
     title: "For Businesses",
     links: [
-      { label: "Enterprise", href: "/services" },
-      { label: "Hire Talent", href: "/services" },
-      { label: "Case Studies", href: "/clients" },
-      { label: "Resources", href: "/insights" },
-      { label: "Events", href: "/community-involvement" }
+      { label: "Services", href: "/services" },
+      { label: "Request Demo", href: "/request-demo" },
+      { label: "Our Clients", href: "/clients" },
+      { label: "Testimonials", href: "/testimonials" }
     ]
   },
   {
     title: "For Technologists",
     links: [
       { label: "Apply as Talent", href: "/careers" },
-      { label: "Learning Community", href: "/community-involvement" },
-      { label: "Tech Leadership", href: "/leadership-team" },
-      { label: "Remote Work", href: "/career-advice" },
-      { label: "Success Stories", href: "/testimonials" }
+      { label: "Career Advice", href: "/career-advice" },
+      { label: "Leadership Team", href: "/leadership-team" },
+      { label: "Community Involvement", href: "/community-involvement" }
     ]
   },
   {
@@ -50,26 +48,12 @@ const footerColumns: FooterColumn[] = [
     ]
   },
   {
-    title: "Insights & Resources",
-    links: [
-      { label: "AI Insights", href: "/insights" },
-      { label: "Facts & Trends", href: "/facts-and-trends" },
-      { label: "Whitepaper", href: "/whitepaper" },
-      { label: "Hiring Advice", href: "/hiring-advice" },
-      { label: "Career Advice", href: "/career-advice" },
-      { label: "Corporate Social Responsibilities", href: "/corporate-social-responsibilities" }
-    ]
-  },
-  {
     title: "About Niddik",
     links: [
       { label: "Our Story", href: "/about-us" },
       { label: "Why NiDDik", href: "/why-us" },
-      { label: "Leadership Team", href: "/leadership-team" },
-      { label: "Community Involvement", href: "/community-involvement" },
       { label: "FAQs", href: "/faqs" },
-      { label: "Contact Us", href: "/contact" },
-      { label: "Apply to Niddik", href: "/careers" }
+      { label: "Contact Us", href: "/contact" }
     ]
   }
 ];
@@ -78,11 +62,11 @@ const Footer = () => {
   return (
     <footer className="bg-andela-dark py-16">
       <Container>
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-6 gap-10">
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-8 lg:gap-10">
           {/* Logo and Description */}
-          <div className="lg:col-span-2">
+          <div className="lg:col-span-1">
             <Logo className="h-10 mb-6" white />
-            <p className="text-gray-300 mb-6">
+            <p className="text-gray-300 mb-6 text-sm">
               Niddik is a global talent marketplace that connects companies with vetted, remote technical talent in emerging markets.
             </p>
             <div className="flex space-x-4">
@@ -116,12 +100,12 @@ const Footer = () => {
 
           {/* Footer Links */}
           {footerColumns.map((column, index) => (
-            <div key={index}>
-              <h4 className="text-white font-semibold mb-4">{column.title}</h4>
+            <div key={index} className="lg:col-span-1">
+              <h4 className="text-white font-semibold mb-4 text-sm">{column.title}</h4>
               <ul className="space-y-3">
                 {column.links.map((link, idx) => (
                   <li key={idx}>
-                    <Link href={link.href} className="text-gray-300 hover:text-white transition-colors">
+                    <Link href={link.href} className="text-gray-300 hover:text-white transition-colors text-sm">
                       {link.label}
                     </Link>
                   </li>
