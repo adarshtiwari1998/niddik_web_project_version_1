@@ -139,6 +139,14 @@ export async function registerRoutes(app: Express): Promise<Server> {
       const featured = req.query.featured === 'true' ? true : undefined;
       const priority = req.query.priority as string;
 
+      // Check if user is admin - if not, force status to be 'active' to hide draft jobs
+      let statusFilter = status;
+      if (!req.user || req.user.role !== 'admin') {
+        statusFilter = 'active';
+      } else if (!status || status === "all_statuses") {
+        statusFilter = undefined;
+      }
+
       const result = await storage.getJobListings({
         page,
         limit,
@@ -146,7 +154,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
         category,
         experienceLevel,
         jobType,
-        status: (!status || status === "all_statuses") ? undefined : status,
+        status: statusFilter,
         featured,
         priority: priority === "all_priorities" ? undefined : priority
       });
@@ -200,7 +208,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
   });
 
   // Get a single job listing by ID
-  app.get('/api/job-listings/:id', async (req, res) => {
+  app.get('/api/job-listings/:id', async (req: AuthenticatedRequest, res) => {
     try {
       const id = parseInt(req.params.id);
       if (isNaN(id)) {
@@ -212,6 +220,14 @@ export async function registerRoutes(app: Express): Promise<Server> {
 
       const jobListing = await storage.getJobListingById(id);
       if (!jobListing) {
+        return res.status(404).json({ 
+          success: false, 
+          message: "Job listing not found" 
+        });
+      }
+
+      // If user is not admin and job is draft, don't show it
+      if (jobListing.status === 'draft' && (!req.user || req.user.role !== 'admin')) {
         return res.status(404).json({ 
           success: false, 
           message: "Job listing not found" 
