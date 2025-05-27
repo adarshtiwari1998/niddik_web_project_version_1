@@ -59,11 +59,11 @@ const navItems: NavItem[] = [
     label: "Client",
     dropdown: [
       { label: "Our Clients", href: "/clients" },
+      { label: "Testimonials", href: "/testimonials" },
       { label: "IT", href: "/partners/it" },
       { label: "Non-IT", href: "/partners/non-it" },
       { label: "Healthcare", href: "/partners/healthcare" },
       { label: "Pharma", href: "#" },
-      { label: "Testimonials", href: "/testimonials" },
       { label: "Case Studies", href: "#" },
       // { label: "Learning Community", href: "#" },
       // { label: "Expert Network", href: "#" }
