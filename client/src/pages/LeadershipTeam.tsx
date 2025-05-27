@@ -330,7 +330,7 @@ const LeadershipTeam = () => {
               <Button 
                 variant="outline" 
                 size="lg"
-                className="border-2 border-white text-white hover:bg-white/10 text-lg px-8 py-4 h-auto font-semibold"
+                className="border-2 border-white text-andela-green hover:bg-white/10 text-lg px-8 py-4 h-auto font-semibold"
               >
                 <span className="flex items-center">
                   Learn Our Story
