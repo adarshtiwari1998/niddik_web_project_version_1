@@ -43,6 +43,9 @@ interface AuthenticatedRequest extends Request {
 }
 
 export async function registerRoutes(app: Express): Promise<Server> {
+  // Set up authentication first before any routes
+  setupAuth(app);
+
   // API endpoint for contact form submissions
   app.post('/api/contact', async (req, res) => {
     try {
@@ -370,9 +373,6 @@ export async function registerRoutes(app: Express): Promise<Server> {
       });
     }
   });
-
-  // Set up authentication
-  setupAuth(app);
 
   // Submitted Candidates API Endpoints
 
