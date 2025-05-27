@@ -226,6 +226,10 @@ html, body {
   transform: translateX(0);
 }
 
+.mobile-menu.open {
+  transform: translateX(0);
+}
+
 /* Hero video styling */
 .hero-video {
   object-fit: cover;

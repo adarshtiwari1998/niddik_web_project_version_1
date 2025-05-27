@@ -476,7 +476,7 @@ const Navbar: React.FC<NavbarProps> = ({ hasAnnouncementAbove = true }) => {
       {/* Mobile Menu */}
       <div 
         className={cn(
-          "fixed left-0 w-4/5 bg-white shadow-xl z-[9999] p-6 overflow-y-auto mobile-menu",
+          "fixed left-0 w-full bg-white shadow-xl z-[9999] p-6 overflow-y-auto mobile-menu",
           isMobileMenuOpen && "open"
         )}
         style={{
