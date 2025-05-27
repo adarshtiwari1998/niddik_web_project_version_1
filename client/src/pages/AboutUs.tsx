@@ -32,7 +32,7 @@ As Abhishek's career progressed, he took on increasingly senior leadership roles
       company: "NIDDIKKARE LLP",
       image: "https://res.cloudinary.com/dhanz6zty/image/upload/v1748340984/niddik-leader-ship-team-samar-husain_gczwmu.png",
       bio: "A trailblazing expert in biotechnology and life sciences, renowned for his groundbreaking work in genomics, molecular biology, and microbiology with over 25 years of experience.",
-      linkedinUrl: "#",
+      linkedinUrl: " https://www.linkedin.com/in/dr-samar-husain-naqvi-1b73a013/",
       twitterUrl: "#",
       fullBio: `Dr. Samar Husain Naqvi is a trailblazing expert in biotechnology and life sciences, renowned for his groundbreaking work in genomics, molecular biology, and microbiology. With a career spanning over 25 years, he has established himself as a leading authority in the development of innovative diagnostic solutions, leveraging cutting-edge technologies to drive medical advancements.
 
@@ -48,7 +48,7 @@ As a testament to his dedication and expertise, Dr. Naqvi has garnered numerous 
       company: "NIDDIKKARE LLP",
       image: "https://res.cloudinary.com/dhanz6zty/image/upload/v1748341074/niddik-leader-ship-team-dr-abhishek_jwetmz.png",
       bio: "A highly accomplished researcher and scientist with over 25 years' strong foundation in the fields of nanomedicine and biotechnology, holding a Ph.D. in Bio-Science (Nanomedicine).",
-      linkedinUrl: "#",
+      linkedinUrl: "https://www.linkedin.com/in/dr-abhishek-chanchal-42007457/",
       twitterUrl: "#",
       fullBio: `Dr. Abhishek Chanchal is a highly accomplished researcher and scientist with over 25 years' strong foundation in the fields of nanomedicine and biotechnology. Holding a Ph.D. in Bio-Science (Nanomedicine) from the esteemed Jamia Millia Islamia, Delhi, he has developed a profound expertise in the design, formulation, and characterization of nanoparticles for targeted drug delivery.
 
