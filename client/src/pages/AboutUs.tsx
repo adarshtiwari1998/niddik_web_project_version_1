@@ -438,7 +438,7 @@ As Abhishek's career progressed, he took on increasingly senior leadership roles
                 <img
                   src="https://res.cloudinary.com/dhanz6zty/image/upload/v1748374942/niddik_about-us_Shri_Satyendra_Prasad_Shrivastava_isec6d.png"
                   alt="Late Shri Satyendra Prasad Shrivastava"
-                  className="w-full h-auto rounded-xl shadow-2xl"
+                  className="w-full h-80 object-cover object-top rounded-xl shadow-2xl"
                 />
                 
                 {/* Overlay with inspirational quote */}
