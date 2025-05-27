@@ -91,33 +91,7 @@ const CorporateResponsibilities = () => {
         </Container>
       </div>
 
-      {/* Impact Metrics with 3D Cards */}
-      <section className="py-20 bg-white">
-        <Container>
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-            {initiatives.map((initiative, index) => (
-              <motion.div
-                key={index}
-                initial={{ opacity: 0, y: 20 }}
-                whileInView={{ opacity: 1, y: 0 }}
-                whileHover={{ scale: 1.02, rotateY: 5 }}
-                transition={{ duration: 0.4 }}
-                className="relative bg-white rounded-2xl p-8 shadow-lg hover:shadow-xl border border-gray-100"
-              >
-                <div className={`absolute inset-0 rounded-2xl bg-gradient-to-br ${initiative.color} opacity-10`} />
-                <div className="relative">
-                  <div className="mb-6">{initiative.icon}</div>
-                  <h3 className="text-2xl font-bold mb-4 text-gray-900">{initiative.title}</h3>
-                  <p className="text-gray-700 mb-6">{initiative.description}</p>
-                  <div className="text-lg font-semibold text-emerald-600">
-                    {initiative.impact}
-                  </div>
-                </div>
-              </motion.div>
-            ))}
-          </div>
-        </Container>
-      </section>
+      
 
       {/* Revolutionary CSR Initiatives - Unique Section */}
       <section className="py-20 bg-gradient-to-br from-gray-50 to-blue-50/30 relative overflow-hidden">
@@ -476,52 +450,7 @@ const CorporateResponsibilities = () => {
         </Container>
       </section>
 
-      {/* Get Involved Section */}
-      <section className="py-20 bg-gradient-to-br from-emerald-500 to-blue-600 text-white">
-        <Container>
-          <div className="max-w-4xl mx-auto text-center">
-            <motion.div
-              initial={{ opacity: 0, y: 20 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              className="space-y-8"
-            >
-              <h2 className="text-4xl font-bold mb-6">Join Our Mission</h2>
-              <p className="text-xl opacity-95 mb-12">
-                Be part of the change. Partner with us to create a more inclusive and sustainable tech future.
-              </p>
-              <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-                {[
-                  {
-                    title: "Partner",
-                    icon: <Heart className="w-8 h-8" />,
-                    description: "Collaborate on initiatives"
-                  },
-                  {
-                    title: "Volunteer",
-                    icon: <Sparkles className="w-8 h-8" />,
-                    description: "Share your expertise"
-                  },
-                  {
-                    title: "Innovate",
-                    icon: <Lightbulb className="w-8 h-8" />,
-                    description: "Propose new solutions"
-                  }
-                ].map((item, index) => (
-                  <motion.div
-                    key={index}
-                    whileHover={{ y: -5 }}
-                    className="bg-white/15 rounded-xl p-8 backdrop-blur-sm border border-white/20 hover:bg-white/20 transition-all duration-300"
-                  >
-                    <div className="mb-4">{item.icon}</div>
-                    <h3 className="text-xl font-bold mb-2">{item.title}</h3>
-                    <p className="opacity-95">{item.description}</p>
-                  </motion.div>
-                ))}
-              </div>
-            </motion.div>
-          </div>
-        </Container>
-      </section>
+      
 
 
       <Footer />
