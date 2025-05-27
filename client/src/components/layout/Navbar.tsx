@@ -474,10 +474,16 @@ const Navbar: React.FC<NavbarProps> = ({ hasAnnouncementAbove = true }) => {
       </Container>
 
       {/* Mobile Menu */}
-      <div className={cn(
-        "fixed top-0 left-0 h-full w-4/5 bg-white shadow-xl z-[9999] p-6 overflow-y-auto mobile-menu",
-        isMobileMenuOpen && "open"
-      )}>
+      <div 
+        className={cn(
+          "fixed left-0 w-4/5 bg-white shadow-xl z-[9999] p-6 overflow-y-auto mobile-menu",
+          isMobileMenuOpen && "open"
+        )}
+        style={{
+          top: isTransparent ? '0px' : `${hasAnnouncementAbove ? '112px' : '72px'}`,
+          height: isTransparent ? '100vh' : `calc(100vh - ${hasAnnouncementAbove ? '112px' : '72px'})`
+        }}
+      >
         <div className="flex justify-between items-center mb-8">
           <div className="flex flex-col">
             <div className="flex flex-col items-center">
