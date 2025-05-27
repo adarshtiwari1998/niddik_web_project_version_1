@@ -1,269 +1,530 @@
 
-import { motion } from "framer-motion";
-import { useState } from "react";
-import { ArrowRight, BarChart2, TrendingUp, Users, Globe, BrainCircuit, Building, Clock, Layers, Users2, Network, ChartBar, GitBranch, Gauge, LineChart, Shield } from "lucide-react";
+import { motion, useScroll, useTransform } from "framer-motion";
+import { useState, useRef } from "react";
+import { TrendingUp, Globe, Building, Users, ChevronRight, Play, Pause, BarChart3, DollarSign, MapPin, Briefcase, ArrowUpRight, Zap, Target, Brain, Heart, Wrench } from "lucide-react";
 import Container from "@/components/ui/container";
 import Navbar from "@/components/layout/Navbar";
 import Footer from "@/components/layout/Footer";
 import AnnouncementBar from "@/components/layout/AnnouncementBar";
+import { Button } from "@/components/ui/button";
 
 const FactsAndTrends = () => {
-    const [isAnnouncementVisible, setIsAnnouncementVisible] = useState(true);
-    
-      const handleAnnouncementVisibilityChange = (isVisible: boolean) => {
-        setIsAnnouncementVisible(isVisible);
-      };
-    
-  const trends = [
+  const [isAnnouncementVisible, setIsAnnouncementVisible] = useState(true);
+  const [isAnimating, setIsAnimating] = useState(true);
+  const containerRef = useRef<HTMLDivElement>(null);
+  
+  const { scrollYProgress } = useScroll({
+    target: containerRef,
+    offset: ["start end", "end start"]
+  });
+
+  const y = useTransform(scrollYProgress, [0, 1], ["0%", "50%"]);
+  const opacity = useTransform(scrollYProgress, [0, 0.5, 1], [0.3, 1, 0.3]);
+
+  const handleAnnouncementVisibilityChange = (isVisible: boolean) => {
+    setIsAnnouncementVisible(isVisible);
+  };
+
+  const marketData = {
+    current: { value: 757, year: 2024, label: "Current Market Size" },
+    projected: { value: 2292.24, year: 2033, label: "Projected Market Size" },
+    growth: { value: 13.1, label: "CAGR %" }
+  };
+
+  const keyPlayers = [
     {
-      title: "AI-Driven Recruitment",
-      stat: "73%",
-      description: "Increase in hiring efficiency through AI-powered candidate matching",
-      icon: <BrainCircuit className="w-8 h-8 text-blue-400" />
+      name: "Randstad",
+      revenue: 29.5,
+      growth: 4.1,
+      country: "Netherlands",
+      description: "Global leader in workforce solutions",
+      color: "from-blue-500 to-blue-700"
     },
     {
-      title: "Remote Work Evolution",
-      stat: "85%",
-      description: "Of tech companies now offer permanent remote work options",
-      icon: <Globe className="w-8 h-8 text-green-400" />
+      name: "Adecco Group",
+      revenue: 19.7,
+      growth: 4.5,
+      country: "Switzerland",
+      description: "World's largest staffing firm",
+      color: "from-purple-500 to-purple-700"
     },
     {
-      title: "Skill-Based Hiring",
-      stat: "64%",
-      description: "Companies prioritizing skills over traditional qualifications",
-      icon: <Users className="w-8 h-8 text-purple-400" />
+      name: "ManpowerGroup",
+      revenue: 20.4,
+      growth: 3.2,
+      country: "USA",
+      description: "Pioneering workforce solutions",
+      color: "from-green-500 to-green-700"
     }
   ];
 
-  const rpoServices = [
+  const keyTrends = [
     {
-      title: "Full RPO",
-      stats: [
-        { value: "40%", label: "Cost Reduction" },
-        { value: "60%", label: "Time-to-Hire Improvement" }
-      ],
-      features: ["End-to-end recruitment", "Dedicated team", "Complete process ownership"],
-      icon: <Building className="w-12 h-12 text-blue-400" />
+      title: "Digital Transformation",
+      description: "AI and automation revolutionizing recruitment efficiency and candidate matching",
+      icon: <Brain className="w-8 h-8" />,
+      growth: "85%",
+      metric: "Efficiency Increase",
+      color: "from-cyan-400 to-blue-600"
     },
     {
-      title: "On-Demand RPO",
-      stats: [
-        { value: "48h", label: "Average Response Time" },
-        { value: "95%", label: "Client Satisfaction" }
-      ],
-      features: ["Flexible scaling", "Pay-per-hire", "Immediate support"],
-      icon: <Clock className="w-12 h-12 text-green-400" />
+      title: "Temporary Staffing",
+      description: "Companies embracing flexible workforce models for changing business needs",
+      icon: <Users className="w-8 h-8" />,
+      growth: "65%",
+      metric: "Market Growth",
+      color: "from-purple-400 to-pink-600"
     },
     {
-      title: "Hybrid RPO",
-      stats: [
-        { value: "35%", label: "Resource Optimization" },
-        { value: "50%", label: "Process Efficiency" }
-      ],
-      features: ["Customized solution", "Balanced approach", "Strategic support"],
-      icon: <Layers className="w-12 h-12 text-purple-400" />
-    },
-    {
-      title: "Contingent",
-      stats: [
-        { value: "24h", label: "Talent Access" },
-        { value: "80%", label: "Success Rate" }
-      ],
-      features: ["Quick deployment", "Quality assurance", "Risk management"],
-      icon: <Users2 className="w-12 h-12 text-orange-400" />
+      title: "Remote Work Revolution",
+      description: "Global talent pools accessible through remote work transformation",
+      icon: <Globe className="w-8 h-8" />,
+      growth: "120%",
+      metric: "Remote Positions",
+      color: "from-green-400 to-teal-600"
     }
   ];
 
-  const adaptiveHiringMetrics = [
+  const soughtAfterPositions = [
     {
-      title: "AI-Powered Matching",
-      value: "93%",
-      description: "Candidate-role fit accuracy",
-      icon: <BrainCircuit className="w-10 h-10 text-blue-400" />
+      category: "Technology",
+      positions: ["Software Engineers", "Data Scientists", "IT Support Specialists"],
+      icon: <Brain className="w-12 h-12" />,
+      demand: "Very High",
+      growth: "+35%",
+      color: "from-blue-500 to-indigo-600"
     },
     {
-      title: "Process Optimization",
-      value: "45%",
-      description: "Reduction in time-to-hire",
-      icon: <Gauge className="w-10 h-10 text-green-400" />
+      category: "Sales & Marketing",
+      positions: ["Sales Representatives", "Digital Marketing Specialists", "Growth Hackers"],
+      icon: <Target className="w-12 h-12" />,
+      demand: "High",
+      growth: "+28%",
+      color: "from-purple-500 to-pink-600"
     },
     {
-      title: "Quality of Hire",
-      value: "87%",
-      description: "Long-term retention rate",
-      icon: <Shield className="w-10 h-10 text-purple-400" />
+      category: "Healthcare",
+      positions: ["Nurses", "Healthcare Assistants", "Medical Technicians"],
+      icon: <Heart className="w-12 h-12" />,
+      demand: "Critical",
+      growth: "+42%",
+      color: "from-red-500 to-orange-600"
+    },
+    {
+      category: "Engineering",
+      positions: ["Site Managers", "Project Engineers", "Infrastructure Specialists"],
+      icon: <Wrench className="w-12 h-12" />,
+      demand: "High",
+      growth: "+31%",
+      color: "from-green-500 to-teal-600"
+    }
+  ];
+
+  const geographicalData = [
+    {
+      region: "North America",
+      description: "Largest market driven by technology and healthcare sectors",
+      growth: "+15.2%",
+      focus: "Tech & Healthcare",
+      color: "bg-blue-500"
+    },
+    {
+      region: "Europe",
+      description: "Strong growth in manufacturing and financial services",
+      growth: "+11.8%",
+      focus: "Manufacturing & Finance",
+      color: "bg-purple-500"
+    },
+    {
+      region: "Asia-Pacific",
+      description: "Rapid expansion through digital platform adoption",
+      growth: "+18.7%",
+      focus: "Digital Transformation",
+      color: "bg-green-500"
     }
   ];
 
   return (
-    <div className="min-h-screen bg-white">
-       {/* Fixed header components */}
-       <AnnouncementBar 
-        text="Download our new whitepaper on scaling tech teams effectively."
-        linkText="Get it now"
+    <div className="min-h-screen bg-gradient-to-br from-slate-900 via-blue-900 to-indigo-900 text-white overflow-hidden">
+      <AnnouncementBar 
+        text="Download our comprehensive market insights report"
+        linkText="Get Report"
         linkUrl="/whitepaper"
-        bgColor="bg-green-600" 
+        bgColor="bg-gradient-to-r from-blue-600 to-purple-600" 
         textColor="text-white"
         onVisibilityChange={handleAnnouncementVisibilityChange}
       />
       <Navbar hasAnnouncementAbove={isAnnouncementVisible} />
       
-      {/* Hero Section */}
-      <div className="relative overflow-hidden mt-6 pt-32 pb-20 bg-gradient-to-b from-blue-50 to-white">
-        <Container>
+      {/* Animated Background */}
+      <div className="fixed inset-0 z-0">
+        <div className="absolute inset-0 bg-[url('/circuit-board-pattern.svg')] opacity-5"></div>
+        {Array.from({ length: 100 }).map((_, i) => (
           <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.8 }}
-            className="text-center"
-          >
-            <h1 className="text-5xl md:text-7xl pb-6 font-bold bg-gradient-to-r from-blue-400 to-green-400 bg-clip-text text-transparent">
-              Facts & Trends
-            </h1>
-            <p className="text-xl text-gray-600 max-w-3xl mx-auto">
-              Discover the latest insights and trends shaping the future of tech recruitment and workforce evolution
-            </p>
-          </motion.div>
-        </Container>
+            key={i}
+            className="absolute w-1 h-1 bg-blue-400 rounded-full"
+            initial={{
+              x: Math.random() * window.innerWidth,
+              y: Math.random() * window.innerHeight,
+              opacity: 0
+            }}
+            animate={{
+              x: Math.random() * window.innerWidth,
+              y: Math.random() * window.innerHeight,
+              opacity: [0, 1, 0]
+            }}
+            transition={{
+              duration: Math.random() * 5 + 3,
+              repeat: Infinity,
+              delay: Math.random() * 2
+            }}
+          />
+        ))}
       </div>
 
-      {/* Trends Grid */}
-      <section className="py-20 bg-blue-50/30">
-        <Container>
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-            {trends.map((trend, index) => (
-              <motion.div
-                key={index}
-                initial={{ opacity: 0, y: 20 }}
-                whileInView={{ opacity: 1, y: 0 }}
-                transition={{ duration: 0.5, delay: index * 0.2 }}
-                className="bg-white rounded-xl p-8 border border-gray-100 hover:border-blue-200 transition-all shadow-sm hover:shadow-md"
-              >
-                <div className="mb-4">{trend.icon}</div>
-                <h3 className="text-2xl font-bold text-gray-800 mb-2">{trend.title}</h3>
-                <p className="text-4xl font-bold text-blue-400 mb-4">{trend.stat}</p>
-                <p className="text-gray-600">{trend.description}</p>
-              </motion.div>
-            ))}
-          </div>
-        </Container>
-      </section>
-
-      {/* RPO Services Section */}
-      <section className="py-20">
+      {/* Hero Section */}
+      <section className="relative z-10 pt-32 pb-20">
         <Container>
           <motion.div
-            initial={{ opacity: 0 }}
-            whileInView={{ opacity: 1 }}
-            transition={{ duration: 0.8 }}
-            className="text-center mb-16"
+            initial={{ opacity: 0, y: 30 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 1 }}
+            className="text-center max-w-6xl mx-auto"
           >
-            <h2 className="text-4xl font-bold text-gray-800 mb-6">
-              RPO Services Insights
-            </h2>
-            <p className="text-xl text-gray-600 max-w-3xl mx-auto">
-              Explore the impact and efficiency of our various RPO service models
+            <div className="flex items-center justify-center mb-8">
+              <BarChart3 className="w-10 h-10 text-blue-400 mr-4" />
+              <span className="text-xl font-semibold text-blue-300 tracking-wider">MARKET INTELLIGENCE</span>
+            </div>
+            
+            <h1 className="text-6xl lg:text-8xl font-bold mb-8 bg-gradient-to-r from-blue-400 via-purple-400 to-cyan-400 bg-clip-text text-transparent leading-tight">
+              Global Recruitment
+              <br />
+              Market Insights
+            </h1>
+            
+            <p className="text-2xl text-blue-200 mb-12 leading-relaxed max-w-4xl mx-auto">
+              Discover the explosive growth trends, key players, and emerging opportunities 
+              shaping the future of talent acquisition worldwide
             </p>
-          </motion.div>
 
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
-            {rpoServices.map((service, index) => (
+            {/* Market Size Showcase */}
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-8 mb-12">
               <motion.div
-                key={index}
-                initial={{ opacity: 0, y: 20 }}
-                whileInView={{ opacity: 1, y: 0 }}
-                transition={{ duration: 0.5, delay: index * 0.2 }}
-                className="bg-gradient-to-b from-white to-blue-50/30 rounded-xl p-8 border border-gray-100 hover:shadow-lg transition-all"
+                initial={{ scale: 0.8, opacity: 0 }}
+                animate={{ scale: 1, opacity: 1 }}
+                transition={{ delay: 0.5 }}
+                className="relative"
               >
-                <div className="mb-6">{service.icon}</div>
-                <h3 className="text-2xl font-bold text-gray-800 mb-4">{service.title}</h3>
-                
-                <div className="space-y-4 mb-6">
-                  {service.stats.map((stat, idx) => (
-                    <div key={idx} className="flex items-center gap-2">
-                      <span className="text-2xl font-bold text-blue-500">{stat.value}</span>
-                      <span className="text-gray-600">{stat.label}</span>
-                    </div>
-                  ))}
+                <div className="bg-gradient-to-br from-blue-600/20 to-blue-800/20 backdrop-blur-sm rounded-2xl p-8 border border-blue-400/20">
+                  <div className="text-5xl font-bold text-blue-400 mb-2">${marketData.current.value}B</div>
+                  <div className="text-blue-200">{marketData.current.label}</div>
+                  <div className="text-sm text-blue-300 mt-1">{marketData.current.year}</div>
                 </div>
-
-                <ul className="space-y-2">
-                  {service.features.map((feature, idx) => (
-                    <li key={idx} className="flex items-center gap-2 text-gray-600">
-                      <ArrowRight className="w-4 h-4 text-green-400" />
-                      {feature}
-                    </li>
-                  ))}
-                </ul>
               </motion.div>
-            ))}
-          </div>
+              
+              <motion.div
+                initial={{ scale: 0.8, opacity: 0 }}
+                animate={{ scale: 1, opacity: 1 }}
+                transition={{ delay: 0.7 }}
+                className="relative"
+              >
+                <div className="bg-gradient-to-br from-purple-600/20 to-purple-800/20 backdrop-blur-sm rounded-2xl p-8 border border-purple-400/20">
+                  <div className="text-5xl font-bold text-purple-400 mb-2">${marketData.projected.value}B</div>
+                  <div className="text-purple-200">{marketData.projected.label}</div>
+                  <div className="text-sm text-purple-300 mt-1">{marketData.projected.year}</div>
+                </div>
+              </motion.div>
+              
+              <motion.div
+                initial={{ scale: 0.8, opacity: 0 }}
+                animate={{ scale: 1, opacity: 1 }}
+                transition={{ delay: 0.9 }}
+                className="relative"
+              >
+                <div className="bg-gradient-to-br from-green-600/20 to-green-800/20 backdrop-blur-sm rounded-2xl p-8 border border-green-400/20">
+                  <div className="text-5xl font-bold text-green-400 mb-2">{marketData.growth.value}%</div>
+                  <div className="text-green-200">{marketData.growth.label}</div>
+                  <div className="text-sm text-green-300 mt-1">Annual Growth</div>
+                </div>
+              </motion.div>
+            </div>
+          </motion.div>
         </Container>
       </section>
 
-      {/* Adaptive Hiring Impact */}
-      <section className="py-20 bg-gradient-to-b from-blue-50/50 to-white">
+      {/* Key Players Section */}
+      <section className="relative z-10 py-20">
         <Container>
           <motion.div
             initial={{ opacity: 0, y: 20 }}
             whileInView={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.8 }}
-            className="max-w-4xl mx-auto"
+            viewport={{ once: true }}
+            className="text-center mb-16"
           >
-            <div className="text-center mb-12">
-              <h2 className="text-4xl font-bold text-gray-800 mb-4">
-                Adaptive Hiring Impact
-              </h2>
-              <p className="text-xl text-gray-600">
-                Revolutionary recruitment approach powered by AI and data analytics
-              </p>
-            </div>
+            <h2 className="text-5xl font-bold mb-6 bg-gradient-to-r from-blue-400 to-purple-400 bg-clip-text text-transparent">
+              Market Leaders
+            </h2>
+            <p className="text-xl text-blue-200 max-w-3xl mx-auto">
+              The global giants driving innovation in workforce solutions
+            </p>
+          </motion.div>
 
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-              {adaptiveHiringMetrics.map((metric, index) => (
-                <motion.div
-                  key={index}
-                  initial={{ opacity: 0, scale: 0.9 }}
-                  whileInView={{ opacity: 1, scale: 1 }}
-                  transition={{ duration: 0.5, delay: index * 0.2 }}
-                  className="bg-white rounded-xl p-8 border border-gray-100 shadow-sm hover:shadow-md transition-all text-center"
-                >
-                  <div className="flex justify-center mb-4">{metric.icon}</div>
-                  <h3 className="text-xl font-bold text-gray-800 mb-2">{metric.title}</h3>
-                  <p className="text-4xl font-bold text-blue-500 mb-2">{metric.value}</p>
-                  <p className="text-gray-600">{metric.description}</p>
-                </motion.div>
-              ))}
-            </div>
-
-            {/* Interactive Graph Section */}
-            <motion.div
-              initial={{ opacity: 0, y: 20 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.8, delay: 0.4 }}
-              className="mt-16 bg-white rounded-xl p-8 border border-gray-100 shadow-sm"
-            >
-              <div className="flex items-center justify-between mb-8">
-                <h3 className="text-2xl font-bold text-gray-800">Performance Metrics</h3>
-                <div className="flex gap-4">
-                  <LineChart className="w-6 h-6 text-blue-400" />
-                  <ChartBar className="w-6 h-6 text-green-400" />
-                  <GitBranch className="w-6 h-6 text-purple-400" />
+          <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
+            {keyPlayers.map((player, index) => (
+              <motion.div
+                key={index}
+                initial={{ opacity: 0, y: 20 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                viewport={{ once: true }}
+                transition={{ delay: index * 0.2 }}
+                whileHover={{ scale: 1.05, rotateY: 5 }}
+                className="group relative"
+              >
+                <div className={`bg-gradient-to-br ${player.color} p-8 rounded-2xl shadow-2xl relative overflow-hidden`}>
+                  {/* Background Pattern */}
+                  <div className="absolute inset-0 opacity-10">
+                    <div className="absolute top-0 right-0 w-32 h-32 transform rotate-45 translate-x-8 -translate-y-8">
+                      <div className="w-full h-full bg-white/20 rounded-lg"></div>
+                    </div>
+                  </div>
+                  
+                  <div className="relative z-10">
+                    <div className="flex items-center justify-between mb-6">
+                      <Building className="w-10 h-10 text-white/80" />
+                      <span className="text-sm text-white/70">{player.country}</span>
+                    </div>
+                    
+                    <h3 className="text-2xl font-bold text-white mb-2">{player.name}</h3>
+                    <p className="text-white/80 mb-6">{player.description}</p>
+                    
+                    <div className="space-y-4">
+                      <div className="flex justify-between items-center">
+                        <span className="text-white/80">Revenue</span>
+                        <span className="text-2xl font-bold text-white">${player.revenue}B</span>
+                      </div>
+                      <div className="flex justify-between items-center">
+                        <span className="text-white/80">Growth</span>
+                        <span className="text-xl font-bold text-green-300">+{player.growth}%</span>
+                      </div>
+                    </div>
+                    
+                    <div className="mt-6 w-full bg-white/20 rounded-full h-2">
+                      <motion.div
+                        initial={{ width: 0 }}
+                        whileInView={{ width: `${player.growth * 20}%` }}
+                        transition={{ duration: 1, delay: index * 0.2 }}
+                        className="h-full bg-white rounded-full"
+                      />
+                    </div>
+                  </div>
                 </div>
-              </div>
+              </motion.div>
+            ))}
+          </div>
+        </Container>
+      </section>
+
+      {/* Key Trends Section */}
+      <section className="relative z-10 py-20 bg-gradient-to-b from-transparent to-black/20">
+        <Container>
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true }}
+            className="text-center mb-16"
+          >
+            <h2 className="text-5xl font-bold mb-6 bg-gradient-to-r from-purple-400 to-cyan-400 bg-clip-text text-transparent">
+              Transformative Trends
+            </h2>
+            <p className="text-xl text-blue-200 max-w-3xl mx-auto">
+              Revolutionary forces reshaping the recruitment landscape
+            </p>
+          </motion.div>
+
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+            {keyTrends.map((trend, index) => (
+              <motion.div
+                key={index}
+                initial={{ opacity: 0, scale: 0.8 }}
+                whileInView={{ opacity: 1, scale: 1 }}
+                viewport={{ once: true }}
+                transition={{ delay: index * 0.2 }}
+                whileHover={{ y: -10 }}
+                className="relative group"
+              >
+                <div className={`bg-gradient-to-br ${trend.color} p-8 rounded-2xl shadow-2xl relative overflow-hidden h-full`}>
+                  <div className="absolute inset-0 bg-gradient-to-br from-white/10 to-transparent"></div>
+                  
+                  <div className="relative z-10">
+                    <div className="mb-6 p-4 bg-white/20 rounded-xl w-fit">
+                      {trend.icon}
+                    </div>
+                    
+                    <h3 className="text-2xl font-bold text-white mb-4">{trend.title}</h3>
+                    <p className="text-white/90 mb-6 leading-relaxed">{trend.description}</p>
+                    
+                    <div className="flex justify-between items-center pt-4 border-t border-white/20">
+                      <div>
+                        <div className="text-3xl font-bold text-white">{trend.growth}</div>
+                        <div className="text-white/80 text-sm">{trend.metric}</div>
+                      </div>
+                      <ArrowUpRight className="w-8 h-8 text-white/60 group-hover:text-white transition-colors" />
+                    </div>
+                  </div>
+                </div>
+              </motion.div>
+            ))}
+          </div>
+        </Container>
+      </section>
+
+      {/* Most Sought-After Positions */}
+      <section className="relative z-10 py-20">
+        <Container>
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true }}
+            className="text-center mb-16"
+          >
+            <h2 className="text-5xl font-bold mb-6 bg-gradient-to-r from-green-400 to-blue-400 bg-clip-text text-transparent">
+              In-Demand Positions
+            </h2>
+            <p className="text-xl text-blue-200 max-w-3xl mx-auto">
+              The most coveted roles driving market growth across industries
+            </p>
+          </motion.div>
+
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+            {soughtAfterPositions.map((position, index) => (
+              <motion.div
+                key={index}
+                initial={{ opacity: 0, y: 20 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                viewport={{ once: true }}
+                transition={{ delay: index * 0.1 }}
+                whileHover={{ scale: 1.02 }}
+                className="group"
+              >
+                <div className={`bg-gradient-to-br ${position.color} p-6 rounded-xl shadow-xl relative overflow-hidden h-full`}>
+                  <div className="absolute inset-0 bg-gradient-to-br from-white/10 to-transparent"></div>
+                  
+                  <div className="relative z-10">
+                    <div className="flex items-center justify-between mb-4">
+                      <div className="text-white/80">{position.icon}</div>
+                      <div className="text-right">
+                        <div className="text-2xl font-bold text-white">{position.growth}</div>
+                        <div className="text-white/80 text-sm">Growth</div>
+                      </div>
+                    </div>
+                    
+                    <h3 className="text-xl font-bold text-white mb-2">{position.category}</h3>
+                    <div className="text-white/90 text-sm mb-4">Demand: {position.demand}</div>
+                    
+                    <ul className="space-y-2">
+                      {position.positions.map((pos, idx) => (
+                        <li key={idx} className="text-white/80 text-sm flex items-center">
+                          <div className="w-1.5 h-1.5 bg-white/60 rounded-full mr-2"></div>
+                          {pos}
+                        </li>
+                      ))}
+                    </ul>
+                  </div>
+                </div>
+              </motion.div>
+            ))}
+          </div>
+        </Container>
+      </section>
+
+      {/* Geographical Trends */}
+      <section className="relative z-10 py-20 bg-gradient-to-b from-transparent to-black/30">
+        <Container>
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true }}
+            className="text-center mb-16"
+          >
+            <h2 className="text-5xl font-bold mb-6 bg-gradient-to-r from-cyan-400 to-green-400 bg-clip-text text-transparent">
+              Global Expansion
+            </h2>
+            <p className="text-xl text-blue-200 max-w-3xl mx-auto">
+              Regional growth patterns driving worldwide recruitment evolution
+            </p>
+          </motion.div>
+
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+            {geographicalData.map((region, index) => (
+              <motion.div
+                key={index}
+                initial={{ opacity: 0, x: index % 2 === 0 ? -50 : 50 }}
+                whileInView={{ opacity: 1, x: 0 }}
+                viewport={{ once: true }}
+                transition={{ delay: index * 0.2 }}
+                className="relative group"
+              >
+                <div className="bg-white/5 backdrop-blur-sm border border-white/10 rounded-2xl p-8 hover:bg-white/10 transition-all duration-300">
+                  <div className="flex items-center justify-between mb-6">
+                    <MapPin className="w-8 h-8 text-blue-400" />
+                    <div className={`px-3 py-1 ${region.color} text-white rounded-full text-sm font-semibold`}>
+                      {region.growth}
+                    </div>
+                  </div>
+                  
+                  <h3 className="text-2xl font-bold text-white mb-4">{region.region}</h3>
+                  <p className="text-white/80 mb-4 leading-relaxed">{region.description}</p>
+                  
+                  <div className="flex items-center justify-between pt-4 border-t border-white/10">
+                    <span className="text-white/70">Focus Area</span>
+                    <span className="text-white font-semibold">{region.focus}</span>
+                  </div>
+                </div>
+              </motion.div>
+            ))}
+          </div>
+        </Container>
+      </section>
+
+      {/* CTA Section */}
+      <section className="relative z-10 py-20 bg-gradient-to-r from-blue-600/20 via-purple-600/20 to-cyan-600/20 backdrop-blur-sm">
+        <Container>
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true }}
+            className="text-center max-w-4xl mx-auto"
+          >
+            <h2 className="text-5xl font-bold mb-6 bg-gradient-to-r from-blue-400 to-purple-400 bg-clip-text text-transparent">
+              Ready to Lead the Market?
+            </h2>
+            <p className="text-xl text-blue-200 mb-12">
+              Join the global leaders leveraging these insights to transform their recruitment strategies 
+              and capture tomorrow's opportunities today.
+            </p>
+            
+            <div className="flex flex-col sm:flex-row gap-6 justify-center">
+              <Button 
+                size="lg" 
+                className="bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 text-lg px-8 py-4 h-auto"
+              >
+                <span className="flex items-center text-white">
+                  <Zap className="mr-2 w-5 h-5" />
+                  Get Market Intelligence Report
+                </span>
+              </Button>
               
-              <div className="h-64 w-full bg-gradient-to-r from-blue-50 via-green-50 to-purple-50 rounded-lg flex items-end justify-around p-4">
-                {[65, 80, 45, 90, 70].map((height, index) => (
-                  <motion.div
-                    key={index}
-                    initial={{ height: 0 }}
-                    whileInView={{ height: `${height}%` }}
-                    transition={{ duration: 0.8, delay: index * 0.1 }}
-                    className="w-12 bg-gradient-to-t from-blue-400 to-green-400 rounded-t-lg"
-                  />
-                ))}
-              </div>
-            </motion.div>
+              <Button 
+                variant="outline" 
+                size="lg"
+                className="border-2 border-white/30 text-white hover:bg-white/10 text-lg px-8 py-4 h-auto backdrop-blur-sm"
+              >
+                <span className="flex items-center">
+                  Schedule Strategy Call
+                  <ChevronRight className="ml-2 w-5 h-5" />
+                </span>
+              </Button>
+            </div>
           </motion.div>
         </Container>
       </section>
