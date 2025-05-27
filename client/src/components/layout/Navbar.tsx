@@ -239,8 +239,8 @@ const Navbar: React.FC<NavbarProps> = ({ hasAnnouncementAbove = true }) => {
                       className={cn(
                         "group-hover:text-andela-green font-medium transition-colors",
                         isTransparent 
-                          ? (isHomePage ? "text-white" : "text-andela-dark")
-                          : "text-andela-dark"
+                          ? (isHomePage || isDarkPage ? "text-white" : "text-andela-dark")
+                          : (isDarkPage ? "text-white" : "text-andela-dark")
                       )}
                     >
                       {item.label}
@@ -248,8 +248,8 @@ const Navbar: React.FC<NavbarProps> = ({ hasAnnouncementAbove = true }) => {
                     <ChevronDown className={cn(
                       "ml-1 w-4 h-4 group-hover:text-andela-green transition-colors",
                       isTransparent 
-                        ? (isHomePage ? "text-white" : "text-andela-dark")
-                        : "text-andela-dark"
+                        ? (isHomePage || isDarkPage ? "text-white" : "text-andela-dark")
+                        : (isDarkPage ? "text-white" : "text-andela-dark")
                     )} />
                   </div>
                   <div className="absolute left-0 mt-2 w-64 rounded-lg shadow-xl bg-white/95 backdrop-blur-md p-6 opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-300 transform origin-top-left z-50 border border-gray-200/20">
@@ -266,8 +266,8 @@ const Navbar: React.FC<NavbarProps> = ({ hasAnnouncementAbove = true }) => {
                 <div key={index} className={cn(
                   "hover:text-andela-green font-medium transition-colors whitespace-nowrap",
                   isTransparent 
-                    ? (isHomePage ? "text-white" : "text-andela-dark")
-                    : "text-andela-dark"
+                    ? (isHomePage || isDarkPage ? "text-white" : "text-andela-dark")
+                    : (isDarkPage ? "text-white" : "text-andela-dark")
                 )}>
                   <Link href={item.href || "#"}>
                     {item.label}
@@ -292,8 +292,8 @@ const Navbar: React.FC<NavbarProps> = ({ hasAnnouncementAbove = true }) => {
                 className={cn(
                   "hover:text-andela-green font-medium transition-colors",
                   isTransparent 
-                    ? (isHomePage ? "text-white" : "text-andela-dark")
-                    : "text-andela-dark"
+                    ? (isHomePage || isDarkPage ? "text-white" : "text-andela-dark")
+                    : (isDarkPage ? "text-white" : "text-andela-dark")
                 )}
               >
                 <Search className="w-5 h-5" />
@@ -430,17 +430,17 @@ const Navbar: React.FC<NavbarProps> = ({ hasAnnouncementAbove = true }) => {
 
             <div className={cn(
               "border px-4 py-2 rounded-md font-medium flex items-center transition-colors",
-              isTransparent && isHomePage
+              isTransparent && (isHomePage || isDarkPage)
                 ? "border-white text-white hover:bg-white/20 hover:backdrop-blur-sm"
-                : "border-andela-green text-andela-green hover:bg-andela-green hover:text-white"
+                : (isDarkPage ? "border-white text-white hover:bg-white/20 hover:backdrop-blur-sm" : "border-andela-green text-andela-green hover:bg-andela-green hover:text-white")
             )}>
               <Link 
                 href="/careers" 
                 className={cn(
                   "text-sm transition-colors",
-                  isTransparent && isHomePage
+                  isTransparent && (isHomePage || isDarkPage)
                     ? "text-white hover:text-white"
-                    : "text-andela-green hover:text-white"
+                    : (isDarkPage ? "text-white hover:text-white" : "text-andela-green hover:text-white")
                 )}
               >
                 Apply as Talent
@@ -456,8 +456,8 @@ const Navbar: React.FC<NavbarProps> = ({ hasAnnouncementAbove = true }) => {
             <Menu className={cn(
               "w-6 h-6 transition-colors",
               isTransparent 
-                ? (isHomePage ? "text-white" : "text-andela-dark")
-                : "text-andela-dark"
+                ? (isHomePage || isDarkPage ? "text-white" : "text-andela-dark")
+                : (isDarkPage ? "text-white" : "text-andela-dark")
             )} />
           </button>
         </div>
