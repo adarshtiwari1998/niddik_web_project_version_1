@@ -1,3 +1,4 @@
+
 import { Link } from "wouter";
 import { 
   Linkedin, 
@@ -19,26 +20,20 @@ interface FooterColumn {
 
 const footerColumns: FooterColumn[] = [
   {
-    title: "For Businesses",
+    title: "Insights",
     links: [
-      { label: "Services", href: "/services" },
-      { label: "Request Demo", href: "/request-demo" },
-      { label: "Our Clients", href: "/clients" },
-      { label: "Testimonials", href: "/testimonials" }
-    ]
-  },
-  {
-    title: "For Technologists",
-    links: [
-      { label: "Apply as Talent", href: "/careers" },
+      { label: "AI Insights", href: "/insights" },
+      { label: "Facts & Trends", href: "/facts-and-trends" },
+      { label: "Whitepaper", href: "/whitepaper" },
+      { label: "Hiring Advice", href: "/hiring-advice" },
       { label: "Career Advice", href: "/career-advice" },
-      { label: "Leadership Team", href: "/leadership-team" },
-      { label: "Community Involvement", href: "/community-involvement" }
+      { label: "Corporate Social Responsibilities", href: "/corporate-social-responsibilities" }
     ]
   },
   {
     title: "Services",
     links: [
+      { label: "Services", href: "/services" },
       { label: "Full RPO", href: "/services/full-rpo" },
       { label: "On-Demand", href: "/services/on-demand" },
       { label: "Hybrid RPO", href: "/services/hybrid-rpo" },
@@ -47,12 +42,35 @@ const footerColumns: FooterColumn[] = [
     ]
   },
   {
-    title: "About Niddik",
+    title: "Client",
+    links: [
+      { label: "Our Clients", href: "/clients" },
+      { label: "Testimonials", href: "/testimonials" },
+      { label: "IT", href: "/partners/it" },
+      { label: "Non-IT", href: "/partners/non-it" },
+      { label: "Healthcare", href: "/partners/healthcare" },
+      { label: "Pharma", href: "#" },
+      { label: "Case Studies", href: "#" }
+    ]
+  },
+  {
+    title: "Adaptive Hiring",
+    links: [
+      { label: "AI Driven Recruiting", href: "/adaptive-hiring" },
+      { label: "6-Factor Recruiting Model", href: "/six-factor-recruiting-model" },
+      { label: "Agile Approach Based Recruiting", href: "/agile-approach-based-recruiting" }
+    ]
+  },
+  {
+    title: "About Us",
     links: [
       { label: "Our Story", href: "/about-us" },
       { label: "Why NiDDik", href: "/why-us" },
+      { label: "Leadership Team", href: "/leadership-team" },
+      { label: "Community Involvement", href: "/community-involvement" },
       { label: "FAQs", href: "/faqs" },
-      { label: "Contact Us", href: "/contact" }
+      { label: "Contact Us", href: "/contact" },
+      { label: "Apply to Niddik", href: "/careers" }
     ]
   }
 ];
@@ -61,11 +79,11 @@ const Footer = () => {
   return (
     <footer className="bg-andela-dark py-16">
       <Container>
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-8 lg:gap-10">
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-6 gap-8 lg:gap-6">
           {/* Logo and Description */}
           <div className="lg:col-span-1">
             <Logo className="h-10 mb-6" white />
-            <p className="text-gray-300 mb-6 text-sm">
+            <p className="text-gray-300 mb-6 text-sm leading-relaxed">
               Niddik is a global talent marketplace that connects companies with vetted, remote technical talent in emerging markets.
             </p>
             <div className="flex space-x-4">
