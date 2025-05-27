@@ -1,5 +1,5 @@
 
-import { Link } from "wouter";
+import { Link, useLocation } from "wouter";
 import { 
   Linkedin, 
   Twitter, 
@@ -9,6 +9,7 @@ import {
 } from "lucide-react";
 import Container from "@/components/ui/container";
 import Logo from "@/components/ui/logo";
+import GlobalNetworkMap from "@/components/sections/GlobalNetworkMap";
 
 interface FooterColumn {
   title: string;
@@ -76,9 +77,31 @@ const footerColumns: FooterColumn[] = [
 ];
 
 const Footer = () => {
+  const [location] = useLocation();
+  const isContactPage = location === "/contact";
+
   return (
-    <footer className="bg-andela-dark py-16">
-      <Container>
+    <>
+      {/* Global Network Map - Show on all pages except /contact */}
+      {!isContactPage && (
+        <section className="py-16 bg-gray-50">
+          <Container>
+            <div className="text-center mb-12">
+              <h2 className="text-4xl font-bold text-andela-dark mb-4">
+                Our Global Network
+              </h2>
+              <p className="text-xl text-gray-600 max-w-3xl mx-auto">
+                Connect with talent across three core markets: India, USA, and Canada. 
+                Our 24/7 global network ensures seamless recruitment solutions.
+              </p>
+            </div>
+            <GlobalNetworkMap />
+          </Container>
+        </section>
+      )}
+      
+      <footer className="bg-andela-dark py-16">
+        <Container>
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-6 gap-8 lg:gap-6">
           {/* Logo and Description */}
           <div className="lg:col-span-1">
@@ -148,6 +171,7 @@ const Footer = () => {
         </div>
       </Container>
     </footer>
+    </>
   );
 };
 
