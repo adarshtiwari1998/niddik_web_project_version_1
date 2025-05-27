@@ -1,4 +1,3 @@
-
 import { Link } from "wouter";
 import { 
   Linkedin, 
@@ -101,11 +100,11 @@ const Footer = () => {
           {/* Footer Links */}
           {footerColumns.map((column, index) => (
             <div key={index} className="lg:col-span-1">
-              <h4 className="text-white font-semibold mb-4 text-sm">{column.title}</h4>
+              <h4 className="text-white font-semibold mb-4 text-sm uppercase tracking-wide">{column.title}</h4>
               <ul className="space-y-3">
                 {column.links.map((link, idx) => (
                   <li key={idx}>
-                    <Link href={link.href} className="text-gray-300 hover:text-white transition-colors text-sm">
+                    <Link href={link.href} className="text-gray-300 hover:text-white transition-colors text-sm block">
                       {link.label}
                     </Link>
                   </li>
