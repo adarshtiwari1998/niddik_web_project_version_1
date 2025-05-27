@@ -421,7 +421,7 @@ const GlobalNetworkMap: React.FC = () => {
           </div>
         </motion.div>
 
-        {/* Network statistics overlays */}
+        {/* Company statistics overlays */}
         <motion.div
           className="absolute bottom-20 right-20 text-center text-white"
           initial={{ opacity: 0, scale: 0.8 }}
@@ -429,9 +429,9 @@ const GlobalNetworkMap: React.FC = () => {
           transition={{ delay: 1.5, duration: 0.8 }}
         >
           <div className="text-4xl font-bold bg-gradient-to-r from-green-400 to-blue-400 bg-clip-text text-transparent">
-            150K+
+            500K+
           </div>
-          <div className="text-sm opacity-80 font-medium">Global Talent Pool</div>
+          <div className="text-sm opacity-80 font-medium">Talent Pools</div>
         </motion.div>
 
         <motion.div
@@ -441,9 +441,9 @@ const GlobalNetworkMap: React.FC = () => {
           transition={{ delay: 2, duration: 0.8 }}
         >
           <div className="text-4xl font-bold bg-gradient-to-r from-orange-400 to-red-400 bg-clip-text text-transparent">
-            99.9%
+            12+
           </div>
-          <div className="text-sm opacity-80 font-medium">Network Uptime</div>
+          <div className="text-sm opacity-80 font-medium">Panelled Customers</div>
         </motion.div>
 
         <motion.div
@@ -453,9 +453,33 @@ const GlobalNetworkMap: React.FC = () => {
           transition={{ delay: 2.5, duration: 0.8 }}
         >
           <div className="text-4xl font-bold bg-gradient-to-r from-green-400 to-purple-400 bg-clip-text text-transparent">
-            3
+            10K+
           </div>
-          <div className="text-sm opacity-80 font-medium">Core Markets</div>
+          <div className="text-sm opacity-80 font-medium">Communities Engaged</div>
+        </motion.div>
+
+        <motion.div
+          className="absolute top-20 right-1/3 text-center text-white"
+          initial={{ opacity: 0, scale: 0.8 }}
+          animate={{ opacity: 1, scale: 1 }}
+          transition={{ delay: 3, duration: 0.8 }}
+        >
+          <div className="text-4xl font-bold bg-gradient-to-r from-purple-400 to-pink-400 bg-clip-text text-transparent">
+            50%
+          </div>
+          <div className="text-sm opacity-80 font-medium">Faster Time to Submit</div>
+        </motion.div>
+
+        <motion.div
+          className="absolute bottom-16 left-1/3 text-center text-white"
+          initial={{ opacity: 0, scale: 0.8 }}
+          animate={{ opacity: 1, scale: 1 }}
+          transition={{ delay: 3.5, duration: 0.8 }}
+        >
+          <div className="text-4xl font-bold bg-gradient-to-r from-cyan-400 to-blue-400 bg-clip-text text-transparent">
+            200+
+          </div>
+          <div className="text-sm opacity-80 font-medium">Candidates Engaged</div>
         </motion.div>
 
         {/* Interactive hint */}
