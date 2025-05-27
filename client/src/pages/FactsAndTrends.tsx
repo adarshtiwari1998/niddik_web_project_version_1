@@ -517,7 +517,7 @@ const FactsAndTrends = () => {
               <Button 
                 variant="outline" 
                 size="lg"
-                className="border-2 border-white/30 text-white hover:bg-white/10 text-lg px-8 py-4 h-auto backdrop-blur-sm"
+                className="border-2 border-white/30 text-andela-green hover:bg-white/10  hover:text-white text-lg px-8 py-4 h-auto backdrop-blur-sm"
               >
                 <span className="flex items-center">
                   Schedule Strategy Call
