@@ -26,31 +26,7 @@ const generateToken = (user: User | AdminUser) => { // Updated type
     );
 };
 
-// JWT token validation middleware
-const validateJWT = async (req: Request, res: Response, next: NextFunction) => {
-    try {
-        const authHeader = req.headers.authorization;
-        const token = authHeader && authHeader.split(' ')[1]; // Bearer TOKEN format
-
-        if (!token) {
-            return next(); // No token, proceed with session auth
-        }
-
-        const decoded = jwt.verify(token, JWT_SECRET) as { user: User };
-        if (decoded.user && decoded.user.id) {
-            // Get fresh user data from database
-            const user = await storage.getUserById(decoded.user.id);
-            if (user) {
-                req.user = user;
-            }
-        }
-        next();
-    } catch (error) {
-        // Invalid token, but we'll still proceed with session auth
-        console.error('JWT validation error:', error);
-        next();
-    }
-};
+// JWT validation middleware removed - using session-based auth only
 
 const PostgresSessionStore = connectPg(session);
 
@@ -126,9 +102,6 @@ export function setupAuth(app: Express) {
     app.use(session(sessionSettings));
     app.use(passport.initialize());
     app.use(passport.session());
-
-    // Apply JWT validation middleware
-    app.use(validateJWT);
 
     passport.use(
         new LocalStrategy(async (username, password, done) => {
@@ -363,28 +336,12 @@ export function setupAuth(app: Express) {
 
      app.delete('/api/remove-resume', async (req: Request, res: Response) => {
         try {
-          let userId: number | null = null;
-
-          // First check for JWT token
-          const authHeader = req.headers.authorization;
-          if (authHeader && authHeader.startsWith('Bearer ')) {
-            const token = authHeader.substring(7);
-            try {
-              const decoded = jwt.verify(token, JWT_SECRET) as { user: User };
-              userId = decoded.user.id;
-            } catch (error) {
-              console.log("JWT verification failed, falling back to session check");
-            }
-          }
-
-          // If no valid JWT, check session authentication
-          if (!userId && req.isAuthenticated()) {
-            userId = (req.user as User).id;
-          }
-
-          if (!userId) {
+          // Check session authentication only
+          if (!req.isAuthenticated() || !req.user) {
             return res.status(401).json({ error: "Not authenticated" });
           }
+
+          const userId = (req.user as User).id;
 
           // Update user in the database
           await db.update(users)
@@ -398,32 +355,15 @@ export function setupAuth(app: Express) {
         }
       });
 
-    // Current user API route (supports both session and JWT)
-// Current user API route (supports both session and JWT)
+    // Current user API route (session authentication only)
 app.get("/api/user", async (req: Request, res: Response) => {
     try {
-        let userId: number | null = null;
-
-        // First check for JWT token
-        const authHeader = req.headers.authorization;
-        if (authHeader && authHeader.startsWith('Bearer ')) {
-            const token = authHeader.substring(7);
-            try {
-                const decoded = jwt.verify(token, JWT_SECRET) as { user: User };
-                userId = decoded.user.id;
-            } catch (error) {
-                console.log("JWT verification failed, falling back to session check");
-            }
-        }
-
-        // If no valid JWT, check session authentication
-        if (!userId && req.isAuthenticated()) {
-            userId = (req.user as User).id;
-        }
-
-        if (!userId) {
+        // Check session authentication only
+        if (!req.isAuthenticated() || !req.user) {
             return res.status(401).json({ error: "Not authenticated" });
         }
+
+        const userId = (req.user as User).id;
 
         // Get fresh user data from storage
         const user = await storage.getUserById(userId);
