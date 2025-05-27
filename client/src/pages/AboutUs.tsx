@@ -12,9 +12,9 @@ const AboutUs = () => {
   
   const teamMembers = [
     {
-      name: "Abhishek Anhal",
+      name: "Mr. Abhishek Anchal",
       role: "CEO & Co-Founder",
-      image: "https://niddik.com/wp-content/uploads/2025/02/abhishk-anhal.jpg",
+      image: "https://res.cloudinary.com/dhanz6zty/image/upload/v1748340984/niddik-leader-ship-team-mr-abhishek_dm2jal.png",
       bio: "With over 20 years of experience in talent acquisition, Abhishek has established himself as a renowned expert in the field of recruitment.",
       fullBio: `Abhishek is a seasoned Talent Acquisition Professional with over 20 years of extensive experience in talent acquisition, he has established himself as a renowned expert in the field of recruitment. His impressive career trajectory, marked by progressive leadership roles and a strong academic foundation, is a testament to his dedication, passion, and commitment to excellence.
 
@@ -436,7 +436,7 @@ As Abhishek's career progressed, he took on increasingly senior leadership roles
               {/* Main image container */}
               <div className="relative bg-white/10 backdrop-blur-sm rounded-2xl p-4 border border-white/30">
                 <img
-                  src="https://res.cloudinary.com/dhanz6zty/image/upload/v1748374942/niddik_about-us_Shri_Satyendra_Prasad_Shrivastava_isec6d.png"
+                  src="https://res.cloudinary.com/dhanz6zty/image/upload/v1748375787/niddik_about-us_Shri_Satyendra_Prasad_Shrivastava_v2_fjsdsg.png"
                   alt="Late Shri Satyendra Prasad Shrivastava"
                   className="w-full h-auto max-h-96 object-contain rounded-xl shadow-2xl"
                 />
@@ -833,7 +833,7 @@ As Abhishek's career progressed, he took on increasingly senior leadership roles
               <div className="w-full lg:w-2/5 flex-shrink-0">
                 <div className="relative rounded-xl overflow-hidden shadow-lg h-full">
                   <img 
-                    src="https://niddik.com/wp-content/uploads/2025/02/abhishk-anhal.jpg" 
+                    src="https://res.cloudinary.com/dhanz6zty/image/upload/v1748340984/niddik-leader-ship-team-mr-abhishek_dm2jal.png" 
                     alt={teamMembers[0].name} 
                     className="w-full h-full object-cover object-center"
                   />
@@ -916,9 +916,9 @@ As Abhishek's career progressed, he took on increasingly senior leadership roles
                 <div className="flex flex-col md:flex-row gap-8">
                   <div className="flex-shrink-0">
                     <img 
-                      src="https://niddik.com/wp-content/uploads/2025/02/abhishk-anhal.jpg" 
+                      src="https://res.cloudinary.com/dhanz6zty/image/upload/v1748340984/niddik-leader-ship-team-mr-abhishek_dm2jal.png" 
                       alt={teamMembers[selectedTeamMember].name}
-                      className="w-full md:w-64 h-64 object-cover object-center rounded-xl shadow-md" 
+                      className="w-full md:w-64 h-64 object-contain object-center rounded-xl shadow-md" 
                     />
                   </div>
                   
