@@ -11,6 +11,8 @@ import { Button } from "@/components/ui/button";
 const LeadershipTeam = () => {
   const [isAnnouncementVisible, setIsAnnouncementVisible] = useState(true);
   const [hoveredLeader, setHoveredLeader] = useState<number | null>(null);
+  const [selectedLeader, setSelectedLeader] = useState<number | null>(null);
+  const [modalOpen, setModalOpen] = useState(false);
 
   const handleAnnouncementVisibilityChange = (isVisible: boolean) => {
     setIsAnnouncementVisible(isVisible);
@@ -189,7 +191,7 @@ const LeadershipTeam = () => {
                           <img 
                             src={leader.image} 
                             alt={leader.name}
-                            className="w-full h-full object-cover transform hover:scale-110 transition-transform duration-500"
+                            className="w-full h-full object-contain transform hover:scale-110 transition-transform duration-500"
                           />
                         </div>
                       </div>
@@ -257,6 +259,10 @@ const LeadershipTeam = () => {
                     {/* Action Buttons */}
                     <div className="flex flex-col sm:flex-row gap-4 pt-4">
                       <Button 
+                        onClick={() => {
+                          setSelectedLeader(index);
+                          setModalOpen(true);
+                        }}
                         className={`bg-gradient-to-r ${leader.color} hover:opacity-90 text-white px-6 py-3 font-medium shadow-lg hover:shadow-xl transition-all`}
                       >
                         <span className="flex items-center">
@@ -335,6 +341,103 @@ const LeadershipTeam = () => {
           </motion.div>
         </Container>
       </section>
+
+      {/* Biography Modal */}
+      {modalOpen && selectedLeader !== null && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
+          <div 
+            className="absolute inset-0 bg-black/60 backdrop-blur-sm"
+            onClick={() => setModalOpen(false)}
+          />
+          <motion.div
+            initial={{ opacity: 0, scale: 0.9, y: 20 }}
+            animate={{ opacity: 1, scale: 1, y: 0 }}
+            exit={{ opacity: 0, scale: 0.9, y: 20 }}
+            className="relative bg-white rounded-2xl shadow-2xl max-w-4xl max-h-[90vh] overflow-hidden"
+          >
+            <div className="relative">
+              {/* Header */}
+              <div className={`bg-gradient-to-r ${leaders[selectedLeader].color} p-8 text-white`}>
+                <button
+                  onClick={() => setModalOpen(false)}
+                  className="absolute top-6 right-6 w-10 h-10 rounded-full bg-white/20 hover:bg-white/30 flex items-center justify-center transition-colors"
+                >
+                  <span className="text-2xl">×</span>
+                </button>
+                
+                <div className="flex items-center gap-6">
+                  <div className="w-24 h-24 rounded-full bg-white p-1">
+                    <img 
+                      src={leaders[selectedLeader].image} 
+                      alt={leaders[selectedLeader].name}
+                      className="w-full h-full rounded-full object-contain"
+                    />
+                  </div>
+                  <div>
+                    <h2 className="text-3xl font-bold mb-2">{leaders[selectedLeader].name}</h2>
+                    <p className="text-xl opacity-90">{leaders[selectedLeader].title}</p>
+                    <p className="text-lg opacity-75">{leaders[selectedLeader].company}</p>
+                  </div>
+                </div>
+              </div>
+              
+              {/* Content */}
+              <div className="p-8 max-h-[60vh] overflow-y-auto">
+                <div className="space-y-6">
+                  <div>
+                    <h3 className="text-xl font-semibold text-gray-800 mb-3">Experience & Expertise</h3>
+                    <div className="flex flex-wrap gap-2 mb-4">
+                      {leaders[selectedLeader].expertise.map((skill, skillIndex) => (
+                        <span
+                          key={skillIndex}
+                          className={`px-3 py-1 rounded-full bg-gradient-to-r ${leaders[selectedLeader].color} text-white text-sm font-medium`}
+                        >
+                          {skill}
+                        </span>
+                      ))}
+                    </div>
+                    <p className="text-gray-600">
+                      <strong>{leaders[selectedLeader].experience}</strong> of industry experience
+                    </p>
+                  </div>
+                  
+                  <div>
+                    <h3 className="text-xl font-semibold text-gray-800 mb-3">Biography</h3>
+                    <div className="space-y-4 text-gray-700 leading-relaxed">
+                      <p>{leaders[selectedLeader].description}</p>
+                      <p>{leaders[selectedLeader].fullBio}</p>
+                    </div>
+                  </div>
+                </div>
+              </div>
+              
+              {/* Footer */}
+              <div className="bg-gray-50 px-8 py-6 border-t">
+                <div className="flex justify-between items-center">
+                  <div className="text-gray-600">
+                    {leaders[selectedLeader].icon}
+                  </div>
+                  <div className="flex gap-4">
+                    <Button 
+                      variant="outline"
+                      onClick={() => setModalOpen(false)}
+                      className="px-6 py-2"
+                    >
+                      Close
+                    </Button>
+                    <Button 
+                      className={`bg-gradient-to-r ${leaders[selectedLeader].color} text-white px-6 py-2`}
+                    >
+                      <Mail className="mr-2 w-4 h-4" />
+                      Connect
+                    </Button>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </motion.div>
+        </div>
+      )}
 
       <Footer />
     </div>
