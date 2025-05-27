@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { motion } from 'framer-motion';
+import { Link } from "wouter";
 import { Star, Quote, ArrowRight, Users, Award, TrendingUp } from 'lucide-react';
 import Container from '@/components/ui/container';
 import Navbar from '@/components/layout/Navbar';
@@ -21,8 +22,6 @@ const Testimonials = () => {
       company: "TechCorp",
       testimonial: "Niddik helped us scale our engineering team quickly with top talent. The quality of developers and their integration into our team has been seamless.",
       rating: 5,
-      avatar: "https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?auto=format&fit=crop&w=150&q=80",
-      companyLogo: "https://via.placeholder.com/60x40/3B82F6/FFFFFF?text=TC"
     },
     {
       name: "Sarah Williams",
@@ -30,8 +29,6 @@ const Testimonials = () => {
       company: "InnovateX",
       testimonial: "Joining Niddik was the best career decision I've made. I've worked with amazing teams on challenging projects, all while growing professionally.",
       rating: 5,
-      avatar: "https://images.unsplash.com/photo-1494790108755-2616b332c3e0?auto=format&fit=crop&w=150&q=80",
-      companyLogo: "https://via.placeholder.com/60x40/10B981/FFFFFF?text=IX"
     },
     {
       name: "David Chen",
@@ -39,16 +36,9 @@ const Testimonials = () => {
       company: "InnovateX",
       testimonial: "The talent we've accessed through Niddik has been exceptional. Their team understood our needs and matched us with perfect candidates.",
       rating: 5,
-      avatar: "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?auto=format&fit=crop&w=150&q=80",
-      companyLogo: "https://via.placeholder.com/60x40/10B981/FFFFFF?text=IX"
     }
   ];
 
-  const stats = [
-    { value: "500+", label: "Successful Placements", icon: <Users className="w-8 h-8" /> },
-    { value: "98%", label: "Client Satisfaction", icon: <Award className="w-8 h-8" /> },
-    { value: "95%", label: "Retention Rate", icon: <TrendingUp className="w-8 h-8" /> }
-  ];
 
   const achievementStats = [
     { value: "4", label: "Empaneled Customers", bgColor: "bg-blue-600" },
@@ -134,25 +124,7 @@ const Testimonials = () => {
             </div>
 
             {/* Original Stats Grid */}
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-8 mb-16">
-              {stats.map((stat, index) => (
-                <motion.div
-                  key={index}
-                  initial={{ opacity: 0, scale: 0.8 }}
-                  animate={{ opacity: 1, scale: 1 }}
-                  transition={{ delay: index * 0.2 + 0.8, duration: 0.6 }}
-                  className="bg-white rounded-2xl p-8 shadow-xl border border-gray-100"
-                >
-                  <div className="flex flex-col items-center">
-                    <div className="text-blue-600 mb-4">
-                      {stat.icon}
-                    </div>
-                    <div className="text-4xl font-bold text-gray-900 mb-2">{stat.value}</div>
-                    <div className="text-gray-600 font-medium">{stat.label}</div>
-                  </div>
-                </motion.div>
-              ))}
-            </div>
+           
           </motion.div>
         </Container>
       </section>
@@ -206,22 +178,14 @@ const Testimonials = () => {
                   {/* Author Info */}
                   <div className="flex items-center justify-between">
                     <div className="flex items-center">
-                      <img
-                        src={testimonial.avatar}
-                        alt={testimonial.name}
-                        className="w-12 h-12 rounded-full object-cover mr-4"
-                      />
+                    
                       <div>
                         <div className="font-semibold text-gray-900">{testimonial.name}</div>
                         <div className="text-gray-600 text-sm">{testimonial.position}</div>
                         <div className="text-blue-600 text-sm font-medium">{testimonial.company}</div>
                       </div>
                     </div>
-                    <img
-                      src={testimonial.companyLogo}
-                      alt={`${testimonial.company} logo`}
-                      className="w-12 h-8 object-contain opacity-70"
-                    />
+                
                   </div>
                 </div>
               </motion.div>
@@ -256,6 +220,7 @@ const Testimonials = () => {
             </p>
 
             <div className="flex flex-col sm:flex-row gap-6 justify-center">
+              <Link href="/request-demo">
               <Button 
                 size="lg" 
                 className="bg-white text-blue-600 hover:bg-gray-100 text-lg px-8 py-4 h-auto font-semibold"
@@ -265,17 +230,19 @@ const Testimonials = () => {
                   Find Talent
                 </span>
               </Button>
-
+              </Link>
+              <Link href="/careers">
               <Button 
                 variant="outline" 
                 size="lg"
-                className="border-2 border-white text-white hover:bg-white hover:text-blue-600 text-lg px-8 py-4 h-auto font-semibold"
+                className="border-2 border-white text-andela-green hover:bg-white hover:text-blue-600 text-lg px-8 py-4 h-auto font-semibold"
               >
                 <span className="flex items-center">
-                  Join Our Community
+                 Explore Jobs
                   <ArrowRight className="ml-2 w-5 h-5" />
                 </span>
               </Button>
+              </Link>
             </div>
           </motion.div>
         </Container>
