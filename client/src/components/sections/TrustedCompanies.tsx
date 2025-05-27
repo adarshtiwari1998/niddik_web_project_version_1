@@ -1,26 +1,36 @@
 import React, { useState } from "react";
 import { motion } from "framer-motion";
 import Container from "@/components/ui/container";
-import { 
-  FaMicrosoft, 
-  FaGithub, 
-  FaAmazon, 
-  FaGoogle, 
-  FaBuilding, 
-  FaCreditCard
-} from "react-icons/fa";
+// React icons removed as we're now using actual client logos
 // Remove problematic imports that don't exist
 import "./marquee.css";
 
-// Company logos and reliable icons 
+// Company logos with actual client images
 const companies = [
-  { name: "Microsoft", logo: <FaMicrosoft size={32} color="#666" /> },
-  { name: "KPMG", logo: <FaBuilding size={32} color="#666" /> },
-  { name: "JP Morgan", logo: <FaCreditCard size={32} color="#666" /> },
-  { name: "Goldman Sachs", logo: <FaBuilding size={32} color="#666" /> },
-  { name: "GitHub", logo: <FaGithub size={32} color="#666" /> },
-  { name: "Amazon", logo: <FaAmazon size={32} color="#666" /> },
-  { name: "Google", logo: <FaGoogle size={32} color="#666" /> }
+  { 
+    name: "KPMG", 
+    logo: <img src="https://res.cloudinary.com/dhanz6zty/image/upload/v1748372070/niddik_client_kpmg_hlzxx3.png" alt="KPMG" className="h-8 object-contain" />
+  },
+  { 
+    name: "Wimmer", 
+    logo: <img src="https://res.cloudinary.com/dhanz6zty/image/upload/v1748372070/niddik_client_wimmer_dpw6yf.png" alt="Wimmer" className="h-8 object-contain" />
+  },
+  { 
+    name: "Weyerhaeuser", 
+    logo: <img src="https://res.cloudinary.com/dhanz6zty/image/upload/v1748372070/niddik_client_weyerhaeuser_jwis4d.png" alt="Weyerhaeuser" className="h-8 object-contain" />
+  },
+  { 
+    name: "Microsoft", 
+    logo: <img src="https://res.cloudinary.com/dhanz6zty/image/upload/v1748372070/niddik_client_microsoft_fvd2g8.png" alt="Microsoft" className="h-8 object-contain" />
+  },
+  { 
+    name: "Lifespace", 
+    logo: <img src="https://res.cloudinary.com/dhanz6zty/image/upload/v1748372070/niddik_client_lifespace_t4lcfd.png" alt="Lifespace" className="h-8 object-contain" />
+  },
+  { 
+    name: "Nordstrom", 
+    logo: <img src="https://res.cloudinary.com/dhanz6zty/image/upload/v1748372070/niddik_client_nordstorm_oep8ef.png" alt="Nordstrom" className="h-8 object-contain" />
+  }
 ];
 
 // Component for a smooth marquee animation effect
