@@ -9,27 +9,27 @@ import "./marquee.css";
 const companies = [
   { 
     name: "KPMG", 
-    logo: <img src="https://res.cloudinary.com/dhanz6zty/image/upload/v1748372070/niddik_client_kpmg_hlzxx3.png" alt="KPMG" className="h-8 object-contain" />
+    logo: <img src="https://res.cloudinary.com/dhanz6zty/image/upload/v1748372070/niddik_client_kpmg_hlzxx3.png" alt="KPMG" className="h-8 w-20 object-contain" />
   },
   { 
     name: "Wimmer", 
-    logo: <img src="https://res.cloudinary.com/dhanz6zty/image/upload/v1748372070/niddik_client_wimmer_dpw6yf.png" alt="Wimmer" className="h-8 object-contain" />
+    logo: <img src="https://res.cloudinary.com/dhanz6zty/image/upload/v1748372070/niddik_client_wimmer_dpw6yf.png" alt="Wimmer" className="h-8 w-20 object-contain" />
   },
   { 
     name: "Weyerhaeuser", 
-    logo: <img src="https://res.cloudinary.com/dhanz6zty/image/upload/v1748372070/niddik_client_weyerhaeuser_jwis4d.png" alt="Weyerhaeuser" className="h-8 object-contain" />
+    logo: <img src="https://res.cloudinary.com/dhanz6zty/image/upload/v1748372070/niddik_client_weyerhaeuser_jwis4d.png" alt="Weyerhaeuser" className="h-8 w-20 object-contain" />
   },
   { 
     name: "Microsoft", 
-    logo: <img src="https://res.cloudinary.com/dhanz6zty/image/upload/v1748372070/niddik_client_microsoft_fvd2g8.png" alt="Microsoft" className="h-8 object-contain" />
+    logo: <img src="https://res.cloudinary.com/dhanz6zty/image/upload/v1748372070/niddik_client_microsoft_fvd2g8.png" alt="Microsoft" className="h-8 w-20 object-contain" />
   },
   { 
     name: "Lifespace", 
-    logo: <img src="https://res.cloudinary.com/dhanz6zty/image/upload/v1748372070/niddik_client_lifespace_t4lcfd.png" alt="Lifespace" className="h-8 object-contain" />
+    logo: <img src="https://res.cloudinary.com/dhanz6zty/image/upload/v1748372070/niddik_client_lifespace_t4lcfd.png" alt="Lifespace" className="h-8 w-20 object-contain" />
   },
   { 
     name: "Nordstrom", 
-    logo: <img src="https://res.cloudinary.com/dhanz6zty/image/upload/v1748372070/niddik_client_nordstorm_oep8ef.png" alt="Nordstrom" className="h-8 object-contain" />
+    logo: <img src="https://res.cloudinary.com/dhanz6zty/image/upload/v1748372070/niddik_client_nordstorm_oep8ef.png" alt="Nordstrom" className="h-8 w-20 object-contain" />
   }
 ];
 
@@ -105,9 +105,9 @@ const TrustedCompanies = () => {
                 {companies.map((company, index) => (
                   <div 
                     key={`company-${index}`}
-                    className="flex-none mx-10 grayscale hover:grayscale-0 transition-all duration-300"
+                    className="flex-none mx-8 grayscale hover:grayscale-0 transition-all duration-300"
                   >
-                    <div className="w-28 h-16 flex items-center justify-center">
+                    <div className="w-24 h-16 flex items-center justify-center">
                       {company.logo}
                     </div>
                   </div>
