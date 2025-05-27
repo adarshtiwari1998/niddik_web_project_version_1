@@ -425,7 +425,7 @@ const Insights = () => {
             viewport={{ once: true }}
             className="text-center max-w-4xl mx-auto"
           >
-            <h2 className="text-4xl lg:text-5xl font-bold mb-6">
+            <h2 className="text-4xl  lg:text-5xl font-bold mb-6">
               Ready to Transform Your Hiring?
             </h2>
             <p className="text-xl mb-12 text-blue-100">
@@ -445,9 +445,9 @@ const Insights = () => {
               <Button 
                 variant="outline" 
                 size="lg"
-                className="border-2 border-white text-white hover:bg-white hover:text-blue-600 text-lg px-8 py-3"
+                className="border-2 text-andele-green border-white  hover:bg-white hover:text-blue-600 text-lg px-8 py-3"
               >
-                <Link href="/contact" className="flex items-center text-white hover:text-blue-600">
+                <Link href="/contact" className="flex items-center text-andela-green hover:text-blue-600">
                   Contact Our Experts
                   <ChevronRight className="ml-2 w-5 h-5" />
                 </Link>
