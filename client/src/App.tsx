@@ -11,6 +11,8 @@ import ServicesOverview from "@/pages/ServicesOverview";
 import WebAppSolutions from "@/pages/WebAppSolutions";
 import AboutUs from "@/pages/AboutUs";
 import WhyUs from "@/pages/WhyUs";
+import LeadershipTeam from "@/pages/LeadershipTeam";
+import ContactUs from "@/pages/ContactUs";
 import LandingPage from "@/pages/LandingPage";
 import AdaptiveHiring from "@/pages/AdaptiveHiringFix";
 import AdaptiveHiringFixed from "@/pages/AdaptiveHiringFixed";
@@ -97,6 +99,8 @@ function Router() {
             {/* Company Routes */}
             <Route path="/about-us" component={AboutUs} />
             <Route path="/why-us" component={WhyUs} />
+            <Route path="/leadership-team" component={LeadershipTeam} />
+            <Route path="/contact" component={ContactUs} />
 
             {/* Careers & Jobs */}
             <Route path="/careers" component={CareerPage} />

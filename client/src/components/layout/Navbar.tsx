@@ -82,7 +82,7 @@ const navItems: NavItem[] = [
     dropdown: [
       { label: "Our Story", href: "/about-us" },
       { label: "Why NiDDik", href: "/why-us" },
-      { label: "Leadership Team", href: "#" },
+      { label: "Leadership Team", href: "/leadership-team" },
       { label: "Community Involvement", href: "/community-involvement" },
       { label: "Contact Us", href: "/contact" },
       // { label: "Whitepaper", href: "/whitepaper" }
