@@ -167,10 +167,17 @@ export async function registerRoutes(app: Express): Promise<Server> {
         isAdmin = true;
       }
       
+      // For admin users, only filter by status if explicitly provided
       if (!isAdmin) {
+        // Non-admin users can only see active jobs
         statusFilter = 'active';
-      } else if (!status || status === "all_statuses") {
-        statusFilter = undefined;
+      } else {
+        // Admin users: if no status filter specified or "all_statuses", show all
+        if (!status || status === "all_statuses") {
+          statusFilter = undefined; // Show all statuses
+        } else {
+          statusFilter = status; // Use the specific status filter
+        }
       }
 
       const result = await storage.getJobListings({
