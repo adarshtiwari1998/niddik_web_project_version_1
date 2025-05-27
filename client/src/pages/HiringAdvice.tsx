@@ -1,5 +1,6 @@
 import { motion } from "framer-motion";
 import { useState } from "react";
+import { Link } from "wouter";
 import { 
   TrendingUp, Brain, Users, Target, Zap, CheckCircle, BarChart2, ArrowRight, 
   Globe, BrainCircuit, Award, Users2, Network, Cpu, BookOpen, Lightbulb,
@@ -183,26 +184,30 @@ const HiringAdvice = () => {
             </p>
 
             <div className="flex flex-col sm:flex-row gap-6 justify-center">
-              <Button 
-                size="lg" 
-                className="bg-gradient-to-r from-blue-600 to-emerald-600 hover:from-blue-700 hover:to-emerald-700 text-lg px-8 py-4 h-auto text-white"
-              >
-                <span className="flex items-center">
-                  <Star className="mr-2 w-5 h-5" />
-                  View Open Positions
-                </span>
-              </Button>
+              <Link href="/careers">
+                <Button 
+                  size="lg" 
+                  className="bg-gradient-to-r from-blue-600 to-emerald-600 hover:from-blue-700 hover:to-emerald-700 text-lg px-8 py-4 h-auto text-white"
+                >
+                  <span className="flex items-center">
+                    <Star className="mr-2 w-5 h-5" />
+                    View Open Positions
+                  </span>
+                </Button>
+              </Link>
 
-              <Button 
-                variant="outline" 
-                size="lg"
-                className="border-2 border-blue-600 text-blue-600 hover:bg-blue-50 text-lg px-8 py-4 h-auto"
-              >
-                <span className="flex items-center">
-                  Contact Our Team
-                  <ArrowRight className="ml-2 w-5 h-5" />
-                </span>
-              </Button>
+              <Link href="/contact">
+                <Button 
+                  variant="outline" 
+                  size="lg"
+                  className="border-2 border-blue-600 text-blue-600 hover:bg-blue-50 text-lg px-8 py-4 h-auto"
+                >
+                  <span className="flex items-center">
+                    Contact Our Team
+                    <ArrowRight className="ml-2 w-5 h-5" />
+                  </span>
+                </Button>
+              </Link>
             </div>
           </motion.div>
         </Container>
@@ -545,28 +550,32 @@ const HiringAdvice = () => {
 
               <div className="flex flex-col sm:flex-row gap-6 justify-center">
                 <motion.div whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }}>
-                  <Button 
-                    size="lg" 
-                    className="bg-gradient-to-r from-blue-600 to-emerald-600 hover:from-blue-700 hover:to-emerald-700 text-lg px-10 py-4 h-auto shadow-xl text-white"
-                  >
-                    <span className="flex items-center">
-                      <Trophy className="mr-3 w-6 h-6" />
-                      Apply for a Position
-                    </span>
-                  </Button>
+                  <Link href="/careers">
+                    <Button 
+                      size="lg" 
+                      className="bg-gradient-to-r from-blue-600 to-emerald-600 hover:from-blue-700 hover:to-emerald-700 text-lg px-10 py-4 h-auto shadow-xl text-white"
+                    >
+                      <span className="flex items-center">
+                        <Trophy className="mr-3 w-6 h-6" />
+                        Apply for a Position
+                      </span>
+                    </Button>
+                  </Link>
                 </motion.div>
 
                 <motion.div whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }}>
-                  <Button 
-                    variant="outline" 
-                    size="lg"
-                    className="border-2 border-blue-600 text-blue-600 hover:bg-blue-50 text-lg px-10 py-4 h-auto shadow-lg"
-                  >
-                    <span className="flex items-center">
-                      <Network className="mr-3 w-6 h-6" />
-                      Partner With Us
-                    </span>
-                  </Button>
+                  <Link href="/contact">
+                    <Button 
+                      variant="outline" 
+                      size="lg"
+                      className="border-2 border-blue-600 text-blue-600 hover:bg-blue-50 text-lg px-10 py-4 h-auto shadow-lg"
+                    >
+                      <span className="flex items-center">
+                        <Network className="mr-3 w-6 h-6" />
+                        Partner With Us
+                      </span>
+                    </Button>
+                  </Link>
                 </motion.div>
               </div>
             </motion.div>
