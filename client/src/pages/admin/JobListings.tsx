@@ -66,11 +66,16 @@ export default function JobListings() {
       console.log('Query params being sent:', queryParams); // Debug log
       
       // Get the JWT token from localStorage for admin authentication
-      const token = localStorage.getItem('niddik_auth_token');
-      const headers: HeadersInit = {};
+      const token = localStorage.getItem('niddik_auth_token') || localStorage.getItem('admin_auth_token');
+      const headers: HeadersInit = {
+        'Content-Type': 'application/json'
+      };
 
       if (token) {
         headers['Authorization'] = `Bearer ${token}`;
+        console.log('Admin token found and added to headers');
+      } else {
+        console.log('No admin token found in localStorage');
       }
 
       const res = await fetch(`/api/job-listings?${queryParams}`, {

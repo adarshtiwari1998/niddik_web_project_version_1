@@ -156,6 +156,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
           const user = await storage.getUserById(userId);
           if (user && user.role === 'admin') {
             isAdmin = true;
+            console.log("Admin JWT verified successfully");
           }
         } catch (error) {
           console.log("JWT verification failed for admin check");
@@ -165,18 +166,24 @@ export async function registerRoutes(app: Express): Promise<Server> {
       // Also check session-based authentication
       if (req.user && req.user.role === 'admin') {
         isAdmin = true;
+        console.log("Admin session verified successfully");
       }
+      
+      console.log("Is Admin:", isAdmin, "Status filter requested:", status);
       
       // For admin users, only filter by status if explicitly provided
       if (!isAdmin) {
         // Non-admin users can only see active jobs
         statusFilter = 'active';
+        console.log("Non-admin user, filtering to active only");
       } else {
         // Admin users: if no status filter specified or "all_statuses", show all
         if (!status || status === "all_statuses") {
           statusFilter = undefined; // Show all statuses
+          console.log("Admin user, showing all statuses");
         } else {
           statusFilter = status; // Use the specific status filter
+          console.log("Admin user, filtering by status:", statusFilter);
         }
       }
 
