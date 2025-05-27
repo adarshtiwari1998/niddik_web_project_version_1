@@ -1,6 +1,7 @@
 
 import { motion } from "framer-motion";
 import { useState } from "react";
+import { Link } from "wouter";
 import { Award, BookOpen, Microscope, Users, Globe, ChevronRight, Mail, Linkedin, Phone } from "lucide-react";
 import Container from "@/components/ui/container";
 import Navbar from "@/components/layout/Navbar";
@@ -20,17 +21,17 @@ const LeadershipTeam = () => {
 
   const leaders = [
     {
-      name: "Dr. Abhishek Chanchal",
-      title: "CEO / Co-Founder",
-      company: "NIDDIKKARE LLP",
-      image: "https://res.cloudinary.com/dhanz6zty/image/upload/v1748341074/niddik-leader-ship-team-dr-abhishek_jwetmz.png",
-      expertise: ["Nanomedicine", "Biotechnology", "Drug Delivery", "Research"],
-      experience: "25+ Years",
-      description: "A highly accomplished researcher and scientist with over 25 years' strong foundation in the fields of nanomedicine and biotechnology. Holding a Ph.D. in Bio-Science (Nanomedicine) from the esteemed Jamia Millia Islamia, Delhi, he has developed a profound expertise in the design, formulation, and characterization of nanoparticles for targeted drug delivery.",
-      fullBio: "His research focuses on harnessing the potential of nanotechnology to create innovative solutions for complex medical challenges, with a particular emphasis on improving the efficacy and safety of therapeutic interventions. With a deep understanding of the intricate interactions between nanoparticles and biological systems, he has successfully developed novel nanoscale systems that can selectively target diseased cells, reducing side effects and enhancing treatment outcomes. His work has significant implications for the development of personalized medicine and has the potential to revolutionize the field of drug delivery and treatment of various diseases, including cancer, neurological disorders, and infectious diseases. Through his groundbreaking research, Dr. Chanchal continues to contribute to the advancement of nanomedicine and biotechnology, pushing the boundaries of scientific knowledge and innovation, and inspiring future generations of researchers and scientists.",
-      icon: <Award className="w-8 h-8" />,
-      color: "from-purple-500 to-pink-500",
-      bgPattern: "bg-gradient-to-br from-purple-50 to-pink-50"
+      name: "Mr. Abhishek Anchal",
+      title: "CEO / Partner",
+      company: "NIDDIK (An IT Division of NIDDIKKARE LLP)",
+      image: "https://res.cloudinary.com/dhanz6zty/image/upload/v1748340984/niddik-leader-ship-team-mr-abhishek_dm2jal.png",
+      expertise: ["HR Management", "Talent Acquisition", "Strategic Leadership", "Organizational Development"],
+      experience: "20+ Years",
+      description: "A visionary Human Resources leader with a distinguished career spanning over 20 years, marked by a relentless pursuit of excellence in strategic HR management, talent acquisition, and organizational development. With an MBA degree in Human Resource Management from Corllins University - USA, complemented by a strong foundation in Applied Mathematics from University of South Carolina - USA.",
+      fullBio: "Mr. Anchal brings a unique fusion of analytical acumen, business savvy, and interpersonal expertise to his work. Throughout his illustrious career, he has successfully navigated diverse business landscapes in the USA and India, developing a profound understanding of cultural nuances, HR best practices, and regulatory requirements. As a strategic HR thought leader, he has consistently demonstrated his ability to drive organizational growth, foster talent development, and craft innovative recruitment strategies that meet business objectives. With a proven track record of building and managing high-performing teams, designing and implementing cutting-edge HR programs, and providing strategic HR guidance to senior leadership, he has made a lasting impact on his organizations. His expertise in talent management, succession planning, and performance management has enabled companies to optimize their workforce, drive business success, and achieve their goals. As a trusted advisor to senior leaders, Mr. Anchal continues to leverage his expertise to drive HR innovation, promote diversity and inclusion, and build strong, agile organizations that thrive in an ever-changing business landscape.",
+      icon: <Users className="w-8 h-8" />,
+      color: "from-green-500 to-emerald-500",
+      bgPattern: "bg-gradient-to-br from-green-50 to-emerald-50"
     },
     {
       name: "Dr. Samar Husain Naqvi",
@@ -46,18 +47,18 @@ const LeadershipTeam = () => {
       bgPattern: "bg-gradient-to-br from-blue-50 to-cyan-50"
     },
     {
-      name: "Mr. Abhishek Anchal",
-      title: "CEO / Partner",
-      company: "NIDDIK (An IT Division of NIDDIKKARE LLP)",
-      image: "https://res.cloudinary.com/dhanz6zty/image/upload/v1748340984/niddik-leader-ship-team-mr-abhishek_dm2jal.png",
-      expertise: ["HR Management", "Talent Acquisition", "Strategic Leadership", "Organizational Development"],
-      experience: "20+ Years",
-      description: "A visionary Human Resources leader with a distinguished career spanning over 20 years, marked by a relentless pursuit of excellence in strategic HR management, talent acquisition, and organizational development. With an MBA degree in Human Resource Management from Corllins University - USA, complemented by a strong foundation in Applied Mathematics from University of South Carolina - USA.",
-      fullBio: "Mr. Anchal brings a unique fusion of analytical acumen, business savvy, and interpersonal expertise to his work. Throughout his illustrious career, he has successfully navigated diverse business landscapes in the USA and India, developing a profound understanding of cultural nuances, HR best practices, and regulatory requirements. As a strategic HR thought leader, he has consistently demonstrated his ability to drive organizational growth, foster talent development, and craft innovative recruitment strategies that meet business objectives. With a proven track record of building and managing high-performing teams, designing and implementing cutting-edge HR programs, and providing strategic HR guidance to senior leadership, he has made a lasting impact on his organizations. His expertise in talent management, succession planning, and performance management has enabled companies to optimize their workforce, drive business success, and achieve their goals. As a trusted advisor to senior leaders, Mr. Anchal continues to leverage his expertise to drive HR innovation, promote diversity and inclusion, and build strong, agile organizations that thrive in an ever-changing business landscape.",
-      icon: <Users className="w-8 h-8" />,
-      color: "from-green-500 to-emerald-500",
-      bgPattern: "bg-gradient-to-br from-green-50 to-emerald-50"
-    }
+      name: "Dr. Abhishek Chanchal",
+      title: "CEO / Co-Founder",
+      company: "NIDDIKKARE LLP",
+      image: "https://res.cloudinary.com/dhanz6zty/image/upload/v1748341074/niddik-leader-ship-team-dr-abhishek_jwetmz.png",
+      expertise: ["Nanomedicine", "Biotechnology", "Drug Delivery", "Research"],
+      experience: "25+ Years",
+      description: "A highly accomplished researcher and scientist with over 25 years' strong foundation in the fields of nanomedicine and biotechnology. Holding a Ph.D. in Bio-Science (Nanomedicine) from the esteemed Jamia Millia Islamia, Delhi, he has developed a profound expertise in the design, formulation, and characterization of nanoparticles for targeted drug delivery.",
+      fullBio: "His research focuses on harnessing the potential of nanotechnology to create innovative solutions for complex medical challenges, with a particular emphasis on improving the efficacy and safety of therapeutic interventions. With a deep understanding of the intricate interactions between nanoparticles and biological systems, he has successfully developed novel nanoscale systems that can selectively target diseased cells, reducing side effects and enhancing treatment outcomes. His work has significant implications for the development of personalized medicine and has the potential to revolutionize the field of drug delivery and treatment of various diseases, including cancer, neurological disorders, and infectious diseases. Through his groundbreaking research, Dr. Chanchal continues to contribute to the advancement of nanomedicine and biotechnology, pushing the boundaries of scientific knowledge and innovation, and inspiring future generations of researchers and scientists.",
+      icon: <Award className="w-8 h-8" />,
+      color: "from-purple-500 to-pink-500",
+      bgPattern: "bg-gradient-to-br from-purple-50 to-pink-50"
+    },
   ];
 
   return (
@@ -317,16 +318,18 @@ const LeadershipTeam = () => {
             </p>
             
             <div className="flex flex-col sm:flex-row gap-6 justify-center">
+              <Link href="/careers">
               <Button 
                 size="lg" 
                 className="bg-white text-blue-600 hover:bg-gray-100 text-lg px-8 py-4 h-auto font-semibold"
               >
                 <span className="flex items-center">
                   <Users className="mr-2 w-5 h-5" />
-                  Join Our Team
+                  Apply Now
                 </span>
               </Button>
-              
+              </Link>
+              <Link href="/about-us">
               <Button 
                 variant="outline" 
                 size="lg"
@@ -337,6 +340,7 @@ const LeadershipTeam = () => {
                   <ChevronRight className="ml-2 w-5 h-5" />
                 </span>
               </Button>
+              </Link>
             </div>
           </motion.div>
         </Container>
