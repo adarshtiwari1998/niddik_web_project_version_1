@@ -52,7 +52,6 @@ import HiringAdvice from "./pages/HiringAdvice";
 import CareerAdvice from "./pages/CareerAdvice";
 import SixFactorModel from './pages/SixFactorModel';
 import AgileRecruiting from './pages/AgileRecruiting';
-import CommunityInvolvement from './pages/CommunityInvolvement';
 import ITPartners from './pages/ITPartners';
 import NonITPartners from './pages/NonITPartners';
 import HealthcarePartners from './pages/HealthcarePartners';
