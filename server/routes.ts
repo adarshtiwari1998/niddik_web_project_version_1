@@ -143,30 +143,31 @@ export async function registerRoutes(app: Express): Promise<Server> {
       let statusFilter = status;
       let isAdmin = false;
       
-      // Check JWT token for admin authentication
-      const authHeader = req.headers.authorization;
-      if (authHeader && authHeader.startsWith('Bearer ')) {
-        const token = authHeader.substring(7);
-        try {
-          const jwt = require('jsonwebtoken');
-          const decoded = jwt.verify(token, process.env.JWT_SECRET!) as { user: any };
-          const userId = decoded.user.id;
-          
-          // Check if this is an admin user
-          const user = await storage.getUserById(userId);
-          if (user && user.role === 'admin') {
-            isAdmin = true;
-            console.log("Admin JWT verified successfully");
-          }
-        } catch (error) {
-          console.log("JWT verification failed for admin check");
-        }
-      }
-      
-      // Also check session-based authentication
-      if (req.user && req.user.role === 'admin') {
+      // First check session-based authentication (more reliable)
+      if (req.isAuthenticated() && req.user && req.user.role === 'admin') {
         isAdmin = true;
         console.log("Admin session verified successfully");
+      } else {
+        // If no session, check JWT token for admin authentication
+        const authHeader = req.headers.authorization;
+        if (authHeader && authHeader.startsWith('Bearer ')) {
+          const token = authHeader.substring(7);
+          try {
+            const jwt = require('jsonwebtoken');
+            const JWT_SECRET = process.env.JWT_SECRET || 'niddik-jwt-secret';
+            const decoded = jwt.verify(token, JWT_SECRET) as { user: any };
+            const userId = decoded.user.id;
+            
+            // Check if this is an admin user
+            const user = await storage.getUserById(userId);
+            if (user && user.role === 'admin') {
+              isAdmin = true;
+              console.log("Admin JWT verified successfully");
+            }
+          } catch (error) {
+            console.log("JWT verification failed for admin check:", error);
+          }
+        }
       }
       
       console.log("Is Admin:", isAdmin, "Status filter requested:", status);
