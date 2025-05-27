@@ -111,6 +111,7 @@ const Navbar: React.FC<NavbarProps> = ({ hasAnnouncementAbove = true }) => {
   const isAuthPage = location.startsWith("/auth");
   const isCandidatePage = location.startsWith("/candidate");
   const isHomePage = location === "/";
+  const isDarkPage = location === '/facts-and-trends' || location === '/insights';
 
   useEffect(() => {
     const handleScroll = () => {
