@@ -107,7 +107,7 @@ const Footer = () => {
           <div className="lg:col-span-1">
             <Logo className="h-10 mb-6" white />
             <p className="text-gray-300 mb-6 text-sm leading-relaxed">
-              Niddik is a global talent marketplace that connects companies with vetted, remote technical talent in emerging markets.
+              With 12+ panelled customers and 500K+ talent pools across 10K+ communities, Niddik delivers 50% faster time-to-submit and 40% improved response rates. Our proven track record includes 4 successful placements in India, 3 inspiring success stories, and 200+ engaged candidates worldwide.
             </p>
             <div className="flex space-x-4">
               <a 
