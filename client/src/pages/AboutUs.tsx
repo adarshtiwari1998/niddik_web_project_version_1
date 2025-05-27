@@ -1026,7 +1026,7 @@ His work has significant implications for the development of personalized medici
                 </div>
                 
                 <h2 className="text-3xl md:text-5xl font-bold leading-tight text-andela-dark">
-                  A workforce partner that <span className="bg-andela-green text-white px-2 py-1 rounded">understands</span> every inch of <span className="bg-andela-green text-white px-2 py-1 rounded">Your Ground</span>
+                  A workforce partner that <span className="bg-andela-green text-white px-1 py-0 rounded">understands</span> every inch of Your<span className="bg-andela-green text-white px-1 py-0 rounded">Ground</span>
                 </h2>
                 
                 <div className="h-2 w-28 bg-andela-green"></div>
