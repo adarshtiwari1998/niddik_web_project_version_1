@@ -13,7 +13,8 @@ const AboutUs = () => {
   const teamMembers = [
     {
       name: "Mr. Abhishek Anchal",
-      role: "CEO & Co-Founder",
+      role: "CEO / Partner",
+       company: "NIDDIKKARE",
       image: "https://res.cloudinary.com/dhanz6zty/image/upload/v1748340984/niddik-leader-ship-team-mr-abhishek_dm2jal.png",
       bio: "With over 20 years of experience in talent acquisition, Abhishek has established himself as a renowned expert in the field of recruitment.",
       linkedinUrl: "https://www.linkedin.com/in/aanchal/",
@@ -29,7 +30,7 @@ As Abhishek's career progressed, he took on increasingly senior leadership roles
     {
       name: "Dr. Samar Husain Naqvi",
       role: "CEO & Co-Founder",
-      company: "NIDDIKKARE LLP",
+       company: "NIDDIKKARE",
       image: "https://res.cloudinary.com/dhanz6zty/image/upload/v1748340984/niddik-leader-ship-team-samar-husain_gczwmu.png",
       bio: "A trailblazing expert in biotechnology and life sciences, renowned for his groundbreaking work in genomics, molecular biology, and microbiology with over 25 years of experience.",
       linkedinUrl: " https://www.linkedin.com/in/dr-samar-husain-naqvi-1b73a013/",
@@ -45,7 +46,7 @@ As a testament to his dedication and expertise, Dr. Naqvi has garnered numerous 
     {
       name: "Dr. Abhishek Chanchal",
       role: "CEO & Co-Founder",
-      company: "NIDDIKKARE LLP",
+      company: "NIDDIKKARE",
       image: "https://res.cloudinary.com/dhanz6zty/image/upload/v1748341074/niddik-leader-ship-team-dr-abhishek_jwetmz.png",
       bio: "A highly accomplished researcher and scientist with over 25 years' strong foundation in the fields of nanomedicine and biotechnology, holding a Ph.D. in Bio-Science (Nanomedicine).",
       linkedinUrl: "https://www.linkedin.com/in/dr-abhishek-chanchal-42007457/",
