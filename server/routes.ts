@@ -135,9 +135,46 @@ export async function registerRoutes(app: Express): Promise<Server> {
       const category = req.query.category as string;
       const experienceLevel = req.query.experienceLevel as string;
       const jobType = req.query.jobType as string;
-      const status = req.query.status as string;
+      let status = req.query.status as string;
       const featured = req.query.featured === 'true' ? true : undefined;
       const priority = req.query.priority as string;
+
+      let isAdmin = false;
+      
+      // First check session-based authentication (more reliable)
+      if (req.isAuthenticated() && req.user && req.user.role === 'admin') {
+        isAdmin = true;
+        console.log("Admin session verified successfully");
+      } else {
+        // If no session, check JWT token for admin authentication
+        const authHeader = req.headers.authorization;
+        if (authHeader && authHeader.startsWith('Bearer ')) {
+          const token = authHeader.substring(7);
+          try {
+            const jwt = require('jsonwebtoken');
+            const JWT_SECRET = process.env.JWT_SECRET || 'niddik-jwt-secret';
+            const decoded = jwt.verify(token, JWT_SECRET) as { user: any };
+            const userId = decoded.user.id;
+            
+            // Check if this is an admin user
+            const user = await storage.getUserById(userId);
+            if (user && user.role === 'admin') {
+              isAdmin = true;
+              console.log("Admin JWT verified successfully");
+            }
+          } catch (error) {
+            console.log("JWT verification failed for admin check:", error);
+          }
+        }
+      }
+      
+      console.log("Is Admin:", isAdmin, "Status filter requested:", status);
+      
+      // Non-admin users can only see active jobs
+      if (!isAdmin) {
+        console.log("Non-admin user, forcing status to active");
+        status = 'active';
+      }
 
       const result = await storage.getJobListings({
         page,

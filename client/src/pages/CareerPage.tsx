@@ -28,7 +28,9 @@ export default function CareerPage() {
 
   const { data, isLoading, error } = useQuery<{ data: JobListing[], meta: { total: number, pages: number } }>({
     queryKey: ['/api/job-listings', { 
-      status: 'active' 
+      status: 'active',
+      page: 1,
+      limit: 1000
     }],
     queryFn: getQueryFn({ on401: "throw" }),
   });
