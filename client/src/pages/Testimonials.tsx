@@ -50,6 +50,20 @@ const Testimonials = () => {
     { value: "95%", label: "Retention Rate", icon: <TrendingUp className="w-8 h-8" /> }
   ];
 
+  const achievementStats = [
+    { value: "4", label: "Empaneled Customers", bgColor: "bg-blue-600" },
+    { value: "12+", label: "Placements", bgColor: "bg-blue-600" },
+    { value: "10K+", label: "Communities", bgColor: "bg-blue-600" },
+    { value: "500K+", label: "Talent Pools", bgColor: "bg-blue-600" }
+  ];
+
+  const performanceStats = [
+    { value: "30%", label: "Optimize Recruiting Spend", bgColor: "bg-white", textColor: "text-blue-600" },
+    { value: "40%", label: "Improvement in Response %", bgColor: "bg-white", textColor: "text-blue-600" },
+    { value: "50%", label: "Decrease in Time to Submit", bgColor: "bg-white", textColor: "text-blue-600" },
+    { value: "70%", label: "Increase in Talent Quality", bgColor: "bg-white", textColor: "text-blue-600" }
+  ];
+
   return (
     <div className="min-h-screen bg-gradient-to-br from-slate-50 to-blue-50">
       <AnnouncementBar 
@@ -87,14 +101,46 @@ const Testimonials = () => {
               Hear from our clients and technologists about their experience with Niddik
             </p>
 
-            {/* Stats Grid */}
+            {/* Achievement Stats */}
+            <div className="grid grid-cols-2 md:grid-cols-4 gap-6 mb-12">
+              {achievementStats.map((stat, index) => (
+                <motion.div
+                  key={index}
+                  initial={{ opacity: 0, scale: 0.8 }}
+                  animate={{ opacity: 1, scale: 1 }}
+                  transition={{ delay: index * 0.1, duration: 0.6 }}
+                  className={`${stat.bgColor} rounded-2xl p-6 shadow-xl text-center`}
+                >
+                  <div className="text-4xl font-bold text-white mb-2">{stat.value}</div>
+                  <div className="text-white/90 font-medium">{stat.label}</div>
+                </motion.div>
+              ))}
+            </div>
+
+            {/* Performance Stats */}
+            <div className="grid grid-cols-2 md:grid-cols-4 gap-6 mb-12">
+              {performanceStats.map((stat, index) => (
+                <motion.div
+                  key={index}
+                  initial={{ opacity: 0, scale: 0.8 }}
+                  animate={{ opacity: 1, scale: 1 }}
+                  transition={{ delay: index * 0.1 + 0.4, duration: 0.6 }}
+                  className={`${stat.bgColor} rounded-2xl p-6 shadow-xl border border-gray-200 text-center`}
+                >
+                  <div className={`text-4xl font-bold ${stat.textColor} mb-2`}>{stat.value}</div>
+                  <div className={`${stat.textColor} font-medium`}>{stat.label}</div>
+                </motion.div>
+              ))}
+            </div>
+
+            {/* Original Stats Grid */}
             <div className="grid grid-cols-1 md:grid-cols-3 gap-8 mb-16">
               {stats.map((stat, index) => (
                 <motion.div
                   key={index}
                   initial={{ opacity: 0, scale: 0.8 }}
                   animate={{ opacity: 1, scale: 1 }}
-                  transition={{ delay: index * 0.2, duration: 0.6 }}
+                  transition={{ delay: index * 0.2 + 0.8, duration: 0.6 }}
                   className="bg-white rounded-2xl p-8 shadow-xl border border-gray-100"
                 >
                   <div className="flex flex-col items-center">
