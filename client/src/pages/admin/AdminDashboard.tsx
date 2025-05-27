@@ -113,7 +113,13 @@ const AdminDashboard = () => {
     gcTime: 5 * 60 * 1000, // Keep in cache for 5 minutes
   });
 
+  // Job counts by status
+  const activeJobs = jobsData?.data?.filter(job => job.status === 'active')?.length || 0;
+  const draftJobs = jobsData?.data?.filter(job => job.status === 'draft')?.length || 0;
+  const filledJobs = jobsData?.data?.filter(job => job.status === 'filled')?.length || 0;
+  const expiredJobs = jobsData?.data?.filter(job => job.status === 'expired')?.length || 0;
   const totalJobs = jobsData?.data?.length || 0;
+  
   const totalApplications = applicationsData?.data?.length || 0;
 
   const newApplications = applicationsData?.data?.filter(app => app.status === 'new')?.length || 0;
@@ -200,15 +206,24 @@ const AdminDashboard = () => {
                 </div>
               )}
               <CardHeader className="pb-2">
-                <CardTitle className="text-2xl font-bold flex items-center">
-                  <Briefcase className="h-5 w-5 mr-2 text-primary" />
-                  {isLoadingJobs ? "..." : totalJobs}
+                <CardTitle className="text-2xl font-bold flex items-center justify-between">
+                  <div className="flex items-center">
+                    <Briefcase className="h-5 w-5 mr-2 text-primary" />
+                    {isLoadingJobs ? "..." : activeJobs}
+                  </div>
+                  <div className="text-right">
+                    <div className="text-xs text-muted-foreground space-y-1">
+                      {draftJobs > 0 && <div>Draft: {draftJobs}</div>}
+                      {filledJobs > 0 && <div>Filled: {filledJobs}</div>}
+                      {expiredJobs > 0 && <div>Expired: {expiredJobs}</div>}
+                    </div>
+                  </div>
                 </CardTitle>
                 <CardDescription>Active Jobs</CardDescription>
               </CardHeader>
               <CardContent className="pt-0">
                 <div className="text-xs text-muted-foreground">
-                  Total job listings currently active
+                  Job listings currently active ({totalJobs} total)
                 </div>
               </CardContent>
               <CardFooter className="pt-0 border-t">
