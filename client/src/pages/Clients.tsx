@@ -109,7 +109,7 @@ const Clients = () => {
             </h1>
             
             <p className="text-xl text-gray-600 mb-12 leading-relaxed">
-              From Fortune 500 companies to innovative startups, we've partnered with 
+              From Fortune companies to innovative startups, we've partnered with 
               organizations across industries to build exceptional teams and drive growth.
             </p>
           </motion.div>
