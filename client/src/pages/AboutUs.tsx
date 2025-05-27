@@ -863,14 +863,14 @@ His work has significant implications for the development of personalized medici
                     <img 
                       src={member.image} 
                       alt={member.name} 
-                      className="w-48 h-48 object-cover object-center rounded-full border-4 border-white shadow-lg hover:scale-105 transition-transform duration-300"
+                      className="w-48 h-48 object-contain object-center rounded-full border-4 border-white shadow-lg hover:scale-105 transition-transform duration-300"
                     />
                     <div className="absolute inset-0 bg-gradient-to-t from-black/20 to-transparent"></div>
                     
                     {/* Social links */}
                     <div className="absolute bottom-4 left-0 right-0 flex justify-center gap-3">
                       <a 
-                        href="#" 
+                        href="https://www.linkedin.com/in/aanchal/" 
                         className="w-10 h-10 bg-white rounded-full flex items-center justify-center text-andela-green hover:bg-andela-green hover:text-white transition-colors"
                       >
                         <svg className="w-5 h-5" fill="currentColor" viewBox="0 0 24 24">
