@@ -445,9 +445,9 @@ const Insights = () => {
               <Button 
                 variant="outline" 
                 size="lg"
-                className="border-2 border-white text-white hover:bg-white/10 text-lg px-8 py-3"
+                className="border-2 border-white text-white hover:bg-white hover:text-blue-600 text-lg px-8 py-3"
               >
-                <Link href="/contact" className="flex items-center">
+                <Link href="/contact" className="flex items-center text-white hover:text-blue-600">
                   Contact Our Experts
                   <ChevronRight className="ml-2 w-5 h-5" />
                 </Link>
