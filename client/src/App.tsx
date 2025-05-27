@@ -25,7 +25,6 @@ import ProfilePage from "@/pages/ProfilePage";
 import JobApplication from "@/pages/JobApplication";
 import CandidateDashboard from "@/pages/CandidateDashboard";
 import RequestDemo from "@/pages/RequestDemo";
-import ContactUs from "@/pages/ContactUs";
 
 // Admin Pages
 import AdminLogin from "@/pages/admin/AdminLogin";
