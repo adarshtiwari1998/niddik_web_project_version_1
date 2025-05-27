@@ -1,0 +1,79 @@
+ app.get("/api/job-listings", async (req: AuthenticatedRequest, res) => {
+    try {
+      const page = parseInt(req.query.page as string) || 1;
+      const limit = parseInt(req.query.limit as string) || 10;
+      const search = req.query.search as string || "";
+      const category = req.query.category as string;
+      const experienceLevel = req.query.experienceLevel as string;
+      const jobType = req.query.jobType as string;
+      let status = req.query.status as string;
+      const featured = req.query.featured === 'true' ? true : undefined;
+      const priority = req.query.priority as string;
+
+      let isAdmin = false;
+      
+      // First check session-based authentication (more reliable)
+      if (req.isAuthenticated() && req.user && req.user.role === 'admin') {
+        isAdmin = true;
+        console.log("Admin session verified successfully");
+      } else {
+        // If no session, check JWT token for admin authentication
+        const authHeader = req.headers.authorization;
+        if (authHeader && authHeader.startsWith('Bearer ')) {
+          const token = authHeader.substring(7);
+          try {
+            const jwt = require('jsonwebtoken');
+            const JWT_SECRET = process.env.JWT_SECRET || 'niddik-jwt-secret';
+            const decoded = jwt.verify(token, JWT_SECRET) as { user: any };
+            const userId = decoded.user.id;
+            
+            // Check if this is an admin user
+            const user = await storage.getUserById(userId);
+            if (user && user.role === 'admin') {
+              isAdmin = true;
+              console.log("Admin JWT verified successfully");
+            }
+          } catch (error) {
+            console.log("JWT verification failed for admin check:", error);
+          }
+        }
+      }
+      
+      console.log("Is Admin:", isAdmin, "Status filter requested:", status);
+      
+      // Non-admin users can only see active jobs
+      if (!isAdmin) {
+        console.log("Non-admin user, forcing status to active");
+        status = 'active';
+      }
+
+      const result = await storage.getJobListings({
+        page,
+        limit,
+        search,
+        category,
+        experienceLevel,
+        jobType,
+        status: (!status || status === "all_statuses") ? undefined : status,
+        featured,
+        priority: priority === "all_priorities" ? undefined : priority
+      });
+
+      res.json({
+        success: true,
+        data: result.jobListings,
+        meta: {
+          total: result.total,
+          page,
+          limit,
+          pages: Math.ceil(result.total / limit)
+        }
+      });
+    } catch (error) {
+      console.error("Error fetching job listings:", error);
+      res.status(500).json({ 
+        success: false, 
+        error: "Failed to fetch job listings" 
+      });
+    }
+  });
