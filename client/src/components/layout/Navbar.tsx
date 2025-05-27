@@ -200,6 +200,8 @@ const Navbar: React.FC<NavbarProps> = ({ hasAnnouncementAbove = true }) => {
     }
   }, [searchTerm, jobsData]);
 
+  const isDarkPage = location === '/facts-and-trends';
+
   return (
     <header className={cn(
       "fixed w-full z-40",
