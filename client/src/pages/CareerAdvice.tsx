@@ -63,27 +63,30 @@ const CareerAdvice = () => {
             <h1 className="text-6xl font-bold pb-6 bg-gradient-to-r from-blue-600 via-purple-600 to-indigo-600 bg-clip-text text-transparent">
               AI-Powered Career Guidance
             </h1>
-            <p className="text-xl text-gray-600 max-w-3xl mx-auto">
+            <p className="text-xl text-gray-600 max-w-3xl mx-auto mb-8">
               Navigate your tech career with data-driven insights and AI-powered recommendations
             </p>
+            
+            {/* NIDDIK's Career Advice - Integrated into Hero */}
+            <motion.div
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.8, delay: 0.3 }}
+              className="text-center mt-12"
+            >
+              <h2 className="text-4xl font-bold mb-6 text-gray-800">NIDDIK's Career Advice</h2>
+              <p className="text-xl text-gray-600 max-w-4xl mx-auto">
+                At NIDDIK, we are on a mission to define what success is to each team member and the partners we work with. 
+                Whether you are a developer, engineer, manager, leader, or a stakeholder, let these serve as your starting points on your career path.
+              </p>
+            </motion.div>
           </motion.div>
         </Container>
       </div>
 
-      {/* NIDDIK's Career Advice Section */}
+      {/* Career Advice Cards Section */}
       <section className="py-20 bg-gradient-to-br from-blue-50 to-indigo-50">
         <Container>
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            className="text-center mb-16"
-          >
-            <h2 className="text-4xl font-bold mb-6 text-gray-800">NIDDIK's Career Advice</h2>
-            <p className="text-xl text-gray-600 max-w-4xl mx-auto">
-              At NIDDIK, we are on a mission to define what success is to each team member and the partners we work with. 
-              Whether you are a developer, engineer, manager, leader, or a stakeholder, let these serve as your starting points on your career path.
-            </p>
-          </motion.div>
 
           <div className="grid grid-cols-1 md:grid-cols-2 gap-8 mb-16">
             {/* For Developers and Engineers */}
@@ -316,73 +319,6 @@ const CareerAdvice = () => {
               </p>
             </div>
           </motion.div>
-        </Container>
-      </section>
-
-      {/* AI Learning Paths */}
-      <section className="py-20">
-        <Container>
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            className="text-center mb-16"
-          >
-            <h2 className="text-4xl font-bold mb-6">Personalized Learning Paths</h2>
-            <p className="text-xl text-gray-600 max-w-3xl mx-auto">
-              AI-curated learning journeys tailored to your career goals
-            </p>
-          </motion.div>
-
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
-            {[
-              {
-                role: "Full-Stack Developer",
-                skills: ["React", "Node.js", "Python", "Cloud"],
-                growth: "+45% demand",
-                icon: <Zap className="w-6 h-6 text-yellow-500" />
-              },
-              {
-                role: "AI Engineer",
-                skills: ["Machine Learning", "Python", "Deep Learning"],
-                growth: "+75% demand",
-                icon: <Brain className="w-6 h-6 text-purple-500" />
-              },
-              {
-                role: "DevOps Engineer",
-                skills: ["Docker", "Kubernetes", "CI/CD"],
-                growth: "+55% demand",
-                icon: <Rocket className="w-6 h-6 text-blue-500" />
-              },
-              {
-                role: "Data Scientist",
-                skills: ["Statistics", "Python", "Big Data"],
-                growth: "+65% demand",
-                icon: <LineChart className="w-6 h-6 text-green-500" />
-              }
-            ].map((path, index) => (
-              <motion.div
-                key={index}
-                initial={{ opacity: 0, x: index % 2 === 0 ? -20 : 20 }}
-                whileInView={{ opacity: 1, x: 0 }}
-                className="bg-white rounded-xl p-6 shadow-md hover:shadow-lg transition-all border border-gray-100"
-              >
-                <div className="flex items-center gap-4 mb-4">
-                  <div className="p-3 rounded-lg bg-gray-50">{path.icon}</div>
-                  <div>
-                    <h3 className="text-xl font-bold">{path.role}</h3>
-                    <p className="text-green-600">{path.growth}</p>
-                  </div>
-                </div>
-                <div className="flex flex-wrap gap-2 mt-4">
-                  {path.skills.map((skill, i) => (
-                    <span key={i} className="px-3 py-1 bg-blue-50 text-blue-600 rounded-full text-sm">
-                      {skill}
-                    </span>
-                  ))}
-                </div>
-              </motion.div>
-            ))}
-          </div>
         </Container>
       </section>
 
