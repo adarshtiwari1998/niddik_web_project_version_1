@@ -41,44 +41,51 @@ const Insights = () => {
     {
       title: "AI-Based Candidate Sourcing",
       icon: <Brain className="w-8 h-8" />,
-      description: "Machine learning algorithms analyze data from social media, job boards, and professional networks to identify top candidates.",
+      description: "NIDDIK uses machine learning algorithms to analyze and synthesize data from various sources such as social media, job boards, professional networks, etc. to identify candidates.",
       color: "from-blue-500 to-purple-600",
       stats: { efficiency: "85%", sources: "50+", accuracy: "92%" }
     },
     {
-      title: "Predictive Analytics",
+      title: "Predictive Analytics Related to Talent Acquisition",
       icon: <TrendingUp className="w-8 h-8" />,
-      description: "Advanced analytics predict current and future talent needs, enabling proactive acquisition strategies.",
+      description: "We use predictive analytics related to both current (demands and capabilities) and future talent needs, as well as develop strategies for proactive talent acquisition related to those future needs.",
       color: "from-green-500 to-teal-600",
       stats: { prediction: "94%", timeframe: "12M", accuracy: "89%" }
     },
     {
-      title: "Automated Screening",
+      title: "Automated Candidate Screening",
       icon: <Target className="w-8 h-8" />,
-      description: "AI-powered tools filter unqualified candidates, reducing time-to-hire while improving candidate quality.",
+      description: "With our AI-powered screening tools filter out unqualified candidates, reduce time to hire and improve the quality of candidates.",
       color: "from-orange-500 to-red-600",
       stats: { timeReduction: "70%", quality: "95%", automation: "80%" }
     },
     {
-      title: "Personalized Experience",
+      title: "Candidate Experiences Personalized",
       icon: <Users className="w-8 h-8" />,
-      description: "AI-driven chatbots and virtual assistants create personalized candidate experiences and improve engagement.",
+      description: "We use AI-driven chatbots and virtual assistants to improve an individual candidate experience; ultimately, improve candidate engagement and candidate experience as a whole.",
       color: "from-purple-500 to-pink-600",
       stats: { engagement: "88%", satisfaction: "91%", response: "24/7" }
     },
     {
-      title: "Bias Mitigation",
+      title: "Bias and Diversity",
       icon: <Shield className="w-8 h-8" />,
-      description: "AI tools address unconscious biases in hiring to promote diversity, inclusion, and fairness.",
+      description: "NIDDIK leverages AI-powered tools to address/mitigate any unconscious biases in the hiring process to promote diversity and inclusion and better ensure fairness and equity in hiring decisions.",
       color: "from-indigo-500 to-blue-600",
       stats: { diversity: "45%", fairness: "96%", inclusion: "82%" }
     },
     {
-      title: "Data-Driven Decisions",
+      title: "Data-Driven Hiring Decisions",
       icon: <BarChart3 className="w-8 h-8" />,
-      description: "Comprehensive data analysis improves hiring decisions and predicts candidate performance.",
+      description: "We qualify data & analyzing other relevant data sources, (i.e., resumes, cover letters, assessments, etc.) can improve \"better\" decision making in order to hiring and predicting candidate performance.",
       color: "from-teal-500 to-green-600",
       stats: { accuracy: "93%", performance: "87%", dataPoints: "100+" }
+    },
+    {
+      title: "Recruiter Productivity",
+      icon: <Gauge className="w-8 h-8" />,
+      description: "Automate time-consuming task management with its impactful effect on the overall productivity of recruiters. Allowing them to better focus on essential parts of the recruiting process, (i.e., developing relationships, making talent acquisition decisions).",
+      color: "from-cyan-500 to-blue-600",
+      stats: { productivity: "78%", timeSaved: "6H", focus: "90%" }
     }
   ];
 
