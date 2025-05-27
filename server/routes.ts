@@ -141,7 +141,33 @@ export async function registerRoutes(app: Express): Promise<Server> {
 
       // Check if user is admin - if not, force status to be 'active' to hide draft jobs
       let statusFilter = status;
-      if (!req.user || req.user.role !== 'admin') {
+      let isAdmin = false;
+      
+      // Check JWT token for admin authentication
+      const authHeader = req.headers.authorization;
+      if (authHeader && authHeader.startsWith('Bearer ')) {
+        const token = authHeader.substring(7);
+        try {
+          const jwt = require('jsonwebtoken');
+          const decoded = jwt.verify(token, process.env.JWT_SECRET!) as { user: any };
+          const userId = decoded.user.id;
+          
+          // Check if this is an admin user
+          const user = await storage.getUserById(userId);
+          if (user && user.role === 'admin') {
+            isAdmin = true;
+          }
+        } catch (error) {
+          console.log("JWT verification failed for admin check");
+        }
+      }
+      
+      // Also check session-based authentication
+      if (req.user && req.user.role === 'admin') {
+        isAdmin = true;
+      }
+      
+      if (!isAdmin) {
         statusFilter = 'active';
       } else if (!status || status === "all_statuses") {
         statusFilter = undefined;
