@@ -1,4 +1,3 @@
-
 import { motion } from "framer-motion";
 import { useState } from "react";
 import { 
@@ -14,7 +13,7 @@ import { Button } from "@/components/ui/button";
 
 const HiringAdvice = () => {
   const [isAnnouncementVisible, setIsAnnouncementVisible] = useState(true);
-        
+
   const handleAnnouncementVisibilityChange = (isVisible: boolean) => {
     setIsAnnouncementVisible(isVisible);
   };
@@ -170,7 +169,7 @@ const HiringAdvice = () => {
               <BookOpen className="w-10 h-10 text-blue-600 mr-4" />
               <span className="text-xl font-semibold text-blue-600 tracking-wider">NIDDIK'S HIRING ADVICE</span>
             </div>
-            
+
             <h1 className="text-6xl lg:text-7xl font-bold pb-5 bg-gradient-to-r from-blue-600 to-emerald-600 bg-clip-text text-transparent leading-tight">
               Building Diverse &
               <br />
@@ -193,7 +192,7 @@ const HiringAdvice = () => {
                   View Open Positions
                 </span>
               </Button>
-              
+
               <Button 
                 variant="outline" 
                 size="lg"
@@ -238,7 +237,7 @@ const HiringAdvice = () => {
                   <div className="mr-6">{category.icon}</div>
                   <h3 className="text-3xl font-bold text-gray-800">{category.title}</h3>
                 </div>
-                
+
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                   {category.advice.map((advice, adviceIndex) => (
                     <motion.div
@@ -349,7 +348,7 @@ const HiringAdvice = () => {
             <div className="relative">
               {/* Timeline center line */}
               <div className="absolute left-[2.5rem] top-0 bottom-0 w-0.5 bg-blue-200"></div>
-              
+
               {['2020', '2021', '2022', '2023', '2024', '2025'].map((year, index) => (
                 <motion.div
                   key={year}
@@ -413,6 +412,179 @@ const HiringAdvice = () => {
                 </motion.div>
               ))}
             </div>
+          </motion.div>
+        </Container>
+      </section>
+
+      {/* What We're Looking For Section */}
+      <section className="py-20 bg-gradient-to-br from-emerald-600 via-blue-600 to-purple-600 text-white relative overflow-hidden">
+        {/* Animated Background Elements */}
+        <div className="absolute inset-0">
+          {Array.from({ length: 30 }).map((_, i) => (
+            <motion.div
+              key={i}
+              className="absolute w-2 h-2 bg-white/20 rounded-full"
+              initial={{
+                x: Math.random() * window.innerWidth,
+                y: Math.random() * window.innerHeight,
+              }}
+              animate={{
+                x: Math.random() * window.innerWidth,
+                y: Math.random() * window.innerHeight,
+              }}
+              transition={{
+                duration: Math.random() * 15 + 10,
+                repeat: Infinity,
+                repeatType: "reverse",
+              }}
+            />
+          ))}
+        </div>
+
+        <Container className="relative z-10">
+          <motion.div
+            initial={{ opacity: 0, y: 30 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            className="text-center mb-16"
+          >
+            <div className="inline-flex items-center justify-center mb-6">
+              <Users className="w-8 h-8 mr-3" />
+              <span className="text-xl font-semibold tracking-wider">WHAT WE'RE LOOKING FOR</span>
+            </div>
+            <h2 className="text-5xl lg:text-6xl font-bold mb-8 leading-tight">
+              Join Our Vision for
+              <br />
+              <span className="bg-gradient-to-r from-yellow-300 to-orange-300 bg-clip-text text-transparent">
+                Innovation & Excellence
+              </span>
+            </h2>
+            <p className="text-xl text-blue-100 max-w-4xl mx-auto leading-relaxed">
+              At NIDDIK we are looking for individuals and partners to share in our enthusiasm for innovation 
+              and customer satisfaction. We need great Techies, Vendors, and Channel Partners that are:
+            </p>
+          </motion.div>
+
+          <div className="grid grid-cols-1 lg:grid-cols-3 gap-8 mb-16">
+            {[
+              {
+                title: "Innovative",
+                description: "We want people with imagination to think outside the box to find creative ways to solve problems.",
+                icon: <Lightbulb className="w-12 h-12" />,
+                gradient: "from-yellow-400 to-orange-500"
+              },
+              {
+                title: "Collaborative",
+                description: "We simply would like individuals and partners to be able to work together with our team.",
+                icon: <Users2 className="w-12 h-12" />,
+                gradient: "from-blue-400 to-cyan-500"
+              },
+              {
+                title: "Customer-Centric",
+                description: "We tremendous effort and commitment takes place behind the scenes to deliver exceptional customer experiences.",
+                icon: <Heart className="w-12 h-12" />,
+                gradient: "from-pink-400 to-red-500"
+              }
+            ].map((quality, index) => (
+              <motion.div
+                key={index}
+                initial={{ opacity: 0, y: 50, scale: 0.9 }}
+                whileInView={{ opacity: 1, y: 0, scale: 1 }}
+                transition={{ delay: index * 0.2 }}
+                whileHover={{ y: -10, scale: 1.05 }}
+                className="group"
+              >
+                <div className="bg-white/10 backdrop-blur-lg rounded-3xl p-8 h-full border border-white/20 hover:border-white/40 transition-all duration-300">
+                  <div className={`inline-flex p-4 rounded-2xl bg-gradient-to-r ${quality.gradient} mb-6 group-hover:scale-110 transition-transform`}>
+                    {quality.icon}
+                  </div>
+                  <h3 className="text-2xl font-bold mb-4 text-white">{quality.title}</h3>
+                  <p className="text-blue-100 leading-relaxed">{quality.description}</p>
+                </div>
+              </motion.div>
+            ))}
+          </div>
+        </Container>
+      </section>
+
+      {/* How to Apply Section */}
+      <section className="py-20 bg-white relative overflow-hidden">
+        {/* Decorative Elements */}
+        <div className="absolute top-0 left-0 w-72 h-72 bg-gradient-to-br from-blue-100 to-emerald-100 rounded-full opacity-30 -translate-x-36 -translate-y-36"></div>
+        <div className="absolute bottom-0 right-0 w-96 h-96 bg-gradient-to-tl from-purple-100 to-pink-100 rounded-full opacity-30 translate-x-48 translate-y-48"></div>
+
+        <Container className="relative z-10">
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            className="max-w-4xl mx-auto text-center"
+          >
+            <div className="inline-flex items-center justify-center mb-8">
+              <FileText className="w-8 h-8 text-blue-600 mr-3" />
+              <span className="text-xl font-semibold text-blue-600 tracking-wider uppercase">How to Apply</span>
+            </div>
+
+            <h2 className="text-5xl lg:text-6xl font-bold mb-8 text-gray-800 leading-tight">
+              Ready to Make an
+              <br />
+              <span className="bg-gradient-to-r from-blue-600 to-emerald-600 bg-clip-text text-transparent">
+                Impact?
+              </span>
+            </h2>
+
+            <motion.div
+              initial={{ opacity: 0, scale: 0.95 }}
+              whileInView={{ opacity: 1, scale: 1 }}
+              transition={{ delay: 0.2 }}
+              className="bg-gradient-to-r from-blue-50 to-emerald-50 rounded-3xl p-12 mb-12 border-2 border-blue-100"
+            >
+              <p className="text-xl text-gray-700 leading-relaxed mb-8">
+                If you are interested in becoming part of our team or you are interested in partnering with us, 
+                please make your application or proposal via our website. And remember to make it specific to your 
+                needs and requirements - identify your skills, experience and achievements.
+              </p>
+
+              <div className="flex flex-col sm:flex-row gap-6 justify-center">
+                <motion.div whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }}>
+                  <Button 
+                    size="lg" 
+                    className="bg-gradient-to-r from-blue-600 to-emerald-600 hover:from-blue-700 hover:to-emerald-700 text-lg px-10 py-4 h-auto shadow-xl text-white"
+                  >
+                    <span className="flex items-center">
+                      <Trophy className="mr-3 w-6 h-6" />
+                      Apply for a Position
+                    </span>
+                  </Button>
+                </motion.div>
+
+                <motion.div whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }}>
+                  <Button 
+                    variant="outline" 
+                    size="lg"
+                    className="border-2 border-blue-600 text-blue-600 hover:bg-blue-50 text-lg px-10 py-4 h-auto shadow-lg"
+                  >
+                    <span className="flex items-center">
+                      <Network className="mr-3 w-6 h-6" />
+                      Partner With Us
+                    </span>
+                  </Button>
+                </motion.div>
+              </div>
+            </motion.div>
+
+            <motion.div
+              initial={{ opacity: 0, y: 20 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              transition={{ delay: 0.4 }}
+              className="bg-gradient-to-r from-yellow-50 to-orange-50 rounded-2xl p-8 border-2 border-yellow-200"
+            >
+              <div className="flex items-center justify-center mb-4">
+                <Star className="w-8 h-8 text-yellow-500 mr-3" />
+                <h3 className="text-3xl font-bold text-gray-800">WE LOOK FORWARD TO HEARING WHAT YOU CAN OFFER!</h3>
+              </div>
+              <p className="text-lg text-gray-600">
+                Your unique skills and perspective could be exactly what we need to drive innovation forward.
+              </p>
+            </motion.div>
           </motion.div>
         </Container>
       </section>
