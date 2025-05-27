@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { motion } from 'framer-motion';
+import { Link } from "wouter";
 import { ArrowRight, CheckCircle, TrendingUp, ShieldCheck, Zap, Users, Layers, BarChart, Target } from 'lucide-react';
 import Container from '@/components/ui/container';
 
@@ -214,9 +215,11 @@ const BenefitsStrengthsShowcase = () => {
           viewport={{ once: true }}
           transition={{ duration: 0.6, delay: 0.5 }}
         >
+           <Link href="/why-us">
           <button className="inline-flex items-center gap-2 bg-andela-green hover:bg-opacity-90 text-white px-6 py-3 rounded-md font-medium transition transform hover:scale-105">
             Learn More <ArrowRight className="h-4 w-4" />
           </button>
+           </Link>
         </motion.div>
       </Container>
 

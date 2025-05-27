@@ -1,6 +1,7 @@
 
 import { motion, useScroll, useTransform } from "framer-motion";
 import { useState, useRef } from "react";
+import { Link } from "wouter";
 import { TrendingUp, Globe, Building, Users, ChevronRight, Play, Pause, BarChart3, DollarSign, MapPin, Briefcase, ArrowUpRight, Zap, Target, Brain, Heart, Wrench } from "lucide-react";
 import Container from "@/components/ui/container";
 import Navbar from "@/components/layout/Navbar";
@@ -504,6 +505,7 @@ const FactsAndTrends = () => {
             </p>
             
             <div className="flex flex-col sm:flex-row gap-6 justify-center">
+               <Link href="/whitepaper">
               <Button 
                 size="lg" 
                 className="bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 text-lg px-8 py-4 h-auto"
@@ -513,7 +515,8 @@ const FactsAndTrends = () => {
                   Get Market Intelligence Report
                 </span>
               </Button>
-              
+                 </Link>
+               <Link href="/contact">
               <Button 
                 variant="outline" 
                 size="lg"
@@ -524,6 +527,7 @@ const FactsAndTrends = () => {
                   <ChevronRight className="ml-2 w-5 h-5" />
                 </span>
               </Button>
+               </Link>
             </div>
           </motion.div>
         </Container>

@@ -50,7 +50,7 @@ const businessCards = [
     description: "Access our global network of pre-vetted, world-class tech professionals ready to join your team.",
     linkText: "Learn More",
     linkColor: "text-andela-green",
-    href: "#"
+    href: "/request-demo"
   },
   {
     icon: <UserCog className="text-andela-blue text-2xl" />,
@@ -59,7 +59,7 @@ const businessCards = [
     description: "Quickly assemble high-performing teams for your projects with our managed team solution.",
     linkText: "Learn More",
     linkColor: "text-andela-blue",
-    href: "#"
+    href: "/contact"
   },
   {
     icon: <Rocket className="text-green-600 text-2xl" />,
@@ -68,7 +68,7 @@ const businessCards = [
     description: "Flexible talent solutions designed specifically for enterprise needs and compliance requirements.",
     linkText: "Learn More",
     linkColor: "text-green-600",
-    href: "#"
+    href: "/request-demo"
   }
 ];
 
