@@ -20,19 +20,6 @@ const LeadershipTeam = () => {
 
   const leaders = [
     {
-      name: "Dr. Samar Husain Naqvi",
-      title: "CEO / Co-Founder",
-      company: "NIDDIKKARE LLP",
-      image: "https://res.cloudinary.com/dhanz6zty/image/upload/v1748340984/niddik-leader-ship-team-samar-husain_gczwmu.png",
-      expertise: ["Biotechnology", "Life Sciences", "Genomics", "Molecular Biology"],
-      experience: "25+ Years",
-      description: "A trailblazing expert in biotechnology and life sciences, renowned for his groundbreaking work in genomics, molecular biology, and microbiology. With a career spanning over 25 years, he has established himself as a leading authority in the development of innovative diagnostic solutions, leveraging cutting-edge technologies to drive medical advancements.",
-      fullBio: "As a visionary leader, he has held pivotal roles in esteemed corporate organizations, where he has successfully spearheaded the design, development, and manufacturing of in vitro diagnostic medical devices. His expertise in navigating complex regulatory landscapes has ensured the seamless translation of research findings into clinically validated diagnostic tools, ultimately enhancing patient care and outcomes. His research has been instrumental in elucidating the molecular mechanisms underlying various diseases, shedding light on novel biomarkers, and informing the development of targeted therapeutic strategies. Through his mentorship and leadership, he has fostered a new generation of scientists and researchers, imbuing them with a passion for discovery and a commitment to excellence. As a testament to his dedication and expertise, Dr. Naqvi has garnered numerous accolades and recognition within the scientific community, solidifying his position as a luminary in the field of biotechnology and life sciences.",
-      icon: <Microscope className="w-8 h-8" />,
-      color: "from-blue-500 to-cyan-500",
-      bgPattern: "bg-gradient-to-br from-blue-50 to-cyan-50"
-    },
-    {
       name: "Dr. Abhishek Chanchal",
       title: "CEO / Co-Founder",
       company: "NIDDIKKARE LLP",
@@ -44,6 +31,19 @@ const LeadershipTeam = () => {
       icon: <Award className="w-8 h-8" />,
       color: "from-purple-500 to-pink-500",
       bgPattern: "bg-gradient-to-br from-purple-50 to-pink-50"
+    },
+    {
+      name: "Dr. Samar Husain Naqvi",
+      title: "CEO / Co-Founder",
+      company: "NIDDIKKARE LLP",
+      image: "https://res.cloudinary.com/dhanz6zty/image/upload/v1748340984/niddik-leader-ship-team-samar-husain_gczwmu.png",
+      expertise: ["Biotechnology", "Life Sciences", "Genomics", "Molecular Biology"],
+      experience: "25+ Years",
+      description: "A trailblazing expert in biotechnology and life sciences, renowned for his groundbreaking work in genomics, molecular biology, and microbiology. With a career spanning over 25 years, he has established himself as a leading authority in the development of innovative diagnostic solutions, leveraging cutting-edge technologies to drive medical advancements.",
+      fullBio: "As a visionary leader, he has held pivotal roles in esteemed corporate organizations, where he has successfully spearheaded the design, development, and manufacturing of in vitro diagnostic medical devices. His expertise in navigating complex regulatory landscapes has ensured the seamless translation of research findings into clinically validated diagnostic tools, ultimately enhancing patient care and outcomes. His research has been instrumental in elucidating the molecular mechanisms underlying various diseases, shedding light on novel biomarkers, and informing the development of targeted therapeutic strategies. Through his mentorship and leadership, he has fostered a new generation of scientists and researchers, imbuing them with a passion for discovery and a commitment to excellence. As a testament to his dedication and expertise, Dr. Naqvi has garnered numerous accolades and recognition within the scientific community, solidifying his position as a luminary in the field of biotechnology and life sciences.",
+      icon: <Microscope className="w-8 h-8" />,
+      color: "from-blue-500 to-cyan-500",
+      bgPattern: "bg-gradient-to-br from-blue-50 to-cyan-50"
     },
     {
       name: "Mr. Abhishek Anchal",

@@ -1,5 +1,6 @@
 import React, { useState } from "react";
 import { motion } from "framer-motion";
+import { Link } from "wouter";
 import { Users, Globe, Award, Heart, Leaf, Zap, X, ExternalLink, Sparkles } from "lucide-react";
 import Container from "@/components/ui/container";
 import Navbar from "@/components/layout/Navbar";
@@ -1057,21 +1058,21 @@ His work has significant implications for the development of personalized medici
                 </ul>
                 
                 <div className="flex flex-col sm:flex-row gap-4 pt-6">
-                  <a 
-                    href="#" 
+                  <Link 
+                    href="/request-demo" 
                     className="bg-andela-green hover:bg-andela-dark text-white px-8 py-4 rounded-md font-medium transition-all shadow-lg hover:shadow-xl transform hover:-translate-y-1 flex items-center justify-center"
                   >
                     <span className="uppercase tracking-wide">Looking To Hire</span>
                     <svg className="w-5 h-5 ml-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                       <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M14 5l7 7m0 0l-7 7m7-7H3" />
                     </svg>
-                  </a>
-                  <a 
-                    href="#" 
+                  </Link>
+                  <Link 
+                    href="/careers" 
                     className="bg-transparent border-2 border-andela-green text-andela-green hover:bg-andela-green hover:text-white px-8 py-4 rounded-md font-medium transition-all shadow-lg hover:shadow-xl transform hover:-translate-y-1 flex items-center justify-center"
                   >
                     <span className="uppercase tracking-wide">I Am A Job Seeker</span>
-                  </a>
+                  </Link>
                 </div>
               </motion.div>
               
