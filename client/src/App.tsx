@@ -36,6 +36,7 @@ import SubmittedCandidates from "@/pages/admin/SubmittedCandidates";
 import Users from "@/pages/admin/Users";
 import DemoRequests from "./pages/admin/DemoRequests";
 import ContactSubmissions from "./pages/admin/ContactSubmissions";
+import FAQs from "@/pages/FAQs";
 
 // Auth Provider
 import { AuthProvider } from "@/hooks/use-auth";
@@ -99,6 +100,8 @@ function Router() {
             <Route path="/about-us" component={AboutUs} />
             <Route path="/why-us" component={WhyUs} />
             <Route path="/leadership-team" component={LeadershipTeam} />
+          <Route path="/community-involvement" component={CommunityInvolvement} />
+          <Route path="/faqs" component={FAQs} />
             <Route path="/contact" component={ContactUs} />
 
             {/* Careers & Jobs */}

@@ -84,6 +84,7 @@ const navItems: NavItem[] = [
       { label: "Why NiDDik", href: "/why-us" },
       { label: "Leadership Team", href: "/leadership-team" },
       { label: "Community Involvement", href: "/community-involvement" },
+      { label: "FAQs", href: "/faqs" },
       { label: "Contact Us", href: "/contact" },
       // { label: "Whitepaper", href: "/whitepaper" }
       { label: "Apply to Niddik", href: "/careers" },
