@@ -564,7 +564,7 @@ const HiringAdvice = () => {
                 </motion.div>
 
                 <motion.div whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }}>
-                  <Link href="/contact">
+                  <Link href="/request-demo">
                     <Button 
                       variant="outline" 
                       size="lg"
