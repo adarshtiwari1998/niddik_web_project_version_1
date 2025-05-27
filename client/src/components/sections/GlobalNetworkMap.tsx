@@ -441,9 +441,9 @@ const GlobalNetworkMap: React.FC = () => {
           transition={{ delay: 2, duration: 0.8 }}
         >
           <div className="text-4xl font-bold bg-gradient-to-r from-orange-400 to-red-400 bg-clip-text text-transparent">
-            24/7
+            99.9%
           </div>
-          <div className="text-sm opacity-80 font-medium">Global Support</div>
+          <div className="text-sm opacity-80 font-medium">Network Uptime</div>
         </motion.div>
 
         <motion.div
