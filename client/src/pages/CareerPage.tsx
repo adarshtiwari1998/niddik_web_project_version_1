@@ -58,7 +58,7 @@ export default function CareerPage() {
     const matchesCategory = category === 'all_categories' || job.category === category;
     const matchesJobType = jobType === 'all_types' || job.jobType === jobType;
     const matchesExperienceLevel = experienceLevel === 'all_levels' || job.experienceLevel === experienceLevel;
-    
+
     const matchesPriority = priority === 'all_priorities' ||
       (priority === 'urgent' && job.urgent) ||
       (priority === 'priority' && job.priority) ||
@@ -205,100 +205,118 @@ export default function CareerPage() {
           </div>
         )}
 
-        <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
-          {!isLoading && !error && filteredJobs.map((job) => (
-            <Card key={job.id} className="h-full flex flex-col">
-              <CardHeader>
-                <div className="flex justify-between items-start">
-                  <div className="flex-1">
-                    <CardTitle className="text-xl">{job.title}</CardTitle>
-                    <CardDescription className="mt-1">{job.company}</CardDescription>
+        
+<div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
+          {filteredJobs.map((job) => {
+            const isDraft = job.status === 'draft';
+            const CardComponent = ({ children }: { children: React.ReactNode }) => {
+              if (isDraft) {
+                return (
+                  <Card className={`overflow-hidden transition-shadow duration-300 opacity-40 cursor-not-allowed relative`}>
+                    <div className="absolute top-2 right-2 z-10">
+                      <Badge className="bg-gray-500 text-white text-xs font-bold">DRAFT</Badge>
+                    </div>
+                    {children}
+                  </Card>
+                );
+              }
+              return (
+                <Card className="overflow-hidden hover:shadow-lg transition-shadow duration-300">
+                  {children}
+                </Card>
+              );
+            };
+
+            return (
+              <CardComponent key={job.id}>
+                <CardHeader className="pb-3">
+                  <div className="flex items-start justify-between">
+                    <div className="flex-1">
+                      <CardTitle className="text-lg font-semibold mb-1">{job.title}</CardTitle>
+                      <CardDescription className="text-sm">{job.company}</CardDescription>
+                    </div>
+                    <div className="flex flex-wrap gap-1 ml-2">
+                      {job.featured && (
+                        <Badge className="bg-blue-100 text-blue-800 hover:bg-blue-200 text-xs">Featured</Badge>
+                      )}
+                      {job.urgent && (
+                        <Badge className="bg-red-100 text-red-800 hover:bg-red-200 text-xs">
+                          <span className="animate-pulse">🔥</span> Urgent
+                        </Badge>
+                      )}
+                      {job.priority && (
+                        <Badge className="bg-yellow-100 text-yellow-800 hover:bg-yellow-200 text-xs">
+                          ⚡ Priority
+                        </Badge>
+                      )}
+                      {job.isOpen && (
+                        <Badge className="bg-green-100 text-green-800 hover:bg-green-200 text-xs">
+                          ✅ Open
+                        </Badge>
+                      )}
+                    </div>
                   </div>
-                  <div className="flex flex-col gap-1 ml-4">
-                    {job.featured && (
-                      <Badge className="bg-gradient-to-r from-yellow-400 to-amber-500 hover:from-yellow-500 hover:to-amber-600 text-white px-3 py-1 text-xs font-semibold shadow-lg">
-                        ⭐ Featured
-                      </Badge>
-                    )}
-                    {job.urgent && (
-                      <Badge className="bg-gradient-to-r from-red-500 to-red-600 hover:from-red-600 hover:to-red-700 text-white px-3 py-1 text-xs font-semibold shadow-lg animate-pulse">
-                        🔥 Urgent Hiring
-                      </Badge>
-                    )}
-                    {job.priority && (
-                      <Badge className="bg-gradient-to-r from-purple-500 to-indigo-600 hover:from-purple-600 hover:to-indigo-700 text-white px-3 py-1 text-xs font-semibold shadow-lg">
-                        ⚡ Priority Role
-                      </Badge>
-                    )}
-                    {job.isOpen && (
-                      <Badge className="bg-gradient-to-r from-green-500 to-green-600 hover:from-green-600 hover:to-green-700 text-white px-3 py-1 text-xs font-semibold shadow-lg">
-                        ✅ Actively Hiring
-                      </Badge>
-                    )}
-                  </div>
-                </div>
-              </CardHeader>
-              <CardContent className="flex-grow">
-                <div className="space-y-3 text-sm text-muted-foreground mb-4">
-                  <div className="flex items-center">
-                    <MapPin className="h-4 w-4 mr-2" />
-                    <span>{job.location}</span>
-                  </div>
-                  <div className="flex items-center">
-                    <Briefcase className="h-4 w-4 mr-2" />
-                    <span className="capitalize">{job.jobType}</span>
-                  </div>
+                </CardHeader>
+                <CardContent className="space-y-3">
+                  <div className="flex items-center justify-between text-sm">
+                    <div className="flex items-center text-muted-foreground">
+                      <MapPin className="h-3 w-3 mr-1" />
+                      <span>{job.location}</span>
+                    </div>
+                    <Badge variant="outline">{job.jobType}</Badge>
                   </div>
 
-                {/* Job Summary Section */}
-                <div className="space-y-2 text-sm mb-4 p-3 bg-gray-50 dark:bg-gray-800 rounded-md">
-                  <h4 className="font-semibold text-gray-900 dark:text-gray-100 mb-2">Job Summary</h4>
+                  <div className="flex items-center justify-between text-sm">
+                    <div className="flex items-center text-muted-foreground">
+                      <Briefcase className="h-3 w-3 mr-1" />
+                      <span>{job.experienceLevel}</span>
+                    </div>
+                    <span className="font-medium text-primary">{job.salary}</span>
+                  </div>
 
-                  <div className="grid grid-cols-1 gap-2">
-                    <div className="flex items-center justify-between">
-                      <div className="flex items-center text-muted-foreground">
-                        <Award className="h-3 w-3 mr-1" />
-                        <span>Experience Level:</span>
+                  <div className="bg-gray-50 p-2 rounded-md">
+                    <div className="grid grid-cols-2 gap-3 text-xs">
+                      <div className="flex items-center justify-between">
+                        <div className="flex items-center text-muted-foreground">
+                          <Award className="h-3 w-3 mr-1" />
+                          <span>Category:</span>
+                        </div>
+                        <span className="font-medium">{job.category}</span>
                       </div>
-                      <span className="font-medium capitalize">{job.experienceLevel}</span>
-                    </div>
 
-                    <div className="flex items-center justify-between">
-                      <span className="text-muted-foreground">Salary Range:</span>
-                      <span className="font-medium">{job.salary || "Competitive"}</span>
-                    </div>
-
-                    <div className="flex items-center justify-between">
-                      <span className="text-muted-foreground">Category:</span>
-                      <span className="font-medium">{job.category}</span>
-                    </div>
-
-                    <div className="flex items-center justify-between">
-                      <div className="flex items-center text-muted-foreground">
-                        <Clock className="h-3 w-3 mr-1" />
-                        <span>Posted On:</span>
+                      <div className="flex items-center justify-between">
+                        <div className="flex items-center text-muted-foreground">
+                          <Clock className="h-3 w-3 mr-1" />
+                          <span>Posted On:</span>
+                        </div>
+                        <span className="font-medium">
+                          {job.postedDate && !isNaN(new Date(job.postedDate).getTime()) 
+                            ? format(new Date(job.postedDate), "MMM dd, yyyy")
+                            : "Recently"
+                          }
+                        </span>
                       </div>
-                      <span className="font-medium">
-                        {job.postedDate && !isNaN(new Date(job.postedDate).getTime()) 
-                          ? format(new Date(job.postedDate), "MMM dd, yyyy")
-                          : "Recently"
-                        }
-                      </span>
                     </div>
                   </div>
-                </div>
 
-                <div className="text-sm text-gray-600 leading-relaxed">
-                  <p className="line-clamp-3">{job.description}</p>
-                </div>
-              </CardContent>
-              <CardFooter>
-                <Link href={`/jobs/${job.id}`}>
-                  <Button className="w-full">View Details</Button>
-                </Link>
-              </CardFooter>
-            </Card>
-          ))}
+                  <div className="text-sm text-gray-600 leading-relaxed">
+                    <p className="line-clamp-3">{job.description}</p>
+                  </div>
+                </CardContent>
+                <CardFooter>
+                  {isDraft ? (
+                    <Button disabled className="w-full cursor-not-allowed opacity-50">
+                      Draft - Not Available
+                    </Button>
+                  ) : (
+                    <Link href={`/jobs/${job.id}`}>
+                      <Button className="w-full">View Details</Button>
+                    </Link>
+                  )}
+                </CardFooter>
+              </CardComponent>
+            );
+          })}
         </div>
 
         {/* Pagination can be added here later */}
