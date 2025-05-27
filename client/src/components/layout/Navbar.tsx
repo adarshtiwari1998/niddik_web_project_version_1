@@ -240,7 +240,7 @@ const Navbar: React.FC<NavbarProps> = ({ hasAnnouncementAbove = true }) => {
                         "group-hover:text-andela-green font-medium transition-colors",
                         isTransparent 
                           ? (isHomePage ? "text-white" : isDarkPage ? "text-white" : "text-andela-dark")
-                          : (isDarkPage ? "text-w" : "text-andela-dark")
+                          : (isDarkPage ? "text-black" : "text-andela-dark")
                       )}
                     >
                       {item.label}
@@ -254,7 +254,7 @@ const Navbar: React.FC<NavbarProps> = ({ hasAnnouncementAbove = true }) => {
                   </div>
                   <div className="absolute left-0 mt-2 w-64 rounded-lg shadow-xl bg-white/95 backdrop-blur-md p-6 opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-300 transform origin-top-left z-50 border border-gray-200/20">
                     {item.dropdown.map((dropdownItem, idx) => (
-                      <div key={idx} className="block py-2 hover:text-andela-green transition-colors">
+                      <div key={idx} className="block py-2 text-gray-900 hover:text-andela-green transition-colors">
                         <Link href={dropdownItem.href}>
                           {dropdownItem.label}
                         </Link>
