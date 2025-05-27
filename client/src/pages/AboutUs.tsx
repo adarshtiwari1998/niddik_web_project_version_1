@@ -23,6 +23,32 @@ Born with a natural aptitude for mathematics and computer science, Abhishek purs
 Upon graduating, he embarked on his professional journey in the talent acquisition space. His early experiences as a recruiter and lead recruiter helped him develop a keen eye for talent and a deep understanding of the recruitment process.
 
 As Abhishek's career progressed, he took on increasingly senior leadership roles, including Talent Acquisition Manager and Delivery Head – Recruitment. His expertise and leadership skills caught the attention of prominent global organizations, leading to opportunities to work with esteemed companies such as Lehman Brothers (NJ-USA), Thomson Reuters (NY-USA), and Calance (India).`
+    },
+    {
+      name: "Dr. Samar Husain Naqvi",
+      role: "CEO & Co-Founder",
+      company: "NIDDIKKARE LLP",
+      image: "https://res.cloudinary.com/dhanz6zty/image/upload/v1748340984/niddik-leader-ship-team-samar-husain_gczwmu.png",
+      bio: "A trailblazing expert in biotechnology and life sciences, renowned for his groundbreaking work in genomics, molecular biology, and microbiology with over 25 years of experience.",
+      fullBio: `Dr. Samar Husain Naqvi is a trailblazing expert in biotechnology and life sciences, renowned for his groundbreaking work in genomics, molecular biology, and microbiology. With a career spanning over 25 years, he has established himself as a leading authority in the development of innovative diagnostic solutions, leveraging cutting-edge technologies to drive medical advancements.
+
+As a visionary leader, he has held pivotal roles in esteemed corporate organizations, where he has successfully spearheaded the design, development, and manufacturing of in vitro diagnostic medical devices. His expertise in navigating complex regulatory landscapes has ensured the seamless translation of research findings into clinically validated diagnostic tools, ultimately enhancing patient care and outcomes.
+
+His research has been instrumental in elucidating the molecular mechanisms underlying various diseases, shedding light on novel biomarkers, and informing the development of targeted therapeutic strategies. Through his mentorship and leadership, he has fostered a new generation of scientists and researchers, imbuing them with a passion for discovery and a commitment to excellence.
+
+As a testament to his dedication and expertise, Dr. Naqvi has garnered numerous accolades and recognition within the scientific community, solidifying his position as a luminary in the field of biotechnology and life sciences.`
+    },
+    {
+      name: "Dr. Abhishek Chanchal",
+      role: "CEO & Co-Founder",
+      company: "NIDDIKKARE LLP",
+      image: "https://res.cloudinary.com/dhanz6zty/image/upload/v1748341074/niddik-leader-ship-team-dr-abhishek_jwetmz.png",
+      bio: "A highly accomplished researcher and scientist with over 25 years' strong foundation in the fields of nanomedicine and biotechnology, holding a Ph.D. in Bio-Science (Nanomedicine).",
+      fullBio: `Dr. Abhishek Chanchal is a highly accomplished researcher and scientist with over 25 years' strong foundation in the fields of nanomedicine and biotechnology. Holding a Ph.D. in Bio-Science (Nanomedicine) from the esteemed Jamia Millia Islamia, Delhi, he has developed a profound expertise in the design, formulation, and characterization of nanoparticles for targeted drug delivery.
+
+His research focuses on harnessing the potential of nanotechnology to create innovative solutions for complex medical challenges, with a particular emphasis on improving the efficacy and safety of therapeutic interventions. With a deep understanding of the intricate interactions between nanoparticles and biological systems, he has successfully developed novel nanoscale systems that can selectively target diseased cells, reducing side effects and enhancing treatment outcomes.
+
+His work has significant implications for the development of personalized medicine and has the potential to revolutionize the field of drug delivery and treatment of various diseases, including cancer, neurological disorders, and infectious diseases. Through his groundbreaking research, Dr. Chanchal continues to contribute to the advancement of nanomedicine and biotechnology, pushing the boundaries of scientific knowledge and innovation, and inspiring future generations of researchers and scientists.`
     }
   ];
 
@@ -814,88 +840,89 @@ As Abhishek's career progressed, he took on increasingly senior leadership roles
             </h2>
             <div className="w-24 h-1 bg-andela-green mx-auto mb-6"></div>
             <p className="text-xl text-andela-gray max-w-2xl mx-auto">
-              Meet the visionary behind Niddik's mission
+              Meet the visionary leaders behind Niddik's mission
             </p>
           </motion.div>
 
-          <div className="max-w-5xl mx-auto relative">
+          <div className="max-w-7xl mx-auto relative">
             {/* Decorative elements */}
             <div className="absolute -top-10 -left-10 w-20 h-20 rounded-full bg-andela-green/10 blur-xl"></div>
             <div className="absolute -bottom-10 -right-10 w-20 h-20 rounded-full bg-andela-green/10 blur-xl"></div>
             
-            <motion.div
-              className="flex flex-col lg:flex-row gap-12 p-8 bg-white rounded-2xl shadow-xl overflow-hidden relative z-10"
-              initial={{ opacity: 0, y: 20 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              viewport={{ once: true }}
-              transition={{ duration: 0.5 }}
-            >
-              <div className="w-full lg:w-2/5 flex-shrink-0">
-                <div className="relative rounded-xl overflow-hidden shadow-lg h-full">
-                  <img 
-                    src="https://res.cloudinary.com/dhanz6zty/image/upload/v1748340984/niddik-leader-ship-team-mr-abhishek_dm2jal.png" 
-                    alt={teamMembers[0].name} 
-                    className="w-full h-full object-cover object-center"
-                  />
-                  <div className="absolute inset-0 bg-gradient-to-t from-black/50 to-transparent"></div>
-                  
-                  {/* Social links */}
-                  <div className="absolute bottom-4 left-0 right-0 flex justify-center gap-3">
-                    <a 
-                      href="#" 
-                      className="w-10 h-10 bg-white rounded-full flex items-center justify-center text-andela-green hover:bg-andela-green hover:text-white transition-colors"
-                    >
-                      <svg className="w-5 h-5" fill="currentColor" viewBox="0 0 24 24">
-                        <path d="M19 0h-14c-2.761 0-5 2.239-5 5v14c0 2.761 2.239 5 5 5h14c2.762 0 5-2.239 5-5v-14c0-2.761-2.238-5-5-5zm-11 19h-3v-11h3v11zm-1.5-12.268c-.966 0-1.75-.79-1.75-1.764s.784-1.764 1.75-1.764 1.75.79 1.75 1.764-.783 1.764-1.75 1.764zm13.5 12.268h-3v-5.604c0-3.368-4-3.113-4 0v5.604h-3v-11h3v1.765c1.396-2.586 7-2.777 7 2.476v6.759z"/>
-                      </svg>
-                    </a>
-                    <a 
-                      href="#" 
-                      className="w-10 h-10 bg-white rounded-full flex items-center justify-center text-andela-green hover:bg-andela-green hover:text-white transition-colors"
-                    >
-                      <svg className="w-5 h-5" fill="currentColor" viewBox="0 0 24 24">
-                        <path d="M12 0c-6.627 0-12 5.373-12 12s5.373 12 12 12 12-5.373 12-12-5.373-12-12-12zm6.066 9.645c.183 4.04-2.83 8.544-8.164 8.544-1.622 0-3.131-.476-4.402-1.291 1.524.18 3.045-.244 4.252-1.189-1.256-.023-2.317-.854-2.684-1.995.451.086.895.061 1.298-.049-1.381-.278-2.335-1.522-2.304-2.853.388.215.83.344 1.301.359-1.279-.855-1.641-2.544-.889-3.835 1.416 1.738 3.533 2.881 5.92 3.001-.419-1.796.944-3.527 2.799-3.527.825 0 1.572.349 2.096.907.654-.128 1.27-.368 1.824-.697-.215.671-.67 1.233-1.263 1.589.581-.07 1.135-.224 1.649-.453-.384.578-.87 1.084-1.433 1.489z"/>
-                      </svg>
-                    </a>
+            <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
+              {teamMembers.map((member, index) => (
+                <motion.div
+                  key={index}
+                  className="bg-white rounded-2xl shadow-xl overflow-hidden relative z-10 hover:shadow-2xl transition-shadow duration-300"
+                  initial={{ opacity: 0, y: 20 }}
+                  whileInView={{ opacity: 1, y: 0 }}
+                  viewport={{ once: true }}
+                  transition={{ duration: 0.5, delay: index * 0.1 }}
+                >
+                  <div className="aspect-square relative overflow-hidden">
+                    <img 
+                      src={member.image} 
+                      alt={member.name} 
+                      className="w-full h-full object-cover object-center hover:scale-105 transition-transform duration-300"
+                    />
+                    <div className="absolute inset-0 bg-gradient-to-t from-black/50 to-transparent"></div>
+                    
+                    {/* Social links */}
+                    <div className="absolute bottom-4 left-0 right-0 flex justify-center gap-3">
+                      <a 
+                        href="#" 
+                        className="w-10 h-10 bg-white rounded-full flex items-center justify-center text-andela-green hover:bg-andela-green hover:text-white transition-colors"
+                      >
+                        <svg className="w-5 h-5" fill="currentColor" viewBox="0 0 24 24">
+                          <path d="M19 0h-14c-2.761 0-5 2.239-5 5v14c0 2.761 2.239 5 5 5h14c2.762 0 5-2.239 5-5v-14c0-2.761-2.238-5-5-5zm-11 19h-3v-11h3v11zm-1.5-12.268c-.966 0-1.75-.79-1.75-1.764s.784-1.764 1.75-1.764 1.75.79 1.75 1.764-.783 1.764-1.75 1.764zm13.5 12.268h-3v-5.604c0-3.368-4-3.113-4 0v5.604h-3v-11h3v1.765c1.396-2.586 7-2.777 7 2.476v6.759z"/>
+                        </svg>
+                      </a>
+                      <a 
+                        href="#" 
+                        className="w-10 h-10 bg-white rounded-full flex items-center justify-center text-andela-green hover:bg-andela-green hover:text-white transition-colors"
+                      >
+                        <svg className="w-5 h-5" fill="currentColor" viewBox="0 0 24 24">
+                          <path d="M12 0c-6.627 0-12 5.373-12 12s5.373 12 12 12 12-5.373 12-12-5.373-12-12-12zm6.066 9.645c.183 4.04-2.83 8.544-8.164 8.544-1.622 0-3.131-.476-4.402-1.291 1.524.18 3.045-.244 4.252-1.189-1.256-.023-2.317-.854-2.684-1.995.451.086.895.061 1.298-.049-1.381-.278-2.335-1.522-2.304-2.853.388.215.83.344 1.301.359-1.279-.855-1.641-2.544-.889-3.835 1.416 1.738 3.533 2.881 5.92 3.001-.419-1.796.944-3.527 2.799-3.527.825 0 1.572.349 2.096.907.654-.128 1.27-.368 1.824-.697-.215.671-.67 1.233-1.263 1.589.581-.07 1.135-.224 1.649-.453-.384.578-.87 1.084-1.433 1.489z"/>
+                        </svg>
+                      </a>
+                    </div>
                   </div>
-                </div>
-              </div>
-              
-              <div className="flex-1 flex flex-col justify-between">
-                <div>
-                  <div className="inline-block px-4 py-1 bg-andela-green/10 rounded-full text-andela-green text-sm font-medium mb-4">
-                    Founder & CEO
-                  </div>
-                  <h3 className="text-3xl font-bold mb-2 text-andela-dark">{teamMembers[0].name}</h3>
-                  <div className="h-1 w-16 bg-andela-green/50 mb-6"></div>
                   
-                  <div className="space-y-4 text-andela-gray">
-                    <p className="text-lg leading-relaxed">{teamMembers[0].bio}</p>
-                    <p className="text-lg leading-relaxed">
-                      Under his guidance, Niddik has grown into a premier talent matching platform, connecting talented professionals with innovative companies worldwide.
+                  <div className="p-6">
+                    <div className="inline-block px-4 py-1 bg-andela-green/10 rounded-full text-andela-green text-sm font-medium mb-4">
+                      {member.role}
+                    </div>
+                    {member.company && (
+                      <div className="text-sm text-gray-600 mb-2">{member.company}</div>
+                    )}
+                    <h3 className="text-xl font-bold mb-3 text-andela-dark">{member.name}</h3>
+                    <div className="h-1 w-12 bg-andela-green/50 mb-4"></div>
+                    
+                    <p className="text-andela-gray text-sm leading-relaxed mb-6 line-clamp-4">
+                      {member.bio}
                     </p>
+                    
+                    <div className="flex flex-col gap-3">
+                      <button 
+                        onClick={() => {
+                          setSelectedTeamMember(index);
+                          setModalOpen(true);
+                        }}
+                        className="w-full bg-andela-green hover:bg-andela-dark text-white px-4 py-2 rounded-md font-medium transition-colors text-sm flex items-center justify-center"
+                      >
+                        Read Full Bio <ExternalLink className="ml-2 h-4 w-4" />
+                      </button>
+                      <a 
+                        href="#"
+                        className="w-full border-2 border-andela-green text-andela-green hover:bg-andela-green hover:text-white px-4 py-2 rounded-md font-medium transition-colors text-sm text-center"
+                      >
+                        Contact
+                      </a>
+                    </div>
                   </div>
-                </div>
-                
-                <div className="mt-8 pt-6 border-t border-gray-100 flex flex-col sm:flex-row gap-4">
-                  <button 
-                    onClick={() => {
-                      setSelectedTeamMember(0);
-                      setModalOpen(true);
-                    }}
-                    className="inline-flex items-center justify-center bg-andela-green hover:bg-andela-dark text-white px-6 py-3 rounded-md font-medium transition-colors"
-                  >
-                    Read Full Bio <ExternalLink className="ml-2 h-4 w-4" />
-                  </button>
-                  <a 
-                    href="#"
-                    className="inline-flex items-center justify-center border-2 border-andela-green text-andela-green hover:bg-andela-green hover:text-white px-6 py-3 rounded-md font-medium transition-colors"
-                  >
-                    Contact Me
-                  </a>
-                </div>
-              </div>
-            </motion.div>
+                </motion.div>
+              ))}
+            </div>
           </div>
           
           {/* Team Member Modal */}
