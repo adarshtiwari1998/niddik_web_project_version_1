@@ -63,7 +63,7 @@ const navItems: NavItem[] = [
       { label: "Non-IT", href: "/partners/non-it" },
       { label: "Healthcare", href: "/partners/healthcare" },
       { label: "Pharma", href: "#" },
-      { label: "Testimonials", href: "#" },
+      { label: "Testimonials", href: "/testimonials" },
       { label: "Case Studies", href: "#" },
       // { label: "Learning Community", href: "#" },
       // { label: "Expert Network", href: "#" }

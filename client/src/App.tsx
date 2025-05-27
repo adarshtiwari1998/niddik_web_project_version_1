@@ -38,6 +38,9 @@ import DemoRequests from "./pages/admin/DemoRequests";
 import ContactSubmissions from "./pages/admin/ContactSubmissions";
 import FAQs from "@/pages/FAQs";
 import Clients from "@/pages/Clients";
+import Testimonials from "@/pages/Testimonials";
+import CommunityInvolvement from "@/pages/CommunityInvolvement";
+import CorporateResponsibilities from "@/pages/CorporateResponsibilities";
 
 // Auth Provider
 import { AuthProvider } from "@/hooks/use-auth";
@@ -96,6 +99,9 @@ function Router() {
             <Route path="/partners/healthcare" component={HealthcarePartners} />
             <Route path="/search" component={SearchPage} />
             <Route path="/clients" component={Clients} />
+            <Route path="/testimonials" component={Testimonials} />
+            <Route path="/community-involvement" component={CommunityInvolvement} />
+            <Route path="/corporate-social-responsibilities" component={CorporateResponsibilities} />
             <Route path="/contact" component={ContactUs} />
 
             {/* Company Routes */}
