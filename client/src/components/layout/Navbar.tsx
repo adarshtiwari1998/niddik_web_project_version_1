@@ -476,10 +476,12 @@ const Navbar: React.FC<NavbarProps> = ({ hasAnnouncementAbove = true }) => {
       {/* Mobile Menu */}
       <div 
         className={cn(
-          "fixed left-0 w-[85%] bg-white shadow-xl z-[9999] p-6 overflow-y-auto mobile-menu",
+          "fixed left-0 top-0 w-[85%] h-screen bg-white shadow-xl z-[9999] p-6 overflow-y-auto mobile-menu",
           isMobileMenuOpen && "open"
         )}
         style={{
+          height: '100vh',
+          height: '100dvh' // Dynamic viewport height for mobile browsers
         }}
       >
         <div className="flex justify-between items-center mb-8">
