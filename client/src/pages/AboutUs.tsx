@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import { motion } from "framer-motion";
-import { Users, Globe, Award, Heart, Leaf, Zap, X, ExternalLink } from "lucide-react";
+import { Users, Globe, Award, Heart, Leaf, Zap, X, ExternalLink, Sparkles } from "lucide-react";
 import Container from "@/components/ui/container";
 import Navbar from "@/components/layout/Navbar";
 import Footer from "@/components/layout/Footer";
@@ -288,43 +288,225 @@ As Abhishek's career progressed, he took on increasingly senior leadership roles
         </Container>
       </section>
       
-      {/* Story & Vision Section */}
-      <section className="py-20 bg-gradient-to-b from-gray-50 to-white">
-        <Container>
+      {/* Legacy Foundation Section - Unique Design */}
+      <section className="py-20 bg-gradient-to-br from-slate-900 via-blue-900 to-indigo-900 relative overflow-hidden">
+        {/* Animated Background Elements */}
+        <div className="absolute inset-0">
+          {/* Golden award particles */}
+          {Array.from({ length: 30 }).map((_, i) => (
+            <motion.div
+              key={i}
+              className="absolute w-1 h-1 bg-yellow-400 rounded-full"
+              initial={{
+                x: Math.random() * window.innerWidth,
+                y: Math.random() * window.innerHeight,
+                opacity: 0
+              }}
+              animate={{
+                x: Math.random() * window.innerWidth,
+                y: Math.random() * window.innerHeight,
+                opacity: [0, 0.8, 0]
+              }}
+              transition={{
+                duration: Math.random() * 8 + 4,
+                repeat: Infinity,
+                delay: Math.random() * 3
+              }}
+            />
+          ))}
+          
+          {/* Constellation lines */}
+          <svg className="absolute inset-0 w-full h-full opacity-20">
+            {Array.from({ length: 8 }).map((_, i) => (
+              <motion.line
+                key={i}
+                x1={`${Math.random() * 100}%`}
+                y1={`${Math.random() * 100}%`}
+                x2={`${Math.random() * 100}%`}
+                y2={`${Math.random() * 100}%`}
+                stroke="url(#legacyGradient)"
+                strokeWidth="1"
+                initial={{ pathLength: 0, opacity: 0 }}
+                animate={{ pathLength: 1, opacity: 0.6 }}
+                transition={{ duration: 3, delay: i * 0.5 }}
+              />
+            ))}
+            <defs>
+              <linearGradient id="legacyGradient" x1="0%" y1="0%" x2="100%" y2="100%">
+                <stop offset="0%" stopColor="#FFD700" />
+                <stop offset="100%" stopColor="#FFA500" />
+              </linearGradient>
+            </defs>
+          </svg>
+        </div>
+
+        <Container className="relative z-10">
           <motion.div
             variants={containerVariants}
             initial="hidden"
             whileInView="visible"
             viewport={{ once: true }}
-            className="grid grid-cols-1 md:grid-cols-2 gap-12 items-center"
+            className="text-center mb-16"
           >
-            <motion.div variants={itemVariants}>
-              <h2 className="text-3xl font-bold mb-6 text-andela-dark">Our Story</h2>
-              <div className="space-y-4 text-andela-gray">
-                <h3 className="text-xl font-semibold text-andela-dark">Using Technology & People Skills To Create Productive Teams</h3>
-                <p>
-                  Our journey is deeply rooted in a legacy passed down from my grandfather, <a href="https://www.washingtontechnology.com/1998/08/anstec-inc/332231/" target="_blank" className="text-andela-green"   rel="no-follow">Late Shri Satyendra Prasad Shrivastava</a>. A true visionary, he was a recipient of the 1996 Ernst & Young Entrepreneur of the Year Award, the 1994 KPMG Peat Marwick High - Tech Entrepreneur Award, and the 1994 Small Business Person of the Year award for the Washington area.
+            <motion.div variants={itemVariants} className="relative inline-block">
+              <div className="absolute -inset-4 bg-gradient-to-r from-yellow-400/20 to-orange-500/20 rounded-2xl blur-xl"></div>
+              <h2 className="relative text-5xl md:text-6xl font-bold mb-6 text-white">
+                A Legacy of
+                <br />
+                <span className="bg-gradient-to-r from-yellow-400 to-orange-500 bg-clip-text text-transparent">
+                  Excellence
+                </span>
+              </h2>
+            </motion.div>
+            <motion.p variants={itemVariants} className="text-xl text-blue-100 max-w-3xl mx-auto">
+              Our foundation is built upon the extraordinary achievements of a true visionary
+            </motion.p>
+          </motion.div>
 
-                </p>
-                <p>
-                  His achievements were a constant source of inspiration, yet in the early days, I was held back. A lack of awareness and corporate experience meant that it took me over two decades to finally embark on my own entrepreneurial path.
-                </p>
-                <p>
-                  But his spirit never faded. I carried his stories, his values, and his entrepreneurial drive with me. And now, fueled by that long - standing inspiration, we've built this company. We aim to honor his legacy by creating something meaningful, just as he did in his time.
-                </p>
-              
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-16 items-center">
+            {/* Content Side */}
+            <motion.div variants={itemVariants} className="space-y-8">
+              {/* Portrait Card */}
+              <div className="relative bg-white/10 backdrop-blur-sm rounded-2xl p-8 border border-white/20">
+                <div className="flex items-center mb-6">
+                  <div className="w-16 h-16 bg-gradient-to-r from-yellow-400 to-orange-500 rounded-full flex items-center justify-center mr-4">
+                    <Award className="w-8 h-8 text-white" />
+                  </div>
+                  <div>
+                    <h3 className="text-2xl font-bold text-white mb-1">Late Shri Satyendra Prasad Shrivastava</h3>
+                    <p className="text-blue-200">Entrepreneur & Visionary</p>
+                  </div>
+                </div>
+                
+                <div className="space-y-4 text-blue-100">
+                  <p className="leading-relaxed">
+                    Our journey is deeply rooted in a legacy passed down from my grandfather, <a href="https://www.washingtontechnology.com/1998/08/anstec-inc/332231/" target="_blank" className="text-yellow-400 underline decoration-yellow-400/50 hover:decoration-yellow-400" rel="no-follow">Late Shri Satyendra Prasad Shrivastava</a>, a man whose achievements were nothing short of extraordinary.
+                  </p>
+                </div>
+              </div>
+
+              {/* Awards Section */}
+              <div className="space-y-4">
+                <h4 className="text-2xl font-bold text-white mb-6 flex items-center">
+                  <Sparkles className="w-6 h-6 text-yellow-400 mr-3" />
+                  Distinguished Recognition
+                </h4>
+                
+                <div className="grid gap-4">
+                  {[
+                    { year: "1996", award: "Ernst & Young Entrepreneur of the Year Award", color: "from-yellow-400 to-orange-500" },
+                    { year: "1994", award: "KPMG Peat Marwick High-Tech Entrepreneur Award", color: "from-blue-400 to-purple-500" },
+                    { year: "1994", award: "Small Business Person of the Year - Washington Area", color: "from-green-400 to-teal-500" }
+                  ].map((achievement, index) => (
+                    <motion.div
+                      key={index}
+                      initial={{ opacity: 0, x: -20 }}
+                      whileInView={{ opacity: 1, x: 0 }}
+                      viewport={{ once: true }}
+                      transition={{ delay: index * 0.2 }}
+                      className="bg-white/10 backdrop-blur-sm rounded-xl p-4 border border-white/20 hover:bg-white/20 transition-all duration-300"
+                    >
+                      <div className="flex items-center">
+                        <div className={`w-12 h-12 bg-gradient-to-r ${achievement.color} rounded-lg flex items-center justify-center mr-4 flex-shrink-0`}>
+                          <span className="text-white font-bold text-sm">{achievement.year}</span>
+                        </div>
+                        <div>
+                          <h5 className="text-white font-semibold">{achievement.award}</h5>
+                          <p className="text-blue-200 text-sm">A testament to innovative thinking and determination</p>
+                        </div>
+                      </div>
+                    </motion.div>
+                  ))}
+                </div>
               </div>
             </motion.div>
+
+            {/* Image Side with Special Effects */}
             <motion.div variants={itemVariants} className="relative">
-              <div className="absolute -top-6 -left-6 w-20 h-20 bg-andela-green/20 rounded-full"></div>
-              <div className="absolute -bottom-6 -right-6 w-32 h-32 bg-andela-green/10 rounded-full"></div>
-              <img
-                src="https://images.unsplash.com/photo-1552581234-26160f608093?auto=format&fit=crop&w=600&q=80"
-                alt="Team collaboration"
-                className="rounded-lg shadow-xl relative z-10"
+              {/* Decorative frame */}
+              <div className="absolute -inset-8 bg-gradient-to-r from-yellow-400/20 to-orange-500/20 rounded-3xl blur-2xl"></div>
+              <div className="absolute -inset-4 bg-gradient-to-r from-yellow-400/30 to-orange-500/30 rounded-2xl"></div>
+              
+              {/* Corner decorations */}
+              <div className="absolute -top-6 -left-6 w-12 h-12 border-l-4 border-t-4 border-yellow-400 rounded-tl-2xl"></div>
+              <div className="absolute -top-6 -right-6 w-12 h-12 border-r-4 border-t-4 border-yellow-400 rounded-tr-2xl"></div>
+              <div className="absolute -bottom-6 -left-6 w-12 h-12 border-l-4 border-b-4 border-orange-500 rounded-bl-2xl"></div>
+              <div className="absolute -bottom-6 -right-6 w-12 h-12 border-r-4 border-b-4 border-orange-500 rounded-br-2xl"></div>
+              
+              {/* Main image container */}
+              <div className="relative bg-white/10 backdrop-blur-sm rounded-2xl p-4 border border-white/30">
+                <img
+                  src="https://res.cloudinary.com/dhanz6zty/image/upload/v1748374942/niddik_about-us_Shri_Satyendra_Prasad_Shrivastava_isec6d.png"
+                  alt="Late Shri Satyendra Prasad Shrivastava"
+                  className="w-full h-auto rounded-xl shadow-2xl"
+                />
+                
+                {/* Overlay with inspirational quote */}
+                <div className="absolute bottom-8 left-4 right-4 bg-black/60 backdrop-blur-sm rounded-xl p-4 border border-white/20">
+                  <p className="text-white text-sm italic leading-relaxed">
+                    "A true visionary whose innovative thinking and unwavering determination continues to inspire generations."
+                  </p>
+                </div>
+              </div>
+              
+              {/* Floating elements */}
+              <motion.div
+                className="absolute top-1/4 -right-4 w-8 h-8 bg-yellow-400 rounded-full opacity-60"
+                animate={{ y: [0, -10, 0], scale: [1, 1.1, 1] }}
+                transition={{ duration: 3, repeat: Infinity }}
+              />
+              <motion.div
+                className="absolute bottom-1/4 -left-4 w-6 h-6 bg-orange-500 rounded-full opacity-60"
+                animate={{ y: [0, 10, 0], scale: [1, 0.9, 1] }}
+                transition={{ duration: 2.5, repeat: Infinity }}
               />
             </motion.div>
+          </div>
+
+          {/* Legacy Story Continuation */}
+          <motion.div
+            variants={itemVariants}
+            className="mt-16 bg-white/10 backdrop-blur-sm rounded-2xl p-8 border border-white/20"
+          >
+            <div className="max-w-4xl mx-auto space-y-6 text-blue-100">
+              <h4 className="text-2xl font-bold text-white mb-6 text-center flex items-center justify-center">
+                <Heart className="w-6 h-6 text-red-400 mr-3" />
+                The Journey Forward
+              </h4>
+              
+              <div className="grid md:grid-cols-2 gap-8">
+                <div className="space-y-4">
+                  <p className="leading-relaxed">
+                    His achievements were a constant source of inspiration, yet in the early days, we were held back. A lack of awareness and corporate experience meant that it took us over two decades to finally embark on my own entrepreneurial path.
+                  </p>
+                  <p className="leading-relaxed">
+                    But his legacy was like a guiding light in the darkness. His stories continued to inspire me, and many others as we knew that we couldn't let these challenges defeat us.
+                  </p>
+                </div>
+                
+                <div className="space-y-4">
+                  <p className="leading-relaxed">
+                    We spent those two decades learning, growing, and gaining the knowledge and skills we needed to succeed. Finally, after more than two decades, we felt ready to take the plunge.
+                  </p>
+                  <p className="leading-relaxed">
+                    Every decision we make, every product we develop, and every service we offer is a reflection of his values and our commitment to carrying on his legacy.
+                  </p>
+                </div>
+              </div>
+              
+              <div className="mt-8 pt-6 border-t border-white/20 text-center">
+                <p className="text-xl text-white font-semibold leading-relaxed">
+                  We are not just building a business; we are building a legacy. A legacy that will inspire future generations, just as my grandfather inspired me.
+                </p>
+              </div>
+            </div>
           </motion.div>
+        </Container>
+      </section>
+
+      {/* Story & Vision Section */}
+      <section className="py-20 bg-gradient-to-b from-gray-50 to-white">
+        <Container>
 
           <motion.div
             variants={containerVariants}
