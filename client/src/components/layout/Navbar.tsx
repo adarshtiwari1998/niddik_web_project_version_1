@@ -200,7 +200,7 @@ const Navbar: React.FC<NavbarProps> = ({ hasAnnouncementAbove = true }) => {
     }
   }, [searchTerm, jobsData]);
 
-  const isDarkPage = location === '/facts-and-trends';
+  const isDarkPage = false; // Remove dark page treatment for facts-and-trends
 
   return (
     <header className={cn(
@@ -208,9 +208,7 @@ const Navbar: React.FC<NavbarProps> = ({ hasAnnouncementAbove = true }) => {
       hasAnnouncementAbove ? "top-[40px]" : "top-0",
       isTransparent 
         ? "bg-transparent"
-        : isDarkPage 
-          ? "bg-white/95 backdrop-blur-md border-b border-gray-800/50"
-          : "bg-white/95 backdrop-blur-md border-b border-gray-200/50",
+        : "bg-white/95 backdrop-blur-md border-b border-gray-200/50",
       isScrolled && !isTransparent ? "shadow-lg" : "",
       "transition-all duration-300 ease-in-out"
     )}>
