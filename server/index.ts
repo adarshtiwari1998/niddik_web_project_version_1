@@ -55,13 +55,17 @@ app.use((req, res, next) => {
     throw err;
   });
 
-  // Setup Vite for development (this will serve the frontend)
-  await setupVite(app, server);
+  // If in development mode, setup Vite (this will serve the frontend in memory)
+  if (app.get("env") === "development") {
+    await setupVite(app, server);
+  } else {
+    // In production, serve static files from dist
+    serveStatic(app);
+  }
 
-  // Always serve the app on port 5000
+  // Always serve the app on port 13000
   const port = 5000;
-  server.listen(port, "0.0.0.0", () => {
+  server.listen({ port, host: "0.0.0.0", reusePort: true }, () => {
     log(`Serving on port ${port}`);
-    log(`Frontend available at: http://localhost:${port}`);
   });
 })();
