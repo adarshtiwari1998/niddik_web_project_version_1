@@ -57,31 +57,7 @@ app.use((req, res, next) => {
 
   // If in development mode, setup Vite (this will serve the frontend in memory)
   if (app.get("env") === "development") {
-    // In development, first try to serve built files, then fall back to Vite
-    const fs = require('fs');
-    const distPath = path.resolve(process.cwd(), "public"); // Modified path to use process.cwd()
-
-    if (fs.existsSync(distPath)) {
-      console.log("Serving built files from:", distPath);
-      app.use(express.static(distPath));
-
-      // Catch-all handler for SPA routing
-      app.get("*", (req, res, next) => {
-        // Skip API routes
-        if (req.path.startsWith('/api/')) {
-          return next();
-        }
-
-        const indexPath = path.join(distPath, 'index.html');
-        if (fs.existsSync(indexPath)) {
-          res.sendFile(indexPath);
-        } else {
-          next();
-        }
-      });
-    } else {
-      await setupVite(app, server);
-    }
+    await setupVite(app, server);
   } else {
     // In production, serve static files from dist
     serveStatic(app);
