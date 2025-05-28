@@ -190,7 +190,7 @@ export default function SEOPages() {
     twitterCreator: "@niddik",
     canonicalUrl: "",
     robotsDirective: "index,follow",
-    structuredData: JSON.stringify(defaultStructuredData, null, 2),
+    structuredData: JSON.stringify(getDefaultStructuredData(""), null, 2),
     itemPropName: "",
     itemPropDescription: "",
     itemPropImage: "",
