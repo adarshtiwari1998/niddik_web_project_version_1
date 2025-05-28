@@ -938,7 +938,33 @@ async function seed() {
       await db.insert(seoPages).values(seoPageData);
       console.log(`Added ${seoPageData.length} SEO pages`);
     } else {
-      console.log("SEO pages already exist, skipping seeding");
+      console.log("SEO pages already exist, checking for missing service pages...");
+      
+      // Check for missing individual service pages
+      const servicePaths = [
+        '/services/full-rpo',
+        '/services/on-demand', 
+        '/services/hybrid-rpo',
+        '/services/contingent'
+      ];
+      
+      const missingServicePages = [];
+      for (const servicePath of servicePaths) {
+        const existingPage = existingSeoPages.find(page => page.pagePath === servicePath);
+        if (!existingPage) {
+          const servicePageData = seoPageData.find(page => page.pagePath === servicePath);
+          if (servicePageData) {
+            missingServicePages.push(servicePageData);
+          }
+        }
+      }
+      
+      if (missingServicePages.length > 0) {
+        await db.insert(seoPages).values(missingServicePages);
+        console.log(`Added ${missingServicePages.length} missing service SEO pages:`, missingServicePages.map(p => p.pagePath));
+      } else {
+        console.log("All service pages already exist");
+      }
     }
 
     console.log("Seeding completed successfully!");
