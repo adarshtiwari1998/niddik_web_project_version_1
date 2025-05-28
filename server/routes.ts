@@ -2443,7 +2443,12 @@ app.get("/api/last-logout", async (req: Request, res: Response) => {
   // Update SEO page
   app.put('/api/admin/seo-pages/:id', async (req: AuthenticatedRequest, res) => {
     try {
-      if (!req.isAuthenticated() || req.user?.role !== 'admin') {
+      console.log('SEO Update - User:', req.user);
+      console.log('SEO Update - Authenticated:', req.isAuthenticated());
+      console.log('SEO Update - Request body:', req.body);
+
+      if (!req.isAuthenticated() || !req.user || req.user.role !== 'admin') {
+        console.log('SEO Update - Authentication failed');
         return res.status(403).json({
           success: false,
           message: "Unauthorized"
@@ -2452,25 +2457,32 @@ app.get("/api/last-logout", async (req: Request, res: Response) => {
 
       const id = parseInt(req.params.id);
       if (isNaN(id)) {
+        console.log('SEO Update - Invalid ID:', req.params.id);
         return res.status(400).json({
           success: false,
           message: "Invalid SEO page ID"
         });
       }
 
+      console.log('SEO Update - Validating data for ID:', id);
       const validatedData = seoPageSchema.partial().parse(req.body);
+      console.log('SEO Update - Validation passed:', validatedData);
+      
       const seoPage = await storage.updateSeoPage(id, validatedData);
       
       if (!seoPage) {
+        console.log('SEO Update - Page not found for ID:', id);
         return res.status(404).json({
           success: false,
           message: "SEO page not found"
         });
       }
 
+      console.log('SEO Update - Success for ID:', id);
       return res.status(200).json({ success: true, data: seoPage });
     } catch (error) {
       if (error instanceof z.ZodError) {
+        console.log('SEO Update - Validation error:', error.errors);
         return res.status(400).json({
           success: false,
           message: "Validation error",

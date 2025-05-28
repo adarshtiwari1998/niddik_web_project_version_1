@@ -311,6 +311,32 @@ export const seoPages = pgTable("seo_pages", {
   updatedAt: timestamp("updated_at").defaultNow().notNull(),
 });
 
+// SEO Page validation schema
+export const seoPageSchema = z.object({
+  pagePath: z.string().min(1, "Page path is required"),
+  pageTitle: z.string().min(1, "Page title is required"),
+  metaDescription: z.string().min(1, "Meta description is required"),
+  metaKeywords: z.string().optional(),
+  ogTitle: z.string().optional(),
+  ogDescription: z.string().optional(),
+  ogImage: z.string().optional(),
+  ogType: z.string().default("website"),
+  ogUrl: z.string().optional(),
+  twitterCard: z.string().default("summary_large_image"),
+  twitterSite: z.string().optional(),
+  twitterTitle: z.string().optional(),
+  twitterDescription: z.string().optional(),
+  twitterImage: z.string().optional(),
+  twitterCreator: z.string().optional(),
+  canonicalUrl: z.string().optional(),
+  robotsDirective: z.string().default("index,follow"),
+  structuredData: z.string().optional(),
+  itemPropName: z.string().optional(),
+  itemPropDescription: z.string().optional(),
+  itemPropImage: z.string().optional(),
+  isActive: z.boolean().default(true),
+});
+
 export const seoPageSchema = createInsertSchema(seoPages, {
   pagePath: (schema) => schema.min(1, "Page path is required"),
   pageTitle: (schema) => schema.min(1, "Page title is required").max(60, "Title should be under 60 characters"),

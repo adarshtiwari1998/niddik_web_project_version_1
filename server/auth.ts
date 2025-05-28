@@ -383,8 +383,12 @@ app.get("/api/user", async (req: Request, res: Response) => {
     // Middleware to check if user is authenticated (supports both session and JWT)
     app.use("/api/admin", async (req: Request, res: Response, next: NextFunction) => {
         try {
+            // Skip auth check for login endpoint
+            if (req.path === '/login') {
+                return next();
+            }
+
             console.log('Admin middleware - Session ID:', req.sessionID);
-            console.log('Admin middleware - Session data:', req.session);
             console.log('Admin middleware - User authenticated:', req.isAuthenticated());
             console.log('Admin middleware - User data:', req.user);
 
@@ -398,7 +402,7 @@ app.get("/api/user", async (req: Request, res: Response) => {
                     where: eq(users.id, userId)
                 });
 
-                console.log('Admin middleware - Database user:', user);
+                console.log('Admin middleware - Database user found:', !!user, 'Role:', user?.role);
 
                 if (!user || user.role !== 'admin') {
                     console.log('Admin middleware - User not admin or not found');
