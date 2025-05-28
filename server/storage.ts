@@ -809,7 +809,7 @@ export const storage = {
     try {
       // Get recent jobs from last 7 days
       const recentJobs = await this.getRecentJobListings(10, 7);
-      
+
       if (recentJobs.length === 0) {
         console.log(`No recent jobs found for SEO update of ${pagePath}`);
         return undefined;
@@ -846,7 +846,7 @@ export const storage = {
       let enhancedStructuredData = existingSeoPage.structuredData;
       try {
         const structuredDataObj = enhancedStructuredData ? JSON.parse(enhancedStructuredData) : {};
-        
+
         // Add recent job postings to structured data
         if (pagePath === '/' || pagePath === '/careers') {
           structuredDataObj.potentialAction = {
@@ -854,7 +854,7 @@ export const storage = {
             "target": "https://niddik.com/careers?search={search_term}",
             "query-input": "required name=search_term"
           };
-          
+
           structuredDataObj.about = recentJobs.map(job => ({
             "@type": "JobPosting",
             "title": job.title,
@@ -892,7 +892,7 @@ export const storage = {
             };
           }
         }
-        
+
         enhancedStructuredData = JSON.stringify(structuredDataObj, null, 2);
       } catch (parseError) {
         console.error('Error parsing structured data for enhancement:', parseError);
@@ -908,7 +908,7 @@ export const storage = {
 
       const updatedSeoPage = await this.updateSeoPage(existingSeoPage.id, updateData);
       console.log(`SEO page updated for ${pagePath} with ${recentJobs.length} recent jobs`);
-      
+
       return updatedSeoPage;
     } catch (error) {
       console.error(`Error updating SEO page ${pagePath} with job data:`, error);

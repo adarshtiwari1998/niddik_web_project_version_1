@@ -315,19 +315,96 @@ export async function setupVite(app: Express, server: Server) {
   });
 }
 
-export function serveStatic(app: Express) {
-  const distPath = path.resolve(__dirname, "public");
+export async function serveStatic(app: Express) {
+  const distPath = path.resolve("dist/public");
 
   if (!fs.existsSync(distPath)) {
     throw new Error(
-      `Could not find the build directory: ${distPath}, make sure to build the client first`
+      `Could not find the build directory: ${distPath}. Please run \`npm run build\` first.`
     );
   }
 
   app.use(express.static(distPath));
 
-  // fall through to index.html if the file doesn't exist
-  app.use("*", (_req, res) => {
-    res.sendFile(path.resolve(distPath, "index.html"));
+  app.get("*", async (req, res) => {
+    try {
+      const { storage } = await import("./storage");
+      const pathname = req.path;
+
+      // Get SEO data for the current path
+      let seoData = null;
+      try {
+        seoData = await storage.getSeoPageByPath(pathname);
+      } catch (error) {
+        console.error('Error fetching SEO data:', error);
+      }
+
+      // Handle job detail pages
+      const isJobDetailPage = pathname.match(/^\/jobs\/(\d+)$/);
+      if (isJobDetailPage) {
+        const jobId = parseInt(isJobDetailPage[1]);
+        try {
+          const jobData = await storage.getJobListing(jobId);
+          if (jobData) {
+            seoData = {
+              pageTitle: `${jobData.title} at ${jobData.company} - ${jobData.location} | Niddik Jobs`,
+              metaDescription: `Apply for ${jobData.title} position at ${jobData.company} in ${jobData.location}. ${jobData.experienceLevel} level ${jobData.jobType} role.`,
+              metaKeywords: `${jobData.title}, ${jobData.company}, ${jobData.location}, ${jobData.category}, IT jobs`,
+              ogTitle: `${jobData.title} at ${jobData.company} | Niddik`,
+              ogDescription: `Join ${jobData.company} as ${jobData.title} in ${jobData.location}. ${jobData.experienceLevel} level position.`,
+              canonicalUrl: `https://niddik.com/jobs/${jobData.id}`
+            };
+          }
+        } catch (error) {
+          console.error('Error fetching job data:', error);
+        }
+      }
+
+      // Use default SEO if no specific data found
+      if (!seoData) {
+        seoData = {
+          pageTitle: "Niddik - Premier IT Recruitment & Staffing Solutions",
+          metaDescription: "Niddik provides world-class IT recruitment and staffing solutions. Connect with top talent and leading companies.",
+          ogTitle: "Niddik - Premier IT Recruitment & Staffing Solutions",
+          ogDescription: "Niddik provides world-class IT recruitment and staffing solutions.",
+          canonicalUrl: `https://niddik.com${pathname}`
+        };
+      }
+
+      // Read the base HTML file
+      const htmlPath = path.resolve(distPath, "index.html");
+      let html = fs.readFileSync(htmlPath, 'utf-8');
+
+      // Replace the title and add meta tags
+      html = html.replace(
+        /<title>.*?<\/title>/,
+        `<title>${seoData.pageTitle}</title>`
+      );
+
+      // Add meta tags after the title
+      const metaTags = `
+    <meta name="description" content="${seoData.metaDescription}" />
+    ${seoData.metaKeywords ? `<meta name="keywords" content="${seoData.metaKeywords}" />` : ''}
+    <link rel="canonical" href="${seoData.canonicalUrl}" />
+
+    <!-- Open Graph Meta Tags -->
+    <meta property="og:title" content="${seoData.ogTitle || seoData.pageTitle}" />
+    <meta property="og:description" content="${seoData.ogDescription || seoData.metaDescription}" />
+    <meta property="og:type" content="website" />
+    <meta property="og:url" content="${seoData.canonicalUrl}" />
+    <meta property="og:site_name" content="Niddik" />
+
+    <!-- Twitter Card Meta Tags -->
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:title" content="${seoData.ogTitle || seoData.pageTitle}" />
+    <meta name="twitter:description" content="${seoData.ogDescription || seoData.metaDescription}" />`;
+
+      html = html.replace('</title>', `</title>${metaTags}`);
+
+      res.send(html);
+    } catch (error) {
+      console.error('Error in SSR:', error);
+      res.sendFile(path.resolve(distPath, "index.html"));
+    }
   });
 }
