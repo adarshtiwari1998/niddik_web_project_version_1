@@ -282,8 +282,62 @@ export const demoRequestSchema = createInsertSchema(demoRequests, {
 export type DemoRequest = typeof demoRequests.$inferSelect;
 export type InsertDemoRequest = z.infer<typeof demoRequestSchema>;
 
+// SEO Pages schema for dynamic SEO management
+export const seoPages = pgTable("seo_pages", {
+  id: serial("id").primaryKey(),
+  pagePath: text("page_path").notNull().unique(), // e.g., "/", "/about-us", "/services"
+  pageTitle: text("page_title").notNull(),
+  metaDescription: text("meta_description").notNull(),
+  metaKeywords: text("meta_keywords"),
+  ogTitle: text("og_title"),
+  ogDescription: text("og_description"),
+  ogImage: text("og_image"),
+  ogType: text("og_type").notNull().default("website"),
+  ogUrl: text("og_url"),
+  twitterCard: text("twitter_card").notNull().default("summary_large_image"),
+  twitterSite: text("twitter_site"),
+  twitterTitle: text("twitter_title"),
+  twitterDescription: text("twitter_description"),
+  twitterImage: text("twitter_image"),
+  twitterCreator: text("twitter_creator"),
+  canonicalUrl: text("canonical_url"),
+  robotsDirective: text("robots_directive").notNull().default("index,follow"),
+  structuredData: text("structured_data"), // JSON-LD schema
+  itemPropName: text("itemprop_name"),
+  itemPropDescription: text("itemprop_description"),
+  itemPropImage: text("itemprop_image"),
+  isActive: boolean("is_active").notNull().default(true),
+  createdAt: timestamp("created_at").defaultNow().notNull(),
+  updatedAt: timestamp("updated_at").defaultNow().notNull(),
+});
 
+export const seoPageSchema = createInsertSchema(seoPages, {
+  pagePath: (schema) => schema.min(1, "Page path is required"),
+  pageTitle: (schema) => schema.min(1, "Page title is required").max(60, "Title should be under 60 characters"),
+  metaDescription: (schema) => schema.min(1, "Meta description is required").max(160, "Description should be under 160 characters"),
+  metaKeywords: (schema) => schema.optional(),
+  ogTitle: (schema) => schema.optional(),
+  ogDescription: (schema) => schema.optional(),
+  ogImage: (schema) => schema.optional(),
+  ogType: (schema) => schema.optional(),
+  ogUrl: (schema) => schema.optional(),
+  twitterCard: (schema) => schema.optional(),
+  twitterSite: (schema) => schema.optional(),
+  twitterTitle: (schema) => schema.optional(),
+  twitterDescription: (schema) => schema.optional(),
+  twitterImage: (schema) => schema.optional(),
+  twitterCreator: (schema) => schema.optional(),
+  canonicalUrl: (schema) => schema.optional(),
+  robotsDirective: (schema) => schema.optional(),
+  structuredData: (schema) => schema.optional(),
+  itemPropName: (schema) => schema.optional(),
+  itemPropDescription: (schema) => schema.optional(),
+  itemPropImage: (schema) => schema.optional(),
+  isActive: (schema) => schema.optional(),
+});
 
+export type SeoPage = typeof seoPages.$inferSelect;
+export type InsertSeoPage = z.infer<typeof seoPageSchema>;
 
 export const adminSessions = pgTable("admin_sessions", {
   id: serial("id").primaryKey(),

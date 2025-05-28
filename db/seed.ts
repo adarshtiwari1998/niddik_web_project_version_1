@@ -1,5 +1,5 @@
 import { db, pool } from "./index";
-import { testimonials, clients, jobListings, users, contactSubmissions, jobApplications, submittedCandidates, demoRequests } from "@shared/schema";
+import { testimonials, clients, jobListings, users, contactSubmissions, jobApplications, submittedCandidates, demoRequests, seoPages } from "@shared/schema";
 import { scrypt, randomBytes } from "crypto";
 import { promisify } from "util";
 import { sql } from "drizzle-orm";
@@ -180,6 +180,34 @@ async function seed() {
         updated_at TIMESTAMP NOT NULL DEFAULT NOW(),
         scheduled_date TIMESTAMP,
         admin_notes TEXT
+      );
+
+      CREATE TABLE IF NOT EXISTS seo_pages (
+        id SERIAL PRIMARY KEY,
+        page_path TEXT NOT NULL UNIQUE,
+        page_title TEXT NOT NULL,
+        meta_description TEXT NOT NULL,
+        meta_keywords TEXT,
+        og_title TEXT,
+        og_description TEXT,
+        og_image TEXT,
+        og_type TEXT NOT NULL DEFAULT 'website',
+        og_url TEXT,
+        twitter_card TEXT NOT NULL DEFAULT 'summary_large_image',
+        twitter_site TEXT,
+        twitter_title TEXT,
+        twitter_description TEXT,
+        twitter_image TEXT,
+        twitter_creator TEXT,
+        canonical_url TEXT,
+        robots_directive TEXT NOT NULL DEFAULT 'index,follow',
+        structured_data TEXT,
+        itemprop_name TEXT,
+        itemprop_description TEXT,
+        itemprop_image TEXT,
+        is_active BOOLEAN NOT NULL DEFAULT TRUE,
+        created_at TIMESTAMP NOT NULL DEFAULT NOW(),
+        updated_at TIMESTAMP NOT NULL DEFAULT NOW()
       );
     `);
 
@@ -428,6 +456,123 @@ async function seed() {
       console.log("IMPORTANT: Change this password after first login for security!");
     } else {
       console.log("Admin user already exists, skipping seeding.");
+    }
+
+    // Seed SEO pages with default data
+    console.log("Seeding SEO pages...");
+    const seoPageData = [
+      {
+        pagePath: "/",
+        pageTitle: "Niddik - Premier IT Recruitment & Staffing Solutions",
+        metaDescription: "Niddik provides world-class IT recruitment and staffing solutions. Connect with top talent and leading companies. Expert RPO, contingent staffing, and web development services.",
+        metaKeywords: "IT recruitment, staffing solutions, RPO, contingent staffing, web development, tech talent",
+        ogTitle: "Niddik - Premier IT Recruitment & Staffing Solutions",
+        ogDescription: "Niddik provides world-class IT recruitment and staffing solutions. Connect with top talent and leading companies.",
+        ogImage: "https://res.cloudinary.com/your-cloud/image/upload/v1/niddik-og-home.jpg",
+        ogType: "website",
+        ogUrl: "https://niddik.com",
+        twitterCard: "summary_large_image",
+        twitterSite: "@niddik",
+        twitterTitle: "Niddik - Premier IT Recruitment & Staffing Solutions",
+        twitterDescription: "Niddik provides world-class IT recruitment and staffing solutions. Connect with top talent and leading companies.",
+        twitterImage: "https://res.cloudinary.com/your-cloud/image/upload/v1/niddik-twitter-home.jpg",
+        twitterCreator: "@niddik",
+        canonicalUrl: "https://niddik.com",
+        robotsDirective: "index,follow",
+        structuredData: JSON.stringify({
+          "@context": "https://schema.org",
+          "@type": "Organization",
+          "name": "Niddik",
+          "url": "https://niddik.com",
+          "logo": "https://niddik.com/images/niddik_logo.png",
+          "description": "Premier IT recruitment and staffing solutions provider",
+          "sameAs": ["https://twitter.com/niddik", "https://linkedin.com/company/niddik"],
+          "contactPoint": {
+            "@type": "ContactPoint",
+            "telephone": "+1-555-0123",
+            "contactType": "customer service"
+          }
+        }),
+        itemPropName: "Niddik - Premier IT Recruitment & Staffing Solutions",
+        itemPropDescription: "Niddik provides world-class IT recruitment and staffing solutions. Connect with top talent and leading companies.",
+        itemPropImage: "https://res.cloudinary.com/your-cloud/image/upload/v1/niddik-itemprop-home.jpg"
+      },
+      {
+        pagePath: "/about-us",
+        pageTitle: "About Niddik - Leading IT Recruitment Company",
+        metaDescription: "Learn about Niddik's mission to connect exceptional IT talent with innovative companies. Our experienced team delivers personalized recruitment solutions.",
+        metaKeywords: "about niddik, IT recruitment company, tech staffing, our mission, team",
+        ogTitle: "About Niddik - Leading IT Recruitment Company",
+        ogDescription: "Learn about Niddik's mission to connect exceptional IT talent with innovative companies.",
+        ogImage: "https://res.cloudinary.com/your-cloud/image/upload/v1/niddik-og-about.jpg",
+        canonicalUrl: "https://niddik.com/about-us",
+        structuredData: JSON.stringify({
+          "@context": "https://schema.org",
+          "@type": "AboutPage",
+          "name": "About Niddik",
+          "description": "Learn about Niddik's mission to connect exceptional IT talent with innovative companies."
+        })
+      },
+      {
+        pagePath: "/services",
+        pageTitle: "IT Recruitment Services - RPO, Staffing & More | Niddik",
+        metaDescription: "Comprehensive IT recruitment services including RPO, contingent staffing, permanent placement, and web development solutions. Expert talent acquisition.",
+        metaKeywords: "IT recruitment services, RPO, contingent staffing, permanent placement, talent acquisition",
+        ogTitle: "IT Recruitment Services - RPO, Staffing & More",
+        ogDescription: "Comprehensive IT recruitment services including RPO, contingent staffing, permanent placement, and web development solutions.",
+        canonicalUrl: "https://niddik.com/services",
+        structuredData: JSON.stringify({
+          "@context": "https://schema.org",
+          "@type": "Service",
+          "name": "IT Recruitment Services",
+          "provider": {
+            "@type": "Organization",
+            "name": "Niddik"
+          },
+          "description": "Comprehensive IT recruitment and staffing services"
+        })
+      },
+      {
+        pagePath: "/careers",
+        pageTitle: "IT Jobs & Career Opportunities | Niddik",
+        metaDescription: "Discover exciting IT career opportunities with top companies. Browse our latest job openings in software development, engineering, and technology roles.",
+        metaKeywords: "IT jobs, career opportunities, software developer jobs, tech careers, job openings",
+        ogTitle: "IT Jobs & Career Opportunities | Niddik",
+        ogDescription: "Discover exciting IT career opportunities with top companies. Browse our latest job openings.",
+        canonicalUrl: "https://niddik.com/careers",
+        structuredData: JSON.stringify({
+          "@context": "https://schema.org",
+          "@type": "JobPosting",
+          "hiringOrganization": {
+            "@type": "Organization",
+            "name": "Niddik"
+          },
+          "description": "Various IT career opportunities available"
+        })
+      },
+      {
+        pagePath: "/contact",
+        pageTitle: "Contact Niddik - Get In Touch With Our Recruitment Experts",
+        metaDescription: "Contact Niddik's recruitment experts today. Get personalized IT staffing solutions and connect with top talent. Reach out for all your hiring needs.",
+        metaKeywords: "contact niddik, recruitment experts, IT staffing, hiring solutions, get in touch",
+        ogTitle: "Contact Niddik - Get In Touch With Our Recruitment Experts",
+        ogDescription: "Contact Niddik's recruitment experts today. Get personalized IT staffing solutions and connect with top talent.",
+        canonicalUrl: "https://niddik.com/contact",
+        structuredData: JSON.stringify({
+          "@context": "https://schema.org",
+          "@type": "ContactPage",
+          "name": "Contact Niddik"
+        })
+      }
+    ];
+
+    // Check if SEO pages already exist
+    const existingSeoPages = await db.query.seoPages?.findMany() || [];
+    if (existingSeoPages.length === 0) {
+      await db.insert(seoPages).values(seoPageData);
+      console.log(`Added ${seoPageData.length} SEO pages`);
+    } else {
+      console.log("SEO pages already exist, skipping seeding");
     }
 
     console.log("Seeding completed successfully!");

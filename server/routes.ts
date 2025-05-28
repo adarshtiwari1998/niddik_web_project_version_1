@@ -12,7 +12,9 @@ import {
   demoRequestSchema,
   demoRequests,
   sessions,
-  users
+  users,
+  seoPages,
+  seoPageSchema
 } from "@shared/schema";
 import { db } from "../db";
 import { eq, desc, asc, and, or, ilike, inArray, count } from "drizzle-orm";
@@ -2295,7 +2297,235 @@ app.get("/api/last-logout", async (req: Request, res: Response) => {
   }
 });
 
-// Check current user (admin or regular)
+// SEO Pages API Endpoints
+
+  // Get all SEO pages (public endpoint for fetching SEO data)
+  app.get('/api/seo-pages', async (req, res) => {
+    try {
+      const seoPages = await storage.getAllSeoPages();
+      return res.status(200).json({ success: true, data: seoPages });
+    } catch (error) {
+      console.error('Error fetching SEO pages:', error);
+      return res.status(500).json({ 
+        success: false, 
+        message: "Internal server error" 
+      });
+    }
+  });
+
+  // Get SEO data for a specific page path
+  app.get('/api/seo-pages/by-path', async (req, res) => {
+    try {
+      const pagePath = req.query.path as string;
+      
+      if (!pagePath) {
+        return res.status(400).json({
+          success: false,
+          message: "Page path is required"
+        });
+      }
+
+      const seoPage = await storage.getSeoPageByPath(pagePath);
+      
+      if (!seoPage) {
+        // Return default SEO data if no specific page found
+        const defaultSeo = {
+          pageTitle: "Niddik - Premier IT Recruitment & Staffing Solutions",
+          metaDescription: "Niddik provides world-class IT recruitment and staffing solutions. Connect with top talent and leading companies.",
+          ogTitle: "Niddik - Premier IT Recruitment & Staffing Solutions",
+          ogDescription: "Niddik provides world-class IT recruitment and staffing solutions.",
+          ogImage: "https://res.cloudinary.com/your-cloud/image/upload/v1/niddik-default-og.jpg",
+          twitterTitle: "Niddik - Premier IT Recruitment & Staffing Solutions",
+          twitterDescription: "Niddik provides world-class IT recruitment and staffing solutions.",
+          canonicalUrl: `https://niddik.com${pagePath}`
+        };
+        return res.status(200).json({ success: true, data: defaultSeo, isDefault: true });
+      }
+
+      return res.status(200).json({ success: true, data: seoPage });
+    } catch (error) {
+      console.error('Error fetching SEO page by path:', error);
+      return res.status(500).json({ 
+        success: false, 
+        message: "Internal server error" 
+      });
+    }
+  });
+
+  // Admin SEO Pages routes (require admin authentication)
+
+  // Get all SEO pages for admin management
+  app.get('/api/admin/seo-pages', async (req: AuthenticatedRequest, res) => {
+    try {
+      if (!req.isAuthenticated() || req.user?.role !== 'admin') {
+        return res.status(403).json({
+          success: false,
+          message: "Unauthorized"
+        });
+      }
+
+      const seoPages = await storage.getAllSeoPages();
+      return res.status(200).json({ success: true, data: seoPages });
+    } catch (error) {
+      console.error('Error fetching SEO pages for admin:', error);
+      return res.status(500).json({
+        success: false,
+        message: "Internal server error"
+      });
+    }
+  });
+
+  // Get single SEO page by ID
+  app.get('/api/admin/seo-pages/:id', async (req: AuthenticatedRequest, res) => {
+    try {
+      if (!req.isAuthenticated() || req.user?.role !== 'admin') {
+        return res.status(403).json({
+          success: false,
+          message: "Unauthorized"
+        });
+      }
+
+      const id = parseInt(req.params.id);
+      if (isNaN(id)) {
+        return res.status(400).json({
+          success: false,
+          message: "Invalid SEO page ID"
+        });
+      }
+
+      const seoPage = await storage.getSeoPageById(id);
+      if (!seoPage) {
+        return res.status(404).json({
+          success: false,
+          message: "SEO page not found"
+        });
+      }
+
+      return res.status(200).json({ success: true, data: seoPage });
+    } catch (error) {
+      console.error('Error fetching SEO page:', error);
+      return res.status(500).json({
+        success: false,
+        message: "Internal server error"
+      });
+    }
+  });
+
+  // Create new SEO page
+  app.post('/api/admin/seo-pages', async (req: AuthenticatedRequest, res) => {
+    try {
+      if (!req.isAuthenticated() || req.user?.role !== 'admin') {
+        return res.status(403).json({
+          success: false,
+          message: "Unauthorized"
+        });
+      }
+
+      const validatedData = seoPageSchema.parse(req.body);
+      const seoPage = await storage.createSeoPage(validatedData);
+      return res.status(201).json({ success: true, data: seoPage });
+    } catch (error) {
+      if (error instanceof z.ZodError) {
+        return res.status(400).json({
+          success: false,
+          message: "Validation error",
+          errors: error.errors
+        });
+      }
+      console.error('Error creating SEO page:', error);
+      return res.status(500).json({
+        success: false,
+        message: "Internal server error"
+      });
+    }
+  });
+
+  // Update SEO page
+  app.put('/api/admin/seo-pages/:id', async (req: AuthenticatedRequest, res) => {
+    try {
+      if (!req.isAuthenticated() || req.user?.role !== 'admin') {
+        return res.status(403).json({
+          success: false,
+          message: "Unauthorized"
+        });
+      }
+
+      const id = parseInt(req.params.id);
+      if (isNaN(id)) {
+        return res.status(400).json({
+          success: false,
+          message: "Invalid SEO page ID"
+        });
+      }
+
+      const validatedData = seoPageSchema.partial().parse(req.body);
+      const seoPage = await storage.updateSeoPage(id, validatedData);
+      
+      if (!seoPage) {
+        return res.status(404).json({
+          success: false,
+          message: "SEO page not found"
+        });
+      }
+
+      return res.status(200).json({ success: true, data: seoPage });
+    } catch (error) {
+      if (error instanceof z.ZodError) {
+        return res.status(400).json({
+          success: false,
+          message: "Validation error",
+          errors: error.errors
+        });
+      }
+      console.error('Error updating SEO page:', error);
+      return res.status(500).json({
+        success: false,
+        message: "Internal server error"
+      });
+    }
+  });
+
+  // Delete SEO page
+  app.delete('/api/admin/seo-pages/:id', async (req: AuthenticatedRequest, res) => {
+    try {
+      if (!req.isAuthenticated() || req.user?.role !== 'admin') {
+        return res.status(403).json({
+          success: false,
+          message: "Unauthorized"
+        });
+      }
+
+      const id = parseInt(req.params.id);
+      if (isNaN(id)) {
+        return res.status(400).json({
+          success: false,
+          message: "Invalid SEO page ID"
+        });
+      }
+
+      const existingPage = await storage.getSeoPageById(id);
+      if (!existingPage) {
+        return res.status(404).json({
+          success: false,
+          message: "SEO page not found"
+        });
+      }
+
+      await storage.deleteSeoPage(id);
+      return res.status(200).json({
+        success: true,
+        message: "SEO page deleted successfully"
+      });
+    } catch (error) {
+      console.error('Error deleting SEO page:', error);
+      return res.status(500).json({
+        success: false,
+        message: "Internal server error"
+      });
+    }
+  });
+
+  // Check current user (admin or regular)
 app.get("/api/user", async (req: Request, res: Response) => {
   try {
     // Check JWT first

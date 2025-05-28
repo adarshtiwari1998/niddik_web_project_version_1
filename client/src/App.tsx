@@ -36,6 +36,7 @@ import SubmittedCandidates from "@/pages/admin/SubmittedCandidates";
 import Users from "@/pages/admin/Users";
 import DemoRequests from "./pages/admin/DemoRequests";
 import ContactSubmissions from "./pages/admin/ContactSubmissions";
+import SEOPages from "./pages/admin/SEOPages";
 import FAQs from "@/pages/FAQs";
 import Clients from "@/pages/Clients";
 import Testimonials from "@/pages/Testimonials";
@@ -60,6 +61,8 @@ import NonITPartners from './pages/NonITPartners';
 import HealthcarePartners from './pages/HealthcarePartners';
 import SearchPage from "@/pages/SearchPage";
 import { lazy, Suspense } from "react";
+import SEO from "@/components/SEO";
+
 // Component to handle scroll restoration
 function ScrollToTop() {
     const [location] = useLocation();
@@ -77,47 +80,193 @@ function Router() {
             <ScrollToTop />
             <Switch>
             {/* Public Routes */}
-            <Route path="/" component={Home} />
-            <Route path="/landing" component={LandingPage} />
+            <Route path="/" component={() => (
+              <>
+                <SEO pagePath="/" />
+                <Home />
+              </>
+            )} />
+            <Route path="/landing" component={() => (
+              <>
+                <SEO pagePath="/landing" />
+                <LandingPage />
+              </>
+            )} />
 
             {/* Service Routes */}
-            <Route path="/services" component={ServicesOverview} />
+            <Route path="/services" component={() => (
+              <>
+                <SEO pagePath="/services" />
+                <ServicesOverview />
+              </>
+            )} />
             <Route path="/services/:serviceSlug" component={ServiceDetail} />
-            <Route path="/web-app-solutions" component={WebAppSolutions} />
-            <Route path="/adaptive-hiring" component={AdaptiveHiring} />
-            <Route path="/adaptive-hiring-fixed" component={AdaptiveHiringFixed} />
-            <Route path="/whitepaper" component={Whitepaper} />
-            <Route path="/insights" component={Insights} />
-            <Route path="/facts-and-trends" component={FactsAndTrends} />
-            <Route path="/hiring-advice" component={HiringAdvice} />
-            <Route path="/corporate-social-responsibilities" component={CorporateResponsibilities} />
-            <Route path="/career-advice" component={CareerAdvice} />
-            <Route path="/six-factor-recruiting-model" component={SixFactorModel} />
-            <Route path="/agile-approach-based-recruiting" component={AgileRecruiting} />
-            <Route path="/community-involvement" component={CommunityInvolvement} />
-            <Route path="/partners/it" component={ITPartners} />
-            <Route path="/partners/non-it" component={NonITPartners} />
-            <Route path="/partners/healthcare" component={HealthcarePartners} />
-            <Route path="/search" component={SearchPage} />
-            <Route path="/clients" component={Clients} />
-            <Route path="/testimonials" component={Testimonials} />
-            <Route path="/community-involvement" component={CommunityInvolvement} />
-            <Route path="/corporate-social-responsibilities" component={CorporateResponsibilities} />
-            <Route path="/contact" component={ContactUs} />
-             <Route path="/privacy-policy" component={PrivacyPolicy} />
-            <Route path="/terms-of-service" component={TermsOfService} />
-            <Route path="/cookie-policy" component={CookiePolicy} />
+            <Route path="/web-app-solutions" component={() => (
+              <>
+                <SEO pagePath="/web-app-solutions" />
+                <WebAppSolutions />
+              </>
+            )} />
+            <Route path="/adaptive-hiring" component={() => (
+              <>
+                <SEO pagePath="/adaptive-hiring" />
+                <AdaptiveHiring />
+              </>
+            )} />
+            <Route path="/adaptive-hiring-fixed" component={() => (
+              <>
+                <SEO pagePath="/adaptive-hiring-fixed" />
+                <AdaptiveHiringFixed />
+              </>
+            )} />
+            <Route path="/whitepaper" component={() => (
+              <>
+                <SEO pagePath="/whitepaper" />
+                <Whitepaper />
+              </>
+            )} />
+            <Route path="/insights" component={() => (
+              <>
+                <SEO pagePath="/insights" />
+                <Insights />
+              </>
+            )} />
+            <Route path="/facts-and-trends" component={() => (
+              <>
+                <SEO pagePath="/facts-and-trends" />
+                <FactsAndTrends />
+              </>
+            )} />
+            <Route path="/hiring-advice" component={() => (
+              <>
+                <SEO pagePath="/hiring-advice" />
+                <HiringAdvice />
+              </>
+            )} />
+            <Route path="/corporate-social-responsibilities" component={() => (
+              <>
+                <SEO pagePath="/corporate-social-responsibilities" />
+                <CorporateResponsibilities />
+              </>
+            )} />
+            <Route path="/career-advice" component={() => (
+              <>
+                <SEO pagePath="/career-advice" />
+                <CareerAdvice />
+              </>
+            )} />
+            <Route path="/six-factor-recruiting-model" component={() => (
+              <>
+                <SEO pagePath="/six-factor-recruiting-model" />
+                <SixFactorModel />
+              </>
+            )} />
+            <Route path="/agile-approach-based-recruiting" component={() => (
+              <>
+                <SEO pagePath="/agile-approach-based-recruiting" />
+                <AgileRecruiting />
+              </>
+            )} />
+            <Route path="/community-involvement" component={() => (
+              <>
+                <SEO pagePath="/community-involvement" />
+                <CommunityInvolvement />
+              </>
+            )} />
+            <Route path="/partners/it" component={() => (
+              <>
+                <SEO pagePath="/partners/it" />
+                <ITPartners />
+              </>
+            )} />
+            <Route path="/partners/non-it" component={() => (
+              <>
+                <SEO pagePath="/partners/non-it" />
+                <NonITPartners />
+              </>
+            )} />
+            <Route path="/partners/healthcare" component={() => (
+              <>
+                <SEO pagePath="/partners/healthcare" />
+                <HealthcarePartners />
+              </>
+            )} />
+            <Route path="/search" component={() => (
+              <>
+                <SEO pagePath="/search" />
+                <SearchPage />
+              </>
+            )} />
+            <Route path="/clients" component={() => (
+              <>
+                <SEO pagePath="/clients" />
+                <Clients />
+              </>
+            )} />
+            <Route path="/testimonials" component={() => (
+              <>
+                <SEO pagePath="/testimonials" />
+                <Testimonials />
+              </>
+            )} />
+            <Route path="/contact" component={() => (
+              <>
+                <SEO pagePath="/contact" />
+                <ContactUs />
+              </>
+            )} />
+             <Route path="/privacy-policy" component={() => (
+              <>
+                <SEO pagePath="/privacy-policy" />
+                <PrivacyPolicy />
+              </>
+            )} />
+            <Route path="/terms-of-service" component={() => (
+              <>
+                <SEO pagePath="/terms-of-service" />
+                <TermsOfService />
+              </>
+            )} />
+            <Route path="/cookie-policy" component={() => (
+              <>
+                <SEO pagePath="/cookie-policy" />
+                <CookiePolicy />
+              </>
+            )} />
 
             {/* Company Routes */}
-            <Route path="/about-us" component={AboutUs} />
-            <Route path="/why-us" component={WhyUs} />
-            <Route path="/leadership-team" component={LeadershipTeam} />
-          <Route path="/community-involvement" component={CommunityInvolvement} />
-          <Route path="/faqs" component={FAQs} />
-            <Route path="/contact" component={ContactUs} />
+            <Route path="/about-us" component={() => (
+              <>
+                <SEO pagePath="/about-us" />
+                <AboutUs />
+              </>
+            )} />
+            <Route path="/why-us" component={() => (
+              <>
+                <SEO pagePath="/why-us" />
+                <WhyUs />
+              </>
+            )} />
+            <Route path="/leadership-team" component={() => (
+              <>
+                <SEO pagePath="/leadership-team" />
+                <LeadershipTeam />
+              </>
+            )} />
+          <Route path="/faqs" component={() => (
+              <>
+                <SEO pagePath="/faqs" />
+                <FAQs />
+              </>
+            )} />
 
             {/* Careers & Jobs */}
-            <Route path="/careers" component={CareerPage} />
+            <Route path="/careers" component={() => (
+              <>
+                <SEO pagePath="/careers" />
+                <CareerPage />
+              </>
+            )} />
             <Route path="/jobs/:id" component={JobDetail} />
             <ProtectedRoute path="/candidate/jobs" component={CareerPage} />
 
@@ -147,10 +296,16 @@ function Router() {
             <ProtectedRoute path="/admin/users" component={Users} requiredRole="admin" />
             <ProtectedRoute path="/admin/demo-requests" component={DemoRequests} requiredRole="admin"/>
             <ProtectedRoute path="/admin/contact-submissions" component={ContactSubmissions} requiredRole="admin"/>
+            <ProtectedRoute path="/admin/seo-pages" component={SEOPages} requiredRole="admin"/>
             <ProtectedRoute path="/admin/account" component={() => <AdminPasswordChange />} requiredRole="admin"/>
 
             {/* Demo Request */}
-            <Route path="/request-demo" component={RequestDemo} />
+            <Route path="/request-demo" component={() => (
+              <>
+                <SEO pagePath="/request-demo" />
+                <RequestDemo />
+              </>
+            )} />
 
             {/* 404 - Not Found */}
             <Route component={NotFound} />

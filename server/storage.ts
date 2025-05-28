@@ -21,7 +21,11 @@ import {
   SubmittedCandidate,
   InsertSubmittedCandidate,
   DemoRequest,
-  InsertDemoRequest
+  InsertDemoRequest,
+  seoPages,
+  seoPageSchema,
+  SeoPage,
+  InsertSeoPage
 } from "@shared/schema";
 import { eq, desc, and, like, or, asc, inArray, sql, ilike, count } from "drizzle-orm";
 
@@ -216,7 +220,7 @@ export const storage = {
       where: whereCondition
     });
     const totalCount = result.length;
-    
+
     console.log('Total jobs found:', totalCount);
     console.log('Jobs status distribution:', result.map(job => ({ id: job.id, status: job.status })));
 
@@ -774,10 +778,46 @@ export const storage = {
   },
 
   async deleteDemoRequest(id: number): Promise<void> {
-    await db
-      .delete(demoRequests)
-      .where(eq(demoRequests.id, id));
-  },
+    await db.delete(demoRequests).where(eq(demoRequests.id, id));
+  }
+
+  // SEO Pages methods
+  async getAllSeoPages(): Promise<SeoPage[]> {
+    return db.query.seoPages.findMany({
+      orderBy: asc(seoPages.pagePath)
+    });
+  }
+
+  async getSeoPageByPath(pagePath: string): Promise<SeoPage | undefined> {
+    return db.query.seoPages.findFirst({
+      where: eq(seoPages.pagePath, pagePath)
+    });
+  }
+
+  async getSeoPageById(id: number): Promise<SeoPage | undefined> {
+    return db.query.seoPages.findFirst({
+      where: eq(seoPages.id, id)
+    });
+  }
+
+  async createSeoPage(data: InsertSeoPage): Promise<SeoPage> {
+    const [seoPage] = await db.insert(seoPages).values(data).returning();
+    return seoPage;
+  }
+
+  async updateSeoPage(id: number, data: Partial<InsertSeoPage>): Promise<SeoPage | undefined> {
+    const [seoPage] = await db
+      .update(seoPages)
+      .set({ ...data, updatedAt: new Date() })
+      .where(eq(seoPages.id, id))
+      .returning();
+    return seoPage;
+  }
+
+  async deleteSeoPage(id: number): Promise<void> {
+    await db.delete(seoPages).where(eq(seoPages.id, id));
+  }
+,
   async getAllJobApplications({ page = 1, limit = 10, search, status, jobId }: {
     page?: number;
     limit?: number;
@@ -932,8 +972,7 @@ export async function getJobApplicationsWithDetails(
       userSkills: users.skills,
       // Job data fields directly
       jobTitle: jobListings.title,
-      jobCompany: jobListings.company,
-      jobLocation: jobListings.location,
+      jobCompany: jobListingslocation,
       jobType: jobListings.jobType,
       jobSalary: jobListings.salary,
       jobCategory: jobListings.category,

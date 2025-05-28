@@ -3,7 +3,7 @@ import { Link, useLocation } from "wouter";
 import { useAuth } from "@/hooks/use-auth";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { User, FileText, Settings, ChevronRight, LogOut, Shield, Loader2, CalendarClock, Menu, X, Mail } from "lucide-react";
+import { User, FileText, Settings, ChevronRight, LogOut, Shield, Loader2, CalendarClock, Menu, X, Mail, Globe } from "lucide-react";
 import { LoadingScreen } from "@/components/ui/loading-screen";
 
 interface AdminLayoutProps {
@@ -269,6 +269,25 @@ export default function AdminLayout({ children, title, description }: AdminLayou
                   {!isCollapsed && (
                     <>
                       <span className="ml-2 sm:ml-3 text-sm sm:text-base">Contact Submissions</span>
+                      <ChevronRight className="h-3 w-3 sm:h-4 sm:w-4 ml-auto" />
+                    </>
+                  )}
+                </div>
+              </Link>
+
+              {/* SEO Pages */}
+              <Link href="/admin/seo-pages">
+                <div className={`flex items-center px-2 sm:px-3 py-1.5 sm:py-2 mb-1 rounded-md transition-colors cursor-pointer ${
+                  location === "/admin/seo-pages" 
+                    ? "bg-primary/10 text-primary" 
+                    : "hover:bg-gray-100 dark:hover:bg-gray-700"
+                } ${isCollapsed ? 'justify-center' : ''}`}
+                title={isCollapsed ? "SEO Pages" : ""}
+                >
+                  <Globe className="h-4 w-4 sm:h-5 sm:w-5" />
+                  {!isCollapsed && (
+                    <>
+                      <span className="ml-2 sm:ml-3 text-sm sm:text-base">SEO Pages</span>
                       <ChevronRight className="h-3 w-3 sm:h-4 sm:w-4 ml-auto" />
                     </>
                   )}
