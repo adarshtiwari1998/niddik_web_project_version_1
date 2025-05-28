@@ -75,6 +75,12 @@ export async function setupVite(app: Express, server: Server) {
 
     try {
       const clientTemplate = path.resolve(__dirname, "..", "client", "index.html");
+      
+      // Check if template exists
+      if (!fs.existsSync(clientTemplate)) {
+        console.error(`Template not found at: ${clientTemplate}`);
+        return next(new Error(`Template not found: ${clientTemplate}`));
+      }
 
       // always reload the index.html file from disk incase it changes
       let template = await fs.promises.readFile(clientTemplate, "utf-8");
@@ -85,6 +91,7 @@ export async function setupVite(app: Express, server: Server) {
       const page = await vite.transformIndexHtml(url, template);
       res.status(200).set({ "Content-Type": "text/html" }).end(page);
     } catch (e) {
+      console.error("Vite template error:", e);
       vite.ssrFixStacktrace(e as Error);
       next(e);
     }
