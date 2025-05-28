@@ -8,6 +8,10 @@ import NotFound from "@/pages/not-found";
 import Home from "@/pages/Home";
 import ServiceDetail from "@/pages/ServiceDetail";
 import ServicesOverview from "@/pages/ServicesOverview";
+import FullRPO from "@/pages/services/FullRPO";
+import OnDemand from "@/pages/services/OnDemand";
+import HybridRPO from "@/pages/services/HybridRPO";
+import Contingent from "@/pages/services/Contingent";
 import WebAppSolutions from "@/pages/WebAppSolutions";
 import AboutUs from "@/pages/AboutUs";
 import WhyUs from "@/pages/WhyUs";
@@ -100,7 +104,30 @@ function Router() {
                 <ServicesOverview />
               </>
             )} />
-            <Route path="/services/:serviceSlug" component={ServiceDetail} />
+            <Route path="/services/full-rpo" component={() => (
+              <>
+                <SEO pagePath="/services/full-rpo" />
+                <FullRPO />
+              </>
+            )} />
+            <Route path="/services/on-demand" component={() => (
+              <>
+                <SEO pagePath="/services/on-demand" />
+                <OnDemand />
+              </>
+            )} />
+            <Route path="/services/hybrid-rpo" component={() => (
+              <>
+                <SEO pagePath="/services/hybrid-rpo" />
+                <HybridRPO />
+              </>
+            )} />
+            <Route path="/services/contingent" component={() => (
+              <>
+                <SEO pagePath="/services/contingent" />
+                <Contingent />
+              </>
+            )} />
             <Route path="/web-app-solutions" component={() => (
               <>
                 <SEO pagePath="/web-app-solutions" />
