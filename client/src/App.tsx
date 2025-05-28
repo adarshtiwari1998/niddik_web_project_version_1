@@ -37,8 +37,11 @@ import Users from "@/pages/admin/Users";
 import DemoRequests from "./pages/admin/DemoRequests";
 import ContactSubmissions from "./pages/admin/ContactSubmissions";
 import FAQs from "@/pages/FAQs";
-import Clients from "@/pages/Clients";
-import Testimonials from "@/pages/Testimonials";
+import Clients from "@/pages/Clients';
+import Testimonials from "@/pages/Testimonials';
+import PrivacyPolicy from '@/pages/PrivacyPolicy';
+import TermsOfService from '@/pages/TermsOfService';
+import CookiePolicy from '@/pages/CookiePolicy';
 import CommunityInvolvement from "@/pages/CommunityInvolvement";
 import CorporateResponsibilities from "@/pages/CorporateResponsibilities";
 
@@ -101,6 +104,9 @@ function Router() {
             <Route path="/community-involvement" component={CommunityInvolvement} />
             <Route path="/corporate-social-responsibilities" component={CorporateResponsibilities} />
             <Route path="/contact" component={ContactUs} />
+             <Route path="/privacy-policy" component={PrivacyPolicy} />
+            <Route path="/terms-of-service" component={TermsOfService} />
+            <Route path="/cookie-policy" component={CookiePolicy} />
 
             {/* Company Routes */}
             <Route path="/about-us" component={AboutUs} />
