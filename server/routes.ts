@@ -2328,6 +2328,23 @@ app.get("/api/last-logout", async (req: Request, res: Response) => {
       const seoPage = await storage.getSeoPageByPath(pagePath);
       
       if (!seoPage) {
+        // Check if this is a job detail page pattern
+        const jobPageMatch = pagePath.match(/^\/jobs\/(\d+)$/);
+        
+        if (jobPageMatch) {
+          // Return a signal that this is a dynamic job page
+          // The frontend will handle generating the SEO data
+          const defaultJobSeo = {
+            pageTitle: "Job Details | Niddik",
+            metaDescription: "View detailed job information and apply for exciting career opportunities with top companies.",
+            ogTitle: "Job Opportunity | Niddik",
+            ogDescription: "Discover your next career opportunity with Niddik.",
+            canonicalUrl: `https://niddik.com${pagePath}`,
+            isDynamicJob: true
+          };
+          return res.status(200).json({ success: true, data: defaultJobSeo, isDefault: true });
+        }
+        
         // Return default SEO data if no specific page found
         const defaultSeo = {
           pageTitle: "Niddik - Premier IT Recruitment & Staffing Solutions",

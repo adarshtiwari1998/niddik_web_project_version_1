@@ -20,6 +20,7 @@ import { Loader2, MapPin, Calendar, Briefcase, Clock, Building, Award, ArrowLeft
 import { format } from "date-fns";
 import CareersHeader from "@/components/careers/CareersHeader";
 import CareersFooter from "@/components/careers/CareersFooter";
+import SEO from "@/components/SEO";
 
 // Define simplified application form schema for inline application
 const applicationSchema = z.object({
@@ -312,6 +313,7 @@ const handleResumeRemove = async () => {
 
   return (
     <div className="flex flex-col min-h-screen">
+      <SEO pagePath={`/jobs/${jobId}`} />
       <CareersHeader />
       <main className="flex-grow">
         <div className="container mx-auto py-12 px-4 md:px-6">

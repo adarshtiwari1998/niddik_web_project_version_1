@@ -36,6 +36,25 @@ const SEO: React.FC<SEOProps> = ({ pagePath, fallback }) => {
   const [location] = useLocation();
   const currentPath = pagePath || location;
 
+  // Check if this is a job detail page
+  const isJobDetailPage = currentPath.match(/^\/jobs\/(\d+)$/);
+  const jobId = isJobDetailPage ? isJobDetailPage[1] : null;
+
+  // Fetch job data for dynamic SEO if it's a job page
+  const { data: jobData } = useQuery<{ data: any }>({
+    queryKey: [`/api/job-listings/${jobId}`],
+    queryFn: async () => {
+      const response = await fetch(`/api/job-listings/${jobId}`);
+      if (!response.ok) {
+        throw new Error('Failed to fetch job data');
+      }
+      return response.json();
+    },
+    enabled: !!jobId,
+    staleTime: 5 * 60 * 1000,
+    refetchOnWindowFocus: false,
+  });
+
   const { data: seoData } = useQuery<{ 
     success: boolean; 
     data: SEOData; 
@@ -53,11 +72,61 @@ const SEO: React.FC<SEOProps> = ({ pagePath, fallback }) => {
     refetchOnWindowFocus: false,
   });
 
-  // Use fetched data, fallback props, or default values
-  const seo = seoData?.data || fallback || {
-    pageTitle: "Niddik - Premier IT Recruitment & Staffing Solutions",
-    metaDescription: "Niddik provides world-class IT recruitment and staffing solutions. Connect with top talent and leading companies.",
-  };
+  // Generate dynamic SEO for job pages or use fetched/fallback data
+  let seo: SEOData;
+  
+  if (isJobDetailPage && jobData?.data) {
+    const job = jobData.data;
+    // Generate dynamic SEO for job detail page
+    seo = {
+      pageTitle: `${job.title} at ${job.company} - ${job.location} | Niddik Jobs`,
+      metaDescription: `Apply for ${job.title} position at ${job.company} in ${job.location}. ${job.experienceLevel} level ${job.jobType} role. ${job.description?.substring(0, 100)}...`,
+      metaKeywords: `${job.title}, ${job.company}, ${job.location}, ${job.category}, ${job.experienceLevel}, ${job.jobType}, ${job.skills?.replace(/,/g, ', ')}, IT jobs, career opportunities`,
+      ogTitle: `${job.title} at ${job.company} | Niddik`,
+      ogDescription: `Join ${job.company} as ${job.title} in ${job.location}. ${job.experienceLevel} level position with competitive benefits.`,
+      ogType: "article",
+      twitterTitle: `${job.title} at ${job.company}`,
+      twitterDescription: `${job.experienceLevel} level ${job.title} role at ${job.company} in ${job.location}. Apply now!`,
+      canonicalUrl: `https://niddik.com/jobs/${job.id}`,
+      structuredData: JSON.stringify({
+        "@context": "https://schema.org",
+        "@type": "JobPosting",
+        "title": job.title,
+        "description": job.description,
+        "hiringOrganization": {
+          "@type": "Organization",
+          "name": job.company
+        },
+        "jobLocation": {
+          "@type": "Place",
+          "address": {
+            "@type": "PostalAddress",
+            "addressLocality": job.location
+          }
+        },
+        "employmentType": job.jobType?.toUpperCase(),
+        "experienceRequirements": job.experienceLevel,
+        "skills": job.skills ? job.skills.split(',').map((s: string) => s.trim()) : [],
+        "baseSalary": job.salary ? {
+          "@type": "MonetaryAmount",
+          "currency": "USD",
+          "value": {
+            "@type": "QuantitativeValue",
+            "value": job.salary
+          }
+        } : undefined,
+        "datePosted": job.postedDate || job.createdAt,
+        "validThrough": new Date(Date.now() + 90 * 24 * 60 * 60 * 1000).toISOString(), // 90 days from now
+        "url": `https://niddik.com/jobs/${job.id}`
+      })
+    };
+  } else {
+    // Use fetched data, fallback props, or default values
+    seo = seoData?.data || fallback || {
+      pageTitle: "Niddik - Premier IT Recruitment & Staffing Solutions",
+      metaDescription: "Niddik provides world-class IT recruitment and staffing solutions. Connect with top talent and leading companies.",
+    };
+  }
 
   // Parse structured data if it exists
   let structuredDataObj = null;
