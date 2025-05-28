@@ -23,6 +23,8 @@ import { setupAuth } from "./auth";
 import { resumeUpload } from "./cloudinary";
 import { scrypt, randomBytes, timingSafeEqual } from "crypto";
 import { promisify } from "util";
+import fs from 'fs';
+import path from 'path';
 
 const scryptAsync = promisify(scrypt);
 
@@ -145,15 +147,15 @@ export async function registerRoutes(app: Express): Promise<Server> {
       const priority = req.query.priority as string;
 
       let isAdmin = false;
-      
+
       // Check session-based authentication only
       if (req.isAuthenticated() && req.user && req.user.role === 'admin') {
         isAdmin = true;
         console.log("Admin session verified successfully");
       }
-      
+
       console.log("Is Admin:", isAdmin, "Status filter requested:", status);
-      
+
       // Non-admin users can only see active jobs
       if (!isAdmin) {
         console.log("Non-admin user, forcing status to active");
@@ -2317,7 +2319,7 @@ app.get("/api/last-logout", async (req: Request, res: Response) => {
   app.get('/api/seo-pages/by-path', async (req, res) => {
     try {
       const pagePath = req.query.path as string;
-      
+
       if (!pagePath) {
         return res.status(400).json({
           success: false,
@@ -2326,7 +2328,7 @@ app.get("/api/last-logout", async (req: Request, res: Response) => {
       }
 
       const seoPage = await storage.getSeoPageByPath(pagePath);
-      
+
       if (!seoPage) {
         // Return default SEO data if no specific page found
         const defaultSeo = {
@@ -2467,9 +2469,9 @@ app.get("/api/last-logout", async (req: Request, res: Response) => {
       console.log('SEO Update - Validating data for ID:', id);
       const validatedData = seoPageSchema.partial().parse(req.body);
       console.log('SEO Update - Validation passed:', validatedData);
-      
+
       const seoPage = await storage.updateSeoPage(id, validatedData);
-      
+
       if (!seoPage) {
         console.log('SEO Update - Page not found for ID:', id);
         return res.status(404).json({
@@ -2638,5 +2640,121 @@ app.get("/api/admin/check", async (req: Request, res: Response) => {
 });
 
   const httpServer = createServer(app);
+  
+  // Add route to serve HTML with pre-rendered SEO meta tags
+  app.use('/uploads', express.static('uploads'));
+
+  // Server-side rendered pages with SEO meta tags
+  app.get('*', async (req, res, next) => {
+    // Skip API routes and static assets
+    if (req.path.startsWith('/api') || 
+        req.path.startsWith('/assets') || 
+        req.path.startsWith('/uploads') || 
+        req.path.startsWith('/images') ||
+        req.path.includes('.')) {
+      return next();
+    }
+
+    try {
+      // Get SEO data for the current path
+      const pagePath = req.path;
+      let seoData = null;
+
+      // Try to get SEO data from database
+      try {
+        const seoPage = await storage.getSeoPageByPath(pagePath);
+        if (seoPage) {
+          seoData = seoPage;
+        } else {
+          // Check for dynamic job pages
+          const jobMatch = pagePath.match(/^\/jobs\/(\d+)$/);
+          if (jobMatch) {
+            const jobId = parseInt(jobMatch[1]);
+            const job = await storage.getJobById(jobId);
+            if (job) {
+              seoData = {
+                pageTitle: `${job.title} at ${job.company} | Niddik Jobs`,
+                metaDescription: `Apply for ${job.title} position at ${job.company}. ${job.experienceLevel} level role in ${job.location}. Salary: ${job.salaryRange || 'Competitive'}. Apply now through Niddik.`,
+                metaKeywords: `${job.title}, ${job.company}, ${job.location}, ${job.experienceLevel}, IT jobs, tech careers`,
+                ogTitle: `${job.title} at ${job.company} | Niddik Jobs`,
+                ogDescription: `Apply for ${job.title} position at ${job.company}. ${job.experienceLevel} level role in ${job.location}.`,
+                canonicalUrl: `https://niddik.com/jobs/${jobId}`,
+                structuredData: JSON.stringify({
+                  "@context": "https://schema.org",
+                  "@type": "JobPosting",
+                  "title": job.title,
+                  "description": job.description,
+                  "hiringOrganization": {
+                    "@type": "Organization",
+                    "name": job.company
+                  },
+                  "jobLocation": {
+                    "@type": "Place",
+                    "address": job.location
+                  },
+                  "employmentType": job.jobType?.toUpperCase() || "FULL_TIME",
+                  "experienceRequirements": job.experienceLevel,
+                  "datePosted": job.createdAt,
+                  "validThrough": new Date(Date.now() + 30 * 24 * 60 * 60 * 1000).toISOString()
+                })
+              };
+            }
+          }
+        }
+      } catch (error) {
+        console.error('Error fetching SEO data:', error);
+      }
+
+      // Use default SEO if no specific data found
+      if (!seoData) {
+        seoData = {
+          pageTitle: "Niddik - Premier IT Recruitment & Staffing Solutions",
+          metaDescription: "Niddik provides world-class IT recruitment and staffing solutions. Connect with top talent and leading companies.",
+          canonicalUrl: `https://niddik.com${pagePath}`
+        };
+      }
+
+      // Read the main HTML file
+      let html = '';
+      try {
+        html = fs.readFileSync(path.join(process.cwd(), 'client/index.html'), 'utf-8');
+      } catch (error) {
+        // Fallback for production build
+        html = fs.readFileSync(path.join(process.cwd(), 'dist/index.html'), 'utf-8');
+      }
+
+      // Generate meta tags
+      const metaTags = `
+    <title>${seoData.pageTitle}</title>
+    <meta name="description" content="${seoData.metaDescription}" />
+    ${seoData.metaKeywords ? `<meta name="keywords" content="${seoData.metaKeywords}" />` : ''}
+    <link rel="canonical" href="${seoData.canonicalUrl}" />
+
+    <!-- Open Graph Meta Tags -->
+    <meta property="og:title" content="${seoData.ogTitle || seoData.pageTitle}" />
+    <meta property="og:description" content="${seoData.ogDescription || seoData.metaDescription}" />
+    <meta property="og:type" content="${seoData.ogType || 'website'}" />
+    <meta property="og:url" content="${seoData.ogUrl || seoData.canonicalUrl}" />
+    <meta property="og:site_name" content="Niddik" />
+    ${seoData.ogImage ? `<meta property="og:image" content="${seoData.ogImage}" />` : ''}
+
+    <!-- Twitter Card Meta Tags -->
+    <meta name="twitter:card" content="${seoData.twitterCard || 'summary_large_image'}" />
+    <meta name="twitter:title" content="${seoData.twitterTitle || seoData.ogTitle || seoData.pageTitle}" />
+    <meta name="twitter:description" content="${seoData.twitterDescription || seoData.ogDescription || seoData.metaDescription}" />
+    ${seoData.twitterImage ? `<meta name="twitter:image" content="${seoData.twitterImage}" />` : ''}
+
+    ${seoData.structuredData ? `<script type="application/ld+json">${seoData.structuredData}</script>` : ''}
+      `;
+
+      // Inject meta tags into HTML head
+      html = html.replace('<head>', `<head>${metaTags}`);
+
+      res.send(html);
+    } catch (error) {
+      console.error('Error in SSR route:', error);
+      next();
+    }
+  });
   return httpServer;
 }
