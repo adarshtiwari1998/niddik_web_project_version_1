@@ -845,7 +845,30 @@ export const storage = {
       // Enhance structured data with recent jobs
       let enhancedStructuredData = existingSeoPage.structuredData;
       try {
-        const structuredDataObj = enhancedStructuredData ? JSON.parse(enhancedStructuredData) : {};
+        let structuredDataObj = enhancedStructuredData ? JSON.parse(enhancedStructuredData) : {};
+
+        // Preserve existing mainEntity for home page or create if doesn't exist
+        if (pagePath === '/') {
+          // Preserve existing mainEntity if it exists, otherwise create default
+          if (!structuredDataObj.mainEntity) {
+            structuredDataObj.mainEntity = {
+              "@type": "Organization",
+              "name": "Niddik",
+              "url": "https://niddik.com",
+              "description": "Premier IT recruitment and staffing solutions provider",
+              "logo": "https://niddik.com/images/niddik_logo.png",
+              "sameAs": [
+                "https://twitter.com/niddik",
+                "https://linkedin.com/company/niddik"
+              ],
+              "contactPoint": {
+                "@type": "ContactPoint",
+                "telephone": "+1-555-0123",
+                "contactType": "customer service"
+              }
+            };
+          }
+        }
 
         // Add recent job postings to structured data
         if (pagePath === '/' || pagePath === '/careers') {
@@ -872,25 +895,6 @@ export const storage = {
             "employmentType": job.jobType?.toUpperCase(),
             "experienceRequirements": job.experienceLevel
           }));
-
-          if (pagePath === '/') {
-            structuredDataObj.mainEntity = {
-              "@type": "Organization",
-              "name": "Niddik",
-              "url": "https://niddik.com",
-              "description": "Premier IT recruitment and staffing solutions provider",
-              "logo": "https://niddik.com/images/niddik_logo.png",
-              "sameAs": [
-                "https://twitter.com/niddik",
-                "https://linkedin.com/company/niddik"
-              ],
-              "contactPoint": {
-                "@type": "ContactPoint",
-                "telephone": "+1-555-0123",
-                "contactType": "customer service"
-              }
-            };
-          }
         }
 
         enhancedStructuredData = JSON.stringify(structuredDataObj, null, 2);

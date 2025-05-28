@@ -80,16 +80,84 @@ const commonPaths = [
   { value: "/auth", label: "Authentication" },
 ];
 
-const defaultStructuredData = {
-  "@context": "https://schema.org",
-  "@type": "WebPage",
-  "name": "",
-  "description": "",
-  "url": "",
-  "isPartOf": {
-    "@type": "WebSite",
-    "name": "Niddik",
-    "url": "https://niddik.com"
+const getDefaultStructuredData = (pagePath: string) => {
+  const baseData = {
+    "@context": "https://schema.org",
+    "isPartOf": {
+      "@type": "WebSite",
+      "name": "Niddik",
+      "url": "https://niddik.com"
+    }
+  };
+
+  switch (pagePath) {
+    case '/':
+      return {
+        ...baseData,
+        "@type": "Organization",
+        "name": "Niddik",
+        "url": "https://niddik.com",
+        "description": "Premier IT recruitment and staffing solutions provider",
+        "logo": "https://niddik.com/images/niddik_logo.png",
+        "sameAs": [
+          "https://twitter.com/niddik",
+          "https://linkedin.com/company/niddik"
+        ],
+        "contactPoint": {
+          "@type": "ContactPoint",
+          "telephone": "+1-555-0123",
+          "contactType": "customer service"
+        }
+      };
+    
+    case '/about-us':
+      return {
+        ...baseData,
+        "@type": "AboutPage",
+        "name": "About Niddik",
+        "description": "Learn about Niddik's mission to connect exceptional IT talent with innovative companies.",
+        "url": "https://niddik.com/about-us"
+      };
+    
+    case '/careers':
+      return {
+        ...baseData,
+        "@type": "WebPage",
+        "name": "Careers - Niddik",
+        "description": "Join Niddik and explore exciting career opportunities in IT recruitment and staffing.",
+        "url": "https://niddik.com/careers"
+      };
+    
+    case '/services':
+      return {
+        ...baseData,
+        "@type": "Service",
+        "name": "IT Recruitment Services",
+        "description": "Comprehensive IT recruitment and staffing services including RPO, contingent staffing, and web development.",
+        "url": "https://niddik.com/services",
+        "provider": {
+          "@type": "Organization",
+          "name": "Niddik"
+        }
+      };
+    
+    case '/contact':
+      return {
+        ...baseData,
+        "@type": "ContactPage",
+        "name": "Contact Niddik",
+        "description": "Get in touch with Niddik for your IT recruitment and staffing needs.",
+        "url": "https://niddik.com/contact"
+      };
+    
+    default:
+      return {
+        ...baseData,
+        "@type": "WebPage",
+        "name": "",
+        "description": "",
+        "url": `https://niddik.com${pagePath}`
+      };
   }
 };
 
@@ -257,7 +325,7 @@ export default function SEOPages() {
       twitterCreator: "@niddik",
       canonicalUrl: "",
       robotsDirective: "index,follow",
-      structuredData: JSON.stringify(defaultStructuredData, null, 2),
+      structuredData: JSON.stringify(getDefaultStructuredData(""), null, 2),
       itemPropName: "",
       itemPropDescription: "",
       itemPropImage: "",
@@ -267,6 +335,10 @@ export default function SEOPages() {
 
   const handleEdit = (page: SeoPage) => {
     setEditingPage(page);
+    
+    // Use existing structured data or generate appropriate default
+    const structuredData = page.structuredData || JSON.stringify(getDefaultStructuredData(page.pagePath), null, 2);
+    
     setFormData({
       pagePath: page.pagePath,
       pageTitle: page.pageTitle,
@@ -285,7 +357,7 @@ export default function SEOPages() {
       twitterCreator: page.twitterCreator || "",
       canonicalUrl: page.canonicalUrl || "",
       robotsDirective: page.robotsDirective,
-      structuredData: page.structuredData || JSON.stringify(defaultStructuredData, null, 2),
+      structuredData: structuredData,
       itemPropName: page.itemPropName || "",
       itemPropDescription: page.itemPropDescription || "",
       itemPropImage: page.itemPropImage || "",
@@ -516,7 +588,16 @@ interface SEOPageDialogProps {
 
 function SEOPageDialog({ title, formData, setFormData, onSubmit, isLoading, isEdit }: SEOPageDialogProps) {
   const handleInputChange = (field: string, value: any) => {
-    setFormData((prev: any) => ({ ...prev, [field]: value }));
+    setFormData((prev: any) => {
+      const newData = { ...prev, [field]: value };
+      
+      // Auto-populate structured data when page path changes
+      if (field === 'pagePath' && value && !isEdit) {
+        newData.structuredData = JSON.stringify(getDefaultStructuredData(value), null, 2);
+      }
+      
+      return newData;
+    });
   };
 
   return (
