@@ -383,24 +383,23 @@ const Hero = () => {
       </div>
       
       {/* Modern floating highlight badge - now positioned relatively at bottom */}
-      <div className="relative z-20 mt-8 flex justify-end">
-        <motion.div 
-          className="bg-white/10 backdrop-blur-md p-3 md:p-4 rounded-lg shadow-lg max-w-xs border border-white/20 mr-4 md:mr-8"
-          initial={{ opacity: 0, x: 50 }}
-          animate={{ opacity: 1, x: 0 }}
-          transition={{ duration: 0.8, delay: 1 }}
-        >
-          <div className="flex items-center gap-3">
-            <div className="bg-andela-green h-12 w-12 rounded-full flex items-center justify-center text-white">
-              <Check className="h-6 w-6" />
-            </div>
-            <div>
-              <p className="font-semibold text-white">Trusted by Industry Leaders</p>
-              <p className="text-sm text-gray-200">Global leaders choose NIDDIK expertise</p>
-            </div>
+      {/* Modern floating highlight badge */}
+      <motion.div 
+        className="absolute top-32 right-8 bg-white/10 backdrop-blur-md p-4 rounded-lg shadow-lg z-30 max-w-xs hidden md:block border border-white/20"
+        initial={{ opacity: 0, x: 50 }}
+        animate={{ opacity: 1, x: 0 }}
+        transition={{ duration: 0.8, delay: 1 }}
+      >
+        <div className="flex items-center gap-3">
+          <div className="bg-andela-green h-12 w-12 rounded-full flex items-center justify-center text-white">
+            <Check className="h-6 w-6" />
           </div>
-        </motion.div>
-      </div>
+          <div>
+            <p className="font-semibold text-white">Trusted by Industry Leaders</p>
+            <p className="text-sm text-gray-200">Global leaders choose NIDDIK expertise</p>
+          </div>
+        </div>
+      </motion.div>
     </section>
   );
 };
