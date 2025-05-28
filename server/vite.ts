@@ -74,7 +74,10 @@ export async function setupVite(app: Express, server: Server) {
     const url = req.originalUrl;
 
     try {
-      const clientTemplate = path.resolve(__dirname, "..", "client", "index.html");
+      const clientTemplate = path.resolve(process.cwd(), "client", "index.html");
+      
+      console.log(`Looking for template at: ${clientTemplate}`);
+      console.log(`Template exists: ${fs.existsSync(clientTemplate)}`);
       
       // Check if template exists
       if (!fs.existsSync(clientTemplate)) {
