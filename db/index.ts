@@ -29,13 +29,17 @@ const pool = new Pool({
   ssl: {
     rejectUnauthorized: false
   },
-  max: 20,
-  idleTimeoutMillis: 300000, // 5 minutes
-  connectionTimeoutMillis: 10000, // 10 seconds
-  query_timeout: 10000, // 10 seconds
-  statement_timeout: 10000, // 10 seconds
-  keepAlive: true,
-  keepAliveInitialDelayMillis: 10000
+   max: 10, // Reduced max connections for Render
+    min: 2, // Minimum connections
+    idleTimeoutMillis: 60000, // 1 minute
+    connectionTimeoutMillis: 5000, // 5 seconds
+    acquireTimeoutMillis: 5000, // 5 seconds
+    createTimeoutMillis: 5000, // 5 seconds
+    destroyTimeoutMillis: 5000, // 5 seconds
+    reapIntervalMillis: 1000, // 1 second
+    createRetryIntervalMillis: 200, // 200ms
+    keepAlive: true,
+    keepAliveInitialDelayMillis: 0
 });
 
 pool.on('error', (err) => {
