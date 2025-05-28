@@ -487,30 +487,81 @@ const GlobalNetworkMap: React.FC = () => {
           </motion.div>
         </div>
 
-        {/* Mobile statistics - Positioned to avoid canvas overlap */}
+        {/* Mobile statistics - Better distributed positioning */}
         <div className="lg:hidden">
+          {/* Top row */}
           <motion.div
-            className="absolute top-4 right-4 text-center text-white"
+            className="absolute top-16 left-4 text-center text-white"
             initial={{ opacity: 0, scale: 0.8 }}
             animate={{ opacity: 1, scale: 1 }}
             transition={{ delay: 1.5, duration: 0.8 }}
           >
-            <div className="text-2xl font-bold bg-gradient-to-r from-green-400 to-blue-400 bg-clip-text text-transparent">
+            <div className="text-xl font-bold bg-gradient-to-r from-orange-400 to-red-400 bg-clip-text text-transparent">
+              12+
+            </div>
+            <div className="text-xs opacity-80 font-medium">Panelled Customers</div>
+          </motion.div>
+
+          <motion.div
+            className="absolute top-16 right-4 text-center text-white"
+            initial={{ opacity: 0, scale: 0.8 }}
+            animate={{ opacity: 1, scale: 1 }}
+            transition={{ delay: 2, duration: 0.8 }}
+          >
+            <div className="text-xl font-bold bg-gradient-to-r from-green-400 to-blue-400 bg-clip-text text-transparent">
               500K+
             </div>
             <div className="text-xs opacity-80 font-medium">Talent Pools</div>
           </motion.div>
 
+          {/* Middle row - sides */}
           <motion.div
-            className="absolute top-4 left-4 text-center text-white"
+            className="absolute top-1/2 left-2 -translate-y-1/2 text-center text-white"
             initial={{ opacity: 0, scale: 0.8 }}
             animate={{ opacity: 1, scale: 1 }}
-            transition={{ delay: 2, duration: 0.8 }}
+            transition={{ delay: 2.5, duration: 0.8 }}
           >
-            <div className="text-2xl font-bold bg-gradient-to-r from-orange-400 to-red-400 bg-clip-text text-transparent">
-              12+
+            <div className="text-xl font-bold bg-gradient-to-r from-green-400 to-purple-400 bg-clip-text text-transparent">
+              10K+
             </div>
-            <div className="text-xs opacity-80 font-medium">Panelled Customers</div>
+            <div className="text-xs opacity-80 font-medium">Communities</div>
+          </motion.div>
+
+          <motion.div
+            className="absolute top-1/2 right-2 -translate-y-1/2 text-center text-white"
+            initial={{ opacity: 0, scale: 0.8 }}
+            animate={{ opacity: 1, scale: 1 }}
+            transition={{ delay: 3, duration: 0.8 }}
+          >
+            <div className="text-xl font-bold bg-gradient-to-r from-purple-400 to-pink-400 bg-clip-text text-transparent">
+              50%
+            </div>
+            <div className="text-xs opacity-80 font-medium">Faster Submit</div>
+          </motion.div>
+
+          {/* Bottom row */}
+          <motion.div
+            className="absolute bottom-16 left-4 text-center text-white"
+            initial={{ opacity: 0, scale: 0.8 }}
+            animate={{ opacity: 1, scale: 1 }}
+            transition={{ delay: 3.5, duration: 0.8 }}
+          >
+            <div className="text-xl font-bold bg-gradient-to-r from-cyan-400 to-blue-400 bg-clip-text text-transparent">
+              200+
+            </div>
+            <div className="text-xs opacity-80 font-medium">Candidates</div>
+          </motion.div>
+
+          <motion.div
+            className="absolute bottom-16 right-4 text-center text-white"
+            initial={{ opacity: 0, scale: 0.8 }}
+            animate={{ opacity: 1, scale: 1 }}
+            transition={{ delay: 4, duration: 0.8 }}
+          >
+            <div className="text-xl font-bold bg-gradient-to-r from-emerald-400 to-teal-400 bg-clip-text text-transparent">
+              40%
+            </div>
+            <div className="text-xs opacity-80 font-medium">Better Response</div>
           </motion.div>
         </div>
 
