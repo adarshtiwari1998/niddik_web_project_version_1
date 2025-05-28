@@ -339,7 +339,7 @@ const GlobalNetworkMap: React.FC = () => {
   }, []);
 
   return (
-    <div className="relative w-full h-[600px] bg-gradient-to-br from-gray-900 via-blue-900 to-purple-900 rounded-2xl overflow-hidden border border-gray-700">
+    <div className="relative w-full h-[600px] md:h-[600px] bg-gradient-to-br from-gray-900 via-blue-900 to-purple-900 rounded-2xl overflow-hidden border border-gray-700">
       {/* Animated background stars */}
       <div className="absolute inset-0">
         {Array.from({ length: 100 }).map((_, i) => (
@@ -373,123 +373,156 @@ const GlobalNetworkMap: React.FC = () => {
 
       {/* Enhanced overlay information */}
       <div className="absolute inset-0 pointer-events-none">
-        {/* Country legend */}
-        <div className="absolute top-6 left-6 space-y-3">
+        {/* Country legend - Responsive positioning */}
+        <div className="absolute top-6 left-6 space-y-2 md:space-y-3">
           <motion.div 
-            className="flex items-center space-x-3 text-white/90 text-sm font-medium"
+            className="flex items-center space-x-2 md:space-x-3 text-white/90 text-xs md:text-sm font-medium"
             initial={{ opacity: 0, x: -20 }}
             animate={{ opacity: 1, x: 0 }}
             transition={{ delay: 0.5 }}
           >
-            <div className="w-4 h-4 bg-orange-400 rounded-full shadow-lg border-2 border-white/50"></div>
-            <span>India (HQ)</span>
+            <div className="w-3 h-3 md:w-4 md:h-4 bg-orange-400 rounded-full shadow-lg border border-white/50"></div>
+            <span className="hidden sm:inline">India (HQ)</span>
+            <span className="sm:hidden">India</span>
           </motion.div>
           <motion.div 
-            className="flex items-center space-x-3 text-white/90 text-sm font-medium"
+            className="flex items-center space-x-2 md:space-x-3 text-white/90 text-xs md:text-sm font-medium"
             initial={{ opacity: 0, x: -20 }}
             animate={{ opacity: 1, x: 0 }}
             transition={{ delay: 0.7 }}
           >
-            <div className="w-4 h-4 bg-red-400 rounded-full shadow-lg border-2 border-white/50"></div>
+            <div className="w-3 h-3 md:w-4 md:h-4 bg-red-400 rounded-full shadow-lg border border-white/50"></div>
             <span>USA</span>
           </motion.div>
           <motion.div 
-            className="flex items-center space-x-3 text-white/90 text-sm font-medium"
+            className="flex items-center space-x-2 md:space-x-3 text-white/90 text-xs md:text-sm font-medium"
             initial={{ opacity: 0, x: -20 }}
             animate={{ opacity: 1, x: 0 }}
             transition={{ delay: 0.9 }}
           >
-            <div className="w-4 h-4 bg-green-400 rounded-full shadow-lg border-2 border-white/50"></div>
+            <div className="w-3 h-3 md:w-4 md:h-4 bg-green-400 rounded-full shadow-lg border border-white/50"></div>
             <span>Canada</span>
           </motion.div>
         </div>
 
-        {/* Live network status */}
+        {/* Live network status - Responsive */}
         <motion.div 
-          className="absolute top-6 right-6"
+          className="absolute top-16 right-6 md:top-6"
           initial={{ opacity: 0, y: -20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 1 }}
         >
-          <div className="flex items-center space-x-2 text-white/90 text-sm font-medium bg-black/30 backdrop-blur-sm rounded-lg px-4 py-2 border border-white/20">
+          <div className="flex items-center space-x-2 text-white/90 text-xs md:text-sm font-medium bg-black/30 backdrop-blur-sm rounded-lg px-3 py-1.5 md:px-4 md:py-2 border border-white/20">
             <motion.div
               className="w-2 h-2 bg-green-400 rounded-full"
               animate={{ opacity: [1, 0.3, 1] }}
               transition={{ duration: 1.5, repeat: Infinity }}
             />
-            <span>Live Global Network</span>
+            <span className="hidden sm:inline">Live Global Network</span>
+            <span className="sm:hidden">Live Network</span>
           </div>
         </motion.div>
 
-        {/* Company statistics overlays */}
-        <motion.div
-          className="absolute bottom-20 right-20 text-center text-white"
-          initial={{ opacity: 0, scale: 0.8 }}
-          animate={{ opacity: 1, scale: 1 }}
-          transition={{ delay: 1.5, duration: 0.8 }}
-        >
-          <div className="text-4xl font-bold bg-gradient-to-r from-green-400 to-blue-400 bg-clip-text text-transparent">
-            500K+
-          </div>
-          <div className="text-sm opacity-80 font-medium">Talent Pools</div>
-        </motion.div>
+        {/* Company statistics overlays - Responsive positioning */}
+        <div className="hidden lg:block">
+          {/* Desktop statistics positioning */}
+          <motion.div
+            className="absolute bottom-20 right-20 text-center text-white"
+            initial={{ opacity: 0, scale: 0.8 }}
+            animate={{ opacity: 1, scale: 1 }}
+            transition={{ delay: 1.5, duration: 0.8 }}
+          >
+            <div className="text-4xl font-bold bg-gradient-to-r from-green-400 to-blue-400 bg-clip-text text-transparent">
+              500K+
+            </div>
+            <div className="text-sm opacity-80 font-medium">Talent Pools</div>
+          </motion.div>
 
-        <motion.div
-          className="absolute top-32 left-1/4 text-center text-white"
-          initial={{ opacity: 0, scale: 0.8 }}
-          animate={{ opacity: 1, scale: 1 }}
-          transition={{ delay: 2, duration: 0.8 }}
-        >
-          <div className="text-4xl font-bold bg-gradient-to-r from-orange-400 to-red-400 bg-clip-text text-transparent">
-            12+
-          </div>
-          <div className="text-sm opacity-80 font-medium">Panelled Customers</div>
-        </motion.div>
+          <motion.div
+            className="absolute top-32 left-1/4 text-center text-white"
+            initial={{ opacity: 0, scale: 0.8 }}
+            animate={{ opacity: 1, scale: 1 }}
+            transition={{ delay: 2, duration: 0.8 }}
+          >
+            <div className="text-4xl font-bold bg-gradient-to-r from-orange-400 to-red-400 bg-clip-text text-transparent">
+              12+
+            </div>
+            <div className="text-sm opacity-80 font-medium">Panelled Customers</div>
+          </motion.div>
 
-        <motion.div
-          className="absolute bottom-32 left-20 text-center text-white"
-          initial={{ opacity: 0, scale: 0.8 }}
-          animate={{ opacity: 1, scale: 1 }}
-          transition={{ delay: 2.5, duration: 0.8 }}
-        >
-          <div className="text-4xl font-bold bg-gradient-to-r from-green-400 to-purple-400 bg-clip-text text-transparent">
-            10K+
-          </div>
-          <div className="text-sm opacity-80 font-medium">Communities Engaged</div>
-        </motion.div>
+          <motion.div
+            className="absolute bottom-32 left-20 text-center text-white"
+            initial={{ opacity: 0, scale: 0.8 }}
+            animate={{ opacity: 1, scale: 1 }}
+            transition={{ delay: 2.5, duration: 0.8 }}
+          >
+            <div className="text-4xl font-bold bg-gradient-to-r from-green-400 to-purple-400 bg-clip-text text-transparent">
+              10K+
+            </div>
+            <div className="text-sm opacity-80 font-medium">Communities Engaged</div>
+          </motion.div>
 
-        <motion.div
-          className="absolute top-20 right-1/3 text-center text-white"
-          initial={{ opacity: 0, scale: 0.8 }}
-          animate={{ opacity: 1, scale: 1 }}
-          transition={{ delay: 3, duration: 0.8 }}
-        >
-          <div className="text-4xl font-bold bg-gradient-to-r from-purple-400 to-pink-400 bg-clip-text text-transparent">
-            50%
-          </div>
-          <div className="text-sm opacity-80 font-medium">Faster Time to Submit</div>
-        </motion.div>
+          <motion.div
+            className="absolute top-20 right-1/3 text-center text-white"
+            initial={{ opacity: 0, scale: 0.8 }}
+            animate={{ opacity: 1, scale: 1 }}
+            transition={{ delay: 3, duration: 0.8 }}
+          >
+            <div className="text-4xl font-bold bg-gradient-to-r from-purple-400 to-pink-400 bg-clip-text text-transparent">
+              50%
+            </div>
+            <div className="text-sm opacity-80 font-medium">Faster Time to Submit</div>
+          </motion.div>
 
-        <motion.div
-          className="absolute bottom-16 left-1/3 text-center text-white"
-          initial={{ opacity: 0, scale: 0.8 }}
-          animate={{ opacity: 1, scale: 1 }}
-          transition={{ delay: 3.5, duration: 0.8 }}
-        >
-          <div className="text-4xl font-bold bg-gradient-to-r from-cyan-400 to-blue-400 bg-clip-text text-transparent">
-            200+
-          </div>
-          <div className="text-sm opacity-80 font-medium">Candidates Engaged</div>
-        </motion.div>
+          <motion.div
+            className="absolute bottom-16 left-1/3 text-center text-white"
+            initial={{ opacity: 0, scale: 0.8 }}
+            animate={{ opacity: 1, scale: 1 }}
+            transition={{ delay: 3.5, duration: 0.8 }}
+          >
+            <div className="text-4xl font-bold bg-gradient-to-r from-cyan-400 to-blue-400 bg-clip-text text-transparent">
+              200+
+            </div>
+            <div className="text-sm opacity-80 font-medium">Candidates Engaged</div>
+          </motion.div>
+        </div>
 
-        {/* Interactive hint */}
+        {/* Mobile statistics - Positioned to avoid canvas overlap */}
+        <div className="lg:hidden">
+          <motion.div
+            className="absolute top-4 right-4 text-center text-white"
+            initial={{ opacity: 0, scale: 0.8 }}
+            animate={{ opacity: 1, scale: 1 }}
+            transition={{ delay: 1.5, duration: 0.8 }}
+          >
+            <div className="text-2xl font-bold bg-gradient-to-r from-green-400 to-blue-400 bg-clip-text text-transparent">
+              500K+
+            </div>
+            <div className="text-xs opacity-80 font-medium">Talent Pools</div>
+          </motion.div>
+
+          <motion.div
+            className="absolute top-4 left-4 text-center text-white"
+            initial={{ opacity: 0, scale: 0.8 }}
+            animate={{ opacity: 1, scale: 1 }}
+            transition={{ delay: 2, duration: 0.8 }}
+          >
+            <div className="text-2xl font-bold bg-gradient-to-r from-orange-400 to-red-400 bg-clip-text text-transparent">
+              12+
+            </div>
+            <div className="text-xs opacity-80 font-medium">Panelled Customers</div>
+          </motion.div>
+        </div>
+
+        {/* Interactive hint - Responsive */}
         <motion.div
-          className="absolute bottom-6 left-1/2 transform -translate-x-1/2 text-white/60 text-xs font-medium"
+          className="absolute bottom-4 md:bottom-6 left-1/2 transform -translate-x-1/2 text-white/60 text-xs font-medium text-center px-4"
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
           transition={{ delay: 3 }}
         >
-          🌍 Interactive 3D Globe • Auto-rotating view
+          <span className="hidden sm:inline">🌍 Interactive 3D Globe • Auto-rotating view</span>
+          <span className="sm:hidden">🌍 3D Globe</span>
         </motion.div>
       </div>
     </div>
