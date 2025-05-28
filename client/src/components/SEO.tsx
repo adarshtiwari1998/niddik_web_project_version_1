@@ -36,9 +36,29 @@ const SEO: React.FC<SEOProps> = ({ pagePath, fallback }) => {
   const [location] = useLocation();
   const currentPath = pagePath || location;
 
+  // Check if server-side SEO is already present (to avoid duplicates)
+  const hasServerSideSEO = React.useMemo(() => {
+    if (typeof document === 'undefined') return false;
+    
+    // Check if title tag already exists with job-specific content
+    const existingTitle = document.querySelector('title');
+    const existingMeta = document.querySelector('meta[name="description"]');
+    
+    // If we find existing title/meta tags that look like they're from server-side rendering
+    return existingTitle && existingMeta && 
+           (existingTitle.textContent?.includes('at') || 
+            existingTitle.textContent?.includes('|') ||
+            existingMeta.getAttribute('content')?.includes('Apply for'));
+  }, [currentPath]);
+
   // Check if this is a job detail page
   const isJobDetailPage = currentPath.match(/^\/jobs\/(\d+)$/);
   const jobId = isJobDetailPage ? isJobDetailPage[1] : null;
+
+  // For job detail pages, skip client-side SEO if server-side SEO is present
+  if (isJobDetailPage && hasServerSideSEO) {
+    return null;
+  }
 
   // Fetch job data for dynamic SEO if it's a job page
   const { data: jobData } = useQuery<{ data: any }>({
@@ -171,12 +191,46 @@ const SEO: React.FC<SEOProps> = ({ pagePath, fallback }) => {
   let seo: SEOData;
   
   if (isJobDetailPage) {
-    // For job detail pages, prefer server-side generated SEO data
-    // Server-side rendering should handle job detail SEO
-    if (seoData?.data) {
+    // For job detail pages, use fetched data or fallback
+    if (seoData?.data && !seoData.isDefault) {
       seo = seoData.data;
+    } else if (jobData?.data) {
+      // Generate dynamic SEO from job data
+      const job = jobData.data;
+      seo = {
+        pageTitle: `${job.title} at ${job.company} - ${job.location} | Niddik Jobs`,
+        metaDescription: `Apply for ${job.title} position at ${job.company} in ${job.location}. ${job.experienceLevel} level ${job.jobType} role. ${job.description?.substring(0, 100)}...`,
+        metaKeywords: `${job.title}, ${job.company}, ${job.location}, ${job.category}, ${job.experienceLevel}, ${job.jobType}, IT jobs, career opportunities`,
+        ogTitle: `${job.title} at ${job.company} | Niddik`,
+        ogDescription: `Join ${job.company} as ${job.title} in ${job.location}. ${job.experienceLevel} level position with competitive benefits.`,
+        ogType: "article",
+        canonicalUrl: `https://niddik.com/jobs/${job.id}`,
+        structuredData: JSON.stringify({
+          "@context": "https://schema.org",
+          "@type": "JobPosting",
+          "title": job.title,
+          "description": job.description,
+          "hiringOrganization": {
+            "@type": "Organization",
+            "name": job.company
+          },
+          "jobLocation": {
+            "@type": "Place",
+            "address": {
+              "@type": "PostalAddress",
+              "addressLocality": job.location
+            }
+          },
+          "employmentType": job.jobType?.toUpperCase(),
+          "experienceRequirements": job.experienceLevel,
+          "skills": job.skills ? job.skills.split(',').map(s => s.trim()) : [],
+          "datePosted": job.postedDate || job.createdAt,
+          "validThrough": new Date(Date.now() + 90 * 24 * 60 * 60 * 1000).toISOString(),
+          "url": `https://niddik.com/jobs/${job.id}`
+        })
+      };
     } else {
-      // Fallback only if no server-side data at all
+      // Fallback only if no data at all
       seo = fallback || {
         pageTitle: "Job Details | Niddik",
         metaDescription: "View detailed job information and apply for exciting career opportunities with top companies.",
