@@ -55,8 +55,8 @@ app.use((req, res, next) => {
     throw err;
   });
 
-  // If in development mode, setup Vite (this will serve the frontend in memory)
-  if (app.get("env") === "development") {
+  // Setup Vite for development (default environment is development)
+  if (process.env.NODE_ENV !== "production") {
     await setupVite(app, server);
   } else {
     // In production, serve static files from dist
