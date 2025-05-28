@@ -805,6 +805,138 @@ export const storage = {
     });
   },
 
+  async updateSeoPageWithJobData(pagePath: string): Promise<SeoPage | undefined> {
+    try {
+      // Get recent jobs from last 7 days
+      const recentJobs = await this.getRecentJobListings(10, 7);
+      
+      if (recentJobs.length === 0) {
+        console.log(`No recent jobs found for SEO update of ${pagePath}`);
+        return undefined;
+      }
+
+      // Get existing SEO page
+      const existingSeoPage = await this.getSeoPageByPath(pagePath);
+      if (!existingSeoPage) {
+        console.log(`SEO page not found for path: ${pagePath}`);
+        return undefined;
+      }
+
+      // Generate job titles string for description
+      const jobTitles = recentJobs.slice(0, 5).map(job => job.title).join(', ');
+      const jobCompanies = [...new Set(recentJobs.map(job => job.company))].slice(0, 3).join(', ');
+
+      // Create enhanced description based on page path
+      let enhancedDescription = existingSeoPage.metaDescription;
+      let enhancedKeywords = existingSeoPage.metaKeywords || '';
+
+      if (pagePath === '/') {
+        // Home page enhancement
+        const baseDescription = "Niddik provides world-class IT recruitment and staffing solutions. Connect with top talent and leading companies.";
+        enhancedDescription = `${baseDescription} Latest opportunities: ${jobTitles}. Trusted by companies like ${jobCompanies}.`;
+        enhancedKeywords = `${enhancedKeywords}, ${recentJobs.map(job => job.title).join(', ')}, ${jobCompanies}`;
+      } else if (pagePath === '/careers') {
+        // Careers page enhancement
+        const baseDescription = "Join Niddik and explore exciting career opportunities. Find your next role with top technology companies.";
+        enhancedDescription = `${baseDescription} Latest positions: ${jobTitles}. Join companies like ${jobCompanies}.`;
+        enhancedKeywords = `${enhancedKeywords}, ${recentJobs.map(job => job.title).join(', ')}, ${jobCompanies}`;
+      }
+
+      // Enhance structured data with recent jobs
+      let enhancedStructuredData = existingSeoPage.structuredData;
+      try {
+        const structuredDataObj = enhancedStructuredData ? JSON.parse(enhancedStructuredData) : {};
+        
+        // Add recent job postings to structured data
+        if (pagePath === '/' || pagePath === '/careers') {
+          structuredDataObj.potentialAction = {
+            "@type": "SearchAction",
+            "target": "https://niddik.com/careers?search={search_term}",
+            "query-input": "required name=search_term"
+          };
+          
+          structuredDataObj.about = recentJobs.map(job => ({
+            "@type": "JobPosting",
+            "title": job.title,
+            "datePosted": job.postedDate || job.createdAt,
+            "hiringOrganization": {
+              "@type": "Organization",
+              "name": job.company
+            },
+            "jobLocation": {
+              "@type": "Place",
+              "address": job.location
+            },
+            "url": `https://niddik.com/jobs/${job.id}`,
+            "description": job.description?.substring(0, 150) + "...",
+            "employmentType": job.jobType?.toUpperCase(),
+            "experienceRequirements": job.experienceLevel
+          }));
+
+          if (pagePath === '/') {
+            structuredDataObj.mainEntity = {
+              "@type": "Organization",
+              "name": "Niddik",
+              "url": "https://niddik.com",
+              "description": "Premier IT recruitment and staffing solutions provider",
+              "logo": "https://niddik.com/images/niddik_logo.png",
+              "sameAs": [
+                "https://twitter.com/niddik",
+                "https://linkedin.com/company/niddik"
+              ],
+              "contactPoint": {
+                "@type": "ContactPoint",
+                "telephone": "+1-555-0123",
+                "contactType": "customer service"
+              }
+            };
+          }
+        }
+        
+        enhancedStructuredData = JSON.stringify(structuredDataObj, null, 2);
+      } catch (parseError) {
+        console.error('Error parsing structured data for enhancement:', parseError);
+      }
+
+      // Update the SEO page with enhanced data
+      const updateData = {
+        metaDescription: enhancedDescription.substring(0, 160), // Ensure within limit
+        metaKeywords: enhancedKeywords.substring(0, 500), // Reasonable limit
+        structuredData: enhancedStructuredData,
+        updatedAt: new Date()
+      };
+
+      const updatedSeoPage = await this.updateSeoPage(existingSeoPage.id, updateData);
+      console.log(`SEO page updated for ${pagePath} with ${recentJobs.length} recent jobs`);
+      
+      return updatedSeoPage;
+    } catch (error) {
+      console.error(`Error updating SEO page ${pagePath} with job data:`, error);
+      return undefined;
+    }
+  },
+
+  async updateAllSeoJobPages(): Promise<{ updated: string[], errors: string[] }> {
+    const results = { updated: [], errors: [] };
+    const pagesToUpdate = ['/', '/careers'];
+
+    for (const pagePath of pagesToUpdate) {
+      try {
+        const result = await this.updateSeoPageWithJobData(pagePath);
+        if (result) {
+          results.updated.push(pagePath);
+        } else {
+          results.errors.push(`Failed to update ${pagePath}`);
+        }
+      } catch (error) {
+        console.error(`Error updating SEO for ${pagePath}:`, error);
+        results.errors.push(`Error updating ${pagePath}: ${error.message}`);
+      }
+    }
+
+    return results;
+  },
+
   async getSeoPageByPath(pagePath: string): Promise<SeoPage | undefined> {
     return db.query.seoPages.findFirst({
       where: eq(seoPages.pagePath, pagePath)

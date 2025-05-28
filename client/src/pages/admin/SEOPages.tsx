@@ -200,6 +200,44 @@ export default function SEOPages() {
     },
   });
 
+  // Update SEO pages with job data mutation
+  const updateJobDataMutation = useMutation({
+    mutationFn: async () => {
+      const res = await fetch('/api/admin/seo-pages/update-job-data', { 
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+      });
+      if (!res.ok) throw new Error('Failed to update SEO pages with job data');
+      return res.json();
+    },
+    onSuccess: (data) => {
+      queryClient.invalidateQueries({ queryKey: ['/api/admin/seo-pages'] });
+      const { updated, errors } = data.data;
+      
+      if (updated.length > 0) {
+        toast({ 
+          title: "SEO pages updated successfully", 
+          description: `Updated pages: ${updated.join(', ')}` 
+        });
+      }
+      
+      if (errors.length > 0) {
+        toast({ 
+          title: "Some updates failed", 
+          description: errors.join(', '), 
+          variant: "destructive" 
+        });
+      }
+    },
+    onError: (error) => {
+      toast({ 
+        title: "Error updating SEO pages", 
+        description: error.message, 
+        variant: "destructive" 
+      });
+    },
+  });
+
   const resetForm = () => {
     setFormData({
       pagePath: "",
@@ -279,22 +317,62 @@ export default function SEOPages() {
             <h1 className="text-3xl font-bold">SEO Pages Management</h1>
             <p className="text-muted-foreground">Manage SEO metadata for all website pages</p>
           </div>
-          <Dialog open={isCreateDialogOpen} onOpenChange={setIsCreateDialogOpen}>
-            <DialogTrigger asChild>
-              <Button onClick={resetForm}>
-                <Plus className="h-4 w-4 mr-2" />
-                Add SEO Page
-              </Button>
-            </DialogTrigger>
-            <SEOPageDialog
-              title="Create SEO Page"
-              formData={formData}
-              setFormData={setFormData}
-              onSubmit={() => createMutation.mutate(formData)}
-              isLoading={createMutation.isPending}
-            />
-          </Dialog>
+          <div className="flex gap-3">
+            <Button
+              variant="outline"
+              onClick={() => updateJobDataMutation.mutate()}
+              disabled={updateJobDataMutation.isPending}
+            >
+              {updateJobDataMutation.isPending ? (
+                <>
+                  <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-primary mr-2"></div>
+                  Updating...
+                </>
+              ) : (
+                <>
+                  <Globe className="h-4 w-4 mr-2" />
+                  Update Job Data
+                </>
+              )}
+            </Button>
+            <Dialog open={isCreateDialogOpen} onOpenChange={setIsCreateDialogOpen}>
+              <DialogTrigger asChild>
+                <Button onClick={resetForm}>
+                  <Plus className="h-4 w-4 mr-2" />
+                  Add SEO Page
+                </Button>
+              </DialogTrigger>
+              <SEOPageDialog
+                title="Create SEO Page"
+                formData={formData}
+                setFormData={setFormData}
+                onSubmit={() => createMutation.mutate(formData)}
+                isLoading={createMutation.isPending}
+              />
+            </Dialog>
+          </div>
         </div>
+
+        {/* Info Card */}
+        <Card className="border-blue-200 bg-blue-50">
+          <CardContent className="pt-6">
+            <div className="flex items-start gap-3">
+              <div className="rounded-full bg-blue-100 p-2">
+                <Globe className="h-4 w-4 text-blue-600" />
+              </div>
+              <div>
+                <h3 className="font-medium text-blue-900">Automatic Job Data Updates</h3>
+                <p className="text-sm text-blue-700 mt-1">
+                  SEO pages for <code>/</code> and <code>/careers</code> are automatically updated with the latest job postings from the last 7 days. 
+                  Updates happen when jobs are created/modified, or you can trigger manual updates using the "Update Job Data" button.
+                </p>
+                <p className="text-xs text-blue-600 mt-2">
+                  This enhances meta descriptions, keywords, and structured data with fresh job content for better SEO performance.
+                </p>
+              </div>
+            </div>
+          </CardContent>
+        </Card>
 
         {/* Search */}
         <Card>
@@ -341,6 +419,11 @@ export default function SEOPages() {
                         <div className="flex items-center gap-2">
                           <Globe className="h-4 w-4" />
                           <code className="text-sm bg-muted px-1 rounded">{page.pagePath}</code>
+                          {(page.pagePath === '/' || page.pagePath === '/careers') && (
+                            <Badge variant="outline" className="text-xs bg-green-50 text-green-700 border-green-200">
+                              Auto-Updated
+                            </Badge>
+                          )}
                         </div>
                       </TableCell>
                       <TableCell className="max-w-xs">

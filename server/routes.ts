@@ -146,15 +146,15 @@ export async function registerRoutes(app: Express): Promise<Server> {
       const priority = req.query.priority as string;
 
       let isAdmin = false;
-      
+
       // Check session-based authentication only
       if (req.isAuthenticated() && req.user && req.user.role === 'admin') {
         isAdmin = true;
         console.log("Admin session verified successfully");
       }
-      
+
       console.log("Is Admin:", isAdmin, "Status filter requested:", status);
-      
+
       // Non-admin users can only see active jobs
       if (!isAdmin) {
         console.log("Non-admin user, forcing status to active");
@@ -255,6 +255,16 @@ export async function registerRoutes(app: Express): Promise<Server> {
     try {
       const validatedData = jobListingSchema.parse(req.body);
       const jobListing = await storage.createJobListing(validatedData);
+
+      // Automatically update SEO pages with new job data
+      try {
+        await storage.updateAllSeoJobPages();
+        console.log('SEO pages automatically updated after job creation');
+      } catch (seoError) {
+        console.error('Error auto-updating SEO pages after job creation:', seoError);
+        // Don't fail the job creation if SEO update fails
+      }
+
       return res.status(201).json({ success: true, data: jobListing });
     } catch (error) {
       if (error instanceof z.ZodError) {
@@ -296,6 +306,16 @@ export async function registerRoutes(app: Express): Promise<Server> {
       try {
         const validatedData = jobListingSchema.partial().parse(req.body);
         const updatedListing = await storage.updateJobListing(id, validatedData);
+
+        // Automatically update SEO pages with updated job data
+        try {
+          await storage.updateAllSeoJobPages();
+          console.log('SEO pages automatically updated after job update');
+        } catch (seoError) {
+          console.error('Error auto-updating SEO pages after job update:', seoError);
+          // Don't fail the job update if SEO update fails
+        }
+
         return res.status(200).json({ success: true, data: updatedListing });
       } catch (validationError) {
         if (validationError instanceof z.ZodError) {
@@ -2318,7 +2338,7 @@ app.get("/api/last-logout", async (req: Request, res: Response) => {
   app.get('/api/seo-pages/by-path', async (req, res) => {
     try {
       const pagePath = req.query.path as string;
-      
+
       if (!pagePath) {
         return res.status(400).json({
           success: false,
@@ -2327,11 +2347,11 @@ app.get("/api/last-logout", async (req: Request, res: Response) => {
       }
 
       const seoPage = await storage.getSeoPageByPath(pagePath);
-      
+
       if (!seoPage) {
         // Check if this is a job detail page pattern
         const jobPageMatch = pagePath.match(/^\/jobs\/(\d+)$/);
-        
+
         if (jobPageMatch) {
           // Return a signal that this is a dynamic job page
           // The frontend will handle generating the SEO data
@@ -2345,7 +2365,7 @@ app.get("/api/last-logout", async (req: Request, res: Response) => {
           };
           return res.status(200).json({ success: true, data: defaultJobSeo, isDefault: true });
         }
-        
+
         // Return default SEO data if no specific page found
         const defaultSeo = {
           pageTitle: "Niddik - Premier IT Recruitment & Staffing Solutions",
@@ -2485,9 +2505,9 @@ app.get("/api/last-logout", async (req: Request, res: Response) => {
       console.log('SEO Update - Validating data for ID:', id);
       const validatedData = seoPageSchema.partial().parse(req.body);
       console.log('SEO Update - Validation passed:', validatedData);
-      
+
       const seoPage = await storage.updateSeoPage(id, validatedData);
-      
+
       if (!seoPage) {
         console.log('SEO Update - Page not found for ID:', id);
         return res.status(404).json({
