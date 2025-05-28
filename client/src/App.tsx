@@ -62,6 +62,7 @@ import HealthcarePartners from './pages/HealthcarePartners';
 import SearchPage from "@/pages/SearchPage";
 import { lazy, Suspense } from "react";
 import SEO from "@/components/SEO";
+import AdminPasswordChange from "@/components/admin/AdminPasswordChange";
 
 // Component to handle scroll restoration
 function ScrollToTop() {
