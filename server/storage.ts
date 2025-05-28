@@ -284,12 +284,29 @@ export const storage = {
     });
   },
 
-  async getRecentJobListings(limit: number = 10): Promise<JobListing[]> {
-    return await db.query.jobListings.findMany({
-      where: eq(jobListings.status, "active"),
-      orderBy: [desc(jobListings.postedDate)],
-      limit
-    });
+  async getRecentJobListings(limit: number = 10, days: number = 7) {
+    try {
+      const cutoffDate = new Date();
+      cutoffDate.setDate(cutoffDate.getDate() - days);
+      const cutoffDateString = cutoffDate.toISOString().split('T')[0]; // YYYY-MM-DD format
+
+      const result = await db
+        .select()
+        .from(jobListings)
+        .where(
+          and(
+            eq(jobListings.status, 'active'),
+            sql`${jobListings.postedDate} >= ${cutoffDateString} OR ${jobListings.postedDate} IS NULL`
+          )
+        )
+        .orderBy(desc(jobListings.postedDate))
+        .limit(limit);
+
+      return result;
+    } catch (error) {
+      console.error('Error fetching recent job listings:', error);
+      throw error;
+    }
   },
 
   // User management
@@ -957,8 +974,7 @@ export async function getJobApplicationsWithDetails(
       lastUpdated: jobApplications.lastUpdated,
       createdAt: jobApplications.createdAt,
       // User data fields directly
-      userFullName: users.fullName,
-      userEmail: users.email,
+      userFullName: users.fullName,      userEmail: users.email,
       userPhone: users.phone,
       userExperience: users.experience,
       userNoticePeriod: users.noticePeriod,
@@ -971,7 +987,7 @@ export async function getJobApplicationsWithDetails(
       userSkills: users.skills,
       // Job data fields directly
       jobTitle: jobListings.title,
-      jobCompany: jobListingslocation,
+      jobCompany: jobListings.company,
       jobType: jobListings.jobType,
       jobSalary: jobListings.salary,
       jobCategory: jobListings.category,

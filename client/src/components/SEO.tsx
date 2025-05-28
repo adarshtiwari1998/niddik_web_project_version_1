@@ -55,6 +55,21 @@ const SEO: React.FC<SEOProps> = ({ pagePath, fallback }) => {
     refetchOnWindowFocus: false,
   });
 
+  // Fetch recent jobs for careers and home pages
+  const { data: recentJobsData } = useQuery<{ data: any[] }>({
+    queryKey: ['/api/job-listings/recent'],
+    queryFn: async () => {
+      const response = await fetch('/api/job-listings/recent?limit=10');
+      if (!response.ok) {
+        throw new Error('Failed to fetch recent jobs');
+      }
+      return response.json();
+    },
+    enabled: currentPath === '/careers' || currentPath === '/',
+    staleTime: 5 * 60 * 1000,
+    refetchOnWindowFocus: false,
+  });
+
   const { data: seoData } = useQuery<{ 
     success: boolean; 
     data: SEOData; 
@@ -71,6 +86,86 @@ const SEO: React.FC<SEOProps> = ({ pagePath, fallback }) => {
     staleTime: 5 * 60 * 1000, // 5 minutes
     refetchOnWindowFocus: false,
   });
+
+  // Helper function to get recent jobs from last week
+  const getRecentJobs = () => {
+    if (!recentJobsData?.data) return [];
+    
+    const oneWeekAgo = new Date();
+    oneWeekAgo.setDate(oneWeekAgo.getDate() - 7);
+    
+    return recentJobsData.data.filter(job => {
+      const jobDate = new Date(job.postedDate || job.createdAt);
+      return jobDate >= oneWeekAgo;
+    }).slice(0, 5); // Limit to 5 most recent jobs
+  };
+
+  // Generate enhanced structured data with recent jobs
+  const generateEnhancedStructuredData = (baseSeo: SEOData) => {
+    const recentJobs = getRecentJobs();
+    
+    if ((currentPath === '/careers' || currentPath === '/') && recentJobs.length > 0) {
+      const baseStructuredData = currentPath === '/careers' ? {
+        "@context": "https://schema.org",
+        "@type": "WebPage",
+        "name": "Careers - Niddik",
+        "url": "https://niddik.com/careers",
+        "description": "Join Niddik and explore exciting career opportunities in IT recruitment and staffing.",
+        "mainEntity": {
+          "@type": "Organization",
+          "name": "Niddik",
+          "url": "https://niddik.com",
+          "description": "Premier IT recruitment and staffing solutions provider",
+          "logo": "https://niddik.com/images/niddik_logo.png"
+        }
+      } : {
+        "@context": "https://schema.org",
+        "@type": "Organization",
+        "name": "Niddik",
+        "url": "https://niddik.com",
+        "description": "Premier IT recruitment and staffing solutions provider",
+        "logo": "https://niddik.com/images/niddik_logo.png",
+        "sameAs": [
+          "https://twitter.com/niddik",
+          "https://linkedin.com/company/niddik"
+        ],
+        "contactPoint": {
+          "@type": "ContactPoint",
+          "telephone": "+1-555-0123",
+          "contactType": "customer service"
+        }
+      };
+
+      // Add recent jobs to structured data
+      const enhancedData = {
+        ...baseStructuredData,
+        "potentialAction": {
+          "@type": "SearchAction",
+          "target": "https://niddik.com/careers?search={search_term}",
+          "query-input": "required name=search_term"
+        },
+        "about": recentJobs.map(job => ({
+          "@type": "JobPosting",
+          "title": job.title,
+          "datePosted": job.postedDate || job.createdAt,
+          "hiringOrganization": {
+            "@type": "Organization", 
+            "name": job.company
+          },
+          "jobLocation": {
+            "@type": "Place",
+            "address": job.location
+          },
+          "url": `https://niddik.com/jobs/${job.id}`,
+          "description": job.description?.substring(0, 150) + "..."
+        }))
+      };
+
+      return JSON.stringify(enhancedData);
+    }
+
+    return baseSeo.structuredData;
+  };
 
   // Generate dynamic SEO for job pages or use fetched/fallback data
   let seo: SEOData;
@@ -122,9 +217,23 @@ const SEO: React.FC<SEOProps> = ({ pagePath, fallback }) => {
     };
   } else {
     // Use fetched data, fallback props, or default values
-    seo = seoData?.data || fallback || {
+    const baseSeo = seoData?.data || fallback || {
       pageTitle: "Niddik - Premier IT Recruitment & Staffing Solutions",
       metaDescription: "Niddik provides world-class IT recruitment and staffing solutions. Connect with top talent and leading companies.",
+    };
+
+    // Enhance meta descriptions with recent jobs info
+    const recentJobs = getRecentJobs();
+    if ((currentPath === '/careers' || currentPath === '/') && recentJobs.length > 0) {
+      const jobTitles = recentJobs.slice(0, 3).map(job => job.title).join(', ');
+      baseSeo.metaDescription = currentPath === '/careers' 
+        ? `Join Niddik and explore exciting career opportunities. Latest positions: ${jobTitles}. ${baseSeo.metaDescription}`
+        : `${baseSeo.metaDescription} Latest job opportunities: ${jobTitles}.`;
+    }
+
+    seo = {
+      ...baseSeo,
+      structuredData: generateEnhancedStructuredData(baseSeo)
     };
   }
 

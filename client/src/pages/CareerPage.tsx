@@ -18,6 +18,7 @@ import { Briefcase, Clock, MapPin, Search, Filter, Loader2, Award } from "lucide
 import { Badge } from "@/components/ui/badge";
 import CareersLayout from "@/components/careers/CareersLayout";
 import { format } from "date-fns";
+import SEO from "@/components/SEO";
 
 export default function CareerPage() {
   const [search, setSearch] = useState("");
@@ -82,8 +83,10 @@ export default function CareerPage() {
   };
 
   return (
-    <CareersLayout>
-      <div className="container mx-auto py-12 px-4 md:px-6">
+    <>
+      <SEO pagePath="/careers" />
+      <CareersLayout>
+        <div className="container mx-auto py-12 px-4 md:px-6">
         {/* Hero Section */}
         <div className="text-center mb-12">
           <h1 className="text-4xl font-bold mb-4">Join Our Team</h1>
@@ -322,6 +325,7 @@ export default function CareerPage() {
         {/* Pagination can be added here later */}
       </div>
       </div>
-    </CareersLayout>
+      </CareersLayout>
+    </>
   );
 }

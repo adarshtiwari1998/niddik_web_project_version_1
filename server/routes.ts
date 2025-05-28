@@ -116,11 +116,12 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
-  // Get recent job listings
+  // Get recent job listings (last week by default)
   app.get('/api/job-listings/recent', async (req, res) => {
     try {
       const limit = req.query.limit ? parseInt(req.query.limit as string) : 10;
-      const jobListings = await storage.getRecentJobListings(limit);
+      const days = req.query.days ? parseInt(req.query.days as string) : 7; // Default to last week
+      const jobListings = await storage.getRecentJobListings(limit, days);
       return res.status(200).json({ success: true, data: jobListings });
     } catch (error) {
       console.error('Error fetching recent job listings:', error);

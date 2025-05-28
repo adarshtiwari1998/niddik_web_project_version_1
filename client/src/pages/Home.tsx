@@ -46,7 +46,6 @@ const Home = () => {
           <ForTechnologists />
           <SuccessStories />
           <HowItWorks />
-
           <ContactSection />
         </main>
         <Footer />
