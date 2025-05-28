@@ -2535,6 +2535,36 @@ app.get("/api/last-logout", async (req: Request, res: Response) => {
     }
   });
 
+  // Update SEO pages with job data
+  app.post('/api/admin/seo-pages/update-job-data', async (req: AuthenticatedRequest, res) => {
+    try {
+      if (!req.isAuthenticated() || req.user?.role !== 'admin') {
+        return res.status(403).json({
+          success: false,
+          message: "Unauthorized"
+        });
+      }
+
+      console.log('SEO update job data - User authenticated:', req.user?.role);
+      
+      const results = await storage.updateAllSeoJobPages();
+      
+      console.log('SEO update job data - Results:', results);
+      
+      return res.status(200).json({
+        success: true,
+        data: results,
+        message: "SEO pages updated with job data"
+      });
+    } catch (error) {
+      console.error('Error updating SEO pages with job data:', error);
+      return res.status(500).json({
+        success: false,
+        message: "Internal server error"
+      });
+    }
+  });
+
   // Delete SEO page
   app.delete('/api/admin/seo-pages/:id', async (req: AuthenticatedRequest, res) => {
     try {
