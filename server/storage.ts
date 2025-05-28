@@ -779,14 +779,14 @@ export const storage = {
 
   async deleteDemoRequest(id: number): Promise<void> {
     await db.delete(demoRequests).where(eq(demoRequests.id, id));
-  }
+  },
 
   // SEO Pages methods
   async getAllSeoPages(): Promise<SeoPage[]> {
     return db.query.seoPages.findMany({
       orderBy: asc(seoPages.pagePath)
     });
-  }
+  },
 
   async getSeoPageByPath(pagePath: string): Promise<SeoPage | undefined> {
     return db.query.seoPages.findFirst({
@@ -816,8 +816,7 @@ export const storage = {
 
   async deleteSeoPage(id: number): Promise<void> {
     await db.delete(seoPages).where(eq(seoPages.id, id));
-  }
-,
+  },
   async getAllJobApplications({ page = 1, limit = 10, search, status, jobId }: {
     page?: number;
     limit?: number;
