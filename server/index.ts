@@ -72,6 +72,8 @@ app.use((req, res, next) => {
   // Always serve the app on port 5000
   const port = 5000;
   server.listen(port, "0.0.0.0", () => {
-    log(`Serving on port ${port}`);
+    log(`Server is running on http://0.0.0.0:${port}`);
+    log(`Environment: ${app.get("env")}`);
+    log(`Vite development server configured successfully`);
   });
 })();

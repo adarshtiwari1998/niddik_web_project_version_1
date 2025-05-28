@@ -62,10 +62,14 @@ export async function setupVite(app: Express, server: Server) {
       ...viteLogger,
       error: (msg, options) => {
         viteLogger.error(msg, options);
-        process.exit(1);
+        // Don't exit on error, just log it
+        console.error("Vite error:", msg);
       },
     },
-    server: serverOptions,
+    server: {
+      middlewareMode: true,
+      hmr: { server }
+    },
     appType: "custom",
   });
 
@@ -74,28 +78,8 @@ export async function setupVite(app: Express, server: Server) {
     const url = req.originalUrl;
 
     try {
-      console.log(`Current working directory: ${process.cwd()}`);
-      console.log(`__dirname: ${__dirname}`);
-      
-      // Try multiple potential paths
-      const clientTemplate1 = path.resolve(process.cwd(), "client", "index.html");
-      const clientTemplate2 = path.resolve(__dirname, "..", "client", "index.html");
-      const clientTemplate3 = path.join(process.cwd(), "client", "index.html");
-      
-      console.log(`Path 1 (process.cwd): ${clientTemplate1} - exists: ${fs.existsSync(clientTemplate1)}`);
-      console.log(`Path 2 (__dirname): ${clientTemplate2} - exists: ${fs.existsSync(clientTemplate2)}`);
-      console.log(`Path 3 (path.join): ${clientTemplate3} - exists: ${fs.existsSync(clientTemplate3)}`);
-      
-      // Use the first path that exists
-      let clientTemplate = clientTemplate1;
-      if (fs.existsSync(clientTemplate1)) {
-        clientTemplate = clientTemplate1;
-      } else if (fs.existsSync(clientTemplate2)) {
-        clientTemplate = clientTemplate2;
-      } else if (fs.existsSync(clientTemplate3)) {
-        clientTemplate = clientTemplate3;
-      }
-      
+      // Use the standard path resolution from process.cwd()
+      const clientTemplate = path.resolve(process.cwd(), "client", "index.html");
       console.log(`Using template path: ${clientTemplate}`);
       
       // Check if template exists
