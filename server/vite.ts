@@ -62,14 +62,10 @@ export async function setupVite(app: Express, server: Server) {
       ...viteLogger,
       error: (msg, options) => {
         viteLogger.error(msg, options);
-        // Don't exit on error, just log it
-        console.error("Vite error:", msg);
+        process.exit(1);
       },
     },
-    server: {
-      middlewareMode: true,
-      hmr: { server }
-    },
+    server: serverOptions,
     appType: "custom",
   });
 
@@ -78,15 +74,7 @@ export async function setupVite(app: Express, server: Server) {
     const url = req.originalUrl;
 
     try {
-      // Use the standard path resolution from process.cwd()
-      const clientTemplate = path.resolve(process.cwd(), "client", "index.html");
-      console.log(`Using template path: ${clientTemplate}`);
-      
-      // Check if template exists
-      if (!fs.existsSync(clientTemplate)) {
-        console.error(`Template not found at: ${clientTemplate}`);
-        return next(new Error(`Template not found: ${clientTemplate}`));
-      }
+      const clientTemplate = path.resolve(__dirname, "..", "client", "index.html");
 
       // always reload the index.html file from disk incase it changes
       let template = await fs.promises.readFile(clientTemplate, "utf-8");
@@ -97,7 +85,6 @@ export async function setupVite(app: Express, server: Server) {
       const page = await vite.transformIndexHtml(url, template);
       res.status(200).set({ "Content-Type": "text/html" }).end(page);
     } catch (e) {
-      console.error("Vite template error:", e);
       vite.ssrFixStacktrace(e as Error);
       next(e);
     }
