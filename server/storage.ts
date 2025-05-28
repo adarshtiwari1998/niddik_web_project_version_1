@@ -291,28 +291,7 @@ export const storage = {
       const cutoffDateString = cutoffDate.toISOString().split('T')[0]; // YYYY-MM-DD format
 
       const result = await db
-        .select({
-          id: jobListings.id,
-          title: jobListings.title,
-          company: jobListings.company,
-          location: jobListings.location,
-          jobType: jobListings.jobType,
-          experienceLevel: jobListings.experienceLevel,
-          salary: jobListings.salary,
-          description: jobListings.description,
-          requirements: jobListings.requirements,
-          benefits: jobListings.benefits,
-          skills: jobListings.skills,
-          category: jobListings.category,
-          status: jobListings.status,
-          featured: jobListings.featured,
-          urgent: jobListings.urgent,
-          priority: jobListings.priority,
-          isOpen: jobListings.isOpen,
-          postedDate: jobListings.postedDate,
-          createdAt: jobListings.createdAt,
-          updatedAt: jobListings.updatedAt
-        })
+        .select()
         .from(jobListings)
         .where(
           and(
@@ -320,10 +299,9 @@ export const storage = {
             sql`${jobListings.postedDate} >= ${cutoffDateString} OR ${jobListings.postedDate} IS NULL`
           )
         )
-        .orderBy(desc(jobListings.postedDate), desc(jobListings.createdAt))
+        .orderBy(desc(jobListings.postedDate))
         .limit(limit);
 
-      console.log(`Found ${result.length} recent job listings from last ${days} days`);
       return result;
     } catch (error) {
       console.error('Error fetching recent job listings:', error);

@@ -105,53 +105,38 @@ const SEO: React.FC<SEOProps> = ({ pagePath, fallback }) => {
     const recentJobs = getRecentJobs();
     
     if ((currentPath === '/careers' || currentPath === '/') && recentJobs.length > 0) {
-      // Try to parse existing structured data from admin SEO settings
-      let baseStructuredData;
-      try {
-        if (baseSeo.structuredData) {
-          baseStructuredData = typeof baseSeo.structuredData === 'string' 
-            ? JSON.parse(baseSeo.structuredData) 
-            : baseSeo.structuredData;
-        }
-      } catch (error) {
-        console.warn('Could not parse existing structured data, using defaults');
-      }
-
-      // Default structured data if none exists or parsing failed
-      if (!baseStructuredData) {
-        baseStructuredData = currentPath === '/careers' ? {
-          "@context": "https://schema.org",
-          "@type": "WebPage",
-          "name": "Careers - Niddik",
-          "url": "https://niddik.com/careers",
-          "description": "Join Niddik and explore exciting career opportunities in IT recruitment and staffing.",
-          "mainEntity": {
-            "@type": "Organization",
-            "name": "Niddik",
-            "url": "https://niddik.com",
-            "description": "Premier IT recruitment and staffing solutions provider",
-            "logo": "https://niddik.com/images/niddik_logo.png"
-          }
-        } : {
-          "@context": "https://schema.org",
+      const baseStructuredData = currentPath === '/careers' ? {
+        "@context": "https://schema.org",
+        "@type": "WebPage",
+        "name": "Careers - Niddik",
+        "url": "https://niddik.com/careers",
+        "description": "Join Niddik and explore exciting career opportunities in IT recruitment and staffing.",
+        "mainEntity": {
           "@type": "Organization",
           "name": "Niddik",
           "url": "https://niddik.com",
           "description": "Premier IT recruitment and staffing solutions provider",
-          "logo": "https://niddik.com/images/niddik_logo.png",
-          "sameAs": [
-            "https://twitter.com/niddik",
-            "https://linkedin.com/company/niddik"
-          ],
-          "contactPoint": {
-            "@type": "ContactPoint",
-            "telephone": "+1-555-0123",
-            "contactType": "customer service"
-          }
-        };
-      }
+          "logo": "https://niddik.com/images/niddik_logo.png"
+        }
+      } : {
+        "@context": "https://schema.org",
+        "@type": "Organization",
+        "name": "Niddik",
+        "url": "https://niddik.com",
+        "description": "Premier IT recruitment and staffing solutions provider",
+        "logo": "https://niddik.com/images/niddik_logo.png",
+        "sameAs": [
+          "https://twitter.com/niddik",
+          "https://linkedin.com/company/niddik"
+        ],
+        "contactPoint": {
+          "@type": "ContactPoint",
+          "telephone": "+1-555-0123",
+          "contactType": "customer service"
+        }
+      };
 
-      // Enhanced data with recent jobs - always add fresh job data
+      // Add recent jobs to structured data
       const enhancedData = {
         ...baseStructuredData,
         "potentialAction": {
@@ -159,66 +144,24 @@ const SEO: React.FC<SEOProps> = ({ pagePath, fallback }) => {
           "target": "https://niddik.com/careers?search={search_term}",
           "query-input": "required name=search_term"
         },
-        "hasOfferCatalog": {
-          "@type": "OfferCatalog",
-          "name": "Job Opportunities",
-          "numberOfItems": recentJobs.length,
-          "itemListElement": recentJobs.map((job, index) => ({
-            "@type": "Offer",
-            "position": index + 1,
-            "itemOffered": {
-              "@type": "JobPosting",
-              "title": job.title,
-              "datePosted": job.postedDate || job.createdAt,
-              "validThrough": new Date(Date.now() + 90 * 24 * 60 * 60 * 1000).toISOString().split('T')[0],
-              "hiringOrganization": {
-                "@type": "Organization", 
-                "name": job.company || "Niddik",
-                "url": "https://niddik.com"
-              },
-              "jobLocation": {
-                "@type": "Place",
-                "address": {
-                  "@type": "PostalAddress",
-                  "addressLocality": job.location || "Remote"
-                }
-              },
-              "employmentType": job.jobType?.toUpperCase() || "FULL_TIME",
-              "experienceRequirements": job.experienceLevel || "Entry Level",
-              "skills": job.skills ? job.skills.split(',').map(s => s.trim()) : [],
-              "url": `https://niddik.com/jobs/${job.id}`,
-              "description": job.description ? (job.description.length > 200 ? job.description.substring(0, 200) + "..." : job.description) : `Join ${job.company || 'our team'} as ${job.title}`,
-              "baseSalary": job.salary ? {
-                "@type": "MonetaryAmount",
-                "currency": "USD",
-                "value": {
-                  "@type": "QuantitativeValue",
-                  "value": job.salary,
-                  "unitText": "YEAR"
-                }
-              } : undefined
-            }
-          }))
-        },
-        // Also keep the simple "about" structure for broader compatibility
-        "about": recentJobs.slice(0, 3).map(job => ({
+        "about": recentJobs.map(job => ({
           "@type": "JobPosting",
           "title": job.title,
           "datePosted": job.postedDate || job.createdAt,
           "hiringOrganization": {
             "@type": "Organization", 
-            "name": job.company || "Niddik"
+            "name": job.company
           },
           "jobLocation": {
             "@type": "Place",
-            "address": job.location || "Remote"
+            "address": job.location
           },
           "url": `https://niddik.com/jobs/${job.id}`,
-          "description": job.description ? (job.description.length > 150 ? job.description.substring(0, 150) + "..." : job.description) : `${job.title} position at ${job.company || 'Niddik'}`
+          "description": job.description?.substring(0, 150) + "..."
         }))
       };
 
-      return JSON.stringify(enhancedData, null, 2);
+      return JSON.stringify(enhancedData);
     }
 
     return baseSeo.structuredData;
@@ -283,31 +226,9 @@ const SEO: React.FC<SEOProps> = ({ pagePath, fallback }) => {
     const recentJobs = getRecentJobs();
     if ((currentPath === '/careers' || currentPath === '/') && recentJobs.length > 0) {
       const jobTitles = recentJobs.slice(0, 3).map(job => job.title).join(', ');
-      const jobCount = recentJobs.length;
-      const currentDate = new Date().toLocaleDateString('en-US', { month: 'long', year: 'numeric' });
-      
-      if (currentPath === '/careers') {
-        baseSeo.metaDescription = `Join Niddik and explore ${jobCount} exciting career opportunities this week. Latest positions: ${jobTitles}. Apply now for ${currentDate} openings!`;
-      } else {
-        baseSeo.metaDescription = `${baseSeo.metaDescription} ${jobCount} new job opportunities this week: ${jobTitles}. Updated ${currentDate}.`;
-      }
-      
-      // Also enhance keywords with job-related terms
-      const jobSkills = recentJobs
-        .map(job => job.skills)
-        .filter(Boolean)
-        .join(',')
-        .split(',')
-        .map(skill => skill.trim())
-        .filter(Boolean)
-        .slice(0, 5)
-        .join(', ');
-      
-      if (jobSkills && baseSeo.metaKeywords) {
-        baseSeo.metaKeywords = `${baseSeo.metaKeywords}, ${jobSkills}, recent jobs, ${currentDate}`;
-      } else if (jobSkills) {
-        baseSeo.metaKeywords = `${jobSkills}, careers, job opportunities, ${currentDate}`;
-      }
+      baseSeo.metaDescription = currentPath === '/careers' 
+        ? `Join Niddik and explore exciting career opportunities. Latest positions: ${jobTitles}. ${baseSeo.metaDescription}`
+        : `${baseSeo.metaDescription} Latest job opportunities: ${jobTitles}.`;
     }
 
     seo = {
