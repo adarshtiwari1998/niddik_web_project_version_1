@@ -797,6 +797,138 @@ async function seed() {
         ogTitle: "Request Demo - See Niddik in Action | Niddik",
         ogDescription: "Request a demo to see how Niddik's solutions can transform your hiring process.",
         canonicalUrl: "https://niddik.com/request-demo"
+      },
+      {
+        pagePath: "/services/full-rpo",
+        pageTitle: "Full RPO Services - Complete Recruitment Process Outsourcing | Niddik",
+        metaDescription: "Comprehensive Full RPO services from Niddik. Complete recruitment process outsourcing with dedicated teams, scalable solutions, and end-to-end talent acquisition.",
+        metaKeywords: "full RPO, recruitment process outsourcing, complete RPO, dedicated recruitment team, scalable hiring",
+        ogTitle: "Full RPO Services - Complete Recruitment Process Outsourcing | Niddik",
+        ogDescription: "Comprehensive Full RPO services with dedicated teams and scalable solutions for complete talent acquisition.",
+        ogImage: "https://res.cloudinary.com/your-cloud/image/upload/v1/niddik-full-rpo-og.jpg",
+        ogType: "website",
+        ogUrl: "https://niddik.com/services/full-rpo",
+        twitterCard: "summary_large_image",
+        twitterSite: "@niddik",
+        twitterTitle: "Full RPO Services - Complete Recruitment Process Outsourcing | Niddik",
+        twitterDescription: "Comprehensive Full RPO services with dedicated teams and scalable solutions.",
+        twitterImage: "https://res.cloudinary.com/your-cloud/image/upload/v1/niddik-full-rpo-twitter.jpg",
+        twitterCreator: "@niddik",
+        canonicalUrl: "https://niddik.com/services/full-rpo",
+        robotsDirective: "index,follow",
+        structuredData: JSON.stringify({
+          "@context": "https://schema.org",
+          "@type": "Service",
+          "name": "Full RPO Services",
+          "provider": {
+            "@type": "Organization",
+            "name": "Niddik"
+          },
+          "description": "Complete recruitment process outsourcing with dedicated teams and scalable solutions",
+          "serviceType": "Recruitment Process Outsourcing"
+        }),
+        itemPropName: "Full RPO Services - Complete Recruitment Process Outsourcing",
+        itemPropDescription: "Comprehensive Full RPO services with dedicated teams and scalable solutions for complete talent acquisition.",
+        itemPropImage: "https://res.cloudinary.com/your-cloud/image/upload/v1/niddik-full-rpo-itemprop.jpg"
+      },
+      {
+        pagePath: "/services/on-demand",
+        pageTitle: "On-Demand Recruitment Services - Flexible IT Staffing | Niddik",
+        metaDescription: "Flexible on-demand recruitment services from Niddik. Scale your hiring up or down based on business needs with our agile IT staffing solutions.",
+        metaKeywords: "on-demand recruitment, flexible staffing, agile hiring, scalable recruitment, IT staffing on-demand",
+        ogTitle: "On-Demand Recruitment Services - Flexible IT Staffing | Niddik",
+        ogDescription: "Flexible on-demand recruitment services. Scale your hiring based on business needs with agile IT staffing solutions.",
+        ogImage: "https://res.cloudinary.com/your-cloud/image/upload/v1/niddik-on-demand-og.jpg",
+        ogType: "website",
+        ogUrl: "https://niddik.com/services/on-demand",
+        twitterCard: "summary_large_image",
+        twitterSite: "@niddik",
+        twitterTitle: "On-Demand Recruitment Services - Flexible IT Staffing | Niddik",
+        twitterDescription: "Flexible on-demand recruitment services. Scale your hiring based on business needs.",
+        twitterImage: "https://res.cloudinary.com/your-cloud/image/upload/v1/niddik-on-demand-twitter.jpg",
+        twitterCreator: "@niddik",
+        canonicalUrl: "https://niddik.com/services/on-demand",
+        robotsDirective: "index,follow",
+        structuredData: JSON.stringify({
+          "@context": "https://schema.org",
+          "@type": "Service",
+          "name": "On-Demand Recruitment Services",
+          "provider": {
+            "@type": "Organization",
+            "name": "Niddik"
+          },
+          "description": "Flexible on-demand recruitment services that scale with your business needs",
+          "serviceType": "On-Demand Staffing"
+        }),
+        itemPropName: "On-Demand Recruitment Services - Flexible IT Staffing",
+        itemPropDescription: "Flexible on-demand recruitment services. Scale your hiring up or down based on business needs with our agile IT staffing solutions.",
+        itemPropImage: "https://res.cloudinary.com/your-cloud/image/upload/v1/niddik-on-demand-itemprop.jpg"
+      },
+      {
+        pagePath: "/services/hybrid-rpo",
+        pageTitle: "Hybrid RPO Services - Blended Recruitment Solutions | Niddik",
+        metaDescription: "Hybrid RPO services combining the best of internal and external recruitment. Flexible, scalable solutions that adapt to your specific hiring needs.",
+        metaKeywords: "hybrid RPO, blended recruitment, flexible RPO, scalable hiring solutions, mixed recruitment model",
+        ogTitle: "Hybrid RPO Services - Blended Recruitment Solutions | Niddik",
+        ogDescription: "Hybrid RPO services combining internal and external recruitment for flexible, scalable hiring solutions.",
+        ogImage: "https://res.cloudinary.com/your-cloud/image/upload/v1/niddik-hybrid-rpo-og.jpg",
+        ogType: "website",
+        ogUrl: "https://niddik.com/services/hybrid-rpo",
+        twitterCard: "summary_large_image",
+        twitterSite: "@niddik",
+        twitterTitle: "Hybrid RPO Services - Blended Recruitment Solutions | Niddik",
+        twitterDescription: "Hybrid RPO services combining internal and external recruitment for flexible solutions.",
+        twitterImage: "https://res.cloudinary.com/your-cloud/image/upload/v1/niddik-hybrid-rpo-twitter.jpg",
+        twitterCreator: "@niddik",
+        canonicalUrl: "https://niddik.com/services/hybrid-rpo",
+        robotsDirective: "index,follow",
+        structuredData: JSON.stringify({
+          "@context": "https://schema.org",
+          "@type": "Service",
+          "name": "Hybrid RPO Services",
+          "provider": {
+            "@type": "Organization",
+            "name": "Niddik"
+          },
+          "description": "Blended recruitment solutions combining internal and external hiring strategies",
+          "serviceType": "Hybrid Recruitment Process Outsourcing"
+        }),
+        itemPropName: "Hybrid RPO Services - Blended Recruitment Solutions",
+        itemPropDescription: "Hybrid RPO services combining the best of internal and external recruitment. Flexible, scalable solutions that adapt to your specific hiring needs.",
+        itemPropImage: "https://res.cloudinary.com/your-cloud/image/upload/v1/niddik-hybrid-rpo-itemprop.jpg"
+      },
+      {
+        pagePath: "/services/contingent",
+        pageTitle: "Contingent Staffing Services - Project-Based IT Recruitment | Niddik",
+        metaDescription: "Expert contingent staffing services for project-based IT roles. Quick placement of skilled professionals for short-term and contract positions.",
+        metaKeywords: "contingent staffing, contract recruitment, project-based hiring, temporary IT staff, contract placement",
+        ogTitle: "Contingent Staffing Services - Project-Based IT Recruitment | Niddik",
+        ogDescription: "Expert contingent staffing services for project-based IT roles. Quick placement of skilled professionals.",
+        ogImage: "https://res.cloudinary.com/your-cloud/image/upload/v1/niddik-contingent-og.jpg",
+        ogType: "website",
+        ogUrl: "https://niddik.com/services/contingent",
+        twitterCard: "summary_large_image",
+        twitterSite: "@niddik",
+        twitterTitle: "Contingent Staffing Services - Project-Based IT Recruitment | Niddik",
+        twitterDescription: "Expert contingent staffing services for project-based IT roles and contract positions.",
+        twitterImage: "https://res.cloudinary.com/your-cloud/image/upload/v1/niddik-contingent-twitter.jpg",
+        twitterCreator: "@niddik",
+        canonicalUrl: "https://niddik.com/services/contingent",
+        robotsDirective: "index,follow",
+        structuredData: JSON.stringify({
+          "@context": "https://schema.org",
+          "@type": "Service",
+          "name": "Contingent Staffing Services",
+          "provider": {
+            "@type": "Organization",
+            "name": "Niddik"
+          },
+          "description": "Project-based IT recruitment and contingent staffing solutions",
+          "serviceType": "Contingent Staffing"
+        }),
+        itemPropName: "Contingent Staffing Services - Project-Based IT Recruitment",
+        itemPropDescription: "Expert contingent staffing services for project-based IT roles. Quick placement of skilled professionals for short-term and contract positions.",
+        itemPropImage: "https://res.cloudinary.com/your-cloud/image/upload/v1/niddik-contingent-itemprop.jpg"
       }
     ];
 
