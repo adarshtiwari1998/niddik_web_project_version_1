@@ -1,0 +1,33 @@
+
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <title>Niddik - Premier IT Recruitment & Staffing Solutions</title>
+    <meta name="description" content="Niddik provides world-class IT recruitment and staffing solutions. Connect with top talent and leading companies. Expert RPO, contingent staffing, and web development services." />
+    <meta name="keywords" content="IT recruitment, staffing solutions, RPO, contingent staffing, web development, tech talent" />
+    <link rel="canonical" href="https://niddik.com" />
+
+    <!-- Open Graph Meta Tags -->
+    <meta property="og:title" content="Niddik - Premier IT Recruitment & Staffing Solutions" />
+    <meta property="og:description" content="Niddik provides world-class IT recruitment and staffing solutions. Connect with top talent and leading companies." />
+    <meta property="og:type" content="website" />
+    <meta property="og:url" content="https://niddik.com" />
+    <meta property="og:site_name" content="Niddik" />
+    <meta property="og:image" content="https://res.cloudinary.com/your-cloud/image/upload/v1/niddik-og-home.jpg" />
+
+    <!-- Twitter Card Meta Tags -->
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:title" content="Niddik - Premier IT Recruitment & Staffing Solutions" />
+    <meta name="twitter:description" content="Niddik provides world-class IT recruitment and staffing solutions. Connect with top talent and leading companies." />
+    <meta name="twitter:image" content="https://res.cloudinary.com/your-cloud/image/upload/v1/niddik-twitter-home.jpg" />
+
+    <script type="application/ld+json">{"@context":"https://schema.org","@type":"Organization","name":"Niddik","url":"https://niddik.com","logo":"https://niddik.com/images/niddik_logo.png","description":"Premier IT recruitment and staffing solutions provider","sameAs":["https://twitter.com/niddik","https://linkedin.com/company/niddik"],"contactPoint":{"@type":"ContactPoint","telephone":"+1-555-0123","contactType":"customer service"}}</script>
+      
+    <meta charset="UTF-8" />
+    <meta content="width=device-width, initial-scale=1" name="viewport"/>
+  </head>
+  <body>
+    <div id="root"></div>
+    <script type="module" src="/src/main.tsx"></script>
+  </body>
+</html>
