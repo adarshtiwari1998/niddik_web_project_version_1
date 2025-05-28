@@ -313,7 +313,6 @@ const handleResumeRemove = async () => {
 
   return (
     <div className="flex flex-col min-h-screen">
-      <SEO pagePath={`/jobs/${jobId}`} />
       <CareersHeader />
       <main className="flex-grow">
         <div className="container mx-auto py-12 px-4 md:px-6">

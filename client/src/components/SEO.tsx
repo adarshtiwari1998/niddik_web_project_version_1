@@ -171,58 +171,13 @@ const SEO: React.FC<SEOProps> = ({ pagePath, fallback }) => {
   let seo: SEOData;
   
   if (isJobDetailPage) {
-    // For job detail pages, always use server-side generated SEO data
-    // If server-side SEO data exists, use it; otherwise, generate client-side as fallback
-    if (seoData?.data && !seoData.isDefault) {
+    // For job detail pages, prefer server-side generated SEO data
+    // Server-side rendering should handle job detail SEO
+    if (seoData?.data) {
       seo = seoData.data;
-    } else if (jobData?.data) {
-      const job = jobData.data;
-      // Fallback: Generate dynamic SEO for job detail page only if no server-side data
-      seo = {
-        pageTitle: `${job.title} at ${job.company} - ${job.location} | Niddik Jobs`,
-        metaDescription: `Apply for ${job.title} position at ${job.company} in ${job.location}. ${job.experienceLevel} level ${job.jobType} role. ${job.description?.substring(0, 100)}...`,
-        metaKeywords: `${job.title}, ${job.company}, ${job.location}, ${job.category}, ${job.experienceLevel}, ${job.jobType}, ${job.skills?.replace(/,/g, ', ')}, IT jobs, career opportunities`,
-        ogTitle: `${job.title} at ${job.company} | Niddik`,
-        ogDescription: `Join ${job.company} as ${job.title} in ${job.location}. ${job.experienceLevel} level position with competitive benefits.`,
-        ogType: "article",
-        twitterTitle: `${job.title} at ${job.company}`,
-        twitterDescription: `${job.experienceLevel} level ${job.title} role at ${job.company} in ${job.location}. Apply now!`,
-        canonicalUrl: `https://niddik.com/jobs/${job.id}`,
-        structuredData: JSON.stringify({
-          "@context": "https://schema.org",
-          "@type": "JobPosting",
-          "title": job.title,
-          "description": job.description,
-          "hiringOrganization": {
-            "@type": "Organization",
-            "name": job.company
-          },
-          "jobLocation": {
-            "@type": "Place",
-            "address": {
-              "@type": "PostalAddress",
-              "addressLocality": job.location
-            }
-          },
-          "employmentType": job.jobType?.toUpperCase(),
-          "experienceRequirements": job.experienceLevel,
-          "skills": job.skills ? job.skills.split(',').map((s: string) => s.trim()) : [],
-          "baseSalary": job.salary ? {
-            "@type": "MonetaryAmount",
-            "currency": "USD",
-            "value": {
-              "@type": "QuantitativeValue",
-              "value": job.salary
-            }
-          } : undefined,
-          "datePosted": job.postedDate || job.createdAt,
-          "validThrough": new Date(Date.now() + 90 * 24 * 60 * 60 * 1000).toISOString(), // 90 days from now
-          "url": `https://niddik.com/jobs/${job.id}`
-        })
-      };
     } else {
-      // Use fallback data if no job data available
-      seo = seoData?.data || fallback || {
+      // Fallback only if no server-side data at all
+      seo = fallback || {
         pageTitle: "Job Details | Niddik",
         metaDescription: "View detailed job information and apply for exciting career opportunities with top companies.",
       };
