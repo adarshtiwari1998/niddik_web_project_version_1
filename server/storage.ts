@@ -792,18 +792,18 @@ export const storage = {
     return db.query.seoPages.findFirst({
       where: eq(seoPages.pagePath, pagePath)
     });
-  }
+  },
 
   async getSeoPageById(id: number): Promise<SeoPage | undefined> {
     return db.query.seoPages.findFirst({
       where: eq(seoPages.id, id)
     });
-  }
+  },
 
   async createSeoPage(data: InsertSeoPage): Promise<SeoPage> {
     const [seoPage] = await db.insert(seoPages).values(data).returning();
     return seoPage;
-  }
+  },
 
   async updateSeoPage(id: number, data: Partial<InsertSeoPage>): Promise<SeoPage | undefined> {
     const [seoPage] = await db
@@ -812,7 +812,7 @@ export const storage = {
       .where(eq(seoPages.id, id))
       .returning();
     return seoPage;
-  }
+  },
 
   async deleteSeoPage(id: number): Promise<void> {
     await db.delete(seoPages).where(eq(seoPages.id, id));
