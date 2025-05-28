@@ -55,10 +55,16 @@ app.use((req, res, next) => {
     throw err;
   });
 
+  // Add debug logging
+  console.log(`Environment: ${app.get("env")}`);
+  console.log(`NODE_ENV: ${process.env.NODE_ENV}`);
+  
   // If in development mode, setup Vite (this will serve the frontend in memory)
-  if (app.get("env") === "development") {
+  if (app.get("env") === "development" || process.env.NODE_ENV !== "production") {
+    console.log("Setting up Vite for development...");
     await setupVite(app, server);
   } else {
+    console.log("Setting up static file serving for production...");
     // In production, serve static files from dist
     serveStatic(app);
   }

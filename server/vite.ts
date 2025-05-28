@@ -74,10 +74,29 @@ export async function setupVite(app: Express, server: Server) {
     const url = req.originalUrl;
 
     try {
-      const clientTemplate = path.resolve(process.cwd(), "client", "index.html");
+      console.log(`Current working directory: ${process.cwd()}`);
+      console.log(`__dirname: ${__dirname}`);
       
-      console.log(`Looking for template at: ${clientTemplate}`);
-      console.log(`Template exists: ${fs.existsSync(clientTemplate)}`);
+      // Try multiple potential paths
+      const clientTemplate1 = path.resolve(process.cwd(), "client", "index.html");
+      const clientTemplate2 = path.resolve(__dirname, "..", "client", "index.html");
+      const clientTemplate3 = path.join(process.cwd(), "client", "index.html");
+      
+      console.log(`Path 1 (process.cwd): ${clientTemplate1} - exists: ${fs.existsSync(clientTemplate1)}`);
+      console.log(`Path 2 (__dirname): ${clientTemplate2} - exists: ${fs.existsSync(clientTemplate2)}`);
+      console.log(`Path 3 (path.join): ${clientTemplate3} - exists: ${fs.existsSync(clientTemplate3)}`);
+      
+      // Use the first path that exists
+      let clientTemplate = clientTemplate1;
+      if (fs.existsSync(clientTemplate1)) {
+        clientTemplate = clientTemplate1;
+      } else if (fs.existsSync(clientTemplate2)) {
+        clientTemplate = clientTemplate2;
+      } else if (fs.existsSync(clientTemplate3)) {
+        clientTemplate = clientTemplate3;
+      }
+      
+      console.log(`Using template path: ${clientTemplate}`);
       
       // Check if template exists
       if (!fs.existsSync(clientTemplate)) {
