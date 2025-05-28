@@ -36,9 +36,18 @@ const SEO: React.FC<SEOProps> = ({ pagePath, fallback }) => {
   const [location] = useLocation();
   const currentPath = pagePath || location;
 
+  // Check if this is a job detail page
+  const isJobDetailPage = currentPath.match(/^\/jobs\/(\d+)$/);
+  const jobId = isJobDetailPage ? isJobDetailPage[1] : null;
+
   // Check if server-side SEO is already present (to avoid duplicates)
   const hasServerSideSEO = React.useMemo(() => {
     if (typeof document === 'undefined') return false;
+    
+    // For job detail pages, always assume server-side SEO is handling the title
+    if (isJobDetailPage) {
+      return true;
+    }
     
     // Check if title tag already exists with job-specific content or Niddik branding
     const existingTitle = document.querySelector('title');
@@ -58,15 +67,23 @@ const SEO: React.FC<SEOProps> = ({ pagePath, fallback }) => {
             metaContent.includes('Niddik') ||
             metaContent.includes('recruitment') ||
             metaContent.includes('staffing'));
-  }, [currentPath]);
+  }, [currentPath, isJobDetailPage]);
 
-  // Check if this is a job detail page
-  const isJobDetailPage = currentPath.match(/^\/jobs\/(\d+)$/);
-  const jobId = isJobDetailPage ? isJobDetailPage[1] : null;
-
-  // For job detail pages, skip client-side SEO if server-side SEO is present
-  if (isJobDetailPage && hasServerSideSEO) {
-    return null;
+  // For job detail pages, return minimal SEO without title to avoid conflicts
+  if (isJobDetailPage) {
+    return (
+      <Helmet>
+        {/* Only add meta tags that won't conflict with server-side SEO */}
+        <meta name="viewport" content="width=device-width, initial-scale=1" />
+        <meta httpEquiv="Content-Type" content="text/html; charset=utf-8" />
+        <meta name="language" content="en" />
+        <meta name="author" content="Niddik" />
+        
+        {/* Favicon and icons */}
+        <link rel="icon" type="image/png" href="/images/niddik_logo.png" />
+        <link rel="apple-touch-icon" href="/images/niddik_logo.png" />
+      </Helmet>
+    );
   }
 
   // Fetch job data for dynamic SEO if it's a job page
