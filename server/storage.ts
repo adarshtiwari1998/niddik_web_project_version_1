@@ -965,12 +965,12 @@ export const storage = {
       .where(eq(seoPages.id, id))
       .returning();
     return seoPage;
-```typescript
   },
 
   async deleteSeoPage(id: number): Promise<void> {
     await db.delete(seoPages).where(eq(seoPages.id, id));
   },
+
   async getAllJobApplications({ page = 1, limit = 10, search, status, jobId }: {
     page?: number;
     limit?: number;
