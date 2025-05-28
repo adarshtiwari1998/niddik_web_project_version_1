@@ -965,6 +965,7 @@ export const storage = {
       .where(eq(seoPages.id, id))
       .returning();
     return seoPage;
+```typescript
   },
 
   async deleteSeoPage(id: number): Promise<void> {
@@ -1032,6 +1033,28 @@ export const storage = {
     const total = totalResult[0].count;
 
     return { applications, total };
+  },
+
+  // Get job listing by ID
+  async getJobListingById(id: number): Promise<JobListing | undefined> {
+    try {
+      const [job] = await db
+        .select()
+        .from(jobListings)
+        .where(eq(jobListings.id, id))
+        .limit(1);
+
+      return job || undefined;
+    } catch (error) {
+      console.error('Error fetching job listing by ID:', error);
+      return undefined;
+    }
+  }
+  ,
+
+  // Alternative method name for consistency
+  async getJobListing(id: number): Promise<JobListing | undefined> {
+    return this.getJobListingById(id);
   },
 };
 

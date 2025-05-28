@@ -103,7 +103,7 @@ export async function setupVite(app: Express, server: Server) {
         if (jobPageMatch && !seoData) {
           const jobId = parseInt(jobPageMatch[1]);
           try {
-            const jobData = await storage.getJobListingById(jobId);
+            const jobData = await storage.getJobListing(jobId);
             if (jobData) {
               seoData = {
                 pageTitle: `${jobData.title} at ${jobData.company} - ${jobData.location} | Niddik Jobs`,
