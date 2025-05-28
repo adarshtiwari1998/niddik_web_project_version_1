@@ -122,7 +122,30 @@ export async function registerRoutes(app: Express): Promise<Server> {
       const limit = req.query.limit ? parseInt(req.query.limit as string) : 10;
       const days = req.query.days ? parseInt(req.query.days as string) : 7; // Default to last week
       const jobListings = await storage.getRecentJobListings(limit, days);
-      return res.status(200).json({ success: true, data: jobListings });
+      
+      // Enhance the response with additional metadata for SEO
+      const enhancedListings = jobListings.map(job => ({
+        ...job,
+        // Ensure all fields are present for SEO structured data
+        company: job.company || 'Niddik',
+        location: job.location || 'Remote',
+        jobType: job.jobType || 'Full-time',
+        experienceLevel: job.experienceLevel || 'Entry Level',
+        skills: job.skills || '',
+        description: job.description || `Join ${job.company || 'our team'} as ${job.title}. Exciting opportunity in ${job.location || 'Remote'}.`,
+        salary: job.salary || 'Competitive',
+        postedDate: job.postedDate || job.createdAt
+      }));
+
+      return res.status(200).json({ 
+        success: true, 
+        data: enhancedListings,
+        meta: {
+          total: enhancedListings.length,
+          daysRange: days,
+          generatedAt: new Date().toISOString()
+        }
+      });
     } catch (error) {
       console.error('Error fetching recent job listings:', error);
       return res.status(500).json({ 
