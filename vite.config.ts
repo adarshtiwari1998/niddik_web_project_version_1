@@ -34,6 +34,9 @@ const __dirname = path.dirname(__filename);
 export default defineConfig({
   root: path.resolve(__dirname, "client"),
   plugins: [react()],
+  server: {
+    port: 7000,
+  },
   build: {
     outDir: path.resolve(__dirname, "dist/public"),
     emptyOutDir: true,
@@ -44,4 +47,3 @@ export default defineConfig({
     },
   },
 });
-
