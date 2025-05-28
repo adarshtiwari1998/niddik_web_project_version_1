@@ -2645,13 +2645,16 @@ app.get("/api/admin/check", async (req: Request, res: Response) => {
   // Add route to serve HTML with pre-rendered SEO meta tags
   app.use('/uploads', express.static('uploads'));
 
-  // Server-side rendered pages with SEO meta tags
+  // Server-side rendered pages with SEO meta tags (must be last)
   app.get('*', async (req, res, next) => {
-    // Skip API routes and static assets
+    // Skip API routes, static assets, and Vite development files
     if (req.path.startsWith('/api') || 
         req.path.startsWith('/assets') || 
         req.path.startsWith('/uploads') || 
         req.path.startsWith('/images') ||
+        req.path.startsWith('/src') ||
+        req.path.startsWith('/@') ||
+        req.path.startsWith('/node_modules') ||
         req.path.includes('.')) {
       return next();
     }
