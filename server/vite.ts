@@ -537,9 +537,9 @@ export async function serveStatic(app: Express) {
         console.error('Error fetching SEO data:', error);
       }
 
-      // Handle job detail pages
+      // Handle job detail pages - check if SEO page exists first
       const isJobDetailPage = pathname.match(/^\/jobs\/(\d+)$/);
-      if (isJobDetailPage) {
+      if (isJobDetailPage && !seoData) {
         const jobId = parseInt(isJobDetailPage[1]);
         try {
           const jobData = await storage.getJobListing(jobId);
@@ -550,7 +550,38 @@ export async function serveStatic(app: Express) {
               metaKeywords: `${jobData.title}, ${jobData.company}, ${jobData.location}, ${jobData.category}, IT jobs`,
               ogTitle: `${jobData.title} at ${jobData.company} | Niddik`,
               ogDescription: `Join ${jobData.company} as ${jobData.title} in ${jobData.location}. ${jobData.experienceLevel} level position.`,
-              canonicalUrl: `https://niddik.com/jobs/${jobData.id}`
+              canonicalUrl: `https://niddik.com/jobs/${jobData.id}`,
+              structuredData: JSON.stringify({
+                "@context": "https://schema.org",
+                "@type": "JobPosting",
+                "title": jobData.title,
+                "description": jobData.description,
+                "hiringOrganization": {
+                  "@type": "Organization",
+                  "name": jobData.company
+                },
+                "jobLocation": {
+                  "@type": "Place",
+                  "address": {
+                    "@type": "PostalAddress",
+                    "addressLocality": jobData.location
+                  }
+                },
+                "employmentType": jobData.jobType?.toUpperCase(),
+                "experienceRequirements": jobData.experienceLevel,
+                "skills": jobData.skills ? jobData.skills.split(',').map(s => s.trim()) : [],
+                "baseSalary": jobData.salary ? {
+                  "@type": "MonetaryAmount",
+                  "currency": "USD",
+                  "value": {
+                    "@type": "QuantitativeValue",
+                    "value": jobData.salary
+                  }
+                } : undefined,
+                "datePosted": jobData.postedDate || jobData.createdAt,
+                "validThrough": new Date(Date.now() + 90 * 24 * 60 * 60 * 1000).toISOString(),
+                "url": `https://niddik.com/jobs/${jobData.id}`
+              })
             };
           }
         } catch (error) {
