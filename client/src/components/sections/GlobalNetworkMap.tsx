@@ -503,7 +503,7 @@ const GlobalNetworkMap: React.FC = () => {
           </motion.div>
 
           <motion.div
-            className="absolute top-16 right-4 text-center text-white"
+            className="absolute top-32 right-4 text-center text-white"
             initial={{ opacity: 0, scale: 0.8 }}
             animate={{ opacity: 1, scale: 1 }}
             transition={{ delay: 2, duration: 0.8 }}
