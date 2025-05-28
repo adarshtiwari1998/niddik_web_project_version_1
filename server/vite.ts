@@ -70,22 +70,24 @@ export async function setupVite(app: Express, server: Server) {
   });
 
   app.use(vite.middlewares);
+  // Handle all non-API routes with the React app
   app.use("*", async (req, res, next) => {
     const url = req.originalUrl;
 
-    try {
-      const clientTemplate = path.resolve(__dirname, "..", "client", "index.html");
+    // Skip API routes and static assets
+    if (url.startsWith('/api/') || url.startsWith('/images/')) {
+      return next();
+    }
 
-      // always reload the index.html file from disk incase it changes
+    try {
+      // Use the correct path to the client template
+      const clientTemplate = path.resolve(process.cwd(), "client", "index.html");
       let template = await fs.promises.readFile(clientTemplate, "utf-8");
-      template = template.replace(
-        `src="/src/main.tsx"`,
-        `src="/src/main.tsx?v=${nanoid()}"`
-      );
-      const page = await vite.transformIndexHtml(url, template);
-      res.status(200).set({ "Content-Type": "text/html" }).end(page);
+      template = await vite.transformIndexHtml(url, template);
+      res.status(200).set({ "Content-Type": "text/html" }).end(template);
     } catch (e) {
       vite.ssrFixStacktrace(e as Error);
+      log(`Error serving ${url}: ${e.message}`);
       next(e);
     }
   });
