@@ -1,4 +1,3 @@
-
 import React from 'react';
 import { Helmet } from 'react-helmet-async';
 import { useQuery } from '@tanstack/react-query';
@@ -40,34 +39,8 @@ const SEO: React.FC<SEOProps> = ({ pagePath, fallback }) => {
   const isJobDetailPage = currentPath.match(/^\/jobs\/(\d+)$/);
   const jobId = isJobDetailPage ? isJobDetailPage[1] : null;
 
-  // Check if server-side SEO is already present (to avoid duplicates)
-  const hasServerSideSEO = React.useMemo(() => {
-    if (typeof document === 'undefined') return false;
-    
-    // For job detail pages, always assume server-side SEO is handling the title
-    if (isJobDetailPage) {
-      return true;
-    }
-    
-    // Check if title tag already exists with job-specific content or Niddik branding
-    const existingTitle = document.querySelector('title');
-    const existingMeta = document.querySelector('meta[name="description"]');
-    
-    // More comprehensive check for server-side rendered content
-    const titleContent = existingTitle?.textContent || '';
-    const metaContent = existingMeta?.getAttribute('content') || '';
-    
-    // Check for job-specific patterns or general Niddik branding that indicates server-side rendering
-    return existingTitle && existingMeta && 
-           (titleContent.includes('at') || 
-            titleContent.includes('|') ||
-            titleContent.includes('Niddik') ||
-            titleContent.includes('Jobs') ||
-            metaContent.includes('Apply for') ||
-            metaContent.includes('Niddik') ||
-            metaContent.includes('recruitment') ||
-            metaContent.includes('staffing'));
-  }, [currentPath, isJobDetailPage]);
+  // Always skip client-side title rendering to avoid duplicates with server-side SEO
+  const hasServerSideSEO = true;
 
   // For job detail pages, return minimal SEO without title to avoid conflicts
   if (isJobDetailPage) {
@@ -78,7 +51,7 @@ const SEO: React.FC<SEOProps> = ({ pagePath, fallback }) => {
         <meta httpEquiv="Content-Type" content="text/html; charset=utf-8" />
         <meta name="language" content="en" />
         <meta name="author" content="Niddik" />
-        
+
         {/* Favicon and icons */}
         <link rel="icon" type="image/png" href="/images/niddik_logo.png" />
         <link rel="apple-touch-icon" href="/images/niddik_logo.png" />
@@ -136,10 +109,10 @@ const SEO: React.FC<SEOProps> = ({ pagePath, fallback }) => {
   // Helper function to get recent jobs from last week
   const getRecentJobs = () => {
     if (!recentJobsData?.data) return [];
-    
+
     const oneWeekAgo = new Date();
     oneWeekAgo.setDate(oneWeekAgo.getDate() - 7);
-    
+
     return recentJobsData.data.filter(job => {
       const jobDate = new Date(job.postedDate || job.createdAt);
       return jobDate >= oneWeekAgo;
@@ -149,7 +122,7 @@ const SEO: React.FC<SEOProps> = ({ pagePath, fallback }) => {
   // Generate enhanced structured data with recent jobs
   const generateEnhancedStructuredData = (baseSeo: SEOData) => {
     const recentJobs = getRecentJobs();
-    
+
     if ((currentPath === '/careers' || currentPath === '/') && recentJobs.length > 0) {
       const baseStructuredData = currentPath === '/careers' ? {
         "@context": "https://schema.org",
@@ -215,7 +188,7 @@ const SEO: React.FC<SEOProps> = ({ pagePath, fallback }) => {
 
   // Generate dynamic SEO for job pages or use fetched/fallback data
   let seo: SEOData;
-  
+
   if (isJobDetailPage) {
     // For job detail pages, use fetched data or fallback
     if (seoData?.data && !seoData.isDefault) {
@@ -306,10 +279,10 @@ const SEO: React.FC<SEOProps> = ({ pagePath, fallback }) => {
       <meta name="description" content={seo.metaDescription} />
       {seo.metaKeywords && <meta name="keywords" content={seo.metaKeywords} />}
       {seo.robotsDirective && <meta name="robots" content={seo.robotsDirective} />}
-      
+
       {/* Canonical URL */}
       <link rel="canonical" href={fullUrl} />
-      
+
       {/* Open Graph Meta Tags */}
       <meta property="og:title" content={seo.ogTitle || seo.pageTitle} />
       <meta property="og:description" content={seo.ogDescription || seo.metaDescription} />
@@ -317,7 +290,7 @@ const SEO: React.FC<SEOProps> = ({ pagePath, fallback }) => {
       <meta property="og:url" content={seo.ogUrl || fullUrl} />
       <meta property="og:site_name" content="Niddik" />
       {seo.ogImage && <meta property="og:image" content={seo.ogImage} />}
-      
+
       {/* Twitter Card Meta Tags */}
       <meta name="twitter:card" content={seo.twitterCard || "summary_large_image"} />
       {seo.twitterSite && <meta name="twitter:site" content={seo.twitterSite} />}
@@ -326,26 +299,26 @@ const SEO: React.FC<SEOProps> = ({ pagePath, fallback }) => {
       {seo.twitterCreator && <meta name="twitter:creator" content={seo.twitterCreator} />}
       {seo.twitterImage && <meta name="twitter:image" content={seo.twitterImage} />}
       {seo.twitterImage && <meta name="twitter:image:alt" content={seo.twitterTitle || seo.pageTitle} />}
-      
+
       {/* Schema.org Microdata */}
       {seo.itemPropName && <meta itemProp="name" content={seo.itemPropName} />}
       {seo.itemPropDescription && <meta itemProp="description" content={seo.itemPropDescription} />}
       {seo.itemPropImage && <meta itemProp="image" content={seo.itemPropImage} />}
-      
+
       {/* Structured Data (JSON-LD) */}
       {structuredDataObj && (
         <script type="application/ld+json">
           {JSON.stringify(structuredDataObj)}
         </script>
       )}
-      
+
       {/* Additional meta tags for better SEO */}
       <meta name="viewport" content="width=device-width, initial-scale=1" />
       <meta httpEquiv="Content-Type" content="text/html; charset=utf-8" />
       <meta name="language" content="en" />
       <meta name="revisit-after" content="7 days" />
       <meta name="author" content="Niddik" />
-      
+
       {/* Favicon and icons */}
       <link rel="icon" type="image/png" href="/images/niddik_logo.png" />
       <link rel="apple-touch-icon" href="/images/niddik_logo.png" />
