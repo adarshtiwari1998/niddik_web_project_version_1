@@ -10,7 +10,7 @@ deploymentTarget = "autoscale"
 run = ["sh", "-c", "npm run dev"]
 
 [workflows]
-runButton = "Dev Server"
+runButton = "Start Dev Server"
 
 [[workflows.workflow]]
 name = "Project"
@@ -39,44 +39,9 @@ mode = "sequential"
 task = "shell.exec"
 args = "npm run dev"
 
-[[workflows.workflow]]
-name = "Start Full Stack Dev"
-author = 42450406
-mode = "parallel"
-
-[[workflows.workflow.tasks]]
-task = "shell.exec"
-args = "npm run build"
-
-[[workflows.workflow.tasks]]
-task = "shell.exec"
-args = "npm run dev"
-
-[[workflows.workflow]]
-name = "Full Stack Development"
-author = 42450406
-mode = "parallel"
-
-[[workflows.workflow.tasks]]
-task = "shell.exec"
-args = "npm run dev"
-
-[[workflows.workflow]]
-name = "Dev Server"
-author = 42450406
-mode = "sequential"
-
-[[workflows.workflow.tasks]]
-task = "shell.exec"
-args = "npm run dev"
-
 [[ports]]
 localPort = 5000
 externalPort = 80
-
-[[ports]]
-localPort = 10000
-externalPort = 3002
 
 [[ports]]
 localPort = 13000
