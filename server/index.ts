@@ -58,7 +58,7 @@ app.use((req, res, next) => {
   // Add debug logging
   console.log(`Environment: ${app.get("env")}`);
   console.log(`NODE_ENV: ${process.env.NODE_ENV}`);
-  
+
   // If in development mode, setup Vite (this will serve the frontend in memory)
   if (app.get("env") === "development" || process.env.NODE_ENV !== "production") {
     console.log("Setting up Vite for development...");
@@ -71,6 +71,23 @@ app.use((req, res, next) => {
 
   // Always serve the app on port 5000
   const port = 5000;
+
+  // Handle port already in use error
+  server.on('error', (err: any) => {
+    if (err.code === 'EADDRINUSE') {
+      console.log(`Port ${port} is already in use. Trying to find available port...`);
+      // Try port 5001 as fallback
+      const fallbackPort = 5001;
+      server.listen(fallbackPort, "0.0.0.0", () => {
+        log(`Server is running on fallback port ${fallbackPort}`);
+        log(`Environment: ${app.get("env")}`);
+        log(`Vite development server configured successfully`);
+      });
+    } else {
+      console.error('Server error:', err);
+    }
+  });
+
   server.listen(port, "0.0.0.0", () => {
     log(`Server is running on http://0.0.0.0:${port}`);
     log(`Environment: ${app.get("env")}`);
