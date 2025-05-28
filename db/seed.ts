@@ -498,20 +498,13 @@ async function seed() {
         itemPropImage: "https://res.cloudinary.com/your-cloud/image/upload/v1/niddik-itemprop-home.jpg"
       },
       {
-        pagePath: "/about-us",
-        pageTitle: "About Niddik - Leading IT Recruitment Company",
-        metaDescription: "Learn about Niddik's mission to connect exceptional IT talent with innovative companies. Our experienced team delivers personalized recruitment solutions.",
-        metaKeywords: "about niddik, IT recruitment company, tech staffing, our mission, team",
-        ogTitle: "About Niddik - Leading IT Recruitment Company",
-        ogDescription: "Learn about Niddik's mission to connect exceptional IT talent with innovative companies.",
-        ogImage: "https://res.cloudinary.com/your-cloud/image/upload/v1/niddik-og-about.jpg",
-        canonicalUrl: "https://niddik.com/about-us",
-        structuredData: JSON.stringify({
-          "@context": "https://schema.org",
-          "@type": "AboutPage",
-          "name": "About Niddik",
-          "description": "Learn about Niddik's mission to connect exceptional IT talent with innovative companies."
-        })
+        pagePath: "/landing",
+        pageTitle: "Niddik Landing - IT Recruitment Solutions",
+        metaDescription: "Explore Niddik's comprehensive IT recruitment and staffing solutions. Connecting exceptional talent with innovative companies worldwide.",
+        metaKeywords: "IT recruitment, tech staffing, landing page, talent solutions",
+        ogTitle: "Niddik Landing - IT Recruitment Solutions",
+        ogDescription: "Explore Niddik's comprehensive IT recruitment and staffing solutions.",
+        canonicalUrl: "https://niddik.com/landing"
       },
       {
         pagePath: "/services",
@@ -533,6 +526,252 @@ async function seed() {
         })
       },
       {
+        pagePath: "/web-app-solutions",
+        pageTitle: "Web App Development Solutions | Niddik",
+        metaDescription: "Custom web application development solutions. Expert developers for React, Node.js, and full-stack development projects.",
+        metaKeywords: "web app development, custom software, React, Node.js, full-stack development",
+        ogTitle: "Web App Development Solutions | Niddik",
+        ogDescription: "Custom web application development solutions. Expert developers for React, Node.js, and full-stack development projects.",
+        canonicalUrl: "https://niddik.com/web-app-solutions"
+      },
+      {
+        pagePath: "/adaptive-hiring",
+        pageTitle: "Adaptive Hiring Solutions | Niddik",
+        metaDescription: "Innovative adaptive hiring strategies for modern businesses. Flexible recruitment approaches tailored to your company's needs.",
+        metaKeywords: "adaptive hiring, flexible recruitment, hiring strategies, talent acquisition",
+        ogTitle: "Adaptive Hiring Solutions | Niddik",
+        ogDescription: "Innovative adaptive hiring strategies for modern businesses.",
+        canonicalUrl: "https://niddik.com/adaptive-hiring"
+      },
+      {
+        pagePath: "/adaptive-hiring-fixed",
+        pageTitle: "Fixed Adaptive Hiring Model | Niddik",
+        metaDescription: "Structured adaptive hiring solutions with fixed parameters. Predictable and efficient recruitment processes.",
+        metaKeywords: "fixed hiring model, structured recruitment, adaptive hiring",
+        ogTitle: "Fixed Adaptive Hiring Model | Niddik",
+        ogDescription: "Structured adaptive hiring solutions with fixed parameters.",
+        canonicalUrl: "https://niddik.com/adaptive-hiring-fixed"
+      },
+      {
+        pagePath: "/whitepaper",
+        pageTitle: "Recruitment Industry Whitepapers | Niddik",
+        metaDescription: "Access industry-leading whitepapers on recruitment trends, hiring strategies, and talent acquisition best practices.",
+        metaKeywords: "recruitment whitepaper, hiring trends, talent acquisition research",
+        ogTitle: "Recruitment Industry Whitepapers | Niddik",
+        ogDescription: "Access industry-leading whitepapers on recruitment trends and hiring strategies.",
+        canonicalUrl: "https://niddik.com/whitepaper"
+      },
+      {
+        pagePath: "/insights",
+        pageTitle: "IT Recruitment Insights & Industry Analysis | Niddik",
+        metaDescription: "Latest insights on IT recruitment trends, market analysis, and industry developments. Stay ahead with expert perspectives.",
+        metaKeywords: "IT recruitment insights, market trends, industry analysis, hiring trends",
+        ogTitle: "IT Recruitment Insights & Industry Analysis | Niddik",
+        ogDescription: "Latest insights on IT recruitment trends, market analysis, and industry developments.",
+        canonicalUrl: "https://niddik.com/insights"
+      },
+      {
+        pagePath: "/facts-and-trends",
+        pageTitle: "Recruitment Facts & Industry Trends | Niddik",
+        metaDescription: "Discover key facts and emerging trends in the recruitment industry. Data-driven insights for better hiring decisions.",
+        metaKeywords: "recruitment facts, industry trends, hiring statistics, market data",
+        ogTitle: "Recruitment Facts & Industry Trends | Niddik",
+        ogDescription: "Discover key facts and emerging trends in the recruitment industry.",
+        canonicalUrl: "https://niddik.com/facts-and-trends"
+      },
+      {
+        pagePath: "/hiring-advice",
+        pageTitle: "Expert Hiring Advice & Best Practices | Niddik",
+        metaDescription: "Professional hiring advice from recruitment experts. Learn best practices for effective talent acquisition and team building.",
+        metaKeywords: "hiring advice, recruitment tips, best practices, talent acquisition",
+        ogTitle: "Expert Hiring Advice & Best Practices | Niddik",
+        ogDescription: "Professional hiring advice from recruitment experts.",
+        canonicalUrl: "https://niddik.com/hiring-advice"
+      },
+      {
+        pagePath: "/corporate-social-responsibilities",
+        pageTitle: "Corporate Social Responsibility | Niddik",
+        metaDescription: "Learn about Niddik's commitment to corporate social responsibility, community engagement, and sustainable business practices.",
+        metaKeywords: "corporate social responsibility, CSR, community engagement, sustainability",
+        ogTitle: "Corporate Social Responsibility | Niddik",
+        ogDescription: "Learn about Niddik's commitment to corporate social responsibility and community engagement.",
+        canonicalUrl: "https://niddik.com/corporate-social-responsibilities"
+      },
+      {
+        pagePath: "/career-advice",
+        pageTitle: "IT Career Advice & Development Tips | Niddik",
+        metaDescription: "Expert career advice for IT professionals. Tips on career development, skill building, and advancing in technology roles.",
+        metaKeywords: "career advice, IT careers, professional development, tech career tips",
+        ogTitle: "IT Career Advice & Development Tips | Niddik",
+        ogDescription: "Expert career advice for IT professionals and technology careers.",
+        canonicalUrl: "https://niddik.com/career-advice"
+      },
+      {
+        pagePath: "/six-factor-recruiting-model",
+        pageTitle: "Six Factor Recruiting Model | Niddik",
+        metaDescription: "Learn about Niddik's proprietary six factor recruiting model for effective talent acquisition and candidate matching.",
+        metaKeywords: "six factor model, recruiting methodology, talent acquisition strategy",
+        ogTitle: "Six Factor Recruiting Model | Niddik",
+        ogDescription: "Learn about Niddik's proprietary six factor recruiting model.",
+        canonicalUrl: "https://niddik.com/six-factor-recruiting-model"
+      },
+      {
+        pagePath: "/agile-approach-based-recruiting",
+        pageTitle: "Agile Approach Based Recruiting | Niddik",
+        metaDescription: "Discover how agile methodologies enhance recruitment processes. Flexible, iterative approaches to talent acquisition.",
+        metaKeywords: "agile recruiting, agile methodology, flexible hiring, iterative recruitment",
+        ogTitle: "Agile Approach Based Recruiting | Niddik",
+        ogDescription: "Discover how agile methodologies enhance recruitment processes.",
+        canonicalUrl: "https://niddik.com/agile-approach-based-recruiting"
+      },
+      {
+        pagePath: "/community-involvement",
+        pageTitle: "Community Involvement & Engagement | Niddik",
+        metaDescription: "Explore Niddik's community involvement initiatives, partnerships, and commitment to giving back to the tech community.",
+        metaKeywords: "community involvement, tech community, partnerships, social impact",
+        ogTitle: "Community Involvement & Engagement | Niddik",
+        ogDescription: "Explore Niddik's community involvement initiatives and partnerships.",
+        canonicalUrl: "https://niddik.com/community-involvement"
+      },
+      {
+        pagePath: "/partners/it",
+        pageTitle: "IT Partners & Technology Alliances | Niddik",
+        metaDescription: "Meet our IT partners and technology alliances. Strategic partnerships that enhance our recruitment capabilities.",
+        metaKeywords: "IT partners, technology alliances, strategic partnerships, tech companies",
+        ogTitle: "IT Partners & Technology Alliances | Niddik",
+        ogDescription: "Meet our IT partners and technology alliances.",
+        canonicalUrl: "https://niddik.com/partners/it"
+      },
+      {
+        pagePath: "/partners/non-it",
+        pageTitle: "Non-IT Partners & Business Alliances | Niddik",
+        metaDescription: "Explore our non-IT partnerships and business alliances that support comprehensive recruitment solutions.",
+        metaKeywords: "non-IT partners, business alliances, partnerships, recruitment support",
+        ogTitle: "Non-IT Partners & Business Alliances | Niddik",
+        ogDescription: "Explore our non-IT partnerships and business alliances.",
+        canonicalUrl: "https://niddik.com/partners/non-it"
+      },
+      {
+        pagePath: "/partners/healthcare",
+        pageTitle: "Healthcare Partners & Medical IT Recruitment | Niddik",
+        metaDescription: "Specialized healthcare IT recruitment through our healthcare partners. Medical technology talent solutions.",
+        metaKeywords: "healthcare partners, medical IT, healthcare technology, medical recruitment",
+        ogTitle: "Healthcare Partners & Medical IT Recruitment | Niddik",
+        ogDescription: "Specialized healthcare IT recruitment through our healthcare partners.",
+        canonicalUrl: "https://niddik.com/partners/healthcare"
+      },
+      {
+        pagePath: "/search",
+        pageTitle: "Search Jobs & Opportunities | Niddik",
+        metaDescription: "Search for IT jobs and career opportunities. Find your next role with top technology companies through Niddik.",
+        metaKeywords: "job search, IT jobs, career opportunities, tech jobs, job listings",
+        ogTitle: "Search Jobs & Opportunities | Niddik",
+        ogDescription: "Search for IT jobs and career opportunities with top technology companies.",
+        canonicalUrl: "https://niddik.com/search"
+      },
+      {
+        pagePath: "/clients",
+        pageTitle: "Our Clients & Success Stories | Niddik",
+        metaDescription: "Meet our clients and discover their success stories. Leading companies trust Niddik for their IT recruitment needs.",
+        metaKeywords: "clients, success stories, case studies, customer testimonials",
+        ogTitle: "Our Clients & Success Stories | Niddik",
+        ogDescription: "Meet our clients and discover their success stories.",
+        canonicalUrl: "https://niddik.com/clients"
+      },
+      {
+        pagePath: "/testimonials",
+        pageTitle: "Client Testimonials & Reviews | Niddik",
+        metaDescription: "Read testimonials and reviews from satisfied clients and candidates. See why companies choose Niddik for IT recruitment.",
+        metaKeywords: "testimonials, reviews, client feedback, candidate reviews",
+        ogTitle: "Client Testimonials & Reviews | Niddik",
+        ogDescription: "Read testimonials and reviews from satisfied clients and candidates.",
+        canonicalUrl: "https://niddik.com/testimonials"
+      },
+      {
+        pagePath: "/contact",
+        pageTitle: "Contact Niddik - Get In Touch With Our Recruitment Experts",
+        metaDescription: "Contact Niddik's recruitment experts today. Get personalized IT staffing solutions and connect with top talent. Reach out for all your hiring needs.",
+        metaKeywords: "contact niddik, recruitment experts, IT staffing, hiring solutions, get in touch",
+        ogTitle: "Contact Niddik - Get In Touch With Our Recruitment Experts",
+        ogDescription: "Contact Niddik's recruitment experts today. Get personalized IT staffing solutions and connect with top talent.",
+        canonicalUrl: "https://niddik.com/contact",
+        structuredData: JSON.stringify({
+          "@context": "https://schema.org",
+          "@type": "ContactPage",
+          "name": "Contact Niddik"
+        })
+      },
+      {
+        pagePath: "/privacy-policy",
+        pageTitle: "Privacy Policy | Niddik",
+        metaDescription: "Read Niddik's privacy policy to understand how we collect, use, and protect your personal information.",
+        metaKeywords: "privacy policy, data protection, personal information, GDPR compliance",
+        ogTitle: "Privacy Policy | Niddik",
+        ogDescription: "Read Niddik's privacy policy to understand how we protect your personal information.",
+        canonicalUrl: "https://niddik.com/privacy-policy"
+      },
+      {
+        pagePath: "/terms-of-service",
+        pageTitle: "Terms of Service | Niddik",
+        metaDescription: "Read Niddik's terms of service and understand the conditions for using our recruitment platform and services.",
+        metaKeywords: "terms of service, legal terms, service conditions, user agreement",
+        ogTitle: "Terms of Service | Niddik",
+        ogDescription: "Read Niddik's terms of service and service conditions.",
+        canonicalUrl: "https://niddik.com/terms-of-service"
+      },
+      {
+        pagePath: "/cookie-policy",
+        pageTitle: "Cookie Policy | Niddik",
+        metaDescription: "Learn about Niddik's cookie policy and how we use cookies to improve your browsing experience.",
+        metaKeywords: "cookie policy, cookies, website tracking, user experience",
+        ogTitle: "Cookie Policy | Niddik",
+        ogDescription: "Learn about Niddik's cookie policy and how we use cookies.",
+        canonicalUrl: "https://niddik.com/cookie-policy"
+      },
+      {
+        pagePath: "/about-us",
+        pageTitle: "About Niddik - Leading IT Recruitment Company",
+        metaDescription: "Learn about Niddik's mission to connect exceptional IT talent with innovative companies. Our experienced team delivers personalized recruitment solutions.",
+        metaKeywords: "about niddik, IT recruitment company, tech staffing, our mission, team",
+        ogTitle: "About Niddik - Leading IT Recruitment Company",
+        ogDescription: "Learn about Niddik's mission to connect exceptional IT talent with innovative companies.",
+        ogImage: "https://res.cloudinary.com/your-cloud/image/upload/v1/niddik-og-about.jpg",
+        canonicalUrl: "https://niddik.com/about-us",
+        structuredData: JSON.stringify({
+          "@context": "https://schema.org",
+          "@type": "AboutPage",
+          "name": "About Niddik",
+          "description": "Learn about Niddik's mission to connect exceptional IT talent with innovative companies."
+        })
+      },
+      {
+        pagePath: "/why-us",
+        pageTitle: "Why Choose Niddik - IT Recruitment Advantages",
+        metaDescription: "Discover why companies choose Niddik for IT recruitment. Our unique advantages, proven track record, and expert team.",
+        metaKeywords: "why choose niddik, recruitment advantages, IT staffing benefits",
+        ogTitle: "Why Choose Niddik - IT Recruitment Advantages",
+        ogDescription: "Discover why companies choose Niddik for IT recruitment.",
+        canonicalUrl: "https://niddik.com/why-us"
+      },
+      {
+        pagePath: "/leadership-team",
+        pageTitle: "Leadership Team | Niddik",
+        metaDescription: "Meet Niddik's leadership team. Experienced executives driving innovation in IT recruitment and talent acquisition.",
+        metaKeywords: "leadership team, executives, management, company leaders",
+        ogTitle: "Leadership Team | Niddik",
+        ogDescription: "Meet Niddik's experienced leadership team driving innovation in IT recruitment.",
+        canonicalUrl: "https://niddik.com/leadership-team"
+      },
+      {
+        pagePath: "/faqs",
+        pageTitle: "Frequently Asked Questions | Niddik",
+        metaDescription: "Find answers to frequently asked questions about Niddik's IT recruitment services, processes, and solutions.",
+        metaKeywords: "FAQs, frequently asked questions, help, support, recruitment questions",
+        ogTitle: "Frequently Asked Questions | Niddik",
+        ogDescription: "Find answers to frequently asked questions about Niddik's services.",
+        canonicalUrl: "https://niddik.com/faqs"
+      },
+      {
         pagePath: "/careers",
         pageTitle: "IT Jobs & Career Opportunities | Niddik",
         metaDescription: "Discover exciting IT career opportunities with top companies. Browse our latest job openings in software development, engineering, and technology roles.",
@@ -551,18 +790,13 @@ async function seed() {
         })
       },
       {
-        pagePath: "/contact",
-        pageTitle: "Contact Niddik - Get In Touch With Our Recruitment Experts",
-        metaDescription: "Contact Niddik's recruitment experts today. Get personalized IT staffing solutions and connect with top talent. Reach out for all your hiring needs.",
-        metaKeywords: "contact niddik, recruitment experts, IT staffing, hiring solutions, get in touch",
-        ogTitle: "Contact Niddik - Get In Touch With Our Recruitment Experts",
-        ogDescription: "Contact Niddik's recruitment experts today. Get personalized IT staffing solutions and connect with top talent.",
-        canonicalUrl: "https://niddik.com/contact",
-        structuredData: JSON.stringify({
-          "@context": "https://schema.org",
-          "@type": "ContactPage",
-          "name": "Contact Niddik"
-        })
+        pagePath: "/request-demo",
+        pageTitle: "Request Demo - See Niddik in Action | Niddik",
+        metaDescription: "Request a demo to see how Niddik's IT recruitment solutions can transform your hiring process. Schedule your personalized demonstration.",
+        metaKeywords: "request demo, recruitment demo, hiring solutions demo, schedule demo",
+        ogTitle: "Request Demo - See Niddik in Action | Niddik",
+        ogDescription: "Request a demo to see how Niddik's solutions can transform your hiring process.",
+        canonicalUrl: "https://niddik.com/request-demo"
       }
     ];
 
