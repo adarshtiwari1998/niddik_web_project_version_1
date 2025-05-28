@@ -10,7 +10,7 @@ deploymentTarget = "autoscale"
 run = ["sh", "-c", "npm run dev"]
 
 [workflows]
-runButton = "Start Full Stack Dev"
+runButton = "Full Stack Development"
 
 [[workflows.workflow]]
 name = "Project"
@@ -51,6 +51,19 @@ args = "npm run build"
 [[workflows.workflow.tasks]]
 task = "shell.exec"
 args = "npm run dev"
+
+[[workflows.workflow]]
+name = "Full Stack Development"
+author = 42450406
+mode = "parallel"
+
+[[workflows.workflow.tasks]]
+task = "shell.exec"
+args = "npm run dev"
+
+[[workflows.workflow.tasks]]
+task = "shell.exec"
+args = "cd client && npm run dev"
 
 [[ports]]
 localPort = 5000

@@ -480,7 +480,6 @@ const Navbar: React.FC<NavbarProps> = ({ hasAnnouncementAbove = true }) => {
           isMobileMenuOpen && "open"
         )}
         style={{
-          height: '100vh',
           height: '100dvh', // Dynamic viewport height for mobile browsers
           zIndex: 99999
         }}
