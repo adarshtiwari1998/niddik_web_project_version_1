@@ -1,0 +1,23 @@
+<title>Finding apartments in Japan for foreigners | Japan Dev</title>
+<script type="application/ld+json">{"@context":"https://schema.org","@type":"WebSite","url":"https://japan-dev.com","name":"Japan Dev","description":"Hand-picked developer jobs in Japan for English speakers. No Japanese required. Apply from overseas + visa sponsorship. Silicon Valley-style companies.","inLanguage":"en","image":"https://japan-dev.com/cdn/static/logo_simple_blue.png","publisher":{"@type":"Organization","name":"Japan Dev","url":"https://japan-dev.com","logo":{"@type":"ImageObject","url":"https://japan-dev.com/cdn/static/logo_simple_blue.png"}},"potentialAction":{"@type":"SearchAction","target":"https://japan-dev.com/jobs?query={search_term_string}","query-input":"required name=search_term_string"}}</script>
+<script type="application/ld+json">{"@context":"http://schema.org","@type":"Organization","name":"Japan Dev","url":"https://japan-dev.com","logo":"https://japan-dev.com/cdn/static/logo_simple_blue.png","sameAs":["https://twitter.com/jpn_dev"]}</script>
+<link rel="canonical" href="https://japan-dev.com">
+<meta name="description" content="Hand-picked developer jobs in Japan for English speakers. No Japanese required. Apply from overseas + visa sponsorship. Silicon Valley-style companies.">
+<meta property="og:title" content="Software Developer Jobs in Japan">
+<meta property="og:site_name" content="Japan Dev">
+<meta property="og:type" content="website">
+<meta property="og:url" content="https://japan-dev.com">
+<meta property="og:image" content="https://japan-dev.com/cdn/sns_images/sns_images/sns_banner.jpg">
+<meta property="og:description" content="Hand-picked developer jobs in Japan for English speakers. No Japanese required. Apply from overseas + visa sponsorship. Silicon Valley-style companies.">
+<meta property="og:fb_app_id" content="jpndev">
+<meta property="fb:app_id" content="317121466381932">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:site" content="@jpn_dev">
+<meta name="twitter:title" content="Software Developer Jobs in Japan">
+<meta name="twitter:description" content="Hand-picked developer jobs in Japan for English speakers. No Japanese required. Apply from overseas + visa sponsorship. Silicon Valley-style companies.">
+<meta name="twitter:creator" content="@jpn_dev">
+<meta name="twitter:image" content="https://japan-dev.com/cdn/sns_images/sns_images/sns_banner.jpg">
+<meta name="twitter:image:alt" content="Software Developer Jobs in Japan">
+<meta itemprop="name" content="Software Developer Jobs in Japan">
+<meta itemprop="description" content="Hand-picked developer jobs in Japan for English speakers. No Japanese required. Apply from overseas + visa sponsorship. Silicon Valley-style companies.">
+<meta itemprop="image" content="https://japan-dev.com/cdn/sns_images/sns_images/sns_banner.jpg">
