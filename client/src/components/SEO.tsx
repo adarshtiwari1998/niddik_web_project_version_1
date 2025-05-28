@@ -40,15 +40,24 @@ const SEO: React.FC<SEOProps> = ({ pagePath, fallback }) => {
   const hasServerSideSEO = React.useMemo(() => {
     if (typeof document === 'undefined') return false;
     
-    // Check if title tag already exists with job-specific content
+    // Check if title tag already exists with job-specific content or Niddik branding
     const existingTitle = document.querySelector('title');
     const existingMeta = document.querySelector('meta[name="description"]');
     
-    // If we find existing title/meta tags that look like they're from server-side rendering
+    // More comprehensive check for server-side rendered content
+    const titleContent = existingTitle?.textContent || '';
+    const metaContent = existingMeta?.getAttribute('content') || '';
+    
+    // Check for job-specific patterns or general Niddik branding that indicates server-side rendering
     return existingTitle && existingMeta && 
-           (existingTitle.textContent?.includes('at') || 
-            existingTitle.textContent?.includes('|') ||
-            existingMeta.getAttribute('content')?.includes('Apply for'));
+           (titleContent.includes('at') || 
+            titleContent.includes('|') ||
+            titleContent.includes('Niddik') ||
+            titleContent.includes('Jobs') ||
+            metaContent.includes('Apply for') ||
+            metaContent.includes('Niddik') ||
+            metaContent.includes('recruitment') ||
+            metaContent.includes('staffing'));
   }, [currentPath]);
 
   // Check if this is a job detail page
@@ -275,8 +284,8 @@ const SEO: React.FC<SEOProps> = ({ pagePath, fallback }) => {
 
   return (
     <Helmet>
-      {/* Basic Meta Tags */}
-      <title>{seo.pageTitle}</title>
+      {/* Basic Meta Tags - Skip title if server-side SEO exists */}
+      {!hasServerSideSEO && <title>{seo.pageTitle}</title>}
       <meta name="description" content={seo.metaDescription} />
       {seo.metaKeywords && <meta name="keywords" content={seo.metaKeywords} />}
       {seo.robotsDirective && <meta name="robots" content={seo.robotsDirective} />}
