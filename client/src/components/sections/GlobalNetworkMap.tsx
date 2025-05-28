@@ -491,7 +491,7 @@ const GlobalNetworkMap: React.FC = () => {
         <div className="lg:hidden">
           {/* Top row */}
           <motion.div
-            className="absolute top-16 left-4 text-center text-white"
+            className="absolute top-6 left-4 text-center text-white"
             initial={{ opacity: 0, scale: 0.8 }}
             animate={{ opacity: 1, scale: 1 }}
             transition={{ delay: 1.5, duration: 0.8 }}
