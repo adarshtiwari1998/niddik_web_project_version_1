@@ -2652,10 +2652,19 @@ app.get("/api/admin/check", async (req: Request, res: Response) => {
         req.path.startsWith('/assets') || 
         req.path.startsWith('/uploads') || 
         req.path.startsWith('/images') ||
-        req.path.startsWith('/src') ||
+        req.path.startsWith('/src/') ||
         req.path.startsWith('/@') ||
         req.path.startsWith('/node_modules') ||
-        req.path.includes('.')) {
+        req.path.endsWith('.js') ||
+        req.path.endsWith('.ts') ||
+        req.path.endsWith('.tsx') ||
+        req.path.endsWith('.css') ||
+        req.path.endsWith('.svg') ||
+        req.path.endsWith('.png') ||
+        req.path.endsWith('.jpg') ||
+        req.path.endsWith('.ico') ||
+        req.path.includes('?v=') ||
+        req.path.includes('.hot-update.')) {
       return next();
     }
 
