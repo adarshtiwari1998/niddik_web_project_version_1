@@ -647,6 +647,203 @@ class EmailService {
     }
   }
 
+  async sendApplicationStatusChangeNotification(
+    userEmail: string,
+    userName: string,
+    jobTitle: string,
+    company: string,
+    oldStatus: string,
+    newStatus: string,
+    requestOrigin?: string
+  ): Promise<boolean> {
+    try {
+      const statusMessages = {
+        new: {
+          title: 'Application Received',
+          message: 'Your application has been received and is being processed.',
+          color: '#3b82f6',
+          icon: '📥'
+        },
+        reviewing: {
+          title: 'Application Under Review',
+          message: 'Great news! Your application is now under review by our hiring team.',
+          color: '#f59e0b',
+          icon: '👀'
+        },
+        interview: {
+          title: 'Interview Scheduled',
+          message: 'Excellent! You\'ve been selected for an interview. Someone from our team will contact you soon.',
+          color: '#8b5cf6',
+          icon: '🎯'
+        },
+        hired: {
+          title: 'Congratulations - You\'re Hired!',
+          message: 'We\'re thrilled to offer you this position! Welcome to the team!',
+          color: '#10b981',
+          icon: '🎉'
+        },
+        rejected: {
+          title: 'Application Update',
+          message: 'Thank you for your interest. While we won\'t be moving forward with your application at this time, we encourage you to apply for future opportunities.',
+          color: '#ef4444',
+          icon: '📝'
+        }
+      };
+
+      const statusInfo = statusMessages[newStatus as keyof typeof statusMessages];
+      
+      const content = `
+        <h2 style="color: ${statusInfo.color}; margin-bottom: 20px;">${statusInfo.icon} ${statusInfo.title}</h2>
+        
+        <p>Dear <strong>${userName}</strong>,</p>
+        
+        <p>We have an update regarding your application for the <strong>${jobTitle}</strong> position at <strong>${company}</strong>.</p>
+        
+        <div class="highlight-box">
+            <h3 style="margin-top: 0; color: ${statusInfo.color};">Status Update:</h3>
+            <ul style="margin: 15px 0; padding-left: 20px; list-style: none;">
+                <li><strong>💼 Position:</strong> ${jobTitle}</li>
+                <li><strong>🏢 Company:</strong> ${company}</li>
+                <li><strong>📊 Previous Status:</strong> ${oldStatus.charAt(0).toUpperCase() + oldStatus.slice(1)}</li>
+                <li><strong>🔄 New Status:</strong> <span style="color: ${statusInfo.color}; font-weight: bold;">${newStatus.charAt(0).toUpperCase() + newStatus.slice(1)}</span></li>
+                <li><strong>📅 Updated On:</strong> ${format(new Date(), 'MMMM dd, yyyy \'at\' hh:mm a')}</li>
+            </ul>
+        </div>
+        
+        <p>${statusInfo.message}</p>
+        
+        ${newStatus === 'interview' ? `
+        <p><strong>Next Steps:</strong></p>
+        <ul style="margin: 15px 0; padding-left: 20px;">
+            <li>A member of our team will contact you within 1-2 business days</li>
+            <li>Prepare for the interview by researching the company and role</li>
+            <li>Review your resume and be ready to discuss your experience</li>
+            <li>Prepare thoughtful questions about the role and company</li>
+        </ul>
+        ` : ''}
+        
+        ${newStatus === 'hired' ? `
+        <p><strong>What's Next:</strong></p>
+        <ul style="margin: 15px 0; padding-left: 20px;">
+            <li>Our HR team will contact you with next steps</li>
+            <li>You'll receive information about onboarding</li>
+            <li>Welcome to the ${company} family!</li>
+        </ul>
+        ` : ''}
+        
+        ${newStatus === 'rejected' ? `
+        <p><strong>Keep Moving Forward:</strong></p>
+        <ul style="margin: 15px 0; padding-left: 20px;">
+            <li>Continue exploring opportunities on our platform</li>
+            <li>Consider updating your profile with new skills</li>
+            <li>Apply to other positions that match your experience</li>
+            <li>We appreciate your interest in working with us</li>
+        </ul>
+        ` : ''}
+        
+        <div style="text-align: center; margin: 30px 0;">
+            <a href="${this.getBaseUrl(requestOrigin)}/my-applications" class="button">
+                View Application Status
+            </a>
+        </div>
+        
+        <p>If you have any questions about this update, please don't hesitate to contact us at <a href="mailto:info@niddik.com" style="color: #16a34a;">info@niddik.com</a>.</p>
+        
+        <p>Best regards,<br>
+        <strong>The NiDDiK Team</strong><br>
+        <em>Connecting People, Changing Lives</em></p>
+      `;
+
+      const mailOptions = {
+        from: `"NiDDiK Careers" <${this.config.user}>`,
+        to: userEmail,
+        subject: `${statusInfo.icon} Application Update: ${jobTitle} at ${company}`,
+        html: this.getEmailTemplate(content, `Application Status Update - ${statusInfo.title}`)
+      };
+
+      await this.transporter.sendMail(mailOptions);
+      console.log(`Status change notification sent successfully to ${userEmail} for status: ${newStatus}`);
+      return true;
+    } catch (error) {
+      console.error('Error sending status change notification:', error);
+      return false;
+    }
+  }
+
+  async sendAdminStatusChangeNotification(
+    adminEmail: string,
+    userName: string,
+    userEmail: string,
+    jobTitle: string,
+    company: string,
+    oldStatus: string,
+    newStatus: string,
+    adminName: string,
+    requestOrigin?: string
+  ): Promise<boolean> {
+    try {
+      const content = `
+        <h2 style="color: #16a34a; margin-bottom: 20px;">Application Status Updated 🔄</h2>
+        
+        <p>Hello Admin Team,</p>
+        
+        <p>An application status has been updated by <strong>${adminName}</strong>. Here are the details:</p>
+        
+        <div class="highlight-box">
+            <h3 style="margin-top: 0; color: #16a34a;">Application Details:</h3>
+            <ul style="margin: 15px 0; padding-left: 20px; list-style: none;">
+                <li><strong>💼 Position:</strong> ${jobTitle}</li>
+                <li><strong>🏢 Company:</strong> ${company}</li>
+                <li><strong>👤 Candidate:</strong> ${userName}</li>
+                <li><strong>📧 Candidate Email:</strong> ${userEmail}</li>
+                <li><strong>📅 Updated On:</strong> ${format(new Date(), 'MMMM dd, yyyy \'at\' hh:mm a')}</li>
+                <li><strong>👨‍💼 Updated By:</strong> ${adminName}</li>
+            </ul>
+        </div>
+        
+        <div class="highlight-box">
+            <h3 style="margin-top: 0; color: #2563eb;">Status Change:</h3>
+            <ul style="margin: 15px 0; padding-left: 20px; list-style: none;">
+                <li><strong>📊 From:</strong> ${oldStatus.charAt(0).toUpperCase() + oldStatus.slice(1)}</li>
+                <li><strong>🔄 To:</strong> <span style="color: #16a34a; font-weight: bold;">${newStatus.charAt(0).toUpperCase() + newStatus.slice(1)}</span></li>
+            </ul>
+        </div>
+        
+        <p><strong>Automatic Actions Taken:</strong></p>
+        <ul style="margin: 15px 0; padding-left: 20px;">
+            <li>✅ Candidate has been notified via email about the status change</li>
+            <li>📊 Application status updated in the database</li>
+            <li>📋 Activity logged for audit trail</li>
+        </ul>
+        
+        <div style="text-align: center; margin: 30px 0;">
+            <a href="${this.getBaseUrl(requestOrigin)}/admin/candidates" class="button">
+                View All Applications
+            </a>
+        </div>
+        
+        <p>This is an automated notification to keep you informed of application status changes.</p>
+        
+        <p>Best regards,<br>
+        <strong>NiDDiK Admin System</strong></p>
+      `;
+
+      const mailOptions = {
+        from: `"NiDDiK Admin System" <${this.config.user}>`,
+        to: this.config.adminEmails,
+        subject: `🔄 Status Updated: ${jobTitle} - ${userName} (${oldStatus} → ${newStatus})`,
+        html: this.getEmailTemplate(content, 'Application Status Update')
+      };
+
+      await this.transporter.sendMail(mailOptions);
+      console.log(`Admin status change notification sent successfully for ${userName}'s application`);
+      return true;
+    } catch (error) {
+      console.error('Error sending admin status change notification:', error);
+      return false;
+    }
+  }
+
   async testConnection(): Promise<boolean> {
     try {
       await this.transporter.verify();

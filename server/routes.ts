@@ -935,7 +935,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
       });
     } catch (error) {
       if (error instanceof z.ZodError) {
-        return res.status(400).json({
+        return res.status(400.json({
           success: false,
           message: "Validation error",
           errors: error.errors
@@ -1007,7 +1007,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
   });
 
   // Admin API: Update application status
-  app.put('/api/admin/job-applications/:id/status', async (req, res) => {
+  app.put('/api/admin/job-applications/:id/status', async (req: AuthenticatedRequest, res) => {
     try {
       const id = parseInt(req.params.id);
 
@@ -1027,6 +1027,17 @@ export async function registerRoutes(app: Express): Promise<Server> {
         });
       }
 
+      // Get the current application to check old status and get user/job info
+      const currentApplication = await storage.getJobApplicationById(id);
+      if (!currentApplication) {
+        return res.status(404).json({
+          success: false,
+          message: "Application not found"
+        });
+      }
+
+      const oldStatus = currentApplication.status;
+
       // Update application status
       const updatedApplication = await storage.updateJobApplicationStatus(id, status);
 
@@ -1037,6 +1048,44 @@ export async function registerRoutes(app: Express): Promise<Server> {
         });
       }
 
+      // Get user and job details for email notifications
+      const user = await storage.getUserById(currentApplication.userId);
+      const job = await storage.getJobListingById(currentApplication.jobId);
+      const adminUser = req.user;
+
+      if (user && job && adminUser && oldStatus !== status) {
+        try {
+          // Send notification to candidate
+          await emailService.sendApplicationStatusChangeNotification(
+            user.email,
+            user.fullName || user.username,
+            job.title,
+            job.company,
+            oldStatus,
+            status,
+            req.get('origin')
+          );
+
+          // Send notification to admin team
+          await emailService.sendAdminStatusChangeNotification(
+            adminUser.email,
+            user.fullName || user.username,
+            user.email,
+            job.title,
+            job.company,
+            oldStatus,
+            status,
+            adminUser.fullName || adminUser.username,
+            req.get('origin')
+          );
+
+          console.log(`Status change notifications sent for application ${id}: ${oldStatus} → ${status}`);
+        } catch (emailError) {
+          console.error('Error sending status change emails:', emailError);
+          // Don't fail the status update if email fails
+        }
+      }
+
       return res.status(200).json({
         success: true,
         data: updatedApplication
@@ -1045,7 +1094,8 @@ export async function registerRoutes(app: Express): Promise<Server> {
       console.error('Error updating application status:', error);
       return res.status(500).json({
         success: false,
-        message: "Internal server error"      });
+        message: "Internal server error"
+      });
     }
   });
 
