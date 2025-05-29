@@ -402,15 +402,7 @@ const handleResumeRemove = async () => {
 
           {/* Job Header */}
           <div className="flex flex-col md:flex-row justify-between gap-6 mb-8">
-            <div className="relative">
-              {/* New Badge for Job Title */}
-              {allJobsData?.data && isJobNew(job.postedDate, allJobsData.data) && (
-                <div className="absolute -top-3 -left-3 z-10">
-                  <Badge className="bg-gradient-to-r from-emerald-500 to-teal-500 text-white text-sm font-bold px-4 py-2 rounded-full shadow-lg animate-pulse">
-                    ✨ NEW
-                  </Badge>
-                </div>
-              )}
+            <div>
               <h1 className="text-3xl font-bold mb-2">{job.title}</h1>
               <div className="flex flex-wrap items-center gap-2 text-muted-foreground mb-4">
                 <div className="flex items-center">
@@ -448,6 +440,11 @@ const handleResumeRemove = async () => {
               
               {/* Job Status Badges */}
               <div className="flex flex-wrap gap-2 mb-4">
+                {allJobsData?.data && isJobNew(job.postedDate, allJobsData.data) && (
+                  <Badge className="bg-gradient-to-r from-emerald-500 to-teal-500 text-white px-3 py-1 text-sm font-semibold shadow-lg animate-pulse">
+                    ✨ NEW
+                  </Badge>
+                )}
                 {job.featured && (
                   <Badge className="bg-gradient-to-r from-yellow-400 to-amber-500 hover:from-yellow-500 hover:to-amber-600 text-white px-3 py-1 text-sm font-semibold shadow-lg">
                     ⭐ Featured
@@ -800,15 +797,7 @@ const handleResumeRemove = async () => {
 
             {/* Right Column: Job Summary */}
             <div className="space-y-6">
-              <Card className="relative">
-                {/* New Badge for Job Summary Card */}
-                {allJobsData?.data && isJobNew(job.postedDate, allJobsData.data) && (
-                  <div className="absolute -top-3 -right-3 z-10">
-                    <Badge className="bg-gradient-to-r from-emerald-500 to-teal-500 text-white text-sm font-bold px-3 py-2 rounded-full shadow-lg animate-pulse">
-                      ✨ NEW
-                    </Badge>
-                  </div>
-                )}
+              <Card>
                 <CardHeader>
                   <CardTitle>Job Summary</CardTitle>
                 </CardHeader>
@@ -952,15 +941,7 @@ const handleResumeRemove = async () => {
                   <CardContent>
                     <div className="space-y-4">
                       {recommendedJobs.map((recJob) => (
-                        <div key={recJob.id} className="relative border rounded-lg p-4 hover:bg-muted/50 transition-colors">
-                          {/* New Badge for recommended job */}
-                          {allJobsData?.data && isJobNew(recJob.postedDate, allJobsData.data) && (
-                            <div className="absolute -top-2 -right-2 z-10">
-                              <Badge className="bg-gradient-to-r from-emerald-500 to-teal-500 text-white text-xs font-bold px-2 py-1 rounded-full shadow-lg animate-pulse">
-                                ✨ NEW
-                              </Badge>
-                            </div>
-                          )}
+                        <div key={recJob.id} className="border rounded-lg p-4 hover:bg-muted/50 transition-colors">
                           <Link href={`/jobs/${recJob.id}`}>
                             <div className="cursor-pointer">
                               <h4 className="font-medium text-primary hover:underline mb-1">
@@ -974,6 +955,11 @@ const handleResumeRemove = async () => {
                                 <span className="capitalize">{recJob.jobType}</span>
                               </div>
                               <div className="flex flex-wrap gap-1">
+                                {allJobsData?.data && isJobNew(recJob.postedDate, allJobsData.data) && (
+                                  <Badge variant="outline" className="text-xs bg-emerald-50 text-emerald-700 border-emerald-200">
+                                    ✨ NEW
+                                  </Badge>
+                                )}
                                 {recJob.featured && (
                                   <Badge variant="outline" className="text-xs bg-amber-50 text-amber-700 border-amber-200">
                                     Featured
