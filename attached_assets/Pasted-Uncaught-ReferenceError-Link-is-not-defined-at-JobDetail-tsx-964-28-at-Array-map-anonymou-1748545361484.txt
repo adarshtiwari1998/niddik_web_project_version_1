@@ -1,0 +1,36 @@
+Uncaught ReferenceError: Link is not defined
+    at JobDetail.tsx:964:28
+    at Array.map (<anonymous>)
+    at JobDetail (JobDetail.tsx:954:40)
+    at renderWithHooks (chunk-RPCDYKBN.js?v=db738107:11548:26)
+    at updateFunctionComponent (chunk-RPCDYKBN.js?v=db738107:14582:28)
+    at beginWork (chunk-RPCDYKBN.js?v=db738107:15924:22)
+    at HTMLUnknownElement.callCallback2 (chunk-RPCDYKBN.js?v=db738107:3674:22)
+    at Object.invokeGuardedCallbackDev (chunk-RPCDYKBN.js?v=db738107:3699:24)
+    at invokeGuardedCallback (chunk-RPCDYKBN.js?v=db738107:3733:39)
+    at beginWork$1 (chunk-RPCDYKBN.js?v=db738107:19765:15)Understand this error
+chunk-RPCDYKBN.js?v=db738107:14032 The above error occurred in the <JobDetail> component:
+
+    at JobDetail (https://c97bc9b7-d459-4d54-aa25-a500aa3482fe-00-17pkxb2ueb99z.sisko.replit.dev/src/pages/JobDetail.tsx?t=1748545306665:44:18)
+    at Route (https://c97bc9b7-d459-4d54-aa25-a500aa3482fe-00-17pkxb2ueb99z.sisko.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/wouter.js?v=db738107:280:16)
+    at Switch (https://c97bc9b7-d459-4d54-aa25-a500aa3482fe-00-17pkxb2ueb99z.sisko.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/wouter.js?v=db738107:336:17)
+    at Router
+    at AuthProvider (https://c97bc9b7-d459-4d54-aa25-a500aa3482fe-00-17pkxb2ueb99z.sisko.replit.dev/src/hooks/use-auth.tsx:32:32)
+    at QueryClientProvider (https://c97bc9b7-d459-4d54-aa25-a500aa3482fe-00-17pkxb2ueb99z.sisko.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/@tanstack_react-query.js?v=db738107:2875:3)
+    at _a (https://c97bc9b7-d459-4d54-aa25-a500aa3482fe-00-17pkxb2ueb99z.sisko.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/react-helmet-async.js?v=db738107:624:5)
+    at App
+
+Consider adding an error boundary to your tree to customize error handling behavior.
+Visit https://reactjs.org/link/error-boundaries to learn more about error boundaries.
+logCapturedError @ chunk-RPCDYKBN.js?v=db738107:14032Understand this error
+chunk-RPCDYKBN.js?v=db738107:9129 Uncaught ReferenceError: Link is not defined
+    at JobDetail.tsx:964:28
+    at Array.map (<anonymous>)
+    at JobDetail (JobDetail.tsx:954:40)
+    at renderWithHooks (chunk-RPCDYKBN.js?v=db738107:11548:26)
+    at updateFunctionComponent (chunk-RPCDYKBN.js?v=db738107:14582:28)
+    at beginWork (chunk-RPCDYKBN.js?v=db738107:15924:22)
+    at beginWork$1 (chunk-RPCDYKBN.js?v=db738107:19753:22)
+    at performUnitOfWork (chunk-RPCDYKBN.js?v=db738107:19198:20)
+    at workLoopSync (chunk-RPCDYKBN.js?v=db738107:19137:13)
+    at renderRootSync (chunk-RPCDYKBN.js?v=db738107:19116:15)Understand this error
