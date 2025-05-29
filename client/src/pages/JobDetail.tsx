@@ -88,6 +88,43 @@ export default function JobDetail() {
 
   const job = jobData?.data;
 
+  // Fetch all jobs for recommendations and New badge logic
+  const { data: allJobsData } = useQuery<{ data: JobListing[], meta: { total: number, pages: number } }>({
+    queryKey: ['/api/job-listings', { 
+      status: 'active',
+      page: 1,
+      limit: 1000
+    }],
+    queryFn: getQueryFn({ on401: "throw" }),
+  });
+
+  // Function to check if a job is "new" (posted within last 7 days from the latest job date)
+  const isJobNew = (jobDate: string, allJobs: JobListing[]): boolean => {
+    if (!jobDate || !allJobs.length) return false;
+    
+    // Find the latest job posting date
+    const latestDate = allJobs.reduce((latest, job) => {
+      if (!job.postedDate) return latest;
+      const jobDate = new Date(job.postedDate);
+      return jobDate > latest ? jobDate : latest;
+    }, new Date(0));
+
+    // Check if this job was posted within 7 days of the latest posting
+    const currentJobDate = new Date(jobDate);
+    const diffInDays = Math.ceil((latestDate.getTime() - currentJobDate.getTime()) / (1000 * 60 * 60 * 24));
+    
+    return diffInDays <= 7;
+  };
+
+  // Get job recommendations (same category, different jobs, max 3)
+  const recommendedJobs = React.useMemo(() => {
+    if (!allJobsData?.data || !job) return [];
+    
+    return allJobsData.data
+      .filter(j => j.id !== job.id && j.category === job.category)
+      .slice(0, 3);
+  }, [allJobsData?.data, job]);
+
   // Check if user has already applied for this job
   const { data: userApplicationsData } = useQuery<{ success: boolean; data: any[] }>({
     queryKey: ['/api/my-applications'],
@@ -365,7 +402,15 @@ const handleResumeRemove = async () => {
 
           {/* Job Header */}
           <div className="flex flex-col md:flex-row justify-between gap-6 mb-8">
-            <div>
+            <div className="relative">
+              {/* New Badge for Job Title */}
+              {allJobsData?.data && isJobNew(job.postedDate, allJobsData.data) && (
+                <div className="absolute -top-3 -left-3 z-10">
+                  <Badge className="bg-gradient-to-r from-emerald-500 to-teal-500 text-white text-sm font-bold px-4 py-2 rounded-full shadow-lg animate-pulse">
+                    ✨ NEW
+                  </Badge>
+                </div>
+              )}
               <h1 className="text-3xl font-bold mb-2">{job.title}</h1>
               <div className="flex flex-wrap items-center gap-2 text-muted-foreground mb-4">
                 <div className="flex items-center">
@@ -755,7 +800,15 @@ const handleResumeRemove = async () => {
 
             {/* Right Column: Job Summary */}
             <div className="space-y-6">
-              <Card>
+              <Card className="relative">
+                {/* New Badge for Job Summary Card */}
+                {allJobsData?.data && isJobNew(job.postedDate, allJobsData.data) && (
+                  <div className="absolute -top-3 -right-3 z-10">
+                    <Badge className="bg-gradient-to-r from-emerald-500 to-teal-500 text-white text-sm font-bold px-3 py-2 rounded-full shadow-lg animate-pulse">
+                      ✨ NEW
+                    </Badge>
+                  </div>
+                )}
                 <CardHeader>
                   <CardTitle>Job Summary</CardTitle>
                 </CardHeader>
@@ -884,6 +937,75 @@ const handleResumeRemove = async () => {
                           {skill.trim()}
                         </Badge>
                       ))}
+                    </div>
+                  </CardContent>
+                </Card>
+              )}
+
+              {/* Job Recommendations */}
+              {recommendedJobs.length > 0 && (
+                <Card>
+                  <CardHeader>
+                    <CardTitle>Other Opportunities</CardTitle>
+                    <CardDescription>Similar roles you might be interested in</CardDescription>
+                  </CardHeader>
+                  <CardContent>
+                    <div className="space-y-4">
+                      {recommendedJobs.map((recJob) => (
+                        <div key={recJob.id} className="relative border rounded-lg p-4 hover:bg-muted/50 transition-colors">
+                          {/* New Badge for recommended job */}
+                          {allJobsData?.data && isJobNew(recJob.postedDate, allJobsData.data) && (
+                            <div className="absolute -top-2 -right-2 z-10">
+                              <Badge className="bg-gradient-to-r from-emerald-500 to-teal-500 text-white text-xs font-bold px-2 py-1 rounded-full shadow-lg animate-pulse">
+                                ✨ NEW
+                              </Badge>
+                            </div>
+                          )}
+                          <Link href={`/jobs/${recJob.id}`}>
+                            <div className="cursor-pointer">
+                              <h4 className="font-medium text-primary hover:underline mb-1">
+                                {recJob.title}
+                              </h4>
+                              <div className="flex items-center gap-2 text-sm text-muted-foreground mb-2">
+                                <span>{recJob.company}</span>
+                                <span>•</span>
+                                <span>{recJob.location}</span>
+                                <span>•</span>
+                                <span className="capitalize">{recJob.jobType}</span>
+                              </div>
+                              <div className="flex flex-wrap gap-1">
+                                {recJob.featured && (
+                                  <Badge variant="outline" className="text-xs bg-amber-50 text-amber-700 border-amber-200">
+                                    Featured
+                                  </Badge>
+                                )}
+                                {recJob.urgent && (
+                                  <Badge variant="outline" className="text-xs bg-red-50 text-red-700 border-red-200">
+                                    Urgent
+                                  </Badge>
+                                )}
+                                {recJob.priority && (
+                                  <Badge variant="outline" className="text-xs bg-orange-50 text-orange-700 border-orange-200">
+                                    Priority
+                                  </Badge>
+                                )}
+                                {recJob.isOpen && (
+                                  <Badge variant="outline" className="text-xs bg-green-50 text-green-700 border-green-200">
+                                    Open
+                                  </Badge>
+                                )}
+                              </div>
+                            </div>
+                          </Link>
+                        </div>
+                      ))}
+                    </div>
+                    <div className="mt-4">
+                      <Link href="/careers">
+                        <Button variant="outline" className="w-full">
+                          View All Jobs
+                        </Button>
+                      </Link>
                     </div>
                   </CardContent>
                 </Card>

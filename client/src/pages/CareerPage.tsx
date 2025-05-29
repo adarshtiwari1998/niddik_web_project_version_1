@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { Link } from "wouter";
 import { Button } from "@/components/ui/button";
@@ -17,7 +17,7 @@ import { JobListing } from "@shared/schema";
 import { Briefcase, Clock, MapPin, Search, Filter, Loader2, Award, FileText, User, Mail, Globe, CalendarClock } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 import CareersLayout from "@/components/careers/CareersLayout";
-import { format } from "date-fns";
+import { format, subDays } from "date-fns";
 import SEO from "@/components/SEO";
 import { useAuth } from "@/hooks/use-auth";
 
@@ -28,6 +28,9 @@ export default function CareerPage() {
   const [jobType, setJobType] = useState("all_types");
   const [experienceLevel, setExperienceLevel] = useState("all_levels");
   const [priority, setPriority] = useState("all_priorities");
+  const [currentPage, setCurrentPage] = useState(1);
+  const jobsPerPage = 10; // Define the number of jobs to display per page
+
 
   const { data, isLoading, error } = useQuery<{ data: JobListing[], meta: { total: number, pages: number } }>({
     queryKey: ['/api/job-listings', { 
@@ -220,6 +223,14 @@ export default function CareerPage() {
     return matchesSearch && matchesCategory && matchesJobType && matchesExperienceLevel && matchesPriority;
   }) || [];
 
+   // Pagination logic
+   const indexOfLastJob = currentPage * jobsPerPage;
+   const indexOfFirstJob = indexOfLastJob - jobsPerPage;
+   const currentJobs = filteredJobs.slice(indexOfFirstJob, indexOfLastJob);
+
+   // Function to handle page changes
+   const paginate = (pageNumber: number) => setCurrentPage(pageNumber);
+
   const handleSearch = (e: React.FormEvent) => {
     e.preventDefault();
     // Filtering is now handled automatically by the filteredJobs computation
@@ -236,31 +247,31 @@ export default function CareerPage() {
   // Function to calculate time difference
   const timeAgo = (dateString: string): string => {
     if (!dateString) return 'Recently';
-    
+
     // Create dates and ensure we're comparing at midnight for day calculations
     const postedDate = new Date(dateString);
     const now = new Date();
-    
+
     // Check if the date is valid
     if (isNaN(postedDate.getTime())) {
       return 'Recently';
     }
-    
+
     // Normalize both dates to midnight for accurate day comparison
     const postedDateNormalized = new Date(postedDate.getFullYear(), postedDate.getMonth(), postedDate.getDate());
     const nowNormalized = new Date(now.getFullYear(), now.getMonth(), now.getDate());
-    
+
     // Calculate difference in milliseconds
     const diff = nowNormalized.getTime() - postedDateNormalized.getTime();
-    
+
     // If the date is in the future, return "Recently"
     if (diff < 0) {
       return 'Recently';
     }
-    
+
     // Calculate days based on normalized dates
     const days = Math.floor(diff / (1000 * 60 * 60 * 24));
-    
+
     // Debug logging (can be removed in production)
     console.log(`Date calculation: Posted: ${dateString}, Today: ${now.toDateString()}, Days diff: ${days}`);
 
@@ -273,6 +284,14 @@ export default function CareerPage() {
     } else {
       return 'Recently';
     }
+  };
+
+   // Determine if a job is "new" (posted within the last 7 days)
+   const isNewJob = (postedDate: string | undefined): boolean => {
+    if (!postedDate) return false;
+    const jobDate = new Date(postedDate);
+    const sevenDaysAgo = subDays(new Date(), 7);
+    return jobDate >= sevenDaysAgo;
   };
 
 
@@ -590,7 +609,7 @@ export default function CareerPage() {
                 )}
 
                 <div className="grid gap-6 lg:grid-cols-1 xl:grid-cols-2">
-                  {filteredJobs.map((job) => {
+                  {currentJobs.map((job) => {
                     const isDraft = job.status === 'draft';
                     const CardComponent = ({ children }: { children: React.ReactNode }) => {
                       if (isDraft) {
@@ -619,7 +638,14 @@ export default function CareerPage() {
                               <CardTitle className="text-lg font-semibold mb-1">{job.title}</CardTitle>
                               <CardDescription className="text-sm">{job.company}</CardDescription>
                             </div>
-                            
+
+                             {/* New Badge - Displayed if the job is new */}
+                             {isNewJob(job.postedDate) && (
+                                <Badge className="bg-green-500 text-white text-xs font-bold absolute top-2 right-2 z-10">
+                                  New
+                                </Badge>
+                              )}
+
                             {/* Badges - Full Width Row */}
                             <div className="flex flex-wrap gap-2">
                               {job.featured && (
@@ -678,13 +704,13 @@ export default function CareerPage() {
                                 <span className="font-medium">
                                   {(() => {
                                     if (!job.postedDate) return "Recently";
-                                    
+
                                     const postedDate = new Date(job.postedDate);
                                     if (isNaN(postedDate.getTime())) return "Recently";
-                                    
+
                                     const formattedDate = format(postedDate, "MMM dd, yyyy");
                                     const timeAgoText = timeAgo(job.postedDate);
-                                    
+
                                     return `${formattedDate} (${timeAgoText})`;
                                   })()}
                                 </span>
@@ -721,6 +747,22 @@ export default function CareerPage() {
                   })}
                 </div>
               </div>
+
+              {/* Pagination */}
+              {filteredJobs.length > jobsPerPage && (
+                <div className="flex justify-center mt-8">
+                  {Array.from({ length: Math.ceil(filteredJobs.length / jobsPerPage) }, (_, i) => i + 1).map(number => (
+                    <Button
+                      key={number}
+                      variant={currentPage === number ? "default" : "outline"}
+                      onClick={() => paginate(number)}
+                      className="mx-1"
+                    >
+                      {number}
+                    </Button>
+                  ))}
+                </div>
+              )}
             </div>
           </div>
         ) : (
@@ -848,7 +890,7 @@ export default function CareerPage() {
               )}
 
               <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
-                {filteredJobs.map((job) => {
+                {currentJobs.map((job) => {
                   const isDraft = job.status === 'draft';
                   const CardComponent = ({ children }: { children: React.ReactNode }) => {
                     if (isDraft) {
@@ -877,7 +919,13 @@ export default function CareerPage() {
                             <CardTitle className="text-lg font-semibold mb-1">{job.title}</CardTitle>
                             <CardDescription className="text-sm">{job.company}</CardDescription>
                           </div>
-                          
+                            {/* New Badge - Displayed if the job is new */}
+                            {isNewJob(job.postedDate) && (
+                                <Badge className="bg-green-500 text-white text-xs font-bold absolute top-2 right-2 z-10">
+                                  New
+                                </Badge>
+                              )}
+
                           {/* Badges - Full Width Row */}
                           <div className="flex flex-wrap gap-2">
                             {job.featured && (
@@ -936,13 +984,13 @@ export default function CareerPage() {
                               <span className="font-medium">
                                 {(() => {
                                   if (!job.postedDate) return "Recently";
-                                  
+
                                   const postedDate = new Date(job.postedDate);
                                   if (isNaN(postedDate.getTime())) return "Recently";
-                                  
+
                                   const formattedDate = format(postedDate, "MMM dd, yyyy");
                                   const timeAgoText = timeAgo(job.postedDate);
-                                  
+
                                   return `${formattedDate} (${timeAgoText})`;
                                 })()}
                               </span>
@@ -970,6 +1018,21 @@ export default function CareerPage() {
                 })}
               </div>
             </div>
+             {/* Pagination */}
+             {filteredJobs.length > jobsPerPage && (
+                <div className="flex justify-center mt-8">
+                  {Array.from({ length: Math.ceil(filteredJobs.length / jobsPerPage) }, (_, i) => i + 1).map(number => (
+                    <Button
+                      key={number}
+                      variant={currentPage === number ? "default" : "outline"}
+                      onClick={() => paginate(number)}
+                      className="mx-1"
+                    >
+                      {number}
+                    </Button>
+                  ))}
+                </div>
+              )}
           </>
         )}
       </div>
