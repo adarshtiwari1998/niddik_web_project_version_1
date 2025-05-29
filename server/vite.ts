@@ -227,9 +227,8 @@ export async function setupVite(app: Express, server: Server) {
           };
         }
 
-        // Inject SEO metadata into HTML head
+        // Inject SEO metadata into HTML head (excluding title since we replace it separately)
         const headContent = `
-          <title>${seoData.pageTitle}</title>
           <meta name="description" content="${seoData.metaDescription}" />
           ${seoData.metaKeywords ? `<meta name="keywords" content="${seoData.metaKeywords}" />` : ''}
           ${seoData.robotsDirective ? `<meta name="robots" content="${seoData.robotsDirective}" />` : ''}
@@ -268,7 +267,7 @@ export async function setupVite(app: Express, server: Server) {
           <link rel="apple-touch-icon" href="/images/niddik_logo.png" />
         `;
 
-        // Replace the title and insert additional meta tags
+        // Replace the title tag first
         template = template.replace(
           /<title>.*?<\/title>/,
           `<title>${seoData.pageTitle}</title>`
