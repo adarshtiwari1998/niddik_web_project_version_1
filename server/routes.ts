@@ -60,7 +60,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
 
     try {
       const seoPage = await storage.getSeoPageByPath(req.path);
-      
+
       // If there's an SEO page for this path and it's inactive, return 404
       if (seoPage && !seoPage.isActive) {
         return res.status(404).send(`
@@ -1867,8 +1867,7 @@ app.put('/api/profile', async (req: AuthenticatedRequest, res) => {
 
       if (!currentPassword || !newPassword) {
         return res.status(400).json({
-          success: false,
-          message: "Current password and new password are required"
+          success: false,          message: "Current password and new password are required"
         });
       }
 
@@ -2554,7 +2553,24 @@ app.get("/api/last-logout", async (req: Request, res: Response) => {
       }
 
       const validatedData = seoPageSchema.parse(req.body);
-      const seoPage = await storage.createSeoPage(validatedData);
+      const seoPage = await storage.createSeoPage({
+        pageTitle: req.body.pageTitle,
+        pagePath: req.body.pagePath,
+        metaDescription: req.body.metaDescription,
+        metaKeywords: req.body.metaKeywords,
+        canonicalUrl: req.body.canonicalUrl,
+        ogTitle: req.body.ogTitle,
+        ogDescription: req.body.ogDescription,
+        ogImage: req.body.ogImage,
+        twitterTitle: req.body.twitterTitle,
+        twitterDescription: req.body.twitterDescription,
+        itemPropName: req.body.itemPropName,
+        itemPropDescription: req.body.itemPropDescription,
+        itemPropImage: req.body.itemPropImage,
+        headScripts: req.body.headScripts,
+        bodyScripts: req.body.bodyScripts,
+        isActive: req.body.isActive ?? true,
+      });
       return res.status(201).json({ success: true, data: seoPage });
     } catch (error) {
       if (error instanceof z.ZodError) {
@@ -2600,7 +2616,24 @@ app.get("/api/last-logout", async (req: Request, res: Response) => {
       const validatedData = seoPageSchema.partial().parse(req.body);
       console.log('SEO Update - Validation passed:', validatedData);
 
-      const seoPage = await storage.updateSeoPage(id, validatedData);
+      const seoPage = await storage.updateSeoPage(id, {
+          pageTitle: req.body.pageTitle,
+          pagePath: req.body.pagePath,
+          metaDescription: req.body.metaDescription,
+          metaKeywords: req.body.metaKeywords,
+          canonicalUrl: req.body.canonicalUrl,
+          ogTitle: req.body.ogTitle,
+          ogDescription: req.body.ogDescription,
+          ogImage: req.body.ogImage,
+          twitterTitle: req.body.twitterTitle,
+          twitterDescription: req.body.twitterDescription,
+          itemPropName: req.body.itemPropName,
+          itemPropDescription: req.body.itemPropDescription,
+          itemPropImage: req.body.itemPropImage,
+          headScripts: req.body.headScripts,
+          bodyScripts: req.body.bodyScripts,
+          isActive: req.body.isActive,
+      });
 
       if (!seoPage) {
         console.log('SEO Update - Page not found for ID:', id);
@@ -2640,11 +2673,11 @@ app.get("/api/last-logout", async (req: Request, res: Response) => {
       }
 
       console.log('SEO update job data - User authenticated:', req.user?.role);
-      
+
       const results = await storage.updateAllSeoJobPages();
-      
+
       console.log('SEO update job data - Results:', results);
-      
+
       return res.status(200).json({
         success: true,
         data: results,
@@ -2705,7 +2738,7 @@ app.get("/api/last-logout", async (req: Request, res: Response) => {
       const activeSeoPages = await storage.getAllActiveSeoPages();
       // Double filter to ensure only active pages are included
       const trulyActiveSeoPages = activeSeoPages.filter(page => page.isActive === true);
-      
+
       const schemaData = {
         "@context": "https://schema.org",
         "@graph": trulyActiveSeoPages.map(page => {
@@ -2817,12 +2850,12 @@ app.get("/api/last-logout", async (req: Request, res: Response) => {
       jobListings.jobListings.forEach(job => {
         // Ensure we have a valid date - use postedDate, updatedAt, createdAt, or current date as fallback
         let lastModDate = job.updatedAt || job.createdAt || job.postedDate || new Date().toISOString();
-        
+
         // If lastModDate is still null/undefined, use current date
         if (!lastModDate) {
           lastModDate = new Date().toISOString();
         }
-        
+
         // Ensure it's a valid date string
         let formattedDate;
         try {
@@ -2831,7 +2864,7 @@ app.get("/api/last-logout", async (req: Request, res: Response) => {
           console.error(`Invalid date for job ${job.id}:`, lastModDate);
           formattedDate = new Date().toISOString();
         }
-        
+
         sitemapXml += `  <url>
     <loc>https://niddik.com/jobs/${job.id}</loc>
     <lastmod>${formattedDate}</lastmod>
@@ -2848,7 +2881,7 @@ app.get("/api/last-logout", async (req: Request, res: Response) => {
         if (page.isActive && !staticPaths.has(page.pagePath)) {
           const pageLastMod = page.updatedAt || new Date().toISOString();
           const formattedPageDate = new Date(pageLastMod).toISOString();
-          
+
           sitemapXml += `  <url>
     <loc>https://niddik.com${page.pagePath}</loc>
     <lastmod>${formattedPageDate}</lastmod>
@@ -2876,7 +2909,7 @@ app.get("/api/last-logout", async (req: Request, res: Response) => {
       // Get all active SEO pages to generate dynamic robots.txt
       const seoPages = await storage.getAllActiveSeoPages();
       const activeSeoPages = seoPages.filter(page => page.isActive === true);
-      
+
       // Get all active job listings
       const jobListings = await storage.getJobListings({
         page: 1,
@@ -2937,7 +2970,7 @@ Disallow: /api/
       });
 
       robotsContent += `\n# Allow active SEO pages\n`;
-      
+
       // Add active SEO pages
       activeSeoPages.forEach(page => {
         robotsContent += `Allow: ${page.pagePath}\n`;

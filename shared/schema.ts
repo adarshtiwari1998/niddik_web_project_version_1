@@ -343,6 +343,22 @@ export const seoPageSchema = z.object({
 export type SeoPage = typeof seoPages.$inferSelect;
 export type InsertSeoPage = z.infer<typeof seoPageSchema>;
 
+// Admin Users table
+export const adminUsers = pgTable("admin_users", {
+  id: serial("id").primaryKey(),
+  username: text("username").notNull().unique(),
+  password: text("password").notNull(),
+  email: text("email").notNull().unique(),
+  fullName: text("full_name").notNull(),
+  role: text("role").notNull().default("admin"),
+  createdAt: timestamp("created_at").defaultNow().notNull(),
+  lastLogin: timestamp("last_login"),
+  isActive: boolean("is_active").notNull().default(true),
+});
+
+export type AdminUser = typeof adminUsers.$inferSelect;
+export type InsertAdminUser = typeof adminUsers.$inferInsert;
+
 export const adminSessions = pgTable("admin_sessions", {
   id: serial("id").primaryKey(),
   userId: integer("user_id").references(() => adminUsers.id).notNull(),

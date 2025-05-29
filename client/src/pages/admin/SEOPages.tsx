@@ -17,6 +17,7 @@ import { useToast } from "@/hooks/use-toast";
 import AdminLayout from "@/components/layout/AdminLayout";
 import { Helmet } from 'react-helmet-async';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
+import { Separator } from "@/components/ui/separator"
 
 interface SeoPage {
   id: number;
@@ -178,29 +179,29 @@ export default function SEOPages() {
 
   // Form state
   const [formData, setFormData] = useState({
-    pagePath: '',
-    pageTitle: '',
-    metaDescription: '',
-    metaKeywords: '',
-    ogTitle: '',
-    ogDescription: '',
-    ogImage: '',
-    ogType: 'website',
-    ogUrl: '',
-    twitterCard: 'summary_large_image',
-    twitterSite: '',
-    twitterTitle: '',
-    twitterDescription: '',
-    twitterImage: '',
-    twitterCreator: '',
-    canonicalUrl: '',
-    robotsDirective: 'index,follow',
-    structuredData: '',
-    itemPropName: '',
-    itemPropDescription: '',
-    itemPropImage: '',
-    headScripts: '',
-    bodyScripts: '',
+    pagePath: "",
+    pageTitle: "",
+    metaDescription: "",
+    metaKeywords: "",
+    ogTitle: "",
+    ogDescription: "",
+    ogImage: "",
+    ogType: "website",
+    ogUrl: "",
+    twitterCard: "summary_large_image",
+    twitterSite: "",
+    twitterTitle: "",
+    twitterDescription: "",
+    twitterImage: "",
+    twitterCreator: "",
+    canonicalUrl: "",
+    robotsDirective: "index,follow",
+    structuredData: "",
+    itemPropName: "",
+    itemPropDescription: "",
+    itemPropImage: "",
+    headScripts: "",
+    bodyScripts: "",
     isActive: true,
   });
 
@@ -430,8 +431,8 @@ export default function SEOPages() {
       itemPropName: page.itemPropName || "",
       itemPropDescription: page.itemPropDescription || "",
       itemPropImage: page.itemPropImage || "",
-      headScripts: page.headScripts || '',
-      bodyScripts: page.bodyScripts || '',
+      headScripts: page.headScripts || "",
+      bodyScripts: page.bodyScripts || "",
       isActive: page.isActive,
     });
     setIsEditDialogOpen(true);
@@ -702,7 +703,7 @@ export default function SEOPages() {
                   <TableRow>
                     <TableHead>Page Path</TableHead>
                     <TableHead>Title</TableHead>
-                    <TableHead>Description</TableHead>
+                    <TableHead>Scripts</TableHead>
                     <TableHead>Status</TableHead>
                     <TableHead>Last Updated</TableHead>
                     <TableHead>Actions</TableHead>
@@ -722,14 +723,22 @@ export default function SEOPages() {
                           )}
                         </div>
                       </TableCell>
-                      <TableCell className="max-w-xs">
-                        <div className="truncate" title={page.pageTitle}>
-                          {page.pageTitle}
-                        </div>
-                      </TableCell>
-                      <TableCell className="max-w-xs">
-                        <div className="truncate" title={page.metaDescription}>
-                          {page.metaDescription}
+                      <TableCell className="font-medium">{page.pageTitle}</TableCell>
+                      <TableCell>
+                        <div className="flex gap-1">
+                          {page.headScripts && (
+                            <Badge variant="outline" className="text-xs">
+                              Head
+                            </Badge>
+                          )}
+                          {page.bodyScripts && (
+                            <Badge variant="outline" className="text-xs">
+                              Body
+                            </Badge>
+                          )}
+                          {!page.headScripts && !page.bodyScripts && (
+                            <span className="text-muted-foreground text-xs">None</span>
+                          )}
                         </div>
                       </TableCell>
                       <TableCell>
@@ -910,549 +919,549 @@ function SEOPageDialog({ title, formData, setFormData, onSubmit, isLoading, isEd
                 </TabsList>
 
         {/* Basic Information */}
-        
-          
-            
-              
+
+
+
+
               Basic Information
-            
-          
-          
-            
-              
-                
+
+
+
+
+
+
                 Page Path *
                 {isEdit ? (
-                  
-                    
+
+
                     {formData.pagePath}
                     disabled
                     className="bg-muted"
-                  
+
                 ) : (
-                  
-                    
-                      
-                    
-                    
+
+
+
+
+
                       Select a page path
-                    
-                    
+
+
                       {commonPaths.map((path) => (
-                        
+
                           {path.label} ({path.value})
-                        
+
                       ))}
-                    
-                  
+
+
                 )}
                 {!isEdit && (
-                  
-                    
+
+
                       Or enter custom path (e.g., /custom-page)
                       value={formData.pagePath.startsWith('/') && !commonPaths.find(p => p.value === formData.pagePath) ? formData.pagePath : ''}
                       onChange={(e) => handleInputChange('pagePath', e.target.value)}
-                    
-                  
-                )}
-              
 
-              
-                
+
+                )}
+
+
+
+
                 Page Title * (50-60 characters recommended)
-                
-                  
+
+
                     value={formData.pageTitle}
                     onChange={(e) => handleInputChange('pageTitle', e.target.value)}
                     placeholder="Enter page title"
-                  
-                
-                
-                  {formData.pageTitle.length}/60 characters
-                
-              
 
-              
-                
+
+
+                  {formData.pageTitle.length}/60 characters
+
+
+
+
+
                 Meta Description * (150-160 characters recommended)
-                
-                  
+
+
                     value={formData.metaDescription}
                     onChange={(e) => handleInputChange('metaDescription', e.target.value)}
                     placeholder="Enter meta description"
                     rows={3}
-                  
-                
-                
-                  {formData.metaDescription.length}/160 characters
-                
-              
 
-              
-                
+
+
+                  {formData.metaDescription.length}/160 characters
+
+
+
+
+
                 Meta Keywords (comma-separated)
-                
-                  
+
+
                     value={formData.metaKeywords}
                     onChange={(e) => handleInputChange('metaKeywords', e.target.value)}
                     placeholder="keyword1, keyword2, keyword3"
-                  
-                
-              
-            
-          
-        
+
+
+
+
+
+
 
         {/* Open Graph */}
-        
-          
-            
-              
-              
+
+
+
+
+
               Open Graph (Facebook)
-            
-          
-          
-            
-              
-                
-                
-                  
-                    
+
+
+
+
+
+
+
+
+
                       OG Title
-                      
-                        
+
+
                           value={formData.ogTitle}
                           onChange={(e) => handleInputChange('ogTitle', e.target.value)}
                           placeholder="Leave blank to use page title"
-                        
-                      
-                    
 
-                    
+
+
+
+
                       OG Type
-                      
-                        
-                          
-                            
-                          
-                          
-                            
-                              
-                                Website
-                              
-                                Article
-                              
-                                Business
-                              
-                            
-                          
-                        
-                      
-                    
-                  
-                
 
-                
-                  
+
+
+
+
+
+
+
+                                Website
+
+                                Article
+
+                                Business
+
+
+
+
+
+
+
+
+
+
+
                     OG Description
-                    
-                      
+
+
                         value={formData.ogDescription}
                         onChange={(e) => handleInputChange('ogDescription', e.target.value)}
                         placeholder="Leave blank to use meta description"
                         rows={2}
-                      
-                    
-                  
-                
 
-                
-                  
-                    
-                      
-                        
+
+
+
+
+
+
+
+
+
                           OG Image URL
-                          
-                            
-                              
+
+
+
                                 value={formData.ogImage}
                                 onChange={(e) => handleInputChange('ogImage', e.target.value)}
                                 placeholder="https://example.com/image.jpg"
-                              
-                              
-                                
+
+
+
                                 accept="image/*"
                                 onChange={handleImageUpload}
                                 className="hidden"
                                 id="ogImageUpload"
-                              
-                              
-                                
-                                  {uploadingImage ?  : }
-                                
-                              
-                            
-                          
-                          {uploadedImageUrl && (
-                            
-                              
-                                {uploadedImageUrl}
-                                
-                                  
-                                  Use
-                                
-                                
-                                  
-                                
-                              
-                            
-                          )}
-                        
-                      
 
-                      
+
+
+                                  {uploadingImage ?  : }
+
+
+
+
+                          {uploadedImageUrl && (
+
+
+                                {uploadedImageUrl}
+
+
+                                  Use
+
+
+
+
+
+
+                          )}
+
+
+
+
                         OG URL
-                        
-                          
+
+
                             value={formData.ogUrl}
                             onChange={(e) => handleInputChange('ogUrl', e.target.value)}
                             placeholder="Leave blank to auto-generate"
-                          
-                        
-                      
-                    
-                  
-                
-              
-            
-          
-        
+
+
+
+
+
+
+
+
+
+
 
         {/* Twitter Cards */}
-        
-          
-            
-              Twitter Cards
-            
-          
-          
-            
-              
-                
-                  
-                    Twitter Card Type
-                    
-                      
-                        
-                          
-                            
-                          
-                          
-                            
-                              
-                                Summary
-                              
-                                Summary Large Image
-                              
-                            
-                          
-                        
-                      
-                    
-                  
 
-                  
+
+
+              Twitter Cards
+
+
+
+
+
+
+
+                    Twitter Card Type
+
+
+
+
+
+
+
+
+
+                                Summary
+
+                                Summary Large Image
+
+
+
+
+
+
+
+
+
                     Twitter Site Handle
-                    
-                      
+
+
                         value={formData.twitterSite}
                         onChange={(e) => handleInputChange('twitterSite', e.target.value)}
                         placeholder="@niddik"
-                      
-                    
-                  
-                
-              
 
-              
-                
-                  
+
+
+
+
+
+
+
+
                     Twitter Title
-                    
-                      
+
+
                         value={formData.twitterTitle}
                         onChange={(e) => handleInputChange('twitterTitle', e.target.value)}
                         placeholder="Leave blank to use OG title"
-                      
-                    
-                  
 
-                  
+
+
+
+
                     Twitter Creator
-                    
-                      
+
+
                         value={formData.twitterCreator}
                         onChange={(e) => handleInputChange('twitterCreator', e.target.value)}
                         placeholder="@niddik"
-                      
-                    
-                  
-                
-              
 
-              
-                
-                  
+
+
+
+
+
+
+
+
                     Twitter Description
-                    
-                      
+
+
                         value={formData.twitterDescription}
                         onChange={(e) => handleInputChange('twitterDescription', e.target.value)}
                         placeholder="Leave blank to use OG description"
                         rows={2}
-                      
-                    
-                  
-                
 
-                 
-                    
-                      
+
+
+
+
+
+
+
                         Twitter Image URL
-                        
-                          
-                            
+
+
+
                               value={formData.twitterImage}
                               onChange={(e) => handleInputChange('twitterImage', e.target.value)}
                               placeholder="https://example.com/twitter-image.jpg"
-                            
-                            
-                              
-                                
+
+
+
+
                                 accept="image/*"
                                 onChange={handleImageUpload}
                                 className="hidden"
                                 id="ogImageUpload"
-                              
-                              
-                                
+
+
+
                                   {uploadingImage ?  : }
-                                
-                              
-                            
-                          
+
+
+
+
                           {uploadedImageUrl && (
-                            
-                              
+
+
                                 {uploadedImageUrl}
-                                
-                                  
+
+
                                   Use
-                                
-                                
-                                  
-                                
-                              
-                            
+
+
+
+
+
+
                           )}
-                        
-                      
-                    
-                  
-                
-              
-            
-          
-        
+
+
+
+
+
+
+
+
+
 
         {/* Schema.org Microdata */}
-        
-          
+
+
             Schema.org Microdata
-          
-          
-            
-              
-                
-                  
+
+
+
+
+
+
                     ItemProp Name
-                    
-                      
+
+
                         value={formData.itemPropName}
                         onChange={(e) => handleInputChange('itemPropName', e.target.value)}
                         placeholder="Page name for microdata"
-                      
-                    
-                  
 
-                  
+
+
+
+
                     ItemProp Description
-                    
-                      
+
+
                         value={formData.itemPropDescription}
                         onChange={(e) => handleInputChange('itemPropDescription', e.target.value)}
                         placeholder="Page description for microdata"
-                      
-                    
-                  
 
-                  
+
+
+
+
                     ItemProp Image
-                    
-                      
+
+
                         value={formData.itemPropImage}
                         onChange={(e) => handleInputChange('itemPropImage', e.target.value)}
                         placeholder="Image URL for microdata"
-                      
-                    
-                  
-                
-              
-            
-          
-        
+
+
+
+
+
+
+
+
 
         {/* Advanced Settings */}
-        
-          
-            
-              
-              
+
+
+
+
+
               Advanced Settings
-            
-          
-          
-            
-              
-                
-                  
+
+
+
+
+
+
+
                     Canonical URL
-                    
-                      
+
+
                         value={formData.canonicalUrl}
                         onChange={(e) => handleInputChange('canonicalUrl', e.target.value)}
                         placeholder="Leave blank to auto-generate"
-                      
-                    
-                  
 
-                  
+
+
+
+
                     Robots Directive
-                    
-                      
-                        
-                          
-                            
-                          
-                          
-                            
-                              
-                                Index, Follow
-                              
-                                No Index, Follow
-                              
-                                Index, No Follow
-                              
-                                No Index, No Follow
-                              
-                            
-                          
-                        
-                      
-                    
-                  
-                
-              
 
-              
-                
+
+
+
+
+
+
+
+
+                                Index, Follow
+
+                                No Index, Follow
+
+                                Index, No Follow
+
+                                No Index, No Follow
+
+
+
+
+
+
+
+
+
+
+
+
                   Structured Data (JSON-LD)
-                  
-                    
+
+
                       value={formData.structuredData}
                       onChange={(e) => handleInputChange('structuredData', e.target.value)}
                       placeholder="Enter JSON-LD structured data"
                       rows={8}
                       className="font-mono text-sm"
-                    
-                  
-                
-              
 
-              
-                
-                  
-                    
-                      
-                        
+
+
+
+
+
+
+
+
+
+
                           checked={formData.isActive}
                           onChange={(checked) => handleInputChange('isActive', checked)}
-                        
-                      
-                    
+
+
+
                     Active
-                  
-                
-              
-            
-          
-        
-                  
-                    
-                      
+
+
+
+
+
+
+
+
+
                         Item Prop Name
-                        
-                          
+
+
                             value={formData.itemPropName}
                             onChange={(e) => setFormData({...formData, itemPropName: e.target.value})}
                             placeholder="e.g., Software Engineer Position"
-                          
-                        
-                      
 
-                      
+
+
+
+
                         Item Prop Description
-                        
-                          
+
+
                             value={formData.itemPropDescription}
                             onChange={(e) => setFormData({...formData, itemPropDescription: e.target.value})}
                             placeholder="Description for microdata"
-                          
-                        
-                      
 
-                      
+
+
+
+
                         Item Prop Image URL
-                        
-                          
+
+
                             value={formData.itemPropImage}
                             onChange={(e) => setFormData({...formData, itemPropImage: e.target.value})}
                             placeholder="https://example.com/image.jpg"
-                          
-                        
-                      
-                    
-                  
 
-                  
-                    
-                      
+
+
+
+
+
+
+
+
                         Script Management
-                        
+
                           Add third-party scripts like Google Analytics, Facebook Pixel, or other tracking codes. 
                           These scripts will be injected into the HTML during server-side rendering.
-                        
-                      
 
-                      
-                        
+
+
+
+
                           Head Scripts
-                          
+
                             Scripts that should be placed in the section (e.g., Google Analytics, Meta Pixel)
-                          
-                          
-                            
+
+
+
                               <!-- Google Analytics -->
 <script async src="https://www.googletagmanager.com/gtag/js?id=GA_MEASUREMENT_ID"></script>
 <script>
@@ -1475,18 +1484,18 @@ s.parentNode.insertBefore(t,s)}(window, document,'script',
 fbq('init', 'YOUR_PIXEL_ID');
 fbq('track', 'PageView');
 </script>
-                            
-                          
-                        
 
-                      
-                        
+
+
+
+
+
                           Body Scripts
-                          
+
                             Scripts that should be placed before the closing tag (e.g., chat widgets, performance scripts)
-                          
-                          
-                            
+
+
+
                               <!-- Intercom Chat Widget -->
 <script>
   window.intercomSettings = {
@@ -1506,36 +1515,36 @@ fbq('track', 'PageView');
         a.appendChild(r);
     })(window,document,'https://static.hotjar.com/c/hotjar-','.js?sv=');
 </script>
-                            
-                          
-                        
 
-                      
-                        
+
+
+
+
+
                           ⚠️ Security Notice
-                          
+
                             Only add scripts from trusted sources. Malicious scripts can compromise your website security. 
                             Always validate and sanitize third-party code before adding it here.
-                          
-                        
-                      
-                    
-                  
-                
-              
-            
-          
-        
-      
 
-      
-        
+
+
+
+
+
+
+
+
+
+
+
+
+
           Cancel
-        
-        
+
+
           {isLoading ? "Saving..." : "Save SEO Page"}
-        
-      
-    
+
+
+
   );
 }
