@@ -181,23 +181,23 @@ export const storage = {
     }
 
     if (priority && priority !== 'all_priorities') {
-      console.log('Applying priority filter:', priority); // Debug log
+     // console.log('Applying priority filter:', priority); // Debug log
       switch (priority) {
         case 'urgent':
           whereConditions.push(eq(jobListings.urgent, true));
-          console.log('Added urgent filter condition - filtering for urgent = true'); // Debug log
+         // console.log('Added urgent filter condition - filtering for urgent = true'); // Debug log
           break;
         case 'priority':
           whereConditions.push(eq(jobListings.priority, true));
-          console.log('Added priority filter condition - filtering for priority = true'); // Debug log
+         // console.log('Added priority filter condition - filtering for priority = true'); // Debug log
           break;
         case 'open':
           whereConditions.push(eq(jobListings.isOpen, true));
-          console.log('Added open filter condition - filtering for isOpen = true'); // Debug log
+         // console.log('Added open filter condition - filtering for isOpen = true'); // Debug log
           break;
         case 'featured':
           whereConditions.push(eq(jobListings.featured, true));
-          console.log('Added featured filter condition - filtering for featured = true'); // Debug log
+         // console.log('Added featured filter condition - filtering for featured = true'); // Debug log
           break;
         default:
           console.log('Unknown priority filter value:', priority);
@@ -210,10 +210,10 @@ export const storage = {
       ? and(...whereConditions)
       : undefined;
 
-    console.log('Storage getJobListings called with options:', {
-      page, limit, search, category, experienceLevel, jobType, status, featured, priority
-    });
-    console.log('Where conditions:', whereConditions.length);
+    // console.log('Storage getJobListings called with options:', {
+    //   page, limit, search, category, experienceLevel, jobType, status, featured, priority
+    // });
+    // console.log('Where conditions:', whereConditions.length);
 
     // Count total matching records for pagination
     const result = await db.query.jobListings.findMany({
@@ -221,8 +221,8 @@ export const storage = {
     });
     const totalCount = result.length;
 
-    console.log('Total jobs found:', totalCount);
-    console.log('Jobs status distribution:', result.map(job => ({ id: job.id, status: job.status })));
+    // console.log('Total jobs found:', totalCount);
+    // console.log('Jobs status distribution:', result.map(job => ({ id: job.id, status: job.status })));
 
     // Get paginated job listings
     const jobListingsResult = await db.query.jobListings.findMany({
@@ -232,15 +232,15 @@ export const storage = {
       offset: (page - 1) * limit,
     });
 
-    console.log('Query results count:', jobListingsResult.length);
-    console.log('Priority filter results:', jobListingsResult.map(job => ({
-      id: job.id,
-      title: job.title,
-      urgent: job.urgent,
-      priority: job.priority,
-      isOpen: job.isOpen,
-      featured: job.featured
-    })));
+    // console.log('Query results count:', jobListingsResult.length);
+    // console.log('Priority filter results:', jobListingsResult.map(job => ({
+    //   id: job.id,
+    //   title: job.title,
+    //   urgent: job.urgent,
+    //   priority: job.priority,
+    //   isOpen: job.isOpen,
+    //   featured: job.featured
+    // })));
 
     return {
       jobListings: jobListingsResult,
@@ -919,7 +919,7 @@ export const storage = {
       };
 
       const updatedSeoPage = await this.updateSeoPage(existingSeoPage.id, updateData);
-      console.log(`SEO page updated for ${pagePath} with ${recentJobs.length} recent jobs`);
+     // console.log(`SEO page updated for ${pagePath} with ${recentJobs.length} recent jobs`);
 
       return updatedSeoPage;
     } catch (error) {
