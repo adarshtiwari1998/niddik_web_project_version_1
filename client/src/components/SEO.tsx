@@ -1,3 +1,4 @@
+
 import React from 'react';
 import { Helmet } from 'react-helmet-async';
 import { useQuery } from '@tanstack/react-query';
@@ -62,15 +63,19 @@ const SEO: React.FC<SEOProps> = ({ pagePath, fallback }) => {
     );
   }
 
-  // For dynamic job pages, also fetch job data
-  const { data: jobData } = useQuery({
+  // Fetch job data for dynamic SEO if it's a job page
+  const { data: jobData } = useQuery<{ data: any }>({
     queryKey: [`/api/job-listings/${jobId}`],
     queryFn: async () => {
-      const res = await fetch(`/api/job-listings/${jobId}`);
-      if (!res.ok) throw new Error('Failed to fetch job data');
-      return res.json();
+      const response = await fetch(`/api/job-listings/${jobId}`);
+      if (!response.ok) {
+        throw new Error('Failed to fetch job data');
+      }
+      return response.json();
     },
-    enabled: isJobDetailPage && !!jobId,
+    enabled: !!jobId,
+    staleTime: 5 * 60 * 1000,
+    refetchOnWindowFocus: false,
   });
 
   // Fetch root page SEO data for global scripts (unless we're already on root)
@@ -340,7 +345,7 @@ const SEO: React.FC<SEOProps> = ({ pagePath, fallback }) => {
     if (seo.bodyScripts) {
       injectScripts(seo.bodyScripts);
     }
-  }, [seo.bodyScripts, rootSeoData]);
+  }, [seo.bodyScripts, rootSeoData, location]);
 
   return (
     <Helmet>
@@ -376,10 +381,9 @@ const SEO: React.FC<SEOProps> = ({ pagePath, fallback }) => {
 
       {/* Structured Data (JSON-LD) */}
       {structuredDataObj && (
-        <script 
-          type="application/ld+json"
-          dangerouslySetInnerHTML={{ __html: structuredDataObj }}
-        />
+        <script type="application/ld+json">
+          {JSON.stringify(structuredDataObj)}
+        </script>
       )}
 
       {/* Global Head Scripts from Root Page */}
@@ -391,6 +395,17 @@ const SEO: React.FC<SEOProps> = ({ pagePath, fallback }) => {
       {seo.headScripts && (
         <div dangerouslySetInnerHTML={{ __html: seo.headScripts }} />
       )}
+
+      {/* Additional meta tags for better SEO */}
+      <meta name="viewport" content="width=device-width, initial-scale=1" />
+      <meta httpEquiv="Content-Type" content="text/html; charset=utf-8" />
+      <meta name="language" content="en" />
+      <meta name="revisit-after" content="7 days" />
+      <meta name="author" content="Niddik" />
+
+      {/* Favicon and icons */}
+      <link rel="icon" type="image/png" href="/images/niddik_logo.png" />
+      <link rel="apple-touch-icon" href="/images/niddik_logo.png" />
     </Helmet>
   );
 };
