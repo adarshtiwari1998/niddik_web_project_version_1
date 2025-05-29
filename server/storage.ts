@@ -809,18 +809,8 @@ export const storage = {
     }
   },
 
-  async getAllActiveSeoPages(): Promise<any[]> {
-    try {
-      const pages = await db
-        .select()
-        .from(seoPages)
-        .where(eq(seoPages.isActive, true))
-        .orderBy(desc(seoPages.updatedAt));
-      return pages;
-    } catch (error) {
-      console.error('Error fetching active SEO pages:', error);
-      throw error;
-    }
+  async getAllActiveSeoPages(): Promise<SeoPage[]> {
+    return await db.select().from(seoPages).where(eq(seoPages.isActive, true)).orderBy(desc(seoPages.updatedAt));
   },
 
   async updateSeoPageWithJobData(pagePath: string): Promise<SeoPage | undefined> {
@@ -976,7 +966,7 @@ export const storage = {
     return seoPage;
   },
 
-  async updateSeoPage(id: number, data: Partial<InsertSeoPage>): Promise<SeoPage | undefined> {
+async updateSeoPage(id: number, data: Partial<InsertSeoPage>): Promise<SeoPage | undefined> {
     const [seoPage] = await db
       .update(seoPages)
       .set({ ...data, updatedAt: new Date() })

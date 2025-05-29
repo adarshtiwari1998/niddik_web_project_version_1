@@ -89,21 +89,21 @@ const SEO: React.FC<SEOProps> = ({ pagePath, fallback }) => {
     refetchOnWindowFocus: false,
   });
 
-  const { data: seoData } = useQuery<{ 
-    success: boolean; 
-    data: SEOData; 
-    isDefault?: boolean 
-  }>({
-    queryKey: ['/api/seo-pages/by-path', currentPath],
+  const pathname = pagePath || location;
+
+  const { data: seoData } = useQuery<{ success: boolean; data: SEOData; isDefault?: boolean }>({
+    queryKey: [`/api/seo-pages/by-path?path=${pathname}`],
     queryFn: async () => {
-      const response = await fetch(`/api/seo-pages/by-path?path=${encodeURIComponent(currentPath)}`);
-      if (!response.ok) {
-        throw new Error('Failed to fetch SEO data');
-      }
-      return response.json();
+      const res = await fetch(`/api/seo-pages/by-path?path=${pathname}`);
+      if (!res.ok) throw new Error('Failed to fetch SEO data');
+      return res.json();
     },
-    staleTime: 5 * 60 * 1000, // 5 minutes
-    refetchOnWindowFocus: false,
+    staleTime: 1000 * 60 * 5, // 5 minutes
+    retry: (failureCount, error) => {
+      // Don't retry for inactive pages
+      if (error.message.includes('inactive')) return false;
+      return failureCount < 3;
+    },
   });
 
   // Helper function to get recent jobs from last week

@@ -222,10 +222,15 @@ export default function SEOPages() {
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['/api/admin/seo-pages'] });
+      // Invalidate public SEO endpoints cache
+      queryClient.invalidateQueries({ queryKey: ['seo-pages'] });
       setLastSchemaUpdate(new Date().toISOString());
       setIsCreateDialogOpen(false);
       resetForm();
-      toast({ title: "SEO page created successfully" });
+      toast({ 
+        title: "SEO page created successfully",
+        description: "Public SEO endpoints (sitemap, schema, robots.txt) have been updated"
+      });
     },
     onError: (error) => {
       toast({ title: "Error creating SEO page", description: error.message, variant: "destructive" });
@@ -245,11 +250,16 @@ export default function SEOPages() {
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['/api/admin/seo-pages'] });
+      // Invalidate public SEO endpoints cache
+      queryClient.invalidateQueries({ queryKey: ['seo-pages'] });
       setLastSchemaUpdate(new Date().toISOString());
       setIsEditDialogOpen(false);
       setEditingPage(null);
       resetForm();
-      toast({ title: "SEO page updated successfully" });
+      toast({ 
+        title: "SEO page updated successfully",
+        description: "Public SEO endpoints (sitemap, schema, robots.txt) have been updated"
+      });
     },
     onError: (error) => {
       toast({ title: "Error updating SEO page", description: error.message, variant: "destructive" });
@@ -265,7 +275,12 @@ export default function SEOPages() {
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['/api/admin/seo-pages'] });
-      toast({ title: "SEO page deleted successfully" });
+      // Invalidate public SEO endpoints cache
+      queryClient.invalidateQueries({ queryKey: ['seo-pages'] });
+      toast({ 
+        title: "SEO page deleted successfully",
+        description: "Public SEO endpoints (sitemap, schema, robots.txt) have been updated"
+      });
     },
     onError: (error) => {
       toast({ title: "Error deleting SEO page", description: error.message, variant: "destructive" });
@@ -519,10 +534,10 @@ export default function SEOPages() {
           <CardHeader>
             <CardTitle className="flex items-center gap-2">
               <Code className="h-5 w-5" />
-              Schema Management
+              SEO Files Management
             </CardTitle>
             <CardDescription>
-              View and manage your public schema endpoint for Google Search Console
+              View and manage your public SEO endpoints for search engines
             </CardDescription>
           </CardHeader>
           <CardContent className="space-y-4">
@@ -555,6 +570,40 @@ export default function SEOPages() {
                   >
                     <Globe className="h-4 w-4 mr-2" />
                     View Schema
+                  </Button>
+                </div>
+              </div>
+            </div>
+
+            <div className="bg-muted p-4 rounded-lg">
+              <div className="flex items-center justify-between">
+                <div>
+                  <h4 className="font-medium">Sitemap.xml URL</h4>
+                  <p className="text-sm text-muted-foreground mt-1">
+                    Dynamic sitemap containing all active pages and job listings
+                  </p>
+                  <code className="text-sm bg-background px-2 py-1 rounded mt-2 inline-block">
+                    {window.location.origin}/sitemap.xml
+                  </code>
+                </div>
+                <div className="flex gap-2">
+                  <Button
+                    variant="outline"
+                    size="sm"
+                    onClick={() => {
+                      navigator.clipboard.writeText(`${window.location.origin}/sitemap.xml`);
+                      toast({ title: "URL copied to clipboard" });
+                    }}
+                  >
+                    Copy URL
+                  </Button>
+                  <Button
+                    variant="outline"
+                    size="sm"
+                    onClick={() => window.open(`${window.location.origin}/sitemap.xml`, '_blank')}
+                  >
+                    <Globe className="h-4 w-4 mr-2" />
+                    View Sitemap
                   </Button>
                 </div>
               </div>
@@ -599,6 +648,21 @@ export default function SEOPages() {
                 Last schema update: {new Date(lastSchemaUpdate).toLocaleString()}
               </div>
             )}
+
+            <div className="bg-amber-50 border border-amber-200 rounded-lg p-4">
+              <div className="flex items-start gap-3">
+                <div className="rounded-full bg-amber-100 p-1">
+                  <Globe className="h-4 w-4 text-amber-600" />
+                </div>
+                <div>
+                  <h4 className="font-medium text-amber-900">Important Note</h4>
+                  <p className="text-sm text-amber-700 mt-1">
+                    Only <strong>Active</strong> SEO pages appear in public endpoints (sitemap.xml, schema, robots.txt). 
+                    Inactive pages are hidden from search engines and public access.
+                  </p>
+                </div>
+              </div>
+            </div>
 
             <div className="text-sm text-muted-foreground">
               <strong>For Google Search Console:</strong>
@@ -665,7 +729,13 @@ export default function SEOPages() {
                         </Badge>
                       </TableCell>
                       <TableCell>
-                        {new Date(page.updatedAt).toLocaleDateString()}
+                        {new Date(page.updatedAt).toLocaleDateString('en-US', {
+                          year: 'numeric',
+                          month: 'short',
+                          day: 'numeric',
+                          hour: '2-digit',
+                          minute: '2-digit'
+                        })}
                       </TableCell>
                       <TableCell>
                         <div className="flex items-center gap-2">

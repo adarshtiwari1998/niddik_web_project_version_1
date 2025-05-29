@@ -2397,7 +2397,7 @@ app.get("/api/last-logout", async (req: Request, res: Response) => {
 
       const seoPage = await storage.getSeoPageByPath(pagePath);
 
-      if (!seoPage) {
+      if (!seoPage || !seoPage.isActive) {
         // Check if this is a job detail page pattern
         const jobPageMatch = pagePath.match(/^\/jobs\/(\d+)$/);
 
@@ -2661,7 +2661,7 @@ app.get("/api/last-logout", async (req: Request, res: Response) => {
       
       const schemaData = {
         "@context": "https://schema.org",
-        "@graph": activeSeoPages.map(page => {
+        "@graph": activeSeoPages.filter(page => page.isActive === true).map(page => {
           let structuredData;
           try {
             structuredData = page.structuredData ? JSON.parse(page.structuredData) : null;
@@ -2725,6 +2725,7 @@ app.get("/api/last-logout", async (req: Request, res: Response) => {
 
       // Get all active SEO pages
       const seoPages = await storage.getAllActiveSeoPages();
+      const activeSeoPages = seoPages.filter(page => page.isActive === true);
 
       const staticUrls = [
         { loc: 'https://niddik.com/', priority: '1.0', changefreq: 'daily' },
@@ -2795,7 +2796,7 @@ app.get("/api/last-logout", async (req: Request, res: Response) => {
 
       // Add SEO pages (avoid duplicates with static URLs)
       const staticPaths = new Set(staticUrls.map(u => u.loc.replace('https://niddik.com', '')));
-      seoPages.forEach(page => {
+      activeSeoPages.forEach(page => {
         if (!staticPaths.has(page.pagePath)) {
           const pageLastMod = page.updatedAt || new Date().toISOString();
           const formattedPageDate = new Date(pageLastMod).toISOString();
