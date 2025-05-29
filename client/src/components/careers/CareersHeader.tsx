@@ -239,7 +239,8 @@ export default function CareersHeader() {
                 </Button>
               </SheetTrigger>
               <SheetContent side="right" className="w-[300px] sm:w-[400px]">
-                <div className="flex flex-col h-full">
+                <div className="flex flex-col h-full" style="height: auto;
+                  overflow: scroll;">
                   <div className="flex items-center justify-between pb-4 border-b">
                     <Link href="/" className="flex flex-col items-start" onClick={() => setMobileMenuOpen(false)}>
                       <div className="flex flex-col items-center">
