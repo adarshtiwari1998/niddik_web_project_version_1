@@ -222,6 +222,7 @@ export default function SEOPages() {
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['/api/admin/seo-pages'] });
+      setLastSchemaUpdate(new Date().toISOString());
       setIsCreateDialogOpen(false);
       resetForm();
       toast({ title: "SEO page created successfully" });
@@ -244,6 +245,7 @@ export default function SEOPages() {
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['/api/admin/seo-pages'] });
+      setLastSchemaUpdate(new Date().toISOString());
       setIsEditDialogOpen(false);
       setEditingPage(null);
       resetForm();
@@ -282,6 +284,7 @@ export default function SEOPages() {
     },
     onSuccess: (data) => {
       queryClient.invalidateQueries({ queryKey: ['/api/admin/seo-pages'] });
+      setLastSchemaUpdate(new Date().toISOString());
       const { updated, errors } = data.data;
 
       if (updated.length > 0) {
@@ -507,6 +510,104 @@ export default function SEOPages() {
                 onChange={(e) => setSearch(e.target.value)}
                 className="pl-8"
               />
+            </div>
+          </CardContent>
+        </Card>
+
+        {/* Schema Management */}
+        <Card>
+          <CardHeader>
+            <CardTitle className="flex items-center gap-2">
+              <Code className="h-5 w-5" />
+              Schema Management
+            </CardTitle>
+            <CardDescription>
+              View and manage your public schema endpoint for Google Search Console
+            </CardDescription>
+          </CardHeader>
+          <CardContent className="space-y-4">
+            <div className="bg-muted p-4 rounded-lg">
+              <div className="flex items-center justify-between">
+                <div>
+                  <h4 className="font-medium">Public Schema URL</h4>
+                  <p className="text-sm text-muted-foreground mt-1">
+                    This URL contains all active SEO pages in JSON-LD format for search engines
+                  </p>
+                  <code className="text-sm bg-background px-2 py-1 rounded mt-2 inline-block">
+                    {window.location.origin}/schema
+                  </code>
+                </div>
+                <div className="flex gap-2">
+                  <Button
+                    variant="outline"
+                    size="sm"
+                    onClick={() => {
+                      navigator.clipboard.writeText(`${window.location.origin}/schema`);
+                      toast({ title: "URL copied to clipboard" });
+                    }}
+                  >
+                    Copy URL
+                  </Button>
+                  <Button
+                    variant="outline"
+                    size="sm"
+                    onClick={() => window.open(`${window.location.origin}/schema`, '_blank')}
+                  >
+                    <Globe className="h-4 w-4 mr-2" />
+                    View Schema
+                  </Button>
+                </div>
+              </div>
+            </div>
+
+            <div className="bg-muted p-4 rounded-lg">
+              <div className="flex items-center justify-between">
+                <div>
+                  <h4 className="font-medium">Robots.txt URL</h4>
+                  <p className="text-sm text-muted-foreground mt-1">
+                    Automatically generated robots.txt file for search engine crawlers
+                  </p>
+                  <code className="text-sm bg-background px-2 py-1 rounded mt-2 inline-block">
+                    {window.location.origin}/robots.txt
+                  </code>
+                </div>
+                <div className="flex gap-2">
+                  <Button
+                    variant="outline"
+                    size="sm"
+                    onClick={() => {
+                      navigator.clipboard.writeText(`${window.location.origin}/robots.txt`);
+                      toast({ title: "URL copied to clipboard" });
+                    }}
+                  >
+                    Copy URL
+                  </Button>
+                  <Button
+                    variant="outline"
+                    size="sm"
+                    onClick={() => window.open(`${window.location.origin}/robots.txt`, '_blank')}
+                  >
+                    <FileText className="h-4 w-4 mr-2" />
+                    View Robots.txt
+                  </Button>
+                </div>
+              </div>
+            </div>
+
+            {lastSchemaUpdate && (
+              <div className="text-sm text-muted-foreground">
+                Last schema update: {new Date(lastSchemaUpdate).toLocaleString()}
+              </div>
+            )}
+
+            <div className="text-sm text-muted-foreground">
+              <strong>For Google Search Console:</strong>
+              <ol className="list-decimal list-inside mt-2 space-y-1">
+                <li>Copy the schema URL above</li>
+                <li>Go to Google Search Console → Sitemaps</li>
+                <li>Add the schema URL as a sitemap</li>
+                <li>Submit for indexing</li>
+              </ol>
             </div>
           </CardContent>
         </Card>
