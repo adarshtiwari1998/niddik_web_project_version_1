@@ -963,7 +963,6 @@ export const storage = {
   },
 
   async getRootSeoPage(): Promise<SeoPage | undefined> {
-Applying the requested changes to the code, including adding password reset token storage methods and updating imports.```text
     return db.query.seoPages.findFirst({
       where: and(eq(seoPages.pagePath, '/'), eq(seoPages.isActive, true))
     });
