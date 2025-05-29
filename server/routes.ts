@@ -1114,6 +1114,145 @@ export async function registerRoutes(app: Express): Promise<Server> {
   });
 
 
+  // Forgot password endpoint
+  app.post('/api/forgot-password', async (req, res) => {
+    try {
+      const { email } = req.body;
+
+      if (!email) {
+        return res.status(400).json({
+          success: false,
+          message: "Email is required"
+        });
+      }
+
+      // Find user by email
+      const user = await storage.getUserByEmail(email);
+      if (!user) {
+        // Don't reveal if email exists or not for security
+        return res.status(200).json({
+          success: true,
+          message: "If an account with this email exists, a password reset link has been sent."
+        });
+      }
+
+      // Generate reset token
+      const resetToken = randomBytes(32).toString('hex');
+      const expiresAt = new Date(Date.now() + 60 * 60 * 1000); // 1 hour from now
+
+      // Store reset token in database
+      await storage.createPasswordResetToken({
+        userId: user.id,
+        token: resetToken,
+        expiresAt,
+        used: false
+      });
+
+      // Send reset email
+      await emailService.sendPasswordResetEmail(user.email, user.fullName || user.username, resetToken);
+
+      return res.status(200).json({
+        success: true,
+        message: "If an account with this email exists, a password reset link has been sent."
+      });
+    } catch (error) {
+      console.error('Forgot password error:', error);
+      return res.status(500).json({
+        success: false,
+        message: "Internal server error"
+      });
+    }
+  });
+
+  // Verify reset token endpoint
+  app.get('/api/verify-reset-token/:token', async (req, res) => {
+    try {
+      const { token } = req.params;
+
+      if (!token) {
+        return res.status(400).json({
+          success: false,
+          message: "Token is required"
+        });
+      }
+
+      const resetToken = await storage.getPasswordResetToken(token);
+      
+      if (!resetToken || resetToken.used || new Date() > resetToken.expiresAt) {
+        return res.status(400).json({
+          success: false,
+          message: "Invalid or expired token"
+        });
+      }
+
+      return res.status(200).json({
+        success: true,
+        message: "Token is valid"
+      });
+    } catch (error) {
+      console.error('Token verification error:', error);
+      return res.status(500).json({
+        success: false,
+        message: "Internal server error"
+      });
+    }
+  });
+
+  // Reset password endpoint
+  app.post('/api/reset-password', async (req, res) => {
+    try {
+      const { token, newPassword } = req.body;
+
+      if (!token || !newPassword) {
+        return res.status(400).json({
+          success: false,
+          message: "Token and new password are required"
+        });
+      }
+
+      const resetToken = await storage.getPasswordResetToken(token);
+      
+      if (!resetToken || resetToken.used || new Date() > resetToken.expiresAt) {
+        return res.status(400).json({
+          success: false,
+          message: "Invalid or expired token"
+        });
+      }
+
+      // Get user
+      const user = await storage.getUserById(resetToken.userId);
+      if (!user) {
+        return res.status(404).json({
+          success: false,
+          message: "User not found"
+        });
+      }
+
+      // Hash new password
+      const hashedPassword = await hashPassword(newPassword);
+
+      // Update user password
+      await storage.updateUserPassword(user.id, hashedPassword);
+
+      // Mark token as used
+      await storage.markPasswordResetTokenAsUsed(resetToken.id);
+
+      // Send confirmation email
+      await emailService.sendPasswordResetConfirmation(user.email, user.fullName || user.username);
+
+      return res.status(200).json({
+        success: true,
+        message: "Password reset successfully"
+      });
+    } catch (error) {
+      console.error('Reset password error:', error);
+      return res.status(500).json({
+        success: false,
+        message: "Internal server error"
+      });
+    }
+  });
+
   // Get user's job applications with pagination and filtering
   app.get('/api/my-applications', async (req: AuthenticatedRequest, res) => {
     try {

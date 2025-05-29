@@ -1,34 +1,38 @@
 import { db } from "@db";
 import { 
+  users, 
   contactSubmissions, 
   testimonials, 
-  clients,
-  jobListings,
+  clients, 
+  jobListings, 
   jobApplications,
-  users,
   submittedCandidates,
   demoRequests,
-  passwordResetTokens,
-  InsertContactSubmission,
-  ContactSubmission,
-  Testimonial,
-  Client,
-  JobListing,
-  InsertJobListing,
-  JobApplication,
-  InsertJobApplication,
-  User,
-  InsertUser,
-  SubmittedCandidate,
-  InsertSubmittedCandidate,
-  DemoRequest,
-  InsertDemoRequest,
-  PasswordResetToken,
-  InsertPasswordResetToken,
   seoPages,
-  seoPageSchema,
-  SeoPage,
-  InsertSeoPage
+  adminSessions,
+  sessions,
+  passwordResetTokens,
+  type User, 
+  type ContactSubmission, 
+  type InsertContactSubmission,
+  type Testimonial,
+  type Client,
+  type JobListing,
+  type InsertJobListing,
+  type JobApplication,
+  type InsertJobApplication,
+  type SubmittedCandidate,
+  type InsertSubmittedCandidate,
+  type DemoRequest,
+  type InsertDemoRequest,
+  type SeoPage,
+  type InsertSeoPage,
+  type AdminSession,
+  type InsertAdminSession,
+  type Session,
+  type InsertSession,
+  type PasswordResetToken,
+  type InsertPasswordResetToken
 } from "@shared/schema";
 import { eq, desc, and, like, or, asc, inArray, sql, ilike, count } from "drizzle-orm";
 
@@ -959,6 +963,7 @@ export const storage = {
   },
 
   async getRootSeoPage(): Promise<SeoPage | undefined> {
+Applying the requested changes to the code, including adding password reset token storage methods and updating imports.```text
     return db.query.seoPages.findFirst({
       where: and(eq(seoPages.pagePath, '/'), eq(seoPages.isActive, true))
     });
