@@ -34,7 +34,7 @@ interface SEOProps {
   fallback?: Partial<SEOData>;
 }
 
-const SEO: React.FC<SEOProps> = ({ pagePath, fallback }) => {
+export const SEO: React.FC<SEOProps> = ({ pagePath, fallback }) => {
   const [location] = useLocation();
   const currentPath = pagePath || location;
 
