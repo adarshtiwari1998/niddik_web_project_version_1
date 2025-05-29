@@ -712,7 +712,7 @@ class EmailService {
                 <li><strong>🏢 Company:</strong> ${company}</li>
                 <li><strong>📊 Previous Status:</strong> ${oldStatus.charAt(0).toUpperCase() + oldStatus.slice(1)}</li>
                 <li><strong>🔄 New Status:</strong> <span style="color: ${statusInfo.color}; font-weight: bold;">${newStatus.charAt(0).toUpperCase() + newStatus.slice(1)}</span></li>
-                <li><strong>📅 Updated On:</strong> ${formatInTimeZone(new Date(), 'Asia/Kolkata', 'MMMM dd, yyyy \'at\' hh:mm a zzz')}</li>
+                <li><strong>📅 Updated On:</strong> ${formatInTimeZone(new Date(), 'Asia/Kolkata', 'MMMM dd, yyyy \'at\' hh:mm a')} IST</li>
             </ul>
         </div>
 
@@ -802,7 +802,7 @@ class EmailService {
                 <li><strong>🏢 Company:</strong> ${company}</li>
                 <li><strong>👤 Candidate:</strong> ${userName}</li>
                 <li><strong>📧 Candidate Email:</strong> ${userEmail}</li>
-                <li><strong>📅 Updated On:</strong> ${formatInTimeZone(new Date(), 'Asia/Kolkata', 'MMMM dd, yyyy \'at\' hh:mm a zzz')}</li>
+                <li><strong>📅 Updated On:</strong> ${formatInTimeZone(new Date(), 'Asia/Kolkata', 'MMMM dd, yyyy \'at\' hh:mm a')} IST</li>
                 <li><strong>👨‍💼 Updated By:</strong> ${adminName}</li>
             </ul>
         </div>
@@ -863,5 +863,3 @@ class EmailService {
 }
 
 export const emailService = new EmailService();
-
-//The code has been updated to format dates in IST timezone using formatInTimeZone where appropriate.
