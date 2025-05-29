@@ -118,19 +118,78 @@ const CareersFooter = () => {
               <Link href="/why-us" className="block text-sm text-gray-600 hover:text-blue-600 transition-colors">
                 Why Choose Us
               </Link>
-              <Link href="/services" className="block text-sm text-gray-600 hover:text-blue-600 transition-colors">
-                Services
-              </Link>
               <Link href="/adaptive-hiring" className="block text-sm text-gray-600 hover:text-blue-600 transition-colors">
                 Adaptive Hiring
               </Link>
               <Link href="/whitepaper" className="block text-sm text-gray-600 hover:text-blue-600 transition-colors">
                 Whitepaper
               </Link>
+              <Link href="/leadership-team" className="block text-sm text-gray-600 hover:text-blue-600 transition-colors">
+                Leadership Team
+              </Link>
             </div>
           </div>
 
-          {/* Contact Us Section - Compact */}
+          {/* Services Section */}
+          <div className="space-y-4">
+            <h3 className="text-lg font-semibold text-gray-900">SERVICES</h3>
+            <div className="space-y-2">
+              <Link href="/services" className="block text-sm text-gray-600 hover:text-blue-600 transition-colors">
+                All Services
+              </Link>
+              <Link href="/services/full-rpo" className="block text-sm text-gray-600 hover:text-blue-600 transition-colors">
+                Full RPO
+              </Link>
+              <Link href="/services/hybrid-rpo" className="block text-sm text-gray-600 hover:text-blue-600 transition-colors">
+                Hybrid RPO
+              </Link>
+              <Link href="/services/on-demand" className="block text-sm text-gray-600 hover:text-blue-600 transition-colors">
+                On-Demand
+              </Link>
+              <Link href="/services/contingent" className="block text-sm text-gray-600 hover:text-blue-600 transition-colors">
+                Contingent
+              </Link>
+              <Link href="/web-app-solutions" className="block text-sm text-gray-600 hover:text-blue-600 transition-colors">
+                Web Solutions
+              </Link>
+            </div>
+          </div>
+
+          {/* Resources Section */}
+          <div className="space-y-4">
+            <h3 className="text-lg font-semibold text-gray-900">RESOURCES</h3>
+            <div className="space-y-2">
+              <Link href="/insights" className="block text-sm text-gray-600 hover:text-blue-600 transition-colors">
+                AI Insights
+              </Link>
+              <Link href="/facts-and-trends" className="block text-sm text-gray-600 hover:text-blue-600 transition-colors">
+                Facts & Trends
+              </Link>
+              <Link href="/hiring-advice" className="block text-sm text-gray-600 hover:text-blue-600 transition-colors">
+                Hiring Advice
+              </Link>
+              <Link href="/career-advice" className="block text-sm text-gray-600 hover:text-blue-600 transition-colors">
+                Career Advice
+              </Link>
+              <Link href="/six-factor-recruiting-model" className="block text-sm text-gray-600 hover:text-blue-600 transition-colors">
+                6-Factor Model
+              </Link>
+              <Link href="/whitepaper" className="block text-sm text-gray-600 hover:text-blue-600 transition-colors">
+                Whitepaper
+              </Link>
+              <Link href="/testimonials" className="block text-sm text-gray-600 hover:text-blue-600 transition-colors">
+                Testimonials
+              </Link>
+              <Link href="/faqs" className="block text-sm text-gray-600 hover:text-blue-600 transition-colors">
+                FAQs
+              </Link>
+              <Link href="/corporate-social-responsibilities" className="block text-sm text-gray-600 hover:text-blue-600 transition-colors">
+                CSR
+              </Link>
+            </div>
+          </div>
+
+          {/* Contact Us Section - Moved to last position */}
           <div className="space-y-3">
             <h3 className="text-lg font-semibold text-gray-900">CONTACT US</h3>
             <div className="space-y-2">
@@ -153,31 +212,6 @@ const CareersFooter = () => {
                   info@niddik.com
                 </Link>
               </div>
-            </div>
-          </div>
-
-          {/* Additional Resources Section */}
-          <div className="space-y-4">
-            <h3 className="text-lg font-semibold text-gray-900">RESOURCES</h3>
-            <div className="space-y-2">
-              <Link href="/insights" className="block text-sm text-gray-600 hover:text-blue-600 transition-colors">
-                AI Insights
-              </Link>
-              <Link href="/facts-and-trends" className="block text-sm text-gray-600 hover:text-blue-600 transition-colors">
-                Facts & Trends
-              </Link>
-              <Link href="/hiring-advice" className="block text-sm text-gray-600 hover:text-blue-600 transition-colors">
-                Hiring Advice
-              </Link>
-              <Link href="/career-advice" className="block text-sm text-gray-600 hover:text-blue-600 transition-colors">
-                Career Advice
-              </Link>
-              <Link href="/six-factor-recruiting-model" className="block text-sm text-gray-600 hover:text-blue-600 transition-colors">
-                6-Factor Model
-              </Link>
-              <Link href="/web-app-solutions" className="block text-sm text-gray-600 hover:text-blue-600 transition-colors">
-                Web Solutions
-              </Link>
             </div>
           </div>
         </div>
