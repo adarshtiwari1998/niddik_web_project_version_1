@@ -2,6 +2,8 @@ import { pgTable, text, serial, integer, boolean, timestamp, varchar, decimal, d
 import { createInsertSchema } from "drizzle-zod";
 import { z } from "zod";
 import { relations } from "drizzle-orm";
+import { eq, desc, asc, and, or, ilike, inArray, count, gt, lt } from "drizzle-orm";
+import { passwordResetTokens, passwordResetTokenSchema, PasswordResetToken, InsertPasswordResetToken } from "./schema";
 
 export const users = pgTable("users", {
   id: serial("id").primaryKey(),

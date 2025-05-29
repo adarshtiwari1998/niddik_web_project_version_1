@@ -25,9 +25,11 @@ import {
   seoPages,
   seoPageSchema,
   SeoPage,
-  InsertSeoPage
+  InsertSeoPage,
+  passwordResetTokens,
+  PasswordResetToken
 } from "@shared/schema";
-import { eq, desc, and, like, or, asc, inArray, sql, ilike, count } from "drizzle-orm";
+import { eq, desc, and, like, or, asc, inArray, sql, ilike, count, gt, lt } from "drizzle-orm";
 
 export const storage = {
   // Contact form submissions
@@ -642,6 +644,40 @@ export const storage = {
     await db.delete(submittedCandidates).where(eq(submittedCandidates.id, id));
   },
 
+  // Password Reset Token methods
+  async createPasswordResetToken(userId: number, token: string): Promise<PasswordResetToken> {
+    const expiresAt = new Date(Date.now() + 60 * 60 * 1000); // 1 hour from now
+    const [resetToken] = await db.insert(passwordResetTokens).values({
+      userId,
+      token,
+      expiresAt,
+      used: false
+    }).returning();
+    return resetToken;
+  },
+
+  async getPasswordResetToken(token: string): Promise<PasswordResetToken | undefined> {
+    return await db.query.passwordResetTokens.findFirst({
+      where: and(
+        eq(passwordResetTokens.token, token),
+        eq(passwordResetTokens.used, false),
+        gt(passwordResetTokens.expiresAt, new Date())
+      )
+    });
+  },
+
+  async markPasswordResetTokenAsUsed(id: number): Promise<void> {
+    await db.update(passwordResetTokens)
+      .set({ used: true })
+      .where(eq(passwordResetTokens.id, id));
+  },
+
+  async deleteExpiredPasswordResetTokens(): Promise<void> {
+    await db.delete(passwordResetTokens)
+      .where(lt(passwordResetTokens.expiresAt, new Date()));
+  },
+
+  // Get analytics for submitted candidates
   async getSubmittedCandidateAnalytics(): Promise<{ 
     totalCandidates: number; 
     uniqueClients: number;

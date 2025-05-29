@@ -64,6 +64,7 @@ import ITPartners from './pages/ITPartners';
 import NonITPartners from './pages/NonITPartners';
 import HealthcarePartners from './pages/HealthcarePartners';
 import SearchPage from "@/pages/SearchPage";
+import ResetPassword from "@/pages/ResetPassword";
 import { lazy, Suspense } from "react";
 
 // Component to handle scroll restoration
@@ -139,6 +140,7 @@ function Router() {
 
             {/* Auth Routes */}
             <Route path="/auth" component={AuthPage} />
+            <Route path="/reset-password" component={ResetPassword} />
             <Route path="/admin/login" component={AdminLogin} />
 
             {/* Admin Routes - Require admin role */}

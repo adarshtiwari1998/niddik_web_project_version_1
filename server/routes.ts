@@ -3051,3 +3051,307 @@ app.get("/api/admin/check", async (req: Request, res: Response) => {
   const httpServer = createServer(app);
   return httpServer;
 }
+
+// Email service setup (insert at the top)
+import { createTransport } from 'nodemailer';
+
+// Load environment variables for email configuration
+const emailConfig = {
+  host: process.env.EMAIL_HOST,
+  port: parseInt(process.env.EMAIL_PORT || '587'), // Default to 587 if not specified
+  secure: process.env.EMAIL_SECURE === 'true', // Use TLS
+  auth: {
+    user: process.env.EMAIL_USER,
+    pass: process.env.EMAIL_PASS,
+  },
+};
+
+// Create reusable transporter object using the default SMTP transport
+const transporter = createTransport(emailConfig);
+
+const emailService = {
+  sendWelcomeEmail: async (to: string, name: string) => {
+    const mailOptions = {
+      from: `"Niddik Jobs" <${process.env.EMAIL_USER}>`,
+      to,
+      subject: 'Welcome to Niddik Jobs!',
+      html: `
+        <!DOCTYPE html>
+        <html>
+        <head>
+        <meta charset="utf-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <style>
+        body { font-family: Arial, sans-serif; line-height: 1.6; color: #333; }
+        .container { max-width: 600px; margin: auto; padding: 20px; border: 1px solid #ddd; }
+        .header { background-color: #0056b3; color: white; padding: 10px; text-align: center; }
+        .footer { margin-top: 20px; text-align: center; color: #777; }
+        </style>
+        </head>
+        <body>
+        <div class="container">
+          <div class="header">
+            <h1>Welcome to Niddik Jobs!</h1>
+          </div>
+          <p>Dear ${name},</p>
+          <p>Thank you for registering with Niddik Jobs. We are excited to have you on board!</p>
+          <p>Start exploring job opportunities tailored to your skills and experience.</p>
+          <p>If you have any questions, feel free to contact us.</p>
+          <div class="footer">
+            <p>Sincerely,<br>The Niddik Jobs Team</p>
+          </div>
+        </div>
+        </body>
+        </html>
+      `,
+    };
+
+    try {
+      await transporter.sendMail(mailOptions);
+      console.log(`Welcome email sent to ${to}`);
+    } catch (error) {
+      console.error(`Failed to send welcome email to ${to}:`, error);
+      throw error; // Re-throw to be caught by the route handler
+    }
+  },
+
+  sendLoginNotification: async (to: string, name: string, loginTime: string) => {
+    const mailOptions = {
+      from: `"Niddik Jobs" <${process.env.EMAIL_USER}>`,
+      to,
+      subject: 'Niddik Jobs - New Login Notification',
+      html: `
+        <!DOCTYPE html>
+        <html>
+        <head>
+        <meta charset="utf-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <style>
+        body { font-family: Arial, sans-serif; line-height: 1.6; color: #333; }
+        .container { max-width: 600px; margin: auto; padding: 20px; border: 1px solid #ddd; }
+        .header { background-color: #0056b3; color: white; padding: 10px; text-align: center; }
+        .footer { margin-top: 20px; text-align: center; color: #777; }
+        </style>
+        </head>
+        <body>
+        <div class="container">
+          <div class="header">
+            <h1>Login Notification</h1>
+          </div>
+          <p>Dear ${name},</p>
+          <p>A new login to your Niddik Jobs account was detected.</p>
+          <p>Login Time: ${loginTime}</p>
+          <p>If you did not log in, please contact us immediately to secure your account.</p>
+          <div class="footer">
+            <p>Sincerely,<br>The Niddik Jobs Team</p>
+          </div>
+        </div>
+        </body>
+        </html>
+      `,
+    };
+
+    try {
+      await transporter.sendMail(mailOptions);
+      console.log(`Login notification sent to ${to}`);
+    } catch (error) {
+      console.error(`Failed to send login notification to ${to}:`, error);
+      throw error; // Re-throw to be caught by the route handler
+    }
+  },
+};
+
+import passport from "passport";
+import jwt from 'jsonwebtoken';
+import { adminUsers } from "@shared/schema";
+
+// Admin routes for login
+export function setupAuth(app: Express): void {
+  app.post('/auth/register', async (req, res, next) => {
+    try {
+      const { username, password, email, fullName } = req.body;
+
+      if (!username || !password || !email) {
+        return res.status(400).json({
+          success: false,
+          message: "Username, password, and email are required"
+        });
+      }
+
+      // Check if the username or email already exists
+      const existingUser = await storage.getUserByUsername(username);
+      if (existingUser) {
+        return res.status(400).json({
+          success: false,
+          message: "Username already exists"
+        });
+      }
+
+      const existingEmail = await storage.getUserByEmail(email);
+      if (existingEmail) {
+        return res.status(400).json({
+          success: false,
+          message: "Email already exists"
+        });
+      }
+
+      // Hash the password
+      const hashedPassword = await hashPassword(password);
+
+      // Create the user
+      const user = await storage.createUser({
+        username,
+        password: hashedPassword,
+        email,
+        fullName
+      });
+
+      // Log the user in after registration
+      req.login(user, async (err) => {
+        if (err) return next(err);
+
+        // Send welcome email
+        try {
+          await emailService.sendWelcomeEmail(user.email, user.fullName || user.username);
+        } catch (emailError) {
+          console.error('Failed to send welcome email:', emailError);
+          // Don't fail registration if email fails
+        }
+
+        // Generate JWT token
+        const token = generateToken(user);
+
+        // Return user without password, and include token
+        const { password, ...userWithoutPassword } = user;
+        res.status(201).json({
+          ...userWithoutPassword,
+          token
+        });
+      });
+    } catch (error) {
+      console.error('Error registering user:', error);
+      return res.status(500).json({
+        success: false,
+        message: "Internal server error"
+      });
+    }
+  });
+
+  app.post('/auth/login', (req, res, next) => {
+    passport.authenticate('local', async (err, user, info) => {
+      if (err) {
+        console.error('Authentication error:', err);
+        return res.status(500).json({
+          success: false,
+          message: "Internal server error"
+        });
+      }
+
+      if (!user) {
+        console.log('Authentication failed:', info);
+        return res.status(401).json({
+          success: false,
+          message: info.message
+        });
+      }
+
+      req.login(user, async (err) => {
+                if (err) return next(err);
+
+                console.log("Logged-in user:", user);
+
+                // Send login notification email (except for admin)
+                if (user.role !== 'admin') {
+                  try {
+                    const loginTime = new Date().toLocaleString();
+                    await emailService.sendLoginNotification(
+                      user.email, 
+                      user.fullName || user.username, 
+                      loginTime
+                    );
+                  } catch (emailError) {
+                    console.error('Failed to send login notification:', emailError);
+                    // Don't fail login if email fails
+                  }
+                }
+
+                if (user.role === "admin") {
+          // Generate JWT token for admin
+          const token = generateToken(user);
+          const { password, ...userData } = user;
+          return res.status(200).json({
+            ...userData,
+            token: token,
+            isAdmin: true
+          });
+        }
+
+        // Generate JWT token for regular user
+        const token = generateToken(user);
+        const { password, ...userData } = user;
+        return res.status(200).json({
+          ...userData,
+          token: token,
+          isAdmin: false
+        });
+      });
+    })(req, res, next);
+  });
+
+  app.get('/auth/logout', (req, res) => {
+    if (req.isAuthenticated()) {
+      // Save the last logout time
+      storage.updateLastLogout(req.user.id, new Date());
+
+      // Logout the user
+      req.logout((err) => {
+        if (err) {
+          console.error('Logout error:', err);
+          return res.status(500).json({
+            success: false,
+            message: "Failed to logout"
+          });
+        }
+
+        // Clear session
+        req.session.destroy((err) => {
+          if (err) {
+            console.error('Session destroy error:', err);
+            return res.status(500).json({
+              success: false,
+              message: "Failed to destroy session"
+            });
+          }
+
+          res.clearCookie('connect.sid');
+          return res.status(200).json({
+            success: true,
+            message: "Logged out successfully"
+          });
+        });
+      });
+    } else {
+      console.log('User is not authenticated');
+      return res.status(401).json({
+        success: false,
+        message: "Not authenticated"
+      });
+    }
+  });
+
+  function generateToken(user: any) {
+    const payload = {
+      user: {
+        id: user.id,
+        username: user.username,
+        email: user.email,
+        role: user.role
+      }
+    };
+
+    const token = jwt.sign(payload, process.env.JWT_SECRET!, {
+      expiresIn: '12h'
+    });
+    return token;
+  }
+}
