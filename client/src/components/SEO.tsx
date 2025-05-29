@@ -56,8 +56,10 @@ const SEO: React.FC<SEOProps> = ({ pagePath, fallback }) => {
         <meta name="author" content="Niddik" />
 
         {/* Favicon and icons */}
-        <link rel="icon" type="image/png" href="/images/niddik_logo.png" />
-        <link rel="apple-touch-icon" href="/images/niddik_logo.png" />
+        <link rel="icon" type="image/png" sizes="32x32" href="/images/niddik_logo.png" />
+        <link rel="icon" type="image/png" sizes="16x16" href="/images/niddik_logo.png" />
+        <link rel="apple-touch-icon" sizes="180x180" href="/images/niddik_logo.png" />
+        <link rel="shortcut icon" href="/images/niddik_logo.png" />
       </Helmet>
     );
   }
@@ -403,8 +405,10 @@ const SEO: React.FC<SEOProps> = ({ pagePath, fallback }) => {
       <meta name="author" content="Niddik" />
 
       {/* Favicon and icons */}
-      <link rel="icon" type="image/png" href="/images/niddik_logo.png" />
-      <link rel="apple-touch-icon" href="/images/niddik_logo.png" />
+      <link rel="icon" type="image/png" sizes="32x32" href="/images/niddik_logo.png" />
+      <link rel="icon" type="image/png" sizes="16x16" href="/images/niddik_logo.png" />
+      <link rel="apple-touch-icon" sizes="180x180" href="/images/niddik_logo.png" />
+      <link rel="shortcut icon" href="/images/niddik_logo.png" />
     </Helmet>
   );
 };

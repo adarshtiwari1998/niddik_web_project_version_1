@@ -499,6 +499,10 @@ export default function SEOPages() {
                 setFormData={setFormData}
                 onSubmit={() => createMutation.mutate(formData)}
                 isLoading={createMutation.isPending}
+                onCancel={() => {
+                  setIsCreateDialogOpen(false);
+                  resetForm();
+                }}
               />
             </Dialog>
           </div>
@@ -836,6 +840,11 @@ export default function SEOPages() {
             onSubmit={() => editingPage && updateMutation.mutate({ id: editingPage.id, data: formData })}
             isLoading={updateMutation.isPending}
             isEdit={true}
+            onCancel={() => {
+              setIsEditDialogOpen(false);
+              setEditingPage(null);
+              resetForm();
+            }}
           />
         </Dialog>
       </div>
@@ -851,9 +860,10 @@ interface SEOPageDialogProps {
   onSubmit: () => void;
   isLoading: boolean;
   isEdit?: boolean;
+  onCancel: () => void;
 }
 
-function SEOPageDialog({ title, formData, setFormData, onSubmit, isLoading, isEdit }: SEOPageDialogProps) {
+function SEOPageDialog({ title, formData, setFormData, onSubmit, isLoading, isEdit, onCancel }: SEOPageDialogProps) {
   const { toast } = useToast();
     const [uploadingImage, setUploadingImage] = useState(false);
   const [uploadedImageUrl, setUploadedImageUrl] = useState<string>("");
@@ -1393,7 +1403,7 @@ function SEOPageDialog({ title, formData, setFormData, onSubmit, isLoading, isEd
       </div>
 
       <DialogFooter>
-        <Button type="button" variant="outline" onClick={() => {}}>
+        <Button type="button" variant="outline" onClick={onCancel}>
           Cancel
         </Button>
         <Button onClick={onSubmit} disabled={isLoading}>
