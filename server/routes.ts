@@ -2820,3 +2820,38 @@ app.get("/api/last-logout", async (req: Request, res: Response) => {
         { loc: 'https://niddik.com/testimonials', priority: '0.6', changefreq: 'monthly' },
         { loc: 'https://niddik.com/facts-and-trends', priority: '0.6', changefreq: 'weekly' }
       ];
+
+      // Generate job listing URLs
+      const jobUrls = jobListings.jobListings.map(job => ({
+        loc: `https://niddik.com/jobs/${job.id}`,
+        priority: '0.8',
+        changefreq: 'weekly',
+        lastmod: job.postedDate || new Date().toISOString().split('T')[0]
+      }));
+
+      // Combine all URLs
+      const allUrls = [...staticUrls, ...jobUrls];
+
+      // Build sitemap XML
+      const sitemap = `<?xml version="1.0" encoding="UTF-8"?>
+<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
+${allUrls.map(url => `  <url>
+    <loc>${url.loc}</loc>
+    <changefreq>${url.changefreq}</changefreq>
+    <priority>${url.priority}</priority>
+    ${url.lastmod ? `<lastmod>${url.lastmod}</lastmod>` : ''}
+  </url>`).join('\n')}
+</urlset>`;
+
+      res.setHeader('Content-Type', 'application/xml');
+      res.setHeader('Cache-Control', 'public, max-age=3600'); // Cache for 1 hour
+      return res.send(sitemap);
+    } catch (error) {
+      console.error('Error generating sitemap:', error);
+      return res.status(500).send('Error generating sitemap');
+    }
+  });
+
+  const server = createServer(app);
+  return server;
+}
