@@ -2654,6 +2654,116 @@ app.get("/api/last-logout", async (req: Request, res: Response) => {
     }
   });
 
+  // Public schema endpoint for Google Search Console
+  app.get('/schema', async (req, res) => {
+    try {
+      const activeSeoPages = await storage.getAllActiveSeoPages();
+      
+      const schemaData = {
+        "@context": "https://schema.org",
+        "@graph": activeSeoPages.map(page => {
+          let structuredData;
+          try {
+            structuredData = page.structuredData ? JSON.parse(page.structuredData) : null;
+          } catch (error) {
+            console.error(`Error parsing structured data for page ${page.pagePath}:`, error);
+            structuredData = null;
+          }
+
+          return {
+            "@type": "WebPage",
+            "@id": `https://niddik.com${page.pagePath}`,
+            "url": page.canonicalUrl || `https://niddik.com${page.pagePath}`,
+            "name": page.pageTitle,
+            "description": page.metaDescription,
+            "isPartOf": {
+              "@type": "WebSite",
+              "@id": "https://niddik.com/#website",
+              "name": "Niddik",
+              "url": "https://niddik.com"
+            },
+            "dateModified": page.updatedAt,
+            "breadcrumb": {
+              "@type": "BreadcrumbList",
+              "itemListElement": [{
+                "@type": "ListItem",
+                "position": 1,
+                "name": "Home",
+                "item": "https://niddik.com"
+              }, {
+                "@type": "ListItem", 
+                "position": 2,
+                "name": page.pageTitle,
+                "item": page.canonicalUrl || `https://niddik.com${page.pagePath}`
+              }]
+            },
+            ...(structuredData && typeof structuredData === 'object' ? structuredData : {})
+          };
+        })
+      };
+
+      res.setHeader('Content-Type', 'application/ld+json');
+      res.setHeader('Cache-Control', 'public, max-age=3600'); // Cache for 1 hour
+      return res.json(schemaData);
+    } catch (error) {
+      console.error('Error generating schema data:', error);
+      return res.status(500).json({
+        error: "Failed to generate schema data"
+      });
+    }
+  });
+
+  // Robots.txt endpoint
+  app.get('/robots.txt', async (req, res) => {
+    try {
+      const robotsContent = `User-agent: *
+Allow: /
+
+# Sitemaps
+Sitemap: https://niddik.com/sitemap.xml
+Sitemap: https://niddik.com/schema
+
+# Specific rules for search engines
+User-agent: Googlebot
+Allow: /
+Crawl-delay: 1
+
+User-agent: Bingbot
+Allow: /
+Crawl-delay: 1
+
+# Disallow admin areas
+Disallow: /admin/
+Disallow: /api/
+Disallow: /auth/
+
+# Allow important pages
+Allow: /careers
+Allow: /jobs/
+Allow: /services/
+Allow: /about-us
+Allow: /contact
+Allow: /request-demo
+
+# SEO optimized pages
+Allow: /insights
+Allow: /hiring-advice
+Allow: /career-advice
+Allow: /whitepaper
+Allow: /facts-and-trends
+
+# Updated: ${new Date().toISOString()}
+`;
+
+      res.setHeader('Content-Type', 'text/plain');
+      res.setHeader('Cache-Control', 'public, max-age=86400'); // Cache for 24 hours
+      return res.send(robotsContent);
+    } catch (error) {
+      console.error('Error generating robots.txt:', error);
+      return res.status(500).send('Error generating robots.txt');
+    }
+  });
+
   // Check current user (admin or regular)
 app.get("/api/user", async (req: Request, res: Response) => {
   try {

@@ -920,6 +920,21 @@ export const storage = {
     }
   },
 
+  async getAllActiveSeoPages() {
+    try {
+      const pages = await db
+        .select()
+        .from(seoPages)
+        .where(eq(seoPages.isActive, true))
+        .orderBy(asc(seoPages.pagePath));
+      
+      return pages;
+    } catch (error) {
+      console.error('Error fetching active SEO pages:', error);
+      throw error;
+    }
+  }
+
   async updateAllSeoJobPages(): Promise<{ updated: string[], errors: string[] }> {
     const results = { updated: [], errors: [] };
     const pagesToUpdate = ['/', '/careers'];

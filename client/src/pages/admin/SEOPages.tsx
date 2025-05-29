@@ -171,6 +171,7 @@ export default function SEOPages() {
   const [search, setSearch] = useState("");
   const [uploadingImage, setUploadingImage] = useState(false);
   const [uploadedImageUrl, setUploadedImageUrl] = useState<string>("");
+  const [lastSchemaUpdate, setLastSchemaUpdate] = useState<string | null>(null);
 
   // Form state
   const [formData, setFormData] = useState({
@@ -639,6 +640,7 @@ function SEOPageDialog({ title, formData, setFormData, onSubmit, isLoading, isEd
   const { toast } = useToast();
     const [uploadingImage, setUploadingImage] = useState(false);
   const [uploadedImageUrl, setUploadedImageUrl] = useState<string>("");
+  const [lastSchemaUpdate, setLastSchemaUpdate] = useState<string | null>(null);
   const queryClient = useQueryClient();
   const handleInputChange = (field: string, value: any) => {
     setFormData((prev: any) => {
@@ -664,7 +666,7 @@ function SEOPageDialog({ title, formData, setFormData, onSubmit, isLoading, isEd
       setFormData(prev => ({ ...prev, [field]: url }));
       setUploadedImageUrl("");
     };
-    
+
       const imageUploadMutation = useMutation({
     mutationFn: async (file: File) => {
       const formData = new FormData();
