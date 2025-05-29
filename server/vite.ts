@@ -610,7 +610,18 @@ export async function serveStatic(app: Express) {
     <meta name="twitter:title" content="${seoData.ogTitle || seoData.pageTitle}" />
     <meta name="twitter:description" content="${seoData.ogDescription || seoData.metaDescription}" />`;
 
+      // Add custom head scripts if they exist
+      if (seoData.headScripts) {
+        metaTags += `\n\n    <!-- Custom Head Scripts -->\n    ${seoData.headScripts}`;
+      }
+
       html = html.replace('</title>', `</title>${metaTags}`);
+
+      // Add custom body scripts if they exist
+      if (seoData.bodyScripts) {
+        const bodyScripts = `\n    <!-- Custom Body Scripts -->\n    ${seoData.bodyScripts}\n  `;
+        html = html.replace('</body>', `${bodyScripts}</body>`);
+      }
 
       res.send(html);
     } catch (error) {

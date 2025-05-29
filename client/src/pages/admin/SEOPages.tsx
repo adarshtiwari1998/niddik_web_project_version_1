@@ -16,6 +16,7 @@ import { Plus, Edit, Trash2, Globe, Search, Image, Code, FileText, Upload, X, Lo
 import { useToast } from "@/hooks/use-toast";
 import AdminLayout from "@/components/layout/AdminLayout";
 import { Helmet } from 'react-helmet-async';
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
 
 interface SeoPage {
   id: number;
@@ -40,6 +41,8 @@ interface SeoPage {
   itemPropName?: string;
   itemPropDescription?: string;
   itemPropImage?: string;
+  headScripts?: string;
+  bodyScripts?: string;
   isActive: boolean;
   createdAt: string;
   updatedAt: string;
@@ -175,27 +178,29 @@ export default function SEOPages() {
 
   // Form state
   const [formData, setFormData] = useState({
-    pagePath: "",
-    pageTitle: "",
-    metaDescription: "",
-    metaKeywords: "",
-    ogTitle: "",
-    ogDescription: "",
-    ogImage: "",
-    ogType: "website",
-    ogUrl: "",
-    twitterCard: "summary_large_image",
-    twitterSite: "@niddik",
-    twitterTitle: "",
-    twitterDescription: "",
-    twitterImage: "",
-    twitterCreator: "@niddik",
-    canonicalUrl: "",
-    robotsDirective: "index,follow",
-    structuredData: JSON.stringify(getDefaultStructuredData(""), null, 2),
-    itemPropName: "",
-    itemPropDescription: "",
-    itemPropImage: "",
+    pagePath: '',
+    pageTitle: '',
+    metaDescription: '',
+    metaKeywords: '',
+    ogTitle: '',
+    ogDescription: '',
+    ogImage: '',
+    ogType: 'website',
+    ogUrl: '',
+    twitterCard: 'summary_large_image',
+    twitterSite: '',
+    twitterTitle: '',
+    twitterDescription: '',
+    twitterImage: '',
+    twitterCreator: '',
+    canonicalUrl: '',
+    robotsDirective: 'index,follow',
+    structuredData: '',
+    itemPropName: '',
+    itemPropDescription: '',
+    itemPropImage: '',
+    headScripts: '',
+    bodyScripts: '',
     isActive: true,
   });
 
@@ -369,27 +374,29 @@ export default function SEOPages() {
 
   const resetForm = () => {
     setFormData({
-      pagePath: "",
-      pageTitle: "",
-      metaDescription: "",
-      metaKeywords: "",
-      ogTitle: "",
-      ogDescription: "",
-      ogImage: "",
-      ogType: "website",
-      ogUrl: "",
-      twitterCard: "summary_large_image",
-      twitterSite: "@niddik",
-      twitterTitle: "",
-      twitterDescription: "",
-      twitterImage: "",
-      twitterCreator: "@niddik",
-      canonicalUrl: "",
-      robotsDirective: "index,follow",
+      pagePath: '',
+      pageTitle: '',
+      metaDescription: '',
+      metaKeywords: '',
+      ogTitle: '',
+      ogDescription: '',
+      ogImage: '',
+      ogType: 'website',
+      ogUrl: '',
+      twitterCard: 'summary_large_image',
+      twitterSite: '',
+      twitterTitle: '',
+      twitterDescription: '',
+      twitterImage: '',
+      twitterCreator: '',
+      canonicalUrl: '',
+      robotsDirective: 'index,follow',
       structuredData: JSON.stringify(getDefaultStructuredData(""), null, 2),
-      itemPropName: "",
-      itemPropDescription: "",
-      itemPropImage: "",
+      itemPropName: '',
+      itemPropDescription: '',
+      itemPropImage: '',
+      headScripts: '',
+      bodyScripts: '',
       isActive: true,
     });
   };
@@ -423,6 +430,8 @@ export default function SEOPages() {
       itemPropName: page.itemPropName || "",
       itemPropDescription: page.itemPropDescription || "",
       itemPropImage: page.itemPropImage || "",
+      headScripts: page.headScripts || '',
+      bodyScripts: page.bodyScripts || '',
       isActive: page.isActive,
     });
     setIsEditDialogOpen(true);
@@ -889,434 +898,644 @@ function SEOPageDialog({ title, formData, setFormData, onSubmit, isLoading, isEd
       </DialogHeader>
 
       <div className="space-y-6">
+        <Tabs defaultValue="basic" className="space-y-4">
+                <TabsList className="grid w-full grid-cols-7">
+                  <TabsTrigger value="basic">Basic</TabsTrigger>
+                  <TabsTrigger value="opengraph">Open Graph</TabsTrigger>
+                  <TabsTrigger value="twitter">Twitter</TabsTrigger>
+                  <TabsTrigger value="technical">Technical</TabsTrigger>
+                  <TabsTrigger value="structured">Structured</TabsTrigger>
+                  <TabsTrigger value="microdata">Microdata</TabsTrigger>
+                  <TabsTrigger value="scripts">Scripts</TabsTrigger>
+                </TabsList>
+
         {/* Basic Information */}
-        <Card>
-          <CardHeader>
-            <CardTitle className="flex items-center gap-2">
-              <FileText className="h-4 w-4" />
+        
+          
+            
+              
               Basic Information
-            </CardTitle>
-          </CardHeader>
-          <CardContent className="space-y-4">
-            <div className="grid grid-cols-1 gap-4">
-              <div>
-                <Label htmlFor="pagePath">Page Path *</Label>
+            
+          
+          
+            
+              
+                
+                Page Path *
                 {isEdit ? (
-                  <Input
-                    id="pagePath"
-                    value={formData.pagePath}
+                  
+                    
+                    {formData.pagePath}
                     disabled
                     className="bg-muted"
-                  />
+                  
                 ) : (
-                  <Select
-                    value={formData.pagePath}
-                    onValueChange={(value) => handleInputChange('pagePath', value)}
-                  >
-                    <SelectTrigger>
-                      <SelectValue placeholder="Select a page path" />
-                    </SelectTrigger>
-                    <SelectContent>
+                  
+                    
+                      
+                    
+                    
+                      Select a page path
+                    
+                    
                       {commonPaths.map((path) => (
-                        <SelectItem key={path.value} value={path.value}>
+                        
                           {path.label} ({path.value})
-                        </SelectItem>
+                        
                       ))}
-                    </SelectContent>
-                  </Select>
+                    
+                  
                 )}
                 {!isEdit && (
-                  <div className="mt-2">
-                    <Input
-                      placeholder="Or enter custom path (e.g., /custom-page)"
+                  
+                    
+                      Or enter custom path (e.g., /custom-page)
                       value={formData.pagePath.startsWith('/') && !commonPaths.find(p => p.value === formData.pagePath) ? formData.pagePath : ''}
                       onChange={(e) => handleInputChange('pagePath', e.target.value)}
-                    />
-                  </div>
+                    
+                  
                 )}
-              </div>
+              
 
-              <div>
-                <Label htmlFor="pageTitle">Page Title * (50-60 characters recommended)</Label>
-                <Input
-                  id="pageTitle"
-                  value={formData.pageTitle}
-                  onChange={(e) => handleInputChange('pageTitle', e.target.value)}
-                  placeholder="Enter page title"
-                />
-                <div className="text-xs text-muted-foreground mt-1">
+              
+                
+                Page Title * (50-60 characters recommended)
+                
+                  
+                    value={formData.pageTitle}
+                    onChange={(e) => handleInputChange('pageTitle', e.target.value)}
+                    placeholder="Enter page title"
+                  
+                
+                
                   {formData.pageTitle.length}/60 characters
-                </div>
-              </div>
+                
+              
 
-              <div>
-                <Label htmlFor="metaDescription">Meta Description * (150-160 characters recommended)</Label>
-                <Textarea
-                  id="metaDescription"
-                  value={formData.metaDescription}
-                  onChange={(e) => handleInputChange('metaDescription', e.target.value)}
-                  placeholder="Enter meta description"
-                  rows={3}
-                />
-                <div className="text-xs text-muted-foreground mt-1">
+              
+                
+                Meta Description * (150-160 characters recommended)
+                
+                  
+                    value={formData.metaDescription}
+                    onChange={(e) => handleInputChange('metaDescription', e.target.value)}
+                    placeholder="Enter meta description"
+                    rows={3}
+                  
+                
+                
                   {formData.metaDescription.length}/160 characters
-                </div>
-              </div>
+                
+              
 
-              <div>
-                <Label htmlFor="metaKeywords">Meta Keywords (comma-separated)</Label>
-                <Input
-                  id="metaKeywords"
-                  value={formData.metaKeywords}
-                  onChange={(e) => handleInputChange('metaKeywords', e.target.value)}
-                  placeholder="keyword1, keyword2, keyword3"
-                />
-              </div>
-            </div>
-          </CardContent>
-        </Card>
+              
+                
+                Meta Keywords (comma-separated)
+                
+                  
+                    value={formData.metaKeywords}
+                    onChange={(e) => handleInputChange('metaKeywords', e.target.value)}
+                    placeholder="keyword1, keyword2, keyword3"
+                  
+                
+              
+            
+          
+        
 
         {/* Open Graph */}
-        <Card>
-          <CardHeader>
-            <CardTitle className="flex items-center gap-2">
-              <Image className="h-4 w-4" />
+        
+          
+            
+              
+              
               Open Graph (Facebook)
-            </CardTitle>
-          </CardHeader>
-          <CardContent className="space-y-4">
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-              <div>
-                <Label htmlFor="ogTitle">OG Title</Label>
-                <Input
-                  id="ogTitle"
-                  value={formData.ogTitle}
-                  onChange={(e) => handleInputChange('ogTitle', e.target.value)}
-                  placeholder="Leave blank to use page title"
-                />
-              </div>
+            
+          
+          
+            
+              
+                
+                
+                  
+                    
+                      OG Title
+                      
+                        
+                          value={formData.ogTitle}
+                          onChange={(e) => handleInputChange('ogTitle', e.target.value)}
+                          placeholder="Leave blank to use page title"
+                        
+                      
+                    
 
-              <div>
-                <Label htmlFor="ogType">OG Type</Label>
-                <Select
-                  value={formData.ogType}
-                  onValueChange={(value) => handleInputChange('ogType', value)}
-                >
-                  <SelectTrigger>
-                    <SelectValue />
-                  </SelectTrigger>
-                  <SelectContent>
-                    <SelectItem value="website">Website</SelectItem>
-                    <SelectItem value="article">Article</SelectItem>
-                    <SelectItem value="business.business">Business</SelectItem>
-                  </SelectContent>
-                </Select>
-              </div>
-            </div>
+                    
+                      OG Type
+                      
+                        
+                          
+                            
+                          
+                          
+                            
+                              
+                                Website
+                              
+                                Article
+                              
+                                Business
+                              
+                            
+                          
+                        
+                      
+                    
+                  
+                
 
-            <div>
-              <Label htmlFor="ogDescription">OG Description</Label>
-              <Textarea
-                id="ogDescription"
-                value={formData.ogDescription}
-                onChange={(e) => handleInputChange('ogDescription', e.target.value)}
-                placeholder="Leave blank to use meta description"
-                rows={2}
-              />
-            </div>
+                
+                  
+                    OG Description
+                    
+                      
+                        value={formData.ogDescription}
+                        onChange={(e) => handleInputChange('ogDescription', e.target.value)}
+                        placeholder="Leave blank to use meta description"
+                        rows={2}
+                      
+                    
+                  
+                
 
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                <div className="space-y-2">
-                  <Label htmlFor="ogImage">OG Image URL</Label>
-                  <div className="flex gap-2">
-                    <Input
-                      id="ogImage"
-                      value={formData.ogImage}
-                      onChange={(e) => handleInputChange('ogImage', e.target.value)}
-                      placeholder="https://example.com/image.jpg"
-                    />
-                    <input
-                      type="file"
-                      accept="image/*"
-                      onChange={handleImageUpload}
-                      className="hidden"
-                      id="ogImageUpload"
-                    />
-                    <Button
-                      type="button"
-                      variant="outline"
-                      size="icon"
-                      onClick={() => document.getElementById('ogImageUpload')?.click()}
-                      disabled={uploadingImage}
-                    >
-                      {uploadingImage ? <Loader2 className="h-4 w-4 animate-spin" /> : <Upload className="h-4 w-4" />}
-                    </Button>
-                  </div>
-                  {uploadedImageUrl && (
-                    <div className="flex items-center gap-2 p-2 bg-muted rounded">
-                      <span className="text-sm truncate">{uploadedImageUrl}</span>
-                      <Button
-                        type="button"
-                        variant="outline"
-                        size="sm"
-                        onClick={() => handleImageUrlSet(uploadedImageUrl, 'ogImage')}
-                      >
-                        Use
-                      </Button>
-                      <Button
-                        type="button"
-                        variant="outline"
-                        size="sm"
-                        onClick={() => setUploadedImageUrl("")}
-                      >
-                        <X className="h-4 w-4" />
-                      </Button>
-                    </div>
-                  )}
-                </div>
+                
+                  
+                    
+                      
+                        
+                          OG Image URL
+                          
+                            
+                              
+                                value={formData.ogImage}
+                                onChange={(e) => handleInputChange('ogImage', e.target.value)}
+                                placeholder="https://example.com/image.jpg"
+                              
+                              
+                                
+                                accept="image/*"
+                                onChange={handleImageUpload}
+                                className="hidden"
+                                id="ogImageUpload"
+                              
+                              
+                                
+                                  {uploadingImage ?  : }
+                                
+                              
+                            
+                          
+                          {uploadedImageUrl && (
+                            
+                              
+                                {uploadedImageUrl}
+                                
+                                  
+                                  Use
+                                
+                                
+                                  
+                                
+                              
+                            
+                          )}
+                        
+                      
 
-              <div>
-                <Label htmlFor="ogUrl">OG URL</Label>
-                <Input
-                  id="ogUrl"
-                  value={formData.ogUrl}
-                  onChange={(e) => handleInputChange('ogUrl', e.target.value)}
-                  placeholder="Leave blank to auto-generate"
-                />
-              </div>
-            </div>
-          </CardContent>
-        </Card>
+                      
+                        OG URL
+                        
+                          
+                            value={formData.ogUrl}
+                            onChange={(e) => handleInputChange('ogUrl', e.target.value)}
+                            placeholder="Leave blank to auto-generate"
+                          
+                        
+                      
+                    
+                  
+                
+              
+            
+          
+        
 
         {/* Twitter Cards */}
-        <Card>
-          <CardHeader>
-            <CardTitle>Twitter Cards</CardTitle>
-          </CardHeader>
-          <CardContent className="space-y-4">
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-              <div>
-                <Label htmlFor="twitterCard">Twitter Card Type</Label>
-                <Select
-                  value={formData.twitterCard}
-                  onValueChange={(value) => handleInputChange('twitterCard', value)}
-                >
-                  <SelectTrigger>
-                    <SelectValue />
-                  </SelectTrigger>
-                  <SelectContent>
-                    <SelectItem value="summary">Summary</SelectItem>
-                    <SelectItem value="summary_large_image">Summary Large Image</SelectItem>
-                  </SelectContent>
-                </Select>
-              </div>
+        
+          
+            
+              Twitter Cards
+            
+          
+          
+            
+              
+                
+                  
+                    Twitter Card Type
+                    
+                      
+                        
+                          
+                            
+                          
+                          
+                            
+                              
+                                Summary
+                              
+                                Summary Large Image
+                              
+                            
+                          
+                        
+                      
+                    
+                  
 
-              <div>
-                <Label htmlFor="twitterSite">Twitter Site Handle</Label>
-                <Input
-                  id="twitterSite"
-                  value={formData.twitterSite}
-                  onChange={(e) => handleInputChange('twitterSite', e.target.value)}
-                  placeholder="@niddik"
-                />
-              </div>
-            </div>
+                  
+                    Twitter Site Handle
+                    
+                      
+                        value={formData.twitterSite}
+                        onChange={(e) => handleInputChange('twitterSite', e.target.value)}
+                        placeholder="@niddik"
+                      
+                    
+                  
+                
+              
 
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-              <div>
-                <Label htmlFor="twitterTitle">Twitter Title</Label>
-                <Input
-                  id="twitterTitle"
-                  value={formData.twitterTitle}
-                  onChange={(e) => handleInputChange('twitterTitle', e.target.value)}
-                  placeholder="Leave blank to use OG title"
-                />
-              </div>
+              
+                
+                  
+                    Twitter Title
+                    
+                      
+                        value={formData.twitterTitle}
+                        onChange={(e) => handleInputChange('twitterTitle', e.target.value)}
+                        placeholder="Leave blank to use OG title"
+                      
+                    
+                  
 
-              <div>
-                <Label htmlFor="twitterCreator">Twitter Creator</Label>
-                <Input
-                  id="twitterCreator"
-                  value={formData.twitterCreator}
-                  onChange={(e) => handleInputChange('twitterCreator', e.target.value)}
-                  placeholder="@niddik"
-                />
-              </div>
-            </div>
+                  
+                    Twitter Creator
+                    
+                      
+                        value={formData.twitterCreator}
+                        onChange={(e) => handleInputChange('twitterCreator', e.target.value)}
+                        placeholder="@niddik"
+                      
+                    
+                  
+                
+              
 
-            <div>
-              <Label htmlFor="twitterDescription">Twitter Description</Label>
-              <Textarea
-                id="twitterDescription"
-                value={formData.twitterDescription}
-                onChange={(e) => handleInputChange('twitterDescription', e.target.value)}
-                placeholder="Leave blank to use OG description"
-                rows={2}
-              />
-            </div>
+              
+                
+                  
+                    Twitter Description
+                    
+                      
+                        value={formData.twitterDescription}
+                        onChange={(e) => handleInputChange('twitterDescription', e.target.value)}
+                        placeholder="Leave blank to use OG description"
+                        rows={2}
+                      
+                    
+                  
+                
 
-               <div className="space-y-2">
-                  <Label htmlFor="twitterImage">Twitter Image URL</Label>
-                  <div className="flex gap-2">
-                    <Input
-                      id="twitterImage"
-                      value={formData.twitterImage}
-                      onChange={(e) => handleInputChange('twitterImage', e.target.value)}
-                      placeholder="https://example.com/twitter-image.jpg"
-                    />
-                    <input
-                      type="file"
-                      accept="image/*"
-                      onChange={handleImageUpload}
-                      className="hidden"
-                      id="ogImageUpload"
-                    />
-                    <Button
-                      type="button"
-                      variant="outline"
-                      size="icon"
-                      onClick={() => document.getElementById('ogImageUpload')?.click()}
-                      disabled={uploadingImage}
-                    >
-                      {uploadingImage ? <Loader2 className="h-4 w-4 animate-spin" /> : <Upload className="h-4 w-4" />}
-                    </Button>
-                  </div>
-                  {uploadedImageUrl && (
-                    <div className="flex items-center gap-2 p-2 bg-muted rounded">
-                      <span className="text-sm truncate">{uploadedImageUrl}</span>
-                      <Button
-                        type="button"
-                        variant="outline"
-                        size="sm"
-                        onClick={() => handleImageUrlSet(uploadedImageUrl, 'twitterImage')}
-                      >
-                        Use
-                      </Button>
-                      <Button
-                        type="button"
-                        variant="outline"
-                        size="sm"
-                        onClick={() => setUploadedImageUrl("")}
-                      >
-                        <X className="h-4 w-4" />
-                      </Button>
-                    </div>
-                  )}
-                </div>
-          </CardContent>
-        </Card>
+                 
+                    
+                      
+                        Twitter Image URL
+                        
+                          
+                            
+                              value={formData.twitterImage}
+                              onChange={(e) => handleInputChange('twitterImage', e.target.value)}
+                              placeholder="https://example.com/twitter-image.jpg"
+                            
+                            
+                              
+                                
+                                accept="image/*"
+                                onChange={handleImageUpload}
+                                className="hidden"
+                                id="ogImageUpload"
+                              
+                              
+                                
+                                  {uploadingImage ?  : }
+                                
+                              
+                            
+                          
+                          {uploadedImageUrl && (
+                            
+                              
+                                {uploadedImageUrl}
+                                
+                                  
+                                  Use
+                                
+                                
+                                  
+                                
+                              
+                            
+                          )}
+                        
+                      
+                    
+                  
+                
+              
+            
+          
+        
 
         {/* Schema.org Microdata */}
-        <Card>
-          <CardHeader>
-            <CardTitle>Schema.org Microdata</CardTitle>
-          </CardHeader>
-          <CardContent className="space-y-4">
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-              <div>
-                <Label htmlFor="itemPropName">ItemProp Name</Label>
-                <Input
-                  id="itemPropName"
-                  value={formData.itemPropName}
-                  onChange={(e) => handleInputChange('itemPropName', e.target.value)}
-                  placeholder="Page name for microdata"
-                />
-              </div>
+        
+          
+            Schema.org Microdata
+          
+          
+            
+              
+                
+                  
+                    ItemProp Name
+                    
+                      
+                        value={formData.itemPropName}
+                        onChange={(e) => handleInputChange('itemPropName', e.target.value)}
+                        placeholder="Page name for microdata"
+                      
+                    
+                  
 
-              <div>
-                <Label htmlFor="itemPropDescription">ItemProp Description</Label>
-                <Input
-                  id="itemPropDescription"
-                  value={formData.itemPropDescription}
-                  onChange={(e) => handleInputChange('itemPropDescription', e.target.value)}
-                  placeholder="Page description for microdata"
-                />
-              </div>
+                  
+                    ItemProp Description
+                    
+                      
+                        value={formData.itemPropDescription}
+                        onChange={(e) => handleInputChange('itemPropDescription', e.target.value)}
+                        placeholder="Page description for microdata"
+                      
+                    
+                  
 
-              <div>
-                <Label htmlFor="itemPropImage">ItemProp Image</Label>
-                <Input
-                  id="itemPropImage"
-                  value={formData.itemPropImage}
-                  onChange={(e) => handleInputChange('itemPropImage', e.target.value)}
-                  placeholder="Image URL for microdata"
-                />
-              </div>
-            </div>
-          </CardContent>
-        </Card>
+                  
+                    ItemProp Image
+                    
+                      
+                        value={formData.itemPropImage}
+                        onChange={(e) => handleInputChange('itemPropImage', e.target.value)}
+                        placeholder="Image URL for microdata"
+                      
+                    
+                  
+                
+              
+            
+          
+        
 
         {/* Advanced Settings */}
-        <Card>
-          <CardHeader>
-            <CardTitle className="flex items-center gap-2">
-              <Code className="h-4 w-4" />
+        
+          
+            
+              
+              
               Advanced Settings
-            </CardTitle>
-          </CardHeader>
-          <CardContent className="space-y-4">
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-              <div>
-                <Label htmlFor="canonicalUrl">Canonical URL</Label>
-                <Input
-                  id="canonicalUrl"
-                  value={formData.canonicalUrl}
-                  onChange={(e) => handleInputChange('canonicalUrl', e.target.value)}
-                  placeholder="Leave blank to auto-generate"
-                />
-              </div>
+            
+          
+          
+            
+              
+                
+                  
+                    Canonical URL
+                    
+                      
+                        value={formData.canonicalUrl}
+                        onChange={(e) => handleInputChange('canonicalUrl', e.target.value)}
+                        placeholder="Leave blank to auto-generate"
+                      
+                    
+                  
 
-              <div>
-                <Label htmlFor="robotsDirective">Robots Directive</Label>
-                <Select
-                  value={formData.robotsDirective}
-                  onValueChange={(value) => handleInputChange('robotsDirective', value)}
-                >
-                  <SelectTrigger>
-                    <SelectValue />
-                  </SelectTrigger>
-                  <SelectContent>
-                    <SelectItem value="index,follow">Index, Follow</SelectItem>
-                    <SelectItem value="noindex,follow">No Index, Follow</SelectItem>
-                    <SelectItem value="index,nofollow">Index, No Follow</SelectItem>
-                    <SelectItem value="noindex,nofollow">No Index, No Follow</SelectItem>
-                  </SelectContent>
-                </Select>
-              </div>
-            </div>
+                  
+                    Robots Directive
+                    
+                      
+                        
+                          
+                            
+                          
+                          
+                            
+                              
+                                Index, Follow
+                              
+                                No Index, Follow
+                              
+                                Index, No Follow
+                              
+                                No Index, No Follow
+                              
+                            
+                          
+                        
+                      
+                    
+                  
+                
+              
 
-            <div>
-              <Label htmlFor="structuredData">Structured Data (JSON-LD)</Label>
-              <Textarea
-                id="structuredData"
-                value={formData.structuredData}
-                onChange={(e) => handleInputChange('structuredData', e.target.value)}
-                placeholder="Enter JSON-LD structured data"
-                rows={8}
-                className="font-mono text-sm"
-              />
-            </div>
+              
+                
+                  Structured Data (JSON-LD)
+                  
+                    
+                      value={formData.structuredData}
+                      onChange={(e) => handleInputChange('structuredData', e.target.value)}
+                      placeholder="Enter JSON-LD structured data"
+                      rows={8}
+                      className="font-mono text-sm"
+                    
+                  
+                
+              
 
-            <div className="flex items-center space-x-2">
-              <Switch
-                id="isActive"
-                checked={formData.isActive}
-                onCheckedChange={(checked) => handleInputChange('isActive', checked)}
-              />
-              <Label htmlFor="isActive">Active</Label>
-            </div>
-          </CardContent>
-        </Card>
-      </div>
+              
+                
+                  
+                    
+                      
+                        
+                          checked={formData.isActive}
+                          onChange={(checked) => handleInputChange('isActive', checked)}
+                        
+                      
+                    
+                    Active
+                  
+                
+              
+            
+          
+        
+                  
+                    
+                      
+                        Item Prop Name
+                        
+                          
+                            value={formData.itemPropName}
+                            onChange={(e) => setFormData({...formData, itemPropName: e.target.value})}
+                            placeholder="e.g., Software Engineer Position"
+                          
+                        
+                      
 
-      <DialogFooter>
-        <Button type="button" variant="outline" onClick={() => {}}>
+                      
+                        Item Prop Description
+                        
+                          
+                            value={formData.itemPropDescription}
+                            onChange={(e) => setFormData({...formData, itemPropDescription: e.target.value})}
+                            placeholder="Description for microdata"
+                          
+                        
+                      
+
+                      
+                        Item Prop Image URL
+                        
+                          
+                            value={formData.itemPropImage}
+                            onChange={(e) => setFormData({...formData, itemPropImage: e.target.value})}
+                            placeholder="https://example.com/image.jpg"
+                          
+                        
+                      
+                    
+                  
+
+                  
+                    
+                      
+                        Script Management
+                        
+                          Add third-party scripts like Google Analytics, Facebook Pixel, or other tracking codes. 
+                          These scripts will be injected into the HTML during server-side rendering.
+                        
+                      
+
+                      
+                        
+                          Head Scripts
+                          
+                            Scripts that should be placed in the section (e.g., Google Analytics, Meta Pixel)
+                          
+                          
+                            
+                              <!-- Google Analytics -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=GA_MEASUREMENT_ID"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+  gtag('config', 'GA_MEASUREMENT_ID');
+</script>
+
+<!-- Meta Pixel Code -->
+<script>
+!function(f,b,e,v,n,t,s)
+{if(f.fbq)return;n=f.fbq=function(){n.callMethod?
+n.callMethod.apply(n,arguments):n.queue.push(arguments)};
+if(!f._fbq)f._fbq=n;n.push=n;n.loaded=!0;n.version='2.0';
+n.queue=[];t=b.createElement(e);t.async=!0;
+t.src=v;s=b.getElementsByTagName(e)[0];
+s.parentNode.insertBefore(t,s)}(window, document,'script',
+'https://connect.facebook.net/en_US/fbevents.js');
+fbq('init', 'YOUR_PIXEL_ID');
+fbq('track', 'PageView');
+</script>
+                            
+                          
+                        
+
+                      
+                        
+                          Body Scripts
+                          
+                            Scripts that should be placed before the closing tag (e.g., chat widgets, performance scripts)
+                          
+                          
+                            
+                              <!-- Intercom Chat Widget -->
+<script>
+  window.intercomSettings = {
+    app_id: "YOUR_APP_ID"
+  };
+</script>
+<script>(function(){var w=window;var ic=w.Intercom;if(typeof ic==="function"){ic('reattach_activator');ic('update',w.intercomSettings);}else{var d=document;var i=function(){i.c(arguments);};i.q=[];i.c=function(args){i.q.push(args);};w.Intercom=i;var l=function(){var s=d.createElement('script');s.type='text/javascript';s.async=true;s.src='https://widget.intercom.io/widget/YOUR_APP_ID';var x=d.getElementsByTagName('script')[0];x.parentNode.insertBefore(s,x);};if(w.attachEvent){w.attachEvent('onload',l);}else{w.addEventListener('load',l,false);}}})();</script>
+
+<!-- Hotjar Tracking Code -->
+<script>
+    (function(h,o,t,j,a,r){
+        h.hj=h.hj||function(){(h.hj.q=h.hj.q||[]).push(arguments)};
+        h._hjSettings={hjid:YOUR_HJID,hjsv:6};
+        a=o.getElementsByTagName('head')[0];
+        r=o.createElement('script');r.async=1;
+        r.src=t+h._hjSettings.hjid+j+h._hjSettings.hjsv;
+        a.appendChild(r);
+    })(window,document,'https://static.hotjar.com/c/hotjar-','.js?sv=');
+</script>
+                            
+                          
+                        
+
+                      
+                        
+                          ⚠️ Security Notice
+                          
+                            Only add scripts from trusted sources. Malicious scripts can compromise your website security. 
+                            Always validate and sanitize third-party code before adding it here.
+                          
+                        
+                      
+                    
+                  
+                
+              
+            
+          
+        
+      
+
+      
+        
           Cancel
-        </Button>
-        <Button onClick={onSubmit} disabled={isLoading}>
+        
+        
           {isLoading ? "Saving..." : "Save SEO Page"}
-        </Button>
-      </DialogFooter>
-    </DialogContent>
+        
+      
+    
   );
 }
