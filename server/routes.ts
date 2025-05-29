@@ -935,7 +935,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
       });
     } catch (error) {
       if (error instanceof z.ZodError) {
-        return res.status(400.json({
+        return res.status(400).json({
           success: false,
           message: "Validation error",
           errors: error.errors
