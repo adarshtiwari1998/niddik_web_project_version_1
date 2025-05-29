@@ -205,10 +205,24 @@ async function seed() {
         itemprop_name TEXT,
         itemprop_description TEXT,
         itemprop_image TEXT,
+        head_scripts TEXT,
+        body_scripts TEXT,
         is_active BOOLEAN NOT NULL DEFAULT TRUE,
         created_at TIMESTAMP NOT NULL DEFAULT NOW(),
         updated_at TIMESTAMP NOT NULL DEFAULT NOW()
       );
+
+      -- Add missing columns if they don't exist
+      DO $$ 
+      BEGIN 
+        IF NOT EXISTS (SELECT 1 FROM information_schema.columns WHERE table_name = 'seo_pages' AND column_name = 'head_scripts') THEN
+          ALTER TABLE seo_pages ADD COLUMN head_scripts TEXT;
+        END IF;
+        
+        IF NOT EXISTS (SELECT 1 FROM information_schema.columns WHERE table_name = 'seo_pages' AND column_name = 'body_scripts') THEN
+          ALTER TABLE seo_pages ADD COLUMN body_scripts TEXT;
+        END IF;
+      END $$;
     `);
 
     // Seed testimonials
