@@ -234,9 +234,18 @@ export default function CareerPage() {
   };
 
   // Function to calculate time difference
-  const timeAgo = (date: Date): string => {
+  const timeAgo = (dateString: string): string => {
+    if (!dateString) return 'Recently';
+    
+    const postedDate = new Date(dateString);
     const now = new Date();
-    const diff = now.getTime() - date.getTime();
+    
+    // Check if the date is valid
+    if (isNaN(postedDate.getTime())) {
+      return 'Recently';
+    }
+    
+    const diff = now.getTime() - postedDate.getTime();
     const seconds = Math.floor(diff / 1000);
     const minutes = Math.floor(seconds / 60);
     const hours = Math.floor(minutes / 60);
@@ -663,7 +672,7 @@ export default function CareerPage() {
                         </div>
                         <span className="font-medium">
                           {job.postedDate && !isNaN(new Date(job.postedDate).getTime()) 
-                            ? `${format(new Date(job.postedDate), "MMM dd, yyyy")} (${timeAgo(new Date(job.postedDate))})`
+                            ? `${format(new Date(job.postedDate), "MMM dd, yyyy")} (${timeAgo(job.postedDate)})`
                             : "Recently"
                           }
                         </span>
