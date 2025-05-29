@@ -934,7 +934,7 @@ function SEOPageDialog({ title, formData, setFormData, onSubmit, isLoading, isEd
                 {isEdit ? (
 
 
-                    {formData.pagePath}
+                    value={formData.pagePath}
                     disabled
                     className="bg-muted"
 
