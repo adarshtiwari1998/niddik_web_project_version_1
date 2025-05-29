@@ -245,7 +245,14 @@ export default function CareerPage() {
       return 'Recently';
     }
     
+    // Calculate difference in milliseconds
     const diff = now.getTime() - postedDate.getTime();
+    
+    // If the date is in the future, return "Recently"
+    if (diff < 0) {
+      return 'Recently';
+    }
+    
     const seconds = Math.floor(diff / 1000);
     const minutes = Math.floor(seconds / 60);
     const hours = Math.floor(minutes / 60);
@@ -671,10 +678,17 @@ export default function CareerPage() {
                           <span>Posted On:</span>
                         </div>
                         <span className="font-medium">
-                          {job.postedDate && !isNaN(new Date(job.postedDate).getTime()) 
-                            ? `${format(new Date(job.postedDate), "MMM dd, yyyy")} (${timeAgo(job.postedDate)})`
-                            : "Recently"
-                          }
+                          {(() => {
+                            if (!job.postedDate) return "Recently";
+                            
+                            const postedDate = new Date(job.postedDate);
+                            if (isNaN(postedDate.getTime())) return "Recently";
+                            
+                            const formattedDate = format(postedDate, "MMM dd, yyyy");
+                            const timeAgoText = timeAgo(job.postedDate);
+                            
+                            return `${formattedDate} (${timeAgoText})`;
+                          })()}
                         </span>
 
                       </div>
