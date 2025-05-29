@@ -1394,7 +1394,7 @@ function SEOPageDialog({ title, formData, setFormData, onSubmit, isLoading, isEd
               <Switch
                 id="isActive"
                 checked={formData.isActive}
-                onChange={(checked) => handleInputChange('isActive', checked)}
+                onCheckedChange={(checked) => handleInputChange('isActive', checked)}
               />
               <Label htmlFor="isActive">Active</Label>
             </div>
