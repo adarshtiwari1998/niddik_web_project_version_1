@@ -969,7 +969,7 @@ export const storage = {
     return db.query.seoPages.findFirst({
       where: eq(seoPages.id, id)
     });
-The code has been modified to include a function called `getAllActiveSeoPages` that retrieves all active SEO pages.   },
+  },
 
   async createSeoPage(data: InsertSeoPage): Promise<SeoPage> {
     const [seoPage] = await db.insert(seoPages).values(data).returning();
