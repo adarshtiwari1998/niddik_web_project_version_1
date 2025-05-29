@@ -39,39 +39,70 @@ const CareersFooter = () => {
             </div>
           </div>
 
-          {/* Job Seekers Section */}
+          {/* Dynamic Section based on user role */}
           <div className="space-y-4">
-            <h3 className="text-lg font-semibold text-gray-900">JOB SEEKERS</h3>
-            <div className="space-y-2">
-              <Link href="/careers" className="block text-sm text-gray-600 hover:text-blue-600 transition-colors">
-                Browse Jobs
-              </Link>
-              {user && user.role !== 'admin' ? (
-                <>
-                  <Link href="/candidate/dashboard" className="block text-sm text-gray-600 hover:text-blue-600 transition-colors">
-                    Candidate Dashboard
+            {user && user.role === 'admin' ? (
+              <>
+                <h3 className="text-lg font-semibold text-gray-900">ADMIN PANEL</h3>
+                <div className="space-y-2">
+                  <Link href="/admin/dashboard" className="block text-sm text-blue-600 hover:text-blue-800 transition-colors font-medium">
+                    Dashboard
                   </Link>
-                  <Link href="/candidate/applications" className="block text-sm text-gray-600 hover:text-blue-600 transition-colors">
-                    My Applications
+                  <Link href="/admin/jobs" className="block text-sm text-blue-600 hover:text-blue-800 transition-colors font-medium">
+                    Manage Job Listings
                   </Link>
-                  <Link href="/candidate/profile" className="block text-sm text-gray-600 hover:text-blue-600 transition-colors">
-                    Profile
+                  <Link href="/admin/candidates" className="block text-sm text-blue-600 hover:text-blue-800 transition-colors font-medium">
+                    Candidates
                   </Link>
-                </>
-              ) : !user ? (
-                <>
-                  <Link href="/auth" className="block text-sm text-gray-600 hover:text-blue-600 transition-colors">
-                    Candidate Dashboard
+                  <Link href="/admin/submitted-candidates" className="block text-sm text-blue-600 hover:text-blue-800 transition-colors font-medium">
+                    Submitted Candidates
                   </Link>
-                  <Link href="/auth" className="block text-sm text-gray-600 hover:text-blue-600 transition-colors">
-                    My Applications
+                  <Link href="/admin/users" className="block text-sm text-blue-600 hover:text-blue-800 transition-colors font-medium">
+                    Users Management
                   </Link>
-                  <Link href="/auth" className="block text-sm text-gray-600 hover:text-blue-600 transition-colors">
-                    Profile
+                  <Link href="/admin/demo-requests" className="block text-sm text-blue-600 hover:text-blue-800 transition-colors font-medium">
+                    Demo Requests
                   </Link>
-                </>
-              ) : null}
-            </div>
+                  <Link href="/admin/contact-submissions" className="block text-sm text-blue-600 hover:text-blue-800 transition-colors font-medium">
+                    Contact Submissions
+                  </Link>
+                </div>
+              </>
+            ) : (
+              <>
+                <h3 className="text-lg font-semibold text-gray-900">JOB SEEKERS</h3>
+                <div className="space-y-2">
+                  <Link href="/careers" className="block text-sm text-gray-600 hover:text-blue-600 transition-colors">
+                    Browse Jobs
+                  </Link>
+                  {user && user.role !== 'admin' ? (
+                    <>
+                      <Link href="/candidate/dashboard" className="block text-sm text-gray-600 hover:text-blue-600 transition-colors">
+                        Candidate Dashboard
+                      </Link>
+                      <Link href="/candidate/applications" className="block text-sm text-gray-600 hover:text-blue-600 transition-colors">
+                        My Applications
+                      </Link>
+                      <Link href="/candidate/profile" className="block text-sm text-gray-600 hover:text-blue-600 transition-colors">
+                        Profile
+                      </Link>
+                    </>
+                  ) : !user ? (
+                    <>
+                      <Link href="/auth" className="block text-sm text-gray-600 hover:text-blue-600 transition-colors">
+                        Candidate Dashboard
+                      </Link>
+                      <Link href="/auth" className="block text-sm text-gray-600 hover:text-blue-600 transition-colors">
+                        My Applications
+                      </Link>
+                      <Link href="/auth" className="block text-sm text-gray-600 hover:text-blue-600 transition-colors">
+                        Profile
+                      </Link>
+                    </>
+                  ) : null}
+                </div>
+              </>
+            )}
           </div>
 
           {/* Company Section */}
@@ -93,22 +124,6 @@ const CareersFooter = () => {
               <Link href="/whitepaper" className="block text-sm text-gray-600 hover:text-blue-600 transition-colors">
                 Whitepaper
               </Link>
-              {user && user.role === 'admin' && (
-                <>
-                  <Link href="/admin/dashboard" className="block text-sm text-blue-600 hover:text-blue-800 transition-colors font-medium">
-                    Admin Dashboard
-                  </Link>
-                  <Link href="/admin/jobs" className="block text-sm text-blue-600 hover:text-blue-800 transition-colors font-medium">
-                    Manage Job Listings
-                  </Link>
-                  <Link href="/admin/candidates" className="block text-sm text-blue-600 hover:text-blue-800 transition-colors font-medium">
-                    Candidates
-                  </Link>
-                  <Link href="/admin/submitted-candidates" className="block text-sm text-blue-600 hover:text-blue-800 transition-colors font-medium">
-                    Submitted Candidates
-                  </Link>
-                </>
-              )}
             </div>
           </div>
 
