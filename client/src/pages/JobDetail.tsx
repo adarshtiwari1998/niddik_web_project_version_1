@@ -98,22 +98,27 @@ export default function JobDetail() {
     queryFn: getQueryFn({ on401: "throw" }),
   });
 
-  // Function to check if a job is "new" (posted within last 7 days from the latest job date)
-  const isJobNew = (jobDate: string, allJobs: JobListing[]): boolean => {
-    if (!jobDate || !allJobs.length) return false;
+  // Function to check if a job is "new" (posted within last 7 days from today)
+  const isJobNew = (jobDate: string): boolean => {
+    if (!jobDate) return false;
     
-    // Find the latest job posting date
-    const latestDate = allJobs.reduce((latest, job) => {
-      if (!job.postedDate) return latest;
-      const jobDate = new Date(job.postedDate);
-      return jobDate > latest ? jobDate : latest;
-    }, new Date(0));
-
-    // Check if this job was posted within 7 days of the latest posting
-    const currentJobDate = new Date(jobDate);
-    const diffInDays = Math.ceil((latestDate.getTime() - currentJobDate.getTime()) / (1000 * 60 * 60 * 24));
+    const postedDate = new Date(jobDate);
+    const today = new Date();
     
-    return diffInDays <= 7;
+    // Check if the date is valid
+    if (isNaN(postedDate.getTime())) {
+      return false;
+    }
+    
+    // Normalize both dates to midnight for accurate day comparison
+    const postedDateNormalized = new Date(postedDate.getFullYear(), postedDate.getMonth(), postedDate.getDate());
+    const todayNormalized = new Date(today.getFullYear(), today.getMonth(), today.getDate());
+    
+    // Calculate difference in days from today
+    const diffInDays = Math.ceil((todayNormalized.getTime() - postedDateNormalized.getTime()) / (1000 * 60 * 60 * 24));
+    
+    // Show "NEW" badge for jobs posted within the last 7 days
+    return diffInDays >= 0 && diffInDays <= 7;
   };
 
   // Get job recommendations (same category, different jobs, max 3)
@@ -440,7 +445,7 @@ const handleResumeRemove = async () => {
               
               {/* Job Status Badges */}
               <div className="flex flex-wrap gap-2 mb-4">
-                {allJobsData?.data && isJobNew(job.postedDate, allJobsData.data) && (
+                {isJobNew(job.postedDate) && (
                   <Badge className="bg-gradient-to-r from-emerald-500 to-teal-500 text-white px-3 py-1 text-sm font-semibold shadow-lg animate-pulse">
                     ✨ NEW
                   </Badge>
@@ -955,7 +960,7 @@ const handleResumeRemove = async () => {
                                 <span className="capitalize">{recJob.jobType}</span>
                               </div>
                               <div className="flex flex-wrap gap-1">
-                                {allJobsData?.data && isJobNew(recJob.postedDate, allJobsData.data) && (
+                                {isJobNew(recJob.postedDate) && (
                                   <Badge variant="outline" className="text-xs bg-emerald-50 text-emerald-700 border-emerald-200">
                                     ✨ NEW
                                   </Badge>

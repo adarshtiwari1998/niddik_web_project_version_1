@@ -286,22 +286,18 @@ export default function CareerPage() {
     }
   };
 
-   // Function to check if a job is "new" (posted within last 7 days from the latest job date)
-  const isJobNew = (jobDate: string, allJobs: JobListing[]): boolean => {
-    if (!jobDate || !allJobs.length) return false;
-    
-    // Find the latest job posting date
-    const latestDate = allJobs.reduce((latest, job) => {
-      if (!job.postedDate) return latest;
-      const jobDate = new Date(job.postedDate);
-      return jobDate > latest ? jobDate : latest;
-    }, new Date(0));
-
-    // Check if this job was posted within 7 days of the latest posting
-    const currentJobDate = new Date(jobDate);
-    const diffInDays = Math.ceil((latestDate.getTime() - currentJobDate.getTime()) / (1000 * 60 * 60 * 24));
-    
-    return diffInDays <= 7;
+   // Function to check if a job is "new" (posted within last 7 days)
+   const isJobNew = (jobDate: string): boolean => {
+    if (!jobDate) return false;
+  
+    const jobPostDate = new Date(jobDate);
+    const today = new Date();
+  
+    // Calculate the difference in days
+    const timeDiff = today.getTime() - jobPostDate.getTime();
+    const dayDiff = Math.ceil(timeDiff / (1000 * 3600 * 24));
+  
+    return dayDiff <= 7;
   };
 
 
@@ -649,11 +645,11 @@ export default function CareerPage() {
                               <CardDescription className="text-sm">{job.company}</CardDescription>
                             </div>
 
-                             
+
 
                             {/* Badges - Full Width Row */}
                             <div className="flex flex-wrap gap-2">
-                              {data?.data && isJobNew(job.postedDate, data.data) && (
+                              {isJobNew(job.postedDate) && (
                                 <Badge className="bg-gradient-to-r from-emerald-500 to-teal-500 text-white text-xs font-bold px-3 py-1 rounded-full shadow-lg animate-pulse">
                                   ✨ NEW
                                 </Badge>
@@ -929,11 +925,11 @@ export default function CareerPage() {
                             <CardTitle className="text-lg font-semibold mb-1">{job.title}</CardTitle>
                             <CardDescription className="text-sm">{job.company}</CardDescription>
                           </div>
-                            
+
 
                           {/* Badges - Full Width Row */}
                           <div className="flex flex-wrap gap-2">
-                            {data?.data && isJobNew(job.postedDate, data.data) && (
+                            {isJobNew(job.postedDate) && (
                               <Badge className="bg-gradient-to-r from-emerald-500 to-teal-500 text-white text-xs font-bold px-3 py-1 rounded-full shadow-lg animate-pulse">
                                 ✨ NEW
                               </Badge>
