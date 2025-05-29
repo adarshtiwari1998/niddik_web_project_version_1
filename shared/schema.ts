@@ -262,7 +262,7 @@ export const demoRequests = pgTable("demo_requests", {
   status: text("status").notNull().default("pending"), // pending, scheduled, completed, rejected
   acceptedTerms: boolean("accepted_terms").notNull().default(false),
   createdAt: timestamp("created_at").defaultNow().notNull(),
-  updatedAt: timestamp("updated_at").defaultAtNow().notNull(),
+  updatedAt: timestamp("updated_at").defaultNow().notNull(),
   scheduledDate: timestamp("scheduled_date"),
   adminNotes: text("admin_notes"),
 });
