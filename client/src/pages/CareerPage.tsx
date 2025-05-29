@@ -14,13 +14,15 @@ import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle }
 import { Separator } from "@/components/ui/separator";
 import { getQueryFn } from "@/lib/queryClient";
 import { JobListing } from "@shared/schema";
-import { Briefcase, Clock, MapPin, Search, Filter, Loader2, Award } from "lucide-react";
+import { Briefcase, Clock, MapPin, Search, Filter, Loader2, Award, FileText, User, Mail, Globe, CalendarClock } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 import CareersLayout from "@/components/careers/CareersLayout";
 import { format } from "date-fns";
 import SEO from "@/components/SEO";
+import { useAuth } from "@/hooks/use-auth";
 
 export default function CareerPage() {
+  const { user } = useAuth();
   const [search, setSearch] = useState("");
   const [category, setCategory] = useState("all_categories");
   const [jobType, setJobType] = useState("all_types");
@@ -34,6 +36,37 @@ export default function CareerPage() {
       limit: 1000
     }],
     queryFn: getQueryFn({ on401: "throw" }),
+  });
+
+  // Admin-only queries for dashboard stats
+  const { data: applicationsData } = useQuery({
+    queryKey: ['/api/admin/applications'],
+    queryFn: getQueryFn({ on401: "throw" }),
+    enabled: user?.role === 'admin'
+  });
+
+  const { data: submittedCandidatesData } = useQuery({
+    queryKey: ['/api/submitted-candidates'],
+    queryFn: getQueryFn({ on401: "throw" }),
+    enabled: user?.role === 'admin'
+  });
+
+  const { data: demoRequestsData } = useQuery({
+    queryKey: ['/api/admin/demo-requests'],
+    queryFn: getQueryFn({ on401: "throw" }),
+    enabled: user?.role === 'admin'
+  });
+
+  const { data: contactSubmissionsData } = useQuery({
+    queryKey: ['/api/admin/contact-submissions'],
+    queryFn: getQueryFn({ on401: "throw" }),
+    enabled: user?.role === 'admin'
+  });
+
+  const { data: seoData } = useQuery({
+    queryKey: ['/api/admin/seo-pages'],
+    queryFn: getQueryFn({ on401: "throw" }),
+    enabled: user?.role === 'admin'
   });
 
   // Get unique values for filter options from available jobs
@@ -87,6 +120,192 @@ export default function CareerPage() {
       <SEO pagePath="/careers" />
       <CareersLayout>
         <div className="container mx-auto py-12 px-4 md:px-6">
+        {/* Admin Dashboard Cards - Only visible to admin users */}
+        {user && user.role === 'admin' && (
+          <div className="mb-12">
+            <div className="text-center mb-8">
+              <h2 className="text-2xl font-bold mb-2">Admin Dashboard Overview</h2>
+              <p className="text-muted-foreground">Quick stats and analytics for your recruitment platform</p>
+            </div>
+            
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
+              {/* Active Jobs */}
+              <Card className="border-l-4 border-l-green-500">
+                <CardHeader className="pb-3">
+                  <div className="flex items-center justify-between">
+                    <div className="flex items-center gap-2">
+                      <Briefcase className="h-5 w-5 text-green-600" />
+                      <CardTitle className="text-2xl font-bold">{data?.meta.total || 0}</CardTitle>
+                    </div>
+                  </div>
+                </CardHeader>
+                <CardContent>
+                  <p className="text-sm font-medium text-gray-600 mb-1">Active Jobs</p>
+                  <p className="text-xs text-gray-500 mb-3">Job listings currently active ({data?.meta.total || 0} total)</p>
+                  <Link href="/admin/jobs">
+                    <Button variant="link" className="text-xs p-0 h-auto text-green-600 hover:text-green-800">
+                      View all jobs →
+                    </Button>
+                  </Link>
+                </CardContent>
+              </Card>
+
+              {/* Total Candidates */}
+              <Card className="border-l-4 border-l-blue-500">
+                <CardHeader className="pb-3">
+                  <div className="flex items-center justify-between">
+                    <div className="flex items-center gap-2">
+                      <User className="h-5 w-5 text-blue-600" />
+                      <CardTitle className="text-2xl font-bold">{applicationsData?.data?.length || 0}</CardTitle>
+                    </div>
+                  </div>
+                </CardHeader>
+                <CardContent>
+                  <p className="text-sm font-medium text-gray-600 mb-1">Total Candidates</p>
+                  <p className="text-xs text-gray-500 mb-3">All job applications received</p>
+                  <Link href="/admin/candidates">
+                    <Button variant="link" className="text-xs p-0 h-auto text-blue-600 hover:text-blue-800">
+                      View all candidates →
+                    </Button>
+                  </Link>
+                </CardContent>
+              </Card>
+
+              {/* New Applications */}
+              <Card className="border-l-4 border-l-purple-500">
+                <CardHeader className="pb-3">
+                  <div className="flex items-center justify-between">
+                    <div className="flex items-center gap-2">
+                      <Clock className="h-5 w-5 text-purple-600" />
+                      <CardTitle className="text-2xl font-bold">
+                        {applicationsData?.data?.filter((app: any) => app.status === 'applied').length || 0}
+                      </CardTitle>
+                    </div>
+                  </div>
+                </CardHeader>
+                <CardContent>
+                  <p className="text-sm font-medium text-gray-600 mb-1">New Applications</p>
+                  <p className="text-xs text-gray-500 mb-3">Applications awaiting review</p>
+                  <Link href="/admin/candidates">
+                    <Button variant="link" className="text-xs p-0 h-auto text-purple-600 hover:text-purple-800">
+                      Review applications →
+                    </Button>
+                  </Link>
+                </CardContent>
+              </Card>
+
+              {/* Interview Stage */}
+              <Card className="border-l-4 border-l-orange-500">
+                <CardHeader className="pb-3">
+                  <div className="flex items-center justify-between">
+                    <div className="flex items-center gap-2">
+                      <Award className="h-5 w-5 text-orange-600" />
+                      <CardTitle className="text-2xl font-bold">
+                        {applicationsData?.data?.filter((app: any) => app.status === 'interview').length || 0}
+                      </CardTitle>
+                    </div>
+                  </div>
+                </CardHeader>
+                <CardContent>
+                  <p className="text-sm font-medium text-gray-600 mb-1">Interview Stage</p>
+                  <p className="text-xs text-gray-500 mb-3">Candidates in interview process</p>
+                  <Link href="/admin/candidates">
+                    <Button variant="link" className="text-xs p-0 h-auto text-orange-600 hover:text-orange-800">
+                      See interview pipeline →
+                    </Button>
+                  </Link>
+                </CardContent>
+              </Card>
+
+              {/* Submitted Candidates */}
+              <Card className="border-l-4 border-l-indigo-500">
+                <CardHeader className="pb-3">
+                  <div className="flex items-center justify-between">
+                    <div className="flex items-center gap-2">
+                      <FileText className="h-5 w-5 text-indigo-600" />
+                      <CardTitle className="text-2xl font-bold">{submittedCandidatesData?.data?.length || 0}</CardTitle>
+                    </div>
+                  </div>
+                </CardHeader>
+                <CardContent>
+                  <p className="text-sm font-medium text-gray-600 mb-1">Submitted Candidates</p>
+                  <p className="text-xs text-gray-500 mb-3">Candidates submitted to clients</p>
+                  <Link href="/admin/submitted-candidates">
+                    <Button variant="link" className="text-xs p-0 h-auto text-indigo-600 hover:text-indigo-800">
+                      View submissions →
+                    </Button>
+                  </Link>
+                </CardContent>
+              </Card>
+
+              {/* Demo Requests */}
+              <Card className="border-l-4 border-l-pink-500">
+                <CardHeader className="pb-3">
+                  <div className="flex items-center justify-between">
+                    <div className="flex items-center gap-2">
+                      <CalendarClock className="h-5 w-5 text-pink-600" />
+                      <CardTitle className="text-2xl font-bold">{demoRequestsData?.meta?.total || 0}</CardTitle>
+                    </div>
+                  </div>
+                </CardHeader>
+                <CardContent>
+                  <p className="text-sm font-medium text-gray-600 mb-1">Demo Requests</p>
+                  <p className="text-xs text-gray-500 mb-3">Pending demo requests</p>
+                  <Link href="/admin/demo-requests">
+                    <Button variant="link" className="text-xs p-0 h-auto text-pink-600 hover:text-pink-800">
+                      Manage requests →
+                    </Button>
+                  </Link>
+                </CardContent>
+              </Card>
+
+              {/* Contact Submissions */}
+              <Card className="border-l-4 border-l-teal-500">
+                <CardHeader className="pb-3">
+                  <div className="flex items-center justify-between">
+                    <div className="flex items-center gap-2">
+                      <Mail className="h-5 w-5 text-teal-600" />
+                      <CardTitle className="text-2xl font-bold">{contactSubmissionsData?.data?.length || 0}</CardTitle>
+                    </div>
+                  </div>
+                </CardHeader>
+                <CardContent>
+                  <p className="text-sm font-medium text-gray-600 mb-1">Contact Submissions</p>
+                  <p className="text-xs text-gray-500 mb-3">Messages from contact form</p>
+                  <Link href="/admin/contact-submissions">
+                    <Button variant="link" className="text-xs p-0 h-auto text-teal-600 hover:text-teal-800">
+                      View messages →
+                    </Button>
+                  </Link>
+                </CardContent>
+              </Card>
+
+              {/* SEO Pages */}
+              <Card className="border-l-4 border-l-cyan-500">
+                <CardHeader className="pb-3">
+                  <div className="flex items-center justify-between">
+                    <div className="flex items-center gap-2">
+                      <Globe className="h-5 w-5 text-cyan-600" />
+                      <CardTitle className="text-2xl font-bold">{seoData?.data?.length || 0}</CardTitle>
+                    </div>
+                  </div>
+                </CardHeader>
+                <CardContent>
+                  <p className="text-sm font-medium text-gray-600 mb-1">Active SEO Pages</p>
+                  <p className="text-xs text-gray-500 mb-3">SEO optimized pages ({seoData?.data?.length || 0} total)</p>
+                  <Link href="/admin/seo-pages">
+                    <Button variant="link" className="text-xs p-0 h-auto text-cyan-600 hover:text-cyan-800">
+                      Manage SEO →
+                    </Button>
+                  </Link>
+                </CardContent>
+              </Card>
+            </div>
+
+            <Separator className="my-8" />
+          </div>
+        )}
+
         {/* Hero Section */}
         <div className="text-center mb-12">
           <h1 className="text-4xl font-bold mb-4">Join Our Team</h1>
