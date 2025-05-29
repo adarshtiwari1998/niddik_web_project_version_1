@@ -933,7 +933,7 @@ export const storage = {
       console.error('Error fetching active SEO pages:', error);
       throw error;
     }
-  }
+  },
 
   async updateAllSeoJobPages(): Promise<{ updated: string[], errors: string[] }> {
     const results = { updated: [], errors: [] };
@@ -1070,7 +1070,7 @@ export const storage = {
   // Alternative method name for consistency
   async getJobListing(id: number): Promise<JobListing | undefined> {
     return this.getJobListingById(id);
-  },
+  }
 };
 
 export async function getJobApplicationsWithDetails(
