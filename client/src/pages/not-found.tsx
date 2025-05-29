@@ -10,10 +10,12 @@ const NotFound = () => {
   return (
     <>
       <SEO 
-        title="Page Not Found - 404 Error | NIDDIK"
-        description="The page you're looking for doesn't exist. Return to NIDDIK's homepage to explore our IT recruitment services and job opportunities."
-        keywords="404 error, page not found, NIDDIK, IT recruitment"
-        robotsDirective="noindex,nofollow"
+        fallback={{
+          pageTitle: "Page Not Found - 404 Error | NIDDIK",
+          metaDescription: "The page you're looking for doesn't exist. Return to NIDDIK's homepage to explore our IT recruitment services and job opportunities.",
+          metaKeywords: "404 error, page not found, NIDDIK, IT recruitment",
+          robotsDirective: "noindex,nofollow"
+        }}
       />
 
       <div className="min-h-screen bg-gradient-to-br from-blue-50 via-white to-indigo-50 flex items-center justify-center px-4">
