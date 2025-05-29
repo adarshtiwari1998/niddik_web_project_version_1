@@ -1,7 +1,7 @@
 
 import { Link } from "wouter";
 import { useAuth } from "@/hooks/use-auth";
-import { Facebook, Twitter, Linkedin, Instagram, Phone, Mail, MapPin } from "lucide-react";
+import { Facebook, Twitter, Linkedin, Instagram, Phone, Mail, MapPin, Youtube } from "lucide-react";
 
 const CareersFooter = () => {
   const { user } = useAuth();
@@ -9,7 +9,7 @@ const CareersFooter = () => {
   return (
     <footer className="bg-gray-50 border-t border-gray-200">
       <div className="container mx-auto px-4 py-12">
-        <div className="grid grid-cols-1 md:grid-cols-4 gap-8">
+        <div className="grid grid-cols-1 md:grid-cols-5 gap-8">
           {/* Company Info */}
           <div className="space-y-4">
             <div className="flex items-center gap-2">
@@ -35,6 +35,9 @@ const CareersFooter = () => {
               </Link>
               <Link href="https://instagram.com/niddik" className="text-gray-400 hover:text-pink-600 transition-colors">
                 <Instagram className="h-5 w-5" />
+              </Link>
+              <Link href="https://www.youtube.com/@NiddikkareLLP" className="text-gray-400 hover:text-red-600 transition-colors">
+                <Youtube className="h-5 w-5" />
               </Link>
             </div>
           </div>
@@ -127,25 +130,26 @@ const CareersFooter = () => {
             </div>
           </div>
 
-          {/* Contact Us Section */}
-          <div className="space-y-4">
+          {/* Contact Us Section - Compact */}
+          <div className="space-y-3">
             <h3 className="text-lg font-semibold text-gray-900">CONTACT US</h3>
-            <div className="space-y-3">
+            <div className="space-y-2">
               <div className="flex items-start gap-2">
                 <MapPin className="h-4 w-4 text-gray-400 mt-0.5 flex-shrink-0" />
-                <span className="text-sm text-gray-600">
+                <span className="text-xs text-gray-600 leading-tight">
                   Platina Heights, Sector 59, Noida - 201301
                 </span>
               </div>
-              <div className="flex items-center gap-2">
-                <Phone className="h-4 w-4 text-gray-400 flex-shrink-0" />
-                <span className="text-sm text-gray-600">
-                  +91 9773120558 (INDIA), +1 (646) 899-9537 (USA)
-                </span>
+              <div className="flex items-start gap-2">
+                <Phone className="h-4 w-4 text-gray-400 mt-0.5 flex-shrink-0" />
+                <div className="text-xs text-gray-600 leading-tight">
+                  <div>+91 9773120558 (INDIA)</div>
+                  <div>+1 (646) 899-9537 (USA)</div>
+                </div>
               </div>
               <div className="flex items-center gap-2">
                 <Mail className="h-4 w-4 text-gray-400 flex-shrink-0" />
-                <Link href="mailto:info@niddik.com" className="text-sm text-gray-600 hover:text-blue-600 transition-colors">
+                <Link href="mailto:info@niddik.com" className="text-xs text-gray-600 hover:text-blue-600 transition-colors">
                   info@niddik.com
                 </Link>
               </div>
@@ -156,9 +160,22 @@ const CareersFooter = () => {
         {/* Bottom Section */}
         <div className="mt-12 pt-8 border-t border-gray-200">
           <div className="flex flex-col md:flex-row justify-between items-center gap-4">
-            <p className="text-sm text-gray-500">
-              © 2025 Niddik. All rights reserved.
-            </p>
+            <div className="flex flex-col items-center md:items-start gap-2">
+              <p className="text-sm text-gray-500">
+                © 2025 Niddik. All rights reserved.
+              </p>
+              <p className="text-xs text-gray-400">
+                Managed and maintained by{" "}
+                <Link 
+                  href="https://itweblens.com" 
+                  target="_blank" 
+                  rel="noopener noreferrer"
+                  className="text-blue-500 hover:text-blue-600 transition-colors"
+                >
+                  Itweblens.com
+                </Link>
+              </p>
+            </div>
             <div className="flex items-center gap-6">
               <Link href="/privacy-policy" className="text-sm text-gray-500 hover:text-gray-700 transition-colors">
                 Privacy Policy
