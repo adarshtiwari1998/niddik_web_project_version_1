@@ -11,7 +11,7 @@ const CareersFooter = () => {
       <div className="container mx-auto px-4 py-12">
         <div className="grid grid-cols-1 md:grid-cols-6 gap-8">
           {/* Company Info */}
-          <div className="space-y-4">
+          <div className="space-y-4 flex flex-col items-center md:items-start">
             <div className="flex items-center gap-2">
               <img 
                 src="/images/niddik_logo.png" 
@@ -20,10 +20,10 @@ const CareersFooter = () => {
               />
               <span className="text-xl font-bold text-gray-900">Niddik</span>
             </div>
-            <p className="text-sm text-gray-600 leading-relaxed">
+            <p className="text-sm text-gray-600 leading-relaxed text-center md:text-left">
               Empowering talent acquisition with intelligent matching technology that connects the right people with the right opportunities.
             </p>
-            <div className="flex items-center gap-3">
+            <div className="flex items-center justify-center md:justify-start gap-3">
               <Link href="https://facebook.com/niddik" className="text-gray-400 hover:text-blue-600 transition-colors">
                 <Facebook className="h-5 w-5" />
               </Link>
