@@ -531,8 +531,7 @@ export async function setupVite(app: Express, server: Server) {
 }
 
 export async function serveStatic(app: Express) {
-  const distPath = path.resolve("dist");
-  const publicPath = path.resolve("dist/public");
+  const distPath = path.resolve("dist/public");
 
   if (!fs.existsSync(distPath)) {
     throw new Error(
@@ -540,20 +539,13 @@ export async function serveStatic(app: Express) {
     );
   }
 
-  // Serve static assets from Vite build output
+  // Serve static assets with proper caching headers
   app.use('/assets', express.static(path.join(distPath, 'assets'), {
     maxAge: '1y',
     etag: true
   }));
   
-  // Serve images from public directory in dist
-  app.use('/images', express.static(path.join(publicPath, 'images'), {
-    maxAge: '1d',
-    etag: true
-  }));
-
-  // Serve all other static files from public directory
-  app.use(express.static(publicPath, {
+  app.use('/images', express.static(path.join(distPath, 'images'), {
     maxAge: '1d',
     etag: true
   }));
@@ -635,8 +627,8 @@ export async function serveStatic(app: Express) {
         };
       }
 
-      // Read the base HTML file from dist root
-      const htmlPath = path.resolve("dist", "index.html");
+      // Read the base HTML file
+      const htmlPath = path.resolve(distPath, "index.html");
       let html = fs.readFileSync(htmlPath, 'utf-8');
 
       // Prepare scripts for injection (similar to development)
@@ -721,7 +713,7 @@ export async function serveStatic(app: Express) {
       res.send(html);
     } catch (error) {
       console.error('Error in SSR:', error);
-      res.sendFile(path.resolve("dist", "index.html"));
+      res.sendFile(path.resolve(distPath, "index.html"));
     }
   });
 }
