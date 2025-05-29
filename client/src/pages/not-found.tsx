@@ -4,7 +4,7 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { Home, ArrowLeft, Search, AlertTriangle } from "lucide-react";
 import { motion } from "framer-motion";
-import { SEO } from "@/components/SEO";
+import SEO from "@/components/SEO";
 
 const NotFound = () => {
   return (
