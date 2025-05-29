@@ -1,4 +1,3 @@
-
 import { useState } from "react";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { useAuth } from "@/hooks/use-auth";
@@ -7,13 +6,12 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
-import { Badge } from "@/components/ui/badge";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
-import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
+import { Badge } from "@/components/ui/badge";
 import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle, AlertDialogTrigger } from "@/components/ui/alert-dialog";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Switch } from "@/components/ui/switch";
-import { Plus, Edit, Trash2, Globe, Search, Image, Code, FileText } from "lucide-react";
+import { Plus, Edit, Trash2, Globe, Search, Image, Code, FileText, Upload, X } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 import AdminLayout from "@/components/layout/AdminLayout";
 import { Helmet } from 'react-helmet-async';
@@ -109,7 +107,7 @@ const getDefaultStructuredData = (pagePath: string) => {
           "contactType": "customer service"
         }
       };
-    
+
     case '/about-us':
       return {
         ...baseData,
@@ -118,7 +116,7 @@ const getDefaultStructuredData = (pagePath: string) => {
         "description": "Learn about Niddik's mission to connect exceptional IT talent with innovative companies.",
         "url": "https://niddik.com/about-us"
       };
-    
+
     case '/careers':
       return {
         ...baseData,
@@ -127,7 +125,7 @@ const getDefaultStructuredData = (pagePath: string) => {
         "description": "Join Niddik and explore exciting career opportunities in IT recruitment and staffing.",
         "url": "https://niddik.com/careers"
       };
-    
+
     case '/services':
       return {
         ...baseData,
@@ -140,7 +138,7 @@ const getDefaultStructuredData = (pagePath: string) => {
           "name": "Niddik"
         }
       };
-    
+
     case '/contact':
       return {
         ...baseData,
@@ -149,7 +147,7 @@ const getDefaultStructuredData = (pagePath: string) => {
         "description": "Get in touch with Niddik for your IT recruitment and staffing needs.",
         "url": "https://niddik.com/contact"
       };
-    
+
     default:
       return {
         ...baseData,
@@ -165,11 +163,13 @@ export default function SEOPages() {
   const { user } = useAuth();
   const { toast } = useToast();
   const queryClient = useQueryClient();
-  
+
   const [isCreateDialogOpen, setIsCreateDialogOpen] = useState(false);
   const [isEditDialogOpen, setIsEditDialogOpen] = useState(false);
   const [editingPage, setEditingPage] = useState<SeoPage | null>(null);
   const [search, setSearch] = useState("");
+  const [uploadingImage, setUploadingImage] = useState(false);
+  const [uploadedImageUrl, setUploadedImageUrl] = useState<string>("");
 
   // Form state
   const [formData, setFormData] = useState({
@@ -281,14 +281,14 @@ export default function SEOPages() {
     onSuccess: (data) => {
       queryClient.invalidateQueries({ queryKey: ['/api/admin/seo-pages'] });
       const { updated, errors } = data.data;
-      
+
       if (updated.length > 0) {
         toast({ 
           title: "SEO pages updated successfully", 
           description: `Updated pages: ${updated.join(', ')}` 
         });
       }
-      
+
       if (errors.length > 0) {
         toast({ 
           title: "Some updates failed", 
@@ -303,6 +303,47 @@ export default function SEOPages() {
         description: error.message, 
         variant: "destructive" 
       });
+    },
+  });
+
+  // Mutation to upload SEO meta images
+  const imageUploadMutation = useMutation({
+    mutationFn: async (file: File) => {
+      const formData = new FormData();
+      formData.append('image', file);
+
+      const response = await fetch('/api/upload-seo-image', {
+        method: 'POST',
+        body: formData,
+        credentials: 'include',
+      });
+
+      if (!response.ok) {
+        const errorData = await response.json();
+        throw new Error(errorData.message || 'Upload failed');
+      }
+
+      return await response.json();
+    },
+    onSuccess: (data) => {
+      setUploadedImageUrl(data.url);
+      toast({
+        title: "Success",
+        description: "Image uploaded successfully",
+      });
+    },
+    onError: (error: Error) => {
+      toast({
+        title: "Error",
+        description: error.message,
+        variant: "destructive",
+      });
+    },
+    onMutate: () => {
+      setUploadingImage(true);
+    },
+    onSettled: () => {
+      setUploadingImage(false);
     },
   });
 
@@ -335,10 +376,11 @@ export default function SEOPages() {
 
   const handleEdit = (page: SeoPage) => {
     setEditingPage(page);
-    
+    setUploadedImageUrl("");
+
     // Use existing structured data or generate appropriate default
     const structuredData = page.structuredData || JSON.stringify(getDefaultStructuredData(page.pagePath), null, 2);
-    
+
     setFormData({
       pagePath: page.pagePath,
       pageTitle: page.pageTitle,
@@ -365,6 +407,12 @@ export default function SEOPages() {
     });
     setIsEditDialogOpen(true);
   };
+
+    const handleAdd = () => {
+      setEditingPage(null);
+      setUploadedImageUrl("");
+      setIsCreateDialogOpen(true);
+    };
 
   const filteredPages = seoPages?.data?.filter(page =>
     page.pagePath.toLowerCase().includes(search.toLowerCase()) ||
@@ -409,7 +457,7 @@ export default function SEOPages() {
             </Button>
             <Dialog open={isCreateDialogOpen} onOpenChange={setIsCreateDialogOpen}>
               <DialogTrigger asChild>
-                <Button onClick={resetForm}>
+                <Button onClick={handleAdd}>
                   <Plus className="h-4 w-4 mr-2" />
                   Add SEO Page
                 </Button>
@@ -587,18 +635,75 @@ interface SEOPageDialogProps {
 }
 
 function SEOPageDialog({ title, formData, setFormData, onSubmit, isLoading, isEdit }: SEOPageDialogProps) {
+  const { toast } = useToast();
+    const [uploadingImage, setUploadingImage] = useState(false);
+  const [uploadedImageUrl, setUploadedImageUrl] = useState<string>("");
+  const queryClient = useQueryClient();
   const handleInputChange = (field: string, value: any) => {
     setFormData((prev: any) => {
       const newData = { ...prev, [field]: value };
-      
+
       // Auto-populate structured data when page path changes
       if (field === 'pagePath' && value && !isEdit) {
         newData.structuredData = JSON.stringify(getDefaultStructuredData(value), null, 2);
       }
-      
+
       return newData;
     });
   };
+
+    const handleImageUpload = (event: React.ChangeEvent<HTMLInputElement>) => {
+      const file = event.target.files?.[0];
+      if (file) {
+        imageUploadMutation.mutate(file);
+      }
+    };
+
+    const handleImageUrlSet = (url: string, field: 'ogImage' | 'twitterImage' | 'itemPropImage') => {
+      setFormData(prev => ({ ...prev, [field]: url }));
+      setUploadedImageUrl("");
+    };
+    
+      const imageUploadMutation = useMutation({
+    mutationFn: async (file: File) => {
+      const formData = new FormData();
+      formData.append('image', file);
+
+      const response = await fetch('/api/upload-seo-image', {
+        method: 'POST',
+        body: formData,
+        credentials: 'include',
+      });
+
+      if (!response.ok) {
+        const errorData = await response.json();
+        throw new Error(errorData.message || 'Upload failed');
+      }
+
+      return await response.json();
+    },
+    onSuccess: (data) => {
+      setUploadedImageUrl(data.url);
+      toast({
+        title: "Success",
+        description: "Image uploaded successfully",
+      });
+       queryClient.invalidateQueries({ queryKey: ['/api/admin/seo-pages'] });
+    },
+    onError: (error: Error) => {
+      toast({
+        title: "Error",
+        description: error.message,
+        variant: "destructive",
+      });
+    },
+    onMutate: () => {
+      setUploadingImage(true);
+    },
+    onSettled: () => {
+      setUploadingImage(false);
+    },
+  });
 
   return (
     <DialogContent className="max-w-4xl max-h-[90vh] overflow-y-auto">
@@ -747,15 +852,54 @@ function SEOPageDialog({ title, formData, setFormData, onSubmit, isLoading, isEd
             </div>
 
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-              <div>
-                <Label htmlFor="ogImage">OG Image URL</Label>
-                <Input
-                  id="ogImage"
-                  value={formData.ogImage}
-                  onChange={(e) => handleInputChange('ogImage', e.target.value)}
-                  placeholder="https://example.com/image.jpg"
-                />
-              </div>
+                <div className="space-y-2">
+                  <Label htmlFor="ogImage">OG Image URL</Label>
+                  <div className="flex gap-2">
+                    <Input
+                      id="ogImage"
+                      value={formData.ogImage}
+                      onChange={(e) => handleInputChange('ogImage', e.target.value)}
+                      placeholder="https://example.com/image.jpg"
+                    />
+                    <input
+                      type="file"
+                      accept="image/*"
+                      onChange={handleImageUpload}
+                      className="hidden"
+                      id="ogImageUpload"
+                    />
+                    <Button
+                      type="button"
+                      variant="outline"
+                      size="icon"
+                      onClick={() => document.getElementById('ogImageUpload')?.click()}
+                      disabled={uploadingImage}
+                    >
+                      {uploadingImage ? <Loader2 className="h-4 w-4 animate-spin" /> : <Upload className="h-4 w-4" />}
+                    </Button>
+                  </div>
+                  {uploadedImageUrl && (
+                    <div className="flex items-center gap-2 p-2 bg-muted rounded">
+                      <span className="text-sm truncate">{uploadedImageUrl}</span>
+                      <Button
+                        type="button"
+                        variant="outline"
+                        size="sm"
+                        onClick={() => handleImageUrlSet(uploadedImageUrl, 'ogImage')}
+                      >
+                        Use
+                      </Button>
+                      <Button
+                        type="button"
+                        variant="outline"
+                        size="sm"
+                        onClick={() => setUploadedImageUrl("")}
+                      >
+                        <X className="h-4 w-4" />
+                      </Button>
+                    </div>
+                  )}
+                </div>
 
               <div>
                 <Label htmlFor="ogUrl">OG URL</Label>
@@ -837,15 +981,54 @@ function SEOPageDialog({ title, formData, setFormData, onSubmit, isLoading, isEd
               />
             </div>
 
-            <div>
-              <Label htmlFor="twitterImage">Twitter Image URL</Label>
-              <Input
-                id="twitterImage"
-                value={formData.twitterImage}
-                onChange={(e) => handleInputChange('twitterImage', e.target.value)}
-                placeholder="https://example.com/twitter-image.jpg"
-              />
-            </div>
+               <div className="space-y-2">
+                  <Label htmlFor="twitterImage">Twitter Image URL</Label>
+                  <div className="flex gap-2">
+                    <Input
+                      id="twitterImage"
+                      value={formData.twitterImage}
+                      onChange={(e) => handleInputChange('twitterImage', e.target.value)}
+                      placeholder="https://example.com/twitter-image.jpg"
+                    />
+                    <input
+                      type="file"
+                      accept="image/*"
+                      onChange={handleImageUpload}
+                      className="hidden"
+                      id="ogImageUpload"
+                    />
+                    <Button
+                      type="button"
+                      variant="outline"
+                      size="icon"
+                      onClick={() => document.getElementById('ogImageUpload')?.click()}
+                      disabled={uploadingImage}
+                    >
+                      {uploadingImage ? <Loader2 className="h-4 w-4 animate-spin" /> : <Upload className="h-4 w-4" />}
+                    </Button>
+                  </div>
+                  {uploadedImageUrl && (
+                    <div className="flex items-center gap-2 p-2 bg-muted rounded">
+                      <span className="text-sm truncate">{uploadedImageUrl}</span>
+                      <Button
+                        type="button"
+                        variant="outline"
+                        size="sm"
+                        onClick={() => handleImageUrlSet(uploadedImageUrl, 'twitterImage')}
+                      >
+                        Use
+                      </Button>
+                      <Button
+                        type="button"
+                        variant="outline"
+                        size="sm"
+                        onClick={() => setUploadedImageUrl("")}
+                      >
+                        <X className="h-4 w-4" />
+                      </Button>
+                    </div>
+                  )}
+                </div>
           </CardContent>
         </Card>
 

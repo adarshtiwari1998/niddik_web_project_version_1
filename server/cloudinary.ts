@@ -47,4 +47,41 @@ export const resumeUpload = multer({
   }
 });
 
+// Create storage engine for SEO meta assets (images)
+const seoMetaStorage = new CloudinaryStorage({
+  cloudinary: cloudinary,
+  params: {
+    folder: 'Niddik-Assets/seo-meta',
+    resource_type: 'image',
+    type: 'upload',
+    delivery_type: 'upload',
+    access_mode: 'public',
+    allowed_formats: ['jpg', 'jpeg', 'png', 'webp', 'svg'],
+    use_filename: true,
+    unique_filename: true,
+    overwrite: false,
+    public_id: (req, file) => {
+      const timestamp = Date.now();
+      const extension = file.originalname.split('.').pop() || '';
+      const nameWithoutExt = file.originalname.split('.')[0];
+      return `seo-meta_${timestamp}_${nameWithoutExt}`;
+    }
+  }
+});
+
+// Create the multer upload instance for SEO meta assets
+export const seoMetaUpload = multer({ 
+  storage: seoMetaStorage,
+  limits: { fileSize: 5 * 1024 * 1024 }, // 5MB limit
+  fileFilter: (req, file, cb) => {
+    // Accept image files
+    const allowedTypes = ['image/jpeg', 'image/jpg', 'image/png', 'image/webp', 'image/svg+xml'];
+    if (allowedTypes.includes(file.mimetype)) {
+      cb(null, true);
+    } else {
+      cb(new Error('Invalid file type. Only JPG, PNG, WebP and SVG files are allowed.'));
+    }
+  }
+});
+
 export { cloudinary };

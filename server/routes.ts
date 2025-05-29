@@ -20,7 +20,7 @@ import { db } from "../db";
 import { eq, desc, asc, and, or, ilike, inArray, count } from "drizzle-orm";
 import { z } from "zod";
 import { setupAuth } from "./auth";
-import { resumeUpload } from "./cloudinary";
+import { resumeUpload, seoMetaUpload } from "./cloudinary";
 import { scrypt, randomBytes, timingSafeEqual } from "crypto";
 import { promisify } from "util";
 
@@ -946,6 +946,55 @@ export async function registerRoutes(app: Express): Promise<Server> {
       return res.status(500).json({
         success: false,
         message: "Internal server error"      });
+    }
+  });
+
+  // API endpoint for uploading SEO meta images (admin only)
+  app.post('/api/upload-seo-image', seoMetaUpload.single('image'), async (req: AuthenticatedRequest, res: Response) => {
+    try {
+      if (!req.isAuthenticated() || req.user?.role !== 'admin') {
+        return res.status(403).json({
+          success: false,
+          message: "Unauthorized access"
+        });
+      }
+
+      if (!req.file) {
+        return res.status(400).json({ success: false, message: 'No file uploaded' });
+      }
+
+      // @ts-ignore - Cloudinary typings
+      const file = req.file;
+
+      if (!file.path) {
+        console.error('Upload failed - file path missing', file);
+        return res.status(500).json({ 
+          success: false, 
+          message: 'Upload failed - no file path returned' 
+        });
+      }
+
+      console.log('SEO meta image uploaded successfully:', {
+        path: file.path,
+        filename: file.originalname,
+        size: file.size
+      });
+
+      return res.status(200).json({ 
+        success: true, 
+        url: file.path,
+        filename: file.originalname 
+      });
+    } catch (error) {
+      console.error('SEO meta image upload error:', error);
+      if (error instanceof Error) {
+        console.error('Error details:', error.message, error.stack);
+      }
+      return res.status(500).json({ 
+        success: false, 
+        message: error instanceof Error ? error.message : 'Upload failed',
+        error: error
+      });
     }
   });
 
