@@ -18,7 +18,7 @@ const CareersFooter = () => {
                 alt="Niddik Logo" 
                 className="h-8 w-8 object-contain"
               />
-              <span className="text-xl font-bold text-gray-900">Niddik</span>
+              {/* <span className="text-xl font-bold text-gray-900">Niddik</span> */}
             </div>
             <p className="text-sm text-gray-600 leading-relaxed text-center md:text-left">
               Empowering talent acquisition with intelligent matching technology that connects the right people with the right opportunities.

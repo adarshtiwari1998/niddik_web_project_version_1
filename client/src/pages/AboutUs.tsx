@@ -30,7 +30,7 @@ As Abhishek's career progressed, he took on increasingly senior leadership roles
     },
     {
       name: "Dr. Samar Husain Naqvi",
-      role: "CEO & Co-Founder",
+      role: "Managing Director / CO-Founder",
        company: "NIDDIKKARE",
       image: "https://res.cloudinary.com/dhanz6zty/image/upload/v1748340984/niddik-leader-ship-team-samar-husain_gczwmu.png",
       bio: "A trailblazing expert in biotechnology and life sciences, renowned for his groundbreaking work in genomics, molecular biology, and microbiology with over 25 years of experience.",
@@ -46,13 +46,13 @@ As a testament to his dedication and expertise, Dr. Naqvi has garnered numerous 
     },
     {
       name: "Dr. Abhishek Chanchal",
-      role: "CEO & Co-Founder",
+      role: "Director & Co-Founder",
       company: "NIDDIKKARE",
       image: "https://res.cloudinary.com/dhanz6zty/image/upload/v1748341074/niddik-leader-ship-team-dr-abhishek_jwetmz.png",
       bio: "A highly accomplished researcher and scientist with over 25 years' strong foundation in the fields of nanomedicine and biotechnology, holding a Ph.D. in Bio-Science (Nanomedicine).",
       linkedinUrl: "https://www.linkedin.com/in/dr-abhishek-chanchal-42007457/",
       twitterUrl: "#",
-      fullBio: `Dr. Abhishek Chanchal is a highly accomplished researcher and scientist with over 25 years' strong foundation in the fields of nanomedicine and biotechnology. Holding a Ph.D. in Bio-Science (Nanomedicine) from the esteemed Jamia Millia Islamia, Delhi, he has developed a profound expertise in the design, formulation, and characterization of nanoparticles for targeted drug delivery.
+      fullBio: `Dr. Abhishek Chanchal is a highly accomplished researcher and scientist with over 15+ years' strong foundation in the fields of nanomedicine and biotechnology. Holding a Ph.D. in Bio-Science (Nanomedicine) from the esteemed Jamia Millia Islamia, Delhi, he has developed a profound expertise in the design, formulation, and characterization of nanoparticles for targeted drug delivery.
 
 His research focuses on harnessing the potential of nanotechnology to create innovative solutions for complex medical challenges, with a particular emphasis on improving the efficacy and safety of therapeutic interventions. With a deep understanding of the intricate interactions between nanoparticles and biological systems, he has successfully developed novel nanoscale systems that can selectively target diseased cells, reducing side effects and enhancing treatment outcomes.
 
