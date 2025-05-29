@@ -613,12 +613,15 @@ export default function CareerPage() {
                     return (
                       <CardComponent key={job.id}>
                         <CardHeader className="pb-3">
-                          <div className="flex items-start justify-between">
-                            <div className="flex-1">
+                          <div className="space-y-3">
+                            {/* Title and Company - Full Width */}
+                            <div className="w-full">
                               <CardTitle className="text-lg font-semibold mb-1">{job.title}</CardTitle>
                               <CardDescription className="text-sm">{job.company}</CardDescription>
                             </div>
-                            <div className="flex flex-wrap gap-1 ml-2">
+                            
+                            {/* Badges - Full Width Row */}
+                            <div className="flex flex-wrap gap-2">
                               {job.featured && (
                                 <Badge className="bg-blue-100 text-blue-800 hover:bg-blue-200 text-xs">Featured</Badge>
                               )}
@@ -868,12 +871,15 @@ export default function CareerPage() {
                   return (
                     <CardComponent key={job.id}>
                       <CardHeader className="pb-3">
-                        <div className="flex items-start justify-between">
-                          <div className="flex-1">
+                        <div className="space-y-3">
+                          {/* Title and Company - Full Width */}
+                          <div className="w-full">
                             <CardTitle className="text-lg font-semibold mb-1">{job.title}</CardTitle>
                             <CardDescription className="text-sm">{job.company}</CardDescription>
                           </div>
-                          <div className="flex flex-wrap gap-1 ml-2">
+                          
+                          {/* Badges - Full Width Row */}
+                          <div className="flex flex-wrap gap-2">
                             {job.featured && (
                               <Badge className="bg-blue-100 text-blue-800 hover:bg-blue-200 text-xs">Featured</Badge>
                             )}
