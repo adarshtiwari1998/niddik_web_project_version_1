@@ -692,11 +692,12 @@ export default function SEOPages() {
                 <TableHeader>
                   <TableRow>
                     <TableHead>Page Path</TableHead>
-                    <TableHead>Title</TableHead>
-                    <TableHead>Description</TableHead>
-                    <TableHead>Status</TableHead>
-                    <TableHead>Last Updated</TableHead>
-                    <TableHead>Actions</TableHead>
+                      <TableHead>Title</TableHead>
+                      <TableHead>Description</TableHead>
+                      <TableHead>Scripts</TableHead>
+                      <TableHead>Status</TableHead>
+                      <TableHead>Last Updated</TableHead>
+                      <TableHead>Actions</TableHead>
                   </TableRow>
                 </TableHeader>
                 <TableBody>
@@ -1000,7 +1001,7 @@ function SEOPageDialog({ title, formData, setFormData, onSubmit, isLoading, isEd
                 <Label htmlFor="ogType">OG Type</Label>
                 <Select
                   value={formData.ogType}
-                  onValueChange={(value) => handleInputChange('ogType', value)}
+                  onChange={(value) => handleInputChange('ogType', value)}
                 >
                   <SelectTrigger>
                     <SelectValue />
@@ -1099,7 +1100,7 @@ function SEOPageDialog({ title, formData, setFormData, onSubmit, isLoading, isEd
                 <Label htmlFor="twitterCard">Twitter Card Type</Label>
                 <Select
                   value={formData.twitterCard}
-                  onValueChange={(value) => handleInputChange('twitterCard', value)}
+                  onChange={(value) => handleInputChange('twitterCard', value)}
                 >
                   <SelectTrigger>
                     <SelectValue />
@@ -1270,7 +1271,7 @@ function SEOPageDialog({ title, formData, setFormData, onSubmit, isLoading, isEd
                 <Label htmlFor="robotsDirective">Robots Directive</Label>
                 <Select
                   value={formData.robotsDirective}
-                  onValueChange={(value) => handleInputChange('robotsDirective', value)}
+                  onChange={(value) => handleInputChange('robotsDirective', value)}
                 >
                   <SelectTrigger>
                     <SelectValue />
@@ -1301,7 +1302,7 @@ function SEOPageDialog({ title, formData, setFormData, onSubmit, isLoading, isEd
               <Switch
                 id="isActive"
                 checked={formData.isActive}
-                onCheckedChange={(checked) => handleInputChange('isActive', checked)}
+                onChange={(checked) => handleInputChange('isActive', checked)}
               />
               <Label htmlFor="isActive">Active</Label>
             </div>

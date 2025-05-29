@@ -80,6 +80,12 @@ export async function setupVite(app: Express, server: Server) {
 
         // Fetch SEO data for the current path
         let seoData = await storage.getSeoPageByPath(pathname);
+        
+        // Also fetch root page scripts for global injection
+        let rootSeoData = null;
+        if (pathname !== '/') {
+          rootSeoData = await storage.getRootSeoPage();
+        }
 
         // Handle job detail pages dynamically
         const jobPageMatch = pathname.match(/^\/jobs\/(\d+)$/);
@@ -210,6 +216,26 @@ export async function setupVite(app: Express, server: Server) {
           };
         }
 
+        // Prepare scripts for injection
+        let headScripts = '';
+        let bodyScripts = '';
+        
+        // Add root page scripts first (global scripts)
+        if (rootSeoData?.headScripts) {
+          headScripts += `\n          ${rootSeoData.headScripts}`;
+        }
+        if (rootSeoData?.bodyScripts) {
+          bodyScripts += `\n          ${rootSeoData.bodyScripts}`;
+        }
+        
+        // Add page-specific scripts
+        if (seoData.headScripts) {
+          headScripts += `\n          ${seoData.headScripts}`;
+        }
+        if (seoData.bodyScripts) {
+          bodyScripts += `\n          ${seoData.bodyScripts}`;
+        }
+
         // Inject SEO metadata into HTML head (excluding title since we replace it separately)
         const headContent = `
           <meta name="description" content="${seoData.metaDescription}" />
@@ -248,6 +274,8 @@ export async function setupVite(app: Express, server: Server) {
           <!-- Favicon and icons -->
           <link rel="icon" type="image/png" href="/images/niddik_logo.png" />
           <link rel="apple-touch-icon" href="/images/niddik_logo.png" />
+          
+          <!-- Custom Head Scripts -->${headScripts}
         `;
 
         // Replace the title tag first
@@ -258,6 +286,13 @@ export async function setupVite(app: Express, server: Server) {
         
         // Insert additional head content before the closing </head> tag
         template = template.replace('</head>', `${headContent}\n</head>`);
+        
+        // Insert body scripts before closing </body> tag if any exist
+        if (bodyScripts) {
+          const bodyScriptContent = `
+          <!-- Custom Body Scripts -->${bodyScripts}`;
+          template = template.replace('</body>', `${bodyScriptContent}\n</body>`);
+        }
 
       } catch (error) {
         console.error('Error injecting SEO data:', error);

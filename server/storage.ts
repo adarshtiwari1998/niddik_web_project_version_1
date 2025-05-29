@@ -955,6 +955,12 @@ export const storage = {
     });
   },
 
+  async getRootSeoPage(): Promise<SeoPage | undefined> {
+    return db.query.seoPages.findFirst({
+      where: and(eq(seoPages.pagePath, '/'), eq(seoPages.isActive, true))
+    });
+  },
+
   async getSeoPageById(id: number): Promise<SeoPage | undefined> {
     return db.query.seoPages.findFirst({
       where: eq(seoPages.id, id)

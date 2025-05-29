@@ -306,6 +306,8 @@ export const seoPages = pgTable("seo_pages", {
   itemPropName: text("itemprop_name"),
   itemPropDescription: text("itemprop_description"),
   itemPropImage: text("itemprop_image"),
+  headScripts: text("head_scripts"), // Custom scripts for <head>
+  bodyScripts: text("body_scripts"), // Custom scripts for <body>
   isActive: boolean("is_active").notNull().default(true),
   createdAt: timestamp("created_at").defaultNow().notNull(),
   updatedAt: timestamp("updated_at").defaultNow().notNull(),
@@ -333,6 +335,8 @@ export const seoPageSchema = createInsertSchema(seoPages, {
   itemPropName: (schema) => schema.optional(),
   itemPropDescription: (schema) => schema.optional(),
   itemPropImage: (schema) => schema.optional(),
+  headScripts: (schema) => schema.optional(),
+  bodyScripts: (schema) => schema.optional(),
   isActive: (schema) => schema.optional(),
 });
 

@@ -1,7 +1,8 @@
 import React from 'react';
 import { Helmet } from 'react-helmet-async';
 import { useQuery } from '@tanstack/react-query';
-import { useLocation } from 'wouter';
+import { useLocation } from 'react-router-dom';
+import { useEffect } from 'react';
 
 interface SEOData {
   pageTitle: string;
@@ -24,6 +25,8 @@ interface SEOData {
   itemPropName?: string;
   itemPropDescription?: string;
   itemPropImage?: string;
+  headScripts?: string;
+  bodyScripts?: string;
 }
 
 interface SEOProps {
@@ -33,7 +36,7 @@ interface SEOProps {
 
 const SEO: React.FC<SEOProps> = ({ pagePath, fallback }) => {
   const [location] = useLocation();
-  const currentPath = pagePath || location;
+  const currentPath = pagePath || location.pathname;
 
   // Check if this is a job detail page
   const isJobDetailPage = currentPath.match(/^\/jobs\/(\d+)$/);
@@ -59,19 +62,26 @@ const SEO: React.FC<SEOProps> = ({ pagePath, fallback }) => {
     );
   }
 
-  // Fetch job data for dynamic SEO if it's a job page
-  const { data: jobData } = useQuery<{ data: any }>({
+  // For dynamic job pages, also fetch job data
+  const { data: jobData } = useQuery({
     queryKey: [`/api/job-listings/${jobId}`],
     queryFn: async () => {
-      const response = await fetch(`/api/job-listings/${jobId}`);
-      if (!response.ok) {
-        throw new Error('Failed to fetch job data');
-      }
-      return response.json();
+      const res = await fetch(`/api/job-listings/${jobId}`);
+      if (!res.ok) throw new Error('Failed to fetch job data');
+      return res.json();
     },
-    enabled: !!jobId,
-    staleTime: 5 * 60 * 1000,
-    refetchOnWindowFocus: false,
+    enabled: isJobDetailPage && !!jobId,
+  });
+
+  // Fetch root page SEO data for global scripts (unless we're already on root)
+  const { data: rootSeoData } = useQuery({
+    queryKey: ['seo-pages', '/'],
+    queryFn: async () => {
+      const res = await fetch('/api/seo-pages/by-path?path=/');
+      if (!res.ok) throw new Error('Failed to fetch root SEO data');
+      return res.json();
+    },
+    enabled: location.pathname !== '/',
   });
 
   // Fetch recent jobs for careers and home pages
@@ -89,7 +99,7 @@ const SEO: React.FC<SEOProps> = ({ pagePath, fallback }) => {
     refetchOnWindowFocus: false,
   });
 
-  const pathname = pagePath || location;
+  const pathname = pagePath || location.pathname;
 
   const { data: seoData, error: seoError } = useQuery<{ success: boolean; data: SEOData; isDefault?: boolean }>({
     queryKey: [`/api/seo-pages/by-path?path=${pathname}`],
@@ -292,6 +302,46 @@ const SEO: React.FC<SEOProps> = ({ pagePath, fallback }) => {
   const baseUrl = "https://niddik.com";
   const fullUrl = seo.canonicalUrl || `${baseUrl}${currentPath}`;
 
+  // Handle body scripts injection (global + page-specific)
+  useEffect(() => {
+    const injectScripts = (scripts: string) => {
+      if (!scripts) return;
+
+      // Create a temporary container to parse the scripts
+      const tempDiv = document.createElement('div');
+      tempDiv.innerHTML = scripts;
+
+      // Extract and execute scripts
+      const scriptElements = tempDiv.querySelectorAll('script');
+      scriptElements.forEach((script) => {
+        const newScript = document.createElement('script');
+
+        // Copy attributes
+        Array.from(script.attributes).forEach((attr) => {
+          newScript.setAttribute(attr.name, attr.value);
+        });
+
+        // Copy content
+        if (script.innerHTML) {
+          newScript.innerHTML = script.innerHTML;
+        }
+
+        // Append to body
+        document.body.appendChild(newScript);
+      });
+    };
+
+    // Inject global scripts from root page first
+    if (rootSeoData?.data?.bodyScripts && location.pathname !== '/') {
+      injectScripts(rootSeoData.data.bodyScripts);
+    }
+
+    // Then inject page-specific scripts
+    if (seo.bodyScripts) {
+      injectScripts(seo.bodyScripts);
+    }
+  }, [seo.bodyScripts, rootSeoData]);
+
   return (
     <Helmet>
       {/* Basic Meta Tags - Title handled by server-side SEO */}
@@ -326,21 +376,21 @@ const SEO: React.FC<SEOProps> = ({ pagePath, fallback }) => {
 
       {/* Structured Data (JSON-LD) */}
       {structuredDataObj && (
-        <script type="application/ld+json">
-          {JSON.stringify(structuredDataObj)}
-        </script>
+        <script 
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{ __html: structuredDataObj }}
+        />
       )}
 
-      {/* Additional meta tags for better SEO */}
-      <meta name="viewport" content="width=device-width, initial-scale=1" />
-      <meta httpEquiv="Content-Type" content="text/html; charset=utf-8" />
-      <meta name="language" content="en" />
-      <meta name="revisit-after" content="7 days" />
-      <meta name="author" content="Niddik" />
+      {/* Global Head Scripts from Root Page */}
+      {rootSeoData?.data?.headScripts && location.pathname !== '/' && (
+        <div dangerouslySetInnerHTML={{ __html: rootSeoData.data.headScripts }} />
+      )}
 
-      {/* Favicon and icons */}
-      <link rel="icon" type="image/png" href="/images/niddik_logo.png" />
-      <link rel="apple-touch-icon" href="/images/niddik_logo.png" />
+      {/* Custom Head Scripts */}
+      {seo.headScripts && (
+        <div dangerouslySetInnerHTML={{ __html: seo.headScripts }} />
+      )}
     </Helmet>
   );
 };
