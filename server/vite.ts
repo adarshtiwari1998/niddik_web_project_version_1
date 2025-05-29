@@ -78,8 +78,9 @@ export async function setupVite(app: Express, server: Server) {
 
         console.log(`Serving page: ${pathname} with server-side SEO`);
 
-        // Fetch SEO data for the current path
+        // Fetch SEO data and scripts for the current path
         let seoData = await storage.getSeoPageByPath(pathname);
+        const scriptsData = await storage.getAllScriptsForPath(pathname);
 
         // Handle job detail pages dynamically
         const jobPageMatch = pathname.match(/^\/jobs\/(\d+)$/);
@@ -210,6 +211,32 @@ export async function setupVite(app: Express, server: Server) {
           };
         }
 
+        // Compile all scripts (global + page-specific)
+        const compileScripts = (type: 'head' | 'body') => {
+          let scripts = '';
+          
+          // Add global scripts first
+          scriptsData.global.forEach(globalScript => {
+            const scriptContent = type === 'head' ? globalScript.headScripts : globalScript.bodyScripts;
+            if (scriptContent) {
+              scripts += `\n<!-- Global Scripts from ${globalScript.pagePath} -->\n${scriptContent}\n`;
+            }
+          });
+          
+          // Add page-specific scripts
+          if (scriptsData.pageSpecific) {
+            const scriptContent = type === 'head' ? scriptsData.pageSpecific.headScripts : scriptsData.pageSpecific.bodyScripts;
+            if (scriptContent) {
+              scripts += `\n<!-- Page Specific Scripts -->\n${scriptContent}\n`;
+            }
+          }
+          
+          return scripts;
+        };
+
+        const headScripts = compileScripts('head');
+        const bodyScripts = compileScripts('body');
+
         // Inject SEO metadata into HTML head (excluding title since we replace it separately)
         const headContent = `
           <meta name="description" content="${seoData.metaDescription}" />
@@ -248,6 +275,8 @@ export async function setupVite(app: Express, server: Server) {
           <!-- Favicon and icons -->
           <link rel="icon" type="image/png" href="/images/niddik_logo.png" />
           <link rel="apple-touch-icon" href="/images/niddik_logo.png" />
+
+          ${headScripts}
         `;
 
         // Replace the title tag first
@@ -258,6 +287,11 @@ export async function setupVite(app: Express, server: Server) {
         
         // Insert additional head content before the closing </head> tag
         template = template.replace('</head>', `${headContent}\n</head>`);
+        
+        // Insert body scripts before the closing </body> tag
+        if (bodyScripts) {
+          template = template.replace('</body>', `${bodyScripts}\n</body>`);
+        }
 
       } catch (error) {
         console.error('Error injecting SEO data:', error);

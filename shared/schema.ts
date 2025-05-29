@@ -262,7 +262,7 @@ export const demoRequests = pgTable("demo_requests", {
   status: text("status").notNull().default("pending"), // pending, scheduled, completed, rejected
   acceptedTerms: boolean("accepted_terms").notNull().default(false),
   createdAt: timestamp("created_at").defaultNow().notNull(),
-  updatedAt: timestamp("updated_at").defaultNow().notNull(),
+  updatedAt: timestamp("updated_at").defaultAtNow().notNull(),
   scheduledDate: timestamp("scheduled_date"),
   adminNotes: text("admin_notes"),
 });
@@ -302,10 +302,13 @@ export const seoPages = pgTable("seo_pages", {
   twitterCreator: text("twitter_creator"),
   canonicalUrl: text("canonical_url"),
   robotsDirective: text("robots_directive").notNull().default("index,follow"),
-  structuredData: text("structured_data"), // JSON-LD schema
+  structuredData: text("structured_data"),
   itemPropName: text("itemprop_name"),
   itemPropDescription: text("itemprop_description"),
   itemPropImage: text("itemprop_image"),
+  headScripts: text("head_scripts"), // Scripts to inject in <head>
+  bodyScripts: text("body_scripts"), // Scripts to inject before </body>
+  isGlobal: boolean("is_global").default(false), // Apply to all pages
   isActive: boolean("is_active").notNull().default(true),
   createdAt: timestamp("created_at").defaultNow().notNull(),
   updatedAt: timestamp("updated_at").defaultNow().notNull(),
