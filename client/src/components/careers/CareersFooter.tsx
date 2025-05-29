@@ -16,7 +16,7 @@ const CareersFooter = () => {
               <img 
                 src="/images/niddik_logo.png" 
                 alt="Niddik Logo" 
-                className="h-8 w-8 object-contain"
+                className="h-20 w-20 object-contain"
               />
               {/* <span className="text-xl font-bold text-gray-900">Niddik</span> */}
             </div>
