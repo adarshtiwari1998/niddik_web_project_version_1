@@ -180,9 +180,8 @@ class EmailService {
                     <a href="mailto:info@niddik.com">info@niddik.com</a>
                 </p>
                 <div class="social-links">
-                    <a href="#">LinkedIn</a> |
-                    <a href="#">Twitter</a> |
-                    <a href="#">Facebook</a>
+                    <a href="https://www.linkedin.com/company/niddik/">LinkedIn</a> |
+                    <a href="https://www.youtube.com/@NiddikkareLLP">YouTube</a>
                 </div>
                 <p style="margin-top: 20px; font-size: 12px; color: #9ca3af;">
                     © ${new Date().getFullYear()} NiDDiK. All rights reserved.<br>
@@ -249,7 +248,7 @@ class EmailService {
 
   async sendLoginNotification(userEmail: string, userName: string, loginTime: Date, ipAddress?: string, requestOrigin?: string): Promise<boolean> {
     try {
-      const formattedTime = format(new Date(), 'MMMM dd, yyyy \'at\' hh:mm a');
+      const formattedTime = format(loginTime, 'MMMM dd, yyyy \'at\' hh:mm a');
       
       const content = `
         <h2 style="color: #16a34a; margin-bottom: 20px;">Security Alert: Account Login 🔐</h2>
@@ -314,7 +313,7 @@ class EmailService {
     requestOrigin?: string
   ): Promise<boolean> {
     try {
-      const formattedDate = format(new Date(), 'MMMM dd, yyyy \'at\' hh:mm a');
+      const formattedDate = format(applicationDate, 'MMMM dd, yyyy \'at\' hh:mm a');
       
       const content = `
         <h2 style="color: #16a34a; margin-bottom: 20px;">Application Submitted Successfully! ✅</h2>
@@ -393,7 +392,7 @@ class EmailService {
     requestOrigin?: string
   ): Promise<boolean> {
     try {
-      const formattedDate = format(new Date(), 'MMMM dd, yyyy \'at\' hh:mm a');
+      const formattedDate = format(applicationDate, 'MMMM dd, yyyy \'at\' hh:mm a');
       
       const content = `
         <h2 style="color: #16a34a; margin-bottom: 20px;">New Job Application Received! 📋</h2>
@@ -590,7 +589,8 @@ class EmailService {
     requestOrigin?: string
   ): Promise<boolean> {
     try {
-      const formattedDate = format(new Date(), 'MMMM dd, yyyy \'at\' hh:mm a');
+      const registrationDate = new Date();
+      const formattedDate = format(registrationDate, 'MMMM dd, yyyy \'at\' hh:mm a');
       
       const content = `
         <h2 style="color: #16a34a; margin-bottom: 20px;">New User Registration! 🎉</h2>

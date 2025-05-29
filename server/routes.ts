@@ -894,6 +894,41 @@ export async function registerRoutes(app: Express): Promise<Server> {
       // Create the job application
       const application = await storage.createJobApplication(validatedData);
 
+      // Get job details for email
+      const job = await db.query.jobListings.findFirst({
+        where: eq(jobListings.id, validatedData.jobId)
+      });
+
+      // Get user details for email
+      const user = await db.query.users.findFirst({
+        where: eq(users.id, userId)
+      });
+
+      if (job && user) {
+        // Send confirmation email to user
+        await emailService.sendJobApplicationConfirmation(
+          user.email,
+          user.fullName,
+          job.title,
+          job.company,
+          new Date(),
+          req.get('origin')
+        );
+
+        // Send notification email to admin
+        await emailService.sendAdminJobApplicationNotification(
+          user.fullName,
+          user.email,
+          job.title,
+          job.company,
+          new Date(),
+          user.phone || undefined,
+          user.experience || undefined,
+          user.skills || undefined,
+          req.get('origin')
+        );
+      }
+
       return res.status(201).json({ 
         success: true, 
         data: application 
