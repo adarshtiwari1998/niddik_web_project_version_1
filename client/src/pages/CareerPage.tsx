@@ -281,457 +281,691 @@ export default function CareerPage() {
       <SEO pagePath="/careers" />
       <CareersLayout>
         <div className="container mx-auto py-12 px-4 md:px-6">
-        {/* Admin Dashboard Cards - Only visible to admin users */}
-        {user && user.role === 'admin' && (
-          <div className="mb-12">
-            <div className="text-center mb-8">
-              <h2 className="text-2xl font-bold mb-2">Admin Dashboard Overview</h2>
-              <p className="text-muted-foreground">Quick stats and analytics for your recruitment platform</p>
+        {/* Admin Layout - Split view with dashboard cards on left and jobs on right */}
+        {user && user.role === 'admin' ? (
+          <div className="grid grid-cols-1 lg:grid-cols-12 gap-8">
+            {/* Left Side - Admin Dashboard Cards */}
+            <div className="lg:col-span-5 xl:col-span-4">
+              <div className="text-center mb-6">
+                <h2 className="text-2xl font-bold mb-2">Admin Dashboard Overview</h2>
+                <p className="text-muted-foreground">Quick stats and analytics for your recruitment platform</p>
+              </div>
+
+              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-1 gap-4">
+                {/* Active Jobs */}
+                <Card className="border-l-4 border-l-green-500">
+                  <CardHeader className="pb-3">
+                    <div className="flex items-center justify-between">
+                      <div className="flex items-center gap-2">
+                        <Briefcase className="h-5 w-5 text-green-600" />
+                        <CardTitle className="text-xl font-bold">{data?.meta.total || 0}</CardTitle>
+                      </div>
+                    </div>
+                  </CardHeader>
+                  <CardContent>
+                    <p className="text-sm font-medium text-gray-600 mb-1">Active Jobs</p>
+                    <p className="text-xs text-gray-500 mb-3">Job listings currently active</p>
+                    <Link href="/admin/jobs">
+                      <Button variant="link" className="text-xs p-0 h-auto text-green-600 hover:text-green-800">
+                        View all jobs →
+                      </Button>
+                    </Link>
+                  </CardContent>
+                </Card>
+
+                {/* Total Candidates */}
+                <Card className="border-l-4 border-l-blue-500">
+                  <CardHeader className="pb-3">
+                    <div className="flex items-center justify-between">
+                      <div className="flex items-center gap-2">
+                        <User className="h-5 w-5 text-blue-600" />
+                        <CardTitle className="text-xl font-bold">{applicationsData?.data?.length || 0}</CardTitle>
+                      </div>
+                    </div>
+                  </CardHeader>
+                  <CardContent>
+                    <p className="text-sm font-medium text-gray-600 mb-1">Total Candidates</p>
+                    <p className="text-xs text-gray-500 mb-3">All job applications received</p>
+                    <Link href="/admin/candidates">
+                      <Button variant="link" className="text-xs p-0 h-auto text-blue-600 hover:text-blue-800">
+                        View all candidates →
+                      </Button>
+                    </Link>
+                  </CardContent>
+                </Card>
+
+                {/* New Applications */}
+                <Card className="border-l-4 border-l-purple-500">
+                  <CardHeader className="pb-3">
+                    <div className="flex items-center justify-between">
+                      <div className="flex items-center gap-2">
+                        <Clock className="h-5 w-5 text-purple-600" />
+                        <CardTitle className="text-xl font-bold">
+                          {applicationsData?.data?.filter((app: any) => app.status === 'new').length || 0}
+                        </CardTitle>
+                      </div>
+                    </div>
+                  </CardHeader>
+                  <CardContent>
+                    <p className="text-sm font-medium text-gray-600 mb-1">New Applications</p>
+                    <p className="text-xs text-gray-500 mb-3">Awaiting review</p>
+                    <Link href="/admin/candidates">
+                      <Button variant="link" className="text-xs p-0 h-auto text-purple-600 hover:text-purple-800">
+                        Review applications →
+                      </Button>
+                    </Link>
+                  </CardContent>
+                </Card>
+
+                {/* Interview Stage */}
+                <Card className="border-l-4 border-l-orange-500">
+                  <CardHeader className="pb-3">
+                    <div className="flex items-center justify-between">
+                      <div className="flex items-center gap-2">
+                        <Award className="h-5 w-5 text-orange-600" />
+                        <CardTitle className="text-xl font-bold">
+                          {applicationsData?.data?.filter((app: any) => app.status === 'interview').length || 0}
+                        </CardTitle>
+                      </div>
+                    </div>
+                  </CardHeader>
+                  <CardContent>
+                    <p className="text-sm font-medium text-gray-600 mb-1">Interview Stage</p>
+                    <p className="text-xs text-gray-500 mb-3">In interview process</p>
+                    <Link href="/admin/candidates">
+                      <Button variant="link" className="text-xs p-0 h-auto text-orange-600 hover:text-orange-800">
+                        See interview pipeline →
+                      </Button>
+                    </Link>
+                  </CardContent>
+                </Card>
+
+                {/* Submitted Candidates */}
+                <Card className="border-l-4 border-l-indigo-500">
+                  <CardHeader className="pb-3">
+                    <div className="flex items-center justify-between">
+                      <div className="flex items-center gap-2">
+                        <FileText className="h-5 w-5 text-indigo-600" />
+                        <CardTitle className="text-xl font-bold">{submittedCandidatesData?.meta?.total || 0}</CardTitle>
+                      </div>
+                    </div>
+                  </CardHeader>
+                  <CardContent>
+                    <p className="text-sm font-medium text-gray-600 mb-1">Submitted Candidates</p>
+                    <p className="text-xs text-gray-500 mb-3">Submitted to clients</p>
+                    <Link href="/admin/submitted-candidates">
+                      <Button variant="link" className="text-xs p-0 h-auto text-indigo-600 hover:text-indigo-800">
+                        View submissions →
+                      </Button>
+                    </Link>
+                  </CardContent>
+                </Card>
+
+                {/* Demo Requests */}
+                <Card className="border-l-4 border-l-pink-500">
+                  <CardHeader className="pb-3">
+                    <div className="flex items-center justify-between">
+                      <div className="flex items-center gap-2">
+                        <CalendarClock className="h-5 w-5 text-pink-600" />
+                        <CardTitle className="text-xl font-bold">{demoRequestsData?.meta?.total || 0}</CardTitle>
+                      </div>
+                    </div>
+                  </CardHeader>
+                  <CardContent>
+                    <p className="text-sm font-medium text-gray-600 mb-1">Demo Requests</p>
+                    <p className="text-xs text-gray-500 mb-3">Pending requests</p>
+                    <Link href="/admin/demo-requests">
+                      <Button variant="link" className="text-xs p-0 h-auto text-pink-600 hover:text-pink-800">
+                        Manage requests →
+                      </Button>
+                    </Link>
+                  </CardContent>
+                </Card>
+
+                {/* Contact Submissions */}
+                <Card className="border-l-4 border-l-teal-500">
+                  <CardHeader className="pb-3">
+                    <div className="flex items-center justify-between">
+                      <div className="flex items-center gap-2">
+                        <Mail className="h-5 w-5 text-teal-600" />
+                        <CardTitle className="text-xl font-bold">{contactSubmissionsData?.meta?.total || 0}</CardTitle>
+                      </div>
+                    </div>
+                  </CardHeader>
+                  <CardContent>
+                    <p className="text-sm font-medium text-gray-600 mb-1">Contact Submissions</p>
+                    <p className="text-xs text-gray-500 mb-3">Messages from contact form</p>
+                    <Link href="/admin/contact-submissions">
+                      <Button variant="link" className="text-xs p-0 h-auto text-teal-600 hover:text-teal-800">
+                        View messages →
+                      </Button>
+                    </Link>
+                  </CardContent>
+                </Card>
+
+                {/* SEO Pages */}
+                <Card className="border-l-4 border-l-cyan-500">
+                  <CardHeader className="pb-3">
+                    <div className="flex items-center justify-between">
+                      <div className="flex items-center gap-2">
+                        <Globe className="h-5 w-5 text-cyan-600" />
+                        <CardTitle className="text-xl font-bold">{seoData?.data?.length || 0}</CardTitle>
+                      </div>
+                    </div>
+                  </CardHeader>
+                  <CardContent>
+                    <p className="text-sm font-medium text-gray-600 mb-1">Active SEO Pages</p>
+                    <p className="text-xs text-gray-500 mb-3">SEO optimized pages</p>
+                    <Link href="/admin/seo-pages">
+                      <Button variant="link" className="text-xs p-0 h-auto text-cyan-600 hover:text-cyan-800">
+                        Manage SEO →
+                      </Button>
+                    </Link>
+                  </CardContent>
+                </Card>
+              </div>
             </div>
 
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
-              {/* Active Jobs */}
-              <Card className="border-l-4 border-l-green-500">
-                <CardHeader className="pb-3">
-                  <div className="flex items-center justify-between">
-                    <div className="flex items-center gap-2">
-                      <Briefcase className="h-5 w-5 text-green-600" />
-                      <CardTitle className="text-2xl font-bold">{data?.meta.total || 0}</CardTitle>
+            {/* Right Side - Job Listings with Header and Filters */}
+            <div className="lg:col-span-7 xl:col-span-8">
+              {/* Hero Section for Admin */}
+              <div className="text-center mb-8">
+                <h1 className="text-3xl font-bold mb-4">Talent Acquisition Dashboard</h1>
+                <p className="text-lg text-muted-foreground max-w-2xl mx-auto">
+                  Manage your recruitment pipeline, track candidate applications, and oversee all talent acquisition activities from this centralized admin dashboard.
+                </p>
+              </div>
+
+              {/* Search and Filters */}
+              <Card className="mb-8">
+                <CardContent className="pt-6">
+                  <form onSubmit={handleSearch} className="space-y-4">
+                    <div className="flex flex-col md:flex-row gap-4">
+                      <div className="relative flex-grow">
+                        <Search className="absolute left-3 top-3 h-4 w-4 text-muted-foreground" />
+                        <Input
+                          placeholder="Search job title or keywords"
+                          value={search}
+                          onChange={(e) => setSearch(e.target.value)}
+                          className="pl-9"
+                        />
+                      </div>
+                      <div className="grid grid-cols-2 md:grid-cols-4 gap-4 md:w-2/3">
+                        <Select value={category} onValueChange={setCategory}>
+                          <SelectTrigger>
+                            <SelectValue placeholder="All Categories" />
+                          </SelectTrigger>
+                          <SelectContent>
+                            <SelectItem value="all_categories">All Categories</SelectItem>
+                            {availableCategories.map(cat => (
+                              <SelectItem key={cat} value={cat}>{cat}</SelectItem>
+                            ))}
+                          </SelectContent>
+                        </Select>
+
+                        <Select value={jobType} onValueChange={setJobType}>
+                          <SelectTrigger>
+                            <SelectValue placeholder="All Types" />
+                          </SelectTrigger>
+                          <SelectContent>
+                            <SelectItem value="all_types">All Types</SelectItem>
+                            {availableJobTypes.map(type => (
+                              <SelectItem key={type} value={type}>
+                                {type.charAt(0).toUpperCase() + type.slice(1)}
+                              </SelectItem>
+                            ))}
+                          </SelectContent>
+                        </Select>
+
+                        <Select value={experienceLevel} onValueChange={setExperienceLevel}>
+                          <SelectTrigger>
+                            <SelectValue placeholder="All Levels" />
+                          </SelectTrigger>
+                          <SelectContent>
+                            <SelectItem value="all_levels">All Levels</SelectItem>
+                            {availableExperienceLevels.map(level => (
+                              <SelectItem key={level} value={level}>
+                                {level.charAt(0).toUpperCase() + level.slice(1)} Level
+                              </SelectItem>
+                            ))}
+                          </SelectContent>
+                        </Select>
+
+                        <Select value={priority} onValueChange={setPriority}>
+                          <SelectTrigger>
+                            <SelectValue placeholder="All Priorities" />
+                          </SelectTrigger>
+                          <SelectContent>
+                            <SelectItem value="all_priorities">All Priorities</SelectItem>
+                            <SelectItem value="urgent">Urgent</SelectItem>
+                            <SelectItem value="priority">Priority</SelectItem>
+                            <SelectItem value="open">Open</SelectItem>
+                            <SelectItem value="featured">Featured</SelectItem>
+                          </SelectContent>
+                        </Select>
+                      </div>
                     </div>
-                  </div>
-                </CardHeader>
-                <CardContent>
-                  <p className="text-sm font-medium text-gray-600 mb-1">Active Jobs</p>
-                  <p className="text-xs text-gray-500 mb-3">Job listings currently active ({data?.meta.total || 0} total)</p>
-                  <Link href="/admin/jobs">
-                    <Button variant="link" className="text-xs p-0 h-auto text-green-600 hover:text-green-800">
-                      View all jobs →
-                    </Button>
-                  </Link>
+
+                    <div className="flex justify-between items-center">
+                      <Button type="button" variant="outline" onClick={clearFilters} className="flex items-center gap-2">
+                        <Filter className="h-4 w-4" /> Clear Filters
+                      </Button>
+                      <Button type="submit">Search Jobs</Button>
+                    </div>
+                  </form>
                 </CardContent>
               </Card>
 
-              {/* Total Candidates */}
-              <Card className="border-l-4 border-l-blue-500">
-                <CardHeader className="pb-3">
-                  <div className="flex items-center justify-between">
-                    <div className="flex items-center gap-2">
-                      <User className="h-5 w-5 text-blue-600" />
-                      <CardTitle className="text-2xl font-bold">{applicationsData?.data?.length || 0}</CardTitle>
-                    </div>
-                  </div>
-                </CardHeader>
-                <CardContent>
-                  <p className="text-sm font-medium text-gray-600 mb-1">Total Candidates</p>
-                  <p className="text-xs text-gray-500 mb-3">All job applications received</p>
-                  <Link href="/admin/candidates">
-                    <Button variant="link" className="text-xs p-0 h-auto text-blue-600 hover:text-blue-800">
-                      View all candidates →
-                    </Button>
-                  </Link>
-                </CardContent>
-              </Card>
+              {/* Job Listings */}
+              <div className="space-y-6">
+                <div className="flex justify-between items-center">
+                  <h2 className="text-2xl font-bold">Available Positions</h2>
+                  {data && (
+                    <p className="text-muted-foreground">
+                      Showing {filteredJobs.length} of {data.meta.total} opportunities
+                    </p>
+                  )}
+                </div>
 
-              {/* New Applications */}
-              <Card className="border-l-4 border-l-purple-500">
-                <CardHeader className="pb-3">
-                  <div className="flex items-center justify-between">
-                    <div className="flex items-center gap-2">
-                      <Clock className="h-5 w-5 text-purple-600" />
-                      <CardTitle className="text-2xl font-bold">
-                        {applicationsData?.data?.filter((app: any) => app.status === 'new').length || 0}
-                      </CardTitle>
-                    </div>
-                  </div>
-                </CardHeader>
-                <CardContent>
-                  <p className="text-sm font-medium text-gray-600 mb-1">New Applications</p>
-                  <p className="text-xs text-gray-500 mb-3">Applications awaiting review</p>
-                  <Link href="/admin/candidates">
-                    <Button variant="link" className="text-xs p-0 h-auto text-purple-600 hover:text-purple-800">
-                      Review applications →
-                    </Button>
-                  </Link>
-                </CardContent>
-              </Card>
+                <Separator className="my-6" />
 
-              {/* Interview Stage */}
-              <Card className="border-l-4 border-l-orange-500">
-                <CardHeader className="pb-3">
-                  <div className="flex items-center justify-between">
-                    <div className="flex items-center gap-2">
-                      <Award className="h-5 w-5 text-orange-600" />
-                      <CardTitle className="text-2xl font-bold">
-                        {applicationsData?.data?.filter((app: any) => app.status === 'interview').length || 0}
-                      </CardTitle>
-                    </div>
+                {isLoading && (
+                  <div className="flex justify-center items-center py-12">
+                    <Loader2 className="h-8 w-8 animate-spin text-primary" />
                   </div>
-                </CardHeader>
-                <CardContent>
-                  <p className="text-sm font-medium text-gray-600 mb-1">Interview Stage</p>
-                  <p className="text-xs text-gray-500 mb-3">Candidates in interview process</p>
-                  <Link href="/admin/candidates">
-                    <Button variant="link" className="text-xs p-0 h-auto text-orange-600 hover:text-orange-800">
-                      See interview pipeline →
-                    </Button>
-                  </Link>
-                </CardContent>
-              </Card>
+                )}
 
-              {/* Submitted Candidates */}
-              <Card className="border-l-4 border-l-indigo-500">
-                <CardHeader className="pb-3">
-                  <div className="flex items-center justify-between">
-                    <div className="flex items-center gap-2">
-                      <FileText className="h-5 w-5 text-indigo-600" />
-                      <CardTitle className="text-2xl font-bold">{submittedCandidatesData?.meta?.total || 0}</CardTitle>
-                    </div>
+                {error && (
+                  <div className="text-center py-12">
+                    <p className="text-destructive">Failed to load jobs. Please try again later.</p>
                   </div>
-                </CardHeader>
-                <CardContent>
-                  <p className="text-sm font-medium text-gray-600 mb-1">Submitted Candidates</p>
-                  <p className="text-xs text-gray-500 mb-3">Candidates submitted to clients</p>
-                  <Link href="/admin/submitted-candidates">
-                    <Button variant="link" className="text-xs p-0 h-auto text-indigo-600 hover:text-indigo-800">
-                      View submissions →
-                    </Button>
-                  </Link>
-                </CardContent>
-              </Card>
+                )}
 
-              {/* Demo Requests */}
-              <Card className="border-l-4 border-l-pink-500">
-                <CardHeader className="pb-3">
-                  <div className="flex items-center justify-between">
-                    <div className="flex items-center gap-2">
-                      <CalendarClock className="h-5 w-5 text-pink-600" />
-                      <CardTitle className="text-2xl font-bold">{demoRequestsData?.meta?.total || 0}</CardTitle>
-                    </div>
+                {!isLoading && !error && filteredJobs.length === 0 && (
+                  <div className="text-center py-12">
+                    <h3 className="text-xl font-medium mb-2">No jobs match your criteria</h3>
+                    <p className="text-muted-foreground mb-6">Try adjusting your filters or search terms</p>
+                    <Button variant="outline" onClick={clearFilters}>Clear All Filters</Button>
                   </div>
-                </CardHeader>
-                <CardContent>
-                  <p className="text-sm font-medium text-gray-600 mb-1">Demo Requests</p>
-                  <p className="text-xs text-gray-500 mb-3">Pending demo requests</p>
-                  <Link href="/admin/demo-requests">
-                    <Button variant="link" className="text-xs p-0 h-auto text-pink-600 hover:text-pink-800">
-                      Manage requests →
-                    </Button>
-                  </Link>
-                </CardContent>
-              </Card>
+                )}
 
-              {/* Contact Submissions */}
-              <Card className="border-l-4 border-l-teal-500">
-                <CardHeader className="pb-3">
-                  <div className="flex items-center justify-between">
-                    <div className="flex items-center gap-2">
-                      <Mail className="h-5 w-5 text-teal-600" />
-                      <CardTitle className="text-2xl font-bold">{contactSubmissionsData?.meta?.total || 0}</CardTitle>
-                    </div>
-                  </div>
-                </CardHeader>
-                <CardContent>
-                  <p className="text-sm font-medium text-gray-600 mb-1">Contact Submissions</p>
-                  <p className="text-xs text-gray-500 mb-3">Messages from contact form</p>
-                  <Link href="/admin/contact-submissions">
-                    <Button variant="link" className="text-xs p-0 h-auto text-teal-600 hover:text-teal-800">
-                      View messages →
-                    </Button>
-                  </Link>
-                </CardContent>
-              </Card>
+                <div className="grid gap-6 lg:grid-cols-1 xl:grid-cols-2">
+                  {filteredJobs.map((job) => {
+                    const isDraft = job.status === 'draft';
+                    const CardComponent = ({ children }: { children: React.ReactNode }) => {
+                      if (isDraft) {
+                        return (
+                          <Card className={`overflow-hidden transition-shadow duration-300 opacity-40 cursor-not-allowed relative`}>
+                            <div className="absolute top-2 right-2 z-10">
+                              <Badge className="bg-gray-500 text-white text-xs font-bold">DRAFT</Badge>
+                            </div>
+                            {children}
+                          </Card>
+                        );
+                      }
+                      return (
+                        <Card className="overflow-hidden hover:shadow-lg transition-shadow duration-300">
+                          {children}
+                        </Card>
+                      );
+                    };
 
-              {/* SEO Pages */}
-              <Card className="border-l-4 border-l-cyan-500">
-                <CardHeader className="pb-3">
-                  <div className="flex items-center justify-between">
-                    <div className="flex items-center gap-2">
-                      <Globe className="h-5 w-5 text-cyan-600" />
-                      <CardTitle className="text-2xl font-bold">{seoData?.data?.length || 0}</CardTitle>
-                    </div>
-                  </div>
-                </CardHeader>
-                <CardContent>
-                  <p className="text-sm font-medium text-gray-600 mb-1">Active SEO Pages</p>
-                  <p className="text-xs text-gray-500 mb-3">SEO optimized pages ({seoData?.data?.length || 0} total)</p>
-                  <Link href="/admin/seo-pages">
-                    <Button variant="link" className="text-xs p-0 h-auto text-cyan-600 hover:text-cyan-800">
-                      Manage SEO →
-                    </Button>
-                  </Link>
-                </CardContent>
-              </Card>
+                    return (
+                      <CardComponent key={job.id}>
+                        <CardHeader className="pb-3">
+                          <div className="flex items-start justify-between">
+                            <div className="flex-1">
+                              <CardTitle className="text-lg font-semibold mb-1">{job.title}</CardTitle>
+                              <CardDescription className="text-sm">{job.company}</CardDescription>
+                            </div>
+                            <div className="flex flex-wrap gap-1 ml-2">
+                              {job.featured && (
+                                <Badge className="bg-blue-100 text-blue-800 hover:bg-blue-200 text-xs">Featured</Badge>
+                              )}
+                              {job.urgent && (
+                                <Badge className="bg-red-100 text-red-800 hover:bg-red-200 text-xs">
+                                  <span className="animate-pulse">🔥</span> Urgent
+                                </Badge>
+                              )}
+                              {job.priority && (
+                                <Badge className="bg-yellow-100 text-yellow-800 hover:bg-yellow-200 text-xs">
+                                  ⚡ Priority
+                                </Badge>
+                              )}
+                              {job.isOpen && (
+                                <Badge className="bg-green-100 text-green-800 hover:bg-green-200 text-xs">
+                                  ✅ Open
+                                </Badge>
+                              )}
+                            </div>
+                          </div>
+                        </CardHeader>
+                        <CardContent className="space-y-3">
+                          <div className="flex items-center justify-between text-sm">
+                            <div className="flex items-center text-muted-foreground">
+                              <MapPin className="h-3 w-3 mr-1" />
+                              <span>{job.location}</span>
+                            </div>
+                            <Badge variant="outline">{job.jobType}</Badge>
+                          </div>
+
+                          <div className="flex items-center justify-between text-sm">
+                            <div className="flex items-center text-muted-foreground">
+                              <Briefcase className="h-3 w-3 mr-1" />
+                              <span>{job.experienceLevel}</span>
+                            </div>
+                            <span className="font-medium text-primary">{job.salary}</span>
+                          </div>
+
+                          <div className="bg-gray-50 p-2 rounded-md">
+                            <div className="grid grid-cols-2 gap-3 text-xs">
+                              <div className="flex items-center justify-between">
+                                <div className="flex items-center text-muted-foreground">
+                                  <Award className="h-3 w-3 mr-1" />
+                                  <span>Category:</span>
+                                </div>
+                                <span className="font-medium">{job.category}</span>
+                              </div>
+
+                              <div className="flex items-center justify-between">
+                                <div className="flex items-center text-muted-foreground">
+                                  <Clock className="h-3 w-3 mr-1" />
+                                  <span>Posted On:</span>
+                                </div>
+                                <span className="font-medium">
+                                  {(() => {
+                                    if (!job.postedDate) return "Recently";
+                                    
+                                    const postedDate = new Date(job.postedDate);
+                                    if (isNaN(postedDate.getTime())) return "Recently";
+                                    
+                                    const formattedDate = format(postedDate, "MMM dd, yyyy");
+                                    const timeAgoText = timeAgo(job.postedDate);
+                                    
+                                    return `${formattedDate} (${timeAgoText})`;
+                                  })()}
+                                </span>
+                              </div>
+                            </div>
+
+                            {/* Display application counts for admin */}
+                            {applicationCountsData && (
+                              <div className="mt-2 text-center">
+                                <span className="text-blue-500 font-semibold">
+                                  {applicationCountsData.data?.[job.id] || 0} Candidates Applied
+                                </span>
+                              </div>
+                            )}
+                          </div>
+
+                          <div className="text-sm text-gray-600 leading-relaxed">
+                            <p className="line-clamp-3">{job.description}</p>
+                          </div>
+                        </CardContent>
+                        <CardFooter>
+                          {isDraft ? (
+                            <Button disabled className="w-full cursor-not-allowed opacity-50">
+                              Draft - Not Available
+                            </Button>
+                          ) : (
+                            <Link href={`/jobs/${job.id}`}>
+                              <Button className="w-full">View Details</Button>
+                            </Link>
+                          )}
+                        </CardFooter>
+                      </CardComponent>
+                    );
+                  })}
+                </div>
+              </div>
             </div>
-
-            <Separator className="my-8" />
           </div>
-        )}
-
-        {/* Hero Section */}
-        <div className="text-center mb-12">
-          {user && user.role === 'admin' ? (
-            <>
-              <h1 className="text-4xl font-bold mb-4">Talent Acquisition Dashboard</h1>
-              <p className="text-xl text-muted-foreground max-w-2xl mx-auto">
-                Manage your recruitment pipeline, track candidate applications, and oversee all talent acquisition activities from this centralized admin dashboard.
-              </p>
-            </>
-          ) : (
-            <>
+        ) : (
+          // Regular layout for non-admin users
+          <>
+            {/* Hero Section */}
+            <div className="text-center mb-12">
               <h1 className="text-4xl font-bold mb-4">Join Our Team</h1>
               <p className="text-xl text-muted-foreground max-w-2xl mx-auto">
                 Discover opportunities to grow your career with Niddik. We're looking for talented individuals to help us build the future of talent acquisition.
               </p>
-            </>
-          )}
-        </div>
+            </div>
 
       {/* Search and Filters */}
-      <Card className="mb-8">
-        <CardContent className="pt-6">
-          <form onSubmit={handleSearch} className="space-y-4">
-            <div className="flex flex-col md:flex-row gap-4">
-              <div className="relative flex-grow">
-                <Search className="absolute left-3 top-3 h-4 w-4 text-muted-foreground" />
-                <Input
-                  placeholder="Search job title or keywords"
-                  value={search}
-                  onChange={(e) => setSearch(e.target.value)}
-                  className="pl-9"
-                />
-              </div>
-              <div className="grid grid-cols-1 md:grid-cols-4 gap-4 md:w-2/3">
-                <Select value={category} onValueChange={setCategory}>
-                  <SelectTrigger>
-                    <SelectValue placeholder="Job Category" />
-                  </SelectTrigger>
-                  <SelectContent>
-                    <SelectItem value="all_categories">All Categories</SelectItem>
-                    {availableCategories.map(cat => (
-                      <SelectItem key={cat} value={cat}>{cat}</SelectItem>
-                    ))}
-                  </SelectContent>
-                </Select>
-
-                <Select value={jobType} onValueChange={setJobType}>
-                  <SelectTrigger>
-                    <SelectValue placeholder="Job Type" />
-                  </SelectTrigger>
-                  <SelectContent>
-                    <SelectItem value="all_types">All Types</SelectItem>
-                    {availableJobTypes.map(type => (
-                      <SelectItem key={type} value={type}>
-                        {type.charAt(0).toUpperCase() + type.slice(1)}
-                      </SelectItem>
-                    ))}
-                  </SelectContent>
-                </Select>
-
-                <Select value={experienceLevel} onValueChange={setExperienceLevel}>
-                  <SelectTrigger>
-                    <SelectValue placeholder="Experience Level" />
-                  </SelectTrigger>
-                  <SelectContent>
-                    <SelectItem value="all_levels">All Levels</SelectItem>
-                    {availableExperienceLevels.map(level => (
-                      <SelectItem key={level} value={level}>
-                        {level.charAt(0).toUpperCase() + level.slice(1)} Level
-                      </SelectItem>
-                    ))}
-                  </SelectContent>
-                </Select>
-
-                <Select value={priority} onValueChange={setPriority}>
-                  <SelectTrigger>
-                    <SelectValue placeholder="Priority" />
-                  </SelectTrigger>
-                  <SelectContent>
-                    <SelectItem value="all_priorities">All Priorities</SelectItem>
-                    <SelectItem value="urgent">Urgent</SelectItem>
-                    <SelectItem value="priority">Priority</SelectItem>
-                    <SelectItem value="open">Open</SelectItem>
-                    <SelectItem value="featured">Featured</SelectItem>
-                  </SelectContent>
-                </Select>
-              </div>
-            </div>
-
-            <div className="flex justify-between items-center">
-              <Button type="button" variant="outline" onClick={clearFilters} className="flex items-center gap-2">
-                <Filter className="h-4 w-4" /> Clear Filters
-              </Button>
-              <Button type="submit">Search Jobs</Button>
-            </div>
-          </form>
-        </CardContent>
-      </Card>
-
-      {/* Job Listings */}
-      <div className="space-y-6">
-        <div className="flex justify-between items-center">
-          <h2 className="text-2xl font-bold">Available Positions</h2>
-          {data && (
-            <p className="text-muted-foreground">
-              Showing {filteredJobs.length} of {data.meta.total} opportunities
-            </p>
-          )}
-        </div>
-
-        <Separator className="my-6" />
-
-        {isLoading && (
-          <div className="flex justify-center items-center py-12">
-            <Loader2 className="h-8 w-8 animate-spin text-primary" />
-          </div>
-        )}
-
-        {error && (
-          <div className="text-center py-12">
-            <p className="text-destructive">Failed to load jobs. Please try again later.</p>
-          </div>
-        )}
-
-        {!isLoading && !error && filteredJobs.length === 0 && (
-          <div className="text-center py-12">
-            <h3 className="text-xl font-medium mb-2">No jobs match your criteria</h3>
-            <p className="text-muted-foreground mb-6">Try adjusting your filters or search terms</p>
-            <Button variant="outline" onClick={clearFilters}>Clear All Filters</Button>
-          </div>
-        )}
-
-
-<div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
-          {filteredJobs.map((job) => {
-            const isDraft = job.status === 'draft';
-            const CardComponent = ({ children }: { children: React.ReactNode }) => {
-              if (isDraft) {
-                return (
-                  <Card className={`overflow-hidden transition-shadow duration-300 opacity-40 cursor-not-allowed relative`}>
-                    <div className="absolute top-2 right-2 z-10">
-                      <Badge className="bg-gray-500 text-white text-xs font-bold">DRAFT</Badge>
+            <Card className="mb-8">
+              <CardContent className="pt-6">
+                <form onSubmit={handleSearch} className="space-y-4">
+                  <div className="flex flex-col md:flex-row gap-4">
+                    <div className="relative flex-grow">
+                      <Search className="absolute left-3 top-3 h-4 w-4 text-muted-foreground" />
+                      <Input
+                        placeholder="Search job title or keywords"
+                        value={search}
+                        onChange={(e) => setSearch(e.target.value)}
+                        className="pl-9"
+                      />
                     </div>
-                    {children}
-                  </Card>
-                );
-              }
-              return (
-                <Card className="overflow-hidden hover:shadow-lg transition-shadow duration-300">
-                  {children}
-                </Card>
-              );
-            };
+                    <div className="grid grid-cols-1 md:grid-cols-4 gap-4 md:w-2/3">
+                      <Select value={category} onValueChange={setCategory}>
+                        <SelectTrigger>
+                          <SelectValue placeholder="Job Category" />
+                        </SelectTrigger>
+                        <SelectContent>
+                          <SelectItem value="all_categories">All Categories</SelectItem>
+                          {availableCategories.map(cat => (
+                            <SelectItem key={cat} value={cat}>{cat}</SelectItem>
+                          ))}
+                        </SelectContent>
+                      </Select>
 
-            return (
-              <CardComponent key={job.id}>
-                <CardHeader className="pb-3">
-                  <div className="flex items-start justify-between">
-                    <div className="flex-1">
-                      <CardTitle className="text-lg font-semibold mb-1">{job.title}</CardTitle>
-                      <CardDescription className="text-sm">{job.company}</CardDescription>
-                    </div>
-                    <div className="flex flex-wrap gap-1 ml-2">
-                      {job.featured && (
-                        <Badge className="bg-blue-100 text-blue-800 hover:bg-blue-200 text-xs">Featured</Badge>
-                      )}
-                      {job.urgent && (
-                        <Badge className="bg-red-100 text-red-800 hover:bg-red-200 text-xs">
-                          <span className="animate-pulse">🔥</span> Urgent
-                        </Badge>
-                      )}
-                      {job.priority && (
-                        <Badge className="bg-yellow-100 text-yellow-800 hover:bg-yellow-200 text-xs">
-                          ⚡ Priority
-                        </Badge>
-                      )}
-                      {job.isOpen && (
-                        <Badge className="bg-green-100 text-green-800 hover:bg-green-200 text-xs">
-                          ✅ Open
-                        </Badge>
-                      )}
+                      <Select value={jobType} onValueChange={setJobType}>
+                        <SelectTrigger>
+                          <SelectValue placeholder="Job Type" />
+                        </SelectTrigger>
+                        <SelectContent>
+                          <SelectItem value="all_types">All Types</SelectItem>
+                          {availableJobTypes.map(type => (
+                            <SelectItem key={type} value={type}>
+                              {type.charAt(0).toUpperCase() + type.slice(1)}
+                            </SelectItem>
+                          ))}
+                        </SelectContent>
+                      </Select>
+
+                      <Select value={experienceLevel} onValueChange={setExperienceLevel}>
+                        <SelectTrigger>
+                          <SelectValue placeholder="Experience Level" />
+                        </SelectTrigger>
+                        <SelectContent>
+                          <SelectItem value="all_levels">All Levels</SelectItem>
+                          {availableExperienceLevels.map(level => (
+                            <SelectItem key={level} value={level}>
+                              {level.charAt(0).toUpperCase() + level.slice(1)} Level
+                            </SelectItem>
+                          ))}
+                        </SelectContent>
+                      </Select>
+
+                      <Select value={priority} onValueChange={setPriority}>
+                        <SelectTrigger>
+                          <SelectValue placeholder="Priority" />
+                        </SelectTrigger>
+                        <SelectContent>
+                          <SelectItem value="all_priorities">All Priorities</SelectItem>
+                          <SelectItem value="urgent">Urgent</SelectItem>
+                          <SelectItem value="priority">Priority</SelectItem>
+                          <SelectItem value="open">Open</SelectItem>
+                          <SelectItem value="featured">Featured</SelectItem>
+                        </SelectContent>
+                      </Select>
                     </div>
                   </div>
-                </CardHeader>
-                <CardContent className="space-y-3">
-                  <div className="flex items-center justify-between text-sm">
-                    <div className="flex items-center text-muted-foreground">
-                      <MapPin className="h-3 w-3 mr-1" />
-                      <span>{job.location}</span>
-                    </div>
-                    <Badge variant="outline">{job.jobType}</Badge>
-                  </div>
 
-                  <div className="flex items-center justify-between text-sm">
-                    <div className="flex items-center text-muted-foreground">
-                      <Briefcase className="h-3 w-3 mr-1" />
-                      <span>{job.experienceLevel}</span>
-                    </div>
-                    <span className="font-medium text-primary">{job.salary}</span>
-                  </div>
-
-                  <div className="bg-gray-50 p-2 rounded-md">
-                    <div className="grid grid-cols-2 gap-3 text-xs">
-                      <div className="flex items-center justify-between">
-                        <div className="flex items-center text-muted-foreground">
-                          <Award className="h-3 w-3 mr-1" />
-                          <span>Category:</span>
-                        </div>
-                        <span className="font-medium">{job.category}</span>
-                      </div>
-
-                      <div className="flex items-center justify-between">
-                        <div className="flex items-center text-muted-foreground">
-                          <Clock className="h-3 w-3 mr-1" />
-                          <span>Posted On:</span>
-                        </div>
-                        <span className="font-medium">
-                          {(() => {
-                            if (!job.postedDate) return "Recently";
-                            
-                            const postedDate = new Date(job.postedDate);
-                            if (isNaN(postedDate.getTime())) return "Recently";
-                            
-                            const formattedDate = format(postedDate, "MMM dd, yyyy");
-                            const timeAgoText = timeAgo(job.postedDate);
-                            
-                            return `${formattedDate} (${timeAgoText})`;
-                          })()}
-                        </span>
-
-                      </div>
-                    </div>
-
-                    {/* Display application counts for admin */}
-                    {user?.role === 'admin' && applicationCountsData && (
-                      <div className="mt-2 text-center">
-                        <span className="text-blue-500 font-semibold">
-                          {applicationCountsData.data?.[job.id] || 0} Candidates Applied
-                        </span>
-                      </div>
-                    )}
-                  </div>
-
-                  <div className="text-sm text-gray-600 leading-relaxed">
-                    <p className="line-clamp-3">{job.description}</p>
-                  </div>
-                </CardContent>
-                <CardFooter>
-                  {isDraft ? (
-                    <Button disabled className="w-full cursor-not-allowed opacity-50">
-                      Draft - Not Available
+                  <div className="flex justify-between items-center">
+                    <Button type="button" variant="outline" onClick={clearFilters} className="flex items-center gap-2">
+                      <Filter className="h-4 w-4" /> Clear Filters
                     </Button>
-                  ) : (
-                    <Link href={`/jobs/${job.id}`}>
-                      <Button className="w-full">View Details</Button>
-                    </Link>
-                  )}
-                </CardFooter>
-              </CardComponent>
-            );
-          })}
-        </div>
+                    <Button type="submit">Search Jobs</Button>
+                  </div>
+                </form>
+              </CardContent>
+            </Card>
 
-        {/* Pagination can be added here later */}
-      </div>
+            {/* Job Listings */}
+            <div className="space-y-6">
+              <div className="flex justify-between items-center">
+                <h2 className="text-2xl font-bold">Available Positions</h2>
+                {data && (
+                  <p className="text-muted-foreground">
+                    Showing {filteredJobs.length} of {data.meta.total} opportunities
+                  </p>
+                )}
+              </div>
+
+              <Separator className="my-6" />
+
+              {isLoading && (
+                <div className="flex justify-center items-center py-12">
+                  <Loader2 className="h-8 w-8 animate-spin text-primary" />
+                </div>
+              )}
+
+              {error && (
+                <div className="text-center py-12">
+                  <p className="text-destructive">Failed to load jobs. Please try again later.</p>
+                </div>
+              )}
+
+              {!isLoading && !error && filteredJobs.length === 0 && (
+                <div className="text-center py-12">
+                  <h3 className="text-xl font-medium mb-2">No jobs match your criteria</h3>
+                  <p className="text-muted-foreground mb-6">Try adjusting your filters or search terms</p>
+                  <Button variant="outline" onClick={clearFilters}>Clear All Filters</Button>
+                </div>
+              )}
+
+              <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
+                {filteredJobs.map((job) => {
+                  const isDraft = job.status === 'draft';
+                  const CardComponent = ({ children }: { children: React.ReactNode }) => {
+                    if (isDraft) {
+                      return (
+                        <Card className={`overflow-hidden transition-shadow duration-300 opacity-40 cursor-not-allowed relative`}>
+                          <div className="absolute top-2 right-2 z-10">
+                            <Badge className="bg-gray-500 text-white text-xs font-bold">DRAFT</Badge>
+                          </div>
+                          {children}
+                        </Card>
+                      );
+                    }
+                    return (
+                      <Card className="overflow-hidden hover:shadow-lg transition-shadow duration-300">
+                        {children}
+                      </Card>
+                    );
+                  };
+
+                  return (
+                    <CardComponent key={job.id}>
+                      <CardHeader className="pb-3">
+                        <div className="flex items-start justify-between">
+                          <div className="flex-1">
+                            <CardTitle className="text-lg font-semibold mb-1">{job.title}</CardTitle>
+                            <CardDescription className="text-sm">{job.company}</CardDescription>
+                          </div>
+                          <div className="flex flex-wrap gap-1 ml-2">
+                            {job.featured && (
+                              <Badge className="bg-blue-100 text-blue-800 hover:bg-blue-200 text-xs">Featured</Badge>
+                            )}
+                            {job.urgent && (
+                              <Badge className="bg-red-100 text-red-800 hover:bg-red-200 text-xs">
+                                <span className="animate-pulse">🔥</span> Urgent
+                              </Badge>
+                            )}
+                            {job.priority && (
+                              <Badge className="bg-yellow-100 text-yellow-800 hover:bg-yellow-200 text-xs">
+                                ⚡ Priority
+                              </Badge>
+                            )}
+                            {job.isOpen && (
+                              <Badge className="bg-green-100 text-green-800 hover:bg-green-200 text-xs">
+                                ✅ Open
+                              </Badge>
+                            )}
+                          </div>
+                        </div>
+                      </CardHeader>
+                      <CardContent className="space-y-3">
+                        <div className="flex items-center justify-between text-sm">
+                          <div className="flex items-center text-muted-foreground">
+                            <MapPin className="h-3 w-3 mr-1" />
+                            <span>{job.location}</span>
+                          </div>
+                          <Badge variant="outline">{job.jobType}</Badge>
+                        </div>
+
+                        <div className="flex items-center justify-between text-sm">
+                          <div className="flex items-center text-muted-foreground">
+                            <Briefcase className="h-3 w-3 mr-1" />
+                            <span>{job.experienceLevel}</span>
+                          </div>
+                          <span className="font-medium text-primary">{job.salary}</span>
+                        </div>
+
+                        <div className="bg-gray-50 p-2 rounded-md">
+                          <div className="grid grid-cols-2 gap-3 text-xs">
+                            <div className="flex items-center justify-between">
+                              <div className="flex items-center text-muted-foreground">
+                                <Award className="h-3 w-3 mr-1" />
+                                <span>Category:</span>
+                              </div>
+                              <span className="font-medium">{job.category}</span>
+                            </div>
+
+                            <div className="flex items-center justify-between">
+                              <div className="flex items-center text-muted-foreground">
+                                <Clock className="h-3 w-3 mr-1" />
+                                <span>Posted On:</span>
+                              </div>
+                              <span className="font-medium">
+                                {(() => {
+                                  if (!job.postedDate) return "Recently";
+                                  
+                                  const postedDate = new Date(job.postedDate);
+                                  if (isNaN(postedDate.getTime())) return "Recently";
+                                  
+                                  const formattedDate = format(postedDate, "MMM dd, yyyy");
+                                  const timeAgoText = timeAgo(job.postedDate);
+                                  
+                                  return `${formattedDate} (${timeAgoText})`;
+                                })()}
+                              </span>
+                            </div>
+                          </div>
+                        </div>
+
+                        <div className="text-sm text-gray-600 leading-relaxed">
+                          <p className="line-clamp-3">{job.description}</p>
+                        </div>
+                      </CardContent>
+                      <CardFooter>
+                        {isDraft ? (
+                          <Button disabled className="w-full cursor-not-allowed opacity-50">
+                            Draft - Not Available
+                          </Button>
+                        ) : (
+                          <Link href={`/jobs/${job.id}`}>
+                            <Button className="w-full">View Details</Button>
+                          </Link>
+                        )}
+                      </CardFooter>
+                    </CardComponent>
+                  );
+                })}
+              </div>
+            </div>
+          </>
+        )}
       </div>
       </CareersLayout>
     </>
