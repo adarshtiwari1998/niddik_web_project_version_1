@@ -16,7 +16,6 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { Separator } from "@/components/ui/separator";
 import { format } from "date-fns";
 import { Helmet } from 'react-helmet-async';
-import ForgotPasswordDialog from "@/components/ForgotPasswordDialog";
 
 // Schema definitions
 const registerStep1Schema = z.object({
@@ -366,10 +365,6 @@ const AuthPage = () => {
                               "Sign In"
                             )}
                           </Button>
-
-                          <div className="text-center mt-4">
-                            <ForgotPasswordDialog />
-                          </div>
                         </form>
                       </Form>
                     </CardContent>

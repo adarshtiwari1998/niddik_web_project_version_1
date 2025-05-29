@@ -2,7 +2,6 @@ import { pgTable, text, serial, integer, boolean, timestamp, varchar, decimal, d
 import { createInsertSchema } from "drizzle-zod";
 import { z } from "zod";
 import { relations } from "drizzle-orm";
-import { eq, desc, asc, and, or, ilike, inArray, count, gt, lt } from "drizzle-orm";
 
 export const users = pgTable("users", {
   id: serial("id").primaryKey(),
@@ -369,22 +368,3 @@ export type AdminSession = typeof adminSessions.$inferSelect;
 export type InsertAdminSession = typeof adminSessions.$inferInsert;
 export type Session = typeof sessions.$inferSelect;
 export type InsertSession = typeof sessions.$inferInsert;
-
-// Password Reset Tokens
-export const passwordResetTokens = pgTable("password_reset_tokens", {
-  id: serial("id").primaryKey(),
-  userId: integer("user_id").notNull().references(() => users.id, { onDelete: "cascade" }),
-  token: text("token").notNull().unique(),
-  expiresAt: timestamp("expires_at").notNull(),
-  used: boolean("used").notNull().default(false),
-  createdAt: timestamp("created_at").defaultNow().notNull(),
-});
-
-export const passwordResetTokenSchema = createInsertSchema(passwordResetTokens, {
-  userId: (schema) => schema.min(1, "User ID is required"),
-  token: (schema) => schema.min(1, "Token is required"),
-  expiresAt: (schema) => schema.refine(date => date > new Date(), "Expiry date must be in the future"),
-});
-
-export type PasswordResetToken = typeof passwordResetTokens.$inferSelect;
-export type InsertPasswordResetToken = z.infer<typeof passwordResetTokenSchema>;
