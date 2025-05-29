@@ -9,7 +9,7 @@ const CareersFooter = () => {
   return (
     <footer className="bg-gray-50 border-t border-gray-200">
       <div className="container mx-auto px-4 py-12">
-        <div className="grid grid-cols-1 md:grid-cols-5 gap-8">
+        <div className="grid grid-cols-1 md:grid-cols-6 gap-8">
           {/* Company Info */}
           <div className="space-y-4">
             <div className="flex items-center gap-2">
@@ -153,6 +153,31 @@ const CareersFooter = () => {
                   info@niddik.com
                 </Link>
               </div>
+            </div>
+          </div>
+
+          {/* Additional Resources Section */}
+          <div className="space-y-4">
+            <h3 className="text-lg font-semibold text-gray-900">RESOURCES</h3>
+            <div className="space-y-2">
+              <Link href="/insights" className="block text-sm text-gray-600 hover:text-blue-600 transition-colors">
+                AI Insights
+              </Link>
+              <Link href="/facts-and-trends" className="block text-sm text-gray-600 hover:text-blue-600 transition-colors">
+                Facts & Trends
+              </Link>
+              <Link href="/hiring-advice" className="block text-sm text-gray-600 hover:text-blue-600 transition-colors">
+                Hiring Advice
+              </Link>
+              <Link href="/career-advice" className="block text-sm text-gray-600 hover:text-blue-600 transition-colors">
+                Career Advice
+              </Link>
+              <Link href="/six-factor-recruiting-model" className="block text-sm text-gray-600 hover:text-blue-600 transition-colors">
+                6-Factor Model
+              </Link>
+              <Link href="/web-app-solutions" className="block text-sm text-gray-600 hover:text-blue-600 transition-colors">
+                Web Solutions
+              </Link>
             </div>
           </div>
         </div>
