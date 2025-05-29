@@ -73,7 +73,7 @@ export default function CareersHeader() {
       <div className="container flex h-16 items-center">
         <div className="flex items-center justify-between w-full">
           <div className="flex items-center gap-6">
-            <Link href="/" className="flex flex-col items-start">
+            <Link href="/" className="flex flex-col items-center">
               <div className="flex flex-col items-center">
                 <img 
                   src="/images/niddik_logo.png" 
@@ -82,7 +82,7 @@ export default function CareersHeader() {
                 />
                 {/* <div className="text-[10px] text-gray-500 mt-0.5">Connecting People, Changing Lives</div> */}
               </div>
-            </Link>
+            </Link></old_str>
             <nav className="hidden md:flex gap-6">
               <Link href="/careers" className="text-sm font-medium hover:text-primary">
                 Browse Jobs
@@ -241,7 +241,7 @@ export default function CareersHeader() {
               <SheetContent side="right" className="w-[300px] sm:w-[400px]">
                 <div className="flex flex-col h-full">
                   <div className="flex items-center justify-between pb-4 border-b">
-                    <Link href="/" className="flex flex-col items-start" onClick={() => setMobileMenuOpen(false)}>
+                    <Link href="/" className="flex flex-col items-center" onClick={() => setMobileMenuOpen(false)}>
                       <div className="flex flex-col items-center">
                         <img 
                           src="/images/niddik_logo.png" 
@@ -250,7 +250,7 @@ export default function CareersHeader() {
                         />
                         <div className="text-[10px] text-gray-500 mt-0.5">Connecting People, Changing Lives</div>
                       </div>
-                    </Link>
+                    </Link></old_str>
                     <SheetClose className="rounded-sm opacity-70 ring-offset-background transition-opacity hover:opacity-100 focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2">
                       <X className="h-4 w-4" />
                       <span className="sr-only">Close</span>
