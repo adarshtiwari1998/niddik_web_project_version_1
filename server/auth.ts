@@ -12,6 +12,7 @@ import { pool } from "@db"; // Adjust path as needed
 import { eq, and, gt } from "drizzle-orm";
 import { db } from '@db'; // Adjust path as needed
 import { v4 as uuidv4 } from 'uuid';
+import { emailService } from './email';
 
 // JWT Secret key
 const JWT_SECRET = process.env.JWT_SECRET || 'niddik-jwt-secret';
@@ -229,11 +230,36 @@ export function setupAuth(app: Express) {
             });
 
             // Log the user in after registration
-            req.login(user, (err) => {
+            req.login(user, async (err) => {
                 if (err) return next(err);
 
                 // Generate JWT token
                 const token = generateToken(user);
+
+                // Send welcome email to user
+                try {
+                    const baseUrl = `${req.protocol}://${req.get('host')}`;
+                    await emailService.sendWelcomeEmail(user.email, user.fullName || user.username, baseUrl);
+                } catch (emailError) {
+                    console.error('Failed to send welcome email:', emailError);
+                    // Don't fail registration if email fails
+                }
+
+                // Send admin notification
+                try {
+                    const baseUrl = `${req.protocol}://${req.get('host')}`;
+                    await emailService.sendAdminRegistrationNotification(
+                        user.fullName || user.username,
+                        user.email,
+                        user.phone,
+                        user.location || user.city,
+                        user.skills,
+                        baseUrl
+                    );
+                } catch (emailError) {
+                    console.error('Failed to send admin registration notification:', emailError);
+                    // Don't fail registration if email fails
+                }
 
                 // Return user without password, and include token
                 const { password, ...userWithoutPassword } = user;
@@ -297,6 +323,24 @@ export function setupAuth(app: Express) {
                     //     console.error("Error creating admin session:", error);
                     //     return res.status(500).json({ error: `Failed to create admin session: ${error.message}` });
                     // }
+                }
+
+                // Send login notification email for regular users (not admins)
+                if (user.role !== 'admin') {
+                    try {
+                        const baseUrl = `${req.protocol}://${req.get('host')}`;
+                        const ipAddress = req.ip || req.connection.remoteAddress || 'Unknown';
+                        await emailService.sendLoginNotification(
+                            user.email,
+                            user.fullName || user.username,
+                            new Date(),
+                            ipAddress,
+                            baseUrl
+                        );
+                    } catch (emailError) {
+                        console.error('Failed to send login notification:', emailError);
+                        // Don't fail login if email fails
+                    }
                 }
 
                 // Generate JWT token

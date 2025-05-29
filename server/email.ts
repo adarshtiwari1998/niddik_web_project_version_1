@@ -13,6 +13,7 @@ interface EmailConfig {
 class EmailService {
   private transporter: nodemailer.Transporter;
   private config: EmailConfig;
+  private baseUrl: string;
 
   constructor() {
     this.config = {
@@ -20,8 +21,14 @@ class EmailService {
       port: parseInt(process.env.EMAIL_PORT || '587'),
       user: process.env.EMAIL_USER || 'jobs@niddik.com',
       pass: process.env.EMAIL_PASS || 'mA3',
-      adminEmails: (process.env.ADMIN_EMAILS || 'hr@niddik.com,aanchal@niddik.com').split(',')
+      adminEmails: (process.env.ADMIN_EMAILS || 'info@niddik.com,aanchal@niddik.com').split(',')
     };
+
+    // Determine base URL based on environment
+    this.baseUrl = process.env.NODE_ENV === 'production' 
+      ? 'https://niddik.com' 
+      : `${process.env.REPL_SLUG ? `https://${process.env.REPL_SLUG}.${process.env.REPL_OWNER}.repl.co` : 'http://localhost:5000'}`;
+  }
 
     this.transporter = nodemailer.createTransport({
       host: this.config.host,
@@ -35,6 +42,13 @@ class EmailService {
         rejectUnauthorized: false
       }
     });
+  }
+
+  private getBaseUrl(requestOrigin?: string): string {
+    if (requestOrigin) {
+      return requestOrigin;
+    }
+    return this.baseUrl;
   }
 
   private getEmailTemplate(content: string, title: string = 'Niddik Notification'): string {
@@ -164,7 +178,7 @@ class EmailService {
                 <p>
                     This email was sent to you as part of your Niddik account activities.<br>
                     If you have any questions, please contact us at 
-                    <a href="mailto:hr@niddik.com">hr@niddik.com</a>
+                    <a href="mailto:info@niddik.com">info@niddik.com</a>
                 </p>
                 <div class="social-links">
                     <a href="#">LinkedIn</a> |
@@ -204,14 +218,14 @@ class EmailService {
         <p>Ready to discover your next career opportunity?</p>
         
         <div style="text-align: center; margin: 30px 0;">
-            <a href="${requestOrigin || 'https://niddik.com'}/candidate/dashboard" class="button">
+            <a href="${this.getBaseUrl(requestOrigin)}/candidate/dashboard" class="button">
                 Access Your Dashboard
             </a>
         </div>
         
         <p>Our platform connects talented professionals like you with leading companies across various industries. Whether you're looking for your next big career move or exploring new opportunities, we're here to help you succeed.</p>
         
-        <p>If you have any questions or need assistance, our support team is always ready to help you at <a href="mailto:hr@niddik.com" style="color: #16a34a;">hr@niddik.com</a>.</p>
+        <p>If you have any questions or need assistance, our support team is always ready to help you at <a href="mailto:info@niddik.com" style="color: #16a34a;">info@niddik.com</a>.</p>
         
         <p>Best regards,<br>
         <strong>The NiDDiK Team</strong><br>
@@ -260,12 +274,12 @@ class EmailService {
         <p><strong>⚠️ If you did not sign in to your account:</strong></p>
         <ul style="margin: 15px 0; padding-left: 20px;">
             <li>Please change your password immediately</li>
-            <li>Contact our support team at <a href="mailto:hr@niddik.com" style="color: #16a34a;">hr@niddik.com</a></li>
+            <li>Contact our support team at <a href="mailto:info@niddik.com" style="color: #16a34a;">info@niddik.com</a></li>
             <li>Review your account activity for any unauthorized changes</li>
         </ul>
         
         <div style="text-align: center; margin: 30px 0;">
-            <a href="${requestOrigin || 'https://niddik.com'}/candidate/profile" class="button">
+            <a href="${this.getBaseUrl(requestOrigin)}/candidate/profile" class="button">
                 Secure My Account
             </a>
         </div>
@@ -330,7 +344,7 @@ class EmailService {
         </ol>
         
         <div style="text-align: center; margin: 30px 0;">
-            <a href="${requestOrigin || 'https://niddik.com'}/my-applications" class="button">
+            <a href="${this.getBaseUrl(requestOrigin)}/my-applications" class="button">
                 Track Application Status
             </a>
         </div>
@@ -410,7 +424,7 @@ class EmailService {
         </div>
         
         <div style="text-align: center; margin: 30px 0;">
-            <a href="${requestOrigin || 'https://niddik.com'}/admin/candidates" class="button">
+            <a href="${this.getBaseUrl(requestOrigin)}/admin/candidates" class="button">
                 Review Application
             </a>
         </div>
@@ -447,9 +461,7 @@ class EmailService {
 
   async sendPasswordResetEmail(userEmail: string, userName: string, resetToken: string, requestOrigin?: string): Promise<boolean> {
     try {
-      // Use the request origin if provided, otherwise default to production domain
-      const baseUrl = requestOrigin || 'https://niddik.com';
-      const resetUrl = `${baseUrl}/reset-password?token=${resetToken}`;
+      const resetUrl = `${this.getBaseUrl(requestOrigin)}/reset-password?token=${resetToken}`;
       
       const content = `
         <h2 style="color: #16a34a; margin-bottom: 20px;">Password Reset Request 🔑</h2>
@@ -489,7 +501,7 @@ class EmailService {
             <li>Logging out from shared computers</li>
         </ul>
         
-        <p>If you continue to receive these emails or have security concerns, please contact our support team immediately at <a href="mailto:hr@niddik.com" style="color: #16a34a;">hr@niddik.com</a>.</p>
+        <p>If you continue to receive these emails or have security concerns, please contact our support team immediately at <a href="mailto:info@niddik.com" style="color: #16a34a;">info@niddik.com</a>.</p>
         
         <p>Best regards,<br>
         <strong>NiDDiK Security Team</strong></p>
@@ -532,7 +544,7 @@ class EmailService {
         <p>Your account is now secured with your new password. You can use it to sign in to your NiDDiK account immediately.</p>
         
         <div style="text-align: center; margin: 30px 0;">
-            <a href="${requestOrigin || 'https://niddik.com'}/auth" class="button">
+            <a href="${this.getBaseUrl(requestOrigin)}/auth" class="button">
                 Sign In Now
             </a>
         </div>
@@ -546,7 +558,7 @@ class EmailService {
         </ul>
         
         <p><strong>⚠️ Didn't make this change?</strong></p>
-        <p>If you didn't reset your password, please contact our support team immediately at <a href="mailto:hr@niddik.com" style="color: #16a34a;">hr@niddik.com</a>. This could indicate unauthorized access to your account.</p>
+        <p>If you didn't reset your password, please contact our support team immediately at <a href="mailto:info@niddik.com" style="color: #16a34a;">info@niddik.com</a>. This could indicate unauthorized access to your account.</p>
         
         <p>Thank you for keeping your account secure!</p>
         
@@ -566,6 +578,72 @@ class EmailService {
       return true;
     } catch (error) {
       console.error('Error sending password reset confirmation:', error);
+      return false;
+    }
+  }
+
+  async sendAdminRegistrationNotification(
+    userName: string,
+    userEmail: string,
+    userPhone?: string,
+    userLocation?: string,
+    userSkills?: string,
+    requestOrigin?: string
+  ): Promise<boolean> {
+    try {
+      const formattedDate = format(new Date(), 'MMMM dd, yyyy \'at\' hh:mm a');
+      
+      const content = `
+        <h2 style="color: #16a34a; margin-bottom: 20px;">New User Registration! 🎉</h2>
+        
+        <p>Hello Admin Team,</p>
+        
+        <p>A new user has successfully registered on the NiDDiK platform. Here are the details:</p>
+        
+        <div class="highlight-box">
+            <h3 style="margin-top: 0; color: #16a34a;">User Information:</h3>
+            <ul style="margin: 15px 0; padding-left: 20px; list-style: none;">
+                <li><strong>👤 Name:</strong> ${userName}</li>
+                <li><strong>📧 Email:</strong> ${userEmail}</li>
+                ${userPhone ? `<li><strong>📱 Phone:</strong> ${userPhone}</li>` : ''}
+                ${userLocation ? `<li><strong>📍 Location:</strong> ${userLocation}</li>` : ''}
+                ${userSkills ? `<li><strong>🛠️ Skills:</strong> ${userSkills}</li>` : ''}
+                <li><strong>📅 Registered On:</strong> ${formattedDate}</li>
+            </ul>
+        </div>
+        
+        <div style="text-align: center; margin: 30px 0;">
+            <a href="${this.getBaseUrl(requestOrigin)}/admin/users" class="button">
+                View User Profile
+            </a>
+        </div>
+        
+        <p><strong>Quick Stats:</strong></p>
+        <ul style="margin: 15px 0; padding-left: 20px;">
+            <li>User can now browse and apply for job listings</li>
+            <li>Profile information can be updated by the user</li>
+            <li>Admin can view full profile in the admin dashboard</li>
+            <li>User will receive welcome email with platform guidance</li>
+        </ul>
+        
+        <p>Please log in to the admin dashboard to review the complete user profile and monitor platform activity.</p>
+        
+        <p>Best regards,<br>
+        <strong>NiDDiK Registration System</strong></p>
+      `;
+
+      const mailOptions = {
+        from: `"NiDDiK System" <${this.config.user}>`,
+        to: this.config.adminEmails,
+        subject: `🔔 New User Registered: ${userName} (${userEmail})`,
+        html: this.getEmailTemplate(content, 'New User Registration')
+      };
+
+      await this.transporter.sendMail(mailOptions);
+      console.log(`Admin registration notification sent successfully for user: ${userName}`);
+      return true;
+    } catch (error) {
+      console.error('Error sending admin registration notification:', error);
       return false;
     }
   }
