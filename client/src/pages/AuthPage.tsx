@@ -16,6 +16,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { Separator } from "@/components/ui/separator";
 import { format } from "date-fns";
 import { Helmet } from 'react-helmet-async';
+import { ForgotPasswordDialog } from "@/components/ForgotPasswordDialog";
 
 // Schema definitions
 const registerStep1Schema = z.object({
@@ -69,6 +70,7 @@ const AuthPage = () => {
   const [resumeFile, setResumeFile] = useState<File | null>(null);
   const [formData, setFormData] = useState<Partial<RegisterFormValues>>({});
   const [lastLogoutTime, setLastLogoutTime] = useState<string | null>(null);
+  const [showForgotPassword, setShowForgotPassword] = useState(false);
   const { user, loginMutation, registerMutation } = useAuth();
   const { toast } = useToast();
 
@@ -369,6 +371,15 @@ const AuthPage = () => {
                       </Form>
                     </CardContent>
                     <CardFooter className="flex flex-col space-y-4">
+                      <div className="text-sm text-center text-muted-foreground">
+                        <Button 
+                          variant="link" 
+                          className="p-0 h-auto text-primary" 
+                          onClick={() => setShowForgotPassword(true)}
+                        >
+                          Forgot your password?
+                        </Button>
+                      </div>
                       <div className="text-sm text-center text-muted-foreground">
                         Don't have an account?{" "}
                         <Button 
@@ -864,6 +875,12 @@ const AuthPage = () => {
             </div>
           </div>
         </div>
+
+        {/* Forgot Password Dialog */}
+        <ForgotPasswordDialog 
+          open={showForgotPassword} 
+          onOpenChange={setShowForgotPassword} 
+        />
       </div>
     </>
   );

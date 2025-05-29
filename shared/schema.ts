@@ -343,6 +343,20 @@ export const seoPageSchema = createInsertSchema(seoPages, {
 export type SeoPage = typeof seoPages.$inferSelect;
 export type InsertSeoPage = z.infer<typeof seoPageSchema>;
 
+// Password reset tokens
+export const passwordResetTokens = pgTable("password_reset_tokens", {
+  id: serial("id").primaryKey(),
+  userId: integer("user_id").notNull().references(() => users.id),
+  token: text("token").notNull().unique(),
+  expiresAt: timestamp("expires_at").notNull(),
+  used: boolean("used").notNull().default(false),
+  createdAt: timestamp("created_at").defaultNow().notNull(),
+});
+
+export const passwordResetTokenSchema = createInsertSchema(passwordResetTokens);
+export type PasswordResetToken = typeof passwordResetTokens.$inferSelect;
+export type InsertPasswordResetToken = z.infer<typeof passwordResetTokenSchema>;
+
 export const adminSessions = pgTable("admin_sessions", {
   id: serial("id").primaryKey(),
   userId: integer("user_id").references(() => adminUsers.id).notNull(),

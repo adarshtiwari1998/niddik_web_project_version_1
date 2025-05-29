@@ -114,11 +114,11 @@ async function seed() {
         IF NOT EXISTS (SELECT 1 FROM information_schema.columns WHERE table_name = 'job_listings' AND column_name = 'urgent') THEN
           ALTER TABLE job_listings ADD COLUMN urgent BOOLEAN NOT NULL DEFAULT false;
         END IF;
-        
+
         IF NOT EXISTS (SELECT 1 FROM information_schema.columns WHERE table_name = 'job_listings' AND column_name = 'priority') THEN
           ALTER TABLE job_listings ADD COLUMN priority BOOLEAN NOT NULL DEFAULT false;
         END IF;
-        
+
         IF NOT EXISTS (SELECT 1 FROM information_schema.columns WHERE table_name = 'job_listings' AND column_name = 'is_open') THEN
           ALTER TABLE job_listings ADD COLUMN is_open BOOLEAN NOT NULL DEFAULT false;
         END IF;
@@ -218,7 +218,7 @@ async function seed() {
         IF NOT EXISTS (SELECT 1 FROM information_schema.columns WHERE table_name = 'seo_pages' AND column_name = 'head_scripts') THEN
           ALTER TABLE seo_pages ADD COLUMN head_scripts TEXT;
         END IF;
-        
+
         IF NOT EXISTS (SELECT 1 FROM information_schema.columns WHERE table_name = 'seo_pages' AND column_name = 'body_scripts') THEN
           ALTER TABLE seo_pages ADD COLUMN body_scripts TEXT;
         END IF;
@@ -228,7 +228,7 @@ async function seed() {
           UPDATE seo_pages SET head_scripts = head_script WHERE head_script IS NOT NULL;
           ALTER TABLE seo_pages DROP COLUMN IF EXISTS head_script;
         END IF;
-        
+
         IF EXISTS (SELECT 1 FROM information_schema.columns WHERE table_name = 'seo_pages' AND column_name = 'body_script') THEN
           UPDATE seo_pages SET body_scripts = body_script WHERE body_script IS NOT NULL;
           ALTER TABLE seo_pages DROP COLUMN IF EXISTS body_script;
@@ -964,7 +964,7 @@ async function seed() {
       console.log(`Added ${seoPageData.length} SEO pages`);
     } else {
       console.log("SEO pages already exist, checking for missing service pages...");
-      
+
       // Check for missing individual service pages
       const servicePaths = [
         '/services/full-rpo',
@@ -972,7 +972,7 @@ async function seed() {
         '/services/hybrid-rpo',
         '/services/contingent'
       ];
-      
+
       const missingServicePages = [];
       for (const servicePath of servicePaths) {
         const existingPage = existingSeoPages.find(page => page.pagePath === servicePath);
@@ -983,7 +983,7 @@ async function seed() {
           }
         }
       }
-      
+
       if (missingServicePages.length > 0) {
         await db.insert(seoPages).values(missingServicePages);
         console.log(`Added ${missingServicePages.length} missing service SEO pages:`, missingServicePages.map(p => p.pagePath));
@@ -992,10 +992,23 @@ async function seed() {
       }
     }
 
-    console.log("Seeding completed successfully!");
+    // Create password reset tokens table
+    await db.execute(sql`
+      CREATE TABLE IF NOT EXISTS password_reset_tokens (
+        id SERIAL PRIMARY KEY,
+        user_id INTEGER NOT NULL REFERENCES users(id),
+        token TEXT NOT NULL UNIQUE,
+        expires_at TIMESTAMP NOT NULL,
+        used BOOLEAN NOT NULL DEFAULT FALSE,
+        created_at TIMESTAMP NOT NULL DEFAULT NOW()
+      );
+    `);
 
+    console.log("✓ Password reset tokens table created");
+    console.log("✓ Seeding completed successfully!");
   } catch (error) {
-    console.error("Error seeding database:", error);
+    console.error("✗ Error during seeding:", error);
+    throw error;
   }
 }
 

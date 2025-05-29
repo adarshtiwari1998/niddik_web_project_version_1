@@ -8,6 +8,7 @@ import {
   users,
   submittedCandidates,
   demoRequests,
+  passwordResetTokens,
   InsertContactSubmission,
   ContactSubmission,
   Testimonial,
@@ -22,6 +23,8 @@ import {
   InsertSubmittedCandidate,
   DemoRequest,
   InsertDemoRequest,
+  PasswordResetToken,
+  InsertPasswordResetToken,
   seoPages,
   seoPageSchema,
   SeoPage,
@@ -1082,6 +1085,41 @@ async updateSeoPage(id: number, data: Partial<InsertSeoPage>): Promise<SeoPage |
       console.error('Error fetching all applications:', error);
       return [];
     }
+  },
+
+  // Password Reset Token methods
+  async createPasswordResetToken(data: InsertPasswordResetToken): Promise<PasswordResetToken> {
+    const [token] = await db.insert(passwordResetTokens).values(data).returning();
+    return token;
+  },
+
+  async getPasswordResetToken(token: string): Promise<PasswordResetToken | undefined> {
+    return await db.query.passwordResetTokens.findFirst({
+      where: and(
+        eq(passwordResetTokens.token, token),
+        eq(passwordResetTokens.used, false)
+      )
+    });
+  },
+
+  async markPasswordResetTokenAsUsed(tokenId: number): Promise<void> {
+    await db
+      .update(passwordResetTokens)
+      .set({ used: true })
+      .where(eq(passwordResetTokens.id, tokenId));
+  },
+
+  async cleanupExpiredPasswordResetTokens(): Promise<void> {
+    const now = new Date();
+    await db
+      .delete(passwordResetTokens)
+      .where(sql`${passwordResetTokens.expiresAt} < ${now.toISOString()}`);
+  },
+
+  async deletePasswordResetTokensForUser(userId: number): Promise<void> {
+    await db
+      .delete(passwordResetTokens)
+      .where(eq(passwordResetTokens.userId, userId));
   }
 };
 

@@ -22,6 +22,7 @@ import AdaptiveHiring from "@/pages/AdaptiveHiringFix";
 import AdaptiveHiringFixed from "@/pages/AdaptiveHiringFixed";
 import Whitepaper from "@/pages/Whitepaper";
 import AuthPage from "@/pages/AuthPage";
+import ResetPassword from "@/pages/ResetPassword";
 import CareerPage from "@/pages/CareerPage";
 import JobDetail from "@/pages/JobDetail";
 import MyApplications from "@/pages/MyApplications";
@@ -139,6 +140,7 @@ function Router() {
 
             {/* Auth Routes */}
             <Route path="/auth" component={AuthPage} />
+            <Route path="/reset-password" component={ResetPassword} />
             <Route path="/admin/login" component={AdminLogin} />
 
             {/* Admin Routes - Require admin role */}
