@@ -414,6 +414,30 @@ export async function registerRoutes(app: Express): Promise<Server> {
 
   // Submitted Candidates API Endpoints
 
+  // Get application counts per job for admin
+  app.get('/api/admin/job-application-counts', async (req: AuthenticatedRequest, res: Response) => {
+    try {
+      if (!req.user || req.user.role !== 'admin') {
+        return res.status(403).json({ success: false, message: 'Admin access required' });
+      }
+
+      // Get all applications and count by job ID
+      const applications = await storage.getAllApplications();
+      const countsByJobId: Record<number, number> = {};
+
+      applications.forEach(app => {
+        if (app.jobId) {
+          countsByJobId[app.jobId] = (countsByJobId[app.jobId] || 0) + 1;
+        }
+      });
+
+      res.json({ success: true, data: countsByJobId });
+    } catch (error) {
+      console.error('Error fetching job application counts:', error);
+      res.status(500).json({ success: false, message: 'Failed to fetch application counts' });
+    }
+  });
+
   // Get job applicants for use in submitted candidates
   app.get('/api/submitted-candidates/job-applicants', async (req: AuthenticatedRequest, res: Response) => {
     try {

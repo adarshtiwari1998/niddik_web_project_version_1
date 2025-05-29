@@ -148,6 +148,45 @@ export default function CareerPage() {
     staleTime: 0,
   });
 
+  // Query for job applicants
+  const { 
+    data: applicantsData, 
+    isLoading: isLoadingApplicants,
+    refetch: refetchApplicants 
+  } = useQuery({
+    queryKey: ['/api/submitted-candidates/job-applicants'],
+    queryFn: async () => {
+      // Assuming apiRequest is defined elsewhere
+      const apiRequest = async (method: string, url: string) => {
+        const res = await fetch(url, { method });
+        return res;
+      };
+      const res = await apiRequest("GET", `/api/submitted-candidates/job-applicants`);
+      if (!res.ok) throw new Error("Failed to fetch job applicants");
+      return await res.json();
+    },
+    enabled: false // Don't load automatically, only when requested
+  });
+
+  // Query for application counts per job (admin only)
+  const { data: applicationCountsData } = useQuery({
+    queryKey: ['/api/admin/job-application-counts'],
+    queryFn: async () => {
+      const res = await fetch('/api/admin/job-application-counts', {
+        headers: {
+          'Cache-Control': 'no-cache',
+          'Pragma': 'no-cache'
+        }
+      });
+      if (!res.ok) throw new Error('Failed to fetch application counts');
+      return res.json();
+    },
+    enabled: user?.role === 'admin',
+    refetchOnMount: true,
+    refetchOnWindowFocus: true,
+    staleTime: 0,
+  });
+
   // Get unique values for filter options from available jobs
   const availableCategories = Array.from(new Set(data?.data.map(job => job.category).filter(Boolean))) || [];
   const availableJobTypes = Array.from(new Set(data?.data.map(job => job.jobType).filter(Boolean))) || [];
@@ -194,6 +233,27 @@ export default function CareerPage() {
     setPriority("all_priorities");
   };
 
+  // Function to calculate time difference
+  const timeAgo = (date: Date): string => {
+    const now = new Date();
+    const diff = now.getTime() - date.getTime();
+    const seconds = Math.floor(diff / 1000);
+    const minutes = Math.floor(seconds / 60);
+    const hours = Math.floor(minutes / 60);
+    const days = Math.floor(hours / 24);
+
+    if (days > 0) {
+      return `${days} day${days > 1 ? 's' : ''} ago`;
+    } else if (hours > 0) {
+      return `${hours} hour${hours > 1 ? 's' : ''} ago`;
+    } else if (minutes > 0) {
+      return `${minutes} minute${minutes > 1 ? 's' : ''} ago`;
+    } else {
+      return 'Just now';
+    }
+  };
+
+
   return (
     <>
       <SEO pagePath="/careers" />
@@ -206,7 +266,7 @@ export default function CareerPage() {
               <h2 className="text-2xl font-bold mb-2">Admin Dashboard Overview</h2>
               <p className="text-muted-foreground">Quick stats and analytics for your recruitment platform</p>
             </div>
-            
+
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
               {/* Active Jobs */}
               <Card className="border-l-4 border-l-green-500">
@@ -517,7 +577,7 @@ export default function CareerPage() {
           </div>
         )}
 
-        
+
 <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
           {filteredJobs.map((job) => {
             const isDraft = job.status === 'draft';
@@ -603,12 +663,22 @@ export default function CareerPage() {
                         </div>
                         <span className="font-medium">
                           {job.postedDate && !isNaN(new Date(job.postedDate).getTime()) 
-                            ? format(new Date(job.postedDate), "MMM dd, yyyy")
+                            ? `${format(new Date(job.postedDate), "MMM dd, yyyy")} (${timeAgo(new Date(job.postedDate))})`
                             : "Recently"
                           }
                         </span>
+
                       </div>
                     </div>
+
+                    {/* Display application counts for admin */}
+                    {user?.role === 'admin' && applicationCountsData && applicationCountsData[job.id] !== undefined && (
+                      <div className="mt-2 text-center">
+                        <span className="text-blue-500 font-semibold">
+                          {applicationCountsData[job.id]} Candidates Applied
+                        </span>
+                      </div>
+                    )}
                   </div>
 
                   <div className="text-sm text-gray-600 leading-relaxed">
