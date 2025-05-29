@@ -302,13 +302,10 @@ export const seoPages = pgTable("seo_pages", {
   twitterCreator: text("twitter_creator"),
   canonicalUrl: text("canonical_url"),
   robotsDirective: text("robots_directive").notNull().default("index,follow"),
-  structuredData: text("structured_data"),
+  structuredData: text("structured_data"), // JSON-LD schema
   itemPropName: text("itemprop_name"),
   itemPropDescription: text("itemprop_description"),
   itemPropImage: text("itemprop_image"),
-  headScripts: text("head_scripts"), // Scripts to inject in <head>
-  bodyScripts: text("body_scripts"), // Scripts to inject before </body>
-  isGlobal: boolean("is_global").default(false), // Apply to all pages
   isActive: boolean("is_active").notNull().default(true),
   createdAt: timestamp("created_at").defaultNow().notNull(),
   updatedAt: timestamp("updated_at").defaultNow().notNull(),
@@ -341,17 +338,6 @@ export const seoPageSchema = createInsertSchema(seoPages, {
 
 export type SeoPage = typeof seoPages.$inferSelect;
 export type InsertSeoPage = z.infer<typeof seoPageSchema>;
-
-export const adminUsers = pgTable("admin_users", {
-  id: serial("id").primaryKey(),
-  username: text("username").notNull().unique(),
-  password: text("password").notNull(),
-  email: text("email").notNull().unique(),
-  fullName: text("full_name").notNull(),
-  role: text("role").notNull().default("admin"),
-  createdAt: timestamp("created_at").defaultNow().notNull(),
-  lastLogin: timestamp("last_login"),
-});
 
 export const adminSessions = pgTable("admin_sessions", {
   id: serial("id").primaryKey(),

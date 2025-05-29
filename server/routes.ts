@@ -2703,12 +2703,10 @@ app.get("/api/last-logout", async (req: Request, res: Response) => {
   app.get('/schema', async (req, res) => {
     try {
       const activeSeoPages = await storage.getAllActiveSeoPages();
-      // Double filter to ensure only active pages are included
-      const trulyActiveSeoPages = activeSeoPages.filter(page => page.isActive === true);
       
       const schemaData = {
         "@context": "https://schema.org",
-        "@graph": trulyActiveSeoPages.map(page => {
+        "@graph": activeSeoPages.filter(page => page.isActive === true).map(page => {
           let structuredData;
           try {
             structuredData = page.structuredData ? JSON.parse(page.structuredData) : null;
@@ -2770,7 +2768,7 @@ app.get("/api/last-logout", async (req: Request, res: Response) => {
         status: 'active'
       });
 
-      // Get all active SEO pages (only include active ones)
+      // Get all active SEO pages
       const seoPages = await storage.getAllActiveSeoPages();
       const activeSeoPages = seoPages.filter(page => page.isActive === true);
 
@@ -2873,42 +2871,7 @@ app.get("/api/last-logout", async (req: Request, res: Response) => {
   // Robots.txt endpoint
   app.get('/robots.txt', async (req, res) => {
     try {
-      // Get all active SEO pages to generate dynamic robots.txt
-      const seoPages = await storage.getAllActiveSeoPages();
-      const activeSeoPages = seoPages.filter(page => page.isActive === true);
-      
-      // Get all active job listings
-      const jobListings = await storage.getJobListings({
-        page: 1,
-        limit: 1000,
-        status: 'active'
-      });
-
-      // Define static URLs that are always allowed
-      const staticAllowedUrls = [
-        '/',
-        '/about-us',
-        '/services/',
-        '/contact',
-        '/request-demo',
-        '/jobs/',
-        '/auth',
-        '/candidate/',
-        '/why-us',
-        '/leadership-team',
-        '/testimonials',
-        '/faqs',
-        '/clients',
-        '/privacy-policy',
-        '/terms-of-service',
-        '/cookie-policy'
-      ];
-
-      // Get inactive SEO pages to disallow them
-      const allSeoPages = await storage.getAllSeoPages();
-      const inactiveSeoPages = allSeoPages.filter(page => page.isActive === false);
-
-      let robotsContent = `User-agent: *
+      const robotsContent = `User-agent: *
 Allow: /
 
 # Sitemaps
@@ -2927,37 +2890,25 @@ Crawl-delay: 1
 # Disallow admin areas
 Disallow: /admin/
 Disallow: /api/
+Disallow: /auth/
 
-# Allow static important pages
+# Allow important pages
+Allow: /careers
+Allow: /jobs/
+Allow: /services/
+Allow: /about-us
+Allow: /contact
+Allow: /request-demo
+
+# SEO optimized pages
+Allow: /insights
+Allow: /hiring-advice
+Allow: /career-advice
+Allow: /whitepaper
+Allow: /facts-and-trends
+
+# Updated: ${new Date().toISOString()}
 `;
-
-      // Add static allowed URLs
-      staticAllowedUrls.forEach(url => {
-        robotsContent += `Allow: ${url}\n`;
-      });
-
-      robotsContent += `\n# Allow active SEO pages\n`;
-      
-      // Add active SEO pages
-      activeSeoPages.forEach(page => {
-        robotsContent += `Allow: ${page.pagePath}\n`;
-      });
-
-      // Add active job listings
-      robotsContent += `\n# Allow active job listings\n`;
-      jobListings.jobListings.forEach(job => {
-        robotsContent += `Allow: /jobs/${job.id}\n`;
-      });
-
-      // Disallow inactive SEO pages
-      if (inactiveSeoPages.length > 0) {
-        robotsContent += `\n# Disallow inactive pages\n`;
-        inactiveSeoPages.forEach(page => {
-          robotsContent += `Disallow: ${page.pagePath}\n`;
-        });
-      }
-
-      robotsContent += `\n# Updated: ${new Date().toISOString()}\n`;
 
       res.setHeader('Content-Type', 'text/plain');
       res.setHeader('Cache-Control', 'public, max-age=86400'); // Cache for 24 hours

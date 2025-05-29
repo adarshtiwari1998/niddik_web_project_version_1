@@ -40,9 +40,6 @@ interface SeoPage {
   itemPropName?: string;
   itemPropDescription?: string;
   itemPropImage?: string;
-  headScripts?: string;
-  bodyScripts?: string;
-  isGlobal: boolean;
   isActive: boolean;
   createdAt: string;
   updatedAt: string;
@@ -199,9 +196,6 @@ export default function SEOPages() {
     itemPropName: "",
     itemPropDescription: "",
     itemPropImage: "",
-    headScripts: "",
-    bodyScripts: "",
-    isGlobal: false,
     isActive: true,
   });
 
@@ -396,9 +390,6 @@ export default function SEOPages() {
       itemPropName: "",
       itemPropDescription: "",
       itemPropImage: "",
-      headScripts: "",
-      bodyScripts: "",
-      isGlobal: false,
       isActive: true,
     });
   };
@@ -432,9 +423,6 @@ export default function SEOPages() {
       itemPropName: page.itemPropName || "",
       itemPropDescription: page.itemPropDescription || "",
       itemPropImage: page.itemPropImage || "",
-      headScripts: page.headScripts || "",
-      bodyScripts: page.bodyScripts || "",
-      isGlobal: page.isGlobal,
       isActive: page.isActive,
     });
     setIsEditDialogOpen(true);
@@ -721,16 +709,6 @@ export default function SEOPages() {
                           {(page.pagePath === '/' || page.pagePath === '/careers') && (
                             <Badge variant="outline" className="text-xs bg-green-50 text-green-700 border-green-200">
                               Auto-Updated
-                            </Badge>
-                          )}
-                          {page.isGlobal && (
-                            <Badge variant="outline" className="text-xs bg-blue-50 text-blue-700 border-blue-200">
-                              Global
-                            </Badge>
-                          )}
-                          {(page.headScripts || page.bodyScripts) && (
-                            <Badge variant="outline" className="text-xs bg-purple-50 text-purple-700 border-purple-200">
-                              Scripts
                             </Badge>
                           )}
                         </div>
@@ -1263,89 +1241,6 @@ function SEOPageDialog({ title, formData, setFormData, onSubmit, isLoading, isEd
                   onChange={(e) => handleInputChange('itemPropImage', e.target.value)}
                   placeholder="Image URL for microdata"
                 />
-              </div>
-            </div>
-          </CardContent>
-        </Card>
-
-        {/* Scripts Management */}
-        <Card>
-          <CardHeader>
-            <CardTitle className="flex items-center gap-2">
-              <Code className="h-4 w-4" />
-              Scripts Management
-            </CardTitle>
-            <CardDescription>
-              Add custom JavaScript code that will be injected into this page or globally across all pages
-            </CardDescription>
-          </CardHeader>
-          <CardContent className="space-y-4">
-            <div className="bg-amber-50 border border-amber-200 rounded-lg p-4">
-              <div className="flex items-start gap-3">
-                <div className="rounded-full bg-amber-100 p-1">
-                  <Code className="h-4 w-4 text-amber-600" />
-                </div>
-                <div>
-                  <h4 className="font-medium text-amber-900">Script Examples</h4>
-                  <ul className="text-sm text-amber-700 mt-1 list-disc list-inside">
-                    <li>Google Analytics: &lt;script async src="https://www.googletagmanager.com/gtag/js?id=GA_TRACKING_ID"&gt;&lt;/script&gt;</li>
-                    <li>Facebook Pixel: &lt;script&gt;!function(f,b,e,v,n,t,s)...&lt;/script&gt;</li>
-                    <li>Hotjar: &lt;script&gt;(function(h,o,t,j,a,r)...&lt;/script&gt;</li>
-                    <li>Custom tracking or third-party integrations</li>
-                  </ul>
-                </div>
-              </div>
-            </div>
-
-            <div>
-              <Label htmlFor="headScripts">Head Scripts</Label>
-              <Textarea
-                id="headScripts"
-                value={formData.headScripts}
-                onChange={(e) => handleInputChange('headScripts', e.target.value)}
-                placeholder={`<script async src="https://www.googletagmanager.com/gtag/js?id=GA_TRACKING_ID"></script>
-<script>
-  window.dataLayer = window.dataLayer || [];
-  function gtag(){dataLayer.push(arguments);}
-  gtag('js', new Date());
-  gtag('config', 'GA_TRACKING_ID');
-</script>`}
-                rows={6}
-                className="font-mono text-sm"
-              />
-              <div className="text-xs text-muted-foreground mt-1">
-                Scripts added here will be injected into the &lt;head&gt; section. Use for analytics, tracking pixels, and critical scripts.
-              </div>
-            </div>
-
-            <div>
-              <Label htmlFor="bodyScripts">Body Scripts (Before &lt;/body&gt;)</Label>
-              <Textarea
-                id="bodyScripts"
-                value={formData.bodyScripts}
-                onChange={(e) => handleInputChange('bodyScripts', e.target.value)}
-                placeholder={`<script>
-  // Custom tracking code
-  console.log('Page loaded');
-</script>
-<script src="https://example.com/widget.js"></script>`}
-                rows={6}
-                className="font-mono text-sm"
-              />
-              <div className="text-xs text-muted-foreground mt-1">
-                Scripts added here will be injected before the closing &lt;/body&gt; tag. Use for widgets, chat systems, and non-critical scripts.
-              </div>
-            </div>
-
-            <div className="flex items-center space-x-2">
-              <Switch
-                id="isGlobal"
-                checked={formData.isGlobal}
-                onCheckedChange={(checked) => handleInputChange('isGlobal', checked)}
-              />
-              <Label htmlFor="isGlobal">Apply Globally</Label>
-              <div className="text-xs text-muted-foreground ml-2">
-                When enabled, these scripts will be applied to ALL pages, not just this specific page path.
               </div>
             </div>
           </CardContent>

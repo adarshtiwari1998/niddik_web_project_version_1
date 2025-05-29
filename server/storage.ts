@@ -955,27 +955,6 @@ export const storage = {
     });
   },
 
-  async getGlobalScripts(): Promise<SeoPage[]> {
-    return db.query.seoPages.findMany({
-      where: and(
-        eq(seoPages.isGlobal, true),
-        eq(seoPages.isActive, true)
-      )
-    });
-  },
-
-  async getAllScriptsForPath(pagePath: string): Promise<{ pageSpecific?: SeoPage; global: SeoPage[] }> {
-    const [pageSpecific, global] = await Promise.all([
-      this.getSeoPageByPath(pagePath),
-      this.getGlobalScripts()
-    ]);
-
-    return {
-      pageSpecific: pageSpecific && pageSpecific.isActive ? pageSpecific : undefined,
-      global
-    };
-  },
-
   async getSeoPageById(id: number): Promise<SeoPage | undefined> {
     return db.query.seoPages.findFirst({
       where: eq(seoPages.id, id)
