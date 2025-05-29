@@ -67,6 +67,11 @@ export default function AdminLayout({ children, title, description }: AdminLayou
     setLocation("/");
   };
 
+  // Navigation handler for careers page
+  const handleCareersNavigation = () => {
+    setLocation("/careers");
+  };
+
   // Navigation handler for dashboard with tab routing
   const handleDashboardNavigation = () => {
     setLocation("/admin/dashboard");
@@ -167,7 +172,7 @@ export default function AdminLayout({ children, title, description }: AdminLayou
               </div>
               {/* Careers */}
               <div 
-                onClick={handleHomeNavigation}
+                onClick={handleCareersNavigation}
                 className={`flex items-center px-2 sm:px-3 py-1.5 sm:py-2 mb-1 rounded-md transition-colors cursor-pointer ${
                   location === "/careers"
                     ? "bg-primary/10 text-primary" 
