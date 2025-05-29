@@ -91,17 +91,24 @@ const SEO: React.FC<SEOProps> = ({ pagePath, fallback }) => {
 
   const pathname = pagePath || location;
 
-  const { data: seoData } = useQuery<{ success: boolean; data: SEOData; isDefault?: boolean }>({
+  const { data: seoData, error: seoError } = useQuery<{ success: boolean; data: SEOData; isDefault?: boolean }>({
     queryKey: [`/api/seo-pages/by-path?path=${pathname}`],
     queryFn: async () => {
       const res = await fetch(`/api/seo-pages/by-path?path=${pathname}`);
-      if (!res.ok) throw new Error('Failed to fetch SEO data');
+      if (!res.ok) {
+        if (res.status === 404) {
+          // For 404 responses, we'll handle this in the component
+          const errorData = await res.json();
+          throw new Error(`Page not found: ${errorData.message || 'Page is inactive'}`);
+        }
+        throw new Error('Failed to fetch SEO data');
+      }
       return res.json();
     },
     staleTime: 1000 * 60 * 5, // 5 minutes
     retry: (failureCount, error) => {
-      // Don't retry for inactive pages
-      if (error.message.includes('inactive')) return false;
+      // Don't retry for inactive pages or 404 errors
+      if (error.message.includes('Page not found') || error.message.includes('inactive')) return false;
       return failureCount < 3;
     },
   });
@@ -185,6 +192,19 @@ const SEO: React.FC<SEOProps> = ({ pagePath, fallback }) => {
 
     return baseSeo.structuredData;
   };
+
+  // Check if the page is inactive (returns 404)
+  if (seoError && seoError.message.includes('Page not found')) {
+    // For inactive pages, render meta tags that indicate the page is not found
+    return (
+      <Helmet>
+        <title>Page Not Found | Niddik</title>
+        <meta name="description" content="The requested page is not available." />
+        <meta name="robots" content="noindex,nofollow" />
+        <link rel="canonical" href={`https://niddik.com${currentPath}`} />
+      </Helmet>
+    );
+  }
 
   // Generate dynamic SEO for job pages or use fetched/fallback data
   let seo: SEOData;

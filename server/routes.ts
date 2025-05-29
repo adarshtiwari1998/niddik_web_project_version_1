@@ -48,6 +48,42 @@ export async function registerRoutes(app: Express): Promise<Server> {
   // Set up authentication first before any routes
   setupAuth(app);
 
+  // Middleware to check for inactive SEO pages and return 404
+  app.use(async (req, res, next) => {
+    // Skip for API routes, static files, and assets
+    if (req.path.startsWith('/api/') || 
+        req.path.startsWith('/images/') || 
+        req.path.startsWith('/assets/') ||
+        req.path.match(/\.(png|jpg|jpeg|gif|svg|ico|css|js|woff|woff2|ttf|eot)$/)) {
+      return next();
+    }
+
+    try {
+      const seoPage = await storage.getSeoPageByPath(req.path);
+      
+      // If there's an SEO page for this path and it's inactive, return 404
+      if (seoPage && !seoPage.isActive) {
+        return res.status(404).send(`
+          <!DOCTYPE html>
+          <html>
+            <head>
+              <title>Page Not Found | Niddik</title>
+              <meta name="robots" content="noindex,nofollow">
+            </head>
+            <body>
+              <h1>404 - Page Not Found</h1>
+              <p>The requested page is currently not available.</p>
+            </body>
+          </html>
+        `);
+      }
+    } catch (error) {
+      console.error('Error checking SEO page status:', error);
+    }
+
+    next();
+  });
+
   // API endpoint for contact form submissions
   app.post('/api/contact', async (req, res) => {
     try {
@@ -2397,7 +2433,7 @@ app.get("/api/last-logout", async (req: Request, res: Response) => {
 
       const seoPage = await storage.getSeoPageByPath(pagePath);
 
-      if (!seoPage || !seoPage.isActive) {
+      if (!seoPage) {
         // Check if this is a job detail page pattern
         const jobPageMatch = pagePath.match(/^\/jobs\/(\d+)$/);
 
@@ -2427,6 +2463,15 @@ app.get("/api/last-logout", async (req: Request, res: Response) => {
           canonicalUrl: `https://niddik.com${pagePath}`
         };
         return res.status(200).json({ success: true, data: defaultSeo, isDefault: true });
+      }
+
+      // If page exists but is inactive, return 404 for SEO purposes
+      if (!seoPage.isActive) {
+        return res.status(404).json({
+          success: false,
+          message: "Page not found",
+          error: "This page is currently inactive"
+        });
       }
 
       return res.status(200).json({ success: true, data: seoPage });
@@ -2727,11 +2772,11 @@ app.get("/api/last-logout", async (req: Request, res: Response) => {
       const seoPages = await storage.getAllActiveSeoPages();
       const activeSeoPages = seoPages.filter(page => page.isActive === true);
 
+      // Define static URLs without SEO-managed pages like /careers
       const staticUrls = [
         { loc: 'https://niddik.com/', priority: '1.0', changefreq: 'daily' },
         { loc: 'https://niddik.com/about-us', priority: '0.8', changefreq: 'monthly' },
         { loc: 'https://niddik.com/services', priority: '0.9', changefreq: 'weekly' },
-        { loc: 'https://niddik.com/careers', priority: '0.9', changefreq: 'daily' },
         { loc: 'https://niddik.com/contact', priority: '0.7', changefreq: 'monthly' },
         { loc: 'https://niddik.com/request-demo', priority: '0.8', changefreq: 'monthly' },
         { loc: 'https://niddik.com/web-app-solutions', priority: '0.7', changefreq: 'monthly' },
@@ -2794,10 +2839,11 @@ app.get("/api/last-logout", async (req: Request, res: Response) => {
 `;
       });
 
-      // Add SEO pages (avoid duplicates with static URLs)
+      // Add SEO pages (avoid duplicates with static URLs and only include active ones)
       const staticPaths = new Set(staticUrls.map(u => u.loc.replace('https://niddik.com', '')));
       activeSeoPages.forEach(page => {
-        if (!staticPaths.has(page.pagePath)) {
+        // Only add if page is active and not in static URLs
+        if (page.isActive && !staticPaths.has(page.pagePath)) {
           const pageLastMod = page.updatedAt || new Date().toISOString();
           const formattedPageDate = new Date(pageLastMod).toISOString();
           
