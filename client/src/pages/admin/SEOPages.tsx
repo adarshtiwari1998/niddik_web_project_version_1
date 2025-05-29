@@ -43,8 +43,8 @@ interface SeoPage {
   isActive: boolean;
   createdAt: string;
   updatedAt: string;
-  headScript?: string;
-  bodyScript?: string;
+  headScripts?: string;
+  bodyScripts?: string;
 }
 
 const commonPaths = [
@@ -430,8 +430,8 @@ export default function SEOPages() {
       itemPropDescription: page.itemPropDescription || "",
       itemPropImage: page.itemPropImage || "",
       isActive: page.isActive,
-      headScripts: page.headScript || "",
-      bodyScripts: page.bodyScript || "",
+      headScripts: page.headScripts || "",
+      bodyScripts: page.bodyScripts || "",
     });
     setIsEditDialogOpen(true);
   };
@@ -733,8 +733,8 @@ export default function SEOPages() {
                         </div>
                       </TableCell>
                        <TableCell className="max-w-xs">
-                        <div className="truncate" title={`${page.headScript || ''}\n${page.bodyScript || ''}`}>
-                          {(page.headScript || page.bodyScript) ? "Has Scripts" : "No Scripts"}
+                        <div className="truncate" title={`${page.headScripts || ''}\n${page.bodyScripts || ''}`}>
+                          {(page.headScripts || page.bodyScripts) ? "Has Scripts" : "No Scripts"}
                         </div>
                       </TableCell>
                       <TableCell>

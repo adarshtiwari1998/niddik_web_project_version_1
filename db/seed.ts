@@ -222,6 +222,17 @@ async function seed() {
         IF NOT EXISTS (SELECT 1 FROM information_schema.columns WHERE table_name = 'seo_pages' AND column_name = 'body_scripts') THEN
           ALTER TABLE seo_pages ADD COLUMN body_scripts TEXT;
         END IF;
+
+        -- Migrate data from old columns if they exist
+        IF EXISTS (SELECT 1 FROM information_schema.columns WHERE table_name = 'seo_pages' AND column_name = 'head_script') THEN
+          UPDATE seo_pages SET head_scripts = head_script WHERE head_script IS NOT NULL;
+          ALTER TABLE seo_pages DROP COLUMN IF EXISTS head_script;
+        END IF;
+        
+        IF EXISTS (SELECT 1 FROM information_schema.columns WHERE table_name = 'seo_pages' AND column_name = 'body_script') THEN
+          UPDATE seo_pages SET body_scripts = body_script WHERE body_script IS NOT NULL;
+          ALTER TABLE seo_pages DROP COLUMN IF EXISTS body_script;
+        END IF;
       END $$;
     `);
 
