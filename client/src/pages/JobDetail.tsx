@@ -35,6 +35,44 @@ export default function JobDetail() {
   const { toast } = useToast();
   const [isDialogOpen, setIsDialogOpen] = useState(false);
 
+  // Time ago calculation function
+  const timeAgo = (dateString: string): string => {
+    if (!dateString) return 'Recently';
+    
+    // Create dates and ensure we're comparing at midnight for day calculations
+    const postedDate = new Date(dateString);
+    const now = new Date();
+    
+    if (isNaN(postedDate.getTime())) {
+      return 'Recently';
+    }
+    
+    // Normalize both dates to midnight for accurate day comparison
+    const postedDateNormalized = new Date(postedDate.getFullYear(), postedDate.getMonth(), postedDate.getDate());
+    const nowNormalized = new Date(now.getFullYear(), now.getMonth(), now.getDate());
+    
+    // Calculate difference in milliseconds
+    const diff = nowNormalized.getTime() - postedDateNormalized.getTime();
+    
+    // If the date is in the future, return "Recently"
+    if (diff < 0) {
+      return 'Recently';
+    }
+    
+    // Calculate days based on normalized dates
+    const days = Math.floor(diff / (1000 * 60 * 60 * 24));
+
+    if (days === 0) {
+      return 'Today';
+    } else if (days === 1) {
+      return '1 day ago';
+    } else if (days > 1) {
+      return `${days} days ago`;
+    } else {
+      return 'Recently';
+    }
+  };
+
   const [resumeFile, setResumeFile] = useState<File | null>(null);
   const [isUploading, setIsUploading] = useState(false);
   const [isRemoving, setIsRemoving] = useState(false);
@@ -343,6 +381,23 @@ const handleResumeRemove = async () => {
                 <div className="flex items-center">
                   <Briefcase className="h-4 w-4 mr-1" />
                   <span className="capitalize">{job.jobType}</span>
+                </div>
+                <span>•</span>
+                <div className="flex items-center">
+                  <Calendar className="h-4 w-4 mr-1" />
+                  <span>
+                    {(() => {
+                      if (!job.postedDate) return "Recently";
+                      
+                      const postedDate = new Date(job.postedDate);
+                      if (isNaN(postedDate.getTime())) return "Recently";
+                      
+                      const formattedDate = format(postedDate, "MMM dd, yyyy");
+                      const timeAgoText = timeAgo(job.postedDate);
+                      
+                      return `${formattedDate} (${timeAgoText})`;
+                    })()}
+                  </span>
                 </div>
               </div>
               
@@ -775,7 +830,19 @@ const handleResumeRemove = async () => {
                     <p className="text-sm font-medium mb-1">Posted On</p>
                     <div className="flex items-center text-muted-foreground">
                       <Calendar className="h-4 w-4 mr-2" />
-                      <span>{job.postedDate ? format(new Date(job.postedDate), "MMM dd, yyyy") : "Recently"}</span>
+                      <span>
+                        {(() => {
+                          if (!job.postedDate) return "Recently";
+                          
+                          const postedDate = new Date(job.postedDate);
+                          if (isNaN(postedDate.getTime())) return "Recently";
+                          
+                          const formattedDate = format(postedDate, "MMM dd, yyyy");
+                          const timeAgoText = timeAgo(job.postedDate);
+                          
+                          return `${formattedDate} (${timeAgoText})`;
+                        })()}
+                      </span>
                     </div>
                   </div>
                 </CardContent>
