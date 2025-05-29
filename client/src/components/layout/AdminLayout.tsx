@@ -147,6 +147,19 @@ export default function AdminLayout({ children, title, description }: AdminLayou
             </div>
 
             <nav className="p-1 sm:p-2">
+              {/* Home */}
+              <div 
+                onClick={handleDashboardNavigation}
+                className={`flex items-center px-2 sm:px-3 py-1.5 sm:py-2 mb-1 rounded-md transition-colors cursor-pointer ${
+                  (location === "/" && !window.location.search)
+                    ? "bg-primary/10 text-primary" 
+                    : "hover:bg-gray-100 dark:hover:bg-gray-700"
+                } ${isCollapsed ? 'justify-center' : ''}`}
+                title={isCollapsed ? "Home" : ""}
+              >
+                <User className="h-4 w-4 sm:h-5 sm:w-5" />
+                {!isCollapsed && <span className="ml-2 sm:ml-3 text-sm sm:text-base">Home</span>}
+              </div>
               {/* Dashboard */}
               <div 
                 onClick={handleDashboardNavigation}
