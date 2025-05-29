@@ -342,6 +342,17 @@ export const seoPageSchema = createInsertSchema(seoPages, {
 export type SeoPage = typeof seoPages.$inferSelect;
 export type InsertSeoPage = z.infer<typeof seoPageSchema>;
 
+export const adminUsers = pgTable("admin_users", {
+  id: serial("id").primaryKey(),
+  username: text("username").notNull().unique(),
+  password: text("password").notNull(),
+  email: text("email").notNull().unique(),
+  fullName: text("full_name").notNull(),
+  role: text("role").notNull().default("admin"),
+  createdAt: timestamp("created_at").defaultNow().notNull(),
+  lastLogin: timestamp("last_login"),
+});
+
 export const adminSessions = pgTable("admin_sessions", {
   id: serial("id").primaryKey(),
   userId: integer("user_id").references(() => adminUsers.id).notNull(),
