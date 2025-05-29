@@ -274,8 +274,7 @@ const SEO: React.FC<SEOProps> = ({ pagePath, fallback }) => {
 
   return (
     <Helmet>
-      {/* Basic Meta Tags - Skip title if server-side SEO exists */}
-      {!hasServerSideSEO && <title>{seo.pageTitle}</title>}
+      {/* Basic Meta Tags - Title handled by server-side SEO */}
       <meta name="description" content={seo.metaDescription} />
       {seo.metaKeywords && <meta name="keywords" content={seo.metaKeywords} />}
       {seo.robotsDirective && <meta name="robots" content={seo.robotsDirective} />}
