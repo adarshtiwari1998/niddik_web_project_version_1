@@ -60,20 +60,21 @@ const Footer = () => {
         { label: "6-Factor Recruiting Model", href: "/six-factor-recruiting-model" },
         { label: "Agile Approach Based Recruiting", href: "/agile-approach-based-recruiting" }
       ]
-    },
-    {
-      title: "About us",
-      links: [
-        { label: "Our Story", href: "/about-us" },
-        { label: "Why NiDDik", href: "/why-us" },
-        { label: "Leadership Team", href: "/leadership-team" },
-        { label: "Community Involvement", href: "/community-involvement" },
-        { label: "FAQs", href: "/faqs" },
-        { label: "Contact Us", href: "/contact" },
-        { label: "Apply to Niddik", href: "/careers" },
-      ]
     }
   ];
+
+  const aboutUsColumn: FooterColumn = {
+    title: "About us",
+    links: [
+      { label: "Our Story", href: "/about-us" },
+      { label: "Why NiDDik", href: "/why-us" },
+      { label: "Leadership Team", href: "/leadership-team" },
+      { label: "Community Involvement", href: "/community-involvement" },
+      { label: "FAQs", href: "/faqs" },
+      { label: "Contact Us", href: "/contact" },
+      { label: "Apply to Niddik", href: "/careers" },
+    ]
+  };
 
   if (isContactPage) {
     return null;
@@ -82,9 +83,9 @@ const Footer = () => {
   return (
     <footer className="bg-gray-900 text-white">
       <div className="container mx-auto px-6 py-16">
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-6 gap-8">
-          {/* Company Info */}
-          <div className="lg:col-span-2 space-y-6">
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-12 gap-8">
+          {/* Company Info - Takes 3 columns on large screens */}
+          <div className="lg:col-span-3 space-y-6">
             <div className="flex items-center gap-3">
               <img 
                 src="/images/niddik_logo.png" 
@@ -93,7 +94,7 @@ const Footer = () => {
               />
               <span className="text-2xl font-bold">Niddik</span>
             </div>
-            <p className="text-gray-300 leading-relaxed">
+            <p className="text-gray-300 leading-relaxed text-sm">
               Empowering talent acquisition with intelligent matching technology that connects the right people with the right opportunities.
             </p>
             
@@ -168,16 +169,16 @@ const Footer = () => {
             </div>
           </div>
 
-          {/* Footer Columns */}
+          {/* Footer Columns - Each takes 2 columns on large screens */}
           {footerColumns.map((column) => (
-            <div key={column.title} className="space-y-4">
-              <h3 className="text-lg font-semibold">{column.title}</h3>
-              <div className="space-y-2">
+            <div key={column.title} className="lg:col-span-2 space-y-4">
+              <h3 className="text-lg font-semibold text-white">{column.title}</h3>
+              <div className="space-y-3">
                 {column.links.map((link) => (
                   <Link 
                     key={link.label}
                     href={link.href}
-                    className="block text-sm text-gray-300 hover:text-white transition-colors"
+                    className="block text-sm text-gray-300 hover:text-white transition-colors leading-relaxed"
                   >
                     {link.label}
                   </Link>
@@ -185,16 +186,32 @@ const Footer = () => {
               </div>
             </div>
           ))}
+
+          {/* About Us Column - Takes 1 column on large screens */}
+          <div className="lg:col-span-1 space-y-4">
+            <h3 className="text-lg font-semibold text-white">{aboutUsColumn.title}</h3>
+            <div className="space-y-3">
+              {aboutUsColumn.links.map((link) => (
+                <Link 
+                  key={link.label}
+                  href={link.href}
+                  className="block text-sm text-gray-300 hover:text-white transition-colors leading-relaxed"
+                >
+                  {link.label}
+                </Link>
+              ))}
+            </div>
+          </div>
         </div>
 
         {/* Contact Information */}
-        <div className="mt-12 pt-8 border-t border-gray-700">
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+        <div className="mt-16 pt-8 border-t border-gray-700">
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
             <div className="flex items-start gap-3">
               <MapPin className="h-5 w-5 text-gray-400 mt-1 flex-shrink-0" />
               <div>
-                <h4 className="font-semibold mb-1">Address</h4>
-                <p className="text-sm text-gray-300">
+                <h4 className="font-semibold mb-2">Address</h4>
+                <p className="text-sm text-gray-300 leading-relaxed">
                   Platina Heights, Sector 59, Noida - 201301
                 </p>
               </div>
@@ -202,8 +219,8 @@ const Footer = () => {
             <div className="flex items-start gap-3">
               <Phone className="h-5 w-5 text-gray-400 mt-1 flex-shrink-0" />
               <div>
-                <h4 className="font-semibold mb-1">Phone</h4>
-                <p className="text-sm text-gray-300">
+                <h4 className="font-semibold mb-2">Phone</h4>
+                <p className="text-sm text-gray-300 leading-relaxed">
                   +91 9773120558 (INDIA)<br />
                   +1 (646) 899-9537 (USA)
                 </p>
@@ -212,7 +229,7 @@ const Footer = () => {
             <div className="flex items-start gap-3">
               <Mail className="h-5 w-5 text-gray-400 mt-1 flex-shrink-0" />
               <div>
-                <h4 className="font-semibold mb-1">Email</h4>
+                <h4 className="font-semibold mb-2">Email</h4>
                 <Link 
                   href="mailto:info@niddik.com" 
                   className="text-sm text-gray-300 hover:text-white transition-colors"
