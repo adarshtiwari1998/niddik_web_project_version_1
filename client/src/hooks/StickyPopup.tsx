@@ -1,6 +1,6 @@
 import React, { useState, useRef, useEffect } from 'react';
 import { Link } from 'wouter';
-import { X, Home } from 'lucide-react';
+import { X } from 'lucide-react';
 
 /* StickyPopup.css */
 
@@ -37,7 +37,7 @@ const StickyIcon = ({ isOpen, onClick }: { isOpen: boolean; onClick: () => void 
         className="w-12 h-12 bg-blue-500 rounded-full flex items-center justify-center text-white text-2xl cursor-pointer"
         onClick={onClick}
     >
-        {isOpen ? <X size={24} /> : <Home className="h-6 w-6" />}
+        {isOpen ? <X size={24} /> : '?'}
     </div>
 );
 

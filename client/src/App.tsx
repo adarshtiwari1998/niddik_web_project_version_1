@@ -165,16 +165,25 @@ function Router() {
     );
 }
 
+
+function StickyPopupWrapper() {
+    const [location] = useLocation();
+
+    const shouldHidePopup = location.startsWith('/admin') || 
+                           location.startsWith('/candidate') ||
+                           location.startsWith('/careers') ||
+                           location.startsWith('/jobs/');
+
+    return shouldHidePopup ? null : <StickyPopup />;
+}
+
 function App() {
     return (
         <HelmetProvider>
             <QueryClientProvider client={queryClient}>
                 <AuthProvider>
                     <Router />
-                    {window.location.pathname.startsWith('/admin') || 
-                     window.location.pathname.startsWith('/candidate') ||
-                     window.location.pathname.startsWith('/careers') ||
-                     window.location.pathname.startsWith('/jobs/') ? null : <StickyPopup />}
+                    <StickyPopupWrapper />
                     <Toaster />
                 </AuthProvider>
             </QueryClientProvider>
