@@ -5,7 +5,7 @@ import { useAuth } from "@/hooks/use-auth";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle, CardFooter } from "@/components/ui/card";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Button } from "@/components/ui/button";
-import { Shield, Briefcase, Users, Calendar, Activity, Clock, ChevronRight, CreditCard, Box, RefreshCw } from "lucide-react";
+import { Shield, Briefcase, Users, Calendar, Activity, Clock, ChevronRight, CreditCard, Box, RefreshCw, Mail, Globe, UserCheck, CalendarClock } from "lucide-react";
 import AdminPasswordChange from "@/components/admin/AdminPasswordChange";
 import AdminLayout from "@/components/layout/AdminLayout";
 import { LoadingScreen } from "@/components/ui/loading-screen";
@@ -113,6 +113,97 @@ const AdminDashboard = () => {
     gcTime: 5 * 60 * 1000, // Keep in cache for 5 minutes
   });
 
+  const { data: submittedCandidatesData, isLoading: isLoadingSubmittedCandidates } = useQuery<{
+    success: boolean;
+    data: any[];
+    meta: { total: number; page: number; limit: number; pages: number }
+  }>({
+    queryKey: ['/api/submitted-candidates'],
+    queryFn: async () => {
+      const res = await fetch('/api/submitted-candidates?page=1&limit=1', {
+        headers: {
+          'Cache-Control': 'no-cache',
+          'Pragma': 'no-cache'
+        }
+      });
+      if (!res.ok) throw new Error('Failed to fetch submitted candidates');
+      return res.json();
+    },
+    refetchInterval: 30000,
+    refetchOnMount: true,
+    refetchOnWindowFocus: true,
+    staleTime: 0,
+    gcTime: 5 * 60 * 1000,
+  });
+
+  const { data: demoRequestsData, isLoading: isLoadingDemoRequests } = useQuery<{
+    success: boolean;
+    data: any[];
+    meta: { total: number; page: number; limit: number; pages: number }
+  }>({
+    queryKey: ['/api/admin/demo-requests'],
+    queryFn: async () => {
+      const res = await fetch('/api/admin/demo-requests?page=1&limit=1', {
+        headers: {
+          'Cache-Control': 'no-cache',
+          'Pragma': 'no-cache'
+        }
+      });
+      if (!res.ok) throw new Error('Failed to fetch demo requests');
+      return res.json();
+    },
+    refetchInterval: 30000,
+    refetchOnMount: true,
+    refetchOnWindowFocus: true,
+    staleTime: 0,
+    gcTime: 5 * 60 * 1000,
+  });
+
+  const { data: contactSubmissionsData, isLoading: isLoadingContactSubmissions } = useQuery<{
+    success: boolean;
+    data: any[];
+    meta: { total: number; page: number; limit: number; pages: number }
+  }>({
+    queryKey: ['/api/admin/contact-submissions'],
+    queryFn: async () => {
+      const res = await fetch('/api/admin/contact-submissions?page=1&limit=1', {
+        headers: {
+          'Cache-Control': 'no-cache',
+          'Pragma': 'no-cache'
+        }
+      });
+      if (!res.ok) throw new Error('Failed to fetch contact submissions');
+      return res.json();
+    },
+    refetchInterval: 30000,
+    refetchOnMount: true,
+    refetchOnWindowFocus: true,
+    staleTime: 0,
+    gcTime: 5 * 60 * 1000,
+  });
+
+  const { data: seoData, isLoading: isLoadingSEO } = useQuery<{
+    success: boolean;
+    data: any[];
+  }>({
+    queryKey: ['/api/admin/seo-pages'],
+    queryFn: async () => {
+      const res = await fetch('/api/admin/seo-pages', {
+        headers: {
+          'Cache-Control': 'no-cache',
+          'Pragma': 'no-cache'
+        }
+      });
+      if (!res.ok) throw new Error('Failed to fetch SEO pages');
+      return res.json();
+    },
+    refetchInterval: 60000,
+    refetchOnMount: true,
+    refetchOnWindowFocus: true,
+    staleTime: 0,
+    gcTime: 5 * 60 * 1000,
+  });
+
   // Job counts by status
   const activeJobs = jobsData?.data?.filter(job => job.status === 'active')?.length || 0;
   const draftJobs = jobsData?.data?.filter(job => job.status === 'draft')?.length || 0;
@@ -127,17 +218,24 @@ const AdminDashboard = () => {
   const interviewApplications = applicationsData?.data?.filter(app => app.status === 'interview')?.length || 0;
   const hiredApplications = applicationsData?.data?.filter(app => app.status === 'hired')?.length || 0;
 
+  // Additional dashboard data
+  const totalSubmittedCandidates = submittedCandidatesData?.meta?.total || 0;
+  const totalDemoRequests = demoRequestsData?.meta?.total || 0;
+  const totalContactSubmissions = contactSubmissionsData?.meta?.total || 0;
+  const totalSEOPages = seoData?.data?.length || 0;
+  const activeSEOPages = seoData?.data?.filter(page => page.isActive)?.length || 0;
+
   const recentApplications = applicationsData?.data?.slice(0, 5) || [];
 
   useEffect(() => {
-    if (!isLoadingJobs && !isLoadingApplications) {
+    if (!isLoadingJobs && !isLoadingApplications && !isLoadingSubmittedCandidates && !isLoadingDemoRequests && !isLoadingContactSubmissions && !isLoadingSEO) {
       const timer = setTimeout(() => {
         setInitialLoading(false);
       }, 200);
 
       return () => clearTimeout(timer);
     }
-  }, [isLoadingJobs, isLoadingApplications]);
+  }, [isLoadingJobs, isLoadingApplications, isLoadingSubmittedCandidates, isLoadingDemoRequests, isLoadingContactSubmissions, isLoadingSEO]);
 
   const formatDate = (dateString: string | Date) => {
     const date = typeof dateString === 'string' ? new Date(dateString) : dateString;
@@ -153,7 +251,11 @@ const AdminDashboard = () => {
     try {
       await Promise.all([
         queryClient.invalidateQueries({ queryKey: ['/api/job-listings'] }),
-        queryClient.invalidateQueries({ queryKey: ['/api/admin/applications'] })
+        queryClient.invalidateQueries({ queryKey: ['/api/admin/applications'] }),
+        queryClient.invalidateQueries({ queryKey: ['/api/submitted-candidates'] }),
+        queryClient.invalidateQueries({ queryKey: ['/api/admin/demo-requests'] }),
+        queryClient.invalidateQueries({ queryKey: ['/api/admin/contact-submissions'] }),
+        queryClient.invalidateQueries({ queryKey: ['/api/admin/seo-pages'] })
       ]);
     } catch (error) {
       console.error('Error refreshing data:', error);
@@ -307,6 +409,117 @@ const AdminDashboard = () => {
               <CardFooter className="pt-0 border-t">
                 <Link href="/admin/candidates" className="flex items-center text-xs text-primary hover:underline">
                   See interview pipeline
+                  <ChevronRight className="h-3 w-3 ml-1" />
+                </Link>
+              </CardFooter>
+            </Card>
+
+            <Card className="border-l-4 border-l-purple-500 relative">
+              {isLoadingSubmittedCandidates && (
+                <div className="absolute top-2 right-2">
+                  <div className="w-2 h-2 bg-blue-500 rounded-full animate-pulse"></div>
+                </div>
+              )}
+              <CardHeader className="pb-2">
+                <CardTitle className="text-2xl font-bold flex items-center">
+                  <UserCheck className="h-5 w-5 mr-2 text-purple-500" />
+                  {isLoadingSubmittedCandidates ? "..." : totalSubmittedCandidates}
+                </CardTitle>
+                <CardDescription>Submitted Candidates</CardDescription>
+              </CardHeader>
+              <CardContent className="pt-0">
+                <div className="text-xs text-muted-foreground">
+                  Candidates submitted to clients
+                </div>
+              </CardContent>
+              <CardFooter className="pt-0 border-t">
+                <Link href="/admin/submitted-candidates" className="flex items-center text-xs text-primary hover:underline">
+                  View submissions
+                  <ChevronRight className="h-3 w-3 ml-1" />
+                </Link>
+              </CardFooter>
+            </Card>
+
+            <Card className="border-l-4 border-l-orange-500 relative">
+              {isLoadingDemoRequests && (
+                <div className="absolute top-2 right-2">
+                  <div className="w-2 h-2 bg-blue-500 rounded-full animate-pulse"></div>
+                </div>
+              )}
+              <CardHeader className="pb-2">
+                <CardTitle className="text-2xl font-bold flex items-center">
+                  <CalendarClock className="h-5 w-5 mr-2 text-orange-500" />
+                  {isLoadingDemoRequests ? "..." : totalDemoRequests}
+                </CardTitle>
+                <CardDescription>Demo Requests</CardDescription>
+              </CardHeader>
+              <CardContent className="pt-0">
+                <div className="text-xs text-muted-foreground">
+                  Pending demo requests
+                </div>
+              </CardContent>
+              <CardFooter className="pt-0 border-t">
+                <Link href="/admin/demo-requests" className="flex items-center text-xs text-primary hover:underline">
+                  Manage requests
+                  <ChevronRight className="h-3 w-3 ml-1" />
+                </Link>
+              </CardFooter>
+            </Card>
+
+            <Card className="border-l-4 border-l-cyan-500 relative">
+              {isLoadingContactSubmissions && (
+                <div className="absolute top-2 right-2">
+                  <div className="w-2 h-2 bg-blue-500 rounded-full animate-pulse"></div>
+                </div>
+              )}
+              <CardHeader className="pb-2">
+                <CardTitle className="text-2xl font-bold flex items-center">
+                  <Mail className="h-5 w-5 mr-2 text-cyan-500" />
+                  {isLoadingContactSubmissions ? "..." : totalContactSubmissions}
+                </CardTitle>
+                <CardDescription>Contact Submissions</CardDescription>
+              </CardHeader>
+              <CardContent className="pt-0">
+                <div className="text-xs text-muted-foreground">
+                  Messages from contact form
+                </div>
+              </CardContent>
+              <CardFooter className="pt-0 border-t">
+                <Link href="/admin/contact-submissions" className="flex items-center text-xs text-primary hover:underline">
+                  View messages
+                  <ChevronRight className="h-3 w-3 ml-1" />
+                </Link>
+              </CardFooter>
+            </Card>
+
+            <Card className="border-l-4 border-l-teal-500 relative">
+              {isLoadingSEO && (
+                <div className="absolute top-2 right-2">
+                  <div className="w-2 h-2 bg-blue-500 rounded-full animate-pulse"></div>
+                </div>
+              )}
+              <CardHeader className="pb-2">
+                <CardTitle className="text-2xl font-bold flex items-center justify-between">
+                  <div className="flex items-center">
+                    <Globe className="h-5 w-5 mr-2 text-teal-500" />
+                    {isLoadingSEO ? "..." : activeSEOPages}
+                  </div>
+                  <div className="text-right">
+                    <div className="text-xs text-muted-foreground">
+                      {totalSEOPages > activeSEOPages && <div>Inactive: {totalSEOPages - activeSEOPages}</div>}
+                    </div>
+                  </div>
+                </CardTitle>
+                <CardDescription>Active SEO Pages</CardDescription>
+              </CardHeader>
+              <CardContent className="pt-0">
+                <div className="text-xs text-muted-foreground">
+                  SEO optimized pages ({totalSEOPages} total)
+                </div>
+              </CardContent>
+              <CardFooter className="pt-0 border-t">
+                <Link href="/admin/seo-pages" className="flex items-center text-xs text-primary hover:underline">
+                  Manage SEO
                   <ChevronRight className="h-3 w-3 ml-1" />
                 </Link>
               </CardFooter>
