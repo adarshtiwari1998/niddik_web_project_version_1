@@ -213,6 +213,9 @@ export default function SEOPages() {
     },
   });
 
+  // Get home page scripts for inheritance display
+  const homePageScripts = seoPages?.data?.find(page => page.pagePath === '/');
+
   // Create SEO page mutation
   const createMutation = useMutation({
     mutationFn: async (data: typeof formData) => {
@@ -522,6 +525,28 @@ export default function SEOPages() {
           </CardContent>
         </Card>
 
+        {/* Script Inheritance Info Card */}
+        <Card className="border-amber-200 bg-amber-50">
+          <CardContent className="pt-6">
+            <div className="flex items-start gap-3">
+              <div className="rounded-full bg-amber-100 p-2">
+                <Code className="h-4 w-4 text-amber-600" />
+              </div>
+              <div>
+                <h3 className="font-medium text-amber-900">Script Inheritance System</h3>
+                <p className="text-sm text-amber-700 mt-1">
+                  Scripts added to the <strong>Home Page (/)</strong> are automatically applied to all other pages across the website. 
+                  This includes tracking codes like Google Analytics, Facebook Pixel, etc.
+                </p>
+                <p className="text-xs text-amber-600 mt-2">
+                  Pages showing <Badge variant="outline" className="text-xs bg-blue-50 text-blue-700 border-blue-200 mx-1">+ Home Scripts Applied</Badge> 
+                  inherit and execute the home page scripts in addition to their own page-specific scripts.
+                </p>
+              </div>
+            </div>
+          </CardContent>
+        </Card>
+
         {/* Search */}
         <Card>
           <CardContent className="pt-6">
@@ -702,7 +727,7 @@ export default function SEOPages() {
                     <TableHead>Page Path</TableHead>
                       <TableHead>Title</TableHead>
                       <TableHead>Description</TableHead>
-                      <TableHead>Scripts</TableHead>
+                      <TableHead>Scripts & Inheritance</TableHead>
                       <TableHead>Status</TableHead>
                       <TableHead>Last Updated</TableHead>
                       <TableHead>Actions</TableHead>
@@ -733,8 +758,15 @@ export default function SEOPages() {
                         </div>
                       </TableCell>
                        <TableCell className="max-w-xs">
-                        <div className="truncate" title={`${page.headScripts || ''}\n${page.bodyScripts || ''}`}>
-                          {(page.headScripts || page.bodyScripts) ? "Has Scripts" : "No Scripts"}
+                        <div className="space-y-1">
+                          <div className="truncate" title={`${page.headScripts || ''}\n${page.bodyScripts || ''}`}>
+                            {(page.headScripts || page.bodyScripts) ? "Has Scripts" : "No Scripts"}
+                          </div>
+                          {page.pagePath !== '/' && homePageScripts?.headScripts && (
+                            <Badge variant="outline" className="text-xs bg-blue-50 text-blue-700 border-blue-200">
+                              + Home Scripts Applied
+                            </Badge>
+                          )}
                         </div>
                       </TableCell>
                       <TableCell>
