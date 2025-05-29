@@ -2767,9 +2767,12 @@ app.get("/api/last-logout", async (req: Request, res: Response) => {
 
       // Add job listings
       jobListings.jobListings.forEach(job => {
+        const lastModDate = job.updatedAt || job.createdAt || new Date().toISOString();
+        const formattedDate = new Date(lastModDate).toISOString();
+        
         sitemapXml += `  <url>
     <loc>https://niddik.com/jobs/${job.id}</loc>
-    <lastmod>${job.updatedAt || job.createdAt}</lastmod>
+    <lastmod>${formattedDate}</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
   </url>
@@ -2780,9 +2783,12 @@ app.get("/api/last-logout", async (req: Request, res: Response) => {
       const staticPaths = new Set(staticUrls.map(u => u.loc.replace('https://niddik.com', '')));
       seoPages.forEach(page => {
         if (!staticPaths.has(page.pagePath)) {
+          const pageLastMod = page.updatedAt || new Date().toISOString();
+          const formattedPageDate = new Date(pageLastMod).toISOString();
+          
           sitemapXml += `  <url>
     <loc>https://niddik.com${page.pagePath}</loc>
-    <lastmod>${page.updatedAt}</lastmod>
+    <lastmod>${formattedPageDate}</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.7</priority>
   </url>
