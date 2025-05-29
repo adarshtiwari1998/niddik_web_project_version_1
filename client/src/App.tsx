@@ -172,7 +172,9 @@ function App() {
                 <AuthProvider>
                     <Router />
                     {window.location.pathname.startsWith('/admin') || 
-                     window.location.pathname.startsWith('/candidate') ? null : <StickyPopup />}
+                     window.location.pathname.startsWith('/candidate') ||
+                     window.location.pathname.startsWith('/careers') ||
+                     window.location.pathname.startsWith('/jobs/') ? null : <StickyPopup />}
                     <Toaster />
                 </AuthProvider>
             </QueryClientProvider>

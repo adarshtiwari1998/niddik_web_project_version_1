@@ -95,7 +95,7 @@ const Footer = () => {
         </section>
       )}
       
-      <div className="container mx-auto px-6 py-16"></div>
+      <div className="container mx-auto px-6 py-16">
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-8">
           {/* Company Info - Takes 3 columns on large screens */}
           <div className="lg:col-span-3 space-y-6">
