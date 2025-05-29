@@ -1,6 +1,7 @@
 import { Link, useLocation } from "wouter";
 import { useAuth } from "@/hooks/use-auth";
 import { Facebook, Twitter, Linkedin, Instagram, Phone, Mail, MapPin, Youtube } from "lucide-react";
+import GlobalNetworkMap from "@/components/sections/GlobalNetworkMap";
 
 interface FooterLink {
   label: string;
@@ -77,7 +78,24 @@ const Footer = () => {
 
   return (
     <footer className="bg-gray-900 text-white">
-      <div className="container mx-auto px-6 py-16">
+      {/* Global Network Map Section - Only show when NOT on contact page */}
+      {!isContactPage && (
+        <section className="py-20 bg-gray-800">
+          <div className="container mx-auto px-6">
+            <div className="text-center mb-12">
+              <h2 className="text-4xl font-bold text-white mb-4">
+                Our Global Network
+              </h2>
+              <p className="text-xl text-gray-300 max-w-3xl mx-auto">
+                Connected across three major technology markets - India, United States, and Canada.
+              </p>
+            </div>
+            <GlobalNetworkMap />
+          </div>
+        </section>
+      )}
+      
+      <div className="container mx-auto px-6 py-16"></div>
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-8">
           {/* Company Info - Takes 3 columns on large screens */}
           <div className="lg:col-span-3 space-y-6">
