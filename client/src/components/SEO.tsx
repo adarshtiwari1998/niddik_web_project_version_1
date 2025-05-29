@@ -1,7 +1,7 @@
 import React from 'react';
 import { Helmet } from 'react-helmet-async';
 import { useQuery } from '@tanstack/react-query';
-import { useLocation } from 'react-router-dom';
+import { useLocation } from 'wouter';
 import { useEffect } from 'react';
 
 interface SEOData {
