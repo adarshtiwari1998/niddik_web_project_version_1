@@ -255,14 +255,14 @@ const Footer = () => {
               </p>
               <p className="text-xs text-gray-500 mt-1">
                 Managed and maintained by{" "}
-                <Link 
+                <a 
                   href="https://itweblens.com" 
                   target="_blank" 
                   rel="noopener noreferrer"
                   className="text-blue-400 hover:text-blue-300 transition-colors"
                 >
                   Itweblens.com
-                </Link>
+                </a>
               </p>
             </div>
             <div className="flex items-center gap-6">
