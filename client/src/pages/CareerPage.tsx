@@ -38,35 +38,114 @@ export default function CareerPage() {
     queryFn: getQueryFn({ on401: "throw" }),
   });
 
-  // Admin-only queries for dashboard stats
-  const { data: applicationsData } = useQuery({
+  // Admin-only queries for dashboard stats - using same queries as AdminDashboard
+  const { data: applicationsData } = useQuery<{ 
+    success: boolean; 
+    data: Array<any>;
+    meta: { total: number; page: number; limit: number; pages: number }
+  }>({
     queryKey: ['/api/admin/applications'],
-    queryFn: getQueryFn({ on401: "throw" }),
-    enabled: user?.role === 'admin'
+    queryFn: async () => {
+      const res = await fetch('/api/admin/applications', {
+        headers: {
+          'Cache-Control': 'no-cache',
+          'Pragma': 'no-cache'
+        }
+      });
+      if (!res.ok) throw new Error('Failed to fetch applications');
+      return res.json();
+    },
+    enabled: user?.role === 'admin',
+    refetchOnMount: true,
+    refetchOnWindowFocus: true,
+    staleTime: 0,
   });
 
-  const { data: submittedCandidatesData } = useQuery({
+  const { data: submittedCandidatesData } = useQuery<{
+    success: boolean;
+    data: any[];
+    meta: { total: number; page: number; limit: number; pages: number }
+  }>({
     queryKey: ['/api/submitted-candidates'],
-    queryFn: getQueryFn({ on401: "throw" }),
-    enabled: user?.role === 'admin'
+    queryFn: async () => {
+      const res = await fetch('/api/submitted-candidates?page=1&limit=1', {
+        headers: {
+          'Cache-Control': 'no-cache',
+          'Pragma': 'no-cache'
+        }
+      });
+      if (!res.ok) throw new Error('Failed to fetch submitted candidates');
+      return res.json();
+    },
+    enabled: user?.role === 'admin',
+    refetchOnMount: true,
+    refetchOnWindowFocus: true,
+    staleTime: 0,
   });
 
-  const { data: demoRequestsData } = useQuery({
+  const { data: demoRequestsData } = useQuery<{
+    success: boolean;
+    data: any[];
+    meta: { total: number; page: number; limit: number; pages: number }
+  }>({
     queryKey: ['/api/admin/demo-requests'],
-    queryFn: getQueryFn({ on401: "throw" }),
-    enabled: user?.role === 'admin'
+    queryFn: async () => {
+      const res = await fetch('/api/admin/demo-requests?page=1&limit=1', {
+        headers: {
+          'Cache-Control': 'no-cache',
+          'Pragma': 'no-cache'
+        }
+      });
+      if (!res.ok) throw new Error('Failed to fetch demo requests');
+      return res.json();
+    },
+    enabled: user?.role === 'admin',
+    refetchOnMount: true,
+    refetchOnWindowFocus: true,
+    staleTime: 0,
   });
 
-  const { data: contactSubmissionsData } = useQuery({
+  const { data: contactSubmissionsData } = useQuery<{
+    success: boolean;
+    data: any[];
+    meta: { total: number; page: number; limit: number; pages: number }
+  }>({
     queryKey: ['/api/admin/contact-submissions'],
-    queryFn: getQueryFn({ on401: "throw" }),
-    enabled: user?.role === 'admin'
+    queryFn: async () => {
+      const res = await fetch('/api/admin/contact-submissions?page=1&limit=1', {
+        headers: {
+          'Cache-Control': 'no-cache',
+          'Pragma': 'no-cache'
+        }
+      });
+      if (!res.ok) throw new Error('Failed to fetch contact submissions');
+      return res.json();
+    },
+    enabled: user?.role === 'admin',
+    refetchOnMount: true,
+    refetchOnWindowFocus: true,
+    staleTime: 0,
   });
 
-  const { data: seoData } = useQuery({
+  const { data: seoData } = useQuery<{
+    success: boolean;
+    data: any[];
+  }>({
     queryKey: ['/api/admin/seo-pages'],
-    queryFn: getQueryFn({ on401: "throw" }),
-    enabled: user?.role === 'admin'
+    queryFn: async () => {
+      const res = await fetch('/api/admin/seo-pages', {
+        headers: {
+          'Cache-Control': 'no-cache',
+          'Pragma': 'no-cache'
+        }
+      });
+      if (!res.ok) throw new Error('Failed to fetch SEO pages');
+      return res.json();
+    },
+    enabled: user?.role === 'admin',
+    refetchOnMount: true,
+    refetchOnWindowFocus: true,
+    staleTime: 0,
   });
 
   // Get unique values for filter options from available jobs
@@ -178,7 +257,7 @@ export default function CareerPage() {
                     <div className="flex items-center gap-2">
                       <Clock className="h-5 w-5 text-purple-600" />
                       <CardTitle className="text-2xl font-bold">
-                        {applicationsData?.data?.filter((app: any) => app.status === 'applied').length || 0}
+                        {applicationsData?.data?.filter((app: any) => app.status === 'new').length || 0}
                       </CardTitle>
                     </div>
                   </div>
@@ -223,7 +302,7 @@ export default function CareerPage() {
                   <div className="flex items-center justify-between">
                     <div className="flex items-center gap-2">
                       <FileText className="h-5 w-5 text-indigo-600" />
-                      <CardTitle className="text-2xl font-bold">{submittedCandidatesData?.data?.length || 0}</CardTitle>
+                      <CardTitle className="text-2xl font-bold">{submittedCandidatesData?.meta?.total || 0}</CardTitle>
                     </div>
                   </div>
                 </CardHeader>
@@ -265,7 +344,7 @@ export default function CareerPage() {
                   <div className="flex items-center justify-between">
                     <div className="flex items-center gap-2">
                       <Mail className="h-5 w-5 text-teal-600" />
-                      <CardTitle className="text-2xl font-bold">{contactSubmissionsData?.data?.length || 0}</CardTitle>
+                      <CardTitle className="text-2xl font-bold">{contactSubmissionsData?.meta?.total || 0}</CardTitle>
                     </div>
                   </div>
                 </CardHeader>
