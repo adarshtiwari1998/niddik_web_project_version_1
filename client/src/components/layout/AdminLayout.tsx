@@ -3,7 +3,7 @@ import { Link, useLocation } from "wouter";
 import { useAuth } from "@/hooks/use-auth";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { User, Home, FileText, Settings, ChevronRight, LogOut, Shield, Loader2, CalendarClock, Menu, X, Mail, Globe } from "lucide-react";
+import { User, List, Home, FileText, Settings, ChevronRight, LogOut, Shield, Loader2, CalendarClock, Menu, X, Mail, Globe } from "lucide-react";
 import { LoadingScreen } from "@/components/ui/loading-screen";
 
 interface AdminLayoutProps {
@@ -164,6 +164,19 @@ export default function AdminLayout({ children, title, description }: AdminLayou
               >
                 <Home className="h-4 w-4 sm:h-5 sm:w-5" />
                 {!isCollapsed && <span className="ml-2 sm:ml-3 text-sm sm:text-base">Home</span>}
+              </div>
+              {/* Careers */}
+              <div 
+                onClick={handleHomeNavigation}
+                className={`flex items-center px-2 sm:px-3 py-1.5 sm:py-2 mb-1 rounded-md transition-colors cursor-pointer ${
+                  location === "/careers"
+                    ? "bg-primary/10 text-primary" 
+                    : "hover:bg-gray-100 dark:hover:bg-gray-700"
+                } ${isCollapsed ? 'justify-center' : ''}`}
+                title={isCollapsed ? "Careers" : ""}
+              >
+                <List className="h-4 w-4 sm:h-5 sm:w-5" />
+                {!isCollapsed && <span className="ml-2 sm:ml-3 text-sm sm:text-base">Careers</span>}
               </div>
               {/* Dashboard */}
               <div 
