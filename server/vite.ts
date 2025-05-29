@@ -550,6 +550,12 @@ export async function serveStatic(app: Express) {
     etag: true
   }));
 
+  // Serve all other static files from public directory
+  app.use(express.static(distPath, {
+    maxAge: '1d',
+    etag: true
+  }));
+
   // Handle all other routes through SSR
   app.get("*", async (req, res) => {
     try {
