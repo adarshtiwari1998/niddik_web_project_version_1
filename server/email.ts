@@ -23,7 +23,7 @@ class EmailService {
       adminEmails: (process.env.ADMIN_EMAILS || 'hr@niddik.com,aanchal@niddik.com').split(',')
     };
 
-    this.transporter = nodemailer.createTransporter({
+    this.transporter = nodemailer.createTransport({
       host: this.config.host,
       port: this.config.port,
       secure: false, // true for 465, false for other ports
