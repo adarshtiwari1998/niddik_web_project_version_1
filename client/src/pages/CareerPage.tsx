@@ -387,10 +387,21 @@ export default function CareerPage() {
 
         {/* Hero Section */}
         <div className="text-center mb-12">
-          <h1 className="text-4xl font-bold mb-4">Join Our Team</h1>
-          <p className="text-xl text-muted-foreground max-w-2xl mx-auto">
-            Discover opportunities to grow your career with Niddik. We're looking for talented individuals to help us build the future of talent acquisition.
-          </p>
+          {user && user.role === 'admin' ? (
+            <>
+              <h1 className="text-4xl font-bold mb-4">Talent Acquisition Dashboard</h1>
+              <p className="text-xl text-muted-foreground max-w-2xl mx-auto">
+                Manage your recruitment pipeline, track candidate applications, and oversee all talent acquisition activities from this centralized admin dashboard.
+              </p>
+            </>
+          ) : (
+            <>
+              <h1 className="text-4xl font-bold mb-4">Join Our Team</h1>
+              <p className="text-xl text-muted-foreground max-w-2xl mx-auto">
+                Discover opportunities to grow your career with Niddik. We're looking for talented individuals to help us build the future of talent acquisition.
+              </p>
+            </>
+          )}
         </div>
 
       {/* Search and Filters */}
