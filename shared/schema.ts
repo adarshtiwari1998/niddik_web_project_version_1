@@ -306,58 +306,38 @@ export const seoPages = pgTable("seo_pages", {
   itemPropName: text("itemprop_name"),
   itemPropDescription: text("itemprop_description"),
   itemPropImage: text("itemprop_image"),
-  headScripts: text("head_scripts"), // Scripts to inject in <head>
-  bodyScripts: text("body_scripts"), // Scripts to inject before </body>
   isActive: boolean("is_active").notNull().default(true),
   createdAt: timestamp("created_at").defaultNow().notNull(),
   updatedAt: timestamp("updated_at").defaultNow().notNull(),
 });
 
-export const seoPageSchema = z.object({
-  pagePath: z.string().min(1, "Page path is required"),
-  pageTitle: z.string().min(1, "Page title is required"),
-  metaDescription: z.string().min(1, "Meta description is required"),
-  metaKeywords: z.string().optional(),
-  ogTitle: z.string().optional(),
-  ogDescription: z.string().optional(),
-  ogImage: z.string().optional(),
-  ogType: z.string().default("website"),
-  ogUrl: z.string().optional(),
-  twitterCard: z.string().default("summary_large_image"),
-  twitterSite: z.string().optional(),
-  twitterTitle: z.string().optional(),
-  twitterDescription: z.string().optional(),
-  twitterImage: z.string().optional(),
-  twitterCreator: z.string().optional(),
-  canonicalUrl: z.string().optional(),
-  robotsDirective: z.string().default("index,follow"),
-  structuredData: z.string().optional(),
-  itemPropName: z.string().optional(),
-  itemPropDescription: z.string().optional(),
-  itemPropImage: z.string().optional(),
-  headScripts: z.string().optional(),
-  bodyScripts: z.string().optional(),
-  isActive: z.boolean().default(true),
+export const seoPageSchema = createInsertSchema(seoPages, {
+  pagePath: (schema) => schema.min(1, "Page path is required"),
+  pageTitle: (schema) => schema.min(1, "Page title is required").max(60, "Title should be under 60 characters"),
+  metaDescription: (schema) => schema.min(1, "Meta description is required").max(320, "Description should be under 320 characters"),
+  metaKeywords: (schema) => schema.optional(),
+  ogTitle: (schema) => schema.optional(),
+  ogDescription: (schema) => schema.optional(),
+  ogImage: (schema) => schema.optional(),
+  ogType: (schema) => schema.optional(),
+  ogUrl: (schema) => schema.optional(),
+  twitterCard: (schema) => schema.optional(),
+  twitterSite: (schema) => schema.optional(),
+  twitterTitle: (schema) => schema.optional(),
+  twitterDescription: (schema) => schema.optional(),
+  twitterImage: (schema) => schema.optional(),
+  twitterCreator: (schema) => schema.optional(),
+  canonicalUrl: (schema) => schema.optional(),
+  robotsDirective: (schema) => schema.optional(),
+  structuredData: (schema) => schema.optional(),
+  itemPropName: (schema) => schema.optional(),
+  itemPropDescription: (schema) => schema.optional(),
+  itemPropImage: (schema) => schema.optional(),
+  isActive: (schema) => schema.optional(),
 });
 
 export type SeoPage = typeof seoPages.$inferSelect;
 export type InsertSeoPage = z.infer<typeof seoPageSchema>;
-
-// Admin Users table
-export const adminUsers = pgTable("admin_users", {
-  id: serial("id").primaryKey(),
-  username: text("username").notNull().unique(),
-  password: text("password").notNull(),
-  email: text("email").notNull().unique(),
-  fullName: text("full_name").notNull(),
-  role: text("role").notNull().default("admin"),
-  createdAt: timestamp("created_at").defaultNow().notNull(),
-  lastLogin: timestamp("last_login"),
-  isActive: boolean("is_active").notNull().default(true),
-});
-
-export type AdminUser = typeof adminUsers.$inferSelect;
-export type InsertAdminUser = typeof adminUsers.$inferInsert;
 
 export const adminSessions = pgTable("admin_sessions", {
   id: serial("id").primaryKey(),

@@ -293,7 +293,6 @@ const SEO: React.FC<SEOProps> = ({ pagePath, fallback }) => {
   const fullUrl = seo.canonicalUrl || `${baseUrl}${currentPath}`;
 
   return (
-    <>
     <Helmet>
       {/* Basic Meta Tags - Title handled by server-side SEO */}
       <meta name="description" content={seo.metaDescription} />
@@ -332,17 +331,17 @@ const SEO: React.FC<SEOProps> = ({ pagePath, fallback }) => {
         </script>
       )}
 
-      {/* Inject head scripts from SEO pages */}
-      {seoData?.headScripts && (
-        <div dangerouslySetInnerHTML={{ __html: seoData.headScripts }} />
-      )}
-    </Helmet>
+      {/* Additional meta tags for better SEO */}
+      <meta name="viewport" content="width=device-width, initial-scale=1" />
+      <meta httpEquiv="Content-Type" content="text/html; charset=utf-8" />
+      <meta name="language" content="en" />
+      <meta name="revisit-after" content="7 days" />
+      <meta name="author" content="Niddik" />
 
-    {/* Inject body scripts from SEO pages */}
-    {seoData?.bodyScripts && (
-      <div dangerouslySetInnerHTML={{ __html: seoData.bodyScripts }} />
-    )}
-  </>
+      {/* Favicon and icons */}
+      <link rel="icon" type="image/png" href="/images/niddik_logo.png" />
+      <link rel="apple-touch-icon" href="/images/niddik_logo.png" />
+    </Helmet>
   );
 };
 
