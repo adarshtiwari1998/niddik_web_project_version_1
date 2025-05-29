@@ -237,6 +237,7 @@ export default function CareerPage() {
   const timeAgo = (dateString: string): string => {
     if (!dateString) return 'Recently';
     
+    // Create dates and ensure we're comparing at midnight for day calculations
     const postedDate = new Date(dateString);
     const now = new Date();
     
@@ -245,27 +246,32 @@ export default function CareerPage() {
       return 'Recently';
     }
     
+    // Normalize both dates to midnight for accurate day comparison
+    const postedDateNormalized = new Date(postedDate.getFullYear(), postedDate.getMonth(), postedDate.getDate());
+    const nowNormalized = new Date(now.getFullYear(), now.getMonth(), now.getDate());
+    
     // Calculate difference in milliseconds
-    const diff = now.getTime() - postedDate.getTime();
+    const diff = nowNormalized.getTime() - postedDateNormalized.getTime();
     
     // If the date is in the future, return "Recently"
     if (diff < 0) {
       return 'Recently';
     }
     
-    const seconds = Math.floor(diff / 1000);
-    const minutes = Math.floor(seconds / 60);
-    const hours = Math.floor(minutes / 60);
-    const days = Math.floor(hours / 24);
+    // Calculate days based on normalized dates
+    const days = Math.floor(diff / (1000 * 60 * 60 * 24));
+    
+    // Debug logging (can be removed in production)
+    console.log(`Date calculation: Posted: ${dateString}, Today: ${now.toDateString()}, Days diff: ${days}`);
 
-    if (days > 0) {
-      return `${days} day${days > 1 ? 's' : ''} ago`;
-    } else if (hours > 0) {
-      return `${hours} hour${hours > 1 ? 's' : ''} ago`;
-    } else if (minutes > 0) {
-      return `${minutes} minute${minutes > 1 ? 's' : ''} ago`;
+    if (days === 0) {
+      return 'Today';
+    } else if (days === 1) {
+      return '1 day ago';
+    } else if (days > 1) {
+      return `${days} days ago`;
     } else {
-      return 'Just now';
+      return 'Recently';
     }
   };
 
