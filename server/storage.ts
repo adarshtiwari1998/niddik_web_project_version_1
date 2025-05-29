@@ -112,139 +112,101 @@ export const storage = {
   },
 
   // Job Listings
-  async getJobListings(
-    options: {
-      page?: number;
-      limit?: number;
-      search?: string;
-      category?: string;
-      experienceLevel?: string;
-      jobType?: string;
-      status?: string;
-      featured?: boolean;
-      priority?: string;
-    } = {}
-  ): Promise<{ jobListings: JobListing[]; total: number }> {
-    const { 
-      page = 1, 
-      limit = 10, 
-      search = "", 
-      category, 
-      experienceLevel,
-      jobType,
-      status,
-      featured,
-      priority
-    } = options;
+  async getJobListings(options: {
+    page: number;
+    limit: number;
+    search?: string;
+    category?: string;
+    experienceLevel?: string;
+    jobType?: string;
+    status?: string;
+    featured?: boolean;
+    priority?: string;
+  }) {
+    const { page, limit, search, category, experienceLevel, jobType, status, featured, priority } = options;
 
-    // Build the where conditions
     let whereConditions = [];
 
-    if (search) {
-      const searchTerm = search.toLowerCase();
+    // Search filter
+    if (search && search.trim()) {
       whereConditions.push(
         or(
-          sql`LOWER(${jobListings.title}) LIKE ${`%${searchTerm}%`}`,
-          sql`LOWER(${jobListings.company}) LIKE ${`%${searchTerm}%`}`,
-          sql`LOWER(${jobListings.description}) LIKE ${`%${searchTerm}%`}`,
-          sql`LOWER(${jobListings.skills}) LIKE ${`%${searchTerm}%`}`,
-          sql`LOWER(${jobListings.location}) LIKE ${`%${searchTerm}%`}`,
-          sql`LOWER(${jobListings.category}) LIKE ${`%${searchTerm}%`}`,
-          sql`LOWER(${jobListings.jobType}) LIKE ${`%${searchTerm}%`}`,
-          sql`LOWER(${jobListings.experienceLevel}) LIKE ${`%${searchTerm}%`}`,
-          sql`LOWER(${jobListings.salary}) LIKE ${`%${searchTerm}%`}`,
-          sql`LOWER(${jobListings.requirements}) LIKE ${`%${searchTerm}%`}`,
-          sql`LOWER(${jobListings.benefits}) LIKE ${`%${searchTerm}%`}`,
-          sql`LOWER(${jobListings.status}) LIKE ${`%${searchTerm}%`}`
+          ilike(jobListings.title, `%${search.trim()}%`),
+          ilike(jobListings.company, `%${search.trim()}%`),
+          ilike(jobListings.location, `%${search.trim()}%`),
+          ilike(jobListings.description, `%${search.trim()}%`)
         )
       );
     }
 
-    if (category && category !== 'all_categories') {
+    // Category filter
+    if (category && category !== "all_categories") {
       whereConditions.push(eq(jobListings.category, category));
     }
 
-    if (experienceLevel && experienceLevel !== 'all_levels') {
+    // Experience level filter
+    if (experienceLevel && experienceLevel !== "all_experience") {
       whereConditions.push(eq(jobListings.experienceLevel, experienceLevel));
     }
 
-    if (jobType && jobType !== 'all_types') {
+    // Job type filter
+    if (jobType && jobType !== "all_types") {
       whereConditions.push(eq(jobListings.jobType, jobType));
     }
 
-    if (status !== undefined && status !== null) {
+    // Status filter
+    if (status && status !== "all_statuses") {
       whereConditions.push(eq(jobListings.status, status));
     }
 
+    // Featured filter
     if (featured !== undefined) {
       whereConditions.push(eq(jobListings.featured, featured));
     }
 
-    if (priority && priority !== 'all_priorities') {
-      console.log('Applying priority filter:', priority); // Debug log
-      switch (priority) {
-        case 'urgent':
-          whereConditions.push(eq(jobListings.urgent, true));
-          console.log('Added urgent filter condition - filtering for urgent = true'); // Debug log
-          break;
-        case 'priority':
-          whereConditions.push(eq(jobListings.priority, true));
-          console.log('Added priority filter condition - filtering for priority = true'); // Debug log
-          break;
-        case 'open':
-          whereConditions.push(eq(jobListings.isOpen, true));
-          console.log('Added open filter condition - filtering for isOpen = true'); // Debug log
-          break;
-        case 'featured':
-          whereConditions.push(eq(jobListings.featured, true));
-          console.log('Added featured filter condition - filtering for featured = true'); // Debug log
-          break;
-        default:
-          console.log('Unknown priority filter value:', priority);
-          break;
+    // Priority filter
+    if (priority && priority !== "all_priorities") {
+      if (priority === "urgent") {
+        whereConditions.push(eq(jobListings.urgent, true));
+      } else if (priority === "priority") {
+        whereConditions.push(eq(jobListings.priority, true));
+      } else if (priority === "open") {
+        whereConditions.push(eq(jobListings.isOpen, true));
       }
     }
 
-    // Create the where condition
-    const whereCondition = whereConditions.length > 0
-      ? and(...whereConditions)
-      : undefined;
+    // Build the where clause
+    const whereClause = whereConditions.length > 0 ? and(...whereConditions) : undefined;
 
-    console.log('Storage getJobListings called with options:', {
-      page, limit, search, category, experienceLevel, jobType, status, featured, priority
-    });
-    console.log('Where conditions:', whereConditions.length);
+    // Get total count
+    const countQuery = db
+      .select({ count: count() })
+      .from(jobListings);
 
-    // Count total matching records for pagination
-    const result = await db.query.jobListings.findMany({
-      where: whereCondition
-    });
-    const totalCount = result.length;
+    if (whereClause) {
+      countQuery.where(whereClause);
+    }
 
-    console.log('Total jobs found:', totalCount);
-    console.log('Jobs status distribution:', result.map(job => ({ id: job.id, status: job.status })));
+    const countResult = await countQuery;
+    const total = countResult[0]?.count || 0;
 
-    // Get paginated job listings
-    const jobListingsResult = await db.query.jobListings.findMany({
-      where: whereCondition,
-      orderBy: [desc(jobListings.featured), desc(jobListings.postedDate)],
-      limit,
-      offset: (page - 1) * limit,
-    });
+    // Get jobs with pagination
+    const jobsQuery = db
+      .select()
+      .from(jobListings)
+      .orderBy(desc(jobListings.createdAt))
+      .limit(limit)
+      .offset((page - 1) * limit);
 
-    console.log('Query results count:', jobListingsResult.length);
-    console.log('Priority filter results:', jobListingsResult.map(job => ({
-      id: job.id,
-      title: job.title,
-      urgent: job.urgent,
-      priority: job.priority,
-      isOpen: job.isOpen,
-      featured: job.featured
-    })));
+    if (whereClause) {
+      jobsQuery.where(whereClause);
+    }
+
+    const jobs = await jobsQuery;
 
     return {
-      jobListings: jobListingsResult,
-      total: totalCount
+      jobListings: jobs,
+      total,
     };
   },
 

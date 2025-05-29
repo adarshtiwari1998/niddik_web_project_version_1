@@ -60,7 +60,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
 
     try {
       const seoPage = await storage.getSeoPageByPath(req.path);
-      
+
       // If there's an SEO page for this path and it's inactive, return 404
       if (seoPage && !seoPage.isActive) {
         return res.status(404).send(`
@@ -186,14 +186,10 @@ export async function registerRoutes(app: Express): Promise<Server> {
       // Check session-based authentication only
       if (req.isAuthenticated() && req.user && req.user.role === 'admin') {
         isAdmin = true;
-        console.log("Admin session verified successfully");
       }
-
-      console.log("Is Admin:", isAdmin, "Status filter requested:", status);
 
       // Non-admin users can only see active jobs
       if (!isAdmin) {
-        console.log("Non-admin user, forcing status to active");
         status = 'active';
       }
 
@@ -295,7 +291,6 @@ export async function registerRoutes(app: Express): Promise<Server> {
       // Automatically update SEO pages with new job data
       try {
         await storage.updateAllSeoJobPages();
-        console.log('SEO pages automatically updated after job creation');
       } catch (seoError) {
         console.error('Error auto-updating SEO pages after job creation:', seoError);
         // Don't fail the job creation if SEO update fails
@@ -346,7 +341,6 @@ export async function registerRoutes(app: Express): Promise<Server> {
         // Automatically update SEO pages with updated job data
         try {
           await storage.updateAllSeoJobPages();
-          console.log('SEO pages automatically updated after job update');
         } catch (seoError) {
           console.error('Error auto-updating SEO pages after job update:', seoError);
           // Don't fail the job update if SEO update fails
@@ -1010,12 +1004,6 @@ export async function registerRoutes(app: Express): Promise<Server> {
         });
       }
 
-      console.log('SEO meta image uploaded successfully:', {
-        path: file.path,
-        filename: file.originalname,
-        size: file.size
-      });
-
       return res.status(200).json({ 
         success: true, 
         url: file.path,
@@ -1051,12 +1039,6 @@ export async function registerRoutes(app: Express): Promise<Server> {
           message: 'Upload failed - no file path returned' 
         });
       }
-
-      console.log('File uploaded successfully:', {
-        path: file.path,
-        filename: file.originalname,
-        size: file.size
-      });
 
       // If user is authenticated, update their profile with the resume URL
       if (req.isAuthenticated() && req.user) {
@@ -1207,12 +1189,9 @@ const endIndex = page * limit;
 // Analytics endpoint for user application aggregation
   app.get('/api/admin/analytics', async (req: AuthenticatedRequest, res: Response) => {
     try {
-      console.log('Analytics endpoint called with params:', req.query);
-
       const { search, status, sortBy } = req.query;
 
       // Base query for applications with user data
-      console.log('Executing applications query...');
       const applications = await db
         .select({
           applicationId: jobApplications.id,
@@ -1245,21 +1224,17 @@ const endIndex = page * limit;
         );
       }
 
-      console.log(`Found ${applications.length} applications`);
-
       if (applications.length === 0) {
         return res.json([]);
       }
 
       // Get unique job IDs to fetch job details
       const jobIds = [...new Set(applications.map(app => app.jobId).filter(id => id !== null && id !== undefined))];
-      console.log('Found unique job IDs:', jobIds);
 
        let jobTitleMap = new Map<number, string>();
 
       if (jobIds.length > 0) {
         try {
-          console.log("Fetching job listings...");
           const jobs = await db
             .select({
               id: jobListings.id,
@@ -1268,7 +1243,6 @@ const endIndex = page * limit;
             .from(jobListings)
             .where(inArray(jobListings.id, jobIds));
 
-          console.log(`Found ${jobs.length} job listings`);
           jobTitleMap = new Map(jobs.map(job => [job.id, job.title || 'Untitled Job']));
         } catch (jobError) {
           console.error("Error fetching job listings:", jobError);
@@ -1286,8 +1260,6 @@ const endIndex = page * limit;
         }
         userApplicationMap.get(userEmail)!.push(app);
       });
-
-      console.log(`Grouped into ${userApplicationMap.size} users`);
 
       // Build analytics data for each user
       const analyticsData: any[] = [];
@@ -1378,7 +1350,6 @@ const endIndex = page * limit;
         });
       }
 
-      console.log(`Returning ${analyticsData.length} analytics records`);
       res.json(analyticsData);
     } catch (error) {
       console.error('Analytics endpoint error:', error);
@@ -1443,9 +1414,6 @@ app.put('/api/profile', async (req: AuthenticatedRequest, res) => {
       // Validate and extract the update data
       const updateData = { ...req.body };
       delete updateData.password; // Prevent password updates through this endpoint
-
-      // Make sure to log the updateData for debugging
-      console.log("Update Data:", updateData);
 
       // Update the user profile
       const updatedUser = await storage.updateUser(userId, updateData);
@@ -2575,12 +2543,7 @@ app.get("/api/last-logout", async (req: Request, res: Response) => {
   // Update SEO page
   app.put('/api/admin/seo-pages/:id', async (req: AuthenticatedRequest, res) => {
     try {
-      console.log('SEO Update - User:', req.user);
-      console.log('SEO Update - Authenticated:', req.isAuthenticated());
-      console.log('SEO Update - Request body:', req.body);
-
       if (!req.isAuthenticated() || !req.user || req.user.role !== 'admin') {
-        console.log('SEO Update - Authentication failed');
         return res.status(403).json({
           success: false,
           message: "Unauthorized"
@@ -2589,32 +2552,26 @@ app.get("/api/last-logout", async (req: Request, res: Response) => {
 
       const id = parseInt(req.params.id);
       if (isNaN(id)) {
-        console.log('SEO Update - Invalid ID:', req.params.id);
         return res.status(400).json({
           success: false,
           message: "Invalid SEO page ID"
         });
       }
 
-      console.log('SEO Update - Validating data for ID:', id);
       const validatedData = seoPageSchema.partial().parse(req.body);
-      console.log('SEO Update - Validation passed:', validatedData);
 
       const seoPage = await storage.updateSeoPage(id, validatedData);
 
       if (!seoPage) {
-        console.log('SEO Update - Page not found for ID:', id);
         return res.status(404).json({
           success: false,
           message: "SEO page not found"
         });
       }
 
-      console.log('SEO Update - Success for ID:', id);
       return res.status(200).json({ success: true, data: seoPage });
     } catch (error) {
       if (error instanceof z.ZodError) {
-        console.log('SEO Update - Validation error:', error.errors);
         return res.status(400).json({
           success: false,
           message: "Validation error",
@@ -2639,12 +2596,8 @@ app.get("/api/last-logout", async (req: Request, res: Response) => {
         });
       }
 
-      console.log('SEO update job data - User authenticated:', req.user?.role);
-      
       const results = await storage.updateAllSeoJobPages();
-      
-      console.log('SEO update job data - Results:', results);
-      
+
       return res.status(200).json({
         success: true,
         data: results,
@@ -2703,7 +2656,7 @@ app.get("/api/last-logout", async (req: Request, res: Response) => {
   app.get('/schema', async (req, res) => {
     try {
       const activeSeoPages = await storage.getAllActiveSeoPages();
-      
+
       const schemaData = {
         "@context": "https://schema.org",
         "@graph": activeSeoPages.filter(page => page.isActive === true).map(page => {
@@ -2815,12 +2768,12 @@ app.get("/api/last-logout", async (req: Request, res: Response) => {
       jobListings.jobListings.forEach(job => {
         // Ensure we have a valid date - use postedDate, updatedAt, createdAt, or current date as fallback
         let lastModDate = job.updatedAt || job.createdAt || job.postedDate || new Date().toISOString();
-        
+
         // If lastModDate is still null/undefined, use current date
         if (!lastModDate) {
           lastModDate = new Date().toISOString();
         }
-        
+
         // Ensure it's a valid date string
         let formattedDate;
         try {
@@ -2829,7 +2782,7 @@ app.get("/api/last-logout", async (req: Request, res: Response) => {
           console.error(`Invalid date for job ${job.id}:`, lastModDate);
           formattedDate = new Date().toISOString();
         }
-        
+
         sitemapXml += `  <url>
     <loc>https://niddik.com/jobs/${job.id}</loc>
     <lastmod>${formattedDate}</lastmod>
@@ -2846,7 +2799,7 @@ app.get("/api/last-logout", async (req: Request, res: Response) => {
         if (page.isActive && !staticPaths.has(page.pagePath)) {
           const pageLastMod = page.updatedAt || new Date().toISOString();
           const formattedPageDate = new Date(pageLastMod).toISOString();
-          
+
           sitemapXml += `  <url>
     <loc>https://niddik.com${page.pagePath}</loc>
     <lastmod>${formattedPageDate}</lastmod>
@@ -2987,7 +2940,6 @@ app.get("/api/admin/check", async (req: Request, res: Response) => {
     }
 
     const userId = req.user.id;
-    const now = new Date();
 
     // Check session from sessions table
     if (!req.session || !req.session.user || req.session.user.role !== 'admin') {
@@ -3018,6 +2970,52 @@ app.get("/api/admin/check", async (req: Request, res: Response) => {
     return res.status(500).json({ error: "Internal server error" });
   }
 });
+
+// Middleware to check if user is authenticated (supports both session and JWT)
+    app.use("/api/admin", async (req: Request, res: Response, next: NextFunction) => {
+        try {
+            // Skip auth check for login endpoint
+            if (req.path === '/login') {
+                return next();
+            }
+
+            // First check session authentication
+            if (req.isAuthenticated() && req.user) {
+                const userId = (req.user as User).id;
+
+                // Get admin user
+                const user = await db.query.users.findFirst({
+                    where: eq(users.id, userId)
+                });
+
+                if (!user || user.role !== 'admin') {
+                    return res.status(403).json({ error: "Not an admin user" });
+                }
+
+                return next();
+            }
+
+            // If session check fails, try JWT
+            const authHeader = req.headers.authorization;
+            if (authHeader && authHeader.startsWith('Bearer ')) {
+                const token = authHeader.substring(7);
+                try {
+                    const decoded = jwt.verify(token, process.env.JWT_SECRET!) as { user: User };
+                    if (decoded.user && decoded.user.role === 'admin') {
+                        req.user = decoded.user;
+                        return next();
+                    }
+                } catch (error) {
+                    // JWT verification failed - continue to authentication error
+                }
+            }
+
+            return res.status(401).json({ error: "Not authenticated" });
+        } catch (error) {
+            console.error("Auth middleware error:", error);
+            return res.status(500).json({ error: "Internal server error" });
+        }
+    });
 
   const httpServer = createServer(app);
   return httpServer;
