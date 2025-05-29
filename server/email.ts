@@ -1,5 +1,6 @@
 import nodemailer from 'nodemailer';
 import { format } from 'date-fns';
+import { formatInTimeZone } from 'date-fns-tz';
 
 interface EmailConfig {
   host: string;
@@ -318,7 +319,7 @@ class EmailService {
     requestOrigin?: string
   ): Promise<boolean> {
     try {
-      const formattedDate = format(applicationDate, 'MMMM dd, yyyy \'at\' hh:mm a');
+      const formattedDate = formatInTimeZone(applicationDate, 'Asia/Kolkata', 'MMMM dd, yyyy \'at\' hh:mm a zzz');
 
       const content = `
         <h2 style="color: #16a34a; margin-bottom: 20px;">Application Submitted Successfully! ✅</h2>
@@ -397,7 +398,7 @@ class EmailService {
     requestOrigin?: string
   ): Promise<boolean> {
     try {
-      const formattedDate = format(applicationDate, 'MMMM dd, yyyy \'at\' hh:mm a');
+      const formattedDate = formatInTimeZone(applicationDate, 'Asia/Kolkata', 'MMMM dd, yyyy \'at\' hh:mm a zzz');
 
       const content = `
         <h2 style="color: #16a34a; margin-bottom: 20px;">New Job Application Received! 📋</h2>
@@ -711,7 +712,7 @@ class EmailService {
                 <li><strong>🏢 Company:</strong> ${company}</li>
                 <li><strong>📊 Previous Status:</strong> ${oldStatus.charAt(0).toUpperCase() + oldStatus.slice(1)}</li>
                 <li><strong>🔄 New Status:</strong> <span style="color: ${statusInfo.color}; font-weight: bold;">${newStatus.charAt(0).toUpperCase() + newStatus.slice(1)}</span></li>
-                <li><strong>📅 Updated On:</strong> ${format(new Date(), 'MMMM dd, yyyy \'at\' hh:mm a')}</li>
+                <li><strong>📅 Updated On:</strong> ${formatInTimeZone(new Date(), 'Asia/Kolkata', 'MMMM dd, yyyy \'at\' hh:mm a zzz')}</li>
             </ul>
         </div>
 
@@ -742,7 +743,7 @@ class EmailService {
             <li>Continue exploring opportunities on our platform</li>
             <li>Consider updating your profile with new skills</li>
             <li>Apply to other positions that match your experience</li>
-            <li>We appreciate your interest in working with us</li>
+            <li>We appreciate your interestin working with us</li>
         </ul>
         ` : ''}
 
@@ -801,7 +802,7 @@ class EmailService {
                 <li><strong>🏢 Company:</strong> ${company}</li>
                 <li><strong>👤 Candidate:</strong> ${userName}</li>
                 <li><strong>📧 Candidate Email:</strong> ${userEmail}</li>
-                <li><strong>📅 Updated On:</strong> ${format(new Date(), 'MMMM dd, yyyy \'at\' hh:mm a')}</li>
+                <li><strong>📅 Updated On:</strong> ${formatInTimeZone(new Date(), 'Asia/Kolkata', 'MMMM dd, yyyy \'at\' hh:mm a zzz')}</li>
                 <li><strong>👨‍💼 Updated By:</strong> ${adminName}</li>
             </ul>
         </div>
@@ -862,3 +863,5 @@ class EmailService {
 }
 
 export const emailService = new EmailService();
+
+//The code has been updated to format dates in IST timezone using formatInTimeZone where appropriate.
