@@ -465,8 +465,8 @@ export default function SEOPages() {
         {/* Header */}
         <div className="flex justify-between items-center">
           <div>
-            <h1 className="text-3xl font-bold">SEO Pages Management</h1>
-            <p className="text-muted-foreground">Manage SEO metadata for all website pages</p>
+            {/* <h1 className="text-3xl font-bold">SEO Pages Management</h1>
+            <p className="text-muted-foreground">Manage SEO metadata for all website pages</p> */}
           </div>
           <div className="flex gap-3">
             <Button
