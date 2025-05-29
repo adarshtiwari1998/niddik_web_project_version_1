@@ -2767,8 +2767,22 @@ app.get("/api/last-logout", async (req: Request, res: Response) => {
 
       // Add job listings
       jobListings.jobListings.forEach(job => {
-        const lastModDate = job.updatedAt || job.createdAt || new Date().toISOString();
-        const formattedDate = new Date(lastModDate).toISOString();
+        // Ensure we have a valid date - use postedDate, updatedAt, createdAt, or current date as fallback
+        let lastModDate = job.updatedAt || job.createdAt || job.postedDate || new Date().toISOString();
+        
+        // If lastModDate is still null/undefined, use current date
+        if (!lastModDate) {
+          lastModDate = new Date().toISOString();
+        }
+        
+        // Ensure it's a valid date string
+        let formattedDate;
+        try {
+          formattedDate = new Date(lastModDate).toISOString();
+        } catch (error) {
+          console.error(`Invalid date for job ${job.id}:`, lastModDate);
+          formattedDate = new Date().toISOString();
+        }
         
         sitemapXml += `  <url>
     <loc>https://niddik.com/jobs/${job.id}</loc>
