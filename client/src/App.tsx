@@ -172,7 +172,9 @@ function StickyPopupWrapper() {
     const shouldHidePopup = location.startsWith('/admin') || 
                            location.startsWith('/candidate') ||
                            location.startsWith('/careers') ||
-                           location.startsWith('/jobs/');
+                           location.startsWith('/jobs/') ||
+                           location.startsWith('/auth') ||
+                           location.startsWith('/admin/login');
 
     return shouldHidePopup ? null : <StickyPopup />;
 }
