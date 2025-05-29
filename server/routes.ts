@@ -2818,4 +2818,4 @@ app.get("/api/last-logout", async (req: Request, res: Response) => {
         { loc: 'https://niddik.com/why-us', priority: '0.7', changefreq: 'monthly' },
         { loc: 'https://niddik.com/leadership-team', priority: '0.6', changefreq: 'monthly' },
         { loc: 'https://niddik.com/testimonials', priority: '0.6', changefreq: 'monthly' },
-        { loc: 'https://niddik.com/facts-and-trends', priority: '0.6', changefreq: 'weekly' }
+        { loc: 'https://niddik.com/facts-and-trends', priority: '0.6', changefreq: 'weekly' }-and-trends', priority: '0.6', changefreq: 'weekly' }
