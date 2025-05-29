@@ -1,0 +1,38 @@
+react-helmet-async.js?v=db738107:114 Uncaught Invariant Violation: Only elements types base, body, head, html, link, meta, noscript, script, style, title, Symbol(react.fragment) are allowed. Helmet does not support rendering <div> elements. Refer to our API for more information.
+    at invariant2 (https://c97bc9b7-d459-4d54-aa25-a500aa3482fe-00-17pkxb2ueb99z.sisko.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/react-helmet-async.js?v=db738107:106:19)
+    at _a2.warnOnInvalidChildren (https://c97bc9b7-d459-4d54-aa25-a500aa3482fe-00-17pkxb2ueb99z.sisko.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/react-helmet-async.js?v=db738107:900:34)
+    at https://c97bc9b7-d459-4d54-aa25-a500aa3482fe-00-17pkxb2ueb99z.sisko.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/react-helmet-async.js?v=db738107:927:14
+    at https://c97bc9b7-d459-4d54-aa25-a500aa3482fe-00-17pkxb2ueb99z.sisko.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/chunk-QCHXOAYK.js?v=db738107:750:25
+    at https://c97bc9b7-d459-4d54-aa25-a500aa3482fe-00-17pkxb2ueb99z.sisko.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/chunk-QCHXOAYK.js?v=db738107:737:25
+    at mapIntoArray (https://c97bc9b7-d459-4d54-aa25-a500aa3482fe-00-17pkxb2ueb99z.sisko.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/chunk-QCHXOAYK.js?v=db738107:660:31)
+    at mapIntoArray (https://c97bc9b7-d459-4d54-aa25-a500aa3482fe-00-17pkxb2ueb99z.sisko.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/chunk-QCHXOAYK.js?v=db738107:701:31)
+    at mapChildren (https://c97bc9b7-d459-4d54-aa25-a500aa3482fe-00-17pkxb2ueb99z.sisko.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/chunk-QCHXOAYK.js?v=db738107:736:11)
+    at Object.forEachChildren [as forEach] (https://c97bc9b7-d459-4d54-aa25-a500aa3482fe-00-17pkxb2ueb99z.sisko.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/chunk-QCHXOAYK.js?v=db738107:749:11)
+    at _a2.mapChildrenToProps (https://c97bc9b7-d459-4d54-aa25-a500aa3482fe-00-17pkxb2ueb99z.sisko.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/react-helmet-async.js?v=db738107:914:35)Understand this error
+chunk-RPCDYKBN.js?v=db738107:14032 The above error occurred in the <_a2> component:
+
+    at _a2 (https://c97bc9b7-d459-4d54-aa25-a500aa3482fe-00-17pkxb2ueb99z.sisko.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/react-helmet-async.js?v=db738107:828:21)
+    at SEO (https://c97bc9b7-d459-4d54-aa25-a500aa3482fe-00-17pkxb2ueb99z.sisko.replit.dev/src/components/SEO.tsx:22:16)
+    at NotFound
+    at Route (https://c97bc9b7-d459-4d54-aa25-a500aa3482fe-00-17pkxb2ueb99z.sisko.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/wouter.js?v=db738107:280:16)
+    at Switch (https://c97bc9b7-d459-4d54-aa25-a500aa3482fe-00-17pkxb2ueb99z.sisko.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/wouter.js?v=db738107:336:17)
+    at Router
+    at AuthProvider (https://c97bc9b7-d459-4d54-aa25-a500aa3482fe-00-17pkxb2ueb99z.sisko.replit.dev/src/hooks/use-auth.tsx:32:32)
+    at QueryClientProvider (https://c97bc9b7-d459-4d54-aa25-a500aa3482fe-00-17pkxb2ueb99z.sisko.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/@tanstack_react-query.js?v=db738107:2875:3)
+    at _a (https://c97bc9b7-d459-4d54-aa25-a500aa3482fe-00-17pkxb2ueb99z.sisko.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/react-helmet-async.js?v=db738107:624:5)
+    at App
+
+Consider adding an error boundary to your tree to customize error handling behavior.
+Visit https://reactjs.org/link/error-boundaries to learn more about error boundaries.
+logCapturedError @ chunk-RPCDYKBN.js?v=db738107:14032Understand this error
+chunk-RPCDYKBN.js?v=db738107:9129 Uncaught Invariant Violation: Only elements types base, body, head, html, link, meta, noscript, script, style, title, Symbol(react.fragment) are allowed. Helmet does not support rendering <div> elements. Refer to our API for more information.
+    at invariant2 (https://c97bc9b7-d459-4d54-aa25-a500aa3482fe-00-17pkxb2ueb99z.sisko.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/react-helmet-async.js?v=db738107:106:19)
+    at _a2.warnOnInvalidChildren (https://c97bc9b7-d459-4d54-aa25-a500aa3482fe-00-17pkxb2ueb99z.sisko.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/react-helmet-async.js?v=db738107:900:34)
+    at https://c97bc9b7-d459-4d54-aa25-a500aa3482fe-00-17pkxb2ueb99z.sisko.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/react-helmet-async.js?v=db738107:927:14
+    at https://c97bc9b7-d459-4d54-aa25-a500aa3482fe-00-17pkxb2ueb99z.sisko.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/chunk-QCHXOAYK.js?v=db738107:750:25
+    at https://c97bc9b7-d459-4d54-aa25-a500aa3482fe-00-17pkxb2ueb99z.sisko.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/chunk-QCHXOAYK.js?v=db738107:737:25
+    at mapIntoArray (https://c97bc9b7-d459-4d54-aa25-a500aa3482fe-00-17pkxb2ueb99z.sisko.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/chunk-QCHXOAYK.js?v=db738107:660:31)
+    at mapIntoArray (https://c97bc9b7-d459-4d54-aa25-a500aa3482fe-00-17pkxb2ueb99z.sisko.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/chunk-QCHXOAYK.js?v=db738107:701:31)
+    at mapChildren (https://c97bc9b7-d459-4d54-aa25-a500aa3482fe-00-17pkxb2ueb99z.sisko.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/chunk-QCHXOAYK.js?v=db738107:736:11)
+    at Object.forEachChildren [as forEach] (https://c97bc9b7-d459-4d54-aa25-a500aa3482fe-00-17pkxb2ueb99z.sisko.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/chunk-QCHXOAYK.js?v=db738107:749:11)
+    at _a2.mapChildrenToProps (https://c97bc9b7-d459-4d54-aa25-a500aa3482fe-00-17pkxb2ueb99z.sisko.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/react-helmet-async.js?v=db738107:914:35)Understand this error
