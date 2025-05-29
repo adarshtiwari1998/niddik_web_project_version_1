@@ -387,15 +387,7 @@ const SEO: React.FC<SEOProps> = ({ pagePath, fallback }) => {
         </script>
       )}
 
-      {/* Global Head Scripts from Root Page */}
-      {rootSeoData?.data?.headScripts && location !== '/' && (
-        <div dangerouslySetInnerHTML={{ __html: rootSeoData.data.headScripts }} />
-      )}
 
-      {/* Custom Head Scripts */}
-      {seo.headScripts && (
-        <div dangerouslySetInnerHTML={{ __html: seo.headScripts }} />
-      )}
 
       {/* Additional meta tags for better SEO */}
       <meta name="viewport" content="width=device-width, initial-scale=1" />
