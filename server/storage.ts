@@ -799,10 +799,28 @@ export const storage = {
   },
 
   // SEO Pages methods
-  async getAllSeoPages(): Promise<SeoPage[]> {
-    return db.query.seoPages.findMany({
-      orderBy: asc(seoPages.pagePath)
-    });
+  async getAllSeoPages(): Promise<any[]> {
+    try {
+      const pages = await db.select().from(seoPages).orderBy(desc(seoPages.updatedAt));
+      return pages;
+    } catch (error) {
+      console.error('Error fetching all SEO pages:', error);
+      throw error;
+    }
+  },
+
+  async getAllActiveSeoPages(): Promise<any[]> {
+    try {
+      const pages = await db
+        .select()
+        .from(seoPages)
+        .where(eq(seoPages.isActive, true))
+        .orderBy(desc(seoPages.updatedAt));
+      return pages;
+    } catch (error) {
+      console.error('Error fetching active SEO pages:', error);
+      throw error;
+    }
   },
 
   async updateSeoPageWithJobData(pagePath: string): Promise<SeoPage | undefined> {
@@ -920,21 +938,6 @@ export const storage = {
     }
   },
 
-  async getAllActiveSeoPages() {
-    try {
-      const pages = await db
-        .select()
-        .from(seoPages)
-        .where(eq(seoPages.isActive, true))
-        .orderBy(asc(seoPages.pagePath));
-      
-      return pages;
-    } catch (error) {
-      console.error('Error fetching active SEO pages:', error);
-      throw error;
-    }
-  },
-
   async updateAllSeoJobPages(): Promise<{ updated: string[], errors: string[] }> {
     const results = { updated: [], errors: [] };
     const pagesToUpdate = ['/', '/careers'];
@@ -966,7 +969,7 @@ export const storage = {
     return db.query.seoPages.findFirst({
       where: eq(seoPages.id, id)
     });
-  },
+The code has been modified to include a function called `getAllActiveSeoPages` that retrieves all active SEO pages.   },
 
   async createSeoPage(data: InsertSeoPage): Promise<SeoPage> {
     const [seoPage] = await db.insert(seoPages).values(data).returning();
