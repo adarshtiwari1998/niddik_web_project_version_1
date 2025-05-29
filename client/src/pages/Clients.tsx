@@ -26,25 +26,30 @@ const Clients = () => {
       description: "Leading provider of innovative solutions and services"
     },
     {
-      name: "Weyerhaeuser",
-      logo: "https://res.cloudinary.com/dhanz6zty/image/upload/v1748372070/niddik_client_weyerhaeuser_jwis4d.png",
-      description: "One of the world's largest private owners of timberlands"
+      name: "Schneider Electric", 
+      logo: "https://res.cloudinary.com/dhanz6zty/image/upload/v1748559345/niddik_client_schneider-electric-v2_tlu18y.png",
+      description: "Schneider Electric SE is a French multinational corporation that specializes in digital automation and energy management."
     },
     {
-      name: "Microsoft",
-      logo: "https://res.cloudinary.com/dhanz6zty/image/upload/v1748372070/niddik_client_microsoft_fvd2g8.png",
-      description: "Technology corporation developing computer software, consumer electronics, and related services"
+      name: "FACTORYFIX",
+      logo: "https://res.cloudinary.com/dhanz6zty/image/upload/v1748559345/niddik_client_factoryfix-v2_w97uc0.png",
+      description: "FactoryFix maintains detailed profiles on over 2 million skilled manufacturing and trades professionals."
     },
     {
-      name: "Lifespace",
-      logo: "https://res.cloudinary.com/dhanz6zty/image/upload/v1748372070/niddik_client_lifespace_t4lcfd.png",
-      description: "Provider of senior living communities and services"
+      name: "Google",
+      logo: "https://res.cloudinary.com/dhanz6zty/image/upload/v1748559344/niddik_client_google-v2_n6sn3b.png",
+      description: "Google LLC is an American multinational corporation and technology company."
     },
-    {
-      name: "Nordstrom",
-      logo: "https://res.cloudinary.com/dhanz6zty/image/upload/v1748372070/niddik_client_nordstorm_oep8ef.png",
-      description: "Luxury department store chain offering fashion, shoes, beauty and home goods"
-    }
+    // {
+    //   name: "Lifespace",
+    //   logo: "https://res.cloudinary.com/dhanz6zty/image/upload/v1748372070/niddik_client_lifespace_t4lcfd.png",
+    //   description: "Provider of senior living communities and services"
+    // },
+    // {
+    //   name: "Nordstrom",
+    //   logo: "https://res.cloudinary.com/dhanz6zty/image/upload/v1748372070/niddik_client_nordstorm_oep8ef.png",
+    //   description: "Luxury department store chain offering fashion, shoes, beauty and home goods"
+    // }
   ];
 
   const stats = [

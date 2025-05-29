@@ -16,21 +16,21 @@ const companies = [
     logo: <img src="https://res.cloudinary.com/dhanz6zty/image/upload/v1748372070/niddik_client_wimmer_dpw6yf.png" alt="Wimmer" className="h-12 w-28 object-contain" />
   },
   { 
-    name: "Weyerhaeuser", 
-    logo: <img src="https://res.cloudinary.com/dhanz6zty/image/upload/v1748372070/niddik_client_weyerhaeuser_jwis4d.png" alt="Weyerhaeuser" className="h-12 w-28 object-contain" />
+    name: "Schneider Electric", 
+    logo: <img src="https://res.cloudinary.com/dhanz6zty/image/upload/v1748559345/niddik_client_schneider-electric-v2_tlu18y.png" alt="Schneider Electric" className="h-12 w-28 object-contain" />
   },
   { 
-    name: "Microsoft", 
-    logo: <img src="https://res.cloudinary.com/dhanz6zty/image/upload/v1748372070/niddik_client_microsoft_fvd2g8.png" alt="Microsoft" className="h-12 w-28 object-contain" />
+    name: "FACTORYFIX", 
+    logo: <img src="https://res.cloudinary.com/dhanz6zty/image/upload/v1748559345/niddik_client_factoryfix-v2_w97uc0.png" alt="Factoryfix" className="h-12 w-28 object-contain" />
   },
   { 
-    name: "Lifespace", 
-    logo: <img src="https://res.cloudinary.com/dhanz6zty/image/upload/v1748372070/niddik_client_lifespace_t4lcfd.png" alt="Lifespace" className="h-12 w-28 object-contain" />
+    name: "Google", 
+    logo: <img src="https://res.cloudinary.com/dhanz6zty/image/upload/v1748559344/niddik_client_google-v2_n6sn3b.png" alt="Google" className="h-12 w-28 object-contain" />
   },
-  { 
-    name: "Nordstrom", 
-    logo: <img src="https://res.cloudinary.com/dhanz6zty/image/upload/v1748372070/niddik_client_nordstorm_oep8ef.png" alt="Nordstrom" className="h-12 w-28 object-contain" />
-  }
+  // { 
+  //   name: "Nordstrom", 
+  //   logo: <img src="https://res.cloudinary.com/dhanz6zty/image/upload/v1748372070/niddik_client_nordstorm_oep8ef.png" alt="Nordstrom" className="h-12 w-28 object-contain" />
+  // }
 ];
 
 // Component for a smooth marquee animation effect
