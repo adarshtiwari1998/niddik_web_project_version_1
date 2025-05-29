@@ -672,10 +672,10 @@ export default function CareerPage() {
                     </div>
 
                     {/* Display application counts for admin */}
-                    {user?.role === 'admin' && applicationCountsData && applicationCountsData[job.id] !== undefined && (
+                    {user?.role === 'admin' && applicationCountsData && (
                       <div className="mt-2 text-center">
                         <span className="text-blue-500 font-semibold">
-                          {applicationCountsData[job.id]} Candidates Applied
+                          {applicationCountsData.data?.[job.id] || 0} Candidates Applied
                         </span>
                       </div>
                     )}

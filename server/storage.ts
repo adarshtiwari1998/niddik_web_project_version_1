@@ -1069,6 +1069,19 @@ async updateSeoPage(id: number, data: Partial<InsertSeoPage>): Promise<SeoPage |
   // Alternative method name for consistency
   async getJobListing(id: number): Promise<JobListing | undefined> {
     return this.getJobListingById(id);
+  },
+
+  // Get all applications for counting
+  async getAllApplications(): Promise<JobApplication[]> {
+    try {
+      const applications = await db
+        .select()
+        .from(jobApplications);
+      return applications;
+    } catch (error) {
+      console.error('Error fetching all applications:', error);
+      return [];
+    }
   }
 };
 

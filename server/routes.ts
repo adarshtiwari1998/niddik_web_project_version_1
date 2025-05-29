@@ -422,7 +422,12 @@ export async function registerRoutes(app: Express): Promise<Server> {
       }
 
       // Get all applications and count by job ID
-      const applications = await storage.getAllApplications();
+      const applications = await db
+        .select({
+          jobId: jobApplications.jobId,
+        })
+        .from(jobApplications);
+
       const countsByJobId: Record<number, number> = {};
 
       applications.forEach(app => {
