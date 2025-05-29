@@ -187,8 +187,8 @@ const Footer = () => {
             </div>
           ))}
 
-          {/* About Us Column - Takes 1 column on large screens */}
-          <div className="lg:col-span-1 space-y-4">
+          {/* About Us Column - Takes 2 columns on large screens */}
+          <div className="lg:col-span-2 space-y-4">
             <h3 className="text-lg font-semibold text-white">{aboutUsColumn.title}</h3>
             <div className="space-y-3">
               {aboutUsColumn.links.map((link) => (
@@ -244,9 +244,22 @@ const Footer = () => {
         {/* Bottom Section */}
         <div className="mt-12 pt-8 border-t border-gray-700">
           <div className="flex flex-col md:flex-row justify-between items-center gap-4">
-            <p className="text-sm text-gray-400">
-              © 2025 Niddik. All rights reserved.
-            </p>
+            <div className="text-center md:text-left">
+              <p className="text-sm text-gray-400">
+                © 2025 Niddik. All rights reserved.
+              </p>
+              <p className="text-xs text-gray-500 mt-1">
+                Managed and maintained by{" "}
+                <Link 
+                  href="https://itweblens.com" 
+                  target="_blank" 
+                  rel="noopener noreferrer"
+                  className="text-blue-400 hover:text-blue-300 transition-colors"
+                >
+                  Itweblens.com
+                </Link>
+              </p>
+            </div>
             <div className="flex items-center gap-6">
               <Link href="/privacy-policy" className="text-sm text-gray-400 hover:text-white transition-colors">
                 Privacy Policy
