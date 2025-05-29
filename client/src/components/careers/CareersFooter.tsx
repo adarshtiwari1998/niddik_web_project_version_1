@@ -223,16 +223,16 @@ const CareersFooter = () => {
               <p className="text-sm text-gray-500">
                 © 2025 Niddik. All rights reserved.
               </p>
-              <p className="text-xs text-gray-400">
+              <p className="text-xs text-gray-500 mt-1">
                 Managed and maintained by{" "}
-                <Link 
+                <a 
                   href="https://itweblens.com" 
                   target="_blank" 
                   rel="noopener noreferrer"
-                  className="text-blue-500 hover:text-blue-600 transition-colors"
+                  className="text-blue-400 hover:text-blue-300 transition-colors"
                 >
                   Itweblens.com
-                </Link>
+                </a>
               </p>
             </div>
             <div className="flex items-center gap-6">
