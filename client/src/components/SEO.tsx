@@ -36,7 +36,7 @@ interface SEOProps {
 
 const SEO: React.FC<SEOProps> = ({ pagePath, fallback }) => {
   const [location] = useLocation();
-  const currentPath = pagePath || location.pathname;
+  const currentPath = pagePath || location;
 
   // Check if this is a job detail page
   const isJobDetailPage = currentPath.match(/^\/jobs\/(\d+)$/);
@@ -81,7 +81,7 @@ const SEO: React.FC<SEOProps> = ({ pagePath, fallback }) => {
       if (!res.ok) throw new Error('Failed to fetch root SEO data');
       return res.json();
     },
-    enabled: location.pathname !== '/',
+    enabled: location !== '/',
   });
 
   // Fetch recent jobs for careers and home pages
@@ -99,7 +99,7 @@ const SEO: React.FC<SEOProps> = ({ pagePath, fallback }) => {
     refetchOnWindowFocus: false,
   });
 
-  const pathname = pagePath || location.pathname;
+  const pathname = pagePath || location;
 
   const { data: seoData, error: seoError } = useQuery<{ success: boolean; data: SEOData; isDefault?: boolean }>({
     queryKey: [`/api/seo-pages/by-path?path=${pathname}`],
@@ -332,7 +332,7 @@ const SEO: React.FC<SEOProps> = ({ pagePath, fallback }) => {
     };
 
     // Inject global scripts from root page first
-    if (rootSeoData?.data?.bodyScripts && location.pathname !== '/') {
+    if (rootSeoData?.data?.bodyScripts && location !== '/') {
       injectScripts(rootSeoData.data.bodyScripts);
     }
 
@@ -383,7 +383,7 @@ const SEO: React.FC<SEOProps> = ({ pagePath, fallback }) => {
       )}
 
       {/* Global Head Scripts from Root Page */}
-      {rootSeoData?.data?.headScripts && location.pathname !== '/' && (
+      {rootSeoData?.data?.headScripts && location !== '/' && (
         <div dangerouslySetInnerHTML={{ __html: rootSeoData.data.headScripts }} />
       )}
 
