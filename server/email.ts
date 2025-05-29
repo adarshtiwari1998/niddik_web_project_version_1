@@ -28,7 +28,6 @@ class EmailService {
     this.baseUrl = process.env.NODE_ENV === 'production' 
       ? 'https://niddik.com' 
       : `${process.env.REPL_SLUG ? `https://${process.env.REPL_SLUG}.${process.env.REPL_OWNER}.repl.co` : 'http://localhost:5000'}`;
-  }
 
     this.transporter = nodemailer.createTransport({
       host: this.config.host,
