@@ -88,8 +88,11 @@ export async function setupVite(app: Express, server: Server) {
         const { storage } = await import("./storage");
         const pathname = req.originalUrl.split('?')[0]; // Remove query params
 
-        // Skip API routes
-        if (pathname.startsWith('/api/')) {
+        // Skip API routes and static assets
+        if (pathname.startsWith('/api/') || 
+            pathname.startsWith('/images/') || 
+            pathname.startsWith('/assets/') ||
+            pathname.match(/\.(png|jpg|jpeg|gif|svg|ico|css|js|woff|woff2|ttf|eot)$/)) {
           return next();
         }
 
