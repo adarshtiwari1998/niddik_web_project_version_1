@@ -1,4 +1,3 @@
-
 import nodemailer from 'nodemailer';
 import { format } from 'date-fns';
 
@@ -39,6 +38,12 @@ class EmailService {
       },
       tls: {
         rejectUnauthorized: false
+      },
+      // Add DKIM and other authentication headers
+      dkim: {
+        domainName: 'niddik.com',
+        keySelector: 'default',
+        privateKey: process.env.DKIM_PRIVATE_KEY || '', // You'll need to generate this
       }
     });
   }
@@ -159,11 +164,11 @@ class EmailService {
                 <img src="https://res.cloudinary.com/dhanz6zty/image/upload/v1748531500/Niddik-Assets/seo-meta/seo-meta_1748531498908_niddik_logo.png" alt="NiDDiK Logo" class="logo" />
                 <div class="tagline">Connecting People, Changing Lives</div>
             </div>
-            
+
             <div class="content">
                 ${content}
             </div>
-            
+
             <div class="footer">
                 <img src="https://res.cloudinary.com/dhanz6zty/image/upload/v1748531500/Niddik-Assets/seo-meta/seo-meta_1748531498908_niddik_logo.png" alt="NiDDiK Logo" class="footer-logo" />
                 <p><strong>NiDDiK</strong> - Premier IT Recruitment & Staffing Solutions</p>
@@ -198,11 +203,11 @@ class EmailService {
     try {
       const content = `
         <h2 style="color: #16a34a; margin-bottom: 20px;">Welcome to NiDDiK! 🎉</h2>
-        
+
         <p>Dear <strong>${userName}</strong>,</p>
-        
+
         <p>Congratulations! Your account has been successfully created on NiDDiK, the premier platform for IT recruitment and staffing solutions.</p>
-        
+
         <div class="highlight-box">
             <h3 style="margin-top: 0; color: #16a34a;">What's Next?</h3>
             <ul style="margin: 15px 0; padding-left: 20px;">
@@ -212,19 +217,19 @@ class EmailService {
                 <li>Track your application status in real-time</li>
             </ul>
         </div>
-        
+
         <p>Ready to discover your next career opportunity?</p>
-        
+
         <div style="text-align: center; margin: 30px 0;">
             <a href="${this.getBaseUrl(requestOrigin)}/candidate/dashboard" class="button">
                 Access Your Dashboard
             </a>
         </div>
-        
+
         <p>Our platform connects talented professionals like you with leading companies across various industries. Whether you're looking for your next big career move or exploring new opportunities, we're here to help you succeed.</p>
-        
+
         <p>If you have any questions or need assistance, our support team is always ready to help you at <a href="mailto:info@niddik.com" style="color: #16a34a;">info@niddik.com</a>.</p>
-        
+
         <p>Best regards,<br>
         <strong>The NiDDiK Team</strong><br>
         <em>Connecting People, Changing Lives</em></p>
@@ -249,14 +254,14 @@ class EmailService {
   async sendLoginNotification(userEmail: string, userName: string, loginTime: Date, ipAddress?: string, requestOrigin?: string): Promise<boolean> {
     try {
       const formattedTime = format(loginTime, 'MMMM dd, yyyy \'at\' hh:mm a');
-      
+
       const content = `
         <h2 style="color: #16a34a; margin-bottom: 20px;">Security Alert: Account Login 🔐</h2>
-        
+
         <p>Hello <strong>${userName}</strong>,</p>
-        
+
         <p>We wanted to let you know that your NiDDiK account was accessed recently.</p>
-        
+
         <div class="highlight-box">
             <h3 style="margin-top: 0; color: #16a34a;">Login Details:</h3>
             <ul style="margin: 15px 0; padding-left: 20px; list-style: none;">
@@ -266,24 +271,24 @@ class EmailService {
                 <li><strong>🖥️ Platform:</strong> NiDDiK Web Application</li>
             </ul>
         </div>
-        
+
         <p>If this was you, no further action is needed. You can safely ignore this email.</p>
-        
+
         <p><strong>⚠️ If you did not sign in to your account:</strong></p>
         <ul style="margin: 15px 0; padding-left: 20px;">
             <li>Please change your password immediately</li>
             <li>Contact our support team at <a href="mailto:info@niddik.com" style="color: #16a34a;">info@niddik.com</a></li>
             <li>Review your account activity for any unauthorized changes</li>
         </ul>
-        
+
         <div style="text-align: center; margin: 30px 0;">
             <a href="${this.getBaseUrl(requestOrigin)}/candidate/profile" class="button">
                 Secure My Account
             </a>
         </div>
-        
+
         <p>Your account security is our top priority. We send these notifications to help keep your account safe.</p>
-        
+
         <p>Best regards,<br>
         <strong>NiDDiK Security Team</strong></p>
       `;
@@ -314,14 +319,14 @@ class EmailService {
   ): Promise<boolean> {
     try {
       const formattedDate = format(applicationDate, 'MMMM dd, yyyy \'at\' hh:mm a');
-      
+
       const content = `
         <h2 style="color: #16a34a; margin-bottom: 20px;">Application Submitted Successfully! ✅</h2>
-        
+
         <p>Dear <strong>${userName}</strong>,</p>
-        
+
         <p>Great news! Your job application has been successfully submitted and is now under review.</p>
-        
+
         <div class="highlight-box">
             <h3 style="margin-top: 0; color: #16a34a;">Application Details:</h3>
             <ul style="margin: 15px 0; padding-left: 20px; list-style: none;">
@@ -332,7 +337,7 @@ class EmailService {
                 <li><strong>⚡ Status:</strong> <span style="color: #16a34a; font-weight: bold;">Under Review</span></li>
             </ul>
         </div>
-        
+
         <p><strong>What happens next?</strong></p>
         <ol style="margin: 15px 0; padding-left: 20px;">
             <li><strong>Application Review:</strong> The hiring team will review your application and resume</li>
@@ -340,13 +345,13 @@ class EmailService {
             <li><strong>Interview Process:</strong> Qualified candidates will be invited for interviews</li>
             <li><strong>Final Decision:</strong> You'll be notified of the final decision via email</li>
         </ol>
-        
+
         <div style="text-align: center; margin: 30px 0;">
             <a href="${this.getBaseUrl(requestOrigin)}/my-applications" class="button">
                 Track Application Status
             </a>
         </div>
-        
+
         <p><strong>💡 Pro Tips while you wait:</strong></p>
         <ul style="margin: 15px 0; padding-left: 20px;">
             <li>Keep your profile updated with latest skills and experience</li>
@@ -354,11 +359,11 @@ class EmailService {
             <li>Prepare for potential interviews by researching the company</li>
             <li>Check your application status regularly in your dashboard</li>
         </ul>
-        
+
         <p>We'll keep you updated throughout the process. If you have any questions about your application, feel free to reach out to us.</p>
-        
+
         <p>Best of luck with your application!</p>
-        
+
         <p>Best regards,<br>
         <strong>The NiDDiK Team</strong><br>
         <em>Connecting People, Changing Lives</em></p>
@@ -393,14 +398,14 @@ class EmailService {
   ): Promise<boolean> {
     try {
       const formattedDate = format(applicationDate, 'MMMM dd, yyyy \'at\' hh:mm a');
-      
+
       const content = `
         <h2 style="color: #16a34a; margin-bottom: 20px;">New Job Application Received! 📋</h2>
-        
+
         <p>Hello Admin Team,</p>
-        
+
         <p>A new job application has been submitted through the NiDDiK platform. Here are the details:</p>
-        
+
         <div class="highlight-box">
             <h3 style="margin-top: 0; color: #16a34a;">Job Details:</h3>
             <ul style="margin: 15px 0; padding-left: 20px; list-style: none;">
@@ -409,7 +414,7 @@ class EmailService {
                 <li><strong>📅 Applied On:</strong> ${formattedDate}</li>
             </ul>
         </div>
-        
+
         <div class="highlight-box">
             <h3 style="margin-top: 0; color: #16a34a;">Candidate Information:</h3>
             <ul style="margin: 15px 0; padding-left: 20px; list-style: none;">
@@ -420,13 +425,13 @@ class EmailService {
                 ${userSkills ? `<li><strong>🛠️ Skills:</strong> ${userSkills}</li>` : ''}
             </ul>
         </div>
-        
+
         <div style="text-align: center; margin: 30px 0;">
             <a href="${this.getBaseUrl(requestOrigin)}/admin/candidates" class="button">
                 Review Application
             </a>
         </div>
-        
+
         <p><strong>Next Steps:</strong></p>
         <ol style="margin: 15px 0; padding-left: 20px;">
             <li>Review the candidate's complete application in the admin dashboard</li>
@@ -434,9 +439,9 @@ class EmailService {
             <li>Update application status as needed</li>
             <li>Contact the candidate if they meet the requirements</li>
         </ol>
-        
+
         <p>Please log in to the admin dashboard to review the complete application details and take appropriate action.</p>
-        
+
         <p>Best regards,<br>
         <strong>NiDDiK Application System</strong></p>
       `;
@@ -460,20 +465,20 @@ class EmailService {
   async sendPasswordResetEmail(userEmail: string, userName: string, resetToken: string, requestOrigin?: string): Promise<boolean> {
     try {
       const resetUrl = `${this.getBaseUrl(requestOrigin)}/reset-password?token=${resetToken}`;
-      
+
       const content = `
         <h2 style="color: #16a34a; margin-bottom: 20px;">Password Reset Request 🔑</h2>
-        
+
         <p>Hello <strong>${userName}</strong>,</p>
-        
+
         <p>We received a request to reset the password for your NiDDiK account. If you made this request, please click the button below to reset your password.</p>
-        
+
         <div style="text-align: center; margin: 30px 0;">
             <a href="${resetUrl}" class="button">
                 Reset My Password
             </a>
         </div>
-        
+
         <div class="highlight-box">
             <h3 style="margin-top: 0; color: #e11d48;">Important Security Information:</h3>
             <ul style="margin: 15px 0; padding-left: 20px;">
@@ -483,24 +488,24 @@ class EmailService {
                 <li>🔐 Your current password remains unchanged until you create a new one</li>
             </ul>
         </div>
-        
+
         <p><strong>Alternative option:</strong> If the button doesn't work, copy and paste this link into your browser:</p>
         <p style="background-color: #f8f9fa; padding: 15px; border-radius: 4px; word-break: break-all; font-family: monospace; font-size: 14px;">
             ${resetUrl}
         </p>
-        
+
         <p><strong>⚠️ Didn't request this reset?</strong></p>
         <p>If you didn't request a password reset, someone else might have entered your email address by mistake. You can safely ignore this email - your account remains secure and no changes have been made.</p>
-        
+
         <p>For additional security, consider:</p>
         <ul style="margin: 15px 0; padding-left: 20px;">
             <li>Using a strong, unique password</li>
             <li>Not sharing your login credentials</li>
             <li>Logging out from shared computers</li>
         </ul>
-        
+
         <p>If you continue to receive these emails or have security concerns, please contact our support team immediately at <a href="mailto:info@niddik.com" style="color: #16a34a;">info@niddik.com</a>.</p>
-        
+
         <p>Best regards,<br>
         <strong>NiDDiK Security Team</strong></p>
       `;
@@ -525,11 +530,11 @@ class EmailService {
     try {
       const content = `
         <h2 style="color: #16a34a; margin-bottom: 20px;">Password Successfully Updated! ✅</h2>
-        
+
         <p>Hello <strong>${userName}</strong>,</p>
-        
+
         <p>Great news! Your NiDDiK account password has been successfully updated.</p>
-        
+
         <div class="highlight-box">
             <h3 style="margin-top: 0; color: #16a34a;">Security Confirmation:</h3>
             <ul style="margin: 15px 0; padding-left: 20px; list-style: none;">
@@ -538,15 +543,15 @@ class EmailService {
                 <li><strong>🔐 Status:</strong> <span style="color: #16a34a; font-weight: bold;">Password Updated Successfully</span></li>
             </ul>
         </div>
-        
+
         <p>Your account is now secured with your new password. You can use it to sign in to your NiDDiK account immediately.</p>
-        
+
         <div style="text-align: center; margin: 30px 0;">
             <a href="${this.getBaseUrl(requestOrigin)}/auth" class="button">
                 Sign In Now
             </a>
         </div>
-        
+
         <p><strong>🛡️ Security Reminder:</strong></p>
         <ul style="margin: 15px 0; padding-left: 20px;">
             <li>Keep your password confidential and don't share it with anyone</li>
@@ -554,12 +559,12 @@ class EmailService {
             <li>Consider updating your password periodically for better security</li>
             <li>Sign out from shared or public computers after use</li>
         </ul>
-        
+
         <p><strong>⚠️ Didn't make this change?</strong></p>
         <p>If you didn't reset your password, please contact our support team immediately at <a href="mailto:info@niddik.com" style="color: #16a34a;">info@niddik.com</a>. This could indicate unauthorized access to your account.</p>
-        
+
         <p>Thank you for keeping your account secure!</p>
-        
+
         <p>Best regards,<br>
         <strong>NiDDiK Security Team</strong></p>
       `;
@@ -591,14 +596,14 @@ class EmailService {
     try {
       const registrationDate = new Date();
       const formattedDate = format(registrationDate, 'MMMM dd, yyyy \'at\' hh:mm a');
-      
+
       const content = `
         <h2 style="color: #16a34a; margin-bottom: 20px;">New User Registration! 🎉</h2>
-        
+
         <p>Hello Admin Team,</p>
-        
+
         <p>A new user has successfully registered on the NiDDiK platform. Here are the details:</p>
-        
+
         <div class="highlight-box">
             <h3 style="margin-top: 0; color: #16a34a;">User Information:</h3>
             <ul style="margin: 15px 0; padding-left: 20px; list-style: none;">
@@ -610,13 +615,13 @@ class EmailService {
                 <li><strong>📅 Registered On:</strong> ${formattedDate}</li>
             </ul>
         </div>
-        
+
         <div style="text-align: center; margin: 30px 0;">
             <a href="${this.getBaseUrl(requestOrigin)}/admin/users" class="button">
                 View User Profile
             </a>
         </div>
-        
+
         <p><strong>Quick Stats:</strong></p>
         <ul style="margin: 15px 0; padding-left: 20px;">
             <li>User can now browse and apply for job listings</li>
@@ -624,9 +629,9 @@ class EmailService {
             <li>Admin can view full profile in the admin dashboard</li>
             <li>User will receive welcome email with platform guidance</li>
         </ul>
-        
+
         <p>Please log in to the admin dashboard to review the complete user profile and monitor platform activity.</p>
-        
+
         <p>Best regards,<br>
         <strong>NiDDiK Registration System</strong></p>
       `;
@@ -691,14 +696,14 @@ class EmailService {
       };
 
       const statusInfo = statusMessages[newStatus as keyof typeof statusMessages];
-      
+
       const content = `
         <h2 style="color: ${statusInfo.color}; margin-bottom: 20px;">${statusInfo.icon} ${statusInfo.title}</h2>
-        
+
         <p>Dear <strong>${userName}</strong>,</p>
-        
+
         <p>We have an update regarding your application for the <strong>${jobTitle}</strong> position at <strong>${company}</strong>.</p>
-        
+
         <div class="highlight-box">
             <h3 style="margin-top: 0; color: ${statusInfo.color};">Status Update:</h3>
             <ul style="margin: 15px 0; padding-left: 20px; list-style: none;">
@@ -709,9 +714,9 @@ class EmailService {
                 <li><strong>📅 Updated On:</strong> ${format(new Date(), 'MMMM dd, yyyy \'at\' hh:mm a')}</li>
             </ul>
         </div>
-        
+
         <p>${statusInfo.message}</p>
-        
+
         ${newStatus === 'interview' ? `
         <p><strong>Next Steps:</strong></p>
         <ul style="margin: 15px 0; padding-left: 20px;">
@@ -721,7 +726,7 @@ class EmailService {
             <li>Prepare thoughtful questions about the role and company</li>
         </ul>
         ` : ''}
-        
+
         ${newStatus === 'hired' ? `
         <p><strong>What's Next:</strong></p>
         <ul style="margin: 15px 0; padding-left: 20px;">
@@ -730,7 +735,7 @@ class EmailService {
             <li>Welcome to the ${company} family!</li>
         </ul>
         ` : ''}
-        
+
         ${newStatus === 'rejected' ? `
         <p><strong>Keep Moving Forward:</strong></p>
         <ul style="margin: 15px 0; padding-left: 20px;">
@@ -740,15 +745,15 @@ class EmailService {
             <li>We appreciate your interest in working with us</li>
         </ul>
         ` : ''}
-        
+
         <div style="text-align: center; margin: 30px 0;">
             <a href="${this.getBaseUrl(requestOrigin)}/my-applications" class="button">
                 View Application Status
             </a>
         </div>
-        
-        <p>If you have any questions about this update, please don't hesitate to contact us at <a href="mailto:info@niddik.com" style="color: #16a34a;">info@niddik.com</a>.</p>
-        
+
+        <p>If you have any questions about this update, pleasen't hesitate to contact us at <a href="mailto:info@niddik.com" style="color: #16a34a;">info@niddik.com</a>.</p>
+
         <p>Best regards,<br>
         <strong>The NiDDiK Team</strong><br>
         <em>Connecting People, Changing Lives</em></p>
@@ -784,11 +789,11 @@ class EmailService {
     try {
       const content = `
         <h2 style="color: #16a34a; margin-bottom: 20px;">Application Status Updated 🔄</h2>
-        
+
         <p>Hello Admin Team,</p>
-        
+
         <p>An application status has been updated by <strong>${adminName}</strong>. Here are the details:</p>
-        
+
         <div class="highlight-box">
             <h3 style="margin-top: 0; color: #16a34a;">Application Details:</h3>
             <ul style="margin: 15px 0; padding-left: 20px; list-style: none;">
@@ -800,7 +805,7 @@ class EmailService {
                 <li><strong>👨‍💼 Updated By:</strong> ${adminName}</li>
             </ul>
         </div>
-        
+
         <div class="highlight-box">
             <h3 style="margin-top: 0; color: #2563eb;">Status Change:</h3>
             <ul style="margin: 15px 0; padding-left: 20px; list-style: none;">
@@ -808,22 +813,22 @@ class EmailService {
                 <li><strong>🔄 To:</strong> <span style="color: #16a34a; font-weight: bold;">${newStatus.charAt(0).toUpperCase() + newStatus.slice(1)}</span></li>
             </ul>
         </div>
-        
+
         <p><strong>Automatic Actions Taken:</strong></p>
         <ul style="margin: 15px 0; padding-left: 20px;">
             <li>✅ Candidate has been notified via email about the status change</li>
             <li>📊 Application status updated in the database</li>
             <li>📋 Activity logged for audit trail</li>
         </ul>
-        
+
         <div style="text-align: center; margin: 30px 0;">
             <a href="${this.getBaseUrl(requestOrigin)}/admin/candidates" class="button">
                 View All Applications
             </a>
         </div>
-        
+
         <p>This is an automated notification to keep you informed of application status changes.</p>
-        
+
         <p>Best regards,<br>
         <strong>NiDDiK Admin System</strong></p>
       `;
