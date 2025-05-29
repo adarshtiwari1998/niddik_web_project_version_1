@@ -24,20 +24,20 @@ const CareersFooter = () => {
               Empowering talent acquisition with intelligent matching technology that connects the right people with the right opportunities.
             </p>
             <div className="flex items-center justify-center md:justify-start gap-3">
+              <Link href="https://linkedin.com/company/niddik" className="text-gray-400 hover:text-blue-700 transition-colors">
+                <Linkedin className="h-5 w-5" />
+              </Link>
+              <Link href="https://www.youtube.com/@NiddikkareLLP" className="text-gray-400 hover:text-red-600 transition-colors">
+                <Youtube className="h-5 w-5" />
+              </Link>
               <Link href="https://facebook.com/niddik" className="text-gray-400 hover:text-blue-600 transition-colors">
                 <Facebook className="h-5 w-5" />
               </Link>
               <Link href="https://twitter.com/niddik" className="text-gray-400 hover:text-blue-400 transition-colors">
                 <Twitter className="h-5 w-5" />
               </Link>
-              <Link href="https://linkedin.com/company/niddik" className="text-gray-400 hover:text-blue-700 transition-colors">
-                <Linkedin className="h-5 w-5" />
-              </Link>
               <Link href="https://instagram.com/niddik" className="text-gray-400 hover:text-pink-600 transition-colors">
                 <Instagram className="h-5 w-5" />
-              </Link>
-              <Link href="https://www.youtube.com/@NiddikkareLLP" className="text-gray-400 hover:text-red-600 transition-colors">
-                <Youtube className="h-5 w-5" />
               </Link>
             </div>
           </div>

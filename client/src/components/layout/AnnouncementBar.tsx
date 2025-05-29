@@ -146,7 +146,7 @@ export default function AnnouncementBar({
 
              {/* Sticky Buttons for Mobile Only */}
              {isSticky && (
-                <div className="fixed bottom-0 left-0 right-0 bg-white shadow-lg p-4 flex justify-between z-50 md:hidden">
+                <div className="fixed bottom-0 left-0 right-0 bg-white shadow-lg p-4 flex justify-between z-10 md:hidden">
                     <button 
                         onClick={toggleDrawer} // Open the drawer
                         className="bg-andela-green text-white rounded-md flex-1 py-4 mx-1"

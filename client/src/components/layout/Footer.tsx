@@ -1,7 +1,7 @@
 
 import { Link, useLocation } from "wouter";
 import { useAuth } from "@/hooks/use-auth";
-import { Facebook, Twitter, Linkedin, Instagram, Phone, Mail, MapPin } from "lucide-react";
+import { Facebook, Twitter, Linkedin, Instagram, Phone, Mail, MapPin, Youtube } from "lucide-react";
 
 interface FooterLink {
   label: string;
@@ -154,14 +154,17 @@ const Footer = () => {
             )}
 
             <div className="flex items-center gap-4">
+              <Link href="https://linkedin.com/company/niddik" className="text-gray-400 hover:text-blue-700 transition-colors">
+                <Linkedin className="h-5 w-5" />
+              </Link>
+              <Link href="https://www.youtube.com/@NiddikkareLLP" className="text-gray-400 hover:text-red-600 transition-colors">
+                <Youtube className="h-5 w-5" />
+              </Link>
               <Link href="https://facebook.com/niddik" className="text-gray-400 hover:text-blue-500 transition-colors">
                 <Facebook className="h-6 w-6" />
               </Link>
               <Link href="https://twitter.com/niddik" className="text-gray-400 hover:text-blue-400 transition-colors">
                 <Twitter className="h-6 w-6" />
-              </Link>
-              <Link href="https://linkedin.com/company/niddik" className="text-gray-400 hover:text-blue-600 transition-colors">
-                <Linkedin className="h-6 w-6" />
               </Link>
               <Link href="https://instagram.com/niddik" className="text-gray-400 hover:text-pink-500 transition-colors">
                 <Instagram className="h-6 w-6" />
