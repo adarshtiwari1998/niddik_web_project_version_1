@@ -539,8 +539,18 @@ export async function serveStatic(app: Express) {
     );
   }
 
-  app.use(express.static(distPath));
+  // Serve static assets with proper caching headers
+  app.use('/assets', express.static(path.join(distPath, 'assets'), {
+    maxAge: '1y',
+    etag: true
+  }));
+  
+  app.use('/images', express.static(path.join(distPath, 'images'), {
+    maxAge: '1d',
+    etag: true
+  }));
 
+  // Handle all other routes through SSR
   app.get("*", async (req, res) => {
     try {
       const { storage } = await import("./storage");
@@ -621,31 +631,84 @@ export async function serveStatic(app: Express) {
       const htmlPath = path.resolve(distPath, "index.html");
       let html = fs.readFileSync(htmlPath, 'utf-8');
 
-      // Replace the title and add meta tags
+      // Prepare scripts for injection (similar to development)
+      let headScripts = '';
+      let bodyScripts = '';
+      
+      // Add root page scripts first (global scripts)
+      const rootSeoData = pathname !== '/' ? await storage.getRootSeoPage() : null;
+      if (rootSeoData?.headScripts) {
+        headScripts += `\n          ${rootSeoData.headScripts}`;
+      }
+      if (rootSeoData?.bodyScripts) {
+        bodyScripts += `\n          ${rootSeoData.bodyScripts}`;
+      }
+      
+      // Add page-specific scripts
+      if (seoData.headScripts) {
+        headScripts += `\n          ${seoData.headScripts}`;
+      }
+      if (seoData.bodyScripts) {
+        bodyScripts += `\n          ${seoData.bodyScripts}`;
+      }
+
+      // Inject SEO metadata into HTML head (excluding title since we replace it separately)
+      const headContent = `
+        <meta name="description" content="${seoData.metaDescription}" />
+        ${seoData.metaKeywords ? `<meta name="keywords" content="${seoData.metaKeywords}" />` : ''}
+        ${seoData.robotsDirective ? `<meta name="robots" content="${seoData.robotsDirective}" />` : ''}
+
+        <!-- Open Graph Meta Tags -->
+        <meta property="og:title" content="${seoData.ogTitle || seoData.pageTitle}" />
+        <meta property="og:description" content="${seoData.ogDescription || seoData.metaDescription}" />
+        <meta property="og:type" content="${seoData.ogType || 'website'}" />
+        <meta property="og:url" content="${seoData.ogUrl || seoData.canonicalUrl || `https://niddik.com${pathname}`}" />
+        <meta property="og:site_name" content="Niddik" />
+        ${seoData.ogImage ? `<meta property="og:image" content="${seoData.ogImage}" />` : ''}
+
+        <!-- Twitter Card Meta Tags -->
+        <meta name="twitter:card" content="${seoData.twitterCard || 'summary_large_image'}" />
+        ${seoData.twitterSite ? `<meta name="twitter:site" content="${seoData.twitterSite}" />` : ''}
+        <meta name="twitter:title" content="${seoData.twitterTitle || seoData.ogTitle || seoData.pageTitle}" />
+        <meta name="twitter:description" content="${seoData.twitterDescription || seoData.ogDescription || seoData.metaDescription}" />
+        ${seoData.twitterCreator ? `<meta name="twitter:creator" content="${seoData.twitterCreator}" />` : ''}
+        ${seoData.twitterImage ? `<meta name="twitter:image" content="${seoData.twitterImage}" />` : ''}
+
+        <!-- Canonical URL -->
+        <link rel="canonical" href="${seoData.canonicalUrl || `https://niddik.com${pathname}`}" />
+
+        <!-- Schema.org Structured Data -->
+        ${seoData.structuredData ? `<script type="application/ld+json">${seoData.structuredData}</script>` : ''}
+
+        <!-- Additional meta tags for better SEO -->
+        <meta name="viewport" content="width=device-width, initial-scale=1" />
+        <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+        <meta name="language" content="en" />
+        <meta name="revisit-after" content="7 days" />
+        <meta name="author" content="Niddik" />
+
+        <!-- Favicon and icons -->
+        <link rel="icon" type="image/png" href="/images/niddik_logo.png" />
+        <link rel="apple-touch-icon" href="/images/niddik_logo.png" />
+        
+        <!-- Custom Head Scripts -->${headScripts}
+      `;
+
+      // Replace the title tag first
       html = html.replace(
         /<title>.*?<\/title>/,
         `<title>${seoData.pageTitle}</title>`
       );
-
-      // Add meta tags after the title
-      const metaTags = `
-    <meta name="description" content="${seoData.metaDescription}" />
-    ${seoData.metaKeywords ? `<meta name="keywords" content="${seoData.metaKeywords}" />` : ''}
-    <link rel="canonical" href="${seoData.canonicalUrl}" />
-
-    <!-- Open Graph Meta Tags -->
-    <meta property="og:title" content="${seoData.ogTitle || seoData.pageTitle}" />
-    <meta property="og:description" content="${seoData.ogDescription || seoData.metaDescription}" />
-    <meta property="og:type" content="website" />
-    <meta property="og:url" content="${seoData.canonicalUrl}" />
-    <meta property="og:site_name" content="Niddik" />
-
-    <!-- Twitter Card Meta Tags -->
-    <meta name="twitter:card" content="summary_large_image" />
-    <meta name="twitter:title" content="${seoData.ogTitle || seoData.pageTitle}" />
-    <meta name="twitter:description" content="${seoData.ogDescription || seoData.metaDescription}" />`;
-
-      html = html.replace('</title>', `</title>${metaTags}`);
+      
+      // Insert additional head content before the closing </head> tag
+      html = html.replace('</head>', `${headContent}\n</head>`);
+      
+      // Insert body scripts before closing </body> tag if any exist
+      if (bodyScripts) {
+        const bodyScriptContent = `
+        <!-- Custom Body Scripts -->${bodyScripts}`;
+        html = html.replace('</body>', `${bodyScriptContent}\n</body>`);
+      }
 
       res.send(html);
     } catch (error) {

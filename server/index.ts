@@ -85,8 +85,8 @@ function setupSeoScheduler() {
   if (app.get("env") === "development") {
     await setupVite(app, server);
   } else {
-    console.log('Registering Vite handler for production...');
-    serveStatic(app);
+    console.log('Registering static file handler for production...');
+    await serveStatic(app);
   }
 
   const PORT = 5000;
