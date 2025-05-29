@@ -43,6 +43,8 @@ interface SeoPage {
   isActive: boolean;
   createdAt: string;
   updatedAt: string;
+  headScript?: string;
+  bodyScript?: string;
 }
 
 const commonPaths = [
@@ -197,6 +199,8 @@ export default function SEOPages() {
     itemPropDescription: "",
     itemPropImage: "",
     isActive: true,
+    headScript: "",
+    bodyScript: "",
   });
 
   // Fetch SEO pages
@@ -391,6 +395,8 @@ export default function SEOPages() {
       itemPropDescription: "",
       itemPropImage: "",
       isActive: true,
+      headScript: "",
+      bodyScript: "",
     });
   };
 
@@ -424,6 +430,8 @@ export default function SEOPages() {
       itemPropDescription: page.itemPropDescription || "",
       itemPropImage: page.itemPropImage || "",
       isActive: page.isActive,
+      headScript: page.headScript || "",
+      bodyScript:  page.bodyScript || "",
     });
     setIsEditDialogOpen(true);
   };
@@ -724,6 +732,11 @@ export default function SEOPages() {
                           {page.metaDescription}
                         </div>
                       </TableCell>
+                       <TableCell className="max-w-xs">
+                        <div className="truncate" title={`${page.headScript}\n${page.bodyScript}`}>
+                          {page.headScript ? "Has Scripts" : "No Scripts"}
+                        </div>
+                      </TableCell>
                       <TableCell>
                         <Badge variant={page.isActive ? "default" : "secondary"}>
                           {page.isActive ? "Active" : "Inactive"}
@@ -971,6 +984,43 @@ function SEOPageDialog({ title, formData, setFormData, onSubmit, isLoading, isEd
                   value={formData.metaKeywords}
                   onChange={(e) => handleInputChange('metaKeywords', e.target.value)}
                   placeholder="keyword1, keyword2, keyword3"
+                />
+              </div>
+            </div>
+          </CardContent>
+        </Card>
+
+         {/* Scripts */}
+        <Card>
+          <CardHeader>
+            <CardTitle className="flex items-center gap-2">
+              <Code className="h-4 w-4" />
+              Scripts
+            </CardTitle>
+          </CardHeader>
+          <CardContent className="space-y-4">
+            <div className="grid grid-cols-1 gap-4">
+              <div>
+                <Label htmlFor="headScript">Head Script</Label>
+                <Textarea
+                  id="headScript"
+                  value={formData.headScript}
+                  onChange={(e) => handleInputChange('headScript', e.target.value)}
+                  placeholder="Enter script to be placed in the head"
+                  rows={4}
+                  className="font-mono text-sm"
+                />
+              </div>
+
+              <div>
+                <Label htmlFor="bodyScript">Body Script</Label>
+                <Textarea
+                  id="bodyScript"
+                  value={formData.bodyScript}
+                  onChange={(e) => handleInputChange('bodyScript', e.target.value)}
+                  placeholder="Enter script to be placed in the body"
+                  rows={4}
+                  className="font-mono text-sm"
                 />
               </div>
             </div>
