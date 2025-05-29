@@ -77,11 +77,58 @@ function ScrollToTop() {
     return null;
 }
 
+// Component to check if page is inactive and redirect to 404
+function PageStatusChecker({ children }: { children: React.ReactNode }) {
+    const [location] = useLocation();
+    const [pageStatus, setPageStatus] = React.useState<'loading' | 'active' | 'inactive'>('loading');
+
+    useEffect(() => {
+        const checkPageStatus = async () => {
+            try {
+                const response = await fetch(`/api/seo-pages/by-path?path=${location}`);
+                
+                if (response.status === 404) {
+                    const errorData = await response.json();
+                    if (errorData.error && errorData.error.includes('inactive')) {
+                        setPageStatus('inactive');
+                        return;
+                    }
+                }
+                
+                setPageStatus('active');
+            } catch (error) {
+                // If there's an error or no SEO page exists, allow access
+                setPageStatus('active');
+            }
+        };
+
+        // Skip admin routes and API routes
+        if (location.startsWith('/admin') || location.startsWith('/api') || 
+            location.startsWith('/auth') || location.startsWith('/candidate')) {
+            setPageStatus('active');
+            return;
+        }
+
+        checkPageStatus();
+    }, [location]);
+
+    if (pageStatus === 'loading') {
+        return null; // Show nothing while checking
+    }
+
+    if (pageStatus === 'inactive') {
+        return <NotFound />;
+    }
+
+    return <>{children}</>;
+}
+
 function Router() {
     return (
         <>
             <ScrollToTop />
-            <Switch>
+            <PageStatusChecker>
+                <Switch>
             {/* Public Routes */}
             <Route path="/" component={Home} />
             <Route path="/landing" component={LandingPage} />
@@ -160,7 +207,8 @@ function Router() {
 
             {/* 404 - Not Found */}
             <Route component={NotFound} />
-        </Switch>
+                </Switch>
+            </PageStatusChecker>
         </>
     );
 }
