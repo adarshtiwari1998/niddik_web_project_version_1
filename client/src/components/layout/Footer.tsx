@@ -83,7 +83,7 @@ const Footer = () => {
   return (
     <footer className="bg-gray-900 text-white">
       <div className="container mx-auto px-6 py-16">
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-12 gap-8">
+        <div className="grid grid-cols-1 lg:grid-cols-12 gap-8">
           {/* Company Info - Takes 3 columns on large screens */}
           <div className="lg:col-span-3 space-y-6">
             <div className="flex items-center gap-3">
@@ -169,37 +169,42 @@ const Footer = () => {
             </div>
           </div>
 
-          {/* Footer Columns - Each takes 2 columns on large screens */}
-          {footerColumns.map((column) => (
-            <div key={column.title} className="lg:col-span-2 space-y-4">
-              <h3 className="text-lg font-semibold text-white">{column.title}</h3>
-              <div className="space-y-3">
-                {column.links.map((link) => (
-                  <Link 
-                    key={link.label}
-                    href={link.href}
-                    className="block text-sm text-gray-300 hover:text-white transition-colors leading-relaxed"
-                  >
-                    {link.label}
-                  </Link>
-                ))}
-              </div>
-            </div>
-          ))}
-
-          {/* About Us Column - Takes 2 columns on large screens */}
-          <div className="lg:col-span-2 space-y-4">
-            <h3 className="text-lg font-semibold text-white">{aboutUsColumn.title}</h3>
-            <div className="space-y-3">
-              {aboutUsColumn.links.map((link) => (
-                <Link 
-                  key={link.label}
-                  href={link.href}
-                  className="block text-sm text-gray-300 hover:text-white transition-colors leading-relaxed"
-                >
-                  {link.label}
-                </Link>
+          {/* All Footer Columns Container - Takes remaining 9 columns */}
+          <div className="lg:col-span-9">
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-8">
+              {/* Footer Columns */}
+              {footerColumns.map((column) => (
+                <div key={column.title} className="space-y-4">
+                  <h3 className="text-lg font-semibold text-white">{column.title}</h3>
+                  <div className="space-y-3">
+                    {column.links.map((link) => (
+                      <Link 
+                        key={link.label}
+                        href={link.href}
+                        className="block text-sm text-gray-300 hover:text-white transition-colors leading-relaxed"
+                      >
+                        {link.label}
+                      </Link>
+                    ))}
+                  </div>
+                </div>
               ))}
+
+              {/* About Us Column */}
+              <div className="space-y-4">
+                <h3 className="text-lg font-semibold text-white">{aboutUsColumn.title}</h3>
+                <div className="space-y-3">
+                  {aboutUsColumn.links.map((link) => (
+                    <Link 
+                      key={link.label}
+                      href={link.href}
+                      className="block text-sm text-gray-300 hover:text-white transition-colors leading-relaxed"
+                    >
+                      {link.label}
+                    </Link>
+                  ))}
+                </div>
+              </div>
             </div>
           </div>
         </div>
