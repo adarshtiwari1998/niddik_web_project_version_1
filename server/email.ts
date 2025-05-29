@@ -43,7 +43,14 @@ class EmailService {
       dkim: {
         domainName: 'niddik.com',
         keySelector: 'default',
-        privateKey: process.env.DKIM_PRIVATE_KEY || '', // You'll need to generate this
+        privateKey: process.env.DKIM_PRIVATE_KEY || '',
+      },
+      // Additional headers for better deliverability
+      headers: {
+        'X-Mailer': 'NiDDiK Platform v1.0',
+        'X-Priority': '3',
+        'X-MSMail-Priority': 'Normal',
+        'Importance': 'Normal'
       }
     });
   }
