@@ -144,6 +144,13 @@ export default function JobDetail() {
     enabled: !!user && user.role === 'admin' && !isNaN(jobId)
   });
 
+  // Fetch application counts for all jobs (for admin users to see counts on recommended jobs)
+  const { data: applicationCountsData } = useQuery<{ success: boolean; data: Record<number, number> }>({
+    queryKey: ['/api/admin/job-application-counts'],
+    queryFn: getQueryFn({ on401: "throw" }),
+    enabled: !!user && user.role === 'admin'
+  });
+
   // Determine if user has already applied to this job (excluding withdrawn applications)
   const hasApplied = React.useMemo(() => {
     if (!userApplicationsData?.data) return false;
@@ -940,8 +947,15 @@ const handleResumeRemove = async () => {
               {recommendedJobs.length > 0 && (
                 <Card>
                   <CardHeader>
-                    <CardTitle>Other Opportunities</CardTitle>
-                    <CardDescription>Similar roles you might be interested in</CardDescription>
+                    <CardTitle>
+                      {user?.role === 'admin' ? 'Job Performance Analytics' : 'Other Opportunities'}
+                    </CardTitle>
+                    <CardDescription>
+                      {user?.role === 'admin' 
+                        ? 'Similar roles with application metrics' 
+                        : 'Similar roles you might be interested in'
+                      }
+                    </CardDescription>
                   </CardHeader>
                   <CardContent>
                     <div className="space-y-4">
@@ -949,9 +963,21 @@ const handleResumeRemove = async () => {
                         <div key={recJob.id} className="border rounded-lg p-4 hover:bg-muted/50 transition-colors">
                           <Link href={`/jobs/${recJob.id}`}>
                             <div className="cursor-pointer">
-                              <h4 className="font-medium text-primary hover:underline mb-1">
-                                {recJob.title}
-                              </h4>
+                              <div className="flex items-start justify-between mb-1">
+                                <h4 className="font-medium text-primary hover:underline flex-1">
+                                  {recJob.title}
+                                </h4>
+                                {user?.role === 'admin' && applicationCountsData && (
+                                  <div className="ml-4 text-right flex-shrink-0">
+                                    <div className="text-sm font-semibold text-blue-600">
+                                      {applicationCountsData.data?.[recJob.id] || 0}
+                                    </div>
+                                    <div className="text-xs text-muted-foreground">
+                                      {(applicationCountsData.data?.[recJob.id] || 0) === 1 ? 'Application' : 'Applications'}
+                                    </div>
+                                  </div>
+                                )}
+                              </div>
                               <div className="flex items-center gap-2 text-sm text-muted-foreground mb-2">
                                 <span>{recJob.company}</span>
                                 <span>•</span>
