@@ -932,8 +932,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
       const applications = await storage.getJobApplicationsForUser(userId);
 
       return res.status(200).json({ 
-        success: true, 
-        data: applications 
+        success: true,        data: applications 
       });
     } catch (error) {
       console.error('Error fetching job applications:', error);
@@ -1149,7 +1148,8 @@ export async function registerRoutes(app: Express): Promise<Server> {
       });
 
       // Send reset email
-      await emailService.sendPasswordResetEmail(user.email, user.fullName || user.username, resetToken);
+      const baseUrl = `${req.protocol}://${req.get('host')}`;
+      await emailService.sendPasswordResetEmail(user.email, user.fullName || user.username, resetToken, baseUrl);
 
       return res.status(200).json({
         success: true,
@@ -1177,7 +1177,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
       }
 
       const resetToken = await storage.getPasswordResetToken(token);
-      
+
       if (!resetToken || resetToken.used || new Date() > resetToken.expiresAt) {
         return res.status(400).json({
           success: false,
@@ -1211,7 +1211,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
       }
 
       const resetToken = await storage.getPasswordResetToken(token);
-      
+
       if (!resetToken || resetToken.used || new Date() > resetToken.expiresAt) {
         return res.status(400).json({
           success: false,
@@ -1889,7 +1889,7 @@ app.put('/api/profile', async (req: AuthenticatedRequest, res) => {
 
       const { ne, sql, and: drizzleAnd } = await import('drizzle-orm');
 
-      // Get all non-admin users for analytics
+            // Get all non-admin users for analytics
       const allUsers = await db
         .select({
           experience: users.experience,

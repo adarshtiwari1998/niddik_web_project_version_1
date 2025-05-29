@@ -62,19 +62,21 @@ class EmailService {
                 box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
             }
             .header {
-                background: linear-gradient(135deg, #16a34a, #22c55e);
-                color: white;
+                background-color: #ffffff;
+                color: #333333;
                 padding: 30px 20px;
                 text-align: center;
+                border-bottom: 2px solid #f0f0f0;
             }
             .logo {
-                font-size: 28px;
-                font-weight: bold;
-                margin-bottom: 10px;
+                max-width: 200px;
+                height: auto;
+                margin-bottom: 15px;
             }
             .tagline {
                 font-size: 14px;
-                opacity: 0.9;
+                color: #16a34a;
+                font-weight: 500;
             }
             .content {
                 padding: 40px 30px;
@@ -95,12 +97,17 @@ class EmailService {
                 background: linear-gradient(135deg, #15803d, #16a34a);
             }
             .footer {
-                background-color: #f8f9fa;
+                background-color: #ffffff;
                 padding: 25px 30px;
                 text-align: center;
-                border-top: 1px solid #e9ecef;
+                border-top: 2px solid #f0f0f0;
                 color: #6c757d;
                 font-size: 14px;
+            }
+            .footer-logo {
+                max-width: 120px;
+                height: auto;
+                margin-bottom: 15px;
             }
             .footer-links {
                 margin: 15px 0;
@@ -136,7 +143,7 @@ class EmailService {
     <body>
         <div class="container">
             <div class="header">
-                <div class="logo">NiDDiK</div>
+                <img src="https://res.cloudinary.com/dhanz6zty/image/upload/v1748531500/Niddik-Assets/seo-meta/seo-meta_1748531498908_niddik_logo.png" alt="NiDDiK Logo" class="logo" />
                 <div class="tagline">Connecting People, Changing Lives</div>
             </div>
             
@@ -145,6 +152,7 @@ class EmailService {
             </div>
             
             <div class="footer">
+                <img src="https://res.cloudinary.com/dhanz6zty/image/upload/v1748531500/Niddik-Assets/seo-meta/seo-meta_1748531498908_niddik_logo.png" alt="NiDDiK Logo" class="footer-logo" />
                 <p><strong>NiDDiK</strong> - Premier IT Recruitment & Staffing Solutions</p>
                 <div class="footer-links">
                     <a href="https://niddik.com">Website</a> |
@@ -174,7 +182,7 @@ class EmailService {
     `;
   }
 
-  async sendWelcomeEmail(userEmail: string, userName: string): Promise<boolean> {
+  async sendWelcomeEmail(userEmail: string, userName: string, requestOrigin?: string): Promise<boolean> {
     try {
       const content = `
         <h2 style="color: #16a34a; margin-bottom: 20px;">Welcome to NiDDiK! 🎉</h2>
@@ -196,7 +204,7 @@ class EmailService {
         <p>Ready to discover your next career opportunity?</p>
         
         <div style="text-align: center; margin: 30px 0;">
-            <a href="https://niddik.com/candidate/dashboard" class="button">
+            <a href="${requestOrigin || 'https://niddik.com'}/candidate/dashboard" class="button">
                 Access Your Dashboard
             </a>
         </div>
@@ -226,9 +234,9 @@ class EmailService {
     }
   }
 
-  async sendLoginNotification(userEmail: string, userName: string, loginTime: Date, ipAddress?: string): Promise<boolean> {
+  async sendLoginNotification(userEmail: string, userName: string, loginTime: Date, ipAddress?: string, requestOrigin?: string): Promise<boolean> {
     try {
-      const formattedTime = format(loginTime, 'MMMM dd, yyyy \'at\' hh:mm a');
+      const formattedTime = format(new Date(), 'MMMM dd, yyyy \'at\' hh:mm a');
       
       const content = `
         <h2 style="color: #16a34a; margin-bottom: 20px;">Security Alert: Account Login 🔐</h2>
@@ -257,7 +265,7 @@ class EmailService {
         </ul>
         
         <div style="text-align: center; margin: 30px 0;">
-            <a href="https://niddik.com/candidate/profile" class="button">
+            <a href="${requestOrigin || 'https://niddik.com'}/candidate/profile" class="button">
                 Secure My Account
             </a>
         </div>
@@ -289,10 +297,11 @@ class EmailService {
     userName: string, 
     jobTitle: string, 
     company: string, 
-    applicationDate: Date
+    applicationDate: Date,
+    requestOrigin?: string
   ): Promise<boolean> {
     try {
-      const formattedDate = format(applicationDate, 'MMMM dd, yyyy \'at\' hh:mm a');
+      const formattedDate = format(new Date(), 'MMMM dd, yyyy \'at\' hh:mm a');
       
       const content = `
         <h2 style="color: #16a34a; margin-bottom: 20px;">Application Submitted Successfully! ✅</h2>
@@ -321,7 +330,7 @@ class EmailService {
         </ol>
         
         <div style="text-align: center; margin: 30px 0;">
-            <a href="https://niddik.com/my-applications" class="button">
+            <a href="${requestOrigin || 'https://niddik.com'}/my-applications" class="button">
                 Track Application Status
             </a>
         </div>
@@ -367,10 +376,11 @@ class EmailService {
     applicationDate: Date,
     userPhone?: string,
     userExperience?: string,
-    userSkills?: string
+    userSkills?: string,
+    requestOrigin?: string
   ): Promise<boolean> {
     try {
-      const formattedDate = format(applicationDate, 'MMMM dd, yyyy \'at\' hh:mm a');
+      const formattedDate = format(new Date(), 'MMMM dd, yyyy \'at\' hh:mm a');
       
       const content = `
         <h2 style="color: #16a34a; margin-bottom: 20px;">New Job Application Received! 📋</h2>
@@ -400,7 +410,7 @@ class EmailService {
         </div>
         
         <div style="text-align: center; margin: 30px 0;">
-            <a href="https://niddik.com/admin/candidates" class="button">
+            <a href="${requestOrigin || 'https://niddik.com'}/admin/candidates" class="button">
                 Review Application
             </a>
         </div>
@@ -435,9 +445,11 @@ class EmailService {
     }
   }
 
-  async sendPasswordResetEmail(userEmail: string, userName: string, resetToken: string): Promise<boolean> {
+  async sendPasswordResetEmail(userEmail: string, userName: string, resetToken: string, requestOrigin?: string): Promise<boolean> {
     try {
-      const resetUrl = `https://niddik.com/reset-password?token=${resetToken}`;
+      // Use the request origin if provided, otherwise default to production domain
+      const baseUrl = requestOrigin || 'https://niddik.com';
+      const resetUrl = `${baseUrl}/reset-password?token=${resetToken}`;
       
       const content = `
         <h2 style="color: #16a34a; margin-bottom: 20px;">Password Reset Request 🔑</h2>
@@ -499,7 +511,7 @@ class EmailService {
     }
   }
 
-  async sendPasswordResetConfirmation(userEmail: string, userName: string): Promise<boolean> {
+  async sendPasswordResetConfirmation(userEmail: string, userName: string, requestOrigin?: string): Promise<boolean> {
     try {
       const content = `
         <h2 style="color: #16a34a; margin-bottom: 20px;">Password Successfully Updated! ✅</h2>
@@ -520,7 +532,7 @@ class EmailService {
         <p>Your account is now secured with your new password. You can use it to sign in to your NiDDiK account immediately.</p>
         
         <div style="text-align: center; margin: 30px 0;">
-            <a href="https://niddik.com/auth" class="button">
+            <a href="${requestOrigin || 'https://niddik.com'}/auth" class="button">
                 Sign In Now
             </a>
         </div>

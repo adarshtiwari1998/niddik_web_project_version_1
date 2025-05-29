@@ -11,6 +11,7 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
 import { useToast } from "@/hooks/use-toast";
 import { Helmet } from 'react-helmet-async';
+import { useAuth } from "@/hooks/use-auth";
 
 const resetPasswordSchema = z.object({
   newPassword: z.string().min(6, "Password must be at least 6 characters"),
@@ -28,6 +29,7 @@ const ResetPassword = () => {
   const [tokenValid, setTokenValid] = useState<boolean | null>(null);
   const [resetSuccess, setResetSuccess] = useState(false);
   const { toast } = useToast();
+  const { user, isLoading: authLoading } = useAuth();
 
   // Get token from URL
   const urlParams = new URLSearchParams(window.location.search);
@@ -40,6 +42,19 @@ const ResetPassword = () => {
       confirmPassword: "",
     },
   });
+
+  // Check if user is already logged in
+  useEffect(() => {
+    if (!authLoading && user) {
+      // User is already logged in, redirect to dashboard
+      if (user.role === 'admin') {
+        setLocation('/admin/dashboard');
+      } else {
+        setLocation('/dashboard');
+      }
+      return;
+    }
+  }, [user, authLoading, setLocation]);
 
   // Verify token on component mount
   useEffect(() => {
@@ -74,6 +89,36 @@ const ResetPassword = () => {
 
     verifyToken();
   }, [token, toast]);
+
+  // Real-time auth check - poll every 2 seconds
+  useEffect(() => {
+    if (tokenValid === null || authLoading) return;
+
+    const checkAuthStatus = async () => {
+      try {
+        const response = await fetch('/api/user', {
+          credentials: 'include'
+        });
+        
+        if (response.ok) {
+          const userData = await response.json();
+          if (userData && userData.id) {
+            // User is now logged in, redirect appropriately
+            if (userData.role === 'admin') {
+              setLocation('/admin/dashboard');
+            } else {
+              setLocation('/dashboard');
+            }
+          }
+        }
+      } catch (error) {
+        // Ignore errors, user is likely not logged in
+      }
+    };
+
+    const interval = setInterval(checkAuthStatus, 2000);
+    return () => clearInterval(interval);
+  }, [tokenValid, authLoading, setLocation]);
 
   const onSubmit = async (data: ResetPasswordFormValues) => {
     if (!token) {
