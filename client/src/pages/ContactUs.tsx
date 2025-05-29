@@ -22,7 +22,7 @@ import { Button } from "@/components/ui/button";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { ContactFormData } from "@/lib/types";
 import Navbar from "@/components/layout/Navbar";
-import Footer from "@/components/layout/Footer";
+
 import AnnouncementBar from "@/components/layout/AnnouncementBar";
 import { useState } from "react";
 
@@ -386,7 +386,7 @@ export default function ContactUs() {
           </Container>
         </section>
 
-        <Footer />
+        
       </div>
     </div>
   );
