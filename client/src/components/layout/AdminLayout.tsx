@@ -62,6 +62,11 @@ export default function AdminLayout({ children, title, description }: AdminLayou
     });
   };
 
+  // Navigation handler for home page
+  const handleHomeNavigation = () => {
+    setLocation("/");
+  };
+
   // Navigation handler for dashboard with tab routing
   const handleDashboardNavigation = () => {
     setLocation("/admin/dashboard");
@@ -149,9 +154,9 @@ export default function AdminLayout({ children, title, description }: AdminLayou
             <nav className="p-1 sm:p-2">
               {/* Home */}
               <div 
-                onClick={handleDashboardNavigation}
+                onClick={handleHomeNavigation}
                 className={`flex items-center px-2 sm:px-3 py-1.5 sm:py-2 mb-1 rounded-md transition-colors cursor-pointer ${
-                  (location === "/" && !window.location.search)
+                  location === "/"
                     ? "bg-primary/10 text-primary" 
                     : "hover:bg-gray-100 dark:hover:bg-gray-700"
                 } ${isCollapsed ? 'justify-center' : ''}`}
