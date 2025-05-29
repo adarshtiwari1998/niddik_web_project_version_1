@@ -286,7 +286,7 @@ export default function CareerPage() {
     }
   };
 
-   // Function to check if a job is "new" (posted within last 7 days)
+   // Function to check if a job is "new" (posted within last 2 days)
    const isJobNew = (jobDate: string): boolean => {
     if (!jobDate) return false;
   
@@ -297,7 +297,7 @@ export default function CareerPage() {
     const timeDiff = today.getTime() - jobPostDate.getTime();
     const dayDiff = Math.ceil(timeDiff / (1000 * 3600 * 24));
   
-    return dayDiff <= 7;
+    return dayDiff <= 2;
   };
 
 

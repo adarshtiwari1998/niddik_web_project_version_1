@@ -98,7 +98,7 @@ export default function JobDetail() {
     queryFn: getQueryFn({ on401: "throw" }),
   });
 
-  // Function to check if a job is "new" (posted within last 7 days from today)
+  // Function to check if a job is "new" (posted within last 2 days from today)
   const isJobNew = (jobDate: string): boolean => {
     if (!jobDate) return false;
     
@@ -117,8 +117,8 @@ export default function JobDetail() {
     // Calculate difference in days from today
     const diffInDays = Math.ceil((todayNormalized.getTime() - postedDateNormalized.getTime()) / (1000 * 60 * 60 * 24));
     
-    // Show "NEW" badge for jobs posted within the last 7 days
-    return diffInDays >= 0 && diffInDays <= 7;
+    // Show "NEW" badge for jobs posted within the last 2 days
+    return diffInDays >= 0 && diffInDays <= 2;
   };
 
   // Get job recommendations (same category, different jobs, max 3)
