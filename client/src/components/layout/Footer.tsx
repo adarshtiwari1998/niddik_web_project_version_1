@@ -1,4 +1,3 @@
-
 import { Link, useLocation } from "wouter";
 import { useAuth } from "@/hooks/use-auth";
 import { Facebook, Twitter, Linkedin, Instagram, Phone, Mail, MapPin, Youtube } from "lucide-react";
@@ -76,10 +75,6 @@ const Footer = () => {
     ]
   };
 
-  if (isContactPage) {
-    return null;
-  }
-
   return (
     <footer className="bg-gray-900 text-white">
       <div className="container mx-auto px-6 py-16">
@@ -97,7 +92,7 @@ const Footer = () => {
             <p className="text-gray-300 leading-relaxed text-sm">
               Empowering talent acquisition with intelligent matching technology that connects the right people with the right opportunities.
             </p>
-            
+
             {/* User-specific Navigation */}
             {user ? (
               <div className="space-y-4">
