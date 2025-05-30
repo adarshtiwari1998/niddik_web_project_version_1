@@ -29,17 +29,17 @@ const pool = new Pool({
   ssl: {
     rejectUnauthorized: false
   },
-  max: 5, // Further reduced for Render free tier
-  min: 0, // No minimum connections to avoid idle timeouts
-  idleTimeoutMillis: 30000, // 30 seconds
+  max: 3, // Reduced for Render free tier
+  min: 1, // Keep 1 connection alive to reduce reconnection frequency
+  idleTimeoutMillis: 60000, // 60 seconds - longer idle time
   connectionTimeoutMillis: 10000, // 10 seconds
   acquireTimeoutMillis: 10000, // 10 seconds
   createTimeoutMillis: 10000, // 10 seconds
   destroyTimeoutMillis: 5000, // 5 seconds
-  reapIntervalMillis: 1000, // 1 second
+  reapIntervalMillis: 5000, // 5 seconds - less frequent cleanup
   createRetryIntervalMillis: 500, // 500ms
-  keepAlive: false, // Disable keep-alive for better timeout handling
-  allowExitOnIdle: true, // Allow process to exit when no connections
+  keepAlive: true, // Enable keep-alive to maintain connections
+  allowExitOnIdle: false, // Don't allow exit on idle
   statement_timeout: 30000, // 30 second query timeout
   query_timeout: 30000, // 30 second query timeout
   application_name: 'niddik-app'
@@ -52,15 +52,20 @@ pool.on('error', (err) => {
 });
 
 pool.on('connect', () => {
-  console.log('New database connection established');
+  console.log('Database connection established');
 });
 
+// Reduce logging frequency for acquire/release
+let logCount = 0;
 pool.on('acquire', () => {
-  console.log('Connection acquired from pool');
+  if (logCount % 10 === 0) { // Log every 10th acquire
+    console.log('Connection acquired from pool');
+  }
+  logCount++;
 });
 
 pool.on('release', () => {
-  console.log('Connection released back to pool');
+  // Only log releases occasionally to reduce noise
 });
 
 // Database health check function
