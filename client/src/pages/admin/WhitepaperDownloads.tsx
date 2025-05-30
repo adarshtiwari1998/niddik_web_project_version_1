@@ -340,10 +340,6 @@ const WhitepaperDownloads = () => {
   );
 };
 
-
-
-}
-
 interface WhitepaperDownloadsResponse {
   success: boolean;
   data: WhitepaperDownload[];
