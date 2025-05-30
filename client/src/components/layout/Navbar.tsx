@@ -1,3 +1,4 @@
+
 import { useState, useEffect, useRef } from "react";
 import { Link, useLocation } from "wouter";
 import { Search, Menu, X, ChevronDown, ChevronRight, User, Briefcase, Users, Clock, TrendingUp, FileText, Activity } from "lucide-react";
@@ -8,6 +9,7 @@ import { useQuery } from "@tanstack/react-query";
 import { getQueryFn } from "@/lib/queryClient";
 import { JobListing } from "@shared/schema";
 import { cn } from "@/lib/utils";
+import { useAuth } from "@/hooks/use-auth";
 
 interface DropdownItem {
   label: string;
@@ -22,9 +24,6 @@ interface NavItem {
 
 interface NavbarProps {
   hasAnnouncementAbove?: boolean;
-  user?: any; // Add user prop
-  adminStats?: any; // Add adminStats prop
-  candidateStats?: any; // Add candidateStats prop
 }
 
 interface SearchResult {
@@ -68,11 +67,8 @@ const navItems: NavItem[] = [
       { label: "Healthcare", href: "/partners/healthcare" },
       { label: "Pharma", href: "#" },
       { label: "Case Studies", href: "#" },
-      // { label: "Learning Community", href: "#" },
-      // { label: "Expert Network", href: "#" }
     ]
   },
-  // { label: "Adaptive Hiring", href: "/adaptive-hiring" },
   {
     label: "Adaptive Hiring",
     dropdown: [
@@ -90,7 +86,6 @@ const navItems: NavItem[] = [
       { label: "Community Involvement", href: "/community-involvement" },
       { label: "FAQs", href: "/faqs" },
       { label: "Contact Us", href: "/contact" },
-      // { label: "Whitepaper", href: "/whitepaper" }
       { label: "Apply to Niddik", href: "/careers" },
     ]
   },
@@ -100,7 +95,7 @@ const navItems: NavItem[] = [
   },
 ];
 
-const Navbar: React.FC<NavbarProps> = ({ hasAnnouncementAbove = true, user, adminStats, candidateStats }) => {
+const Navbar: React.FC<NavbarProps> = ({ hasAnnouncementAbove = true }) => {
   const [location, navigate] = useLocation();
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const [isScrolled, setIsScrolled] = useState(false);
@@ -111,11 +106,58 @@ const Navbar: React.FC<NavbarProps> = ({ hasAnnouncementAbove = true, user, admi
   const [searchResults, setSearchResults] = useState<SearchResult[]>([]);
   const searchRef = useRef<HTMLDivElement>(null);
 
+  // Get user from auth context
+  const { user } = useAuth();
+
   // Check if we're on specific pages that should have white background
   const isAdminPage = location.startsWith("/admin");
   const isAuthPage = location.startsWith("/auth");
   const isCandidatePage = location.startsWith("/candidate");
   const isHomePage = location === "/";
+
+  // Fetch admin stats if user is admin
+  const { data: adminStatsData } = useQuery({
+    queryKey: ['/api/admin/analytics'],
+    queryFn: getQueryFn({ on401: "ignore" }),
+    enabled: !!user && user.role === 'admin',
+  });
+
+  // Fetch job listings for admin stats
+  const { data: jobsData } = useQuery({
+    queryKey: ['/api/job-listings'],
+    queryFn: getQueryFn({ on401: "ignore" }),
+    enabled: !!user && user.role === 'admin',
+  });
+
+  // Fetch applications for admin stats
+  const { data: applicationsData } = useQuery({
+    queryKey: ['/api/applications'],
+    queryFn: getQueryFn({ on401: "ignore" }),
+    enabled: !!user && user.role === 'admin',
+  });
+
+  // Fetch candidate applications if user is candidate
+  const { data: candidateApplicationsData } = useQuery({
+    queryKey: ['/api/my-applications'],
+    queryFn: getQueryFn({ on401: "ignore" }),
+    enabled: !!user && user.role !== 'admin',
+  });
+
+  // Calculate admin stats
+  const adminStats = user?.role === 'admin' ? {
+    activeJobs: jobsData?.data?.filter(job => job.status === 'active')?.length || 0,
+    totalJobs: jobsData?.data?.length || 0,
+    totalApplications: applicationsData?.data?.length || 0,
+    newApplications: applicationsData?.data?.filter(app => app.status === 'new')?.length || 0,
+  } : null;
+
+  // Calculate candidate stats
+  const candidateStats = user?.role !== 'admin' ? {
+    totalApplications: candidateApplicationsData?.data?.length || 0,
+    newApplications: candidateApplicationsData?.data?.filter(app => app.status === 'new')?.length || 0,
+    interviewStage: candidateApplicationsData?.data?.filter(app => app.status === 'interview')?.length || 0,
+    availableJobs: jobsData?.data?.filter(job => job.status === 'active')?.length || 0,
+  } : null;
 
   useEffect(() => {
     const handleScroll = () => {
@@ -124,13 +166,10 @@ const Navbar: React.FC<NavbarProps> = ({ hasAnnouncementAbove = true, user, admi
 
       // Apply transparency logic
       if (isAdminPage || isAuthPage || isCandidatePage) {
-        // On admin, auth, and candidate pages, always use white background
         setIsTransparent(false);
       } else if (isHomePage) {
-        // On home page, start transparent and become solid when scrolled
         setIsTransparent(scrollY < 50);
       } else {
-        // On all other pages, always use white background (never transparent)
         setIsTransparent(false);
       }
     };
@@ -142,7 +181,7 @@ const Navbar: React.FC<NavbarProps> = ({ hasAnnouncementAbove = true, user, admi
   }, [hasAnnouncementAbove, isAdminPage, isAuthPage, isCandidatePage, isHomePage]);
 
   // Fetch job listings for search
-  const { data: jobsData } = useQuery<{ data: JobListing[], meta: { total: number, pages: number } }>({
+  const { data: searchJobsData } = useQuery<{ data: JobListing[], meta: { total: number, pages: number } }>({
     queryKey: ['/api/job-listings', { status: 'active' }],
     queryFn: getQueryFn({ on401: "ignore" }),
   });
@@ -179,8 +218,8 @@ const Navbar: React.FC<NavbarProps> = ({ hasAnnouncementAbove = true, user, admi
       });
 
       // Search through job listings
-      if (jobsData?.data) {
-        jobsData.data.forEach(job => {
+      if (searchJobsData?.data) {
+        searchJobsData.data.forEach(job => {
           const searchLower = searchTerm.toLowerCase();
           if (
             job.title.toLowerCase().includes(searchLower) ||
@@ -203,9 +242,9 @@ const Navbar: React.FC<NavbarProps> = ({ hasAnnouncementAbove = true, user, admi
     } else {
       setSearchResults([]);
     }
-  }, [searchTerm, jobsData]);
+  }, [searchTerm, searchJobsData]);
 
-  const isDarkPage = false; // Remove dark page treatment for facts-and-trends
+  const isDarkPage = false;
 
   return (
     <header className={cn(
@@ -226,9 +265,6 @@ const Navbar: React.FC<NavbarProps> = ({ hasAnnouncementAbove = true, user, admi
                 <Logo className="h-12" />
               </Link>
               <div className="marquee-container overflow-hidden relative w-full">
-                {/* <div className="marquee text-gray-500 mt-1 whitespace-nowrap" style={{fontSize: "10px", marginTop: "1px"}}>
-                  Connecting People, Changing Lives
-                </div> */}
               </div>
             </div>
           </div>
@@ -284,11 +320,18 @@ const Navbar: React.FC<NavbarProps> = ({ hasAnnouncementAbove = true, user, admi
 
           {/* CTA Buttons */}
           <div className="hidden lg:flex items-center space-x-4 text-nowrap">
-            <div className="relative group">
+            {/* Show Dashboard link if user is authenticated */}
+            {user ? (
+              <div className="bg-andela-green hover:bg-opacity-90 transition-colors text-white px-4 py-2 rounded-md font-medium">
+                <Link href={user.role === 'admin' ? '/admin/dashboard' : '/candidate/dashboard'} className="text-white text-sm">
+                  {user.role === 'admin' ? 'Admin Dashboard' : 'My Dashboard'}
+                </Link>
+              </div>
+            ) : (
               <div className="bg-andela-green hover:bg-opacity-90 transition-colors text-white px-4 py-2 rounded-md font-medium flex items-center">
                 <Link href="/request-demo" className="text-white text-sm">Hire Talent</Link>
               </div>
-            </div>
+            )}
 
             {/* Search Icon and Dropdown */}
             <div className="relative group">
@@ -310,7 +353,6 @@ const Navbar: React.FC<NavbarProps> = ({ hasAnnouncementAbove = true, user, admi
                     e.preventDefault();
                     if (searchTerm.trim()) {
                       setIsSearchOpen(false);
-                      // Use wouter's navigate for client-side routing
                       navigate(`/search?q=${encodeURIComponent(searchTerm.trim())}`);
                     }
                   }}>
@@ -433,32 +475,34 @@ const Navbar: React.FC<NavbarProps> = ({ hasAnnouncementAbove = true, user, admi
               )}
             </div>
 
-            <div className={cn(
-              "border px-4 py-2 rounded-md font-medium flex items-center transition-colors",
-              isTransparent && isHomePage
-                ? "border-white text-white hover:bg-white/20 hover:backdrop-blur-sm"
-                : isTransparent && isDarkPage
+            {!user && (
+              <div className={cn(
+                "border px-4 py-2 rounded-md font-medium flex items-center transition-colors",
+                isTransparent && isHomePage
                   ? "border-white text-white hover:bg-white/20 hover:backdrop-blur-sm"
-                  : isDarkPage 
-                    ? "border-white text-white hover:bg-white/20 hover:backdrop-blur-sm" 
-                    : "border-andela-green text-andela-green hover:bg-andela-green hover:text-white"
-            )}>
-              <Link 
-                href="/careers" 
-                className={cn(
-                  "text-sm transition-colors",
-                  isTransparent && isHomePage
-                    ? "text-white hover:text-white"
-                    : isTransparent && isDarkPage
+                  : isTransparent && isDarkPage
+                    ? "border-white text-white hover:bg-white/20 hover:backdrop-blur-sm"
+                    : isDarkPage 
+                      ? "border-white text-white hover:bg-white/20 hover:backdrop-blur-sm" 
+                      : "border-andela-green text-andela-green hover:bg-andela-green hover:text-white"
+              )}>
+                <Link 
+                  href="/careers" 
+                  className={cn(
+                    "text-sm transition-colors",
+                    isTransparent && isHomePage
                       ? "text-white hover:text-white"
-                      : isDarkPage 
-                        ? "text-white hover:text-white" 
-                        : "text-andela-green hover:text-white"
-                )}
-              >
-                Apply as Talent
-              </Link>
-            </div>
+                      : isTransparent && isDarkPage
+                        ? "text-white hover:text-white"
+                        : isDarkPage 
+                          ? "text-white hover:text-white" 
+                          : "text-andela-green hover:text-white"
+                  )}
+                >
+                  Apply as Talent
+                </Link>
+              </div>
+            )}
           </div>
 
           {/* Mobile Menu Button */}
@@ -483,7 +527,7 @@ const Navbar: React.FC<NavbarProps> = ({ hasAnnouncementAbove = true, user, admi
           isMobileMenuOpen && "open"
         )}
         style={{
-          height: '100dvh', // Dynamic viewport height for mobile browsers
+          height: '100dvh',
           zIndex: 99999
         }}
       >
@@ -493,10 +537,7 @@ const Navbar: React.FC<NavbarProps> = ({ hasAnnouncementAbove = true, user, admi
               <Link href="/" onClick={() => setIsMobileMenuOpen(false)}>
                 <Logo className="h-14" />
               </Link>
-              <div 	id="marquee-container" className="marquee-container overflow-hidden relative w-full">
-                {/* <div className="marquee text-gray-500 mt-1 whitespace-nowrap" style={{fontSize: "11px", marginTop: "1px"}}>
-                  Connecting People, Changing Lives
-                </div> */}
+              <div id="marquee-container" className="marquee-container overflow-hidden relative w-full">
               </div>
             </div>
           </div>
@@ -704,27 +745,18 @@ const Navbar: React.FC<NavbarProps> = ({ hasAnnouncementAbove = true, user, admi
                 )}
               </div>
             )}
-            <div className="bg-andela-green text-white px-4 py-2 rounded-md font-medium text-center">
-              <div className="flex items-center justify-center">
-                <span>Hire Talent</span>
-                <ChevronDown className="ml-1 w-4 h-4 text-white" />
-              </div>
-              <div className="mt-2 space-y-2 bg-white rounded-md p-2">
-                <div className="text-andela-dark hover:text-andela-green transition-colors text-center">
+            {!user && (
+              <>
+                <div className="bg-andela-green text-white px-4 py-2 rounded-md font-medium text-center">
                   <Link href="/request-demo" onClick={() => setIsMobileMenuOpen(false)}>
-                    Request Demo
+                    Hire Talent
                   </Link>
                 </div>
-                <div className="text-andela-dark hover:text-andela-green transition-colors text-center">
-                  <Link href="#" onClick={() => setIsMobileMenuOpen(false)}>
-                    Contact Sales
-                  </Link>
+                <div className="border border-andela-green text-andela-green px-4 py-2 rounded-md font-medium text-center">
+                  <Link href="/careers" className="text-andela-green" onClick={() => setIsMobileMenuOpen(false)}>Apply as Talent</Link>
                 </div>
-              </div>
-            </div>
-            <div className="border border-andela-green text-andela-green px-4 py-2 rounded-md font-medium text-center">
-              <Link href="/careers" className="text-andela-green" onClick={() => setIsMobileMenuOpen(false)}>Apply as Talent</Link>
-            </div>
+              </>
+            )}
           </div>
         </nav>
       </div>
