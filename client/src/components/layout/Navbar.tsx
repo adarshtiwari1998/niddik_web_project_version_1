@@ -321,17 +321,18 @@ const Navbar: React.FC<NavbarProps> = ({ hasAnnouncementAbove = true }) => {
           {/* CTA Buttons */}
           <div className="hidden lg:flex items-center space-x-4 text-nowrap">
             {/* Show Dashboard link if user is authenticated */}
-            {user ? (
+            {user && (
               <div className="bg-andela-green hover:bg-opacity-90 transition-colors text-white px-4 py-2 rounded-md font-medium">
                 <Link href={user.role === 'admin' ? '/admin/dashboard' : '/candidate/dashboard'} className="text-white text-sm">
                   {user.role === 'admin' ? 'Admin Dashboard' : 'My Dashboard'}
                 </Link>
               </div>
-            ) : (
-              <div className="bg-andela-green hover:bg-opacity-90 transition-colors text-white px-4 py-2 rounded-md font-medium flex items-center">
-                <Link href="/request-demo" className="text-white text-sm">Hire Talent</Link>
-              </div>
             )}
+
+            {/* Show Hire Talent button for all users (authenticated and non-authenticated) */}
+            <div className="bg-andela-green hover:bg-opacity-90 transition-colors text-white px-4 py-2 rounded-md font-medium flex items-center">
+              <Link href="/request-demo" className="text-white text-sm">Hire Talent</Link>
+            </div>
 
             {/* Search Icon and Dropdown */}
             <div className="relative group">
@@ -475,34 +476,33 @@ const Navbar: React.FC<NavbarProps> = ({ hasAnnouncementAbove = true }) => {
               )}
             </div>
 
-            {!user && (
-              <div className={cn(
-                "border px-4 py-2 rounded-md font-medium flex items-center transition-colors",
-                isTransparent && isHomePage
+            {/* Show Apply as Talent button for all users (authenticated and non-authenticated) */}
+            <div className={cn(
+              "border px-4 py-2 rounded-md font-medium flex items-center transition-colors",
+              isTransparent && isHomePage
+                ? "border-white text-white hover:bg-white/20 hover:backdrop-blur-sm"
+                : isTransparent && isDarkPage
                   ? "border-white text-white hover:bg-white/20 hover:backdrop-blur-sm"
-                  : isTransparent && isDarkPage
-                    ? "border-white text-white hover:bg-white/20 hover:backdrop-blur-sm"
-                    : isDarkPage 
-                      ? "border-white text-white hover:bg-white/20 hover:backdrop-blur-sm" 
-                      : "border-andela-green text-andela-green hover:bg-andela-green hover:text-white"
-              )}>
-                <Link 
-                  href="/careers" 
-                  className={cn(
-                    "text-sm transition-colors",
-                    isTransparent && isHomePage
+                  : isDarkPage 
+                    ? "border-white text-white hover:bg-white/20 hover:backdrop-blur-sm" 
+                    : "border-andela-green text-andela-green hover:bg-andela-green hover:text-white"
+            )}>
+              <Link 
+                href="/careers" 
+                className={cn(
+                  "text-sm transition-colors",
+                  isTransparent && isHomePage
+                    ? "text-white hover:text-white"
+                    : isTransparent && isDarkPage
                       ? "text-white hover:text-white"
-                      : isTransparent && isDarkPage
-                        ? "text-white hover:text-white"
-                        : isDarkPage 
-                          ? "text-white hover:text-white" 
-                          : "text-andela-green hover:text-white"
-                  )}
-                >
-                  Apply as Talent
-                </Link>
-              </div>
-            )}
+                      : isDarkPage 
+                        ? "text-white hover:text-white" 
+                        : "text-andela-green hover:text-white"
+                )}
+              >
+                Apply as Talent
+              </Link>
+            </div>
           </div>
 
           {/* Mobile Menu Button */}
@@ -745,18 +745,15 @@ const Navbar: React.FC<NavbarProps> = ({ hasAnnouncementAbove = true }) => {
                 )}
               </div>
             )}
-            {!user && (
-              <>
-                <div className="bg-andela-green text-white px-4 py-2 rounded-md font-medium text-center">
-                  <Link href="/request-demo" onClick={() => setIsMobileMenuOpen(false)}>
-                    Hire Talent
-                  </Link>
-                </div>
-                <div className="border border-andela-green text-andela-green px-4 py-2 rounded-md font-medium text-center">
-                  <Link href="/careers" className="text-andela-green" onClick={() => setIsMobileMenuOpen(false)}>Apply as Talent</Link>
-                </div>
-              </>
-            )}
+            {/* Show CTA buttons for all users in mobile */}
+            <div className="bg-andela-green text-white px-4 py-2 rounded-md font-medium text-center">
+              <Link href="/request-demo" onClick={() => setIsMobileMenuOpen(false)}>
+                Hire Talent
+              </Link>
+            </div>
+            <div className="border border-andela-green text-andela-green px-4 py-2 rounded-md font-medium text-center">
+              <Link href="/careers" className="text-andela-green" onClick={() => setIsMobileMenuOpen(false)}>Apply as Talent</Link>
+            </div>
           </div>
         </nav>
       </div>
