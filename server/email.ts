@@ -1007,6 +1007,7 @@ class EmailService {
     salary: string,
     skills: string,
     postedDate: Date,
+    jobId: number,
     requestOrigin?: string
   ): Promise<boolean> {
     try {
@@ -1036,7 +1037,13 @@ class EmailService {
         <p>This opportunity was posted today and is now accepting applications. Don't miss out on your chance to advance your career!</p>
 
         <div style="text-align: center; margin: 30px 0;">
-            <a href="${this.getBaseUrl(requestOrigin)}/careers" class="button">
+            <a href="${this.getBaseUrl(requestOrigin)}/jobs/${jobId}" class="button">
+                View Job Details
+            </a>
+        </div>
+
+        <div style="text-align: center; margin: 20px 0;">
+            <a href="${this.getBaseUrl(requestOrigin)}/careers" class="button" style="background: linear-gradient(135deg, #6b7280, #9ca3af);">
                 View All Jobs
             </a>
         </div>
@@ -1092,6 +1099,7 @@ class EmailService {
     createdBy: string,
     totalActiveJobs: number,
     totalUsersNotified: number,
+    jobId: number,
     requestOrigin?: string
   ): Promise<boolean> {
     try {
@@ -1130,7 +1138,13 @@ class EmailService {
         </div>
 
         <div style="text-align: center; margin: 30px 0;">
-            <a href="${this.getBaseUrl(requestOrigin)}/admin/jobs" class="button">
+            <a href="${this.getBaseUrl(requestOrigin)}/jobs/${jobId}" class="button">
+                View Job Details
+            </a>
+        </div>
+
+        <div style="text-align: center; margin: 20px 0;">
+            <a href="${this.getBaseUrl(requestOrigin)}/admin/jobs" class="button" style="background: linear-gradient(135deg, #6b7280, #9ca3af);">
                 Manage Job Listings
             </a>
         </div>

@@ -335,6 +335,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
                   jobListing.salary,
                   jobListing.skills,
                   new Date(jobListing.postedDate),
+                  jobListing.id,
                   req.get('origin')
                 );
                 successfulNotifications++;
@@ -358,6 +359,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
               createdBy,
               totalActiveJobs,
               successfulNotifications,
+              jobListing.id,
               req.get('origin')
             );
             console.log('Admin job stats notification sent successfully');
