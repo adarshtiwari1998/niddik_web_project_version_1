@@ -2493,13 +2493,19 @@ app.put('/api/profile', async (req: AuthenticatedRequest, res) => {
       );
 
       // Send admin notification
-      await emailService.sendAdminWhitepaperDownloadNotification(
-        fullName,
-        workEmail,
-        company || '',
-        new Date(),
-        req.get('origin')
-      );
+      try {
+        await emailService.sendAdminWhitepaperDownloadNotification(
+          fullName,
+          workEmail,
+          company || '',
+          new Date(),
+          req.get('origin')
+        );
+        console.log(`Admin whitepaper notification sent for: ${fullName}`);
+      } catch (adminEmailError) {
+        console.error('Error sending admin whitepaper notification:', adminEmailError);
+        // Don't fail the request if admin email fails
+      }
 
       return res.status(201).json({
         success: true,

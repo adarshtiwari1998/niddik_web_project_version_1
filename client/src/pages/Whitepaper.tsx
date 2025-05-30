@@ -25,6 +25,8 @@ const WhitepaperPage = () => {
   const [name, setName] = useState("");
   const [company, setCompany] = useState("");
   const [isAnnouncementVisible, setIsAnnouncementVisible] = useState(true);
+  const [isSubmitted, setIsSubmitted] = useState(false);
+  const [isSubmitting, setIsSubmitting] = useState(false);
 
   const handleAnnouncementVisibilityChange = (isVisible: boolean) => {
     setIsAnnouncementVisible(isVisible);
@@ -43,6 +45,8 @@ const WhitepaperPage = () => {
       return;
     }
 
+    setIsSubmitting(true);
+
     try {
       const response = await fetch('/api/whitepaper-download', {
         method: 'POST',
@@ -59,27 +63,14 @@ const WhitepaperPage = () => {
       const result = await response.json();
 
       if (result.success) {
-        // Show success message
+        // Show confirmation instead of downloading
+        setIsSubmitted(true);
+        
         toast({
           title: "Success!",
-          description: "Whitepaper download link has been sent to your email. Your download will start shortly.",
+          description: "Thank you! The whitepaper download link has been sent to your email.",
           variant: "default"
         });
-
-        // Trigger immediate download
-        const downloadUrl = result.data.downloadUrl;
-        const link = document.createElement('a');
-        link.href = downloadUrl;
-        link.download = 'Niddik_Whitepaper.pdf';
-        link.target = '_blank';
-        document.body.appendChild(link);
-        link.click();
-        document.body.removeChild(link);
-
-        // Reset form
-        setEmail("");
-        setName("");
-        setCompany("");
       } else {
         toast({
           title: "Error",
@@ -94,6 +85,8 @@ const WhitepaperPage = () => {
         description: "An error occurred while processing your request. Please try again.",
         variant: "destructive"
       });
+    } finally {
+      setIsSubmitting(false);
     }
   };
 
@@ -160,55 +153,123 @@ const WhitepaperPage = () => {
                 </Button>
               </div>
               
-              {/* Right column: Form */}
+              {/* Right column: Form or Confirmation */}
               <div className="lg:w-1/2 bg-white text-gray-800 p-8 rounded-xl shadow-xl z-10">
-                <h2 className="text-2xl font-bold mb-6 text-gray-900">Get Your Free Copy</h2>
-                
-                <form onSubmit={handleSubmit} className="space-y-6">
-                  <div className="space-y-2">
-                    <Label htmlFor="name">Full Name *</Label>
-                    <Input 
-                      id="name" 
-                      type="text" 
-                      value={name}
-                      onChange={(e) => setName(e.target.value)}
-                      placeholder="John Smith"
-                      required
-                    />
+                {!isSubmitted ? (
+                  <>
+                    <h2 className="text-2xl font-bold mb-6 text-gray-900">Get Your Free Copy</h2>
+                    
+                    <form onSubmit={handleSubmit} className="space-y-6">
+                      <div className="space-y-2">
+                        <Label htmlFor="name">Full Name *</Label>
+                        <Input 
+                          id="name" 
+                          type="text" 
+                          value={name}
+                          onChange={(e) => setName(e.target.value)}
+                          placeholder="John Smith"
+                          required
+                          disabled={isSubmitting}
+                        />
+                      </div>
+                      
+                      <div className="space-y-2">
+                        <Label htmlFor="email">Work Email *</Label>
+                        <Input 
+                          id="email" 
+                          type="email" 
+                          value={email}
+                          onChange={(e) => setEmail(e.target.value)}
+                          placeholder="john@company.com"
+                          required
+                          disabled={isSubmitting}
+                        />
+                      </div>
+                      
+                      <div className="space-y-2">
+                        <Label htmlFor="company">Company</Label>
+                        <Input 
+                          id="company" 
+                          type="text" 
+                          value={company}
+                          onChange={(e) => setCompany(e.target.value)}
+                          placeholder="Company Inc."
+                          disabled={isSubmitting}
+                        />
+                      </div>
+                      
+                      <Button 
+                        type="submit" 
+                        className="w-full bg-blue-600 hover:bg-blue-700 text-white"
+                        disabled={isSubmitting}
+                      >
+                        {isSubmitting ? "Sending..." : "Download Now"}
+                      </Button>
+                      
+                      <p className="text-xs text-gray-500">
+                        By submitting this form, you agree to our privacy policy and to receive updates about 
+                        Niddik products, services, and events.
+                      </p>
+                    </form>
+                  </>
+                ) : (
+                  <div className="text-center">
+                    <div className="mb-6">
+                      <CheckCircle2 className="h-16 w-16 text-green-500 mx-auto mb-4" />
+                      <h2 className="text-2xl font-bold mb-4 text-gray-900">Thank You!</h2>
+                      <p className="text-lg text-gray-600 mb-4">
+                        Your whitepaper download request has been submitted successfully.
+                      </p>
+                    </div>
+                    
+                    <div className="bg-green-50 border border-green-200 rounded-lg p-6 mb-6">
+                      <h3 className="font-semibold text-green-800 mb-2">What's Next?</h3>
+                      <ul className="text-sm text-green-700 space-y-2 text-left">
+                        <li className="flex items-center gap-2">
+                          <Mail className="h-4 w-4" />
+                          Check your email for the download link
+                        </li>
+                        <li className="flex items-center gap-2">
+                          <Download className="h-4 w-4" />
+                          Click the link to download your whitepaper
+                        </li>
+                        <li className="flex items-center gap-2">
+                          <CheckCircle2 className="h-4 w-4" />
+                          Start implementing adaptive hiring strategies
+                        </li>
+                      </ul>
+                    </div>
+                    
+                    <div className="space-y-3">
+                      <Button 
+                        onClick={() => {
+                          setIsSubmitted(false);
+                          setEmail("");
+                          setName("");
+                          setCompany("");
+                        }}
+                        variant="outline"
+                        className="w-full"
+                      >
+                        Submit Another Request
+                      </Button>
+                      
+                      <Button 
+                        className="w-full bg-green-600 hover:bg-green-700 text-white"
+                        onClick={() => window.location.href = '/request-demo'}
+                      >
+                        Schedule a Demo
+                      </Button>
+                    </div>
+                    
+                    <p className="text-xs text-gray-500 mt-4">
+                      Didn't receive the email? Check your spam folder or contact us at{' '}
+                      <a href="mailto:info@niddik.com" className="text-blue-600 hover:underline">
+                        info@niddik.com
+                      </a>
+                    </p>
                   </div>
-                  
-                  <div className="space-y-2">
-                    <Label htmlFor="email">Work Email *</Label>
-                    <Input 
-                      id="email" 
-                      type="email" 
-                      value={email}
-                      onChange={(e) => setEmail(e.target.value)}
-                      placeholder="john@company.com"
-                      required
-                    />
-                  </div>
-                  
-                  <div className="space-y-2">
-                    <Label htmlFor="company">Company</Label>
-                    <Input 
-                      id="company" 
-                      type="text" 
-                      value={company}
-                      onChange={(e) => setCompany(e.target.value)}
-                      placeholder="Company Inc."
-                    />
-                  </div>
-                  
-                  <Button type="submit" className="w-full bg-blue-600 hover:bg-blue-700 text-white">
-                    Download Now
-                  </Button>
-                  
-                  <p className="text-xs text-gray-500">
-                    By submitting this form, you agree to our privacy policy and to receive updates about 
-                    Niddik products, services, and events.
-                  </p>
-                </form>
+                )}
               </div>
             </div>
           </div>
