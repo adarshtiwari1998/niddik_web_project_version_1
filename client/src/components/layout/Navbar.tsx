@@ -703,66 +703,66 @@ const Navbar: React.FC<NavbarProps> = ({ hasAnnouncementAbove = true }) => {
           ))}
         </nav>
 
-          <div className="pt-4 flex flex-col space-y-3">
-            {!user && (
-              <div>
-                <div className="flex items-center justify-between w-full mb-2">
-                  <div className="font-medium">Sign In</div>
-                  <button
-                    onClick={() => setMobileDropdown(mobileDropdown === 99 ? -1 : 99)}
-                    className="ml-2"
-                  >
-                    <ChevronDown className={`w-4 h-4 transition-transform ${mobileDropdown === 99 ? 'rotate-180' : ''}`} />
-                  </button>
-                </div>
+        <div className="pt-4 flex flex-col space-y-3">
+          {!user && (
+            <div>
+              <div className="flex items-center justify-between w-full mb-2">
+                <div className="font-medium">Sign In</div>
+                <button
+                  onClick={() => setMobileDropdown(mobileDropdown === 99 ? -1 : 99)}
+                  className="ml-2"
+                >
+                  <ChevronDown className={`w-4 h-4 transition-transform ${mobileDropdown === 99 ? 'rotate-180' : ''}`} />
+                </button>
+              </div>
 
-                {mobileDropdown === 99 && (
-                  <div className="ml-4 space-y-2 py-2">
-                    <div className="py-1">
-                      <Link 
-                        href="/admin"
-                        className="text-andela-gray hover:text-andela-green transition-colors"
-                        onClick={() => setIsMobileMenuOpen(false)}
-                      >
-                        Sign in as Admin/Member
-                      </Link>
-                    </div>
-                    <div className="py-1">
-                      <Link 
-                        href="/auth"
-                        className="text-andela-gray hover:text-andela-green transition-colors"
-                        onClick={() => setIsMobileMenuOpen(false)}
-                      >
-                        Sign in as Candidate
-                      </Link>
-                    </div>
+              {mobileDropdown === 99 && (
+                <div className="ml-4 space-y-2 py-2">
+                  <div className="py-1">
+                    <Link 
+                      href="/admin"
+                      className="text-andela-gray hover:text-andela-green transition-colors"
+                      onClick={() => setIsMobileMenuOpen(false)}
+                    >
+                      Sign in as Admin/Member
+                    </Link>
                   </div>
-                )}
-              </div>
-            )}
-            <div className="bg-andela-green text-white px-4 py-2 rounded-md font-medium text-center">
-              <div className="flex items-center justify-center">
-                <span>Hire Talent</span>
-                <ChevronDown className="ml-1 w-4 h-4 text-white" />
-              </div>
-              <div className="mt-2 space-y-2 bg-white rounded-md p-2">
-                <div className="text-andela-dark hover:text-andela-green transition-colors text-center">
-                  <Link href="/request-demo" onClick={() => setIsMobileMenuOpen(false)}>
-                    Request Demo
-                  </Link>
+                  <div className="py-1">
+                    <Link 
+                      href="/auth"
+                      className="text-andela-gray hover:text-andela-green transition-colors"
+                      onClick={() => setIsMobileMenuOpen(false)}
+                    >
+                      Sign in as Candidate
+                    </Link>
+                  </div>
                 </div>
-                <div className="text-andela-dark hover:text-andela-green transition-colors text-center">
-                  <Link href="#" onClick={() => setIsMobileMenuOpen(false)}>
-                    Contact Sales
-                  </Link>
-                </div>
-              </div>
+              )}
             </div>
-            <div className="border border-andela-green text-andela-green px-4 py-2 rounded-md font-medium text-center">
-              <Link href="/careers" className="text-andela-green" onClick={() => setIsMobileMenuOpen(false)}>Apply as Talent</Link>
+          )}
+          <div className="bg-andela-green text-white px-4 py-2 rounded-md font-medium text-center">
+            <div className="flex items-center justify-center">
+              <span>Hire Talent</span>
+              <ChevronDown className="ml-1 w-4 h-4 text-white" />
+            </div>
+            <div className="mt-2 space-y-2 bg-white rounded-md p-2">
+              <div className="text-andela-dark hover:text-andela-green transition-colors text-center">
+                <Link href="/request-demo" onClick={() => setIsMobileMenuOpen(false)}>
+                  Request Demo
+                </Link>
+              </div>
+              <div className="text-andela-dark hover:text-andela-green transition-colors text-center">
+                <Link href="#" onClick={() => setIsMobileMenuOpen(false)}>
+                  Contact Sales
+                </Link>
+              </div>
             </div>
           </div>
+          <div className="border border-andela-green text-andela-green px-4 py-2 rounded-md font-medium text-center">
+            <Link href="/careers" className="text-andela-green" onClick={() => setIsMobileMenuOpen(false)}>Apply as Talent</Link>
+          </div>
         </div>
+      </div>
       </Container>
     </header>
   );
