@@ -331,7 +331,7 @@ export default function AnnouncementBar({
                                             </div>
                                         </div>
                                     </div>
-                                )}
+                                ) : null}
                             </div>
                         )}
 
