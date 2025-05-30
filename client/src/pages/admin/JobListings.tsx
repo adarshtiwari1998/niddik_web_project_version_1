@@ -34,6 +34,9 @@ import {
 } from "lucide-react";
 import { JobListing } from "@shared/schema";
 import AdminLayout from "@/components/layout/AdminLayout";
+import { useMutation } from "@tanstack/react-query";
+import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle, AlertDialogTrigger } from "@/components/ui/alert-dialog";
+import { useToast } from "@/hooks/use-toast";
 
 export default function JobListings() {
   const { user } = useAuth();
@@ -43,6 +46,8 @@ export default function JobListings() {
   const [categoryFilter, setCategoryFilter] = useState<string>("all_categories");
   const [priorityFilter, setPriorityFilter] = useState<string>("all_priorities");
   const queryClient = useQueryClient();
+  const { toast } = useToast();
+  const [deleteId, setDeleteId] = useState<number | null>(null);
 
   const buildQueryParams = () => {
     const params = new URLSearchParams();
@@ -83,7 +88,7 @@ export default function JobListings() {
   // Get unique values for filter options from ALL available jobs (not just filtered ones)
   const availableStatuses = Array.from(new Set(allJobsData?.data.map(job => job.status).filter(Boolean))) || [];
   const availableCategories = Array.from(new Set(allJobsData?.data.map(job => job.category).filter(Boolean))) || [];
-  
+
   // Get priority options based on ALL available data
   const availablePriorities = [];
   if (allJobsData?.data.some(job => job.urgent)) availablePriorities.push({ value: "urgent", label: "Urgent" });
@@ -102,32 +107,53 @@ export default function JobListings() {
     featured: job.featured 
   })));
 
-  const handleDeleteJob = async (id: number) => {
-    if (!confirm("Are you sure you want to delete this job listing?")) return;
-
-    try {
-      // Get the JWT token from localStorage
+  // Delete job mutation
+  const deleteMutation = useMutation({
+    mutationFn: async (id: number) => {
       const token = localStorage.getItem('niddik_auth_token');
       const headers: HeadersInit = {};
 
       if (token) {
         headers['Authorization'] = `Bearer ${token}`;
       }
-
-      const res = await fetch(`/api/job-listings/${id}`, {
+      const response = await fetch(`/api/job-listings/${id}`, {
         method: 'DELETE',
-        headers,
-        credentials: 'include'
+        credentials: 'include',
+        headers
       });
 
-      if (!res.ok) throw new Error("Failed to delete job listing");
+      if (!response.ok) {
+        throw new Error('Failed to delete job listing');
+      }
 
-      // Invalidate query cache instead of refreshing the page
-      queryClient.invalidateQueries({ queryKey: ['/api/job-listings'] });
+      return response.json();
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["/api/job-listings"] });
+      queryClient.invalidateQueries({ queryKey: ["/api/job-listings-all"] });
+      toast({
+        title: "Success",
+        description: "Job listing deleted successfully",
+        variant: "default"
+      });
+      setDeleteId(null);
+    },
+    onError: (error: Error) => {
+      toast({
+        title: "Error",
+        description: error.message || "Failed to delete job listing",
+        variant: "destructive"
+      });
+    }
+  });
 
-    } catch (error) {
-      console.error("Error deleting job:", error);
-      alert("Failed to delete job listing. Please try again.");
+  const handleDeleteClick = (id: number) => {
+    setDeleteId(id);
+  };
+
+  const handleDeleteConfirm = () => {
+    if (deleteId) {
+      deleteMutation.mutate(deleteId);
     }
   };
 
@@ -334,14 +360,38 @@ export default function JobListings() {
                               <span className="sr-only">Edit</span>
                             </Button>
                           </Link>
-                          <Button
-                            variant="destructive"
-                            size="sm"
-                            onClick={() => handleDeleteJob(job.id)}
-                          >
-                            <Trash className="h-4 w-4" />
-                            <span className="sr-only">Delete</span>
-                          </Button>
+                          <AlertDialog>
+                            <AlertDialogTrigger asChild>
+                              <Button
+                                variant="destructive"
+                                size="sm"
+                                onClick={() => handleDeleteClick(job.id)}
+                              >
+                                <Trash className="h-4 w-4" />
+                                <span className="sr-only">Delete</span>
+                              </Button>
+                            </AlertDialogTrigger>
+                            <AlertDialogContent>
+                              <AlertDialogHeader>
+                                <AlertDialogTitle>Delete Job Listing</AlertDialogTitle>
+                                <AlertDialogDescription>
+                                  Are you sure you want to delete the job listing "{job.title}"? 
+                                  This action cannot be undone and will remove all associated data.
+                                </AlertDialogDescription>
+                              </AlertDialogHeader>
+                              <AlertDialogFooter>
+                                <AlertDialogCancel onClick={() => setDeleteId(null)}>
+                                  Cancel
+                                </AlertDialogCancel>
+                                <AlertDialogAction 
+                                  onClick={handleDeleteConfirm}
+                                  disabled={deleteMutation.isPending}
+                                >
+                                  {deleteMutation.isPending ? "Deleting..." : "Delete"}
+                                </AlertDialogAction>
+                              </AlertDialogFooter>
+                            </AlertDialogContent>
+                          </AlertDialog>
                         </div>
                       </TableCell>
                     </TableRow>
