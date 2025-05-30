@@ -17,7 +17,9 @@ import type {
   SeoPage,
   InsertSeoPage,
   PasswordResetToken,
-  InsertPasswordResetToken
+  InsertPasswordResetToken,
+  WhitepaperDownload,
+  InsertWhitepaperDownload
 } from "@shared/schema";
 import {
   users,
@@ -30,6 +32,7 @@ import {
   demoRequests,
   seoPages,
   passwordResetTokens,
+  whitepaperDownloads,
   adminSessions,
   sessions
 } from "@shared/schema";
@@ -1166,6 +1169,74 @@ async updateSeoPage(id: number, data: Partial<InsertSeoPage>): Promise<SeoPage |
     await db
       .delete(passwordResetTokens)
       .where(eq(passwordResetTokens.userId, userId));
+  },
+
+  // Whitepaper Downloads methods
+  async createWhitepaperDownload(data: InsertWhitepaperDownload): Promise<WhitepaperDownload> {
+    const [download] = await db.insert(whitepaperDownloads).values(data).returning();
+    return download;
+  },
+
+  async getAllWhitepaperDownloads(
+    options: {
+      page?: number;
+      limit?: number;
+      search?: string;
+    } = {}
+  ): Promise<{ downloads: WhitepaperDownload[]; total: number }> {
+    const { 
+      page = 1, 
+      limit = 10, 
+      search = ""
+    } = options;
+
+    // Build where conditions
+    let whereConditions = [];
+
+    if (search) {
+      const searchTerm = search.toLowerCase();
+      whereConditions.push(
+        or(
+          sql`LOWER(${whitepaperDownloads.fullName}) LIKE ${`%${searchTerm}%`}`,
+          sql`LOWER(${whitepaperDownloads.workEmail}) LIKE ${`%${searchTerm}%`}`,
+          sql`LOWER(${whitepaperDownloads.company}) LIKE ${`%${searchTerm}%`}`
+        )
+      );
+    }
+
+    // Create the where condition
+    const whereCondition = whereConditions.length > 0
+      ? and(...whereConditions)
+      : undefined;
+
+    // Count total matching records for pagination
+    const result = await db.query.whitepaperDownloads.findMany({
+      where: whereCondition
+    });
+    const totalCount = result.length;
+
+    // Get paginated downloads
+    const downloadsResult = await db.query.whitepaperDownloads.findMany({
+      where: whereCondition,
+      orderBy: [desc(whitepaperDownloads.downloadedAt)],
+      limit,
+      offset: (page - 1) * limit
+    });
+
+    return {
+      downloads: downloadsResult,
+      total: totalCount
+    };
+  },
+
+  async getWhitepaperDownloadById(id: number): Promise<WhitepaperDownload | undefined> {
+    return await db.query.whitepaperDownloads.findFirst({
+      where: eq(whitepaperDownloads.id, id)
+    });
+  },
+
+  async deleteWhitepaperDownload(id: number): Promise<void> {
+    await db.delete(whitepaperDownloads).where(eq(whitepaperDownloads.id, id));
   }
 };
 

@@ -357,6 +357,27 @@ export const passwordResetTokenSchema = createInsertSchema(passwordResetTokens);
 export type PasswordResetToken = typeof passwordResetTokens.$inferSelect;
 export type InsertPasswordResetToken = z.infer<typeof passwordResetTokenSchema>;
 
+// Whitepaper Downloads schema
+export const whitepaperDownloads = pgTable("whitepaper_downloads", {
+  id: serial("id").primaryKey(),
+  fullName: text("full_name").notNull(),
+  workEmail: text("work_email").notNull(),
+  company: text("company"),
+  downloadedAt: timestamp("downloaded_at").defaultNow().notNull(),
+  ipAddress: text("ip_address"),
+  userAgent: text("user_agent"),
+  createdAt: timestamp("created_at").defaultNow().notNull(),
+});
+
+export const whitepaperDownloadSchema = createInsertSchema(whitepaperDownloads, {
+  fullName: (schema) => schema.min(2, "Full name is required"),
+  workEmail: (schema) => schema.email("Please enter a valid work email"),
+  company: (schema) => schema.optional(),
+});
+
+export type WhitepaperDownload = typeof whitepaperDownloads.$inferSelect;
+export type InsertWhitepaperDownload = z.infer<typeof whitepaperDownloadSchema>;
+
 export const adminSessions = pgTable("admin_sessions", {
   id: serial("id").primaryKey(),
   userId: integer("user_id").references(() => adminUsers.id).notNull(),

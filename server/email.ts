@@ -850,6 +850,87 @@ class EmailService {
     }
   }
 
+  async sendWhitepaperDownloadEmail(
+    userEmail: string,
+    userName: string,
+    company: string,
+    downloadUrl: string,
+    requestOrigin?: string
+  ): Promise<boolean> {
+    try {
+      const content = `
+        <h2 style="color: #16a34a; margin-bottom: 20px;">Your Whitepaper Download is Ready! 📊</h2>
+
+        <p>Dear <strong>${userName}</strong>,</p>
+
+        <p>Thank you for downloading our comprehensive whitepaper on "Drive Organizational Transformation Through Adaptive Hiring". This valuable resource contains insights that can help transform your organization's recruitment strategy.</p>
+
+        <div class="highlight-box">
+            <h3 style="margin-top: 0; color: #16a34a;">Download Details:</h3>
+            <ul style="margin: 15px 0; padding-left: 20px; list-style: none;">
+                <li><strong>📄 Document:</strong> NiDDiK Adaptive Hiring Whitepaper</li>
+                <li><strong>👤 Requested by:</strong> ${userName}</li>
+                <li><strong>🏢 Company:</strong> ${company || 'Not specified'}</li>
+                <li><strong>📧 Email:</strong> ${userEmail}</li>
+                <li><strong>📅 Download Date:</strong> ${format(new Date(), 'MMMM dd, yyyy \'at\' hh:mm a')}</li>
+            </ul>
+        </div>
+
+        <div style="text-align: center; margin: 30px 0;">
+            <a href="${downloadUrl}" class="button" download="Niddik_Whitepaper.pdf">
+                📥 Download Whitepaper PDF
+            </a>
+        </div>
+
+        <p><strong>What's Inside the Whitepaper:</strong></p>
+        <ul style="margin: 15px 0; padding-left: 20px;">
+            <li>🎯 Data-driven recruitment strategies</li>
+            <li>🤖 AI-powered talent sourcing techniques</li>
+            <li>📈 Metrics that matter: 40% improvement in response rates</li>
+            <li>⚡ 50% decrease in time-to-submit processes</li>
+            <li>🏆 70% increase in talent quality</li>
+            <li>💰 30% optimization in recruiting spend</li>
+        </ul>
+
+        <p><strong>Ready to implement these strategies?</strong></p>
+        <p>Our team of experts is ready to help you transform your hiring process. Contact us to discuss how we can customize these approaches for your organization.</p>
+
+        <div style="text-align: center; margin: 30px 0;">
+            <a href="${this.getBaseUrl(requestOrigin)}/request-demo" class="button" style="background: linear-gradient(135deg, #2563eb, #3b82f6);">
+                Schedule a Demo
+            </a>
+        </div>
+
+        <p><strong>Stay Connected:</strong></p>
+        <ul style="margin: 15px 0; padding-left: 20px;">
+            <li>📱 Follow us on LinkedIn for the latest insights</li>
+            <li>📧 Join our newsletter for recruitment best practices</li>
+            <li>🌐 Visit our website for more resources</li>
+        </ul>
+
+        <p>If you have any questions about implementing these strategies or need additional resources, don't hesitate to reach out to our team.</p>
+
+        <p>Best regards,<br>
+        <strong>The NiDDiK Team</strong><br>
+        <em>Connecting People, Changing Lives</em></p>
+      `;
+
+      const mailOptions = {
+        from: `"NiDDiK Research Team" <${this.config.user}>`,
+        to: userEmail,
+        subject: '📊 Your NiDDiK Whitepaper Download - Drive Organizational Transformation',
+        html: this.getEmailTemplate(content, 'Whitepaper Download')
+      };
+
+      await this.transporter.sendMail(mailOptions);
+      console.log(`Whitepaper download email sent successfully to ${userEmail}`);
+      return true;
+    } catch (error) {
+      console.error('Error sending whitepaper download email:', error);
+      return false;
+    }
+  }
+
   async testConnection(): Promise<boolean> {
     try {
       await this.transporter.verify();

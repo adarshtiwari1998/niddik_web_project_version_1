@@ -311,6 +311,25 @@ export default function AdminLayout({ children, title, description }: AdminLayou
                 </div>
               </Link>
 
+              {/* Whitepaper Downloads */}
+              <Link href="/admin/whitepaper-downloads">
+                <div className={`flex items-center px-2 sm:px-3 py-1.5 sm:py-2 mb-1 rounded-md transition-colors cursor-pointer ${
+                  location === "/admin/whitepaper-downloads" 
+                    ? "bg-primary/10 text-primary" 
+                    : "hover:bg-gray-100 dark:hover:bg-gray-700"
+                } ${isCollapsed ? 'justify-center' : ''}`}
+                title={isCollapsed ? "Whitepaper Downloads" : ""}
+                >
+                  <FileText className="h-4 w-4 sm:h-5 sm:w-5" />
+                  {!isCollapsed && (
+                    <>
+                      <span className="ml-2 sm:ml-3 text-sm sm:text-base">Whitepaper Downloads</span>
+                      <ChevronRight className="h-3 w-3 sm:h-4 sm:w-4 ml-auto" />
+                    </>
+                  )}
+                </div>
+              </Link>
+
               {/* SEO Pages */}
               <Link href="/admin/seo-pages">
                 <div className={`flex items-center px-2 sm:px-3 py-1.5 sm:py-2 mb-1 rounded-md transition-colors cursor-pointer ${

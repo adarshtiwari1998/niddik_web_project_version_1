@@ -30,7 +30,7 @@ const WhitepaperPage = () => {
     setIsAnnouncementVisible(isVisible);
   };
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     
     // Validate form
@@ -43,17 +43,58 @@ const WhitepaperPage = () => {
       return;
     }
 
-    // In a real app, this would send the data to the server
-    toast({
-      title: "Success!",
-      description: "Your whitepaper has been sent to your email.",
-      variant: "default"
-    });
+    try {
+      const response = await fetch('/api/whitepaper-download', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          fullName: name,
+          workEmail: email,
+          company: company
+        })
+      });
 
-    // Reset form
-    setEmail("");
-    setName("");
-    setCompany("");
+      const result = await response.json();
+
+      if (result.success) {
+        // Show success message
+        toast({
+          title: "Success!",
+          description: "Whitepaper download link has been sent to your email. Your download will start shortly.",
+          variant: "default"
+        });
+
+        // Trigger immediate download
+        const downloadUrl = result.data.downloadUrl;
+        const link = document.createElement('a');
+        link.href = downloadUrl;
+        link.download = 'Niddik_Whitepaper.pdf';
+        link.target = '_blank';
+        document.body.appendChild(link);
+        link.click();
+        document.body.removeChild(link);
+
+        // Reset form
+        setEmail("");
+        setName("");
+        setCompany("");
+      } else {
+        toast({
+          title: "Error",
+          description: result.message || "Failed to process download request",
+          variant: "destructive"
+        });
+      }
+    } catch (error) {
+      console.error('Error submitting whitepaper download:', error);
+      toast({
+        title: "Error",
+        description: "An error occurred while processing your request. Please try again.",
+        variant: "destructive"
+      });
+    }
   };
 
   return (

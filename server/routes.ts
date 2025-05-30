@@ -14,7 +14,9 @@ import {
   sessions,
   users,
   seoPages,
-  seoPageSchema
+  seoPageSchema,
+  whitepaperDownloadSchema,
+  whitepaperDownloads
 } from "@shared/schema";
 import { db } from "../db";
 import { eq, desc, asc, and, or, ilike, inArray, count } from "drizzle-orm";
@@ -2454,6 +2456,138 @@ app.put('/api/profile', async (req: AuthenticatedRequest, res) => {
       });
     } catch (error) {
       console.error('Error submitting demo request:', error);
+      return res.status(500).json({
+        success: false,
+        message: "Internal server error"
+      });
+    }
+  });
+
+  // Whitepaper Download API Endpoints
+
+  // Submit whitepaper download request
+  app.post('/api/whitepaper-download', async (req, res) => {
+    try {
+      const { fullName, workEmail, company } = req.body;
+
+      // Validate request data
+      const validatedData = whitepaperDownloadSchema.parse({
+        fullName,
+        workEmail,
+        company: company || null,
+        ipAddress: req.ip || req.connection.remoteAddress,
+        userAgent: req.get('User-Agent')
+      });
+
+      // Create the download record
+      const download = await storage.createWhitepaperDownload(validatedData);
+
+      // Send download email
+      const downloadUrl = 'https://res.cloudinary.com/dhanz6zty/image/upload/v1748588647/Niddik_Whitepaper_mxfvwa.pdf';
+      await emailService.sendWhitepaperDownloadEmail(
+        workEmail,
+        fullName,
+        company || '',
+        downloadUrl,
+        req.get('origin')
+      );
+
+      return res.status(201).json({
+        success: true,
+        message: "Whitepaper download link sent to your email successfully",
+        data: {
+          id: download.id,
+          downloadUrl: downloadUrl
+        }
+      });
+    } catch (error) {
+      if (error instanceof z.ZodError) {
+        return res.status(400).json({
+          success: false,
+          message: "Validation error",
+          errors: error.errors
+        });
+      }
+      console.error('Error processing whitepaper download:', error);
+      return res.status(500).json({
+        success: false,
+        message: "Internal server error"
+      });
+    }
+  });
+
+  // Admin API: Get all whitepaper downloads
+  app.get('/api/admin/whitepaper-downloads', async (req: AuthenticatedRequest, res) => {
+    try {
+      if (!req.isAuthenticated() || req.user?.role !== 'admin') {
+        return res.status(403).json({
+          success: false,
+          message: "Unauthorized"
+        });
+      }
+
+      const page = req.query.page ? parseInt(req.query.page as string) : 1;
+      const limit = req.query.limit ? parseInt(req.query.limit as string) : 10;
+      const search = req.query.search as string;
+
+      const result = await storage.getAllWhitepaperDownloads({
+        page,
+        limit,
+        search
+      });
+
+      return res.status(200).json({
+        success: true,
+        data: result.downloads,
+        meta: {
+          total: result.total,
+          page,
+          limit,
+          pages: Math.ceil(result.total / limit)
+        }
+      });
+    } catch (error) {
+      console.error('Error fetching whitepaper downloads:', error);
+      return res.status(500).json({
+        success: false,
+        message: "Internal server error"
+      });
+    }
+  });
+
+  // Admin API: Delete whitepaper download
+  app.delete('/api/admin/whitepaper-downloads/:id', async (req: AuthenticatedRequest, res) => {
+    try {
+      if (!req.isAuthenticated() || req.user?.role !== 'admin') {
+        return res.status(403).json({
+          success: false,
+          message: "Unauthorized"
+        });
+      }
+
+      const id = parseInt(req.params.id);
+      if (isNaN(id)) {
+        return res.status(400).json({
+          success: false,
+          message: "Invalid download ID"
+        });
+      }
+
+      const existingDownload = await storage.getWhitepaperDownloadById(id);
+      if (!existingDownload) {
+        return res.status(404).json({
+          success: false,
+          message: "Download record not found"
+        });
+      }
+
+      await storage.deleteWhitepaperDownload(id);
+      return res.status(200).json({
+        success: true,
+        message: "Download record deleted successfully"
+      });
+    } catch (error) {
+      console.error('Error deleting whitepaper download:', error);
       return res.status(500).json({
         success: false,
         message: "Internal server error"

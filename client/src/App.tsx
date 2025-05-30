@@ -152,8 +152,9 @@ function Router() {
             <ProtectedRoute path="/admin/candidates" component={Candidates} requiredRole="admin" />
             <ProtectedRoute path="/admin/submitted-candidates" component={SubmittedCandidates} requiredRole="admin" />
             <ProtectedRoute path="/admin/users" component={Users} requiredRole="admin" />
-            <ProtectedRoute path="/admin/demo-requests" component={DemoRequests} requiredRole="admin"/>
-            <ProtectedRoute path="/admin/contact-submissions" component={ContactSubmissions} requiredRole="admin"/>
+            <ProtectedRoute path="/admin/contact-submissions" component={lazy(() => import("@/pages/admin/ContactSubmissions"))} />
+              <ProtectedRoute path="/admin/whitepaper-downloads" component={lazy(() => import("@/pages/admin/WhitepaperDownloads"))} />
+              <ProtectedRoute path="/admin/demo-requests" component={lazy(() => import("@/pages/admin/DemoRequests"))} />
             <ProtectedRoute path="/admin/seo-pages" component={SEOPages} requiredRole="admin"/>
             <ProtectedRoute path="/admin/account" component={() => <AdminPasswordChange />} requiredRole="admin"/>
 
