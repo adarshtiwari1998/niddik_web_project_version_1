@@ -1,4 +1,4 @@
-import { and, eq, desc, asc, ilike, inArray, count, gt, lt } from "drizzle-orm";
+import { and, eq, desc, asc, ilike, inArray, count, gt, lt, sql } from "drizzle-orm";
 import type { 
   User, 
   InsertUser, 
