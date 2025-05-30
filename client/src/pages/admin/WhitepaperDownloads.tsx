@@ -1,5 +1,5 @@
 
-import React, { useState, useMemo, useEffect } from "react";
+import React, { useState, useMemo, useEffect, Suspense } from "react";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -9,6 +9,7 @@ import { Badge } from "@/components/ui/badge";
 import { Trash2, Search, Download, Mail, Building, User, Calendar, Globe } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle, AlertDialogTrigger } from "@/components/ui/alert-dialog";
+import { LoadingScreen } from "@/components/ui/loading-screen";
 
 interface WhitepaperDownload {
   id: number;
@@ -60,7 +61,10 @@ const WhitepaperDownloads = () => {
       }
 
       return response.json();
-    }
+    },
+    retry: 1,
+    staleTime: 5 * 60 * 1000, // 5 minutes
+    cacheTime: 10 * 60 * 1000, // 10 minutes
   });
 
   // Delete mutation
@@ -170,15 +174,16 @@ const WhitepaperDownloads = () => {
     );
   }
 
-  return (
-    <div className="p-6 space-y-6">
-      {/* Header */}
-      <div>
-        <h1 className="text-3xl font-bold text-gray-900">Whitepaper Downloads</h1>
-        <p className="text-gray-600 mt-2">
-          Manage and track whitepaper download requests
-        </p>
-      </div>
+  try {
+    return (
+      <div className="p-6 space-y-6">
+        {/* Header */}
+        <div>
+          <h1 className="text-3xl font-bold text-gray-900">Whitepaper Downloads</h1>
+          <p className="text-gray-600 mt-2">
+            Manage and track whitepaper download requests
+          </p>
+        </div>
 
       {/* Statistics Cards */}
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
@@ -366,7 +371,27 @@ const WhitepaperDownloads = () => {
         </CardContent>
       </Card>
     </div>
-  );
+    );
+  } catch (error) {
+    console.error('WhitepaperDownloads component error:', error);
+    return (
+      <div className="p-6">
+        <Card>
+          <CardContent className="p-6">
+            <div className="text-center text-red-600">
+              Something went wrong. Please refresh the page.
+            </div>
+          </CardContent>
+        </Card>
+      </div>
+    );
+  }
 };
 
-export default WhitepaperDownloads;
+const WhitepaperDownloadsWithSuspense = () => (
+  <Suspense fallback={<LoadingScreen />}>
+    <WhitepaperDownloads />
+  </Suspense>
+);
+
+export default WhitepaperDownloadsWithSuspense;

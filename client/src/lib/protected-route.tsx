@@ -1,5 +1,5 @@
 
-import { useEffect, startTransition } from "react";
+import { useEffect, startTransition, Suspense } from "react";
 import { useLocation } from "wouter";
 import { useAuth } from "@/hooks/use-auth";
 import { LoadingScreen } from "@/components/ui/loading-screen";
@@ -47,6 +47,10 @@ export function ProtectedRoute({ component: Component, requiredRole }: Protected
     return <LoadingScreen />;
   }
 
-  // Only render the component when we're sure the user is properly authenticated
-  return <Component />;
+  // Wrap the component in Suspense to handle any lazy loading
+  return (
+    <Suspense fallback={<LoadingScreen />}>
+      <Component />
+    </Suspense>
+  );
 }
