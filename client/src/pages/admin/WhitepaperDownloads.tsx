@@ -340,14 +340,6 @@ const WhitepaperDownloads = () => {
   );
 };
 
-interface WhitepaperDownloadsResponse {
-  success: boolean;
-  data: WhitepaperDownload[];
-  total: number;
-  page: number;
-  limit: number;
-}
-
 const WhitepaperDownloadsWithSuspense = () => (
   <Suspense fallback={<LoadingScreen />}>
     <WhitepaperDownloads />

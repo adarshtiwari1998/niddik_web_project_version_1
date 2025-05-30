@@ -6,6 +6,8 @@ import {
   Zap, 
   ChevronRight,
   PieChart,
+  BarChart3,
+  FileText,
   Mail
 } from "lucide-react";
 import { motion } from "framer-motion";
