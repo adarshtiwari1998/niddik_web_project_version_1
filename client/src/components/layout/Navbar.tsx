@@ -764,6 +764,7 @@ const Navbar: React.FC<NavbarProps> = ({ hasAnnouncementAbove = true }) => {
           </div>
         </div>
       </div>
+      </Container>
     </header>
   );
 };
