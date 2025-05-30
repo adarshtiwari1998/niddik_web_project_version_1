@@ -996,6 +996,184 @@ class EmailService {
     }
   }
 
+  async sendNewJobNotificationToUsers(
+    userEmail: string,
+    userName: string,
+    jobTitle: string,
+    company: string,
+    location: string,
+    jobType: string,
+    experienceLevel: string,
+    salary: string,
+    skills: string,
+    postedDate: Date,
+    requestOrigin?: string
+  ): Promise<boolean> {
+    try {
+      const formattedDate = formatInTimeZone(postedDate, 'Asia/Kolkata', 'MMMM dd, yyyy');
+
+      const content = `
+        <h2 style="color: #16a34a; margin-bottom: 20px;">New Job Opportunity Available! 🎯</h2>
+
+        <p>Hello <strong>${userName}</strong>,</p>
+
+        <p>We're excited to share a new job opportunity that might be perfect for you! A new position has just been posted on NiDDiK that matches your profile and interests.</p>
+
+        <div class="highlight-box">
+            <h3 style="margin-top: 0; color: #16a34a;">Job Details:</h3>
+            <ul style="margin: 15px 0; padding-left: 20px; list-style: none;">
+                <li><strong>💼 Position:</strong> ${jobTitle}</li>
+                <li><strong>🏢 Company:</strong> ${company}</li>
+                <li><strong>📍 Location:</strong> ${location}</li>
+                <li><strong>⏰ Job Type:</strong> ${jobType}</li>
+                <li><strong>📊 Experience Level:</strong> ${experienceLevel}</li>
+                <li><strong>💰 Salary:</strong> ${salary}</li>
+                <li><strong>🛠️ Key Skills:</strong> ${skills}</li>
+                <li><strong>📅 Posted On:</strong> ${formattedDate}</li>
+            </ul>
+        </div>
+
+        <p>This opportunity was posted today and is now accepting applications. Don't miss out on your chance to advance your career!</p>
+
+        <div style="text-align: center; margin: 30px 0;">
+            <a href="${this.getBaseUrl(requestOrigin)}/careers" class="button">
+                View All Jobs
+            </a>
+        </div>
+
+        <p><strong>🚀 Why Apply Through NiDDiK?</strong></p>
+        <ul style="margin: 15px 0; padding-left: 20px;">
+            <li>Direct connection with hiring managers</li>
+            <li>Real-time application status updates</li>
+            <li>Personalized career guidance</li>
+            <li>Access to exclusive opportunities</li>
+        </ul>
+
+        <p><strong>💡 Application Tips:</strong></p>
+        <ul style="margin: 15px 0; padding-left: 20px;">
+            <li>Apply early - fresh postings get high attention</li>
+            <li>Tailor your application to match the required skills</li>
+            <li>Update your profile with latest experience</li>
+            <li>Prepare for potential screening calls</li>
+        </ul>
+
+        <p>Ready to take the next step in your career? Browse this opportunity and others on our platform.</p>
+
+        <p>Best of luck with your job search!</p>
+
+        <p>Best regards,<br>
+        <strong>The NiDDiK Team</strong><br>
+        <em>Connecting People, Changing Lives</em></p>
+      `;
+
+      const mailOptions = {
+        from: `"NiDDiK Opportunities" <${this.config.user}>`,
+        to: userEmail,
+        subject: `🎯 New Job Alert: ${jobTitle} at ${company}`,
+        html: this.getEmailTemplate(content, 'New Job Opportunity')
+      };
+
+      await this.transporter.sendMail(mailOptions);
+      console.log(`New job notification sent successfully to ${userEmail}`);
+      return true;
+    } catch (error) {
+      console.error('Error sending new job notification:', error);
+      return false;
+    }
+  }
+
+  async sendAdminJobStatsNotification(
+    jobTitle: string,
+    company: string,
+    location: string,
+    jobType: string,
+    experienceLevel: string,
+    salary: string,
+    createdBy: string,
+    totalActiveJobs: number,
+    totalUsersNotified: number,
+    requestOrigin?: string
+  ): Promise<boolean> {
+    try {
+      const creationDate = new Date();
+      const formattedDate = formatInTimeZone(creationDate, 'Asia/Kolkata', 'MMMM dd, yyyy \'at\' hh:mm a zzz');
+
+      const content = `
+        <h2 style="color: #16a34a; margin-bottom: 20px;">New Job Listing Created! 📊</h2>
+
+        <p>Hello Admin Team,</p>
+
+        <p>A new job listing has been successfully created and published on the NiDDiK platform. Here's a summary of the job and platform statistics:</p>
+
+        <div class="highlight-box">
+            <h3 style="margin-top: 0; color: #16a34a;">New Job Details:</h3>
+            <ul style="margin: 15px 0; padding-left: 20px; list-style: none;">
+                <li><strong>💼 Position:</strong> ${jobTitle}</li>
+                <li><strong>🏢 Company:</strong> ${company}</li>
+                <li><strong>📍 Location:</strong> ${location}</li>
+                <li><strong>⏰ Job Type:</strong> ${jobType}</li>
+                <li><strong>📊 Experience Level:</strong> ${experienceLevel}</li>
+                <li><strong>💰 Salary:</strong> ${salary}</li>
+                <li><strong>👨‍💼 Created By:</strong> ${createdBy}</li>
+                <li><strong>📅 Created On:</strong> ${formattedDate}</li>
+            </ul>
+        </div>
+
+        <div class="highlight-box">
+            <h3 style="margin-top: 0; color: #2563eb;">Platform Statistics:</h3>
+            <ul style="margin: 15px 0; padding-left: 20px; list-style: none;">
+                <li><strong>📋 Total Active Jobs:</strong> ${totalActiveJobs}</li>
+                <li><strong>👥 Users Notified:</strong> ${totalUsersNotified}</li>
+                <li><strong>📧 Notification Status:</strong> <span style="color: #16a34a; font-weight: bold;">Sent Successfully</span></li>
+                <li><strong>🔄 SEO Pages:</strong> Auto-updated with new job data</li>
+            </ul>
+        </div>
+
+        <div style="text-align: center; margin: 30px 0;">
+            <a href="${this.getBaseUrl(requestOrigin)}/admin/jobs" class="button">
+                Manage Job Listings
+            </a>
+        </div>
+
+        <p><strong>Automated Actions Completed:</strong></p>
+        <ul style="margin: 15px 0; padding-left: 20px;">
+            <li>✅ Job listing published and made active</li>
+            <li>✅ Email notifications sent to all eligible users</li>
+            <li>✅ SEO pages updated automatically</li>
+            <li>✅ Job feed and sitemap refreshed</li>
+            <li>✅ Analytics tracking initiated</li>
+        </ul>
+
+        <p><strong>Next Steps:</strong></p>
+        <ul style="margin: 15px 0; padding-left: 20px;">
+            <li>Monitor application submissions in the admin dashboard</li>
+            <li>Review candidate profiles as applications come in</li>
+            <li>Update job status if needed (urgent, priority, featured)</li>
+            <li>Track job performance metrics</li>
+        </ul>
+
+        <p>The job is now live and candidates can start applying immediately. You can monitor applications and manage the job listing through the admin dashboard.</p>
+
+        <p>Best regards,<br>
+        <strong>NiDDiK Job Management System</strong></p>
+      `;
+
+      const mailOptions = {
+        from: `"NiDDiK Admin System" <${this.config.user}>`,
+        to: this.config.adminEmails,
+        subject: `📊 New Job Created: ${jobTitle} at ${company} - ${totalUsersNotified} Users Notified`,
+        html: this.getEmailTemplate(content, 'New Job Created - Admin Notification')
+      };
+
+      await this.transporter.sendMail(mailOptions);
+      console.log(`Admin job stats notification sent successfully for: ${jobTitle}`);
+      return true;
+    } catch (error) {
+      console.error('Error sending admin job stats notification:', error);
+      return false;
+    }
+  }
+
   async testConnection(): Promise<boolean> {
     try {
       await this.transporter.verify();

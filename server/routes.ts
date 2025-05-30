@@ -19,7 +19,7 @@ import {
   whitepaperDownloads
 } from "@shared/schema";
 import { db } from "../db";
-import { eq, desc, asc, and, or, ilike, inArray, count } from "drizzle-orm";
+import { eq, desc, asc, and, or, ilike, inArray, count, ne } from "drizzle-orm";
 import { z } from "zod";
 import { setupAuth } from "./auth";
 import { resumeUpload, seoMetaUpload } from "./cloudinary";
@@ -290,7 +290,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
   });
 
   // Create a new job listing
-  app.post('/api/job-listings', async (req, res) => {
+  app.post('/api/job-listings', async (req: AuthenticatedRequest, res) => {
     try {
       const validatedData = jobListingSchema.parse(req.body);
       const jobListing = await storage.createJobListing(validatedData);
@@ -303,6 +303,75 @@ export async function registerRoutes(app: Express): Promise<Server> {
         console.error('Error auto-updating SEO pages after job creation:', seoError);
         // Don't fail the job creation if SEO update fails
       }
+
+      // Send email notifications in the background
+      const sendNotifications = async () => {
+        try {
+          console.log('Starting email notifications for new job listing...');
+          
+          // Get all non-admin users
+          const users = await storage.getAllNonAdminUsers();
+          console.log(`Found ${users.length} users to notify about new job`);
+
+          // Get platform stats
+          const totalActiveJobs = await storage.getTotalActiveJobsCount();
+          const adminUser = req.user;
+          const createdBy = adminUser?.fullName || adminUser?.username || 'Admin';
+
+          let successfulNotifications = 0;
+
+          // Send notifications to all users
+          for (const user of users) {
+            if (user.email) {
+              try {
+                await emailService.sendNewJobNotificationToUsers(
+                  user.email,
+                  user.fullName || user.username,
+                  jobListing.title,
+                  jobListing.company,
+                  jobListing.location,
+                  jobListing.jobType,
+                  jobListing.experienceLevel,
+                  jobListing.salary,
+                  jobListing.skills,
+                  new Date(jobListing.postedDate),
+                  req.get('origin')
+                );
+                successfulNotifications++;
+              } catch (userEmailError) {
+                console.error(`Error sending notification to ${user.email}:`, userEmailError);
+              }
+            }
+          }
+
+          console.log(`Successfully sent ${successfulNotifications} user notifications`);
+
+          // Send admin notification with stats
+          try {
+            await emailService.sendAdminJobStatsNotification(
+              jobListing.title,
+              jobListing.company,
+              jobListing.location,
+              jobListing.jobType,
+              jobListing.experienceLevel,
+              jobListing.salary,
+              createdBy,
+              totalActiveJobs,
+              successfulNotifications,
+              req.get('origin')
+            );
+            console.log('Admin job stats notification sent successfully');
+          } catch (adminEmailError) {
+            console.error('Error sending admin job stats notification:', adminEmailError);
+          }
+
+        } catch (notificationError) {
+          console.error('Error in notification process:', notificationError);
+        }
+      };
+
+      // Execute notifications asynchronously
+      sendNotifications();
 
       return res.status(201).json({ success: true, data: jobListing });
     } catch (error) {

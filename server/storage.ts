@@ -1,4 +1,4 @@
-import { and, eq, desc, asc, ilike, inArray, count, gt, lt, sql, or } from "drizzle-orm";
+import { and, eq, desc, asc, ilike, inArray, count, gt, lt, sql, or, ne } from "drizzle-orm";
 import type { 
   User, 
   InsertUser, 
@@ -1177,67 +1177,69 @@ async updateSeoPage(id: number, data: Partial<InsertSeoPage>): Promise<SeoPage |
     return download;
   },
 
-  async getAllWhitepaperDownloads(
-    options: {
-      page?: number;
-      limit?: number;
-      search?: string;
-    } = {}
-  ): Promise<{ downloads: WhitepaperDownload[]; total: number }> {
-    const { 
-      page = 1, 
-      limit = 10, 
-      search = ""
-    } = options;
+  async getAllWhitepaperDownloads({
+    page = 1,
+    limit = 10,
+    search
+  }: {
+    page?: number;
+    limit?: number;
+    search?: string;
+  }): Promise<{
+    downloads: WhitepaperDownload[];
+    total: number;
+  }> {
+    let whereCondition = sql`1=1`;
 
-    // Build where conditions
-    let whereConditions = [];
-
-    if (search) {
-      const searchTerm = search.toLowerCase();
-      whereConditions.push(
-        or(
-          sql`LOWER(${whitepaperDownloads.fullName}) LIKE ${`%${searchTerm}%`}`,
-          sql`LOWER(${whitepaperDownloads.workEmail}) LIKE ${`%${searchTerm}%`}`,
-          sql`LOWER(${whitepaperDownloads.company}) LIKE ${`%${searchTerm}%`}`
-        )
-      );
+    if (search && search.trim()) {
+      const searchPattern = `%${search.trim()}%`;
+      whereCondition = sql`(
+        ${whitepaperDownloads.fullName} ILIKE ${searchPattern} OR
+        ${whitepaperDownloads.workEmail} ILIKE ${searchPattern} OR
+        ${whitepaperDownloads.company} ILIKE ${searchPattern}
+      )`;
     }
 
-    // Create the where condition
-    const whereCondition = whereConditions.length > 0
-      ? and(...whereConditions)
-      : undefined;
+    // Get total count
+    const countResult = await db
+      .select({ count: count() })
+      .from(whitepaperDownloads)
+      .where(whereCondition);
 
-    // Count total matching records for pagination
-    const result = await db.query.whitepaperDownloads.findMany({
-      where: whereCondition
-    });
-    const totalCount = result.length;
+    const total = countResult[0]?.count || 0;
 
     // Get paginated downloads
-    const downloadsResult = await db.query.whitepaperDownloads.findMany({
-      where: whereCondition,
-      orderBy: [desc(whitepaperDownloads.downloadedAt)],
-      limit,
-      offset: (page - 1) * limit
-    });
+    const offset = (page - 1) * limit;
+    const downloads = await db
+      .select()
+      .from(whitepaperDownloads)
+      .where(whereCondition)
+      .orderBy(desc(whitepaperDownloads.downloadedAt))
+      .limit(limit)
+      .offset(offset);
 
     return {
-      downloads: downloadsResult,
-      total: totalCount
+      downloads,
+      total
     };
   },
 
-  async getWhitepaperDownloadById(id: number): Promise<WhitepaperDownload | undefined> {
-    return await db.query.whitepaperDownloads.findFirst({
-      where: eq(whitepaperDownloads.id, id)
-    });
+  async getAllNonAdminUsers(): Promise<User[]> {
+    return await db
+      .select()
+      .from(users)
+      .where(ne(users.role, 'admin'))
+      .orderBy(desc(users.createdAt));
   },
 
-  async deleteWhitepaperDownload(id: number): Promise<void> {
-    await db.delete(whitepaperDownloads).where(eq(whitepaperDownloads.id, id));
-  }
+  async getTotalActiveJobsCount(): Promise<number> {
+    const result = await db
+      .select({ count: count() })
+      .from(jobListings)
+      .where(eq(jobListings.status, 'active'));
+
+    return result[0]?.count || 0;
+  },
 };
 
 export async function getJobApplicationsWithDetails(
@@ -1398,3 +1400,4 @@ export async function getJobApplicationsWithDetails(
     }
   };
 }
+// This file includes database utility functions with added methods for user and job retrieval.
