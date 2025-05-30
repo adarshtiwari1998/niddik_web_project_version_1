@@ -30,14 +30,14 @@ const pool = new Pool({
     rejectUnauthorized: false
   },
   max: 3, // Reduced for Render free tier
-  min: 1, // Keep 1 connection alive to reduce reconnection frequency
-  idleTimeoutMillis: 60000, // 60 seconds - longer idle time
-  connectionTimeoutMillis: 10000, // 10 seconds
-  acquireTimeoutMillis: 10000, // 10 seconds
-  createTimeoutMillis: 10000, // 10 seconds
+  min: 2, // Keep 2 connections alive to reduce reconnection frequency
+  idleTimeoutMillis: 120000, // 2 minutes - longer idle time
+  connectionTimeoutMillis: 15000, // 15 seconds
+  acquireTimeoutMillis: 15000, // 15 seconds
+  createTimeoutMillis: 15000, // 15 seconds
   destroyTimeoutMillis: 5000, // 5 seconds
-  reapIntervalMillis: 5000, // 5 seconds - less frequent cleanup
-  createRetryIntervalMillis: 500, // 500ms
+  reapIntervalMillis: 10000, // 10 seconds - less frequent cleanup
+  createRetryIntervalMillis: 1000, // 1 second
   keepAlive: true, // Enable keep-alive to maintain connections
   allowExitOnIdle: false, // Don't allow exit on idle
   statement_timeout: 30000, // 30 second query timeout
@@ -58,14 +58,14 @@ pool.on('connect', () => {
 // Reduce logging frequency for acquire/release
 let logCount = 0;
 pool.on('acquire', () => {
-  if (logCount % 10 === 0) { // Log every 10th acquire
-    console.log('Connection acquired from pool');
+  if (logCount % 100 === 0) { // Log every 100th acquire instead of every 10th
+    console.log(`Connection pool stats - Acquired: ${logCount + 1} connections`);
   }
   logCount++;
 });
 
 pool.on('release', () => {
-  // Only log releases occasionally to reduce noise
+  // Silent release to reduce noise
 });
 
 // Database health check function
