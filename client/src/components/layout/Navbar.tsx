@@ -1,6 +1,6 @@
 import { useState, useEffect, useRef } from "react";
 import { Link, useLocation } from "wouter";
-import { Search, Menu, X, ChevronDown, ChevronRight } from "lucide-react";
+import { Search, Menu, X, ChevronDown, ChevronRight, User, Briefcase, Users, Clock, TrendingUp, FileText, Activity } from "lucide-react";
 import Container from "@/components/ui/container";
 import Logo from "@/components/ui/logo";
 import { Button } from "@/components/ui/button";
@@ -22,6 +22,9 @@ interface NavItem {
 
 interface NavbarProps {
   hasAnnouncementAbove?: boolean;
+  user?: any; // Add user prop
+  adminStats?: any; // Add adminStats prop
+  candidateStats?: any; // Add candidateStats prop
 }
 
 interface SearchResult {
@@ -97,7 +100,7 @@ const navItems: NavItem[] = [
   },
 ];
 
-const Navbar: React.FC<NavbarProps> = ({ hasAnnouncementAbove = true }) => {
+const Navbar: React.FC<NavbarProps> = ({ hasAnnouncementAbove = true, user, adminStats, candidateStats }) => {
   const [location, navigate] = useLocation();
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const [isScrolled, setIsScrolled] = useState(false);
@@ -505,6 +508,120 @@ const Navbar: React.FC<NavbarProps> = ({ hasAnnouncementAbove = true }) => {
           </button>
         </div>
 
+        {/* User Info Section */}
+        {user && (
+          <div className="mb-6 p-4 bg-gray-50 rounded-lg">
+            <div className="flex items-center mb-3">
+              <div className="w-10 h-10 bg-andela-green rounded-full flex items-center justify-center text-white font-medium">
+                {user.fullName ? user.fullName.charAt(0).toUpperCase() : user.username.charAt(0).toUpperCase()}
+              </div>
+              <div className="ml-3">
+                <div className="font-medium text-gray-900">{user.fullName || user.username}</div>
+                <div className="text-sm text-gray-500">{user.email}</div>
+                <div className="text-xs text-andela-green font-medium">
+                  {user.role === 'admin' ? 'Admin' : 'Candidate'}
+                </div>
+              </div>
+            </div>
+
+            {/* Stats Cards */}
+            <div className="mb-3">
+              <h3 className="text-sm font-medium text-gray-800 mb-2">Quick Stats</h3>
+              {user.role === 'admin' && adminStats ? (
+                <div className="grid grid-cols-2 gap-2">
+                  <div className="bg-blue-50 p-2 rounded border border-blue-100">
+                    <div className="flex items-center">
+                      <Briefcase className="h-3 w-3 text-blue-600 mr-1" />
+                      <div>
+                        <div className="text-sm font-semibold text-blue-700">{adminStats.activeJobs}</div>
+                        <div className="text-xs text-blue-600">Active Jobs</div>
+                      </div>
+                    </div>
+                  </div>
+                  <div className="bg-green-50 p-2 rounded border border-green-100">
+                    <div className="flex items-center">
+                      <Users className="h-3 w-3 text-green-600 mr-1" />
+                      <div>
+                        <div className="text-sm font-semibold text-green-700">{adminStats.totalApplications}</div>
+                        <div className="text-xs text-green-600">Candidates</div>
+                      </div>
+                    </div>
+                  </div>
+                  <div className="bg-orange-50 p-2 rounded border border-orange-100">
+                    <div className="flex items-center">
+                      <Clock className="h-3 w-3 text-orange-600 mr-1" />
+                      <div>
+                        <div className="text-sm font-semibold text-orange-700">{adminStats.newApplications}</div>
+                        <div className="text-xs text-orange-600">New Apps</div>
+                      </div>
+                    </div>
+                  </div>
+                  <div className="bg-purple-50 p-2 rounded border border-purple-100">
+                    <div className="flex items-center">
+                      <TrendingUp className="h-3 w-3 text-purple-600 mr-1" />
+                      <div>
+                        <div className="text-sm font-semibold text-purple-700">{adminStats.totalJobs}</div>
+                        <div className="text-xs text-purple-600">Total Jobs</div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              ) : candidateStats ? (
+                <div className="grid grid-cols-2 gap-2">
+                  <div className="bg-blue-50 p-2 rounded border border-blue-100">
+                    <div className="flex items-center">
+                      <FileText className="h-3 w-3 text-blue-600 mr-1" />
+                      <div>
+                        <div className="text-sm font-semibold text-blue-700">{candidateStats.totalApplications}</div>
+                        <div className="text-xs text-blue-600">My Apps</div>
+                      </div>
+                    </div>
+                  </div>
+                  <div className="bg-green-50 p-2 rounded border border-green-100">
+                    <div className="flex items-center">
+                      <Activity className="h-3 w-3 text-green-600 mr-1" />
+                      <div>
+                        <div className="text-sm font-semibold text-green-700">{candidateStats.interviewStage}</div>
+                        <div className="text-xs text-green-600">Interviews</div>
+                      </div>
+                    </div>
+                  </div>
+                  <div className="bg-orange-50 p-2 rounded border border-orange-100">
+                    <div className="flex items-center">
+                      <Clock className="h-3 w-3 text-orange-600 mr-1" />
+                      <div>
+                        <div className="text-sm font-semibold text-orange-700">{candidateStats.newApplications}</div>
+                        <div className="text-xs text-orange-600">Pending</div>
+                      </div>
+                    </div>
+                  </div>
+                  <div className="bg-purple-50 p-2 rounded border border-purple-100">
+                    <div className="flex items-center">
+                      <Briefcase className="h-3 w-3 text-purple-600 mr-1" />
+                      <div>
+                        <div className="text-sm font-semibold text-purple-700">{candidateStats.availableJobs}</div>
+                        <div className="text-xs text-purple-600">New Jobs</div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              ) : null}
+            </div>
+
+            {/* Dashboard Button */}
+            <Button 
+              className="w-full" 
+              onClick={() => setIsMobileMenuOpen(false)}
+              asChild
+            >
+              <Link href={user.role === 'admin' ? '/admin/dashboard' : '/candidate/dashboard'}>
+                <User className="mr-2 h-4 w-4" />
+                Go to {user.role === 'admin' ? 'Admin' : 'My'} Dashboard
+              </Link>
+            </Button>
+          </div>
+        )}
+
         <nav className="flex flex-col space-y-4">
           {navItems.map((item, index) => (
             <div key={index} className="py-2 border-b border-gray-100">
@@ -543,7 +660,7 @@ const Navbar: React.FC<NavbarProps> = ({ hasAnnouncementAbove = true }) => {
                   )}
                 </div>
               ) : (
-                <Link href={item.href || "#"} className="font-medium">
+                <Link href={item.href || "#"} className="font-medium" onClick={() => setIsMobileMenuOpen(false)}>
                   {item.label}
                 </Link>
               )}
@@ -551,40 +668,42 @@ const Navbar: React.FC<NavbarProps> = ({ hasAnnouncementAbove = true }) => {
           ))}
 
           <div className="pt-4 flex flex-col space-y-3">
-            <div>
-              <div className="flex items-center justify-between w-full mb-2">
-                <div className="font-medium">Sign In</div>
-                <button
-                  onClick={() => setMobileDropdown(mobileDropdown === 99 ? -1 : 99)}
-                  className="ml-2"
-                >
-                  <ChevronDown className={`w-4 h-4 transition-transform ${mobileDropdown === 99 ? 'rotate-180' : ''}`} />
-                </button>
-              </div>
-
-              {mobileDropdown === 99 && (
-                <div className="ml-4 space-y-2 py-2">
-                  <div className="py-1">
-                    <Link 
-                      href="/admin"
-                      className="text-andela-gray hover:text-andela-green transition-colors"
-                      onClick={() => setIsMobileMenuOpen(false)}
-                    >
-                      Sign in as Admin/Member
-                    </Link>
-                  </div>
-                  <div className="py-1">
-                    <Link 
-                      href="/auth"
-                      className="text-andela-gray hover:text-andela-green transition-colors"
-                      onClick={() => setIsMobileMenuOpen(false)}
-                    >
-                      Sign in as Candidate
-                    </Link>
-                  </div>
+            {!user && (
+              <div>
+                <div className="flex items-center justify-between w-full mb-2">
+                  <div className="font-medium">Sign In</div>
+                  <button
+                    onClick={() => setMobileDropdown(mobileDropdown === 99 ? -1 : 99)}
+                    className="ml-2"
+                  >
+                    <ChevronDown className={`w-4 h-4 transition-transform ${mobileDropdown === 99 ? 'rotate-180' : ''}`} />
+                  </button>
                 </div>
-              )}
-            </div>
+
+                {mobileDropdown === 99 && (
+                  <div className="ml-4 space-y-2 py-2">
+                    <div className="py-1">
+                      <Link 
+                        href="/admin"
+                        className="text-andela-gray hover:text-andela-green transition-colors"
+                        onClick={() => setIsMobileMenuOpen(false)}
+                      >
+                        Sign in as Admin/Member
+                      </Link>
+                    </div>
+                    <div className="py-1">
+                      <Link 
+                        href="/auth"
+                        className="text-andela-gray hover:text-andela-green transition-colors"
+                        onClick={() => setIsMobileMenuOpen(false)}
+                      >
+                        Sign in as Candidate
+                      </Link>
+                    </div>
+                  </div>
+                )}
+              </div>
+            )}
             <div className="bg-andela-green text-white px-4 py-2 rounded-md font-medium text-center">
               <div className="flex items-center justify-center">
                 <span>Hire Talent</span>
