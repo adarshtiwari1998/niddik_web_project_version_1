@@ -1,13 +1,12 @@
 import { useState } from "react";
-import { 
-  Download,
-  FileText,
+import {
   CheckCircle2,
-  BarChart3,
+  Download,
   Users,
   Zap, 
   ChevronRight,
-  PieChart
+  PieChart,
+  Mail
 } from "lucide-react";
 import { motion } from "framer-motion";
 import { Link } from "wouter";
@@ -34,7 +33,7 @@ const WhitepaperPage = () => {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    
+
     // Validate form
     if (!email || !name) {
       toast({
@@ -65,7 +64,7 @@ const WhitepaperPage = () => {
       if (result.success) {
         // Show confirmation instead of downloading
         setIsSubmitted(true);
-        
+
         toast({
           title: "Success!",
           description: "Thank you! The whitepaper download link has been sent to your email.",
@@ -102,7 +101,7 @@ const WhitepaperPage = () => {
         onVisibilityChange={handleAnnouncementVisibilityChange}
       />
       <Navbar hasAnnouncementAbove={isAnnouncementVisible} />
-      
+
       <div className={`${isAnnouncementVisible ? 'pt-[80px]' : 'pt-[40px]'} transition-all duration-300`}>
       <main>
         {/* Hero Section */}
@@ -112,7 +111,7 @@ const WhitepaperPage = () => {
               <path fill="#FFFFFF" d="M42.8,-65.7C54.9,-56.5,63.7,-43.3,69.8,-28.9C76,-14.4,79.5,1.3,76.7,16.3C73.9,31.3,64.8,45.5,52.4,56.5C40,67.5,24.4,75.3,7.3,78.1C-9.8,80.9,-28.4,78.9,-42.8,69.8C-57.3,60.8,-67.7,44.9,-74.5,27.5C-81.3,10.1,-84.5,-8.8,-80.1,-25.8C-75.7,-42.8,-63.7,-57.9,-48.7,-66.1C-33.7,-74.3,-16.8,-75.6,-0.5,-74.9C15.9,-74.2,30.7,-74.8,42.8,-65.7Z" transform="translate(100 100)" />
             </svg>
           </div>
-          
+
           <div className="container mx-auto px-4 z-10 relative">
             <div className="flex flex-col lg:flex-row items-center gap-12 lg:gap-8">
               {/* Left column: Content */}
@@ -122,16 +121,16 @@ const WhitepaperPage = () => {
                     NEW WHITEPAPER
                   </div>
                 </div>
-                
+
                 <h1 className="text-4xl lg:text-5xl xl:text-6xl font-bold mb-6">
                   Drive Organizational Transformation Through Adaptive Hiring
                 </h1>
-                
+
                 <p className="text-lg text-blue-100 mb-8 max-w-xl">
                   Our comprehensive whitepaper reveals how scalable and flexible recruiting services 
                   shaped by deep market knowledge can transform your organization.
                 </p>
-                
+
                 <div className="flex flex-wrap gap-4 mb-10">
                   <div className="flex items-center gap-2">
                     <CheckCircle2 className="h-5 w-5 text-green-400"/>
@@ -146,19 +145,19 @@ const WhitepaperPage = () => {
                     <span>Industry best practices</span>
                   </div>
                 </div>
-                
+
                 <Button size="lg" className="bg-green-600 hover:bg-green-700 text-white gap-2">
                   <Download className="h-5 w-5" />
                   Download Whitepaper
                 </Button>
               </div>
-              
+
               {/* Right column: Form or Confirmation */}
               <div className="lg:w-1/2 bg-white text-gray-800 p-8 rounded-xl shadow-xl z-10">
                 {!isSubmitted ? (
                   <>
                     <h2 className="text-2xl font-bold mb-6 text-gray-900">Get Your Free Copy</h2>
-                    
+
                     <form onSubmit={handleSubmit} className="space-y-6">
                       <div className="space-y-2">
                         <Label htmlFor="name">Full Name *</Label>
@@ -172,7 +171,7 @@ const WhitepaperPage = () => {
                           disabled={isSubmitting}
                         />
                       </div>
-                      
+
                       <div className="space-y-2">
                         <Label htmlFor="email">Work Email *</Label>
                         <Input 
@@ -185,7 +184,7 @@ const WhitepaperPage = () => {
                           disabled={isSubmitting}
                         />
                       </div>
-                      
+
                       <div className="space-y-2">
                         <Label htmlFor="company">Company</Label>
                         <Input 
@@ -197,7 +196,7 @@ const WhitepaperPage = () => {
                           disabled={isSubmitting}
                         />
                       </div>
-                      
+
                       <Button 
                         type="submit" 
                         className="w-full bg-blue-600 hover:bg-blue-700 text-white"
@@ -205,7 +204,7 @@ const WhitepaperPage = () => {
                       >
                         {isSubmitting ? "Sending..." : "Download Now"}
                       </Button>
-                      
+
                       <p className="text-xs text-gray-500">
                         By submitting this form, you agree to our privacy policy and to receive updates about 
                         Niddik products, services, and events.
@@ -221,7 +220,7 @@ const WhitepaperPage = () => {
                         Your whitepaper download request has been submitted successfully.
                       </p>
                     </div>
-                    
+
                     <div className="bg-green-50 border border-green-200 rounded-lg p-6 mb-6">
                       <h3 className="font-semibold text-green-800 mb-2">What's Next?</h3>
                       <ul className="text-sm text-green-700 space-y-2 text-left">
@@ -239,7 +238,7 @@ const WhitepaperPage = () => {
                         </li>
                       </ul>
                     </div>
-                    
+
                     <div className="space-y-3">
                       <Button 
                         onClick={() => {
@@ -253,7 +252,7 @@ const WhitepaperPage = () => {
                       >
                         Submit Another Request
                       </Button>
-                      
+
                       <Button 
                         className="w-full bg-green-600 hover:bg-green-700 text-white"
                         onClick={() => window.location.href = '/request-demo'}
@@ -261,7 +260,7 @@ const WhitepaperPage = () => {
                         Schedule a Demo
                       </Button>
                     </div>
-                    
+
                     <p className="text-xs text-gray-500 mt-4">
                       Didn't receive the email? Check your spam folder or contact us at{' '}
                       <a href="mailto:info@niddik.com" className="text-blue-600 hover:underline">
@@ -274,14 +273,14 @@ const WhitepaperPage = () => {
             </div>
           </div>
         </section>
-        
+
         {/* Key Insights Section - Modern AI Animation */}
         <section className="py-20 relative overflow-hidden bg-[#0d2340]">
           {/* Technology AI Background with Animation */}
           <div className="absolute inset-0 z-0">
             {/* Background with tech circuit patterns */}
             <div className="absolute inset-0 bg-[url('/circuit-board-pattern.svg')] bg-repeat opacity-10"></div>
-            
+
             {/* Binary code streams */}
             <div className="absolute inset-0">
               {Array.from({ length: 15 }).map((_, i) => (
@@ -310,12 +309,12 @@ const WhitepaperPage = () => {
                 </motion.div>
               ))}
             </div>
-            
+
             {/* Glowing orbs representing technology nodes */}
             <motion.div className="absolute top-1/4 left-1/4 w-32 h-32 bg-blue-500 rounded-full filter blur-3xl opacity-20 animate-pulse-slow"></motion.div>
             <motion.div className="absolute top-3/4 right-1/4 w-48 h-48 bg-purple-500 rounded-full filter blur-3xl opacity-15 animate-pulse-slow animation-delay-2000"></motion.div>
             <motion.div className="absolute bottom-1/3 right-1/3 w-40 h-40 bg-emerald-500 rounded-full filter blur-3xl opacity-20 animate-pulse-slow animation-delay-1000"></motion.div>
-            
+
             {/* Animated data flow lines */}
             <div className="absolute inset-0">
               <svg className="w-full h-full overflow-visible" viewBox="0 0 1000 500">
@@ -340,7 +339,7 @@ const WhitepaperPage = () => {
                       }}
                     />
                   ))}
-                  
+
                   {/* Vertical tech grid lines */}
                   {Array.from({ length: 20 }).map((_, i) => (
                     <motion.line
@@ -362,7 +361,7 @@ const WhitepaperPage = () => {
                       }}
                     />
                   ))}
-                  
+
                   {/* Data flow connecting lines */}
                   {Array.from({ length: 8 }).map((_, i) => (
                     <motion.path
@@ -388,7 +387,7 @@ const WhitepaperPage = () => {
               </svg>
             </div>
           </div>
-          
+
           {/* Content with Overlay */}
           <div className="container mx-auto px-4 relative z-10">
             <div className="text-center mb-16">
@@ -411,7 +410,7 @@ const WhitepaperPage = () => {
                 Discover how our AI-driven talent sourcing approach is transforming traditional recruitment
               </motion.p>
             </div>
-            
+
             {/* Split Layout with AI visualization on left, cards on right */}
             <div className="flex flex-col lg:flex-row gap-8 items-center">
               {/* Left Side - AI Visualization */}
@@ -427,7 +426,7 @@ const WhitepaperPage = () => {
                       </radialGradient>
                     </defs>
                     <circle cx="400" cy="400" r="300" fill="url(#grad1)" />
-                    
+
                     <motion.g opacity="0.7">
                       {/* Animated data flow lines */}
                       {Array.from({ length: 15 }).map((_, i) => (
@@ -453,7 +452,7 @@ const WhitepaperPage = () => {
                           }}
                         />
                       ))}
-                      
+
                       {/* Data nodes */}
                       {Array.from({ length: 20 }).map((_, i) => (
                         <motion.circle
@@ -476,7 +475,7 @@ const WhitepaperPage = () => {
                       ))}
                     </motion.g>
                   </svg>
-                  
+
                   {/* Technology overlay elements */}
                   <div className="absolute inset-0 flex items-center justify-center">
                     <motion.div 
@@ -492,7 +491,7 @@ const WhitepaperPage = () => {
                       }}
                     />
                   </div>
-                  
+
                   {/* Animated grid overlay */}
                   <div className="absolute inset-0">
                     <svg className="w-full h-full" viewBox="0 0 800 800" xmlns="http://www.w3.org/2000/svg">
@@ -500,7 +499,7 @@ const WhitepaperPage = () => {
                         <path d="M 20 0 L 0 0 0 20" fill="none" stroke="#3b82f6" strokeWidth="0.5" opacity="0.3" />
                       </pattern>
                       <rect width="100%" height="100%" fill="url(#smallGrid)" />
-                      
+
                       <motion.g
                         initial={{ opacity: 0 }}
                         animate={{ opacity: 1 }}
@@ -528,7 +527,7 @@ const WhitepaperPage = () => {
                       </motion.g>
                     </svg>
                   </div>
-                  
+
                   {/* AI Recruitment-related imagery */}
                   <div className="absolute inset-0 flex flex-col items-center justify-center text-center p-8">
                     <motion.div
@@ -557,7 +556,7 @@ const WhitepaperPage = () => {
                   </div>
                 </div>
               </div>
-              
+
               {/* Right Side - Cards Grid */}
               <div className="w-full lg:w-3/5">
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
@@ -632,7 +631,7 @@ const WhitepaperPage = () => {
                           transition={{ repeat: Infinity, duration: 3, ease: "linear", repeatDelay: 1 }}
                         />
                       </div>
-                      
+
                       <div className="relative z-10">
                         <div className={`p-3 rounded-full ${item.iconBg || 'bg-white bg-opacity-20'} inline-flex mb-4 shimmer overflow-hidden`}>
                           {item.icon}
@@ -647,7 +646,7 @@ const WhitepaperPage = () => {
             </div>
           </div>
         </section>
-        
+
         {/* Business Impact Section */}
         <section className="py-20 bg-gray-50">
           <div className="container mx-auto px-4">
@@ -657,7 +656,7 @@ const WhitepaperPage = () => {
                 Real metrics that demonstrate the effectiveness of our adaptive hiring approach
               </p>
             </div>
-            
+
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
               {[
                 { label: "Empaneled Customers", value: "4", color: "bg-blue-900 text-white" },
@@ -671,7 +670,7 @@ const WhitepaperPage = () => {
                 </div>
               ))}
             </div>
-            
+
             <div className="mt-16 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 text-center">
               {[
                 { value: "30%", label: "Optimize Recruiting Spend" },
@@ -687,7 +686,7 @@ const WhitepaperPage = () => {
             </div>
           </div>
         </section>
-        
+
         {/* Capabilities Section */}
         <section className="py-20 bg-teal-900 text-white">
           <div className="container mx-auto px-4">
@@ -697,7 +696,7 @@ const WhitepaperPage = () => {
                 A complete end-to-end recruitment solution designed to transform your hiring process
               </p>
             </div>
-            
+
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
               {[
                 {
@@ -779,7 +778,7 @@ const WhitepaperPage = () => {
             </div>
           </div>
         </section>
-        
+
         {/* 6-Factors Model Section */}
         <section className="py-20 bg-gray-900 text-white">
           <div className="container mx-auto px-4">
@@ -789,7 +788,7 @@ const WhitepaperPage = () => {
                 Our dynamic recruitment solutions blend innovation and expertise to match exceptional talents with your unique organizational needs
               </p>
             </div>
-            
+
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
               {[
                 {
@@ -840,7 +839,7 @@ const WhitepaperPage = () => {
             </div>
           </div>
         </section>
-        
+
         {/* X-Factor Section */}
         <section className="py-20 bg-teal-800 text-white">
           <div className="container mx-auto px-4">
@@ -850,7 +849,7 @@ const WhitepaperPage = () => {
                 What sets Niddik apart from traditional recruiting companies
               </p>
             </div>
-            
+
             <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
               {[
                 {
@@ -887,7 +886,7 @@ const WhitepaperPage = () => {
             </div>
           </div>
         </section>
-        
+
         {/* CTA Section */}
         <section className="py-20 bg-gradient-to-br from-blue-900 to-blue-700 text-white">
           <div className="container mx-auto px-4 text-center">
@@ -899,7 +898,7 @@ const WhitepaperPage = () => {
               Download the whitepaper today and take the first step toward a more efficient, 
               effective hiring process powered by data and AI.
             </p>
-            
+
             <div className="flex flex-wrap justify-center gap-4">
               <Button size="lg" className="bg-green-600 hover:bg-green-700 text-white gap-2">
                 <Download className="h-5 w-5" />
@@ -912,7 +911,7 @@ const WhitepaperPage = () => {
           </div>
         </section>
       </main>
-      
+
       <Footer />
       </div>
     </div>

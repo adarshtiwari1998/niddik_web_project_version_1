@@ -21,7 +21,7 @@ class EmailService {
       port: parseInt(process.env.EMAIL_PORT || '587'),
       user: process.env.EMAIL_USER || 'jobs@niddik.com',
       pass: process.env.EMAIL_PASS || 'mA3',
-      adminEmails: (process.env.ADMIN_EMAILS || 'info@niddik.com,aanchal@niddik.com').split(',')
+      adminEmails: (process.env.ADMIN_EMAILS || 'info@niddik.com,aanchal@niddik.com').split(',').map(email => email.trim())
     };
 
     // Determine base URL based on environment
@@ -981,11 +981,12 @@ class EmailService {
 
       const mailOptions = {
         from: `"NiDDiK System" <${this.config.user}>`,
-        to: this.config.adminEmails,
+        to: this.config.adminEmails.join(','), // Ensure it's a string
         subject: `📊 New Whitepaper Download: ${userName} from ${company || userEmail}`,
         html: this.getEmailTemplate(content, 'New Whitepaper Download')
       };
 
+      console.log(`Sending admin notification to: ${this.config.adminEmails.join(', ')}`);
       await this.transporter.sendMail(mailOptions);
       console.log(`Admin whitepaper download notification sent successfully for: ${userName}`);
       return true;
