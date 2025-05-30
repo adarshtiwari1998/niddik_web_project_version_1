@@ -1002,9 +1002,21 @@ async function seed() {
         used BOOLEAN NOT NULL DEFAULT FALSE,
         created_at TIMESTAMP NOT NULL DEFAULT NOW()
       );
+
+      CREATE TABLE IF NOT EXISTS whitepaper_downloads (
+        id SERIAL PRIMARY KEY,
+        full_name TEXT NOT NULL,
+        work_email TEXT NOT NULL,
+        company TEXT,
+        downloaded_at TIMESTAMP NOT NULL DEFAULT NOW(),
+        ip_address TEXT,
+        user_agent TEXT,
+        created_at TIMESTAMP NOT NULL DEFAULT NOW()
+      );
     `);
 
     console.log("✓ Password reset tokens table created");
+    console.log("✓ Whitepaper downloads table created");
     console.log("✓ Seeding completed successfully!");
   } catch (error) {
     console.error("✗ Error during seeding:", error);
