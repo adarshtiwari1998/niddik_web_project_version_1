@@ -658,49 +658,51 @@ const Navbar: React.FC<NavbarProps> = ({ hasAnnouncementAbove = true }) => {
         )}
 
         <nav className="flex flex-col space-y-4">
-          {navItems.map((item, index) => (
-            <div key={index} className="py-2 border-b border-gray-100">
-              {item.dropdown ? (
-                <div>
-                  <div className="flex items-center justify-between w-full mb-2">
-                    <Link 
-                      href={item.href || "#"} 
-                      className="font-medium"
-                      onClick={() => setIsMobileMenuOpen(false)}
-                    >
-                      {item.label}
-                    </Link>
-                    <button
-                      onClick={() => setMobileDropdown(index === mobileDropdown ? -1 : index)}
-                      className="ml-2"
-                    >
-                      <ChevronDown className={`w-4 h-4 transition-transform ${index === mobileDropdown ? 'rotate-180' : ''}`} />
-                    </button>
-                  </div>
-
-                  {index === mobileDropdown && (
-                    <div className="ml-4 space-y-2 py-2">
-                      {item.dropdown?.map((dropdownItem, idx) => (
-                        <div key={idx} className="py-1">
-                          <Link 
-                            href={dropdownItem.href}
-                            className="text-andela-gray hover:text-andela-green transition-colors"
-                            onClick={() => setIsMobileMenuOpen(false)}
-                          >
-                            {dropdownItem.label}
-                          </Link>
-                        </div>
-                      ))}
+          <nav className="flex flex-col space-y-4">
+            {navItems.map((item, index) => (
+              <div key={index} className="py-2 border-b border-gray-100">
+                {item.dropdown ? (
+                  <div>
+                    <div className="flex items-center justify-between w-full mb-2">
+                      <Link 
+                        href={item.href || "#"} 
+                        className="font-medium"
+                        onClick={() => setIsMobileMenuOpen(false)}
+                      >
+                        {item.label}
+                      </Link>
+                      <button
+                        onClick={() => setMobileDropdown(index === mobileDropdown ? -1 : index)}
+                        className="ml-2"
+                      >
+                        <ChevronDown className={`w-4 h-4 transition-transform ${index === mobileDropdown ? 'rotate-180' : ''}`} />
+                      </button>
                     </div>
-                  )}
-                </div>
-              ) : (
-                <Link href={item.href || "#"} className="font-medium" onClick={() => setIsMobileMenuOpen(false)}>
-                  {item.label}
-                </Link>
-              )}
-            </div>
-          ))}</nav>
+
+                    {index === mobileDropdown && (
+                      <div className="ml-4 space-y-2 py-2">
+                        {item.dropdown?.map((dropdownItem, idx) => (
+                          <div key={idx} className="py-1">
+                            <Link 
+                              href={dropdownItem.href}
+                              className="text-andela-gray hover:text-andela-green transition-colors"
+                              onClick={() => setIsMobileMenuOpen(false)}
+                            >
+                              {dropdownItem.label}
+                            </Link>
+                          </div>
+                        ))}
+                      </div>
+                    )}
+                  </div>
+                ) : (
+                  <Link href={item.href || "#"} className="font-medium" onClick={() => setIsMobileMenuOpen(false)}>
+                    {item.label}
+                  </Link>
+                )}
+              </div>
+            ))}
+          </nav></nav>
 
           <div className="pt-4 flex flex-col space-y-3">
             {!user && (
