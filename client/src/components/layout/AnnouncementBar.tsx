@@ -195,7 +195,7 @@ export default function AnnouncementBar({
 
              {/* Sticky Buttons for Mobile Only */}
              {isSticky && (
-                <div className="fixed bottom-0 left-0 right-0 bg-white shadow-lg p-4 flex justify-between z-10 md:hidden">
+                <div className="fixed bottom-0 left-0 right-0 bg-white shadow-lg p-4 flex justify-between z-30 md:hidden">
                     {user ? (
                         // Show dashboard button for authenticated users
                         <Link 
