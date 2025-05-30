@@ -3,6 +3,7 @@ import { X, ChevronDown } from 'lucide-react';
 import { Link } from 'wouter';
 import { motion, AnimatePresence } from 'framer-motion';
 import { cn } from "@/lib/utils";
+import { useAuth } from "@/hooks/use-auth";
 
 interface AnnouncementBarProps {
     text: string;
@@ -21,6 +22,7 @@ export default function AnnouncementBar({
     textColor = "text-white",
     onVisibilityChange
 }: AnnouncementBarProps) {
+    const { user } = useAuth();
     const [isVisible, setIsVisible] = useState(true);
     const [isDrawerOpen, setIsDrawerOpen] = useState(false);
     const [showContactInfo, setShowContactInfo] = useState(false);
@@ -78,7 +80,7 @@ export default function AnnouncementBar({
                                className="hover:opacity-80 transition-opacity flex items-center cursor-pointer"
                                onClick={toggleDrawer}
                            >
-                               <span className="mr-1">Sign In</span>
+                               <span className="mr-1">{user ? 'Dashboard' : 'Sign In'}</span>
                                <ChevronDown className="w-4 h-4" />
                            </div>
                        </div>
@@ -117,7 +119,7 @@ export default function AnnouncementBar({
                                 {/* Sign In Button (Mobile) */}
                                 <div className="relative group z-50 md:hidden">
                                     <div className="hover:opacity-80 transition-opacity flex items-center cursor-pointer" onClick={toggleDrawer}>
-                                        <span className="mr-1">Sign In</span>
+                                        <span className="mr-1">{user ? 'Dashboard' : 'Sign In'}</span>
                                         <ChevronDown className="w-4 h-4" />
                                     </div>
                                 </div>
@@ -134,7 +136,7 @@ export default function AnnouncementBar({
                                 {/* Sign In Button (Desktop) */}
                                 <div className="relative group z-50 hidden md:block">
                                     <div className="hover:opacity-80 transition-opacity flex items-center cursor-pointer" onClick={toggleDrawer}>
-                                        <span className="mr-1">Sign In</span>
+                                        <span className="mr-1">{user ? 'Dashboard' : 'Sign In'}</span>
                                         <ChevronDown className="w-4 h-4" />
                                     </div>
                                 </div>
@@ -147,17 +149,28 @@ export default function AnnouncementBar({
              {/* Sticky Buttons for Mobile Only */}
              {isSticky && (
                 <div className="fixed bottom-0 left-0 right-0 bg-white shadow-lg p-4 flex justify-between z-10 md:hidden">
-                    <button 
-                        onClick={toggleDrawer} // Open the drawer
-                        className="bg-andela-green text-white rounded-md flex-1 py-4 mx-1"
-                    >
-                        Sign In
-                    </button>
+                    {user ? (
+                        // Show dashboard button for authenticated users
+                        <Link 
+                            href={user.role === 'admin' ? '/admin/dashboard' : '/candidate/dashboard'}
+                            className="bg-andela-green text-white rounded-md flex-1 py-4 mx-1 text-center flex items-center justify-center"
+                        >
+                            {user.role === 'admin' ? 'Admin Dashboard' : 'My Dashboard'}
+                        </Link>
+                    ) : (
+                        // Show sign in button for non-authenticated users
+                        <button 
+                            onClick={toggleDrawer} // Open the drawer
+                            className="bg-andela-green text-white rounded-md flex-1 py-4 mx-1"
+                        >
+                            Sign In
+                        </button>
+                    )}
                     <Link 
                         href="/careers" // Link to the careers page
                         className="bg-andela-blue text-white rounded-md flex-1 py-4 mx-1 text-center flex items-center justify-center"
                     >
-                        Apply Now
+                        {user && user.role !== 'admin' ? 'Browse Jobs' : 'Apply Now'}
                     </Link>
                 </div>
             )}
@@ -178,29 +191,45 @@ export default function AnnouncementBar({
                         }}
                     >
                         <div className="flex justify-between items-center mb-6">
-                            <h2 className="text-xl font-semibold text-gray-800">Welcome Back!</h2>
+                            <h2 className="text-xl font-semibold text-gray-800">
+                                {user ? `Welcome, ${user.fullName}!` : 'Welcome Back!'}
+                            </h2>
                             <button onClick={toggleDrawer} className="p-2 rounded-full hover:bg-gray-100">
                                 <X className="h-5 w-5 text-gray-600" />
                             </button>
                         </div>
                         <p className="text-gray-600 text-sm mb-6">
-                            Choose your sign-in method to continue.
+                            {user ? 'Access your dashboard to continue.' : 'Choose your sign-in method to continue.'}
                         </p>
                         <div className="flex flex-col space-y-4 mb-8">
-                            <Link
-                                href="/admin"
-                                className="block py-3 px-6 text-white rounded-md hover:bg-opacity-90 transition-colors text-center font-medium"
-                                style={{ backgroundColor: '#16a34a' }}
-                            >
-                                Sign in as Admin/Member
-                            </Link>
-                            <Link 
-                                href="/auth" 
-                                className="block py-3 px-6 text-white rounded-md hover:bg-opacity-90 transition-colors text-center font-medium"
-                                style={{ backgroundColor: '#3b82f6' }}
-                            >
-                                Sign in as Candidate
-                            </Link>
+                            {user ? (
+                                // Show dashboard link based on user role
+                                <Link
+                                    href={user.role === 'admin' ? '/admin/dashboard' : '/candidate/dashboard'}
+                                    className="block py-3 px-6 text-white rounded-md hover:bg-opacity-90 transition-colors text-center font-medium"
+                                    style={{ backgroundColor: user.role === 'admin' ? '#16a34a' : '#3b82f6' }}
+                                >
+                                    Go to {user.role === 'admin' ? 'Admin' : 'Candidate'} Dashboard
+                                </Link>
+                            ) : (
+                                // Show sign-in options for non-authenticated users
+                                <>
+                                    <Link
+                                        href="/admin"
+                                        className="block py-3 px-6 text-white rounded-md hover:bg-opacity-90 transition-colors text-center font-medium"
+                                        style={{ backgroundColor: '#16a34a' }}
+                                    >
+                                        Sign in as Admin/Member
+                                    </Link>
+                                    <Link 
+                                        href="/auth" 
+                                        className="block py-3 px-6 text-white rounded-md hover:bg-opacity-90 transition-colors text-center font-medium"
+                                        style={{ backgroundColor: '#3b82f6' }}
+                                    >
+                                        Sign in as Candidate
+                                    </Link>
+                                </>
+                            )}
                         </div>
                     </motion.div>
                 )}
