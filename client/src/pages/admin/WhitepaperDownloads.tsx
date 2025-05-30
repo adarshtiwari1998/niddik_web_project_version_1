@@ -10,6 +10,7 @@ import { Trash2, Search, Download, Mail, Building, User, Calendar, Globe } from 
 import { useToast } from "@/hooks/use-toast";
 import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle, AlertDialogTrigger } from "@/components/ui/alert-dialog";
 import { LoadingScreen } from "@/components/ui/loading-screen";
+import AdminLayout from "@/components/layout/AdminLayout";
 
 interface WhitepaperDownload {
   id: number;
@@ -176,14 +177,11 @@ const WhitepaperDownloads = () => {
 
   try {
     return (
-      <div className="p-6 space-y-6">
-        {/* Header */}
-        <div>
-          <h1 className="text-3xl font-bold text-gray-900">Whitepaper Downloads</h1>
-          <p className="text-gray-600 mt-2">
-            Manage and track whitepaper download requests
-          </p>
-        </div>
+      <AdminLayout 
+        title="Whitepaper Downloads" 
+        description="Manage and track whitepaper download requests"
+      >
+        <div className="space-y-6">
 
       {/* Statistics Cards */}
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
@@ -370,12 +368,16 @@ const WhitepaperDownloads = () => {
           )}
         </CardContent>
       </Card>
-    </div>
+        </div>
+      </AdminLayout>
     );
   } catch (error) {
     console.error('WhitepaperDownloads component error:', error);
     return (
-      <div className="p-6">
+      <AdminLayout 
+        title="Whitepaper Downloads" 
+        description="Manage and track whitepaper download requests"
+      >
         <Card>
           <CardContent className="p-6">
             <div className="text-center text-red-600">
@@ -383,7 +385,7 @@ const WhitepaperDownloads = () => {
             </div>
           </CardContent>
         </Card>
-      </div>
+      </AdminLayout>
     );
   }
 };
