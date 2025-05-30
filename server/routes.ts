@@ -2492,6 +2492,15 @@ app.put('/api/profile', async (req: AuthenticatedRequest, res) => {
         req.get('origin')
       );
 
+      // Send admin notification
+      await emailService.sendAdminWhitepaperDownloadNotification(
+        fullName,
+        workEmail,
+        company || '',
+        new Date(),
+        req.get('origin')
+      );
+
       return res.status(201).json({
         success: true,
         message: "Whitepaper download link sent to your email successfully",

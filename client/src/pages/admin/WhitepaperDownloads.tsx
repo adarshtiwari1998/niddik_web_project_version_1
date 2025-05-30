@@ -49,9 +49,12 @@ const WhitepaperDownloads = () => {
     queryFn: async () => {
       const params = new URLSearchParams({
         page: currentPage.toString(),
-        limit: limit.toString(),
-        ...(searchTerm && { search: searchTerm })
+        limit: limit.toString()
       });
+
+      if (searchTerm && searchTerm.trim()) {
+        params.append('search', searchTerm.trim());
+      }
 
       const response = await fetch(`/api/admin/whitepaper-downloads?${params}`, {
         credentials: 'include'

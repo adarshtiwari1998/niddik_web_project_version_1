@@ -872,7 +872,7 @@ class EmailService {
                 <li><strong>👤 Requested by:</strong> ${userName}</li>
                 <li><strong>🏢 Company:</strong> ${company || 'Not specified'}</li>
                 <li><strong>📧 Email:</strong> ${userEmail}</li>
-                <li><strong>📅 Download Date:</strong> ${format(new Date(), 'MMMM dd, yyyy \'at\' hh:mm a')}</li>
+                <li><strong>📅 Download Date:</strong> ${formatInTimeZone(new Date(), 'Asia/Kolkata', 'MMMM dd, yyyy \'at\' hh:mm a zzz')}</li>
             </ul>
         </div>
 
@@ -927,6 +927,70 @@ class EmailService {
       return true;
     } catch (error) {
       console.error('Error sending whitepaper download email:', error);
+      return false;
+    }
+  }
+
+  async sendAdminWhitepaperDownloadNotification(
+    userName: string,
+    userEmail: string,
+    company: string,
+    downloadDate: Date,
+    requestOrigin?: string
+  ): Promise<boolean> {
+    try {
+      const formattedDate = formatInTimeZone(downloadDate, 'Asia/Kolkata', 'MMMM dd, yyyy \'at\' hh:mm a zzz');
+
+      const content = `
+        <h2 style="color: #16a34a; margin-bottom: 20px;">New Whitepaper Download! 📊</h2>
+
+        <p>Hello Admin Team,</p>
+
+        <p>A new whitepaper download has been requested through the NiDDiK platform. Here are the details:</p>
+
+        <div class="highlight-box">
+            <h3 style="margin-top: 0; color: #16a34a;">Download Information:</h3>
+            <ul style="margin: 15px 0; padding-left: 20px; list-style: none;">
+                <li><strong>📄 Document:</strong> NiDDiK Adaptive Hiring Whitepaper</li>
+                <li><strong>👤 Requested by:</strong> ${userName}</li>
+                <li><strong>📧 Email:</strong> ${userEmail}</li>
+                <li><strong>🏢 Company:</strong> ${company || 'Not specified'}</li>
+                <li><strong>📅 Download Date:</strong> ${formattedDate}</li>
+            </ul>
+        </div>
+
+        <div style="text-align: center; margin: 30px 0;">
+            <a href="${this.getBaseUrl(requestOrigin)}/admin/whitepaper-downloads" class="button">
+                View All Downloads
+            </a>
+        </div>
+
+        <p><strong>Action Items:</strong></p>
+        <ul style="margin: 15px 0; padding-left: 20px;">
+            <li>Consider following up with the prospect</li>
+            <li>Add to marketing automation if applicable</li>
+            <li>Track engagement for lead scoring</li>
+            <li>Monitor for demo request potential</li>
+        </ul>
+
+        <p>This lead may be interested in our adaptive hiring solutions. Consider reaching out to discuss their specific needs.</p>
+
+        <p>Best regards,<br>
+        <strong>NiDDiK Download System</strong></p>
+      `;
+
+      const mailOptions = {
+        from: `"NiDDiK System" <${this.config.user}>`,
+        to: this.config.adminEmails,
+        subject: `📊 New Whitepaper Download: ${userName} from ${company || userEmail}`,
+        html: this.getEmailTemplate(content, 'New Whitepaper Download')
+      };
+
+      await this.transporter.sendMail(mailOptions);
+      console.log(`Admin whitepaper download notification sent successfully for: ${userName}`);
+      return true;
+    } catch (error) {
+      console.error('Error sending admin whitepaper download notification:', error);
       return false;
     }
   }
