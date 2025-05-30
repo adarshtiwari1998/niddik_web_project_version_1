@@ -1,40 +1,76 @@
-import { db } from "@db";
-import { 
-  users, 
-  contactSubmissions, 
-  testimonials, 
-  clients, 
-  jobListings, 
+import { and, eq, desc, asc, ilike, inArray, count, gt, lt } from "drizzle-orm";
+import type { 
+  User, 
+  InsertUser, 
+  ContactSubmission, 
+  InsertContactSubmission,
+  Testimonial,
+  Client,
+  JobListing,
+  InsertJobListing,
+  JobApplication,
+  InsertJobApplication,
+  SubmittedCandidate,
+  InsertSubmittedCandidate,
+  DemoRequest,
+  InsertDemoRequest,
+  SeoPage,
+  InsertSeoPage,
+  PasswordResetToken,
+  InsertPasswordResetToken
+} from "@shared/schema";
+import {
+  users,
+  contactSubmissions,
+  testimonials,
+  clients,
+  jobListings,
   jobApplications,
   submittedCandidates,
   demoRequests,
   seoPages,
-  adminSessions,
-  sessions,
   passwordResetTokens,
-  type User, 
-  type ContactSubmission, 
-  type InsertContactSubmission,
-  type Testimonial,
-  type Client,
-  type JobListing,
-  type InsertJobListing,
-  type JobApplication,
-  type InsertJobApplication,
-  type SubmittedCandidate,
-  type InsertSubmittedCandidate,
-  type DemoRequest,
-  type InsertDemoRequest,
-  type SeoPage,
-  type InsertSeoPage,
-  type AdminSession,
-  type InsertAdminSession,
-  type Session,
-  type InsertSession,
-  type PasswordResetToken,
-  type InsertPasswordResetToken
+  adminSessions,
+  sessions
 } from "@shared/schema";
-import { eq, desc, and, like, or, asc, inArray, sql, ilike, count } from "drizzle-orm";
+import { db } from "@db";
+
+// Retry utility function for database operations
+async function withRetry<T>(
+  operation: () => Promise<T>,
+  maxRetries: number = 3,
+  delay: number = 1000
+): Promise<T> {
+  let lastError: Error;
+
+  for (let attempt = 1; attempt <= maxRetries; attempt++) {
+    try {
+      return await operation();
+    } catch (error) {
+      lastError = error as Error;
+      console.error(`Database operation failed (attempt ${attempt}/${maxRetries}):`, error);
+
+      // Check if it's a connection timeout error
+      if (error instanceof Error && 
+          (error.message.includes('connection timeout') || 
+           error.message.includes('Connection terminated') ||
+           error.message.includes('connect ETIMEDOUT'))) {
+
+        if (attempt < maxRetries) {
+          console.log(`Retrying in ${delay}ms...`);
+          await new Promise(resolve => setTimeout(resolve, delay));
+          delay *= 2; // Exponential backoff
+          continue;
+        }
+      }
+
+      // If it's not a timeout error or we've exhausted retries, throw immediately
+      throw error;
+    }
+  }
+
+  throw lastError!;
+}
 
 export const storage = {
   // Contact form submissions
@@ -323,8 +359,11 @@ export const storage = {
   },
 
   async getUserById(id: number): Promise<User | undefined> {
-    return await db.query.users.findFirst({
-      where: eq(users.id, id)
+    return withRetry(async () => {
+      const result = await db.query.users.findFirst({
+        where: eq(users.id, id)
+      });
+      return result || undefined;
     });
   },
 
@@ -335,8 +374,11 @@ export const storage = {
   },
 
   async getUserByEmail(email: string): Promise<User | undefined> {
-    return await db.query.users.findFirst({
-      where: eq(users.email, email)
+    return withRetry(async () => {
+      const result = await db.query.users.findFirst({
+        where: eq(users.email, email)
+      });
+      return result || undefined;
     });
   },
 

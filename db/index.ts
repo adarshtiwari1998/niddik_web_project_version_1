@@ -29,22 +29,64 @@ const pool = new Pool({
   ssl: {
     rejectUnauthorized: false
   },
-   max: 10, // Reduced max connections for Render
-    min: 2, // Minimum connections
-    idleTimeoutMillis: 60000, // 1 minute
-    connectionTimeoutMillis: 5000, // 5 seconds
-    acquireTimeoutMillis: 5000, // 5 seconds
-    createTimeoutMillis: 5000, // 5 seconds
-    destroyTimeoutMillis: 5000, // 5 seconds
-    reapIntervalMillis: 1000, // 1 second
-    createRetryIntervalMillis: 200, // 200ms
-    keepAlive: true,
-    keepAliveInitialDelayMillis: 0
+  max: 5, // Further reduced for Render free tier
+  min: 0, // No minimum connections to avoid idle timeouts
+  idleTimeoutMillis: 30000, // 30 seconds
+  connectionTimeoutMillis: 10000, // 10 seconds
+  acquireTimeoutMillis: 10000, // 10 seconds
+  createTimeoutMillis: 10000, // 10 seconds
+  destroyTimeoutMillis: 5000, // 5 seconds
+  reapIntervalMillis: 1000, // 1 second
+  createRetryIntervalMillis: 500, // 500ms
+  keepAlive: false, // Disable keep-alive for better timeout handling
+  allowExitOnIdle: true, // Allow process to exit when no connections
+  statement_timeout: 30000, // 30 second query timeout
+  query_timeout: 30000, // 30 second query timeout
+  application_name: 'niddik-app'
 });
 
+// Better error handling
 pool.on('error', (err) => {
-  console.error('Unexpected error on idle client', err);
-  process.exit(-1);
+  console.error('Database pool error:', err.message);
+  // Don't exit the process, just log the error
+});
+
+pool.on('connect', () => {
+  console.log('New database connection established');
+});
+
+pool.on('acquire', () => {
+  console.log('Connection acquired from pool');
+});
+
+pool.on('release', () => {
+  console.log('Connection released back to pool');
+});
+
+// Database health check function
+export async function checkDatabaseHealth() {
+  try {
+    const client = await pool.connect();
+    await client.query('SELECT 1');
+    client.release();
+    return true;
+  } catch (error) {
+    console.error('Database health check failed:', error);
+    return false;
+  }
+}
+
+// Graceful shutdown
+process.on('SIGINT', async () => {
+  console.log('Shutting down database pool...');
+  await pool.end();
+  process.exit(0);
+});
+
+process.on('SIGTERM', async () => {
+  console.log('Shutting down database pool...');
+  await pool.end();
+  process.exit(0);
 });
 
 export const db = drizzle(pool, { schema });

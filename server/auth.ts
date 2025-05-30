@@ -83,7 +83,18 @@ export function setupAuth(app: Express) {
             pool,
             tableName: 'session',
             createTableIfMissing: true,
-            pruneSessionInterval: 60
+            pruneSessionInterval: 60,
+            // Add better error handling for session store
+            errorLog: (error) => {
+                console.error('Session store error:', error.message);
+            },
+            // Retry configuration
+            conString: process.env.DATABASE_URL,
+            ttl: 30 * 24 * 60 * 60, // 30 days in seconds
+            schemaName: 'public',
+            // Connection timeout settings
+            connectTimeout: 10000,
+            queryTimeout: 10000
         }),
         name: 'admin.sid',
         cookie: {

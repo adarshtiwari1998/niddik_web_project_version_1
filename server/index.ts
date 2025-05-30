@@ -77,6 +77,25 @@ function setupSeoScheduler() {
 }
 
 (async () => {
+  // Check database health before starting server
+  const { checkDatabaseHealth } = await import("@db");
+  console.log('Checking database connection...');
+  
+  const isHealthy = await checkDatabaseHealth();
+  if (!isHealthy) {
+    console.error('Database health check failed. Retrying in 5 seconds...');
+    await new Promise(resolve => setTimeout(resolve, 5000));
+    
+    const retryHealthy = await checkDatabaseHealth();
+    if (!retryHealthy) {
+      console.error('Database is not accessible. Server will start but may have connection issues.');
+    } else {
+      console.log('Database connection successful on retry');
+    }
+  } else {
+    console.log('Database connection successful');
+  }
+  
   const server = await registerRoutes(app);
 
   // importantly only setup vite in development and after 
