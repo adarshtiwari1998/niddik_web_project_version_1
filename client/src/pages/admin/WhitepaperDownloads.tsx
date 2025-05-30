@@ -6,7 +6,7 @@ import { Input } from "@/components/ui/input";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
-import { Trash2, Search, Download, Mail, Building, User, Calendar, Globe } from "lucide-react";
+import { Trash2, Search, Download, Mail, Building, User, Calendar, Globe, TrendingUp, Users, FileText } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle, AlertDialogTrigger } from "@/components/ui/alert-dialog";
 import { LoadingScreen } from "@/components/ui/loading-screen";
@@ -43,20 +43,11 @@ const WhitepaperDownloads = () => {
 
   const limit = 10;
 
-  // Fetch whitepaper downloads
+  // Fetch all whitepaper downloads for client-side operations
   const { data: downloadsData, isLoading, error } = useQuery<WhitepaperDownloadsResponse>({
-    queryKey: ["whitepaperDownloads", currentPage, searchTerm],
+    queryKey: ["whitepaperDownloads"],
     queryFn: async () => {
-      const params = new URLSearchParams({
-        page: currentPage.toString(),
-        limit: limit.toString()
-      });
-
-      if (searchTerm && searchTerm.trim()) {
-        params.append('search', searchTerm.trim());
-      }
-
-      const response = await fetch(`/api/admin/whitepaper-downloads?${params}`, {
+      const response = await fetch(`/api/admin/whitepaper-downloads?page=1&limit=1000`, {
         credentials: 'include'
       });
 
@@ -70,6 +61,78 @@ const WhitepaperDownloads = () => {
     staleTime: 5 * 60 * 1000, // 5 minutes
     cacheTime: 10 * 60 * 1000, // 10 minutes
   });
+
+  // Client-side filtering and pagination
+  const filteredAndPaginatedData = useMemo(() => {
+    if (!downloadsData?.data) return { downloads: [], total: 0, totalPages: 0 };
+
+    let filtered = downloadsData.data;
+
+    // Client-side search
+    if (searchTerm.trim()) {
+      const searchLower = searchTerm.toLowerCase();
+      filtered = filtered.filter(download => 
+        download.fullName.toLowerCase().includes(searchLower) ||
+        download.workEmail.toLowerCase().includes(searchLower) ||
+        (download.company && download.company.toLowerCase().includes(searchLower))
+      );
+    }
+
+    const total = filtered.length;
+    const totalPages = Math.ceil(total / limit);
+    const startIndex = (currentPage - 1) * limit;
+    const endIndex = startIndex + limit;
+    const paginatedDownloads = filtered.slice(startIndex, endIndex);
+
+    return {
+      downloads: paginatedDownloads,
+      total,
+      totalPages,
+      allDownloads: downloadsData.data
+    };
+  }, [downloadsData?.data, searchTerm, currentPage, limit]);
+
+  // Analytics calculations
+  const analytics = useMemo(() => {
+    if (!downloadsData?.data) return null;
+
+    const allDownloads = downloadsData.data;
+    const totalDownloads = allDownloads.length;
+
+    // Unique companies
+    const uniqueCompanies = new Set(
+      allDownloads
+        .filter(d => d.company)
+        .map(d => d.company)
+    ).size;
+
+    // Downloads in last 7 days
+    const sevenDaysAgo = new Date();
+    sevenDaysAgo.setDate(sevenDaysAgo.getDate() - 7);
+    
+    const recentDownloads = allDownloads.filter(d => {
+      const downloadDate = new Date(d.downloadedAt || d.createdAt);
+      return downloadDate >= sevenDaysAgo;
+    }).length;
+
+    // Downloads today
+    const today = new Date();
+    today.setHours(0, 0, 0, 0);
+    const tomorrow = new Date(today);
+    tomorrow.setDate(tomorrow.getDate() + 1);
+
+    const todayDownloads = allDownloads.filter(d => {
+      const downloadDate = new Date(d.downloadedAt || d.createdAt);
+      return downloadDate >= today && downloadDate < tomorrow;
+    }).length;
+
+    return {
+      totalDownloads,
+      uniqueCompanies,
+      recentDownloads,
+      todayDownloads
+    };
+  }, [downloadsData?.data]);
 
   // Delete mutation
   const deleteMutation = useMutation({
@@ -103,13 +166,9 @@ const WhitepaperDownloads = () => {
     }
   });
 
-  // Handle search with debouncing
+  // Reset to first page when searching
   useEffect(() => {
-    const timeoutId = setTimeout(() => {
-      setCurrentPage(1); // Reset to first page when searching
-    }, 300);
-
-    return () => clearTimeout(timeoutId);
+    setCurrentPage(1);
   }, [searchTerm]);
 
   // Handle delete confirmation
@@ -155,9 +214,7 @@ const WhitepaperDownloads = () => {
     );
   }
 
-  const downloads = downloadsData?.data || [];
-  const totalDownloads = downloadsData?.total || 0;
-  const totalPages = Math.ceil(totalDownloads / limit);
+  const { downloads, total, totalPages } = filteredAndPaginatedData;
 
   return (
     <AdminLayout 
@@ -165,14 +222,71 @@ const WhitepaperDownloads = () => {
       description="Manage and track whitepaper download requests"
     >
       <div className="space-y-6">
+        {/* Analytics Cards */}
+        {analytics && (
+          <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
+            <Card>
+              <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+                <CardTitle className="text-sm font-medium">Total Downloads</CardTitle>
+                <FileText className="h-4 w-4 text-muted-foreground" />
+              </CardHeader>
+              <CardContent>
+                <div className="text-2xl font-bold">{analytics.totalDownloads}</div>
+                <p className="text-xs text-muted-foreground">
+                  All time downloads
+                </p>
+              </CardContent>
+            </Card>
+
+            <Card>
+              <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+                <CardTitle className="text-sm font-medium">Today's Downloads</CardTitle>
+                <TrendingUp className="h-4 w-4 text-muted-foreground" />
+              </CardHeader>
+              <CardContent>
+                <div className="text-2xl font-bold">{analytics.todayDownloads}</div>
+                <p className="text-xs text-muted-foreground">
+                  Downloads today
+                </p>
+              </CardContent>
+            </Card>
+
+            <Card>
+              <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+                <CardTitle className="text-sm font-medium">This Week</CardTitle>
+                <Calendar className="h-4 w-4 text-muted-foreground" />
+              </CardHeader>
+              <CardContent>
+                <div className="text-2xl font-bold">{analytics.recentDownloads}</div>
+                <p className="text-xs text-muted-foreground">
+                  Last 7 days
+                </p>
+              </CardContent>
+            </Card>
+
+            <Card>
+              <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+                <CardTitle className="text-sm font-medium">Unique Companies</CardTitle>
+                <Users className="h-4 w-4 text-muted-foreground" />
+              </CardHeader>
+              <CardContent>
+                <div className="text-2xl font-bold">{analytics.uniqueCompanies}</div>
+                <p className="text-xs text-muted-foreground">
+                  Different organizations
+                </p>
+              </CardContent>
+            </Card>
+          </div>
+        )}
+
         <Card>
           <CardHeader>
             <CardTitle className="flex items-center gap-2">
               <Download className="h-5 w-5" />
-              Whitepaper Downloads ({totalDownloads})
+              Whitepaper Downloads ({total})
             </CardTitle>
             <CardDescription>
-              Track and manage whitepaper download requests
+              Track and manage whitepaper download requests (Client-side search enabled)
             </CardDescription>
           </CardHeader>
           <CardContent>
@@ -187,6 +301,11 @@ const WhitepaperDownloads = () => {
                   className="pl-8"
                 />
               </div>
+              {searchTerm && (
+                <Badge variant="secondary">
+                  {total} result{total !== 1 ? 's' : ''} found
+                </Badge>
+              )}
             </div>
 
             {downloads.length === 0 ? (
@@ -308,7 +427,7 @@ const WhitepaperDownloads = () => {
                 {totalPages > 1 && (
                   <div className="flex items-center justify-between mt-6">
                     <div className="text-sm text-gray-600">
-                      Showing {downloads.length} of {totalDownloads} downloads
+                      Showing {downloads.length} of {total} downloads
                     </div>
                     <div className="flex gap-2">
                       <Button
