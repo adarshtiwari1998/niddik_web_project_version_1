@@ -762,7 +762,7 @@ const Navbar: React.FC<NavbarProps> = ({ hasAnnouncementAbove = true }) => {
               <Link href="/careers" className="text-andela-green" onClick={() => setIsMobileMenuOpen(false)}>Apply as Talent</Link>
             </div>
           </div>
-        </nav>
+        </div>
       </div>
     </header>
   );
