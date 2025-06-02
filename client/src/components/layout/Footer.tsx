@@ -347,7 +347,7 @@ const Footer = () => {
               <p className="text-sm text-gray-400">
                 © 2025 Niddik. All rights reserved.
               </p>
-              <p className="text-xs text-gray-500 mt-1">
+              {/* <p className="text-xs text-gray-500 mt-1">
                 Managed and maintained by{" "}
                 <a 
                   href="https://itweblens.com" 
@@ -357,7 +357,7 @@ const Footer = () => {
                 >
                   Itweblens.com
                 </a>
-              </p>
+              </p> */}
             </div>
             <div className="flex items-center gap-6">
               <Link href="/privacy-policy" className="text-sm text-gray-400 hover:text-white transition-colors">
