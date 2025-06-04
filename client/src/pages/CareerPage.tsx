@@ -195,7 +195,7 @@ export default function CareerPage() {
   const availableJobTypes = Array.from(new Set(data?.data.map(job => job.jobType).filter(Boolean))) || [];
   const availableExperienceLevels = Array.from(new Set(data?.data.map(job => job.experienceLevel).filter(Boolean))) || [];
 
-  // Filter the data client-side for real-time search
+  // Filter and sort the data client-side for real-time search
   const filteredJobs = data?.data.filter((job) => {
     const searchLower = search.toLowerCase().trim();
     const matchesSearch = searchLower === '' || 
@@ -221,6 +221,11 @@ export default function CareerPage() {
       (priority === 'featured' && job.featured);
 
     return matchesSearch && matchesCategory && matchesJobType && matchesExperienceLevel && matchesPriority;
+  }).sort((a, b) => {
+    // Sort by posted date - newest first
+    const dateA = new Date(a.postedDate || '1970-01-01').getTime();
+    const dateB = new Date(b.postedDate || '1970-01-01').getTime();
+    return dateB - dateA; // Descending order (newest first)
   }) || [];
 
    // Pagination logic
