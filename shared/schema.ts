@@ -139,8 +139,8 @@ export const jobListingSchema = z.object({
   urgent: z.boolean().default(false),
   priority: z.boolean().default(false),
   isOpen: z.boolean().default(false),
-  postedDate: z.union([z.string(), z.date()]).optional(),
-  expiryDate: z.union([z.string(), z.date()]).optional(),
+  postedDate: z.string().optional(),
+  expiryDate: z.string().optional().nullable(),
   category: z.string().min(1, "Category is required"),
   skills: z.string().min(1, "Skills are required"),
 });
