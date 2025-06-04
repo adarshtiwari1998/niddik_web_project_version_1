@@ -292,8 +292,41 @@ export async function registerRoutes(app: Express): Promise<Server> {
   // Create a new job listing
   app.post('/api/job-listings', async (req: AuthenticatedRequest, res) => {
     try {
+      // Check if user is authenticated and is an admin
+      if (!req.isAuthenticated() || !req.user || req.user.role !== 'admin') {
+        return res.status(403).json({ 
+          success: false, 
+          message: "Unauthorized access" 
+        });
+      }
+
+      console.log('Creating job listing with data:', req.body);
+      
       const validatedData = jobListingSchema.parse(req.body);
-      const jobListing = await storage.createJobListing(validatedData);
+      
+      // Ensure postedDate is properly formatted as ISO string
+      const formattedData = {
+        ...validatedData,
+        postedDate: validatedData.postedDate ? new Date(validatedData.postedDate).toISOString() : new Date().toISOString(),
+        expiryDate: validatedData.expiryDate ? new Date(validatedData.expiryDate).toISOString() : null
+      };
+      
+      console.log('Formatted job data for creation:', formattedData);
+      
+      const jobListing = await storage.createJobListing(formattedData);
+
+      // Verify the job was actually inserted by fetching it
+      try {
+        const createdJob = await storage.getJobListingById(jobListing.id);
+        console.log('Verification: Job found in database:', createdJob);
+        
+        if (!createdJob) {
+          console.error('Verification: Job was not found in database after creation');
+          throw new Error('Job creation verification failed');
+        }
+      } catch (verificationError) {
+        console.error('Verification: Error checking created job:', verificationError);
+      }
 
       // Automatically update SEO pages with new job data
       try {

@@ -222,23 +222,33 @@ export default function JobForm() {
 
   // Create job mutation
   const createMutation = useMutation({
-    mutationFn: (data: z.infer<typeof formSchema>) => 
-      apiRequest("POST", "/api/job-listings", data),
-    onSuccess: () => {
+    mutationFn: async (data: z.infer<typeof formSchema>) => {
+      console.log("Mutation: Sending data to API:", data);
+      const response = await apiRequest("POST", "/api/job-listings", data);
+      const result = await response.json();
+      console.log("Mutation: API response:", result);
+      if (!response.ok) {
+        throw new Error(result.message || 'Failed to create job listing');
+      }
+      return result;
+    },
+    onSuccess: (result) => {
+      console.log("Mutation: Job created successfully:", result);
       queryClient.invalidateQueries({ queryKey: ["/api/job-listings"] });
+      queryClient.invalidateQueries({ queryKey: ["/api/job-listings-all"] });
       toast({
         title: "Job listing created",
         description: "Your job listing has been created successfully.",
       });
       navigate("/admin/jobs");
     },
-    onError: (error) => {
+    onError: (error: any) => {
+      console.error("Mutation: Error creating job listing:", error);
       toast({
         title: "Error",
-        description: "There was an error creating the job listing. Please try again.",
+        description: error.message || "There was an error creating the job listing. Please try again.",
         variant: "destructive",
       });
-      console.error("Error creating job listing:", error);
     },
   });
 
@@ -274,11 +284,28 @@ export default function JobForm() {
   function onSubmit(data: z.infer<typeof formSchema>) {
     console.log("Form submission data:", data);
 
-    // Convert dates to timestamps ISO format
+    // Convert dates to timestamps ISO format and ensure all required fields are present
     const formattedData = {
-      ...data,
-      expiryDate: data.expiryDate ? new Date(data.expiryDate).toISOString() : null,
-      postedDate: new Date().toISOString()
+      title: data.title,
+      company: data.company,
+      location: data.location,
+      jobType: data.jobType,
+      experienceLevel: data.experienceLevel,
+      salary: data.salary,
+      description: data.description,
+      requirements: data.requirements,
+      benefits: data.benefits || "",
+      applicationUrl: data.applicationUrl || "",
+      contactEmail: data.contactEmail || "",
+      status: data.status || "active",
+      featured: Boolean(data.featured),
+      urgent: Boolean(data.urgent),
+      priority: Boolean(data.priority),
+      isOpen: Boolean(data.isOpen),
+      category: data.category,
+      skills: data.skills,
+      postedDate: new Date().toISOString(),
+      expiryDate: data.expiryDate ? new Date(data.expiryDate).toISOString() : null
     };
 
     console.log("Formatted submission data:", formattedData);

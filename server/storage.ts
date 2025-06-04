@@ -301,8 +301,38 @@ export const storage = {
   },
 
   async createJobListing(data: InsertJobListing): Promise<JobListing> {
-    const [jobListing] = await db.insert(jobListings).values(data).returning();
-    return jobListing;
+    try {
+      console.log('Storage: Creating job listing with data:', data);
+      
+      const [jobListing] = await db.insert(jobListings).values({
+        title: data.title,
+        company: data.company,
+        location: data.location,
+        jobType: data.jobType,
+        experienceLevel: data.experienceLevel,
+        salary: data.salary,
+        description: data.description,
+        requirements: data.requirements,
+        benefits: data.benefits || null,
+        applicationUrl: data.applicationUrl || null,
+        contactEmail: data.contactEmail || null,
+        status: data.status || 'active',
+        featured: data.featured || false,
+        urgent: data.urgent || false,
+        priority: data.priority || false,
+        isOpen: data.isOpen || false,
+        postedDate: data.postedDate || new Date().toISOString(),
+        expiryDate: data.expiryDate || null,
+        category: data.category,
+        skills: data.skills
+      }).returning();
+      
+      console.log('Storage: Job listing created successfully:', jobListing);
+      return jobListing;
+    } catch (error) {
+      console.error('Storage: Error creating job listing:', error);
+      throw error;
+    }
   },
 
   async updateJobListing(id: number, data: Partial<InsertJobListing>): Promise<JobListing | undefined> {
