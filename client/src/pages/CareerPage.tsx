@@ -637,25 +637,23 @@ export default function CareerPage() {
 
                     return (
                       <CardComponent key={job.id}>
-                        <CardHeader className="pb-3 relative">
-                          {/* NEW Badge - Top Right */}
-                          {isJobNew(job.postedDate) && (
-                            <div className="absolute top-3 right-3 z-10">
-                              <Badge className="bg-gradient-to-r from-emerald-500 to-teal-500 text-white text-xs font-bold px-3 py-1 rounded-full shadow-lg animate-pulse">
-                                ✨ NEW
-                              </Badge>
-                            </div>
-                          )}
-                          
-                          <div className="space-y-3 pr-16">
+                        <CardHeader className="pb-3">
+                          <div className="space-y-3">
                             {/* Title and Company - Full Width */}
                             <div className="w-full">
                               <CardTitle className="text-lg font-semibold mb-1">{job.title}</CardTitle>
                               <CardDescription className="text-sm">{job.company}</CardDescription>
                             </div>
 
-                            {/* Other Badges - Full Width Row */}
+
+
+                            {/* Badges - Full Width Row */}
                             <div className="flex flex-wrap gap-2">
+                              {isJobNew(job.postedDate) && (
+                                <Badge className="bg-gradient-to-r from-emerald-500 to-teal-500 text-white text-xs font-bold px-3 py-1 rounded-full shadow-lg animate-pulse">
+                                  ✨ NEW
+                                </Badge>
+                              )}
                               {job.featured && (
                                 <Badge className="bg-blue-100 text-blue-800 hover:bg-blue-200 text-xs">Featured</Badge>
                               )}
@@ -920,25 +918,22 @@ export default function CareerPage() {
 
                   return (
                     <CardComponent key={job.id}>
-                      <CardHeader className="pb-3 relative">
-                        {/* NEW Badge - Top Right */}
-                        {isJobNew(job.postedDate) && (
-                          <div className="absolute top-3 right-3 z-10">
-                            <Badge className="bg-gradient-to-r from-emerald-500 to-teal-500 text-white text-xs font-bold px-3 py-1 rounded-full shadow-lg animate-pulse">
-                              ✨ NEW
-                            </Badge>
-                          </div>
-                        )}
-                        
-                        <div className="space-y-3 pr-16">
+                      <CardHeader className="pb-3">
+                        <div className="space-y-3">
                           {/* Title and Company - Full Width */}
                           <div className="w-full">
                             <CardTitle className="text-lg font-semibold mb-1">{job.title}</CardTitle>
                             <CardDescription className="text-sm">{job.company}</CardDescription>
                           </div>
 
-                          {/* Other Badges - Full Width Row */}
+
+                          {/* Badges - Full Width Row */}
                           <div className="flex flex-wrap gap-2">
+                            {isJobNew(job.postedDate) && (
+                              <Badge className="bg-gradient-to-r from-emerald-500 to-teal-500 text-white text-xs font-bold px-3 py-1 rounded-full shadow-lg animate-pulse">
+                                ✨ NEW
+                              </Badge>
+                            )}
                             {job.featured && (
                               <Badge className="bg-blue-100 text-blue-800 hover:bg-blue-200 text-xs">Featured</Badge>
                             )}
