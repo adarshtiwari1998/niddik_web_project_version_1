@@ -1034,7 +1034,7 @@ const handleResumeRemove = async () => {
                   <CardHeader className="pb-4">
                     <div className="flex items-center gap-4">
                       <img 
-                        src="https://c97bc9b7-d459-4d54-aa25-a500aa3482fe-00-17pkxb2ueb99z.sisko.replit.dev/images/niddik_logo.png"
+                        src="https://niddik.com/images/niddik_logo.png"
                         alt="Niddik Logo"
                         className="w-16 h-16 object-contain flex-shrink-0"
                       />
