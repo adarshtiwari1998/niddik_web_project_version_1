@@ -902,13 +902,17 @@ const WhitepaperPage = () => {
             </p>
 
             <div className="flex flex-wrap justify-center gap-4">
+              <Link href="/whitepaper" target="_blank" rel="noopener noreferrer">
               <Button size="lg" className="bg-green-600 hover:bg-green-700 text-white gap-2">
                 <Download className="h-5 w-5" />
                 Download Whitepaper
               </Button>
+              </Link>
+              <Link href="/contact" target="_blank" rel="noopener noreferrer">
               <Button size="lg" variant="outline" className="border-white text-white hover:bg-white hover:text-blue-900 bg-transparent">
                 Contact Sales
               </Button>
+              </Link>
             </div>
           </div>
         </section>
