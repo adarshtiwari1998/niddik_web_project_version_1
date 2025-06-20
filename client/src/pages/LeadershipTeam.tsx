@@ -24,40 +24,46 @@ const LeadershipTeam = () => {
       name: "Mr. Abhishek Anchal",
       title: "CEO / Partner",
       company: "NIDDIK (An IT Division of NIDDIKKARE LLP)",
-      image: "https://res.cloudinary.com/dhanz6zty/image/upload/v1748340984/niddik-leader-ship-team-mr-abhishek_dm2jal.png",
+      image: "https://res.cloudinary.com/dw4glwrrn/image/upload/v1750407771/niddik-leader-ship-team-mr-abhishek_vlrt6l.png",
       expertise: ["HR Management", "Talent Acquisition", "Strategic Leadership", "Organizational Development"],
       experience: "20+ Years",
       description: "A visionary Human Resources leader with a distinguished career spanning over 20 years, marked by a relentless pursuit of excellence in strategic HR management, talent acquisition, and organizational development. With an MBA degree in Human Resource Management from Corllins University - USA, complemented by a strong foundation in Applied Mathematics from University of South Carolina - USA.",
       fullBio: "Mr. Anchal brings a unique fusion of analytical acumen, business savvy, and interpersonal expertise to his work. Throughout his illustrious career, he has successfully navigated diverse business landscapes in the USA and India, developing a profound understanding of cultural nuances, HR best practices, and regulatory requirements. As a strategic HR thought leader, he has consistently demonstrated his ability to drive organizational growth, foster talent development, and craft innovative recruitment strategies that meet business objectives. With a proven track record of building and managing high-performing teams, designing and implementing cutting-edge HR programs, and providing strategic HR guidance to senior leadership, he has made a lasting impact on his organizations. His expertise in talent management, succession planning, and performance management has enabled companies to optimize their workforce, drive business success, and achieve their goals. As a trusted advisor to senior leaders, Mr. Anchal continues to leverage his expertise to drive HR innovation, promote diversity and inclusion, and build strong, agile organizations that thrive in an ever-changing business landscape.",
       icon: <Users className="w-8 h-8" />,
       color: "from-green-500 to-emerald-500",
-      bgPattern: "bg-gradient-to-br from-green-50 to-emerald-50"
+      bgPattern: "bg-gradient-to-br from-green-50 to-emerald-50",
+      mail: "mailto:aanchal@niddik.com",
+      linkedin: "https://www.linkedin.com/in/aanchal/"
     },
     {
       name: "Dr. Samar Husain Naqvi",
       title: "Managing Director / CO-Founder",
       company: "NIDDIKKARE LLP",
-      image: "https://res.cloudinary.com/dhanz6zty/image/upload/v1748340984/niddik-leader-ship-team-samar-husain_gczwmu.png",
+      image: "https://res.cloudinary.com/dw4glwrrn/image/upload/v1750407773/niddik-leader-ship-team-samar-husain_bkdyrz.png",
       expertise: ["Biotechnology", "Life Sciences", "Genomics", "Molecular Biology"],
       experience: "25+ Years",
       description: "A trailblazing expert in biotechnology and life sciences, renowned for his groundbreaking work in genomics, molecular biology, and microbiology. With a career spanning over 25 years, he has established himself as a leading authority in the development of innovative diagnostic solutions, leveraging cutting-edge technologies to drive medical advancements.",
       fullBio: "As a visionary leader, he has held pivotal roles in esteemed corporate organizations, where he has successfully spearheaded the design, development, and manufacturing of in vitro diagnostic medical devices. His expertise in navigating complex regulatory landscapes has ensured the seamless translation of research findings into clinically validated diagnostic tools, ultimately enhancing patient care and outcomes. His research has been instrumental in elucidating the molecular mechanisms underlying various diseases, shedding light on novel biomarkers, and informing the development of targeted therapeutic strategies. Through his mentorship and leadership, he has fostered a new generation of scientists and researchers, imbuing them with a passion for discovery and a commitment to excellence. As a testament to his dedication and expertise, Dr. Naqvi has garnered numerous accolades and recognition within the scientific community, solidifying his position as a luminary in the field of biotechnology and life sciences.",
       icon: <Microscope className="w-8 h-8" />,
       color: "from-blue-500 to-cyan-500",
-      bgPattern: "bg-gradient-to-br from-blue-50 to-cyan-50"
+      bgPattern: "bg-gradient-to-br from-blue-50 to-cyan-50",
+      mail: "mailto:samar@niddikkare.com",
+      linkedin: "https://www.linkedin.com/in/dr-samar-husain-naqvi-1b73a013/"
     },
     {
       name: "Dr. Abhishek Chanchal",
       title: "Director & Co-Founder",
       company: "NIDDIKKARE LLP",
-      image: "https://res.cloudinary.com/dhanz6zty/image/upload/v1748341074/niddik-leader-ship-team-dr-abhishek_jwetmz.png",
+      image: "https://res.cloudinary.com/dw4glwrrn/image/upload/v1750407770/niddik-leader-ship-team-dr-abhishek_sy7jlk.png",
       expertise: ["Nanomedicine", "Biotechnology", "Drug Delivery", "Research"],
       experience: "15+ Years",
       description: "A highly accomplished researcher and scientist with over 15+ years' strong foundation in the fields of nanomedicine and biotechnology. Holding a Ph.D. in Bio-Science (Nanomedicine) from the esteemed Jamia Millia Islamia, Delhi, he has developed a profound expertise in the design, formulation, and characterization of nanoparticles for targeted drug delivery.",
       fullBio: "His research focuses on harnessing the potential of nanotechnology to create innovative solutions for complex medical challenges, with a particular emphasis on improving the efficacy and safety of therapeutic interventions. With a deep understanding of the intricate interactions between nanoparticles and biological systems, he has successfully developed novel nanoscale systems that can selectively target diseased cells, reducing side effects and enhancing treatment outcomes. His work has significant implications for the development of personalized medicine and has the potential to revolutionize the field of drug delivery and treatment of various diseases, including cancer, neurological disorders, and infectious diseases. Through his groundbreaking research, Dr. Chanchal continues to contribute to the advancement of nanomedicine and biotechnology, pushing the boundaries of scientific knowledge and innovation, and inspiring future generations of researchers and scientists.",
       icon: <Award className="w-8 h-8" />,
       color: "from-purple-500 to-pink-500",
-      bgPattern: "bg-gradient-to-br from-purple-50 to-pink-50"
+      bgPattern: "bg-gradient-to-br from-purple-50 to-pink-50",
+       mail: "mailto:abhishek@niddikkare.com",
+      linkedin: "https://www.linkedin.com/in/dr-abhishek-chanchal-42007457/"
     },
   ];
 
@@ -271,7 +277,7 @@ const LeadershipTeam = () => {
                           Read Full Biography
                         </span>
                       </Button>
-                      
+                    <Link href={leader.mail}>
                       <Button 
                         variant="outline" 
                         className={`border-2 hover:bg-gray-50 px-6 py-3 font-medium transition-all`}
@@ -284,6 +290,24 @@ const LeadershipTeam = () => {
                           Connect
                         </span>
                       </Button>
+                      </Link>
+                       {/* New LinkedIn Button */}
+                      {leader.linkedin && ( // Conditionally render if linkedin property exists
+                          <Link href={leader.linkedin} target="_blank" rel="noopener noreferrer"> {/* target="_blank" and rel="noopener noreferrer" for opening in new tab */}
+                              <Button
+                                  variant="outline"
+                                  className={`border-2 hover:bg-gray-50 px-6 py-3 font-medium transition-all`}
+                                  style={{
+                                      borderImage: `linear-gradient(to right, ${leader.color.split(' ')[1]}, ${leader.color.split(' ')[3]}) 1`
+                                  }}
+                              >
+                                  <span className="flex items-center">
+                                      <Linkedin className="mr-2 w-5 h-5" /> {/* LinkedIn Icon */}
+                                      LinkedIn
+                                  </span>
+                              </Button>
+                          </Link>
+                      )}
                     </div>
                   </div>
                 </div>
@@ -422,7 +446,8 @@ const LeadershipTeam = () => {
                     {leaders[selectedLeader].icon}
                   </div>
                   <div className="flex gap-4">
-                    <Button 
+                     <Link href={leaders[selectedLeader].mail}>
+                      <Button 
                       variant="outline"
                       onClick={() => setModalOpen(false)}
                       className="px-6 py-2"
@@ -435,6 +460,18 @@ const LeadershipTeam = () => {
                       <Mail className="mr-2 w-4 h-4" />
                       Connect
                     </Button>
+                      </Link>
+                    {/* New LinkedIn Button in Modal Footer */}
+                    {leaders[selectedLeader].linkedin && ( // Conditionally render if linkedin property exists
+                      <Link href={leaders[selectedLeader].linkedin} target="_blank" rel="noopener noreferrer">
+                        <Button
+                          className={`bg-gradient-to-r ${leaders[selectedLeader].color} text-white px-6 py-2`} // You can customize the styling here
+                        >
+                          <Linkedin className="mr-2 w-4 h-4" /> {/* LinkedIn Icon */}
+                          LinkedIn
+                        </Button>
+                      </Link>
+                    )}
                   </div>
                 </div>
               </div>

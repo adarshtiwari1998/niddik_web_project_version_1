@@ -244,7 +244,7 @@ const Hero = () => {
           onError={handleVideoError}
           style={{ minHeight: '100vh', objectPosition: 'center center' }}
         >
-          <source src="https://res.cloudinary.com/dhanz6zty/video/upload/v1748266865/Project_05-09_4K_MEDIUM_FR30_1_1_e8eetm.mp4" type="video/mp4" />
+          <source src="https://res.cloudinary.com/dw4glwrrn/video/upload/v1750407588/Project_05-09_4K_MEDIUM_FR30_1_1_upjz6y.mp4" type="video/mp4" />
           Your browser does not support the video tag.
         </video>
         

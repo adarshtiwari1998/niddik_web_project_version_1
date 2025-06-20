@@ -16,10 +16,11 @@ const AboutUs = () => {
       name: "Mr. Abhishek Anchal",
       role: "CEO / Partner",
        company: "NIDDIKKARE",
-      image: "https://res.cloudinary.com/dhanz6zty/image/upload/v1748340984/niddik-leader-ship-team-mr-abhishek_dm2jal.png",
+      image: "https://res.cloudinary.com/dw4glwrrn/image/upload/v1750407771/niddik-leader-ship-team-mr-abhishek_vlrt6l.png",
       bio: "With over 20 years of experience in talent acquisition, Abhishek has established himself as a renowned expert in the field of recruitment.",
       linkedinUrl: "https://www.linkedin.com/in/aanchal/",
       twitterUrl: "#",
+       mailUrl: "mailto:aanchal@niddik.com",
       fullBio: `Abhishek is a seasoned Talent Acquisition Professional with over 20 years of extensive experience in talent acquisition, he has established himself as a renowned expert in the field of recruitment. His impressive career trajectory, marked by progressive leadership roles and a strong academic foundation, is a testament to his dedication, passion, and commitment to excellence.
 
 Born with a natural aptitude for mathematics and computer science, Abhishek pursued his Bachelor's Degree in Applied Mathematics from the University of South Carolina (Conway) between 2000-2004. During his undergraduate studies, he also minored in Computer Science and Statistics, laying a solid foundation for his future career.
@@ -32,9 +33,10 @@ As Abhishek's career progressed, he took on increasingly senior leadership roles
       name: "Dr. Samar Husain Naqvi",
       role: "Managing Director / CO-Founder",
        company: "NIDDIKKARE",
-      image: "https://res.cloudinary.com/dhanz6zty/image/upload/v1748340984/niddik-leader-ship-team-samar-husain_gczwmu.png",
+      image: "https://res.cloudinary.com/dw4glwrrn/image/upload/v1750407773/niddik-leader-ship-team-samar-husain_bkdyrz.png",
       bio: "A trailblazing expert in biotechnology and life sciences, renowned for his groundbreaking work in genomics, molecular biology, and microbiology with over 25 years of experience.",
       linkedinUrl: " https://www.linkedin.com/in/dr-samar-husain-naqvi-1b73a013/",
+       mailUrl: "mailto:samar@niddikkare.com",
       twitterUrl: "#",
       fullBio: `Dr. Samar Husain Naqvi is a trailblazing expert in biotechnology and life sciences, renowned for his groundbreaking work in genomics, molecular biology, and microbiology. With a career spanning over 25 years, he has established himself as a leading authority in the development of innovative diagnostic solutions, leveraging cutting-edge technologies to drive medical advancements.
 
@@ -48,9 +50,10 @@ As a testament to his dedication and expertise, Dr. Naqvi has garnered numerous 
       name: "Dr. Abhishek Chanchal",
       role: "Director & Co-Founder",
       company: "NIDDIKKARE",
-      image: "https://res.cloudinary.com/dhanz6zty/image/upload/v1748341074/niddik-leader-ship-team-dr-abhishek_jwetmz.png",
+      image: "https://res.cloudinary.com/dw4glwrrn/image/upload/v1750407770/niddik-leader-ship-team-dr-abhishek_sy7jlk.png",
       bio: "A highly accomplished researcher and scientist with over 25 years' strong foundation in the fields of nanomedicine and biotechnology, holding a Ph.D. in Bio-Science (Nanomedicine).",
       linkedinUrl: "https://www.linkedin.com/in/dr-abhishek-chanchal-42007457/",
+      mailUrl: "mailto:abhishek@niddikkare.com",
       twitterUrl: "#",
       fullBio: `Dr. Abhishek Chanchal is a highly accomplished researcher and scientist with over 15+ years' strong foundation in the fields of nanomedicine and biotechnology. Holding a Ph.D. in Bio-Science (Nanomedicine) from the esteemed Jamia Millia Islamia, Delhi, he has developed a profound expertise in the design, formulation, and characterization of nanoparticles for targeted drug delivery.
 
@@ -470,7 +473,7 @@ His work has significant implications for the development of personalized medici
               {/* Main image container */}
               <div className="relative bg-white/10 backdrop-blur-sm rounded-2xl p-4 border border-white/30">
                 <img
-                  src="https://res.cloudinary.com/dhanz6zty/image/upload/v1748375787/niddik_about-us_Shri_Satyendra_Prasad_Shrivastava_v2_fjsdsg.png"
+                  src="https://res.cloudinary.com/dw4glwrrn/image/upload/v1750407768/niddik_about-us_Shri_Satyendra_Prasad_Shrivastava_v2_iojino.png"
                   alt="Late Shri Satyendra Prasad Shrivastava"
                   className="w-full h-auto max-h-96 object-contain rounded-xl shadow-2xl"
                 />
@@ -987,7 +990,7 @@ His work has significant implications for the development of personalized medici
                           LinkedIn
                         </a>
                         <a 
-                          href="#" 
+                          href={teamMembers[selectedTeamMember].mailUrl} 
                           className="inline-flex items-center bg-andela-green hover:bg-andela-dark text-white px-4 py-2 rounded-md font-medium transition-colors"
                         >
                           Contact
