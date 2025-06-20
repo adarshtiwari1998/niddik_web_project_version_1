@@ -277,7 +277,7 @@ const LeadershipTeam = () => {
                           Read Full Biography
                         </span>
                       </Button>
-                    <Link href={leader.mail}>
+                    <a href={leader.mail} target="_blank" rel="noopener noreferrer">
                       <Button 
                         variant="outline" 
                         className={`border-2 hover:bg-gray-50 px-6 py-3 font-medium transition-all`}
@@ -290,10 +290,10 @@ const LeadershipTeam = () => {
                           Connect
                         </span>
                       </Button>
-                      </Link>
+                      </a>
                        {/* New LinkedIn Button */}
                       {leader.linkedin && ( // Conditionally render if linkedin property exists
-                          <Link href={leader.linkedin} target="_blank" rel="noopener noreferrer"> {/* target="_blank" and rel="noopener noreferrer" for opening in new tab */}
+                          <a href={leader.linkedin} target="_blank" rel="noopener noreferrer"> {/* target="_blank" and rel="noopener noreferrer" for opening in new tab */}
                               <Button
                                   variant="outline"
                                   className={`border-2 hover:bg-gray-50 px-6 py-3 font-medium transition-all`}
@@ -306,7 +306,7 @@ const LeadershipTeam = () => {
                                       LinkedIn
                                   </span>
                               </Button>
-                          </Link>
+                          </a>
                       )}
                     </div>
                   </div>
@@ -446,7 +446,7 @@ const LeadershipTeam = () => {
                     {leaders[selectedLeader].icon}
                   </div>
                   <div className="flex gap-4">
-                     <Link href={leaders[selectedLeader].mail}>
+                     <a href={leaders[selectedLeader].mail}target="_blank" rel="noopener noreferrer">
                       <Button 
                       variant="outline"
                       onClick={() => setModalOpen(false)}
@@ -460,17 +460,17 @@ const LeadershipTeam = () => {
                       <Mail className="mr-2 w-4 h-4" />
                       Connect
                     </Button>
-                      </Link>
+                      </a>
                     {/* New LinkedIn Button in Modal Footer */}
                     {leaders[selectedLeader].linkedin && ( // Conditionally render if linkedin property exists
-                      <Link href={leaders[selectedLeader].linkedin} target="_blank" rel="noopener noreferrer">
+                      <a href={leaders[selectedLeader].linkedin} target="_blank" rel="noopener noreferrer">
                         <Button
                           className={`bg-gradient-to-r ${leaders[selectedLeader].color} text-white px-6 py-2`} // You can customize the styling here
                         >
                           <Linkedin className="mr-2 w-4 h-4" /> {/* LinkedIn Icon */}
                           LinkedIn
                         </Button>
-                      </Link>
+                      </a>
                     )}
                   </div>
                 </div>

@@ -932,7 +932,9 @@ His work has significant implications for the development of personalized medici
                         Read Full Bio <ExternalLink className="ml-2 h-4 w-4" />
                       </button>
                       <a 
-                        href="#"
+                        href={member.mailUrl} 
+                        target="_blank"
+                        rel="noopener noreferrer"
                         className="w-full border-2 border-andela-green text-andela-green hover:bg-andela-green hover:text-white px-4 py-3 rounded-lg font-medium transition-colors text-sm text-center"
                       >
                         Contact
@@ -989,7 +991,8 @@ His work has significant implications for the development of personalized medici
                         >
                           LinkedIn
                         </a>
-                        <a 
+                        <a target="_blank"
+                          rel="noopener noreferrer"
                           href={teamMembers[selectedTeamMember].mailUrl} 
                           className="inline-flex items-center bg-andela-green hover:bg-andela-dark text-white px-4 py-2 rounded-md font-medium transition-colors"
                         >
