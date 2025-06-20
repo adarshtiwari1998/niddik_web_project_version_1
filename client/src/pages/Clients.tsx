@@ -17,27 +17,27 @@ const Clients = () => {
   const clients = [
     {
       name: "KPMG",
-      logo: "https://res.cloudinary.com/dhanz6zty/image/upload/v1748372070/niddik_client_kpmg_hlzxx3.png",
+      logo: "https://res.cloudinary.com/dw4glwrrn/image/upload/v1750407769/niddik_client_kpmg_khnij5.png",
       description: "Global professional services firm providing audit, tax and advisory services"
     },
     {
       name: "Wimmer",
-      logo: "https://res.cloudinary.com/dhanz6zty/image/upload/v1748372070/niddik_client_wimmer_dpw6yf.png",
+      logo: "https://res.cloudinary.com/dw4glwrrn/image/upload/v1750407768/niddik_client_wimmer_jqzgwg.png",
       description: "Leading provider of innovative solutions and services"
     },
     {
       name: "Schneider Electric", 
-      logo: "https://res.cloudinary.com/dhanz6zty/image/upload/v1748559345/niddik_client_schneider-electric-v2_tlu18y.png",
+      logo: "https://res.cloudinary.com/dw4glwrrn/image/upload/v1750407765/niddik_client_schneider-electric-v2_iyoqaj.png",
       description: "Schneider Electric SE is a French multinational corporation that specializes in digital automation and energy management."
     },
     {
       name: "FACTORYFIX",
-      logo: "https://res.cloudinary.com/dhanz6zty/image/upload/v1748559345/niddik_client_factoryfix-v2_w97uc0.png",
+      logo: "https://res.cloudinary.com/dw4glwrrn/image/upload/v1750407767/niddik_client_factoryfix-v2_bgxr99.png",
       description: "FactoryFix maintains detailed profiles on over 2 million skilled manufacturing and trades professionals."
     },
     {
       name: "Google",
-      logo: "https://res.cloudinary.com/dhanz6zty/image/upload/v1748559344/niddik_client_google-v2_n6sn3b.png",
+      logo: "https://res.cloudinary.com/dw4glwrrn/image/upload/v1750407765/niddik_client_google-v2_xkjxx5.png",
       description: "Google LLC is an American multinational corporation and technology company."
     },
     // {

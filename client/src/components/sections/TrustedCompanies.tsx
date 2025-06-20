@@ -9,23 +9,23 @@ import "./marquee.css";
 const companies = [
   { 
     name: "KPMG", 
-    logo: <img src="https://res.cloudinary.com/dhanz6zty/image/upload/v1748372070/niddik_client_kpmg_hlzxx3.png" alt="KPMG" className="h-12 w-28 object-contain" />
+    logo: <img src="https://res.cloudinary.com/dw4glwrrn/image/upload/v1750407769/niddik_client_kpmg_khnij5.png" alt="KPMG" className="h-12 w-28 object-contain" />
   },
   { 
     name: "Wimmer", 
-    logo: <img src="https://res.cloudinary.com/dhanz6zty/image/upload/v1748372070/niddik_client_wimmer_dpw6yf.png" alt="Wimmer" className="h-12 w-28 object-contain" />
+    logo: <img src="https://res.cloudinary.com/dw4glwrrn/image/upload/v1750407768/niddik_client_wimmer_jqzgwg.png" alt="Wimmer" className="h-12 w-28 object-contain" />
   },
   { 
     name: "Schneider Electric", 
-    logo: <img src="https://res.cloudinary.com/dhanz6zty/image/upload/v1748559345/niddik_client_schneider-electric-v2_tlu18y.png" alt="Schneider Electric" className="h-12 w-28 object-contain" />
+    logo: <img src="https://res.cloudinary.com/dw4glwrrn/image/upload/v1750407765/niddik_client_schneider-electric-v2_iyoqaj.png" alt="Schneider Electric" className="h-12 w-28 object-contain" />
   },
   { 
     name: "FACTORYFIX", 
-    logo: <img src="https://res.cloudinary.com/dhanz6zty/image/upload/v1748559345/niddik_client_factoryfix-v2_w97uc0.png" alt="Factoryfix" className="h-12 w-28 object-contain" />
+    logo: <img src="https://res.cloudinary.com/dw4glwrrn/image/upload/v1750407767/niddik_client_factoryfix-v2_bgxr99.png" alt="Factoryfix" className="h-12 w-28 object-contain" />
   },
   { 
     name: "Google", 
-    logo: <img src="https://res.cloudinary.com/dhanz6zty/image/upload/v1748559344/niddik_client_google-v2_n6sn3b.png" alt="Google" className="h-12 w-28 object-contain" />
+    logo: <img src="https://res.cloudinary.com/dw4glwrrn/image/upload/v1750407765/niddik_client_google-v2_xkjxx5.png" alt="Google" className="h-12 w-28 object-contain" />
   },
   // { 
   //   name: "Nordstrom", 

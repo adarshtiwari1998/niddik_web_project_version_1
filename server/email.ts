@@ -162,7 +162,7 @@ class EmailService {
     <body>
         <div class="container">
             <div class="header">
-                <img src="https://res.cloudinary.com/dhanz6zty/image/upload/v1748531500/Niddik-Assets/seo-meta/seo-meta_1748531498908_niddik_logo.png" alt="NiDDiK Logo" class="logo" />
+                <img src="https://res.cloudinary.com/dw4glwrrn/image/upload/v1750407558/niddik_logo_bggkc9.png" alt="NiDDiK Logo" class="logo" />
                 <div class="tagline">Connecting People, Changing Lives</div>
             </div>
 
@@ -171,7 +171,7 @@ class EmailService {
             </div>
 
             <div class="footer">
-                <img src="https://res.cloudinary.com/dhanz6zty/image/upload/v1748531500/Niddik-Assets/seo-meta/seo-meta_1748531498908_niddik_logo.png" alt="NiDDiK Logo" class="footer-logo" />
+                <img src="https://res.cloudinary.com/dw4glwrrn/image/upload/v1750407558/niddik_logo_bggkc9.png" alt="NiDDiK Logo" class="footer-logo" />
                 <p><strong>NiDDiK</strong> - Premier IT Recruitment & Staffing Solutions</p>
                 <div class="footer-links">
                     <a href="https://niddik.com">Website</a> |

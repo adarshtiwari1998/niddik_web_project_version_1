@@ -2587,7 +2587,7 @@ app.put('/api/profile', async (req: AuthenticatedRequest, res) => {
       const download = await storage.createWhitepaperDownload(validatedData);
 
       // Send download email
-      const downloadUrl = 'https://res.cloudinary.com/dhanz6zty/image/upload/v1748588647/Niddik_Whitepaper_mxfvwa.pdf';
+      const downloadUrl = 'https://res.cloudinary.com/dw4glwrrn/image/upload/v1750410711/Niddik_Whitepaper_rjp3ui.pdf';
       await emailService.sendWhitepaperDownloadEmail(
         workEmail,
         fullName,

@@ -1375,7 +1375,7 @@ function SubmittedCandidates() {
                     </DialogDescription>
                   </div>
                   <a 
-                    href="https://res.cloudinary.com/dhanz6zty/raw/upload/v1748032463/Import_from_Sheet___Niddik_-_Sheet1_1_ujofic.csv"
+                    href="https://res.cloudinary.com/dw4glwrrn/raw/upload/v1750409932/Import_from_Sheet___Niddik_-_Sheet1_1_ujofic_uthftf.csv"
                     target="_blank">
                     View Sample Format
                   </a>
