@@ -653,13 +653,42 @@ export default function Candidates() {
                               {application.user?.expectedCtc || "-"}
                             </div>
                           </TableCell>
-                          <TableCell>
-                            <div className="max-w-[250px]">
-                              <span className="text-xs text-gray-600">
-                                {application.skills || 'Not specified'}
-                              </span>
+                         <TableCell>
+    <div className="max-w-[250px]">
+        {application.user?.skills ? ( // Assuming skills are now under application.user.skills
+            <div>
+                <span className="text-xs text-gray-600 block">
+                    {application.user.skills.split('\n').slice(0, 3).join('\n')}
+                    {application.user.skills.split('\n').length > 3 && '...'}
+                </span>
+                {application.user.skills.split('\n').length > 3 && (
+                    <Dialog>
+                        <DialogTrigger asChild>
+                            <Button variant="link" size="sm" className="p-0 h-auto text-xs text-blue-600">
+                                Read More
+                            </Button>
+                        </DialogTrigger>
+                        <DialogContent className="max-w-2xl">
+                            <DialogHeader>
+                                <DialogTitle>Candidate Skills</DialogTitle>
+                                <DialogDescription>
+                                    All skills provided by {application.user?.fullName || 'Unknown User'}
+                                </DialogDescription>
+                            </DialogHeader>
+                            <div className="mt-4">
+                                <p className="text-sm leading-relaxed whitespace-pre-wrap">
+                                    {application.user.skills}
+                                </p>
                             </div>
-                          </TableCell>
+                        </DialogContent>
+                    </Dialog>
+                )}
+            </div>
+        ) : (
+            <span className="text-xs text-gray-500">Not specified</span>
+        )}
+    </div>
+</TableCell>
                           <TableCell>
                             <div className="flex items-center">
                               <Calendar className="h-3 w-3 mr-1" />
