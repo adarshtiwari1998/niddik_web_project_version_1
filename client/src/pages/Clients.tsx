@@ -30,11 +30,11 @@ const Clients = () => {
       logo: "https://res.cloudinary.com/dw4glwrrn/image/upload/v1750407765/niddik_client_schneider-electric-v2_iyoqaj.png",
       description: "Schneider Electric SE is a French multinational corporation that specializes in digital automation and energy management."
     },
-    {
-      name: "FACTORYFIX",
-      logo: "https://res.cloudinary.com/dw4glwrrn/image/upload/v1750407767/niddik_client_factoryfix-v2_bgxr99.png",
-      description: "FactoryFix maintains detailed profiles on over 2 million skilled manufacturing and trades professionals."
-    },
+    // {
+    //   name: "FACTORYFIX",
+    //   logo: "https://res.cloudinary.com/dw4glwrrn/image/upload/v1750407767/niddik_client_factoryfix-v2_bgxr99.png",
+    //   description: "FactoryFix maintains detailed profiles on over 2 million skilled manufacturing and trades professionals."
+    // },
     {
       name: "Google",
       logo: "https://res.cloudinary.com/dw4glwrrn/image/upload/v1750407765/niddik_client_google-v2_xkjxx5.png",

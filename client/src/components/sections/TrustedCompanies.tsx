@@ -19,10 +19,10 @@ const companies = [
     name: "Schneider Electric", 
     logo: <img src="https://res.cloudinary.com/dw4glwrrn/image/upload/v1750407765/niddik_client_schneider-electric-v2_iyoqaj.png" alt="Schneider Electric" className="h-12 w-28 object-contain" />
   },
-  { 
-    name: "FACTORYFIX", 
-    logo: <img src="https://res.cloudinary.com/dw4glwrrn/image/upload/v1750407767/niddik_client_factoryfix-v2_bgxr99.png" alt="Factoryfix" className="h-12 w-28 object-contain" />
-  },
+  // { 
+  //   name: "FACTORYFIX", 
+  //   logo: <img src="https://res.cloudinary.com/dw4glwrrn/image/upload/v1750407767/niddik_client_factoryfix-v2_bgxr99.png" alt="Factoryfix" className="h-12 w-28 object-contain" />
+  // },
   { 
     name: "Google", 
     logo: <img src="https://res.cloudinary.com/dw4glwrrn/image/upload/v1750407765/niddik_client_google-v2_xkjxx5.png" alt="Google" className="h-12 w-28 object-contain" />
