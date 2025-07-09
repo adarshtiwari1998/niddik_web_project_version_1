@@ -18,11 +18,11 @@ export async function convertDocToPdf(file: Express.Multer.File): Promise<Conver
   const convertedName = `${baseName}.pdf`;
   
   try {
-    if (fileExtension === '.docx') {
-      console.log(`Converting DOCX file to PDF:`, file.originalname);
+    if (fileExtension === '.docx' || fileExtension === '.doc') {
+      console.log(`Converting ${fileExtension.toUpperCase()} file to PDF:`, file.originalname);
       
       try {
-        // Convert DOCX to HTML using mammoth
+        // Convert DOC/DOCX to HTML using mammoth
         const result = await mammoth.convertToHtml({ buffer: file.buffer });
         const html = result.value;
         
@@ -75,23 +75,15 @@ export async function convertDocToPdf(file: Express.Multer.File): Promise<Conver
           convertedName
         };
       } catch (conversionError) {
-        console.error('Error during DOCX to PDF conversion:', conversionError);
+        console.error(`Error during ${fileExtension.toUpperCase()} to PDF conversion:`, conversionError);
         
         return {
           success: false,
           originalName: file.originalname,
           convertedName,
-          error: 'Failed to convert DOCX to PDF'
+          error: `Failed to convert ${fileExtension.toUpperCase()} to PDF: ${conversionError instanceof Error ? conversionError.message : 'Unknown error'}`
         };
       }
-    } else if (fileExtension === '.doc') {
-      console.log(`DOC file format not supported for conversion:`, file.originalname);
-      return {
-        success: false,
-        originalName: file.originalname,
-        convertedName,
-        error: 'DOC file format conversion not supported. Please use DOCX format instead.'
-      };
     } else {
       // Not a DOC/DOCX file, return as is
       return {

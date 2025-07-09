@@ -1303,7 +1303,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
         let finalFilename = file.originalname;
         let wasConverted = false;
         
-        if (fileExtension === 'docx') {
+        if (fileExtension === 'docx' || fileExtension === 'doc') {
           console.log('Converting DOC/DOCX to PDF:', file.originalname);
           
           const conversionResult = await convertDocToPdf(file);

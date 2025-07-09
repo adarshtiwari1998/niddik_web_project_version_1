@@ -299,7 +299,7 @@ const AuthPage = () => {
       if (converted) {
         toast({
           title: 'File converted successfully',
-          description: `Your DOCX file has been converted to PDF: ${filename}`,
+          description: `Your ${file.name.endsWith('.docx') ? 'DOCX' : 'DOC'} file has been converted to PDF: ${filename}`,
         });
       }
 
@@ -864,7 +864,7 @@ const AuthPage = () => {
                                                 PDF, DOCX or DOC (MAX. 5MB)
                                               </p>
                                               <p className="text-xs text-blue-600 mt-1">
-                                                DOCX files will be automatically converted to PDF
+                                                DOC and DOCX files will be automatically converted to PDF
                                               </p>
                                             </>
                                           )}
