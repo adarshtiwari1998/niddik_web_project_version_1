@@ -149,7 +149,7 @@ const Hero = () => {
     // Fetch jobs for marquee
     const fetchJobs = async () => {
       try {
-        const response = await fetch('/api/job-listings');
+        const response = await fetch('/api/job-listings?status=active&page=1&limit=1000');
         if (response.ok) {
           const data = await response.json();
           // Only keep id and title for simplified marquee
