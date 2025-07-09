@@ -29,7 +29,7 @@ export default function CareerPage() {
   const [experienceLevel, setExperienceLevel] = useState("all_levels");
   const [priority, setPriority] = useState("all_priorities");
   const [currentPage, setCurrentPage] = useState(1);
-  const jobsPerPage = 10; // Define the number of jobs to display per page
+  const jobsPerPage = 50; // Define the number of jobs to display per page
 
 
   const { data, isLoading, error } = useQuery<{ data: JobListing[], meta: { total: number, pages: number } }>({
@@ -592,7 +592,7 @@ export default function CareerPage() {
                   <h2 className="text-2xl font-bold">Available Positions</h2>
                   {data && (
                     <p className="text-muted-foreground">
-                      Showing {filteredJobs.length} of {data.meta.total} opportunities
+                      Showing {currentJobs.length} of {filteredJobs.length} filtered jobs ({data.meta.total} total active jobs)
                     </p>
                   )}
                 </div>
@@ -873,7 +873,7 @@ export default function CareerPage() {
                 <h2 className="text-2xl font-bold">Available Positions</h2>
                 {data && (
                   <p className="text-muted-foreground">
-                    Showing {filteredJobs.length} of {data.meta.total} opportunities
+                    Showing {currentJobs.length} of {filteredJobs.length} filtered jobs ({data.meta.total} total active jobs)
                   </p>
                 )}
               </div>
