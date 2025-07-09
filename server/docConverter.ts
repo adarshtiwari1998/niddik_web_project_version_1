@@ -3,6 +3,8 @@ import fs from 'fs';
 import path from 'path';
 import { randomBytes } from 'crypto';
 import htmlPdf from 'html-pdf-node';
+import { PDFDocument, rgb, StandardFonts } from 'pdf-lib';
+import { convert } from 'html-to-text';
 
 interface ConversionResult {
   success: boolean;
@@ -10,6 +12,57 @@ interface ConversionResult {
   originalName: string;
   convertedName: string;
   error?: string;
+}
+
+// Helper function to create a simple PDF using pdf-lib
+async function createSimplePdf(textContent: string, title: string): Promise<Buffer> {
+  const pdfDoc = await PDFDocument.create();
+  const timesRomanFont = await pdfDoc.embedFont(StandardFonts.TimesRoman);
+  const helveticaFont = await pdfDoc.embedFont(StandardFonts.Helvetica);
+  
+  const pages = [];
+  const lines = textContent.split('\n');
+  const pageHeight = 792; // A4 page height in points
+  const pageWidth = 612; // A4 page width in points
+  const margin = 50;
+  const lineHeight = 14;
+  const maxLinesPerPage = Math.floor((pageHeight - 2 * margin) / lineHeight);
+  
+  for (let i = 0; i < lines.length; i += maxLinesPerPage) {
+    const page = pdfDoc.addPage([pageWidth, pageHeight]);
+    const pageLines = lines.slice(i, i + maxLinesPerPage);
+    
+    let yPosition = pageHeight - margin;
+    
+    // Add title on first page
+    if (i === 0) {
+      page.drawText(title, {
+        x: margin,
+        y: yPosition,
+        size: 16,
+        font: helveticaFont,
+        color: rgb(0, 0, 0)
+      });
+      yPosition -= lineHeight * 2;
+    }
+    
+    // Add content lines
+    pageLines.forEach(line => {
+      if (yPosition > margin) {
+        page.drawText(line.substring(0, 100), { // Limit line length
+          x: margin,
+          y: yPosition,
+          size: 11,
+          font: timesRomanFont,
+          color: rgb(0, 0, 0)
+        });
+        yPosition -= lineHeight;
+      }
+    });
+  }
+  
+  const pdfBytes = await pdfDoc.save();
+  return Buffer.from(pdfBytes);
 }
 
 export async function convertDocToPdf(file: Express.Multer.File): Promise<ConversionResult> {
@@ -53,18 +106,32 @@ export async function convertDocToPdf(file: Express.Multer.File): Promise<Conver
           </html>
         `;
         
-        // Generate PDF from HTML
-        const options = {
-          format: 'A4',
-          border: {
-            top: '1in',
-            right: '1in',
-            bottom: '1in',
-            left: '1in'
-          }
-        };
-        
-        const pdfBuffer = await htmlPdf.generatePdf({ content: styledHtml }, options);
+        // Try to generate PDF from HTML using html-pdf-node first
+        let pdfBuffer: Buffer;
+        try {
+          const options = {
+            format: 'A4',
+            border: {
+              top: '1in',
+              right: '1in',
+              bottom: '1in',
+              left: '1in'
+            }
+          };
+          
+          pdfBuffer = await htmlPdf.generatePdf({ content: styledHtml }, options);
+        } catch (puppeteerError) {
+          console.log('Puppeteer PDF generation failed, using fallback method:', puppeteerError);
+          
+          // Fallback: Use pdf-lib to create a simple PDF from text
+          const textContent = convert(html, {
+            wordwrap: 80,
+            preserveNewlines: true,
+            ignoreHref: true
+          });
+          
+          pdfBuffer = await createSimplePdf(textContent, baseName);
+        }
         
         console.log(`Successfully converted ${file.originalname} to PDF`);
         
