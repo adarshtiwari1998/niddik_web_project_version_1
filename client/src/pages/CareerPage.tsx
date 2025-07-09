@@ -214,6 +214,8 @@ export default function CareerPage() {
     const matchesJobType = jobType === 'all_types' || job.jobType === jobType;
     const matchesExperienceLevel = experienceLevel === 'all_levels' || job.experienceLevel === experienceLevel;
 
+    // Fixed priority filter logic - when priority is not "all_priorities", 
+    // at least one of the priority flags should be true
     const matchesPriority = priority === 'all_priorities' ||
       (priority === 'urgent' && job.urgent) ||
       (priority === 'priority' && job.priority) ||
