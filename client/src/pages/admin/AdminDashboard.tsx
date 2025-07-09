@@ -72,9 +72,9 @@ const AdminDashboard = () => {
   }, []);
 
   const { data: jobsData, isLoading: isLoadingJobs } = useQuery<{ data: JobListing[] }>({
-    queryKey: ['/api/job-listings'],
+    queryKey: ['/api/job-listings', { page: 1, limit: 1000 }],
     queryFn: async () => {
-      const res = await fetch('/api/job-listings', {
+      const res = await fetch('/api/job-listings?page=1&limit=1000', {
         headers: {
           'Cache-Control': 'no-cache',
           'Pragma': 'no-cache'
@@ -250,7 +250,7 @@ const AdminDashboard = () => {
     setIsRefreshing(true);
     try {
       await Promise.all([
-        queryClient.invalidateQueries({ queryKey: ['/api/job-listings'] }),
+        queryClient.invalidateQueries({ queryKey: ['/api/job-listings', { page: 1, limit: 1000 }] }),
         queryClient.invalidateQueries({ queryKey: ['/api/admin/applications'] }),
         queryClient.invalidateQueries({ queryKey: ['/api/submitted-candidates'] }),
         queryClient.invalidateQueries({ queryKey: ['/api/admin/demo-requests'] }),
