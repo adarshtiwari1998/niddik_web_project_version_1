@@ -26,6 +26,7 @@ import { resumeUpload, seoMetaUpload } from "./cloudinary";
 import { scrypt, randomBytes, timingSafeEqual } from "crypto";
 import { promisify } from "util";
 import { emailService } from "./email"; // Import the email service
+import multer from "multer";
 
 const scryptAsync = promisify(scrypt);
 
@@ -1257,6 +1258,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
   // API endpoint for uploading resume without authentication (for registration)
   app.post('/api/upload-resume', (req: Request, res: Response) => {
     console.log('Upload request received');
+    console.log('Request headers:', req.headers);
     
     resumeUpload.single('resume')(req, res, async (err) => {
       if (err) {
@@ -1268,6 +1270,10 @@ export async function registerRoutes(app: Express): Promise<Server> {
               message: 'File size must be less than 5MB' 
             });
           }
+          return res.status(400).json({ 
+            success: false, 
+            message: 'File upload error: ' + err.message 
+          });
         }
         return res.status(400).json({ 
           success: false, 
@@ -1324,8 +1330,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
         }
         return res.status(500).json({ 
           success: false, 
-          message: error instanceof Error ? error.message : 'Upload failed',
-          error: error
+          message: error instanceof Error ? error.message : 'Upload failed'
         });
       }
     });
