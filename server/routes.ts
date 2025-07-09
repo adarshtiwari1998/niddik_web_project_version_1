@@ -22,11 +22,12 @@ import { db } from "../db";
 import { eq, desc, asc, and, or, ilike, inArray, count, ne } from "drizzle-orm";
 import { z } from "zod";
 import { setupAuth } from "./auth";
-import { resumeUpload, seoMetaUpload } from "./cloudinary";
+import { resumeUpload, seoMetaUpload, uploadToCloudinary } from "./cloudinary";
 import { scrypt, randomBytes, timingSafeEqual } from "crypto";
 import { promisify } from "util";
 import { emailService } from "./email"; // Import the email service
 import multer from "multer";
+import { convertDocToPdf } from "./docConverter";
 
 const scryptAsync = promisify(scrypt);
 
@@ -1287,41 +1288,65 @@ export async function registerRoutes(app: Express): Promise<Server> {
           return res.status(400).json({ success: false, message: 'No file uploaded' });
         }
 
-        // @ts-ignore - Cloudinary typings
         const file = req.file;
         
         console.log('File details:', {
           originalname: file.originalname,
           mimetype: file.mimetype,
           size: file.size,
-          path: file.path
+          hasBuffer: !!file.buffer
         });
 
-        if (!file.path) {
-          console.error('Upload failed - file path missing', file);
-          return res.status(500).json({ 
-            success: false, 
-            message: 'Upload failed - no file path returned' 
-          });
+        // Check if file needs conversion (DOC/DOCX to PDF)
+        const fileExtension = file.originalname.split('.').pop()?.toLowerCase();
+        let finalBuffer = file.buffer;
+        let finalFilename = file.originalname;
+        let wasConverted = false;
+        
+        if (fileExtension === 'docx') {
+          console.log('Converting DOC/DOCX to PDF:', file.originalname);
+          
+          const conversionResult = await convertDocToPdf(file);
+          
+          if (!conversionResult.success) {
+            console.error('Conversion failed:', conversionResult.error);
+            return res.status(400).json({ 
+              success: false, 
+              message: `Failed to convert ${fileExtension.toUpperCase()} to PDF: ${conversionResult.error}` 
+            });
+          }
+          
+          finalBuffer = conversionResult.pdfBuffer!;
+          finalFilename = conversionResult.convertedName;
+          wasConverted = true;
+          
+          console.log('File converted successfully to PDF:', finalFilename);
         }
 
+        // Upload to Cloudinary
+        const cloudinaryUrl = await uploadToCloudinary(finalBuffer, finalFilename);
+        
         console.log('File uploaded successfully:', {
-          path: file.path,
-          filename: file.originalname,
-          size: file.size
+          originalName: file.originalname,
+          finalName: finalFilename,
+          url: cloudinaryUrl,
+          size: finalBuffer.length,
+          converted: wasConverted
         });
 
         // If user is authenticated, update their profile with the resume URL
         if (req.isAuthenticated() && req.user) {
           await db.update(users)
-            .set({ resumeUrl: file.path })
+            .set({ resumeUrl: cloudinaryUrl })
             .where(eq(users.id, req.user.id));
         }
 
         return res.status(200).json({ 
           success: true, 
-          url: file.path,
-          filename: file.originalname 
+          url: cloudinaryUrl,
+          filename: finalFilename,
+          originalFilename: file.originalname,
+          converted: wasConverted
         });
       } catch (error) {
         console.error('Resume upload error:', error);

@@ -292,8 +292,16 @@ const AuthPage = () => {
         throw new Error(errorData.message || 'Failed to upload resume');
       }
 
-      const { url } = await uploadRes.json();
+      const { url, converted, filename } = await uploadRes.json();
       completeData.resumeUrl = url;
+      
+      // Show conversion success message if file was converted
+      if (converted) {
+        toast({
+          title: 'File converted successfully',
+          description: `Your DOCX file has been converted to PDF: ${filename}`,
+        });
+      }
 
       // Now register with the complete data
       registerMutation.mutate(completeData as any);
@@ -854,6 +862,9 @@ const AuthPage = () => {
                                               </p>
                                               <p className="text-xs text-gray-500 dark:text-gray-400">
                                                 PDF, DOCX or DOC (MAX. 5MB)
+                                              </p>
+                                              <p className="text-xs text-blue-600 mt-1">
+                                                DOCX files will be automatically converted to PDF
                                               </p>
                                             </>
                                           )}

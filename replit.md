@@ -21,7 +21,7 @@ Preferred communication style: Simple, everyday language.
 - **Language**: TypeScript with ESM modules
 - **Authentication**: Passport.js with session-based auth and JWT fallback
 - **Session Storage**: PostgreSQL-based session store
-- **File Upload**: Cloudinary for resume and image storage
+- **File Upload**: Cloudinary for resume and image storage with DOC/DOCX conversion
 - **Email**: Nodemailer with SMTP configuration
 
 ## Database Design
@@ -42,7 +42,7 @@ Preferred communication style: Simple, everyday language.
 - **Job Listings**: Full CRUD operations for job postings
 - **Candidate Applications**: Application tracking and management
 - **Status Management**: Application workflow with status updates
-- **File Handling**: Resume upload and storage via Cloudinary
+- **File Handling**: Resume upload and storage via Cloudinary with automatic DOCX to PDF conversion
 
 ## Admin Dashboard
 - **User Management**: Admin can manage users and applications
@@ -69,7 +69,7 @@ Preferred communication style: Simple, everyday language.
 ## Job Application Flow
 1. User browses job listings (paginated API response)
 2. User applies to job with resume upload
-3. File upload to Cloudinary
+3. File upload to Cloudinary (with automatic DOCX to PDF conversion)
 4. Application data stored in PostgreSQL
 5. Email notifications sent to relevant parties
 6. Admin can review and update application status

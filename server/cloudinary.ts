@@ -10,31 +10,12 @@ cloudinary.config({
   api_secret: process.env.CLOUDINARY_API_SECRET
 });
 
-// Create storage engine for uploads
-const resumeStorage = new CloudinaryStorage({
-  cloudinary: cloudinary,
-  params: {
-    folder: 'Niddik-Assets/cv-data',
-    resource_type: 'raw',
-    type: 'upload',
-    delivery_type: 'upload',
-    access_mode: 'public',
-    allowed_formats: ['pdf', 'doc', 'docx'],
-    use_filename: true,
-    unique_filename: true,
-    overwrite: false,
-    public_id: (req, file) => {
-      const timestamp = Date.now();
-      const extension = file.originalname.split('.').pop() || '';
-      const nameWithoutExt = file.originalname.split('.')[0];
-      return `cv-data_${timestamp}_${nameWithoutExt}.${extension}`;
-    }
-  }
-});
+// Create memory storage for initial file processing
+const memoryStorage = multer.memoryStorage();
 
-// Create the multer upload instance
+// Create the multer upload instance with memory storage
 export const resumeUpload = multer({ 
-  storage: resumeStorage,
+  storage: memoryStorage,
   limits: { fileSize: 5 * 1024 * 1024 }, // 5MB limit
   fileFilter: (req, file, cb) => {
     console.log('File filter check:', {
@@ -67,6 +48,42 @@ export const resumeUpload = multer({
     }
   }
 });
+
+// Function to upload buffer to Cloudinary
+export async function uploadToCloudinary(buffer: Buffer, filename: string): Promise<string> {
+  return new Promise((resolve, reject) => {
+    const timestamp = Date.now();
+    const nameWithoutExt = filename.split('.')[0];
+    const extension = filename.split('.').pop() || 'pdf';
+    const publicId = `cv-data_${timestamp}_${nameWithoutExt}`;
+    
+    const uploadStream = cloudinary.uploader.upload_stream(
+      {
+        folder: 'Niddik-Assets/cv-data',
+        resource_type: 'raw',
+        public_id: publicId,
+        format: extension,
+        use_filename: true,
+        unique_filename: true,
+        overwrite: false,
+        access_mode: 'public'
+      },
+      (error, result) => {
+        if (error) {
+          console.error('Cloudinary upload error:', error);
+          reject(error);
+        } else if (result) {
+          console.log('Cloudinary upload successful:', result.secure_url);
+          resolve(result.secure_url);
+        } else {
+          reject(new Error('No result from Cloudinary'));
+        }
+      }
+    );
+    
+    uploadStream.end(buffer);
+  });
+}
 
 // Create storage engine for SEO meta assets (images)
 const seoMetaStorage = new CloudinaryStorage({
