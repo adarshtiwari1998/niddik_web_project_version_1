@@ -37,12 +37,33 @@ export const resumeUpload = multer({
   storage: resumeStorage,
   limits: { fileSize: 5 * 1024 * 1024 }, // 5MB limit
   fileFilter: (req, file, cb) => {
-    // Accept pdf, doc, docx files
-    const allowedTypes = ['application/pdf', 'application/msword', 'application/vnd.openxmlformats-officedocument.wordprocessingml.document'];
-    if (allowedTypes.includes(file.mimetype)) {
+    console.log('File filter check:', {
+      originalname: file.originalname,
+      mimetype: file.mimetype,
+      size: file.size
+    });
+    
+    // Accept pdf, doc, docx files with various MIME types
+    const allowedTypes = [
+      'application/pdf',
+      'application/msword',
+      'application/vnd.openxmlformats-officedocument.wordprocessingml.document',
+      'application/vnd.ms-word', // Alternative DOC MIME type
+      'application/doc', // Alternative DOC MIME type
+      'application/ms-word', // Alternative DOC MIME type
+      'application/x-msword' // Alternative DOC MIME type
+    ];
+    
+    // Also check by file extension as a fallback
+    const fileExtension = file.originalname.split('.').pop()?.toLowerCase();
+    const allowedExtensions = ['pdf', 'doc', 'docx'];
+    
+    if (allowedTypes.includes(file.mimetype) || allowedExtensions.includes(fileExtension || '')) {
+      console.log('File accepted');
       cb(null, true);
     } else {
-      cb(new Error('Invalid file type. Only PDF, DOC and DOCX files are allowed.'));
+      console.log('File rejected - invalid type');
+      cb(new Error(`Invalid file type. Only PDF, DOC and DOCX files are allowed. Received: ${file.mimetype}`));
     }
   }
 });

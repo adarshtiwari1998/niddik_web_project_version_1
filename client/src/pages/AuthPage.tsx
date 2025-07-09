@@ -170,10 +170,23 @@ const AuthPage = () => {
   };
 
   const validateFile = (file: File): string | null => {
-    // Check file type
-    const allowedTypes = ['application/pdf', 'application/msword', 'application/vnd.openxmlformats-officedocument.wordprocessingml.document'];
-    if (!allowedTypes.includes(file.type)) {
-      return 'Invalid file type. Only PDF, DOC and DOCX files are allowed.';
+    // Check file type with various MIME types
+    const allowedTypes = [
+      'application/pdf',
+      'application/msword',
+      'application/vnd.openxmlformats-officedocument.wordprocessingml.document',
+      'application/vnd.ms-word',
+      'application/doc',
+      'application/ms-word',
+      'application/x-msword'
+    ];
+    
+    // Also check by file extension as a fallback
+    const fileExtension = file.name.split('.').pop()?.toLowerCase();
+    const allowedExtensions = ['pdf', 'doc', 'docx'];
+    
+    if (!allowedTypes.includes(file.type) && !allowedExtensions.includes(fileExtension || '')) {
+      return `Invalid file type. Only PDF, DOC and DOCX files are allowed. Received: ${file.type}`;
     }
     
     // Check file size (5MB limit)

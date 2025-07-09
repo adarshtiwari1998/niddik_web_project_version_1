@@ -1255,52 +1255,80 @@ export async function registerRoutes(app: Express): Promise<Server> {
   });
 
   // API endpoint for uploading resume without authentication (for registration)
-  app.post('/api/upload-resume', resumeUpload.single('resume'), async (req: Request, res: Response) => {
-    try {
-      if (!req.file) {
-        return res.status(400).json({ success: false, message: 'No file uploaded' });
-      }
-
-      // @ts-ignore - Cloudinary typings
-      const file = req.file;
-
-      if (!file.path) {
-        console.error('Upload failed - file path missing', file);
-        return res.status(500).json({ 
+  app.post('/api/upload-resume', (req: Request, res: Response) => {
+    console.log('Upload request received');
+    
+    resumeUpload.single('resume')(req, res, async (err) => {
+      if (err) {
+        console.error('Multer error:', err);
+        if (err instanceof multer.MulterError) {
+          if (err.code === 'LIMIT_FILE_SIZE') {
+            return res.status(400).json({ 
+              success: false, 
+              message: 'File size must be less than 5MB' 
+            });
+          }
+        }
+        return res.status(400).json({ 
           success: false, 
-          message: 'Upload failed - no file path returned' 
+          message: err.message || 'Upload failed' 
         });
       }
 
-      // console.log('File uploaded successfully:', {
-      //   path: file.path,
-      //   filename: file.originalname,
-      //   size: file.size
-      // });
+      try {
+        if (!req.file) {
+          console.error('No file in request');
+          return res.status(400).json({ success: false, message: 'No file uploaded' });
+        }
 
-      // If user is authenticated, update their profile with the resume URL
-      if (req.isAuthenticated() && req.user) {
-        await db.update(users)
-          .set({ resumeUrl: file.path })
-          .where(eq(users.id, req.user.id));
-      }
+        // @ts-ignore - Cloudinary typings
+        const file = req.file;
+        
+        console.log('File details:', {
+          originalname: file.originalname,
+          mimetype: file.mimetype,
+          size: file.size,
+          path: file.path
+        });
 
-      return res.status(200).json({ 
-        success: true, 
-        url: file.path,
-        filename: file.originalname 
-      });
-    } catch (error) {
-      console.error('Resume upload error:', error);
-      if (error instanceof Error) {
-        console.error('Error details:', error.message, error.stack);
+        if (!file.path) {
+          console.error('Upload failed - file path missing', file);
+          return res.status(500).json({ 
+            success: false, 
+            message: 'Upload failed - no file path returned' 
+          });
+        }
+
+        console.log('File uploaded successfully:', {
+          path: file.path,
+          filename: file.originalname,
+          size: file.size
+        });
+
+        // If user is authenticated, update their profile with the resume URL
+        if (req.isAuthenticated() && req.user) {
+          await db.update(users)
+            .set({ resumeUrl: file.path })
+            .where(eq(users.id, req.user.id));
+        }
+
+        return res.status(200).json({ 
+          success: true, 
+          url: file.path,
+          filename: file.originalname 
+        });
+      } catch (error) {
+        console.error('Resume upload error:', error);
+        if (error instanceof Error) {
+          console.error('Error details:', error.message, error.stack);
+        }
+        return res.status(500).json({ 
+          success: false, 
+          message: error instanceof Error ? error.message : 'Upload failed',
+          error: error
+        });
       }
-      return res.status(500).json({ 
-        success: false, 
-        message: error instanceof Error ? error.message : 'Upload failed',
-        error: error
-      });
-    }
+    });
   });
 
 
