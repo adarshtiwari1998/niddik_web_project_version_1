@@ -32,7 +32,7 @@ export default function AnnouncementBar({
 
     // Admin stats queries
     const { data: jobsData } = useQuery<{ data: any[] }>({
-        queryKey: ['/api/job-listings'],
+        queryKey: ['/api/job-listings', { page: 1, limit: 1000 }],
         queryFn: getQueryFn({ on401: "ignore" }),
         enabled: !!user && user.role === 'admin' && isDrawerOpen,
         staleTime: 5 * 60 * 1000,

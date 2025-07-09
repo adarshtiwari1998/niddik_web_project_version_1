@@ -90,8 +90,8 @@ const navItems: NavItem[] = [
     ]
   },
   { 
-  	label: "Contact Us", 
-  	href: "/contact"
+        label: "Contact Us", 
+        href: "/contact"
   },
 ];
 
@@ -124,14 +124,14 @@ const Navbar: React.FC<NavbarProps> = ({ hasAnnouncementAbove = true }) => {
 
   // Fetch job listings for admin stats
   const { data: jobsData } = useQuery({
-    queryKey: ['/api/job-listings'],
+    queryKey: ['/api/job-listings', { page: 1, limit: 1000 }],
     queryFn: getQueryFn({ on401: "ignore" }),
     enabled: !!user && user.role === 'admin',
   });
 
   // Fetch applications for admin stats
   const { data: applicationsData } = useQuery({
-    queryKey: ['/api/applications'],
+    queryKey: ['/api/admin/applications'],
     queryFn: getQueryFn({ on401: "ignore" }),
     enabled: !!user && user.role === 'admin',
   });

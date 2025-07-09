@@ -120,3 +120,17 @@ Preferred communication style: Simple, everyday language.
 - **Scalability**: Stateless server design with external session storage
 
 The application follows a standard full-stack architecture with clear separation of concerns, type safety throughout, and modern development practices for maintainability and scalability.
+
+# Recent Changes
+
+## Database Query Issue Resolution (July 9, 2025)
+- **Problem**: Job listings were showing incorrect counts (9/10 instead of 14) across Hero component, Admin Dashboard, and admin stats in navbar
+- **Root Cause**: Query parameter handling in `getQueryFn` was not passing parameters to API endpoints, causing pagination to default to limit=10
+- **Solution**: 
+  - Fixed `getQueryFn` in `client/src/lib/queryClient.ts` to properly handle query parameters from queryKey
+  - Updated Admin Dashboard query to include `{ page: 1, limit: 1000 }` parameters
+  - Updated Hero component to fetch all jobs with proper parameters
+  - Fixed admin stats queries in Navbar and AnnouncementBar components
+  - Fixed incorrect API endpoint from `/api/applications` to `/api/admin/applications`
+- **Result**: All components now correctly display 14 active jobs instead of 9-10
+- **Database Status**: 14 active jobs confirmed in database, all components now fetch complete dataset
