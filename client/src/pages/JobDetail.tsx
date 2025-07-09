@@ -16,7 +16,7 @@ import { Textarea } from "@/components/ui/textarea";
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
 import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, DialogTrigger, DialogClose } from "@/components/ui/dialog";
 import { Form, FormControl, FormDescription, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
-import { Loader2, MapPin, Calendar, Briefcase, Clock, Building, Award, ArrowLeftIcon, FileText, ExternalLink, CheckCircle, Trash } from "lucide-react";
+import { Loader2, MapPin, Calendar, Briefcase, Clock, Building, Award, ArrowLeftIcon, FileText, ExternalLink, CheckCircle, Trash, Upload } from "lucide-react";
 import { format } from "date-fns";
 import CareersHeader from "@/components/careers/CareersHeader";
 import CareersFooter from "@/components/careers/CareersFooter";
@@ -77,8 +77,114 @@ export default function JobDetail() {
   const [resumeFile, setResumeFile] = useState<File | null>(null);
   const [isUploading, setIsUploading] = useState(false);
   const [isRemoving, setIsRemoving] = useState(false);
+  const [isDragOverDialog, setIsDragOverDialog] = useState(false);
 
   const jobId = parseInt(params.id);
+
+  // PDF-only validation function for Easy Apply dialog
+  const validatePDFFile = (file: File): string | null => {
+    // Check file type - only PDF allowed
+    const allowedTypes = ['application/pdf'];
+    
+    // Also check by file extension as a fallback
+    const fileExtension = file.name.split('.').pop()?.toLowerCase();
+    const allowedExtensions = ['pdf'];
+    
+    if (!allowedTypes.includes(file.type) && !allowedExtensions.includes(fileExtension || '')) {
+      return `Invalid file type. Only PDF files are allowed. Received: ${file.type}`;
+    }
+    
+    // Check file size (5MB limit)
+    if (file.size > 5 * 1024 * 1024) {
+      return 'File size must be less than 5MB.';
+    }
+    
+    return null;
+  };
+
+  // Drag and drop handlers for Easy Apply dialog
+  const handleDialogDragOver = (e: React.DragEvent<HTMLDivElement>) => {
+    e.preventDefault();
+    setIsDragOverDialog(true);
+  };
+
+  const handleDialogDragLeave = (e: React.DragEvent<HTMLDivElement>) => {
+    e.preventDefault();
+    setIsDragOverDialog(false);
+  };
+
+  const handleDialogDrop = (e: React.DragEvent<HTMLDivElement>) => {
+    e.preventDefault();
+    setIsDragOverDialog(false);
+    
+    if (e.dataTransfer.files && e.dataTransfer.files[0]) {
+      const file = e.dataTransfer.files[0];
+      const error = validatePDFFile(file);
+      if (error) {
+        toast({
+          title: 'Invalid file',
+          description: error,
+          variant: 'destructive',
+        });
+        return;
+      }
+      handleFileUpload(file);
+    }
+  };
+
+  const handleDialogFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    if (e.target.files && e.target.files[0]) {
+      const file = e.target.files[0];
+      const error = validatePDFFile(file);
+      if (error) {
+        toast({
+          title: 'Invalid file',
+          description: error,
+          variant: 'destructive',
+        });
+        return;
+      }
+      handleFileUpload(file);
+    }
+  };
+
+  const handleFileUpload = async (file: File) => {
+    setResumeFile(file);
+    setIsUploading(true);
+
+    const formData = new FormData();
+    formData.append("resume", file);
+
+    try {
+      const response = await fetch("/api/upload-resume", {
+        method: "POST",
+        body: formData,
+      });
+
+      if (!response.ok) {
+        throw new Error("Unable to upload resume.");
+      }
+
+      const data = await response.json();
+
+      // Update user data to reflect new resume URL
+      queryClient.invalidateQueries({ queryKey: ["/api/user"] });
+
+      toast({
+        title: "Resume uploaded",
+        description: "Your resume has been uploaded successfully.",
+      });
+
+    } catch (error) {
+      toast({
+        title: "Upload failed",
+        description: "Unable to upload resume. Please try again.",
+        variant: "destructive",
+      });
+    } finally {
+      setIsUploading(false);
+    }
+  };
 
   // Fetch job details
   const { data: jobData, isLoading, error } = useQuery<{ data: JobListing }>({
@@ -1237,100 +1343,63 @@ const handleResumeRemove = async () => {
                         </div>
                       </div>
                     ) : (
-                      <div className="space-y-2">
-                        <div>
-                          <Input
-                            type="file"
-                            accept=".pdf,.doc,.docx,application/pdf,application/msword,application/vnd.openxmlformats-officedocument.wordprocessingml.document"
-                            onChange={async (e) => {
-                              const file = e.target.files?.[0];
-                              if (file) {
-                                const fileType = file.type;
-                                const validTypes = [
-                                  'application/pdf',
-                                  'application/msword',
-                                  'application/vnd.openxmlformats-officedocument.wordprocessingml.document'
-                                ];
-                                if (!validTypes.includes(fileType)) {
-                                  toast({
-                                    title: "Invalid file format",
-                                    description: "Please upload only PDF, DOC, or DOCX files",
-                                    variant: "destructive"
-                                  });
-                                  e.target.value = '';
-                                  return;
-                                }
-                                const ext = file.name.split('.').pop()?.toLowerCase();
-                                if (!['pdf', 'doc', 'docx'].includes(ext || '')) {
-                                  toast({
-                                    title: "Invalid file format",
-                                    description: "Please upload only PDF, DOC, or DOCX files",
-                                    variant: "destructive"
-                                  });
-                                  e.target.value = '';
-                                  return;
-                                }
-
-                                setResumeFile(file);
-                                setIsUploading(true);
-
-                                const formData = new FormData();
-                                formData.append("resume", file);
-
-                                try {
-                                  const response = await fetch("/api/upload-resume", {
-                                    method: "POST",
-                                    body: formData,
-                                  });
-
-                                  if (!response.ok) {
-                                    throw new Error("Unable to upload resume.");
-                                  }
-
-                                  const data = await response.json();
-
-                                  // Update user data to reflect new resume URL
-                                  queryClient.invalidateQueries({ queryKey: ["/api/user"] });
-
-                                  toast({
-                                    title: "Resume uploaded",
-                                    description: "Your resume has been uploaded successfully.",
-                                  });
-
-                                } catch (error) {
-                                  toast({
-                                    title: "Upload failed",
-                                    description: "Unable to upload resume. Please try again.",
-                                    variant: "destructive",
-                                  });
-                                  setResumeFile(null);
-                                  e.target.value = '';
-                                } finally {
-                                  setIsUploading(false);
-                                }
-                              }
-                            }}
-                            placeholder="Upload resume"
-                            className="file:mr-4 file:py-2 file:px-4 file:rounded-md file:border-0 file:text-sm file:font-medium file:bg-primary file:text-primary-foreground hover:file:bg-primary/90"
-                          />
-                          {isUploading && (
-                            <div className="flex items-center gap-2 mt-2 text-sm text-muted-foreground">
-                              <Loader2 className="h-4 w-4 animate-spin" />
-                              Uploading resume...
+                      <div className="space-y-3">
+                        {/* Prominent PDF-only notice */}
+                        <div className="p-3 bg-amber-50 dark:bg-amber-900/20 border border-amber-200 dark:border-amber-800 rounded-lg">
+                          <div className="flex items-center">
+                            <div className="flex-shrink-0">
+                              <svg className="h-5 w-5 text-amber-500" viewBox="0 0 20 20" fill="currentColor">
+                                <path fillRule="evenodd" d="M8.485 2.495c.673-1.167 2.357-1.167 3.03 0l6.28 10.875c.673 1.167-.17 2.625-1.516 2.625H3.72c-1.347 0-2.189-1.458-1.515-2.625L8.485 2.495zM10 5a.75.75 0 01.75.75v3.5a.75.75 0 01-1.5 0v-3.5A.75.75 0 0110 5zm0 9a1 1 0 100-2 1 1 0 000 2z" clipRule="evenodd" />
+                              </svg>
                             </div>
-                          )}
-                {user?.resumeUrl && !isUploading && (
-                            <div className="p-4 border rounded-md bg-muted/5">
-                              <div className="flex items-center justify-between">
-                                <div className="flex items-center gap-2">
-                                  <FileText className="h-4 w-4 text-primary" />
-                                  <a href={user?.resumeUrl} target="_blank" rel="noopener noreferrer" className="text-sm hover:underline">
-                                    View Resume
-                                  </a>
+                            <div className="ml-3">
+                              <p className="text-sm text-amber-800 dark:text-amber-200">
+                                <span className="font-semibold">Important:</span> Only PDF files are accepted (Max 5MB)
+                              </p>
+                            </div>
+                          </div>
+                        </div>
+
+                        {/* Drag and drop upload area */}
+                        <div className="flex items-center justify-center w-full">
+                          <div 
+                            className={`flex flex-col items-center justify-center w-full h-32 border-2 border-dashed rounded-lg cursor-pointer transition-all ${
+                              isDragOverDialog 
+                                ? 'border-primary bg-primary/10' 
+                                : 'border-gray-300 dark:border-gray-600 bg-gray-50 dark:bg-gray-700 hover:bg-gray-100 dark:hover:bg-gray-600'
+                            }`}
+                            onDragOver={handleDialogDragOver}
+                            onDragLeave={handleDialogDragLeave}
+                            onDrop={handleDialogDrop}
+                            onClick={() => document.getElementById('dialog-file-input')?.click()}
+                          >
+                            <div className="flex flex-col items-center justify-center pt-5 pb-6">
+                              <Upload className={`w-8 h-8 mb-3 ${isDragOverDialog ? 'text-primary' : 'text-gray-500 dark:text-gray-400'}`} />
+                              {isUploading ? (
+                                <div className="text-center">
+                                  <Loader2 className="h-6 w-6 animate-spin mx-auto mb-2" />
+                                  <p className="text-sm text-gray-700 dark:text-gray-300">Uploading...</p>
                                 </div>
-                              </div>
+                              ) : (
+                                <>
+                                  <p className={`mb-2 text-sm ${isDragOverDialog ? 'text-primary' : 'text-gray-500 dark:text-gray-400'}`}>
+                                    <span className="font-semibold">Click to upload</span> or drag and drop
+                                  </p>
+                                  <p className="text-xs text-red-600 dark:text-red-400 font-medium">
+                                    PDF files only (MAX. 5MB)
+                                  </p>
+                                </>
+                              )}
                             </div>
-                          )}
+                            <input 
+                              id="dialog-file-input"
+                              type="file" 
+                              className="hidden" 
+                              accept=".pdf"
+                              onChange={handleDialogFileChange}
+                              disabled={isUploading}
+                            />
+                          </div>
                         </div>
                       </div>
                     )}
