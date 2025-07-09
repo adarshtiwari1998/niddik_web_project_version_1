@@ -29,7 +29,7 @@ export default function CareerPage() {
   const [experienceLevel, setExperienceLevel] = useState("all_levels");
   const [priority, setPriority] = useState("all_priorities");
   const [currentPage, setCurrentPage] = useState(1);
-  const jobsPerPage = 50; // Define the number of jobs to display per page
+  const jobsPerPage = 6; // Define the number of jobs to display per page
 
 
   const { data, isLoading, error } = useQuery<{ data: JobListing[], meta: { total: number, pages: number } }>({
