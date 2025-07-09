@@ -27,16 +27,16 @@ const registerStep1Schema = z.object({
 });
 
 const registerStep2Schema = z.object({
-  experience: z.string().optional(),
-  noticePeriod: z.string(),
-  currentCtc: z.string().optional(),
-  expectedCtc: z.string().optional(),
+  experience: z.string().min(1, "Experience is required"),
+  noticePeriod: z.string().min(1, "Notice period is required"),
+  currentCtc: z.string().min(1, "Current CTC is required"),
+  expectedCtc: z.string().min(1, "Expected CTC is required"),
   skills: z.string().min(3, "Please list at least a few skills"),
   location: z.string().min(2, "Please enter your location"),
-  city: z.string().optional(),
-  state: z.string().optional(),
-  country: z.string().optional(),
-  zipCode: z.string().optional(),
+  city: z.string().min(1, "City is required"),
+  state: z.string().min(1, "State is required"),
+  country: z.string().min(1, "Country is required"),
+  zipCode: z.string().min(1, "ZIP code is required"),
 });
 
 const registerStep3Schema = z.object({
@@ -489,7 +489,7 @@ const AuthPage = () => {
                               name="fullName"
                               render={({ field }) => (
                                 <FormItem>
-                                  <FormLabel>Full Name</FormLabel>
+                                  <FormLabel>Full Name <span className="text-destructive">*</span></FormLabel>
                                   <FormControl>
                                     <div className="relative">
                                       <User className="absolute left-3 top-3 h-4 w-4 text-muted-foreground" />
@@ -506,7 +506,7 @@ const AuthPage = () => {
                               name="email"
                               render={({ field }) => (
                                 <FormItem>
-                                  <FormLabel>Email</FormLabel>
+                                  <FormLabel>Email <span className="text-destructive">*</span></FormLabel>
                                   <FormControl>
                                     <div className="relative">
                                       <Mail className="absolute left-3 top-3 h-4 w-4 text-muted-foreground" />
@@ -528,7 +528,7 @@ const AuthPage = () => {
                               name="username"
                               render={({ field }) => (
                                 <FormItem>
-                                  <FormLabel>Username</FormLabel>
+                                  <FormLabel>Username <span className="text-destructive">*</span></FormLabel>
                                   <FormControl>
                                     <Input placeholder="Choose a username" {...field} />
                                   </FormControl>
@@ -542,7 +542,7 @@ const AuthPage = () => {
                               name="phone"
                               render={({ field }) => (
                                 <FormItem>
-                                  <FormLabel>Contact Number</FormLabel>
+                                  <FormLabel>Contact Number <span className="text-destructive">*</span></FormLabel>
                                   <FormControl>
                                     <Input placeholder="Your phone number" {...field} />
                                   </FormControl>
@@ -573,7 +573,7 @@ const AuthPage = () => {
                                 name="experience"
                                 render={({ field }) => (
                                   <FormItem>
-                                    <FormLabel>Experience (Years)</FormLabel>
+                                    <FormLabel>Experience (Years) <span className="text-destructive">*</span></FormLabel>
                                     <FormControl>
                                       <Input placeholder="Years of experience" {...field} />
                                     </FormControl>
@@ -587,7 +587,7 @@ const AuthPage = () => {
                                 name="noticePeriod"
                                 render={({ field }) => (
                                   <FormItem>
-                                    <FormLabel>Notice Period</FormLabel>
+                                    <FormLabel>Notice Period <span className="text-destructive">*</span></FormLabel>
                                     <Select
                                       onValueChange={field.onChange}
                                       value={field.value}
@@ -617,7 +617,7 @@ const AuthPage = () => {
                                 name="currentCtc"
                                 render={({ field }) => (
                                   <FormItem>
-                                    <FormLabel>Current CTC</FormLabel>
+                                    <FormLabel>Current CTC <span className="text-destructive">*</span></FormLabel>
                                     <FormControl>
                                       <Input placeholder="Current salary" {...field} />
                                     </FormControl>
@@ -631,7 +631,7 @@ const AuthPage = () => {
                                 name="expectedCtc"
                                 render={({ field }) => (
                                   <FormItem>
-                                    <FormLabel>Expected CTC</FormLabel>
+                                    <FormLabel>Expected CTC <span className="text-destructive">*</span></FormLabel>
                                     <FormControl>
                                       <Input placeholder="Expected salary" {...field} />
                                     </FormControl>
@@ -646,7 +646,7 @@ const AuthPage = () => {
                               name="skills"
                               render={({ field }) => (
                                 <FormItem>
-                                  <FormLabel>Skills</FormLabel>
+                                  <FormLabel>Skills <span className="text-destructive">*</span></FormLabel>
                                   <FormControl>
                                     <Textarea 
                                       placeholder="List your skills, separated by commas (e.g. React, JavaScript, Project Management)" 
@@ -670,7 +670,7 @@ const AuthPage = () => {
                               name="location"
                               render={({ field }) => (
                                 <FormItem>
-                                  <FormLabel>Current Location</FormLabel>
+                                  <FormLabel>Current Location <span className="text-destructive">*</span></FormLabel>
                                   <FormControl>
                                     <Input placeholder="Your current location" {...field} />
                                   </FormControl>
@@ -685,7 +685,7 @@ const AuthPage = () => {
                                 name="city"
                                 render={({ field }) => (
                                   <FormItem>
-                                    <FormLabel>City</FormLabel>
+                                    <FormLabel>City <span className="text-destructive">*</span></FormLabel>
                                     <FormControl>
                                       <Input placeholder="City" {...field} />
                                     </FormControl>
@@ -699,7 +699,7 @@ const AuthPage = () => {
                                 name="state"
                                 render={({ field }) => (
                                   <FormItem>
-                                    <FormLabel>State</FormLabel>
+                                    <FormLabel>State <span className="text-destructive">*</span></FormLabel>
                                     <FormControl>
                                       <Input placeholder="State" {...field} />
                                     </FormControl>
@@ -715,7 +715,7 @@ const AuthPage = () => {
                                 name="country"
                                 render={({ field }) => (
                                   <FormItem>
-                                    <FormLabel>Country</FormLabel>
+                                    <FormLabel>Country <span className="text-destructive">*</span></FormLabel>
                                     <FormControl>
                                       <Input placeholder="Country" {...field} />
                                     </FormControl>
@@ -729,7 +729,7 @@ const AuthPage = () => {
                                 name="zipCode"
                                 render={({ field }) => (
                                   <FormItem>
-                                    <FormLabel>ZIP Code</FormLabel>
+                                    <FormLabel>ZIP Code <span className="text-destructive">*</span></FormLabel>
                                     <FormControl>
                                       <Input placeholder="ZIP/Postal code" {...field} />
                                     </FormControl>
@@ -765,7 +765,7 @@ const AuthPage = () => {
                               name="password"
                               render={({ field }) => (
                                 <FormItem>
-                                  <FormLabel>Password</FormLabel>
+                                  <FormLabel>Password <span className="text-destructive">*</span></FormLabel>
                                   <FormControl>
                                     <div className="relative">
                                       <Lock className="absolute left-3 top-3 h-4 w-4 text-muted-foreground" />
@@ -787,7 +787,7 @@ const AuthPage = () => {
                               name="confirmPassword"
                               render={({ field }) => (
                                 <FormItem>
-                                  <FormLabel>Confirm Password</FormLabel>
+                                  <FormLabel>Confirm Password <span className="text-destructive">*</span></FormLabel>
                                   <FormControl>
                                     <div className="relative">
                                       <Lock className="absolute left-3 top-3 h-4 w-4 text-muted-foreground" />
