@@ -299,7 +299,7 @@ const AuthPage = () => {
       if (converted) {
         toast({
           title: 'File converted successfully',
-          description: `Your ${file.name.endsWith('.docx') ? 'DOCX' : 'DOC'} file has been converted to PDF: ${filename}`,
+          description: `Your ${resumeFile.name.endsWith('.docx') ? 'DOCX' : 'DOC'} file has been converted to PDF: ${filename}`,
         });
       }
 
