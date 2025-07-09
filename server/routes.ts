@@ -27,7 +27,7 @@ import { scrypt, randomBytes, timingSafeEqual } from "crypto";
 import { promisify } from "util";
 import { emailService } from "./email"; // Import the email service
 import multer from "multer";
-import { convertDocToPdf } from "./docConverter";
+
 
 const scryptAsync = promisify(scrypt);
 
@@ -1297,41 +1297,24 @@ export async function registerRoutes(app: Express): Promise<Server> {
           hasBuffer: !!file.buffer
         });
 
-        // Check if file needs conversion (DOC/DOCX to PDF)
+        // Check if file is PDF only
         const fileExtension = file.originalname.split('.').pop()?.toLowerCase();
-        let finalBuffer = file.buffer;
-        let finalFilename = file.originalname;
-        let wasConverted = false;
         
-        if (fileExtension === 'docx' || fileExtension === 'doc') {
-          console.log('Converting DOC/DOCX to PDF:', file.originalname);
-          
-          const conversionResult = await convertDocToPdf(file);
-          
-          if (!conversionResult.success) {
-            console.error('Conversion failed:', conversionResult.error);
-            return res.status(400).json({ 
-              success: false, 
-              message: `Failed to convert ${fileExtension.toUpperCase()} to PDF: ${conversionResult.error}` 
-            });
-          }
-          
-          finalBuffer = conversionResult.pdfBuffer!;
-          finalFilename = conversionResult.convertedName;
-          wasConverted = true;
-          
-          console.log('File converted successfully to PDF:', finalFilename);
+        if (fileExtension !== 'pdf') {
+          console.log('Non-PDF file rejected:', file.originalname);
+          return res.status(400).json({ 
+            success: false, 
+            message: 'Only PDF files are allowed. Please upload a PDF file.' 
+          });
         }
 
         // Upload to Cloudinary
-        const cloudinaryUrl = await uploadToCloudinary(finalBuffer, finalFilename);
+        const cloudinaryUrl = await uploadToCloudinary(file.buffer, file.originalname);
         
         console.log('File uploaded successfully:', {
           originalName: file.originalname,
-          finalName: finalFilename,
           url: cloudinaryUrl,
-          size: finalBuffer.length,
-          converted: wasConverted
+          size: file.buffer.length
         });
 
         // If user is authenticated, update their profile with the resume URL
@@ -1344,9 +1327,8 @@ export async function registerRoutes(app: Express): Promise<Server> {
         return res.status(200).json({ 
           success: true, 
           url: cloudinaryUrl,
-          filename: finalFilename,
-          originalFilename: file.originalname,
-          converted: wasConverted
+          filename: file.originalname,
+          originalFilename: file.originalname
         });
       } catch (error) {
         console.error('Resume upload error:', error);

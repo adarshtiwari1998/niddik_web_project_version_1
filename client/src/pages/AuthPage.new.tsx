@@ -661,7 +661,7 @@ export default function AuthPage() {
                                   <p className="mb-1 text-sm text-muted-foreground">
                                     <span className="font-semibold">Click to upload</span> or drag and drop
                                   </p>
-                                  <p className="text-xs text-muted-foreground">PDF, DOC, or DOCX (MAX. 5MB)</p>
+                                  <p className="text-xs text-muted-foreground">PDF files only (MAX. 5MB)</p>
                                   {resumeFile && (
                                     <div className="mt-2 flex items-center text-sm text-primary">
                                       <CheckCircle2 className="mr-1 h-4 w-4" />
@@ -673,7 +673,7 @@ export default function AuthPage() {
                                   id="resume-upload" 
                                   type="file" 
                                   className="hidden" 
-                                  accept=".pdf,.doc,.docx" 
+                                  accept=".pdf" 
                                   onChange={handleFileChange}
                                 />
                               </label>

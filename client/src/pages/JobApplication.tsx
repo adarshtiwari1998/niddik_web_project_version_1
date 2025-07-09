@@ -408,15 +408,15 @@ export default function JobApplication() {
                         <div className="flex-1">
                           <Input
                             type="file"
-                            accept=".pdf,.doc,.docx,application/pdf,application/msword,application/vnd.openxmlformats-officedocument.wordprocessingml.document"
+                            accept=".pdf,application/pdf"
                             onChange={(e) => {
                               const file = e.target.files?.[0];
                               if (file) {
                                 const ext = file.name.split('.').pop()?.toLowerCase();
-                                if (!['pdf', 'doc', 'docx'].includes(ext || '')) {
+                                if (ext !== 'pdf' && file.type !== 'application/pdf') {
                                   toast({
                                     title: "Invalid file format",
-                                    description: "Please upload only PDF, DOC, or DOCX files",
+                                    description: "Please upload only PDF files",
                                     variant: "destructive"
                                   });
                                   e.target.value = '';
@@ -448,7 +448,7 @@ export default function JobApplication() {
                       <p className="text-xs text-muted-foreground">
                         {user.resumeUrl 
                           ? "Your existing resume will be used if you don't upload a new one." 
-                          : "Please upload your resume in PDF, DOC, or DOCX format (max 5MB)."}
+                          : "Please upload your resume in PDF format only (max 5MB)."}
                       </p>
                     </div>
                   </div>

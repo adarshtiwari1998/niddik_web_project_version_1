@@ -172,7 +172,36 @@ export default function ProfilePage() {
   // Handle file upload
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     if (e.target.files && e.target.files[0]) {
-      setResumeFile(e.target.files[0]);
+      const file = e.target.files[0];
+      
+      // Validate file type - only PDF allowed
+      const allowedTypes = ['application/pdf'];
+      const fileExtension = file.name.split('.').pop()?.toLowerCase();
+      
+      if (!allowedTypes.includes(file.type) && fileExtension !== 'pdf') {
+        toast({
+          title: 'Invalid file type',
+          description: 'Only PDF files are allowed. Please upload a PDF file.',
+          variant: 'destructive',
+        });
+        // Clear the file input
+        e.target.value = '';
+        return;
+      }
+      
+      // Check file size (5MB limit)
+      if (file.size > 5 * 1024 * 1024) {
+        toast({
+          title: 'File too large',
+          description: 'File size must be less than 5MB.',
+          variant: 'destructive',
+        });
+        // Clear the file input
+        e.target.value = '';
+        return;
+      }
+      
+      setResumeFile(file);
     }
   };
 
@@ -702,7 +731,7 @@ export default function ProfilePage() {
                                 <div className="flex gap-2">
                                   <Input
                                     type="file"
-                                    accept=".pdf,.doc,.docx"
+                                    accept=".pdf"
                                     onChange={handleFileChange}
                                     className="max-w-[200px] file:mr-2 file:py-1 file:px-2 file:rounded-md file:border-0 file:text-xs file:font-medium file:bg-primary file:text-primary-foreground hover:file:bg-primary/90"
                                   />
@@ -726,7 +755,7 @@ export default function ProfilePage() {
                             <div className="flex-1">
                               <Input
                                 type="file"
-                                accept=".pdf,.doc,.docx"
+                                accept=".pdf"
                                 onChange={handleFileChange}
                                 className="file:mr-4 file:py-2 file:px-4 file:rounded-md file:border-0 file:text-sm file:font-medium file:bg-primary file:text-primary-foreground hover:file:bg-primary/90"
                               />
@@ -740,7 +769,7 @@ export default function ProfilePage() {
                           )}
 
                           <FormDescription>
-                            Upload your resume in PDF, DOC, or DOCX format (max 5MB)
+                            Upload your resume in PDF format only (max 5MB)
                           </FormDescription>
                         </div>
                       </div>

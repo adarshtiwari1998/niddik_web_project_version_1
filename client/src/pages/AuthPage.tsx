@@ -170,23 +170,15 @@ const AuthPage = () => {
   };
 
   const validateFile = (file: File): string | null => {
-    // Check file type with various MIME types
-    const allowedTypes = [
-      'application/pdf',
-      'application/msword',
-      'application/vnd.openxmlformats-officedocument.wordprocessingml.document',
-      'application/vnd.ms-word',
-      'application/doc',
-      'application/ms-word',
-      'application/x-msword'
-    ];
+    // Check file type - only PDF allowed
+    const allowedTypes = ['application/pdf'];
     
     // Also check by file extension as a fallback
     const fileExtension = file.name.split('.').pop()?.toLowerCase();
-    const allowedExtensions = ['pdf', 'doc', 'docx'];
+    const allowedExtensions = ['pdf'];
     
     if (!allowedTypes.includes(file.type) && !allowedExtensions.includes(fileExtension || '')) {
-      return `Invalid file type. Only PDF, DOC and DOCX files are allowed. Received: ${file.type}`;
+      return `Invalid file type. Only PDF files are allowed. Received: ${file.type}`;
     }
     
     // Check file size (5MB limit)
@@ -292,16 +284,8 @@ const AuthPage = () => {
         throw new Error(errorData.message || 'Failed to upload resume');
       }
 
-      const { url, converted, filename } = await uploadRes.json();
+      const { url, filename } = await uploadRes.json();
       completeData.resumeUrl = url;
-      
-      // Show conversion success message if file was converted
-      if (converted) {
-        toast({
-          title: 'File converted successfully',
-          description: `Your ${resumeFile.name.endsWith('.docx') ? 'DOCX' : 'DOC'} file has been converted to PDF: ${filename}`,
-        });
-      }
 
       // Now register with the complete data
       registerMutation.mutate(completeData as any);
@@ -861,10 +845,7 @@ const AuthPage = () => {
                                                 <span className="font-semibold">Click to upload</span> or drag and drop
                                               </p>
                                               <p className="text-xs text-gray-500 dark:text-gray-400">
-                                                PDF, DOCX or DOC (MAX. 5MB)
-                                              </p>
-                                              <p className="text-xs text-blue-600 mt-1">
-                                                DOC and DOCX files will be automatically converted to PDF
+                                                PDF files only (MAX. 5MB)
                                               </p>
                                             </>
                                           )}
@@ -873,7 +854,7 @@ const AuthPage = () => {
                                           id="dropzone-file" 
                                           type="file" 
                                           className="hidden" 
-                                          accept=".pdf,.doc,.docx"
+                                          accept=".pdf"
                                           onChange={handleFileChange}
                                         />
                                       </div>
