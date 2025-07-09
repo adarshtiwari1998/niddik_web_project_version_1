@@ -68,6 +68,7 @@ const AuthPage = () => {
   const [registrationStep, setRegistrationStep] = useState(1);
   const [isUploading, setIsUploading] = useState(false);
   const [resumeFile, setResumeFile] = useState<File | null>(null);
+  const [isDragOver, setIsDragOver] = useState(false);
   const [formData, setFormData] = useState<Partial<RegisterFormValues>>({});
   const [lastLogoutTime, setLastLogoutTime] = useState<string | null>(null);
   const [showForgotPassword, setShowForgotPassword] = useState(false);
@@ -168,9 +169,65 @@ const AuthPage = () => {
     loginMutation.mutate(data);
   };
 
+  const validateFile = (file: File): string | null => {
+    // Check file type
+    const allowedTypes = ['application/pdf', 'application/msword', 'application/vnd.openxmlformats-officedocument.wordprocessingml.document'];
+    if (!allowedTypes.includes(file.type)) {
+      return 'Invalid file type. Only PDF, DOC and DOCX files are allowed.';
+    }
+    
+    // Check file size (5MB limit)
+    if (file.size > 5 * 1024 * 1024) {
+      return 'File size must be less than 5MB.';
+    }
+    
+    return null;
+  };
+
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     if (e.target.files && e.target.files[0]) {
-      setResumeFile(e.target.files[0]);
+      const file = e.target.files[0];
+      const error = validateFile(file);
+      if (error) {
+        toast({
+          title: 'Invalid file',
+          description: error,
+          variant: 'destructive',
+        });
+        return;
+      }
+      setResumeFile(file);
+      registerStep3Form.setValue('resume', file);
+    }
+  };
+
+  const handleDragOver = (e: React.DragEvent<HTMLDivElement>) => {
+    e.preventDefault();
+    setIsDragOver(true);
+  };
+
+  const handleDragLeave = (e: React.DragEvent<HTMLDivElement>) => {
+    e.preventDefault();
+    setIsDragOver(false);
+  };
+
+  const handleDrop = (e: React.DragEvent<HTMLDivElement>) => {
+    e.preventDefault();
+    setIsDragOver(false);
+    
+    if (e.dataTransfer.files && e.dataTransfer.files[0]) {
+      const file = e.dataTransfer.files[0];
+      const error = validateFile(file);
+      if (error) {
+        toast({
+          title: 'Invalid file',
+          description: error,
+          variant: 'destructive',
+        });
+        return;
+      }
+      setResumeFile(file);
+      registerStep3Form.setValue('resume', file);
     }
   };
 
@@ -191,6 +248,15 @@ const AuthPage = () => {
   };
 
   const onStep3Submit = async (data: z.infer<typeof registerStep3Schema>) => {
+    if (!resumeFile) {
+      toast({
+        title: 'Resume required',
+        description: 'Please upload your resume before continuing',
+        variant: 'destructive',
+      });
+      return;
+    }
+
     setIsUploading(true);
 
     const completeData = {
@@ -199,26 +265,25 @@ const AuthPage = () => {
     };
 
     try {
-      // Upload resume first if it exists
-        if (resumeFile) {
-          const formData = new FormData();
-          formData.append('resume', resumeFile);
+      // Upload resume first
+      const formData = new FormData();
+      formData.append('resume', resumeFile);
 
-          const uploadRes = await fetch('/api/upload-resume', {
-            method: 'POST',
-            body: formData,
-          });
+      const uploadRes = await fetch('/api/upload-resume', {
+        method: 'POST',
+        body: formData,
+      });
 
-          if (!uploadRes.ok) {
-            throw new Error('Failed to upload resume');
-          }
+      if (!uploadRes.ok) {
+        const errorData = await uploadRes.json();
+        throw new Error(errorData.message || 'Failed to upload resume');
+      }
 
-          const { url } = await uploadRes.json();
-          completeData.resumeUrl = url; // Changed from resume to resumeUrl to match schema
-        }
+      const { url } = await uploadRes.json();
+      completeData.resumeUrl = url;
 
-        // Now register with the complete data
-        registerMutation.mutate(completeData as any);
+      // Now register with the complete data
+      registerMutation.mutate(completeData as any);
     } catch (error) {
       console.error('Registration error:', error);
       toast({
@@ -744,19 +809,34 @@ const AuthPage = () => {
                               name="resume"
                               render={() => (
                                 <FormItem>
-                                  <FormLabel>Upload Resume</FormLabel>
+                                  <FormLabel>Upload Resume <span className="text-destructive">*</span></FormLabel>
                                   <FormControl>
                                     <div className="flex items-center justify-center w-full">
-                                      <label className="flex flex-col items-center justify-center w-full h-32 border-2 border-dashed rounded-lg cursor-pointer bg-gray-50 dark:hover:bg-bray-800 dark:bg-gray-700 hover:bg-gray-100 dark:border-gray-600 dark:hover:border-gray-500 dark:hover:bg-gray-600">
+                                      <div 
+                                        className={`flex flex-col items-center justify-center w-full h-32 border-2 border-dashed rounded-lg cursor-pointer transition-all ${
+                                          isDragOver 
+                                            ? 'border-primary bg-primary/10' 
+                                            : 'border-gray-300 dark:border-gray-600 bg-gray-50 dark:bg-gray-700 hover:bg-gray-100 dark:hover:bg-gray-600'
+                                        }`}
+                                        onDragOver={handleDragOver}
+                                        onDragLeave={handleDragLeave}
+                                        onDrop={handleDrop}
+                                        onClick={() => document.getElementById('dropzone-file')?.click()}
+                                      >
                                         <div className="flex flex-col items-center justify-center pt-5 pb-6">
-                                          <Upload className="w-8 h-8 mb-3 text-gray-500 dark:text-gray-400" />
+                                          <Upload className={`w-8 h-8 mb-3 ${isDragOver ? 'text-primary' : 'text-gray-500 dark:text-gray-400'}`} />
                                           {resumeFile ? (
-                                            <p className="text-sm text-gray-500 dark:text-gray-400">
-                                              Selected: {resumeFile.name}
-                                            </p>
+                                            <div className="text-center">
+                                              <p className="text-sm text-gray-700 dark:text-gray-300 font-medium">
+                                                Selected: {resumeFile.name}
+                                              </p>
+                                              <p className="text-xs text-gray-500 dark:text-gray-400 mt-1">
+                                                {(resumeFile.size / 1024 / 1024).toFixed(2)} MB
+                                              </p>
+                                            </div>
                                           ) : (
                                             <>
-                                              <p className="mb-2 text-sm text-gray-500 dark:text-gray-400">
+                                              <p className={`mb-2 text-sm ${isDragOver ? 'text-primary' : 'text-gray-500 dark:text-gray-400'}`}>
                                                 <span className="font-semibold">Click to upload</span> or drag and drop
                                               </p>
                                               <p className="text-xs text-gray-500 dark:text-gray-400">
@@ -772,11 +852,11 @@ const AuthPage = () => {
                                           accept=".pdf,.doc,.docx"
                                           onChange={handleFileChange}
                                         />
-                                      </label>
+                                      </div>
                                     </div>
                                   </FormControl>
                                   <FormDescription>
-                                    Upload your resume to help employers learn more about you
+                                    Upload your resume to help employers learn more about you (Required)
                                   </FormDescription>
                                   <FormMessage />
                                 </FormItem>
