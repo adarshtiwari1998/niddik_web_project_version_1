@@ -34,6 +34,7 @@ export default function JobDetail() {
   const { user } = useAuth();
   const { toast } = useToast();
   const [isDialogOpen, setIsDialogOpen] = useState(false);
+  const [hasAutoOpened, setHasAutoOpened] = useState(false);
 
   // Time ago calculation function
   const timeAgo = (dateString: string): string => {
@@ -136,6 +137,28 @@ export default function JobDetail() {
     queryFn: getQueryFn({ on401: "returnNull" }),
     enabled: !!user && user.role !== 'admin'
   });
+
+  // Auto-open application dialog if user was redirected after authentication
+  React.useEffect(() => {
+    if (user && !hasAutoOpened && !isDialogOpen && userApplicationsData) {
+      // Check if user came from authentication redirect
+      const urlParams = new URLSearchParams(window.location.search);
+      const fromAuth = urlParams.get('from') === 'auth' || document.referrer.includes('/auth');
+      
+      // Check if user hasn't already applied
+      const hasApplied = userApplicationsData.data?.some(app => app.jobId === jobId);
+      
+      if ((fromAuth || sessionStorage.getItem('just-registered')) && !hasApplied && user.role !== 'admin') {
+        // Small delay to ensure page is fully loaded
+        setTimeout(() => {
+          setIsDialogOpen(true);
+          setHasAutoOpened(true);
+          // Clear the session storage flag
+          sessionStorage.removeItem('just-registered');
+        }, 500);
+      }
+    }
+  }, [user, userApplicationsData, jobId, hasAutoOpened, isDialogOpen]);
 
   // Fetch application count for admin users
   const { data: applicationCountData } = useQuery<{ success: boolean; count: number }>({

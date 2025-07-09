@@ -111,7 +111,9 @@ const AuthPage = () => {
 
   useEffect(() => {
     if (user) {
+      // Set flag to indicate user just authenticated
       if (redirectUrl) {
+        sessionStorage.setItem('just-registered', 'true');
         setLocation(redirectUrl);
       } else if (user.role === "admin") {
         setLocation("/admin/dashboard");

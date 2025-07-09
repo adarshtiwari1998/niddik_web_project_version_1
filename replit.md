@@ -134,3 +134,13 @@ The application follows a standard full-stack architecture with clear separation
   - Fixed incorrect API endpoint from `/api/applications` to `/api/admin/applications`
 - **Result**: All components now correctly display 14 active jobs instead of 9-10
 - **Database Status**: 14 active jobs confirmed in database, all components now fetch complete dataset
+
+## Authentication Flow Enhancement (July 9, 2025)
+- **Feature**: Auto-open job application popup after user registration/login
+- **Implementation**: 
+  - Added PDF-only file upload notice with highlighted warning box on registration form
+  - Enhanced authentication flow to automatically open application dialog when users are redirected back to job pages
+  - Added sessionStorage flag to track when users complete authentication
+  - Modified JobDetail component to detect post-authentication redirects and auto-open apply dialog
+- **User Experience**: Users no longer need to manually click "Apply Now" after registering, improving conversion rate
+- **Files Modified**: `client/src/pages/AuthPage.tsx`, `client/src/pages/JobDetail.tsx`
