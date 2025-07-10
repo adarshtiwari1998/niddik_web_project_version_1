@@ -107,7 +107,13 @@ export const apiRequest = async (method: string, url: string, data?: any) => {
     }
   }
 
-  return response;
+  // Handle response errors
+  if (!response.ok) {
+    const errorText = await response.text();
+    throw new Error(`${response.status}: ${errorText}`);
+  }
+
+  return response.json();
 };
 
 type UnauthorizedBehavior = "returnNull" | "throw";

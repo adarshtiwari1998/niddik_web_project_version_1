@@ -95,10 +95,7 @@ export default function CandidateTimesheets() {
 
   // Create timesheet mutation
   const createTimesheetMutation = useMutation({
-    mutationFn: (data: any) => apiRequest('/api/timesheets', {
-      method: 'POST',
-      body: JSON.stringify(data),
-    }),
+    mutationFn: (data: any) => apiRequest('POST', '/api/timesheets', data),
     onSuccess: () => {
       toast({
         title: "Timesheet submitted successfully",
@@ -127,10 +124,7 @@ export default function CandidateTimesheets() {
 
   // Update timesheet mutation
   const updateTimesheetMutation = useMutation({
-    mutationFn: ({ id, data }: { id: number; data: any }) => apiRequest(`/api/timesheets/${id}`, {
-      method: 'PUT',
-      body: JSON.stringify(data),
-    }),
+    mutationFn: ({ id, data }: { id: number; data: any }) => apiRequest('PUT', `/api/timesheets/${id}`, data),
     onSuccess: () => {
       toast({
         title: "Timesheet updated successfully",
