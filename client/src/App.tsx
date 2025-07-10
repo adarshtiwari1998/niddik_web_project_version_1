@@ -159,6 +159,7 @@ function Router() {
               <ProtectedRoute path="/admin/whitepaper-downloads" component={lazy(() => import("@/pages/admin/WhitepaperDownloads"))} />
               <ProtectedRoute path="/admin/demo-requests" component={lazy(() => import("@/pages/admin/DemoRequests"))} />
             <ProtectedRoute path="/admin/seo-pages" component={SEOPages} requiredRole="admin"/>
+                 <ProtectedRoute path="/admin/account" component={() => <AdminPasswordChange />} requiredRole="admin"/>
             <ProtectedRoute path="/admin/timesheets" component={TimesheetManagement} requiredRole="admin"/>
 
             {/* Demo Request */}
@@ -178,6 +179,7 @@ function StickyPopupWrapper() {
     const shouldHidePopup = location.startsWith('/admin') || 
                            location.startsWith('/candidate') ||
                            location.startsWith('/careers') ||
+        location.startsWith('/auth') ||
                            location.startsWith('/jobs/');
 
     return shouldHidePopup ? null : <StickyPopup />;
