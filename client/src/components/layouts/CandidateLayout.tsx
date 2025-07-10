@@ -198,13 +198,7 @@ export default function CandidateLayout({ children, activeTab = "" }: CandidateL
                         <Link href="/candidate/timesheets">
                           <div className={`flex items-center space-x-2 p-2 rounded-md hover:bg-muted transition-colors ${activeTab === 'timesheets' ? 'bg-muted font-medium' : ''}`}>
                             <Clock className="h-4 w-4" />
-                            <span>Timesheets</span>
-                          </div>
-                        </Link>
-                        <Link href="/candidate/attendance">
-                          <div className={`flex items-center space-x-2 p-2 rounded-md hover:bg-muted transition-colors ${activeTab === 'attendance' ? 'bg-muted font-medium' : ''}`}>
-                            <Calendar className="h-4 w-4" />
-                            <span>Attendance</span>
+                            <span>Timesheet & Billing</span>
                           </div>
                         </Link>
                       </>
@@ -266,13 +260,7 @@ export default function CandidateLayout({ children, activeTab = "" }: CandidateL
                       <Link href="/candidate/timesheets">
                         <div className={`flex items-center space-x-2 p-2 rounded-md hover:bg-muted transition-colors ${activeTab === 'timesheets' ? 'bg-muted font-medium' : ''}`}>
                           <Clock className="h-4 w-4" />
-                          <span>Timesheets</span>
-                        </div>
-                      </Link>
-                      <Link href="/candidate/attendance">
-                        <div className={`flex items-center space-x-2 p-2 rounded-md hover:bg-muted transition-colors ${activeTab === 'attendance' ? 'bg-muted font-medium' : ''}`}>
-                          <Calendar className="h-4 w-4" />
-                          <span>Attendance</span>
+                          <span>Timesheet & Billing</span>
                         </div>
                       </Link>
                     </>

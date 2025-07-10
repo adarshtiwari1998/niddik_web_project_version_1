@@ -1,0 +1,477 @@
+import { useState } from 'react';
+import { useAuth } from '@/hooks/use-auth';
+import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
+import { getQueryFn, apiRequest } from '@/lib/queryClient';
+import CandidateLayout from '@/components/layouts/CandidateLayout';
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
+import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
+import { Button } from '@/components/ui/button';
+import { Input } from '@/components/ui/input';
+import { Label } from '@/components/ui/label';
+import { Badge } from '@/components/ui/badge';
+import { Calendar } from '@/components/ui/calendar';
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
+import { useToast } from '@/hooks/use-toast';
+import { format, startOfWeek, addDays, parseISO } from 'date-fns';
+import { 
+  Clock, 
+  Calendar as CalendarIcon, 
+  DollarSign, 
+  CheckCircle, 
+  XCircle, 
+  AlertCircle,
+  Plus,
+  FileText,
+  Eye
+} from 'lucide-react';
+
+interface WeeklyTimesheet {
+  id: number;
+  candidateId: number;
+  weekStartDate: string;
+  mondayHours: number;
+  tuesdayHours: number;
+  wednesdayHours: number;
+  thursdayHours: number;
+  fridayHours: number;
+  saturdayHours: number;
+  sundayHours: number;
+  totalWeeklyHours: number;
+  totalWeeklyAmount: number;
+  status: 'submitted' | 'approved' | 'rejected';
+  submittedAt: string;
+  approvedAt?: string;
+  approvedBy?: number;
+  rejectionReason?: string;
+}
+
+interface BillingConfig {
+  id: number;
+  candidateId: number;
+  hourlyRate: number;
+  workingHoursPerDay: number;
+  isActive: boolean;
+}
+
+export default function CandidateTimesheets() {
+  const { user } = useAuth();
+  const { toast } = useToast();
+  const queryClient = useQueryClient();
+  const [selectedWeek, setSelectedWeek] = useState<Date>(startOfWeek(new Date(), { weekStartsOn: 1 }));
+  const [newTimesheet, setNewTimesheet] = useState({
+    mondayHours: 0,
+    tuesdayHours: 0,
+    wednesdayHours: 0,
+    thursdayHours: 0,
+    fridayHours: 0,
+    saturdayHours: 0,
+    sundayHours: 0
+  });
+
+  // Get billing configuration
+  const { data: billingConfig } = useQuery({
+    queryKey: ['/api/candidate/billing-status'],
+    queryFn: getQueryFn({ on401: "throw" }),
+    enabled: !!user,
+  });
+
+  // Get timesheets for current candidate
+  const { data: timesheets, isLoading: timesheetsLoading } = useQuery({
+    queryKey: [`/api/timesheets/candidate/${user?.id}`, { page: 1, limit: 50 }],
+    queryFn: getQueryFn({ on401: "throw" }),
+    enabled: !!user,
+  });
+
+  // Get specific week timesheet
+  const weekStartString = format(selectedWeek, 'yyyy-MM-dd');
+  const { data: weekTimesheet } = useQuery({
+    queryKey: [`/api/timesheets/${user?.id}/${weekStartString}`],
+    queryFn: getQueryFn({ on401: "throw" }),
+    enabled: !!user && !!weekStartString,
+  });
+
+  // Create timesheet mutation
+  const createTimesheetMutation = useMutation({
+    mutationFn: (data: any) => apiRequest('/api/timesheets', {
+      method: 'POST',
+      body: JSON.stringify(data),
+    }),
+    onSuccess: () => {
+      toast({
+        title: "Timesheet submitted successfully",
+        description: "Your timesheet has been submitted for approval",
+      });
+      queryClient.invalidateQueries({ queryKey: [`/api/timesheets/candidate/${user?.id}`] });
+      queryClient.invalidateQueries({ queryKey: [`/api/timesheets/${user?.id}/${weekStartString}`] });
+      setNewTimesheet({
+        mondayHours: 0,
+        tuesdayHours: 0,
+        wednesdayHours: 0,
+        thursdayHours: 0,
+        fridayHours: 0,
+        saturdayHours: 0,
+        sundayHours: 0
+      });
+    },
+    onError: (error: any) => {
+      toast({
+        title: "Error submitting timesheet",
+        description: error.message || "Failed to submit timesheet",
+        variant: "destructive",
+      });
+    }
+  });
+
+  // Update timesheet mutation
+  const updateTimesheetMutation = useMutation({
+    mutationFn: ({ id, data }: { id: number; data: any }) => apiRequest(`/api/timesheets/${id}`, {
+      method: 'PUT',
+      body: JSON.stringify(data),
+    }),
+    onSuccess: () => {
+      toast({
+        title: "Timesheet updated successfully",
+        description: "Your timesheet has been updated",
+      });
+      queryClient.invalidateQueries({ queryKey: [`/api/timesheets/candidate/${user?.id}`] });
+      queryClient.invalidateQueries({ queryKey: [`/api/timesheets/${user?.id}/${weekStartString}`] });
+    },
+    onError: (error: any) => {
+      toast({
+        title: "Error updating timesheet",
+        description: error.message || "Failed to update timesheet",
+        variant: "destructive",
+      });
+    }
+  });
+
+  const handleSubmitTimesheet = () => {
+    if (!user || !billingConfig?.data) return;
+
+    const timesheetData = {
+      candidateId: user.id,
+      weekStartDate: weekStartString,
+      ...newTimesheet
+    };
+
+    createTimesheetMutation.mutate(timesheetData);
+  };
+
+  const handleUpdateTimesheet = () => {
+    if (!weekTimesheet?.data) return;
+
+    updateTimesheetMutation.mutate({
+      id: weekTimesheet.data.id,
+      data: newTimesheet
+    });
+  };
+
+  const totalHours = Object.values(newTimesheet).reduce((sum, hours) => sum + hours, 0);
+  const totalAmount = totalHours * (billingConfig?.data?.hourlyRate || 0);
+
+  const getStatusBadge = (status: string) => {
+    switch (status) {
+      case 'approved':
+        return <Badge className="bg-green-100 text-green-800"><CheckCircle className="w-3 h-3 mr-1" />Approved</Badge>;
+      case 'rejected':
+        return <Badge className="bg-red-100 text-red-800"><XCircle className="w-3 h-3 mr-1" />Rejected</Badge>;
+      case 'submitted':
+        return <Badge className="bg-yellow-100 text-yellow-800"><AlertCircle className="w-3 h-3 mr-1" />Pending</Badge>;
+      default:
+        return <Badge variant="outline">Draft</Badge>;
+    }
+  };
+
+  const dayLabels = ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday'];
+  const dayKeys = ['mondayHours', 'tuesdayHours', 'wednesdayHours', 'thursdayHours', 'fridayHours', 'saturdayHours', 'sundayHours'] as const;
+
+  if (!user) return null;
+
+  return (
+    <CandidateLayout activeTab="timesheets">
+      <div className="space-y-6">
+        <div className="flex items-center justify-between">
+          <div>
+            <h1 className="text-2xl font-bold tracking-tight">Timesheet & Billing</h1>
+            <p className="text-muted-foreground">
+              Submit your weekly hours and track attendance
+            </p>
+          </div>
+        </div>
+
+        <Tabs defaultValue="timesheet" className="space-y-6">
+          <TabsList className="grid w-full grid-cols-2">
+            <TabsTrigger value="timesheet" className="flex items-center gap-2">
+              <Clock className="h-4 w-4" />
+              Timesheet Submission
+            </TabsTrigger>
+            <TabsTrigger value="attendance" className="flex items-center gap-2">
+              <CalendarIcon className="h-4 w-4" />
+              Attendance Tracking
+            </TabsTrigger>
+          </TabsList>
+
+          <TabsContent value="timesheet" className="space-y-6">
+            {/* Billing Information Card */}
+            {billingConfig?.data && (
+              <Card>
+                <CardHeader>
+                  <CardTitle className="flex items-center gap-2">
+                    <DollarSign className="h-5 w-5" />
+                    Billing Information
+                  </CardTitle>
+                </CardHeader>
+                <CardContent>
+                  <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                    <div>
+                      <Label className="text-sm font-medium">Hourly Rate</Label>
+                      <p className="text-lg font-semibold">${billingConfig.data.hourlyRate}/hour</p>
+                    </div>
+                    <div>
+                      <Label className="text-sm font-medium">Standard Hours/Day</Label>
+                      <p className="text-lg font-semibold">{billingConfig.data.workingHoursPerDay} hours</p>
+                    </div>
+                    <div>
+                      <Label className="text-sm font-medium">Status</Label>
+                      <Badge className="bg-green-100 text-green-800">Active</Badge>
+                    </div>
+                  </div>
+                </CardContent>
+              </Card>
+            )}
+
+            {/* Week Selection */}
+            <Card>
+              <CardHeader>
+                <CardTitle>Select Week</CardTitle>
+                <CardDescription>Choose the week for timesheet submission</CardDescription>
+              </CardHeader>
+              <CardContent>
+                <div className="flex items-center gap-4">
+                  <Calendar
+                    mode="single"
+                    selected={selectedWeek}
+                    onSelect={(date) => {
+                      if (date) {
+                        setSelectedWeek(startOfWeek(date, { weekStartsOn: 1 }));
+                      }
+                    }}
+                    className="rounded-md border"
+                  />
+                  <div className="space-y-2">
+                    <p className="font-medium">Selected Week:</p>
+                    <p className="text-sm text-muted-foreground">
+                      {format(selectedWeek, 'MMM dd')} - {format(addDays(selectedWeek, 6), 'MMM dd, yyyy')}
+                    </p>
+                    {weekTimesheet?.data && (
+                      <div className="flex items-center gap-2">
+                        <span className="text-sm">Status:</span>
+                        {getStatusBadge(weekTimesheet.data.status)}
+                      </div>
+                    )}
+                  </div>
+                </div>
+              </CardContent>
+            </Card>
+
+            {/* Hours Entry */}
+            <Card>
+              <CardHeader>
+                <CardTitle>Submit Hours</CardTitle>
+                <CardDescription>
+                  Enter your working hours for each day of the selected week
+                </CardDescription>
+              </CardHeader>
+              <CardContent>
+                <div className="grid grid-cols-1 md:grid-cols-4 lg:grid-cols-7 gap-4 mb-6">
+                  {dayLabels.map((day, index) => {
+                    const key = dayKeys[index];
+                    return (
+                      <div key={day} className="space-y-2">
+                        <Label className="text-sm font-medium">{day}</Label>
+                        <Input
+                          type="number"
+                          min="0"
+                          max="24"
+                          step="0.5"
+                          value={newTimesheet[key]}
+                          onChange={(e) => setNewTimesheet(prev => ({
+                            ...prev,
+                            [key]: parseFloat(e.target.value) || 0
+                          }))}
+                          disabled={weekTimesheet?.data?.status === 'approved'}
+                          placeholder="0.0"
+                        />
+                      </div>
+                    );
+                  })}
+                </div>
+
+                <div className="border-t pt-4 space-y-4">
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <div>
+                      <Label className="text-sm font-medium">Total Hours</Label>
+                      <p className="text-lg font-semibold">{totalHours.toFixed(1)} hours</p>
+                    </div>
+                    <div>
+                      <Label className="text-sm font-medium">Total Amount</Label>
+                      <p className="text-lg font-semibold">${totalAmount.toFixed(2)}</p>
+                    </div>
+                  </div>
+
+                  <div className="flex gap-2">
+                    {!weekTimesheet?.data ? (
+                      <Button 
+                        onClick={handleSubmitTimesheet}
+                        disabled={createTimesheetMutation.isPending || totalHours === 0}
+                        className="flex items-center gap-2"
+                      >
+                        <Plus className="h-4 w-4" />
+                        Submit Timesheet
+                      </Button>
+                    ) : weekTimesheet.data.status !== 'approved' ? (
+                      <Button 
+                        onClick={handleUpdateTimesheet}
+                        disabled={updateTimesheetMutation.isPending}
+                        className="flex items-center gap-2"
+                      >
+                        <FileText className="h-4 w-4" />
+                        Update Timesheet
+                      </Button>
+                    ) : (
+                      <Badge className="bg-green-100 text-green-800">
+                        <CheckCircle className="w-3 h-3 mr-1" />
+                        Approved - Cannot Edit
+                      </Badge>
+                    )}
+                  </div>
+                </div>
+              </CardContent>
+            </Card>
+
+            {/* Previous Timesheets */}
+            <Card>
+              <CardHeader>
+                <CardTitle>Previous Timesheets</CardTitle>
+                <CardDescription>Your submitted timesheets</CardDescription>
+              </CardHeader>
+              <CardContent>
+                {timesheetsLoading ? (
+                  <div className="text-center py-4">Loading timesheets...</div>
+                ) : !timesheets?.data?.length ? (
+                  <div className="text-center py-8 text-muted-foreground">
+                    No timesheets submitted yet
+                  </div>
+                ) : (
+                  <div className="space-y-4">
+                    {timesheets.data.map((timesheet: WeeklyTimesheet) => (
+                      <div key={timesheet.id} className="border rounded-lg p-4">
+                        <div className="flex items-center justify-between mb-2">
+                          <div>
+                            <p className="font-medium">
+                              Week of {format(parseISO(timesheet.weekStartDate), 'MMM dd, yyyy')}
+                            </p>
+                            <p className="text-sm text-muted-foreground">
+                              Submitted: {format(parseISO(timesheet.submittedAt), 'MMM dd, yyyy')}
+                            </p>
+                          </div>
+                          {getStatusBadge(timesheet.status)}
+                        </div>
+                        <div className="grid grid-cols-2 md:grid-cols-4 gap-4 text-sm">
+                          <div>
+                            <span className="text-muted-foreground">Total Hours:</span>
+                            <p className="font-medium">{timesheet.totalWeeklyHours}</p>
+                          </div>
+                          <div>
+                            <span className="text-muted-foreground">Total Amount:</span>
+                            <p className="font-medium">${timesheet.totalWeeklyAmount.toFixed(2)}</p>
+                          </div>
+                          <div>
+                            <span className="text-muted-foreground">Status:</span>
+                            <p className="font-medium capitalize">{timesheet.status}</p>
+                          </div>
+                          {timesheet.rejectionReason && (
+                            <div className="md:col-span-4">
+                              <span className="text-muted-foreground">Rejection Reason:</span>
+                              <p className="text-red-600">{timesheet.rejectionReason}</p>
+                            </div>
+                          )}
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                )}
+              </CardContent>
+            </Card>
+          </TabsContent>
+
+          <TabsContent value="attendance" className="space-y-6">
+            <Card>
+              <CardHeader>
+                <CardTitle className="flex items-center gap-2">
+                  <CalendarIcon className="h-5 w-5" />
+                  Attendance Tracking
+                </CardTitle>
+                <CardDescription>
+                  View your attendance records and timesheet history
+                </CardDescription>
+              </CardHeader>
+              <CardContent>
+                <div className="space-y-6">
+                  {/* Monthly Calendar View */}
+                  <div>
+                    <h3 className="text-lg font-medium mb-4">Monthly Attendance</h3>
+                    <Calendar
+                      mode="single"
+                      selected={new Date()}
+                      className="rounded-md border w-fit"
+                    />
+                  </div>
+
+                  {/* Attendance Summary */}
+                  <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                    <Card>
+                      <CardContent className="pt-6">
+                        <div className="text-center">
+                          <CheckCircle className="h-8 w-8 mx-auto text-green-600 mb-2" />
+                          <p className="text-2xl font-bold text-green-600">
+                            {timesheets?.data?.filter((t: WeeklyTimesheet) => t.status === 'approved').length || 0}
+                          </p>
+                          <p className="text-sm text-muted-foreground">Approved Timesheets</p>
+                        </div>
+                      </CardContent>
+                    </Card>
+
+                    <Card>
+                      <CardContent className="pt-6">
+                        <div className="text-center">
+                          <AlertCircle className="h-8 w-8 mx-auto text-yellow-600 mb-2" />
+                          <p className="text-2xl font-bold text-yellow-600">
+                            {timesheets?.data?.filter((t: WeeklyTimesheet) => t.status === 'submitted').length || 0}
+                          </p>
+                          <p className="text-sm text-muted-foreground">Pending Review</p>
+                        </div>
+                      </CardContent>
+                    </Card>
+
+                    <Card>
+                      <CardContent className="pt-6">
+                        <div className="text-center">
+                          <Clock className="h-8 w-8 mx-auto text-blue-600 mb-2" />
+                          <p className="text-2xl font-bold text-blue-600">
+                            {timesheets?.data?.reduce((sum: number, t: WeeklyTimesheet) => sum + t.totalWeeklyHours, 0) || 0}
+                          </p>
+                          <p className="text-sm text-muted-foreground">Total Hours</p>
+                        </div>
+                      </CardContent>
+                    </Card>
+                  </div>
+                </div>
+              </CardContent>
+            </Card>
+          </TabsContent>
+        </Tabs>
+      </div>
+    </CandidateLayout>
+  );
+}
