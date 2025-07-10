@@ -45,7 +45,7 @@ export default function CandidateLayout({ children, activeTab = "" }: CandidateL
     enabled: !!user,
   });
 
-  const isHired = billingConfig?.data?.isActive && billingConfig?.data?.candidateId === user?.id;
+  const isHired = billingConfig?.data?.hasHiredApplication === true;
 
   if (!user) return null;
 

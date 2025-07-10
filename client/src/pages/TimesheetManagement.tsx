@@ -250,7 +250,7 @@ export default function TimesheetManagement() {
     return <div>Please log in to access timesheet management.</div>;
   }
 
-  if (!isAdmin && !billing) {
+  if (!isAdmin && (!billing || !billing.hasHiredApplication)) {
     return (
       <AdminLayout title="Timesheet Management" description="Configure billing to access timesheet management">
         <Helmet>
@@ -263,9 +263,26 @@ export default function TimesheetManagement() {
           <CardHeader>
             <CardTitle>Timesheet Management</CardTitle>
             <CardDescription>
-              Your billing configuration is not set up yet. Please contact your administrator to configure your hourly rate.
+              {!billing?.hasHiredApplication ? 
+                "Timesheet management is only available for hired candidates. You need to be hired for a position to access this feature." :
+                "Your billing configuration is not set up yet. Please contact your administrator to configure your hourly rate."
+              }
             </CardDescription>
           </CardHeader>
+          <CardContent>
+            <div className="text-center py-8">
+              <Clock className="w-16 h-16 mx-auto text-muted-foreground mb-4" />
+              <h3 className="text-lg font-semibold mb-2">
+                {!billing?.hasHiredApplication ? "Not Available" : "Billing Setup Required"}
+              </h3>
+              <p className="text-muted-foreground max-w-md mx-auto">
+                {!billing?.hasHiredApplication ? 
+                  "Once you are hired for a position, you'll be able to submit weekly timesheets and track your working hours here." :
+                  "Contact your administrator to set up your billing configuration and start submitting timesheets."
+                }
+              </p>
+            </div>
+          </CardContent>
         </Card>
       </AdminLayout>
     );

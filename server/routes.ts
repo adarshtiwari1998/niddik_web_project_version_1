@@ -3513,13 +3513,21 @@ ${allUrls.map(url => `  <url>
         return res.status(401).json({ success: false, message: "Not authenticated" });
       }
 
+      // Check if candidate has any hired applications
+      const userApplications = await storage.getJobApplicationsForUser(req.user.id);
+      const hasHiredApplication = userApplications.some(app => app.status === 'hired');
+
+      if (!hasHiredApplication) {
+        return res.json({ success: true, data: { isActive: false, candidateId: req.user.id, hasHiredApplication: false } });
+      }
+
       const billing = await storage.getCandidateBilling(req.user.id);
       
       if (!billing) {
-        return res.json({ success: true, data: { isActive: false, candidateId: req.user.id } });
+        return res.json({ success: true, data: { isActive: false, candidateId: req.user.id, hasHiredApplication: true } });
       }
 
-      res.json({ success: true, data: billing });
+      res.json({ success: true, data: { ...billing, hasHiredApplication: true } });
     } catch (error) {
       console.error('Error fetching candidate billing status:', error);
       res.status(500).json({ success: false, message: "Internal server error" });
