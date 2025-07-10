@@ -45,13 +45,13 @@ export default function BillingConfig() {
 
   // Fetch existing billing configurations
   const { data: billingConfigs, isLoading } = useQuery({
-    queryKey: ['/api/admin/candidate-billing'],
+    queryKey: ['/api/admin/candidates-billing'],
   });
 
   // Create billing configuration mutation
   const createBillingMutation = useMutation({
     mutationFn: async (data: any) => {
-      const response = await fetch('/api/admin/candidate-billing', {
+      const response = await fetch('/api/candidate-billing', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         credentials: 'include',
@@ -65,7 +65,7 @@ export default function BillingConfig() {
     },
     onSuccess: () => {
       toast({ title: "Success", description: "Billing configuration created successfully" });
-      queryClient.invalidateQueries({ queryKey: ['/api/admin/candidate-billing'] });
+      queryClient.invalidateQueries({ queryKey: ['/api/admin/candidates-billing'] });
       setIsDialogOpen(false);
       setBillingData({ hourlyRate: 0, workingHoursPerWeek: 40, currency: 'USD' });
       setSelectedCandidate(null);
@@ -77,9 +77,9 @@ export default function BillingConfig() {
 
   // Update billing configuration mutation
   const updateBillingMutation = useMutation({
-    mutationFn: async ({ id, ...data }: any) => {
-      const response = await fetch(`/api/admin/candidate-billing/${id}`, {
-        method: 'PATCH',
+    mutationFn: async ({ candidateId, ...data }: any) => {
+      const response = await fetch(`/api/candidate-billing/${candidateId}`, {
+        method: 'PUT',
         headers: { 'Content-Type': 'application/json' },
         credentials: 'include',
         body: JSON.stringify(data)
@@ -92,7 +92,7 @@ export default function BillingConfig() {
     },
     onSuccess: () => {
       toast({ title: "Success", description: "Billing configuration updated successfully" });
-      queryClient.invalidateQueries({ queryKey: ['/api/admin/candidate-billing'] });
+      queryClient.invalidateQueries({ queryKey: ['/api/admin/candidates-billing'] });
     },
     onError: (error: Error) => {
       toast({ title: "Error", description: error.message, variant: "destructive" });
@@ -113,7 +113,7 @@ export default function BillingConfig() {
 
   const handleToggleActive = (billing: CandidateBilling) => {
     updateBillingMutation.mutate({
-      id: billing.id,
+      candidateId: billing.candidateId,
       isActive: !billing.isActive
     });
   };

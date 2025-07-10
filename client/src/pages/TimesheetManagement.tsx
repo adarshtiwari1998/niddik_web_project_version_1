@@ -13,6 +13,8 @@ import { useUser } from "@/hooks/use-user";
 import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
 import { format, startOfWeek, endOfWeek, addDays } from "date-fns";
 import BillingConfig from "@/components/BillingConfig";
+import AdminLayout from "@/components/layout/AdminLayout";
+import { Helmet } from 'react-helmet-async';
 
 interface CandidateBilling {
   id: number;
@@ -250,7 +252,13 @@ export default function TimesheetManagement() {
 
   if (!isAdmin && !billing) {
     return (
-      <div className="container mx-auto py-8">
+      <AdminLayout title="Timesheet Management" description="Configure billing to access timesheet management">
+        <Helmet>
+          <title>Timesheet Management | Niddik Admin</title>
+          <meta name="description" content="Manage candidate timesheets, billing configuration, and invoice generation." />
+          <meta property="og:title" content="Timesheet Management | Niddik Admin" />
+          <meta property="og:description" content="Manage candidate timesheets, billing configuration, and invoice generation." />
+        </Helmet>
         <Card>
           <CardHeader>
             <CardTitle>Timesheet Management</CardTitle>
@@ -259,18 +267,18 @@ export default function TimesheetManagement() {
             </CardDescription>
           </CardHeader>
         </Card>
-      </div>
+      </AdminLayout>
     );
   }
 
   return (
-    <div className="container mx-auto py-8">
-      <div className="mb-8">
-        <h1 className="text-3xl font-bold">Timesheet Management</h1>
-        <p className="text-muted-foreground">
-          {isAdmin ? "Manage timesheets and invoices for all candidates" : "Submit and track your weekly timesheets"}
-        </p>
-      </div>
+    <AdminLayout title="Timesheet Management" description="Manage timesheets and invoices for all candidates">
+      <Helmet>
+        <title>Timesheet Management | Niddik Admin</title>
+        <meta name="description" content="Manage candidate timesheets, billing configuration, and invoice generation." />
+        <meta property="og:title" content="Timesheet Management | Niddik Admin" />
+        <meta property="og:description" content="Manage candidate timesheets, billing configuration, and invoice generation." />
+      </Helmet>
 
       <Tabs value={activeTab} onValueChange={setActiveTab}>
         <TabsList className="grid w-full grid-cols-3">
@@ -543,6 +551,6 @@ export default function TimesheetManagement() {
           </TabsContent>
         )}
       </Tabs>
-    </div>
+    </AdminLayout>
   );
 }
