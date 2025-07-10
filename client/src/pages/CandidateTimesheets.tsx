@@ -368,7 +368,7 @@ export default function CandidateTimesheets() {
                     </div>
                     <div>
                       <Label className="text-sm font-medium">Total Amount</Label>
-                      <p className="text-lg font-semibold">${totalAmount.toFixed(2)}</p>
+                      <p className="text-lg font-semibold">{billingConfig?.data?.currency || 'USD'} {totalAmount.toFixed(2)}</p>
                     </div>
                   </div>
 
@@ -437,7 +437,7 @@ export default function CandidateTimesheets() {
                           </div>
                           <div>
                             <span className="text-muted-foreground">Total Amount:</span>
-                            <p className="font-medium">${timesheet.totalWeeklyAmount.toFixed(2)}</p>
+                            <p className="font-medium">{billingConfig?.data?.currency || 'USD'} {timesheet.totalWeeklyAmount.toFixed(2)}</p>
                           </div>
                           <div>
                             <span className="text-muted-foreground">Status:</span>
