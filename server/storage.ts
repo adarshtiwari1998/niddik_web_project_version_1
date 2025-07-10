@@ -1306,6 +1306,13 @@ async updateSeoPage(id: number, data: Partial<InsertSeoPage>): Promise<SeoPage |
     return updated;
   },
 
+  async deleteCandidateBilling(candidateId: number): Promise<boolean> {
+    const result = await db
+      .delete(candidateBilling)
+      .where(eq(candidateBilling.candidateId, candidateId));
+    return result.rowCount > 0;
+  },
+
   async getAllCandidatesWithBilling(): Promise<any[]> {
     // First get all hired candidate IDs
     const hiredCandidateIds = await db

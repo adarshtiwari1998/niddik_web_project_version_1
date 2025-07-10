@@ -3457,6 +3457,27 @@ ${allUrls.map(url => `  <url>
     }
   });
 
+  app.delete('/api/candidate-billing/:candidateId', async (req: AuthenticatedRequest, res: Response) => {
+    try {
+      if (!req.isAuthenticated() || !req.user || req.user.role !== 'admin') {
+        return res.status(403).json({ success: false, message: "Admin access required" });
+      }
+
+      const candidateId = parseInt(req.params.candidateId);
+      
+      const result = await storage.deleteCandidateBilling(candidateId);
+      
+      if (!result) {
+        return res.status(404).json({ success: false, message: "Billing configuration not found" });
+      }
+
+      res.json({ success: true, message: "Billing configuration deleted successfully" });
+    } catch (error) {
+      console.error('Error deleting candidate billing:', error);
+      res.status(500).json({ success: false, message: "Internal server error" });
+    }
+  });
+
   app.get('/api/admin/candidates-billing', async (req: AuthenticatedRequest, res: Response) => {
     try {
       if (!req.isAuthenticated() || !req.user || req.user.role !== 'admin') {

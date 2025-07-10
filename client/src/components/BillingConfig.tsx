@@ -6,8 +6,9 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
+import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle, AlertDialogTrigger } from "@/components/ui/alert-dialog";
 import { Badge } from "@/components/ui/badge";
-import { Plus, Edit, Save, DollarSign, Users } from "lucide-react";
+import { Plus, Edit, Save, DollarSign, Users, Trash2 } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 import { useUser } from "@/hooks/use-user";
 
@@ -39,6 +40,8 @@ export default function BillingConfig() {
     currency: 'USD'
   });
   const [isDialogOpen, setIsDialogOpen] = useState(false);
+  const [editingBilling, setEditingBilling] = useState<CandidateBilling | null>(null);
+  const [isEditDialogOpen, setIsEditDialogOpen] = useState(false);
 
   // Fetch hired candidates only
   const { data: hiredCandidates } = useQuery({
@@ -95,6 +98,30 @@ export default function BillingConfig() {
     onSuccess: () => {
       toast({ title: "Success", description: "Billing configuration updated successfully" });
       queryClient.invalidateQueries({ queryKey: ['/api/admin/candidates-billing'] });
+      setIsEditDialogOpen(false);
+      setEditingBilling(null);
+    },
+    onError: (error: Error) => {
+      toast({ title: "Error", description: error.message, variant: "destructive" });
+    }
+  });
+
+  // Delete billing configuration mutation
+  const deleteBillingMutation = useMutation({
+    mutationFn: async (candidateId: number) => {
+      const response = await fetch(`/api/candidate-billing/${candidateId}`, {
+        method: 'DELETE',
+        credentials: 'include'
+      });
+      if (!response.ok) {
+        const error = await response.json();
+        throw new Error(error.message || 'Failed to delete billing configuration');
+      }
+      return response.json();
+    },
+    onSuccess: () => {
+      toast({ title: "Success", description: "Billing configuration deleted successfully" });
+      queryClient.invalidateQueries({ queryKey: ['/api/admin/candidates-billing'] });
     },
     onError: (error: Error) => {
       toast({ title: "Error", description: error.message, variant: "destructive" });
@@ -128,6 +155,34 @@ export default function BillingConfig() {
     
     const configuredCandidateIds = billingConfigs.data.map((config: CandidateBilling) => config.candidateId);
     return hiredCandidates.data.filter((user: User) => !configuredCandidateIds.includes(user.id));
+  };
+
+  const handleEdit = (billing: CandidateBilling) => {
+    setEditingBilling(billing);
+    setBillingData({
+      hourlyRate: billing.hourlyRate,
+      workingHoursPerWeek: billing.workingHoursPerWeek,
+      currency: billing.currency
+    });
+    setIsEditDialogOpen(true);
+  };
+
+  const handleUpdateSubmit = () => {
+    if (!editingBilling || billingData.hourlyRate <= 0) {
+      toast({ title: "Error", description: "Please enter a valid hourly rate", variant: "destructive" });
+      return;
+    }
+
+    updateBillingMutation.mutate({
+      candidateId: editingBilling.candidateId,
+      hourlyRate: billingData.hourlyRate.toString(),
+      workingHoursPerWeek: billingData.workingHoursPerWeek,
+      currency: billingData.currency
+    });
+  };
+
+  const handleDelete = (candidateId: number) => {
+    deleteBillingMutation.mutate(candidateId);
   };
 
   return (
@@ -234,6 +289,75 @@ export default function BillingConfig() {
         </Dialog>
       </div>
 
+      {/* Edit Dialog */}
+      <Dialog open={isEditDialogOpen} onOpenChange={setIsEditDialogOpen}>
+        <DialogContent>
+          <DialogHeader>
+            <DialogTitle>Edit Billing Configuration</DialogTitle>
+            <DialogDescription>
+              Update billing information for {editingBilling?.candidateName}
+            </DialogDescription>
+          </DialogHeader>
+          
+          <div className="space-y-4">
+            <div className="grid grid-cols-2 gap-4">
+              <div>
+                <Label htmlFor="edit-hourly-rate">Hourly Rate</Label>
+                <Input
+                  id="edit-hourly-rate"
+                  type="number"
+                  min="0"
+                  step="0.01"
+                  value={billingData.hourlyRate}
+                  onChange={(e) => setBillingData(prev => ({ ...prev, hourlyRate: parseFloat(e.target.value) || 0 }))}
+                  placeholder="50.00"
+                />
+              </div>
+              
+              <div>
+                <Label htmlFor="edit-currency">Currency</Label>
+                <Select 
+                  value={billingData.currency} 
+                  onValueChange={(value) => setBillingData(prev => ({ ...prev, currency: value }))}
+                >
+                  <SelectTrigger>
+                    <SelectValue />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="USD">USD</SelectItem>
+                    <SelectItem value="EUR">EUR</SelectItem>
+                    <SelectItem value="GBP">GBP</SelectItem>
+                    <SelectItem value="INR">INR</SelectItem>
+                  </SelectContent>
+                </Select>
+              </div>
+            </div>
+            
+            <div>
+              <Label htmlFor="edit-working-hours">Working Hours per Week</Label>
+              <Input
+                id="edit-working-hours"
+                type="number"
+                min="1"
+                max="80"
+                value={billingData.workingHoursPerWeek}
+                onChange={(e) => setBillingData(prev => ({ ...prev, workingHoursPerWeek: parseInt(e.target.value) || 40 }))}
+                placeholder="40"
+              />
+            </div>
+            
+            <Button 
+              onClick={handleUpdateSubmit} 
+              disabled={updateBillingMutation.isPending}
+              className="w-full"
+            >
+              <Save className="w-4 h-4 mr-2" />
+              Update Configuration
+            </Button>
+          </div>
+        </DialogContent>
+      </Dialog>
+
       <div className="grid gap-4">
         {isLoading ? (
           <div className="text-center py-8">Loading billing configurations...</div>
@@ -271,9 +395,38 @@ export default function BillingConfig() {
                     >
                       {billing.isActive ? 'Deactivate' : 'Activate'}
                     </Button>
-                    <Button variant="outline" size="sm">
+                    <Button 
+                      variant="outline" 
+                      size="sm"
+                      onClick={() => handleEdit(billing)}
+                    >
                       <Edit className="w-4 h-4" />
                     </Button>
+                    <AlertDialog>
+                      <AlertDialogTrigger asChild>
+                        <Button variant="outline" size="sm">
+                          <Trash2 className="w-4 h-4" />
+                        </Button>
+                      </AlertDialogTrigger>
+                      <AlertDialogContent>
+                        <AlertDialogHeader>
+                          <AlertDialogTitle>Delete Billing Configuration</AlertDialogTitle>
+                          <AlertDialogDescription>
+                            Are you sure you want to delete the billing configuration for {billing.candidateName}? 
+                            This action cannot be undone.
+                          </AlertDialogDescription>
+                        </AlertDialogHeader>
+                        <AlertDialogFooter>
+                          <AlertDialogCancel>Cancel</AlertDialogCancel>
+                          <AlertDialogAction 
+                            onClick={() => handleDelete(billing.candidateId)}
+                            disabled={deleteBillingMutation.isPending}
+                          >
+                            Delete
+                          </AlertDialogAction>
+                        </AlertDialogFooter>
+                      </AlertDialogContent>
+                    </AlertDialog>
                   </div>
                 </div>
               </CardContent>
