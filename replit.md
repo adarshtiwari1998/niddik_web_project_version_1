@@ -123,6 +123,27 @@ The application follows a standard full-stack architecture with clear separation
 
 # Recent Changes
 
+## Timesheet Management System Implementation (July 10, 2025)
+- **Feature**: Complete timesheet management system for billing and client management
+- **Database Schema**: Added three new tables - candidate_billing, weekly_timesheets, and invoices with proper relationships
+- **Backend Implementation**:
+  - Added comprehensive storage layer in `server/storage.ts` with methods for timesheet CRUD operations
+  - Implemented protected API routes in `server/routes.ts` with admin/candidate authentication
+  - Added billing configuration, timesheet approval/rejection, and invoice generation endpoints
+- **Frontend Implementation**:
+  - Created comprehensive `TimesheetManagement.tsx` component with tabbed interface
+  - Separate views for candidates (timesheet submission) and admins (approval/billing management)
+  - Integration with existing authentication system and proper role-based access control
+  - Added routing for both `/admin/timesheets` and `/candidate/timesheets` paths
+- **Features**:
+  - Weekly timesheet submission with hourly breakdown (Mon-Sun)
+  - Auto-calculation of weekly totals and billing amounts
+  - Admin approval/rejection workflow with reason tracking
+  - Invoice generation and management
+  - Billing configuration for hired candidates
+- **Files Added**: `client/src/pages/TimesheetManagement.tsx`, `client/src/hooks/use-user.tsx`
+- **Files Modified**: `shared/schema.ts`, `server/storage.ts`, `server/routes.ts`, `client/src/App.tsx`
+
 ## Database Query Issue Resolution (July 9, 2025)
 - **Problem**: Job listings were showing incorrect counts (9/10 instead of 14) across Hero component, Admin Dashboard, and admin stats in navbar
 - **Root Cause**: Query parameter handling in `getQueryFn` was not passing parameters to API endpoints, causing pagination to default to limit=10

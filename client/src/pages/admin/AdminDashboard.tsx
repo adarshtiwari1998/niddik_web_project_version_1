@@ -5,7 +5,7 @@ import { useAuth } from "@/hooks/use-auth";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle, CardFooter } from "@/components/ui/card";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Button } from "@/components/ui/button";
-import { Shield, Briefcase, Users, Calendar, Activity, Clock, ChevronRight, CreditCard, Box, RefreshCw, Mail, Globe, UserCheck, CalendarClock } from "lucide-react";
+import { Shield, Briefcase, Users, Calendar, Activity, Clock, ChevronRight, CreditCard, Box, RefreshCw, Mail, Globe, UserCheck, CalendarClock, FileText } from "lucide-react";
 import AdminPasswordChange from "@/components/admin/AdminPasswordChange";
 import AdminLayout from "@/components/layout/AdminLayout";
 import { LoadingScreen } from "@/components/ui/loading-screen";
@@ -520,6 +520,27 @@ const AdminDashboard = () => {
               <CardFooter className="pt-0 border-t">
                 <Link href="/admin/seo-pages" className="flex items-center text-xs text-primary hover:underline">
                   Manage SEO
+                  <ChevronRight className="h-3 w-3 ml-1" />
+                </Link>
+              </CardFooter>
+            </Card>
+
+            <Card className="border-l-4 border-l-indigo-500 relative">
+              <CardHeader className="pb-2">
+                <CardTitle className="text-2xl font-bold flex items-center">
+                  <FileText className="h-5 w-5 mr-2 text-indigo-500" />
+                  0
+                </CardTitle>
+                <CardDescription>Timesheet Management</CardDescription>
+              </CardHeader>
+              <CardContent className="pt-0">
+                <div className="text-xs text-muted-foreground">
+                  Manage candidate timesheets and billing
+                </div>
+              </CardContent>
+              <CardFooter className="pt-0 border-t">
+                <Link href="/admin/timesheets" className="flex items-center text-xs text-primary hover:underline">
+                  Manage timesheets
                   <ChevronRight className="h-3 w-3 ml-1" />
                 </Link>
               </CardFooter>

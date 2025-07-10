@@ -65,6 +65,7 @@ import ITPartners from './pages/ITPartners';
 import NonITPartners from './pages/NonITPartners';
 import HealthcarePartners from './pages/HealthcarePartners';
 import SearchPage from "@/pages/SearchPage";
+import TimesheetManagement from "@/pages/TimesheetManagement";
 import { lazy, Suspense } from "react";
 
 // Component to handle scroll restoration
@@ -137,6 +138,8 @@ function Router() {
             <ProtectedRoute path="/candidate/jobs/:id" component={JobDetail} />
             <ProtectedRoute path="/candidate/apply/:id" component={JobApplication} />
             <ProtectedRoute path="/apply/:id" component={JobApplication} />
+            <ProtectedRoute path="/candidate/timesheets" component={TimesheetManagement} />
+            <ProtectedRoute path="/timesheets" component={TimesheetManagement} />
 
             {/* Auth Routes */}
             <Route path="/auth" component={AuthPage} />
@@ -156,7 +159,7 @@ function Router() {
               <ProtectedRoute path="/admin/whitepaper-downloads" component={lazy(() => import("@/pages/admin/WhitepaperDownloads"))} />
               <ProtectedRoute path="/admin/demo-requests" component={lazy(() => import("@/pages/admin/DemoRequests"))} />
             <ProtectedRoute path="/admin/seo-pages" component={SEOPages} requiredRole="admin"/>
-            <ProtectedRoute path="/admin/account" component={() => <AdminPasswordChange />} requiredRole="admin"/>
+            <ProtectedRoute path="/admin/timesheets" component={TimesheetManagement} requiredRole="admin"/>
 
             {/* Demo Request */}
             <Route path="/request-demo" component={RequestDemo} />
