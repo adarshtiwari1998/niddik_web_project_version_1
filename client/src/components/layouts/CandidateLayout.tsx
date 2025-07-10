@@ -192,17 +192,13 @@ export default function CandidateLayout({ children, activeTab = "" }: CandidateL
                       </div>
                     </Link>
                     
-                    {/* Timesheet links for hired candidates only */}
-                    {isHired && (
-                      <>
-                        <Link href="/candidate/timesheets">
-                          <div className={`flex items-center space-x-2 p-2 rounded-md hover:bg-muted transition-colors ${activeTab === 'timesheets' ? 'bg-muted font-medium' : ''}`}>
-                            <Clock className="h-4 w-4" />
-                            <span>Timesheet & Billing</span>
-                          </div>
-                        </Link>
-                      </>
-                    )}
+                    {/* Timesheet links - always visible, access control handled in the page */}
+                    <Link href="/candidate/timesheets">
+                      <div className={`flex items-center space-x-2 p-2 rounded-md hover:bg-muted transition-colors ${activeTab === 'timesheets' ? 'bg-muted font-medium' : ''}`}>
+                        <Clock className="h-4 w-4" />
+                        <span>Timesheet & Billing</span>
+                      </div>
+                    </Link>
                   </nav>
 
                   <div className="px-2 py-4 mt-auto border-t">
@@ -254,17 +250,13 @@ export default function CandidateLayout({ children, activeTab = "" }: CandidateL
                     </div>
                   </Link>
                   
-                  {/* Timesheet links for hired candidates only */}
-                  {isHired && (
-                    <>
-                      <Link href="/candidate/timesheets">
-                        <div className={`flex items-center space-x-2 p-2 rounded-md hover:bg-muted transition-colors ${activeTab === 'timesheets' ? 'bg-muted font-medium' : ''}`}>
-                          <Clock className="h-4 w-4" />
-                          <span>Timesheet & Billing</span>
-                        </div>
-                      </Link>
-                    </>
-                  )}
+                  {/* Timesheet links - always visible, access control handled in the page */}
+                  <Link href="/candidate/timesheets">
+                    <div className={`flex items-center space-x-2 p-2 rounded-md hover:bg-muted transition-colors ${activeTab === 'timesheets' ? 'bg-muted font-medium' : ''}`}>
+                      <Clock className="h-4 w-4" />
+                      <span>Timesheet & Billing</span>
+                    </div>
+                  </Link>
                 </nav>
 
                 <div className="pt-6 mt-auto border-t border-border">

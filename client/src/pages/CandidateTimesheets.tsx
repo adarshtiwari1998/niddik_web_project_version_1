@@ -187,6 +187,41 @@ export default function CandidateTimesheets() {
 
   if (!user) return null;
 
+  // Check if candidate is hired
+  const isHired = billingConfig?.data?.hasHiredApplication === true;
+
+  if (!isHired) {
+    return (
+      <CandidateLayout activeTab="timesheets">
+        <div className="space-y-6">
+          <div className="flex items-center justify-between">
+            <div>
+              <h1 className="text-2xl font-bold tracking-tight">Timesheet & Billing</h1>
+              <p className="text-muted-foreground">
+                Submit your weekly hours and track attendance
+              </p>
+            </div>
+          </div>
+
+          <Card>
+            <CardContent className="pt-6">
+              <div className="text-center py-8">
+                <Clock className="w-16 h-16 mx-auto text-muted-foreground mb-4" />
+                <h3 className="text-lg font-semibold mb-2">Not Available</h3>
+                <p className="text-muted-foreground max-w-md mx-auto mb-4">
+                  Timesheet management is only available for hired candidates. You need to be hired for a position to access this feature.
+                </p>
+                <p className="text-sm text-muted-foreground">
+                  Once you are hired for a position, you'll be able to submit weekly timesheets and track your working hours here.
+                </p>
+              </div>
+            </CardContent>
+          </Card>
+        </div>
+      </CandidateLayout>
+    );
+  }
+
   return (
     <CandidateLayout activeTab="timesheets">
       <div className="space-y-6">
