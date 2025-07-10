@@ -110,7 +110,9 @@ export default function BillingConfig() {
     createBillingMutation.mutate({
       candidateId: selectedCandidate,
       createdBy: user?.id || 5, // Current admin user ID
-      ...billingData
+      hourlyRate: billingData.hourlyRate.toString(), // Convert to string for schema validation
+      workingHoursPerWeek: billingData.workingHoursPerWeek,
+      currency: billingData.currency
     });
   };
 
