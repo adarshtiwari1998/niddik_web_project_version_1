@@ -9,6 +9,7 @@ import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, Di
 import { Badge } from "@/components/ui/badge";
 import { Plus, Edit, Save, DollarSign, Users } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
+import { useUser } from "@/hooks/use-user";
 
 interface CandidateBilling {
   id: number;
@@ -30,6 +31,7 @@ interface User {
 export default function BillingConfig() {
   const { toast } = useToast();
   const queryClient = useQueryClient();
+  const { user } = useUser();
   const [selectedCandidate, setSelectedCandidate] = useState<number | null>(null);
   const [billingData, setBillingData] = useState({
     hourlyRate: 0,
@@ -107,7 +109,7 @@ export default function BillingConfig() {
 
     createBillingMutation.mutate({
       candidateId: selectedCandidate,
-      createdBy: 5, // Admin user ID
+      createdBy: user?.id || 5, // Current admin user ID
       ...billingData
     });
   };
