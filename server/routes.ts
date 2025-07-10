@@ -3506,6 +3506,26 @@ ${allUrls.map(url => `  <url>
     }
   });
 
+  // Get candidate billing status (for sidebar visibility)
+  app.get('/api/candidate/billing-status', async (req: AuthenticatedRequest, res: Response) => {
+    try {
+      if (!req.isAuthenticated() || !req.user) {
+        return res.status(401).json({ success: false, message: "Not authenticated" });
+      }
+
+      const billing = await storage.getCandidateBilling(req.user.id);
+      
+      if (!billing) {
+        return res.json({ success: true, data: { isActive: false, candidateId: req.user.id } });
+      }
+
+      res.json({ success: true, data: billing });
+    } catch (error) {
+      console.error('Error fetching candidate billing status:', error);
+      res.status(500).json({ success: false, message: "Internal server error" });
+    }
+  });
+
   // Weekly Timesheet Routes
   app.get('/api/timesheets/candidate/:candidateId', async (req: AuthenticatedRequest, res: Response) => {
     try {

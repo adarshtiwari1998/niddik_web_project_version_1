@@ -1,6 +1,8 @@
 import { ReactNode, useState } from "react";
 import { Link } from "wouter";
 import { useAuth } from "@/hooks/use-auth";
+import { useQuery } from "@tanstack/react-query";
+import { getQueryFn } from "@/lib/queryClient";
 import { 
   BarChart3, 
   Briefcase, 
@@ -9,7 +11,9 @@ import {
   LogOut,
   ChevronDown,
   Menu,
-  Loader2
+  Loader2,
+  Clock,
+  Calendar
 } from "lucide-react";
 import { LoadingScreen } from "@/components/ui/loading-screen";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
@@ -33,6 +37,15 @@ export default function CandidateLayout({ children, activeTab = "" }: CandidateL
   const { user, logoutMutation } = useAuth();
   const { toast } = useToast();
   const [isLoggingOut, setIsLoggingOut] = useState(false);
+
+  // Check if user is hired (has active billing configuration)
+  const { data: billingConfig } = useQuery({
+    queryKey: ['/api/candidate/billing-status'],
+    queryFn: getQueryFn({ on401: "throw" }),
+    enabled: !!user,
+  });
+
+  const isHired = billingConfig?.data?.isActive && billingConfig?.data?.candidateId === user?.id;
 
   if (!user) return null;
 
@@ -178,6 +191,24 @@ export default function CandidateLayout({ children, activeTab = "" }: CandidateL
                         <span>My Profile</span>
                       </div>
                     </Link>
+                    
+                    {/* Timesheet links for hired candidates only */}
+                    {isHired && (
+                      <>
+                        <Link href="/candidate/timesheets">
+                          <div className={`flex items-center space-x-2 p-2 rounded-md hover:bg-muted transition-colors ${activeTab === 'timesheets' ? 'bg-muted font-medium' : ''}`}>
+                            <Clock className="h-4 w-4" />
+                            <span>Timesheets</span>
+                          </div>
+                        </Link>
+                        <Link href="/candidate/attendance">
+                          <div className={`flex items-center space-x-2 p-2 rounded-md hover:bg-muted transition-colors ${activeTab === 'attendance' ? 'bg-muted font-medium' : ''}`}>
+                            <Calendar className="h-4 w-4" />
+                            <span>Attendance</span>
+                          </div>
+                        </Link>
+                      </>
+                    )}
                   </nav>
 
                   <div className="px-2 py-4 mt-auto border-t">
@@ -228,6 +259,24 @@ export default function CandidateLayout({ children, activeTab = "" }: CandidateL
                       <span>My Profile</span>
                     </div>
                   </Link>
+                  
+                  {/* Timesheet links for hired candidates only */}
+                  {isHired && (
+                    <>
+                      <Link href="/candidate/timesheets">
+                        <div className={`flex items-center space-x-2 p-2 rounded-md hover:bg-muted transition-colors ${activeTab === 'timesheets' ? 'bg-muted font-medium' : ''}`}>
+                          <Clock className="h-4 w-4" />
+                          <span>Timesheets</span>
+                        </div>
+                      </Link>
+                      <Link href="/candidate/attendance">
+                        <div className={`flex items-center space-x-2 p-2 rounded-md hover:bg-muted transition-colors ${activeTab === 'attendance' ? 'bg-muted font-medium' : ''}`}>
+                          <Calendar className="h-4 w-4" />
+                          <span>Attendance</span>
+                        </div>
+                      </Link>
+                    </>
+                  )}
                 </nav>
 
                 <div className="pt-6 mt-auto border-t border-border">
