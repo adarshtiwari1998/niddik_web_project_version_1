@@ -8,7 +8,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
 import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle, AlertDialogTrigger } from "@/components/ui/alert-dialog";
 import { Badge } from "@/components/ui/badge";
-import { Plus, Edit, Save, DollarSign, Users, Trash2 } from "lucide-react";
+import { Plus, Edit, Save, DollarSign, Users, Trash2, Calendar } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 import { useUser } from "@/hooks/use-user";
 
@@ -19,6 +19,7 @@ interface CandidateBilling {
   candidateEmail?: string;
   hourlyRate: number;
   workingHoursPerWeek: number;
+  workingDaysPerWeek?: number;
   currency: string;
   isActive: boolean;
 }
@@ -37,6 +38,7 @@ export default function BillingConfig() {
   const [billingData, setBillingData] = useState({
     hourlyRate: 0,
     workingHoursPerWeek: 40,
+    workingDaysPerWeek: 5,
     currency: 'USD'
   });
   const [isDialogOpen, setIsDialogOpen] = useState(false);
@@ -72,7 +74,7 @@ export default function BillingConfig() {
       toast({ title: "Success", description: "Billing configuration created successfully" });
       queryClient.invalidateQueries({ queryKey: ['/api/admin/candidates-billing'] });
       setIsDialogOpen(false);
-      setBillingData({ hourlyRate: 0, workingHoursPerWeek: 40, currency: 'USD' });
+      setBillingData({ hourlyRate: 0, workingHoursPerWeek: 40, workingDaysPerWeek: 5, currency: 'USD' });
       setSelectedCandidate(null);
     },
     onError: (error: Error) => {
@@ -139,6 +141,7 @@ export default function BillingConfig() {
       createdBy: user?.id || 5, // Current admin user ID
       hourlyRate: billingData.hourlyRate.toString(), // Convert to string for schema validation
       workingHoursPerWeek: billingData.workingHoursPerWeek,
+      workingDaysPerWeek: billingData.workingDaysPerWeek,
       currency: billingData.currency
     });
   };
@@ -162,6 +165,7 @@ export default function BillingConfig() {
     setBillingData({
       hourlyRate: billing.hourlyRate,
       workingHoursPerWeek: billing.workingHoursPerWeek,
+      workingDaysPerWeek: billing.workingDaysPerWeek || 5,
       currency: billing.currency
     });
     setIsEditDialogOpen(true);
@@ -177,6 +181,7 @@ export default function BillingConfig() {
       candidateId: editingBilling.candidateId,
       hourlyRate: billingData.hourlyRate.toString(),
       workingHoursPerWeek: billingData.workingHoursPerWeek,
+      workingDaysPerWeek: billingData.workingDaysPerWeek,
       currency: billingData.currency
     });
   };
@@ -263,17 +268,35 @@ export default function BillingConfig() {
                 </div>
               </div>
               
-              <div>
-                <Label htmlFor="working-hours">Working Hours per Week</Label>
-                <Input
-                  id="working-hours"
-                  type="number"
-                  min="1"
-                  max="80"
-                  value={billingData.workingHoursPerWeek}
-                  onChange={(e) => setBillingData(prev => ({ ...prev, workingHoursPerWeek: parseInt(e.target.value) || 40 }))}
-                  placeholder="40"
-                />
+              <div className="grid grid-cols-2 gap-4">
+                <div>
+                  <Label htmlFor="working-hours">Working Hours per Week</Label>
+                  <Input
+                    id="working-hours"
+                    type="number"
+                    min="1"
+                    max="80"
+                    value={billingData.workingHoursPerWeek}
+                    onChange={(e) => setBillingData(prev => ({ ...prev, workingHoursPerWeek: parseInt(e.target.value) || 40 }))}
+                    placeholder="40"
+                  />
+                </div>
+                
+                <div>
+                  <Label htmlFor="working-days">Working Days per Week</Label>
+                  <Select 
+                    value={billingData.workingDaysPerWeek.toString()} 
+                    onValueChange={(value) => setBillingData(prev => ({ ...prev, workingDaysPerWeek: parseInt(value) }))}
+                  >
+                    <SelectTrigger>
+                      <SelectValue />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="5">5 Days (Mon-Fri)</SelectItem>
+                      <SelectItem value="6">6 Days (Mon-Sat)</SelectItem>
+                    </SelectContent>
+                  </Select>
+                </div>
               </div>
               
               <Button 
@@ -333,17 +356,35 @@ export default function BillingConfig() {
               </div>
             </div>
             
-            <div>
-              <Label htmlFor="edit-working-hours">Working Hours per Week</Label>
-              <Input
-                id="edit-working-hours"
-                type="number"
-                min="1"
-                max="80"
-                value={billingData.workingHoursPerWeek}
-                onChange={(e) => setBillingData(prev => ({ ...prev, workingHoursPerWeek: parseInt(e.target.value) || 40 }))}
-                placeholder="40"
-              />
+            <div className="grid grid-cols-2 gap-4">
+              <div>
+                <Label htmlFor="edit-working-hours">Working Hours per Week</Label>
+                <Input
+                  id="edit-working-hours"
+                  type="number"
+                  min="1"
+                  max="80"
+                  value={billingData.workingHoursPerWeek}
+                  onChange={(e) => setBillingData(prev => ({ ...prev, workingHoursPerWeek: parseInt(e.target.value) || 40 }))}
+                  placeholder="40"
+                />
+              </div>
+              
+              <div>
+                <Label htmlFor="edit-working-days">Working Days per Week</Label>
+                <Select 
+                  value={billingData.workingDaysPerWeek.toString()} 
+                  onValueChange={(value) => setBillingData(prev => ({ ...prev, workingDaysPerWeek: parseInt(value) }))}
+                >
+                  <SelectTrigger>
+                    <SelectValue />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="5">5 Days (Mon-Fri)</SelectItem>
+                    <SelectItem value="6">6 Days (Mon-Sat)</SelectItem>
+                  </SelectContent>
+                </Select>
+              </div>
             </div>
             
             <Button 
@@ -382,6 +423,10 @@ export default function BillingConfig() {
                       <div className="flex items-center gap-1">
                         <Users className="w-4 h-4" />
                         <span>{billing.workingHoursPerWeek}h/week</span>
+                      </div>
+                      <div className="flex items-center gap-1">
+                        <Calendar className="w-4 h-4" />
+                        <span>{billing.workingDaysPerWeek || 5} days/week</span>
                       </div>
                     </div>
                   </div>

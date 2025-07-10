@@ -412,6 +412,7 @@ export const candidateBilling = pgTable("candidate_billing", {
   candidateId: integer("candidate_id").notNull().references(() => users.id), // Reference to users table for hired candidates
   hourlyRate: decimal("hourly_rate", { precision: 10, scale: 2 }).notNull().default('0'),
   workingHoursPerWeek: integer("working_hours_per_week").notNull().default(40),
+  workingDaysPerWeek: integer("working_days_per_week").notNull().default(5), // 5 or 6 days per week
   currency: text("currency").notNull().default("INR"),
   isActive: boolean("is_active").notNull().default(true),
   createdBy: integer("created_by").notNull().references(() => users.id), // Admin who set this
@@ -422,6 +423,7 @@ export const candidateBilling = pgTable("candidate_billing", {
 export const candidateBillingSchema = createInsertSchema(candidateBilling, {
   hourlyRate: (schema) => schema.transform((val) => parseFloat(val.toString())),
   workingHoursPerWeek: (schema) => schema.min(1, "Working hours must be at least 1").max(168, "Cannot exceed 168 hours per week"),
+  workingDaysPerWeek: (schema) => schema.min(5, "Must be at least 5 days").max(6, "Cannot exceed 6 days per week"),
   currency: (schema) => schema.optional(),
 });
 

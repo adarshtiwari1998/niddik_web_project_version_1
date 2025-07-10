@@ -123,6 +123,22 @@ The application follows a standard full-stack architecture with clear separation
 
 # Recent Changes
 
+## Dynamic Working Days Configuration Feature (July 10, 2025)
+- **Feature**: Configurable working days per week (5 or 6 days) set by admin with dynamic timesheet calendars
+- **Database Enhancement**: Added `workingDaysPerWeek` field to `candidateBilling` table with range validation (5-6 days)
+- **Admin Interface Updates**:
+  - Enhanced `BillingConfig.tsx` component with working days selection in both create and edit forms
+  - Added proper validation and display of working days information in billing configuration cards
+  - Working days field includes dropdown with "5 Days (Mon-Fri)" and "6 Days (Mon-Sat)" options
+- **Candidate Interface Updates**:
+  - Updated `CandidateTimesheets.tsx` to dynamically generate timesheet form based on configured working days
+  - Adaptive grid layout that shows only relevant working days (Mon-Fri for 5 days, Mon-Sat for 6 days)
+  - Clear indication in timesheet description showing which days are working days
+  - Updated billing information display to show working days configuration
+- **Schema & API**: Server storage and API endpoints already supported the new field
+- **User Experience**: Candidates now see only the days they need to track, reducing confusion and improving usability
+- **Files Modified**: `client/src/components/BillingConfig.tsx`, `client/src/pages/CandidateTimesheets.tsx`
+
 ## Timesheet Management System Implementation (July 10, 2025)
 - **Feature**: Complete timesheet management system for billing and client management
 - **Database Schema**: Added three new tables - candidate_billing, weekly_timesheets, and invoices with proper relationships

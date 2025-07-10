@@ -49,8 +49,11 @@ interface BillingConfig {
   id: number;
   candidateId: number;
   hourlyRate: number;
-  workingHoursPerDay: number;
+  workingHoursPerWeek: number;
+  workingDaysPerWeek?: number;
+  currency: string;
   isActive: boolean;
+  hasHiredApplication?: boolean;
 }
 
 export default function CandidateTimesheets() {
@@ -182,8 +185,14 @@ export default function CandidateTimesheets() {
     }
   };
 
-  const dayLabels = ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday'];
-  const dayKeys = ['mondayHours', 'tuesdayHours', 'wednesdayHours', 'thursdayHours', 'fridayHours', 'saturdayHours', 'sundayHours'] as const;
+  // Dynamic working days based on billing configuration
+  const workingDaysPerWeek = billingConfig?.data?.workingDaysPerWeek || 5;
+  const allDayLabels = ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday'];
+  const allDayKeys = ['mondayHours', 'tuesdayHours', 'wednesdayHours', 'thursdayHours', 'fridayHours', 'saturdayHours', 'sundayHours'] as const;
+  
+  // Filter days based on working days configuration
+  const dayLabels = workingDaysPerWeek === 6 ? allDayLabels.slice(0, 6) : allDayLabels.slice(0, 5);
+  const dayKeys = workingDaysPerWeek === 6 ? allDayKeys.slice(0, 6) : allDayKeys.slice(0, 5);
 
   if (!user) return null;
 
@@ -257,14 +266,18 @@ export default function CandidateTimesheets() {
                   </CardTitle>
                 </CardHeader>
                 <CardContent>
-                  <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                  <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
                     <div>
                       <Label className="text-sm font-medium">Hourly Rate</Label>
-                      <p className="text-lg font-semibold">${billingConfig.data.hourlyRate}/hour</p>
+                      <p className="text-lg font-semibold">{billingConfig.data.currency} {billingConfig.data.hourlyRate}/hour</p>
                     </div>
                     <div>
-                      <Label className="text-sm font-medium">Standard Hours/Day</Label>
-                      <p className="text-lg font-semibold">{billingConfig.data.workingHoursPerDay} hours</p>
+                      <Label className="text-sm font-medium">Weekly Hours</Label>
+                      <p className="text-lg font-semibold">{billingConfig.data.workingHoursPerWeek} hours/week</p>
+                    </div>
+                    <div>
+                      <Label className="text-sm font-medium">Working Days</Label>
+                      <p className="text-lg font-semibold">{workingDaysPerWeek} days/week</p>
                     </div>
                     <div>
                       <Label className="text-sm font-medium">Status</Label>
@@ -315,10 +328,15 @@ export default function CandidateTimesheets() {
                 <CardTitle>Submit Hours</CardTitle>
                 <CardDescription>
                   Enter your working hours for each day of the selected week
+                  {workingDaysPerWeek === 6 ? ' (Monday - Saturday)' : ' (Monday - Friday)'}
                 </CardDescription>
               </CardHeader>
               <CardContent>
-                <div className="grid grid-cols-1 md:grid-cols-4 lg:grid-cols-7 gap-4 mb-6">
+                <div className={`grid gap-4 mb-6 ${
+                  workingDaysPerWeek === 5 
+                    ? 'grid-cols-1 md:grid-cols-3 lg:grid-cols-5' 
+                    : 'grid-cols-1 md:grid-cols-3 lg:grid-cols-6'
+                }`}>
                   {dayLabels.map((day, index) => {
                     const key = dayKeys[index];
                     return (
