@@ -19,7 +19,13 @@ import type {
   PasswordResetToken,
   InsertPasswordResetToken,
   WhitepaperDownload,
-  InsertWhitepaperDownload
+  InsertWhitepaperDownload,
+  CandidateBilling,
+  InsertCandidateBilling,
+  WeeklyTimesheet,
+  InsertWeeklyTimesheet,
+  Invoice,
+  InsertInvoice
 } from "@shared/schema";
 import {
   users,
@@ -34,7 +40,10 @@ import {
   passwordResetTokens,
   whitepaperDownloads,
   adminSessions,
-  sessions
+  sessions,
+  candidateBilling,
+  weeklyTimesheets,
+  invoices
 } from "@shared/schema";
 import { db } from "@db";
 
@@ -1269,6 +1278,367 @@ async updateSeoPage(id: number, data: Partial<InsertSeoPage>): Promise<SeoPage |
       .where(eq(jobListings.status, 'active'));
 
     return result[0]?.count || 0;
+  },
+
+  // ======================= TIMESHEET MANAGEMENT METHODS =======================
+  
+  // Candidate Billing Configuration Methods
+  async createCandidateBilling(data: InsertCandidateBilling): Promise<CandidateBilling> {
+    const [billing] = await db.insert(candidateBilling).values(data).returning();
+    return billing;
+  },
+
+  async getCandidateBilling(candidateId: number): Promise<CandidateBilling | undefined> {
+    return await db.query.candidateBilling.findFirst({
+      where: and(
+        eq(candidateBilling.candidateId, candidateId),
+        eq(candidateBilling.isActive, true)
+      )
+    });
+  },
+
+  async updateCandidateBilling(candidateId: number, data: Partial<InsertCandidateBilling>): Promise<CandidateBilling | undefined> {
+    const [updated] = await db
+      .update(candidateBilling)
+      .set({ ...data, updatedAt: new Date() })
+      .where(eq(candidateBilling.candidateId, candidateId))
+      .returning();
+    return updated;
+  },
+
+  async getAllCandidatesWithBilling(): Promise<any[]> {
+    return await db
+      .select({
+        id: users.id,
+        fullName: users.fullName,
+        email: users.email,
+        phone: users.phone,
+        hourlyRate: candidateBilling.hourlyRate,
+        workingHoursPerWeek: candidateBilling.workingHoursPerWeek,
+        currency: candidateBilling.currency,
+        isActive: candidateBilling.isActive
+      })
+      .from(users)
+      .leftJoin(candidateBilling, eq(users.id, candidateBilling.candidateId))
+      .where(ne(users.role, 'admin'))
+      .orderBy(desc(users.createdAt));
+  },
+
+  async getHiredCandidates(): Promise<User[]> {
+    // Get candidates with status "hired" from job applications
+    const hiredCandidateIds = await db
+      .selectDistinct({ candidateId: jobApplications.userId })
+      .from(jobApplications)
+      .where(eq(jobApplications.status, 'hired'));
+
+    if (hiredCandidateIds.length === 0) return [];
+
+    const candidateIds = hiredCandidateIds.map(c => c.candidateId);
+    
+    return await db
+      .select()
+      .from(users)
+      .where(inArray(users.id, candidateIds))
+      .orderBy(desc(users.createdAt));
+  },
+
+  // Weekly Timesheets Methods
+  async createWeeklyTimesheet(data: InsertWeeklyTimesheet): Promise<WeeklyTimesheet> {
+    const [timesheet] = await db.insert(weeklyTimesheets).values(data).returning();
+    return timesheet;
+  },
+
+  async getWeeklyTimesheet(candidateId: number, weekStartDate: string): Promise<WeeklyTimesheet | undefined> {
+    return await db.query.weeklyTimesheets.findFirst({
+      where: and(
+        eq(weeklyTimesheets.candidateId, candidateId),
+        eq(weeklyTimesheets.weekStartDate, weekStartDate)
+      )
+    });
+  },
+
+  async updateWeeklyTimesheet(id: number, data: Partial<InsertWeeklyTimesheet>): Promise<WeeklyTimesheet | undefined> {
+    const [updated] = await db
+      .update(weeklyTimesheets)
+      .set({ ...data, updatedAt: new Date() })
+      .where(eq(weeklyTimesheets.id, id))
+      .returning();
+    return updated;
+  },
+
+  async getTimesheetsForCandidate(
+    candidateId: number, 
+    options: { page?: number; limit?: number; status?: string } = {}
+  ): Promise<{ timesheets: WeeklyTimesheet[]; total: number }> {
+    const { page = 1, limit = 10, status } = options;
+    const offset = (page - 1) * limit;
+
+    let whereConditions = [eq(weeklyTimesheets.candidateId, candidateId)];
+    
+    if (status && status !== 'all') {
+      whereConditions.push(eq(weeklyTimesheets.status, status));
+    }
+
+    const whereCondition = and(...whereConditions);
+
+    // Get total count
+    const countResult = await db
+      .select({ count: count() })
+      .from(weeklyTimesheets)
+      .where(whereCondition);
+
+    const total = countResult[0]?.count || 0;
+
+    // Get paginated timesheets
+    const timesheets = await db
+      .select()
+      .from(weeklyTimesheets)
+      .where(whereCondition)
+      .orderBy(desc(weeklyTimesheets.weekStartDate))
+      .limit(limit)
+      .offset(offset);
+
+    return { timesheets, total };
+  },
+
+  async getAllTimesheets(options: { page?: number; limit?: number; status?: string; candidateId?: number } = {}): Promise<{ timesheets: any[]; total: number }> {
+    const { page = 1, limit = 10, status, candidateId } = options;
+    const offset = (page - 1) * limit;
+
+    let whereConditions = [];
+    
+    if (status && status !== 'all') {
+      whereConditions.push(eq(weeklyTimesheets.status, status));
+    }
+    
+    if (candidateId) {
+      whereConditions.push(eq(weeklyTimesheets.candidateId, candidateId));
+    }
+
+    const whereCondition = whereConditions.length > 0 ? and(...whereConditions) : undefined;
+
+    // Get total count
+    const countResult = await db
+      .select({ count: count() })
+      .from(weeklyTimesheets)
+      .where(whereCondition);
+
+    const total = countResult[0]?.count || 0;
+
+    // Get paginated timesheets with candidate information
+    const timesheets = await db
+      .select({
+        id: weeklyTimesheets.id,
+        candidateId: weeklyTimesheets.candidateId,
+        candidateName: users.fullName,
+        candidateEmail: users.email,
+        weekStartDate: weeklyTimesheets.weekStartDate,
+        weekEndDate: weeklyTimesheets.weekEndDate,
+        mondayHours: weeklyTimesheets.mondayHours,
+        tuesdayHours: weeklyTimesheets.tuesdayHours,
+        wednesdayHours: weeklyTimesheets.wednesdayHours,
+        thursdayHours: weeklyTimesheets.thursdayHours,
+        fridayHours: weeklyTimesheets.fridayHours,
+        saturdayHours: weeklyTimesheets.saturdayHours,
+        sundayHours: weeklyTimesheets.sundayHours,
+        totalWeeklyHours: weeklyTimesheets.totalWeeklyHours,
+        totalWeeklyAmount: weeklyTimesheets.totalWeeklyAmount,
+        status: weeklyTimesheets.status,
+        submittedAt: weeklyTimesheets.submittedAt,
+        approvedAt: weeklyTimesheets.approvedAt,
+        createdAt: weeklyTimesheets.createdAt,
+        updatedAt: weeklyTimesheets.updatedAt
+      })
+      .from(weeklyTimesheets)
+      .leftJoin(users, eq(weeklyTimesheets.candidateId, users.id))
+      .where(whereCondition)
+      .orderBy(desc(weeklyTimesheets.weekStartDate))
+      .limit(limit)
+      .offset(offset);
+
+    return { timesheets, total };
+  },
+
+  async approveTimesheet(timesheetId: number, approvedBy: number): Promise<WeeklyTimesheet | undefined> {
+    const [updated] = await db
+      .update(weeklyTimesheets)
+      .set({
+        status: 'approved',
+        approvedAt: new Date(),
+        approvedBy: approvedBy,
+        updatedAt: new Date()
+      })
+      .where(eq(weeklyTimesheets.id, timesheetId))
+      .returning();
+    return updated;
+  },
+
+  async rejectTimesheet(timesheetId: number, rejectionReason: string): Promise<WeeklyTimesheet | undefined> {
+    const [updated] = await db
+      .update(weeklyTimesheets)
+      .set({
+        status: 'rejected',
+        rejectionReason: rejectionReason,
+        updatedAt: new Date()
+      })
+      .where(eq(weeklyTimesheets.id, timesheetId))
+      .returning();
+    return updated;
+  },
+
+  // Invoice Methods
+  async createInvoice(data: InsertInvoice): Promise<Invoice> {
+    const [invoice] = await db.insert(invoices).values(data).returning();
+    return invoice;
+  },
+
+  async getInvoicesForCandidate(candidateId: number, options: { page?: number; limit?: number; status?: string } = {}): Promise<{ invoices: any[]; total: number }> {
+    const { page = 1, limit = 10, status } = options;
+    const offset = (page - 1) * limit;
+
+    let whereConditions = [eq(invoices.candidateId, candidateId)];
+    
+    if (status && status !== 'all') {
+      whereConditions.push(eq(invoices.status, status));
+    }
+
+    const whereCondition = and(...whereConditions);
+
+    // Get total count
+    const countResult = await db
+      .select({ count: count() })
+      .from(invoices)
+      .where(whereCondition);
+
+    const total = countResult[0]?.count || 0;
+
+    // Get paginated invoices with timesheet data
+    const invoicesResult = await db
+      .select({
+        id: invoices.id,
+        invoiceNumber: invoices.invoiceNumber,
+        candidateId: invoices.candidateId,
+        timesheetId: invoices.timesheetId,
+        weekStartDate: invoices.weekStartDate,
+        weekEndDate: invoices.weekEndDate,
+        totalHours: invoices.totalHours,
+        hourlyRate: invoices.hourlyRate,
+        totalAmount: invoices.totalAmount,
+        currency: invoices.currency,
+        status: invoices.status,
+        pdfUrl: invoices.pdfUrl,
+        issuedDate: invoices.issuedDate,
+        dueDate: invoices.dueDate,
+        paidDate: invoices.paidDate,
+        notes: invoices.notes,
+        createdAt: invoices.createdAt
+      })
+      .from(invoices)
+      .where(whereCondition)
+      .orderBy(desc(invoices.issuedDate))
+      .limit(limit)
+      .offset(offset);
+
+    return { invoices: invoicesResult, total };
+  },
+
+  async getAllInvoices(options: { page?: number; limit?: number; status?: string; candidateId?: number } = {}): Promise<{ invoices: any[]; total: number }> {
+    const { page = 1, limit = 10, status, candidateId } = options;
+    const offset = (page - 1) * limit;
+
+    let whereConditions = [];
+    
+    if (status && status !== 'all') {
+      whereConditions.push(eq(invoices.status, status));
+    }
+    
+    if (candidateId) {
+      whereConditions.push(eq(invoices.candidateId, candidateId));
+    }
+
+    const whereCondition = whereConditions.length > 0 ? and(...whereConditions) : undefined;
+
+    // Get total count
+    const countResult = await db
+      .select({ count: count() })
+      .from(invoices)
+      .where(whereCondition);
+
+    const total = countResult[0]?.count || 0;
+
+    // Get paginated invoices with candidate information
+    const invoicesResult = await db
+      .select({
+        id: invoices.id,
+        invoiceNumber: invoices.invoiceNumber,
+        candidateId: invoices.candidateId,
+        candidateName: users.fullName,
+        candidateEmail: users.email,
+        timesheetId: invoices.timesheetId,
+        weekStartDate: invoices.weekStartDate,
+        weekEndDate: invoices.weekEndDate,
+        totalHours: invoices.totalHours,
+        hourlyRate: invoices.hourlyRate,
+        totalAmount: invoices.totalAmount,
+        currency: invoices.currency,
+        status: invoices.status,
+        pdfUrl: invoices.pdfUrl,
+        issuedDate: invoices.issuedDate,
+        dueDate: invoices.dueDate,
+        paidDate: invoices.paidDate,
+        notes: invoices.notes,
+        createdAt: invoices.createdAt
+      })
+      .from(invoices)
+      .leftJoin(users, eq(invoices.candidateId, users.id))
+      .where(whereCondition)
+      .orderBy(desc(invoices.issuedDate))
+      .limit(limit)
+      .offset(offset);
+
+    return { invoices: invoicesResult, total };
+  },
+
+  async getInvoiceById(id: number): Promise<Invoice | undefined> {
+    return await db.query.invoices.findFirst({
+      where: eq(invoices.id, id)
+    });
+  },
+
+  async updateInvoiceStatus(id: number, status: string, paidDate?: Date): Promise<Invoice | undefined> {
+    const updateData: any = { status, updatedAt: new Date() };
+    if (paidDate) {
+      updateData.paidDate = paidDate;
+    }
+    
+    const [updated] = await db
+      .update(invoices)
+      .set(updateData)
+      .where(eq(invoices.id, id))
+      .returning();
+    return updated;
+  },
+
+  // Generate invoice number
+  async generateInvoiceNumber(): Promise<string> {
+    const year = new Date().getFullYear();
+    const month = String(new Date().getMonth() + 1).padStart(2, '0');
+    
+    // Get the latest invoice number for this year-month
+    const latestInvoice = await db
+      .select()
+      .from(invoices)
+      .where(sql`${invoices.invoiceNumber} LIKE ${`INV-${year}${month}-%`}`)
+      .orderBy(desc(invoices.invoiceNumber))
+      .limit(1);
+
+    let nextNumber = 1;
+    if (latestInvoice.length > 0) {
+      const lastNumber = latestInvoice[0].invoiceNumber.split('-')[2];
+      nextNumber = parseInt(lastNumber) + 1;
+    }
+
+    return `INV-${year}${month}-${String(nextNumber).padStart(4, '0')}`;
   },
 };
 

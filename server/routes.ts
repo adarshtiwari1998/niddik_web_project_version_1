@@ -16,7 +16,13 @@ import {
   seoPages,
   seoPageSchema,
   whitepaperDownloadSchema,
-  whitepaperDownloads
+  whitepaperDownloads,
+  candidateBillingSchema,
+  weeklyTimesheetSchema,
+  invoiceSchema,
+  candidateBilling,
+  weeklyTimesheets,
+  invoices
 } from "@shared/schema";
 import { db } from "../db";
 import { eq, desc, asc, and, or, ilike, inArray, count, ne } from "drizzle-orm";
@@ -3366,6 +3372,525 @@ ${allUrls.map(url => `  <url>
     } catch (error) {
       console.error('Error generating sitemap:', error);
       return res.status(500).send('Error generating sitemap');
+    }
+  });
+
+  // ======================= TIMESHEET MANAGEMENT API ROUTES =======================
+
+  // Candidate Billing Configuration Routes
+  app.get('/api/candidate-billing/:candidateId', async (req: AuthenticatedRequest, res: Response) => {
+    try {
+      if (!req.isAuthenticated() || !req.user) {
+        return res.status(401).json({ success: false, message: "Not authenticated" });
+      }
+
+      const candidateId = parseInt(req.params.candidateId);
+      const isAdmin = req.user.role === 'admin';
+      
+      // Candidates can only view their own billing info
+      if (!isAdmin && req.user.id !== candidateId) {
+        return res.status(403).json({ success: false, message: "Unauthorized access" });
+      }
+
+      const billing = await storage.getCandidateBilling(candidateId);
+      
+      if (!billing) {
+        return res.status(404).json({ success: false, message: "Billing configuration not found" });
+      }
+
+      res.json({ success: true, data: billing });
+    } catch (error) {
+      console.error('Error fetching candidate billing:', error);
+      res.status(500).json({ success: false, message: "Internal server error" });
+    }
+  });
+
+  app.post('/api/candidate-billing', async (req: AuthenticatedRequest, res: Response) => {
+    try {
+      if (!req.isAuthenticated() || !req.user || req.user.role !== 'admin') {
+        return res.status(403).json({ success: false, message: "Admin access required" });
+      }
+
+      const validatedData = candidateBillingSchema.parse(req.body);
+      const billing = await storage.createCandidateBilling(validatedData);
+
+      res.status(201).json({ success: true, data: billing });
+    } catch (error) {
+      if (error instanceof z.ZodError) {
+        return res.status(400).json({ 
+          success: false, 
+          message: "Validation error", 
+          errors: error.errors 
+        });
+      }
+      console.error('Error creating candidate billing:', error);
+      res.status(500).json({ success: false, message: "Internal server error" });
+    }
+  });
+
+  app.put('/api/candidate-billing/:candidateId', async (req: AuthenticatedRequest, res: Response) => {
+    try {
+      if (!req.isAuthenticated() || !req.user || req.user.role !== 'admin') {
+        return res.status(403).json({ success: false, message: "Admin access required" });
+      }
+
+      const candidateId = parseInt(req.params.candidateId);
+      const validatedData = candidateBillingSchema.partial().parse(req.body);
+      
+      const billing = await storage.updateCandidateBilling(candidateId, validatedData);
+      
+      if (!billing) {
+        return res.status(404).json({ success: false, message: "Billing configuration not found" });
+      }
+
+      res.json({ success: true, data: billing });
+    } catch (error) {
+      if (error instanceof z.ZodError) {
+        return res.status(400).json({ 
+          success: false, 
+          message: "Validation error", 
+          errors: error.errors 
+        });
+      }
+      console.error('Error updating candidate billing:', error);
+      res.status(500).json({ success: false, message: "Internal server error" });
+    }
+  });
+
+  app.get('/api/admin/candidates-billing', async (req: AuthenticatedRequest, res: Response) => {
+    try {
+      if (!req.isAuthenticated() || !req.user || req.user.role !== 'admin') {
+        return res.status(403).json({ success: false, message: "Admin access required" });
+      }
+
+      const candidates = await storage.getAllCandidatesWithBilling();
+      res.json({ success: true, data: candidates });
+    } catch (error) {
+      console.error('Error fetching candidates with billing:', error);
+      res.status(500).json({ success: false, message: "Internal server error" });
+    }
+  });
+
+  app.get('/api/admin/hired-candidates', async (req: AuthenticatedRequest, res: Response) => {
+    try {
+      if (!req.isAuthenticated() || !req.user || req.user.role !== 'admin') {
+        return res.status(403).json({ success: false, message: "Admin access required" });
+      }
+
+      const candidates = await storage.getHiredCandidates();
+      res.json({ success: true, data: candidates });
+    } catch (error) {
+      console.error('Error fetching hired candidates:', error);
+      res.status(500).json({ success: false, message: "Internal server error" });
+    }
+  });
+
+  // Weekly Timesheet Routes
+  app.get('/api/timesheets/candidate/:candidateId', async (req: AuthenticatedRequest, res: Response) => {
+    try {
+      if (!req.isAuthenticated() || !req.user) {
+        return res.status(401).json({ success: false, message: "Not authenticated" });
+      }
+
+      const candidateId = parseInt(req.params.candidateId);
+      const page = parseInt(req.query.page as string) || 1;
+      const limit = parseInt(req.query.limit as string) || 10;
+      const status = req.query.status as string;
+      const isAdmin = req.user.role === 'admin';
+      
+      // Candidates can only view their own timesheets
+      if (!isAdmin && req.user.id !== candidateId) {
+        return res.status(403).json({ success: false, message: "Unauthorized access" });
+      }
+
+      const result = await storage.getTimesheetsForCandidate(candidateId, { page, limit, status });
+      
+      res.json({ 
+        success: true, 
+        data: result.timesheets,
+        meta: {
+          total: result.total,
+          page,
+          limit,
+          pages: Math.ceil(result.total / limit)
+        }
+      });
+    } catch (error) {
+      console.error('Error fetching candidate timesheets:', error);
+      res.status(500).json({ success: false, message: "Internal server error" });
+    }
+  });
+
+  app.get('/api/timesheets/:candidateId/:weekStartDate', async (req: AuthenticatedRequest, res: Response) => {
+    try {
+      if (!req.isAuthenticated() || !req.user) {
+        return res.status(401).json({ success: false, message: "Not authenticated" });
+      }
+
+      const candidateId = parseInt(req.params.candidateId);
+      const weekStartDate = req.params.weekStartDate;
+      const isAdmin = req.user.role === 'admin';
+      
+      // Candidates can only view their own timesheets
+      if (!isAdmin && req.user.id !== candidateId) {
+        return res.status(403).json({ success: false, message: "Unauthorized access" });
+      }
+
+      const timesheet = await storage.getWeeklyTimesheet(candidateId, weekStartDate);
+      
+      if (!timesheet) {
+        return res.status(404).json({ success: false, message: "Timesheet not found" });
+      }
+
+      res.json({ success: true, data: timesheet });
+    } catch (error) {
+      console.error('Error fetching timesheet:', error);
+      res.status(500).json({ success: false, message: "Internal server error" });
+    }
+  });
+
+  app.post('/api/timesheets', async (req: AuthenticatedRequest, res: Response) => {
+    try {
+      if (!req.isAuthenticated() || !req.user) {
+        return res.status(401).json({ success: false, message: "Not authenticated" });
+      }
+
+      const validatedData = weeklyTimesheetSchema.parse(req.body);
+      
+      // Candidates can only submit their own timesheets
+      if (req.user.role !== 'admin' && req.user.id !== validatedData.candidateId) {
+        return res.status(403).json({ success: false, message: "Unauthorized access" });
+      }
+
+      // Check if timesheet already exists for this week
+      const existingTimesheet = await storage.getWeeklyTimesheet(validatedData.candidateId, validatedData.weekStartDate);
+      if (existingTimesheet) {
+        return res.status(409).json({ success: false, message: "Timesheet already exists for this week" });
+      }
+
+      // Get candidate billing to calculate amount
+      const billing = await storage.getCandidateBilling(validatedData.candidateId);
+      if (!billing) {
+        return res.status(400).json({ success: false, message: "Candidate billing configuration not found" });
+      }
+
+      // Calculate total hours and amount
+      const totalHours = (validatedData.mondayHours || 0) + 
+                        (validatedData.tuesdayHours || 0) + 
+                        (validatedData.wednesdayHours || 0) + 
+                        (validatedData.thursdayHours || 0) + 
+                        (validatedData.fridayHours || 0) + 
+                        (validatedData.saturdayHours || 0) + 
+                        (validatedData.sundayHours || 0);
+
+      const totalAmount = totalHours * billing.hourlyRate;
+
+      const timesheetData = {
+        ...validatedData,
+        totalWeeklyHours: totalHours,
+        totalWeeklyAmount: totalAmount,
+        status: 'submitted',
+        submittedAt: new Date()
+      };
+
+      const timesheet = await storage.createWeeklyTimesheet(timesheetData);
+
+      res.status(201).json({ success: true, data: timesheet });
+    } catch (error) {
+      if (error instanceof z.ZodError) {
+        return res.status(400).json({ 
+          success: false, 
+          message: "Validation error", 
+          errors: error.errors 
+        });
+      }
+      console.error('Error creating timesheet:', error);
+      res.status(500).json({ success: false, message: "Internal server error" });
+    }
+  });
+
+  app.put('/api/timesheets/:id', async (req: AuthenticatedRequest, res: Response) => {
+    try {
+      if (!req.isAuthenticated() || !req.user) {
+        return res.status(401).json({ success: false, message: "Not authenticated" });
+      }
+
+      const timesheetId = parseInt(req.params.id);
+      const validatedData = weeklyTimesheetSchema.partial().parse(req.body);
+      
+      // Get existing timesheet to check ownership
+      const existingTimesheet = await db.query.weeklyTimesheets.findFirst({
+        where: eq(weeklyTimesheets.id, timesheetId)
+      });
+
+      if (!existingTimesheet) {
+        return res.status(404).json({ success: false, message: "Timesheet not found" });
+      }
+
+      // Candidates can only edit their own timesheets and only if not approved
+      if (req.user.role !== 'admin') {
+        if (req.user.id !== existingTimesheet.candidateId) {
+          return res.status(403).json({ success: false, message: "Unauthorized access" });
+        }
+        if (existingTimesheet.status === 'approved') {
+          return res.status(403).json({ success: false, message: "Cannot edit approved timesheet" });
+        }
+      }
+
+      // Recalculate totals if hours are being updated
+      if (validatedData.mondayHours !== undefined || 
+          validatedData.tuesdayHours !== undefined || 
+          validatedData.wednesdayHours !== undefined || 
+          validatedData.thursdayHours !== undefined || 
+          validatedData.fridayHours !== undefined || 
+          validatedData.saturdayHours !== undefined || 
+          validatedData.sundayHours !== undefined) {
+        
+        const billing = await storage.getCandidateBilling(existingTimesheet.candidateId);
+        if (billing) {
+          const totalHours = (validatedData.mondayHours ?? (existingTimesheet.mondayHours || 0)) + 
+                            (validatedData.tuesdayHours ?? (existingTimesheet.tuesdayHours || 0)) + 
+                            (validatedData.wednesdayHours ?? (existingTimesheet.wednesdayHours || 0)) + 
+                            (validatedData.thursdayHours ?? (existingTimesheet.thursdayHours || 0)) + 
+                            (validatedData.fridayHours ?? (existingTimesheet.fridayHours || 0)) + 
+                            (validatedData.saturdayHours ?? (existingTimesheet.saturdayHours || 0)) + 
+                            (validatedData.sundayHours ?? (existingTimesheet.sundayHours || 0));
+
+          validatedData.totalWeeklyHours = totalHours;
+          validatedData.totalWeeklyAmount = totalHours * billing.hourlyRate;
+        }
+      }
+
+      const timesheet = await storage.updateWeeklyTimesheet(timesheetId, validatedData);
+      
+      if (!timesheet) {
+        return res.status(404).json({ success: false, message: "Timesheet not found" });
+      }
+
+      res.json({ success: true, data: timesheet });
+    } catch (error) {
+      if (error instanceof z.ZodError) {
+        return res.status(400).json({ 
+          success: false, 
+          message: "Validation error", 
+          errors: error.errors 
+        });
+      }
+      console.error('Error updating timesheet:', error);
+      res.status(500).json({ success: false, message: "Internal server error" });
+    }
+  });
+
+  app.get('/api/admin/timesheets', async (req: AuthenticatedRequest, res: Response) => {
+    try {
+      if (!req.isAuthenticated() || !req.user || req.user.role !== 'admin') {
+        return res.status(403).json({ success: false, message: "Admin access required" });
+      }
+
+      const page = parseInt(req.query.page as string) || 1;
+      const limit = parseInt(req.query.limit as string) || 10;
+      const status = req.query.status as string;
+      const candidateId = req.query.candidateId ? parseInt(req.query.candidateId as string) : undefined;
+
+      const result = await storage.getAllTimesheets({ page, limit, status, candidateId });
+      
+      res.json({ 
+        success: true, 
+        data: result.timesheets,
+        meta: {
+          total: result.total,
+          page,
+          limit,
+          pages: Math.ceil(result.total / limit)
+        }
+      });
+    } catch (error) {
+      console.error('Error fetching admin timesheets:', error);
+      res.status(500).json({ success: false, message: "Internal server error" });
+    }
+  });
+
+  app.patch('/api/admin/timesheets/:id/approve', async (req: AuthenticatedRequest, res: Response) => {
+    try {
+      if (!req.isAuthenticated() || !req.user || req.user.role !== 'admin') {
+        return res.status(403).json({ success: false, message: "Admin access required" });
+      }
+
+      const timesheetId = parseInt(req.params.id);
+      
+      const timesheet = await storage.approveTimesheet(timesheetId, req.user.id);
+      
+      if (!timesheet) {
+        return res.status(404).json({ success: false, message: "Timesheet not found" });
+      }
+
+      res.json({ success: true, data: timesheet });
+    } catch (error) {
+      console.error('Error approving timesheet:', error);
+      res.status(500).json({ success: false, message: "Internal server error" });
+    }
+  });
+
+  app.patch('/api/admin/timesheets/:id/reject', async (req: AuthenticatedRequest, res: Response) => {
+    try {
+      if (!req.isAuthenticated() || !req.user || req.user.role !== 'admin') {
+        return res.status(403).json({ success: false, message: "Admin access required" });
+      }
+
+      const timesheetId = parseInt(req.params.id);
+      const { rejectionReason } = req.body;
+      
+      if (!rejectionReason) {
+        return res.status(400).json({ success: false, message: "Rejection reason is required" });
+      }
+
+      const timesheet = await storage.rejectTimesheet(timesheetId, rejectionReason);
+      
+      if (!timesheet) {
+        return res.status(404).json({ success: false, message: "Timesheet not found" });
+      }
+
+      res.json({ success: true, data: timesheet });
+    } catch (error) {
+      console.error('Error rejecting timesheet:', error);
+      res.status(500).json({ success: false, message: "Internal server error" });
+    }
+  });
+
+  // Invoice Routes
+  app.get('/api/invoices/candidate/:candidateId', async (req: AuthenticatedRequest, res: Response) => {
+    try {
+      if (!req.isAuthenticated() || !req.user) {
+        return res.status(401).json({ success: false, message: "Not authenticated" });
+      }
+
+      const candidateId = parseInt(req.params.candidateId);
+      const page = parseInt(req.query.page as string) || 1;
+      const limit = parseInt(req.query.limit as string) || 10;
+      const status = req.query.status as string;
+      const isAdmin = req.user.role === 'admin';
+      
+      // Candidates can only view their own invoices
+      if (!isAdmin && req.user.id !== candidateId) {
+        return res.status(403).json({ success: false, message: "Unauthorized access" });
+      }
+
+      const result = await storage.getInvoicesForCandidate(candidateId, { page, limit, status });
+      
+      res.json({ 
+        success: true, 
+        data: result.invoices,
+        meta: {
+          total: result.total,
+          page,
+          limit,
+          pages: Math.ceil(result.total / limit)
+        }
+      });
+    } catch (error) {
+      console.error('Error fetching candidate invoices:', error);
+      res.status(500).json({ success: false, message: "Internal server error" });
+    }
+  });
+
+  app.get('/api/admin/invoices', async (req: AuthenticatedRequest, res: Response) => {
+    try {
+      if (!req.isAuthenticated() || !req.user || req.user.role !== 'admin') {
+        return res.status(403).json({ success: false, message: "Admin access required" });
+      }
+
+      const page = parseInt(req.query.page as string) || 1;
+      const limit = parseInt(req.query.limit as string) || 10;
+      const status = req.query.status as string;
+      const candidateId = req.query.candidateId ? parseInt(req.query.candidateId as string) : undefined;
+
+      const result = await storage.getAllInvoices({ page, limit, status, candidateId });
+      
+      res.json({ 
+        success: true, 
+        data: result.invoices,
+        meta: {
+          total: result.total,
+          page,
+          limit,
+          pages: Math.ceil(result.total / limit)
+        }
+      });
+    } catch (error) {
+      console.error('Error fetching admin invoices:', error);
+      res.status(500).json({ success: false, message: "Internal server error" });
+    }
+  });
+
+  app.post('/api/admin/invoices', async (req: AuthenticatedRequest, res: Response) => {
+    try {
+      if (!req.isAuthenticated() || !req.user || req.user.role !== 'admin') {
+        return res.status(403).json({ success: false, message: "Admin access required" });
+      }
+
+      const validatedData = invoiceSchema.parse(req.body);
+      
+      // Generate invoice number if not provided
+      if (!validatedData.invoiceNumber) {
+        validatedData.invoiceNumber = await storage.generateInvoiceNumber();
+      }
+
+      const invoice = await storage.createInvoice(validatedData);
+
+      res.status(201).json({ success: true, data: invoice });
+    } catch (error) {
+      if (error instanceof z.ZodError) {
+        return res.status(400).json({ 
+          success: false, 
+          message: "Validation error", 
+          errors: error.errors 
+        });
+      }
+      console.error('Error creating invoice:', error);
+      res.status(500).json({ success: false, message: "Internal server error" });
+    }
+  });
+
+  app.patch('/api/admin/invoices/:id/status', async (req: AuthenticatedRequest, res: Response) => {
+    try {
+      if (!req.isAuthenticated() || !req.user || req.user.role !== 'admin') {
+        return res.status(403).json({ success: false, message: "Admin access required" });
+      }
+
+      const invoiceId = parseInt(req.params.id);
+      const { status } = req.body;
+      
+      if (!status) {
+        return res.status(400).json({ success: false, message: "Status is required" });
+      }
+
+      const paidDate = status === 'paid' ? new Date() : undefined;
+      
+      const invoice = await storage.updateInvoiceStatus(invoiceId, status, paidDate);
+      
+      if (!invoice) {
+        return res.status(404).json({ success: false, message: "Invoice not found" });
+      }
+
+      res.json({ success: true, data: invoice });
+    } catch (error) {
+      console.error('Error updating invoice status:', error);
+      res.status(500).json({ success: false, message: "Internal server error" });
+    }
+  });
+
+  app.get('/api/admin/invoice-number/generate', async (req: AuthenticatedRequest, res: Response) => {
+    try {
+      if (!req.isAuthenticated() || !req.user || req.user.role !== 'admin') {
+        return res.status(403).json({ success: false, message: "Admin access required" });
+      }
+
+      const invoiceNumber = await storage.generateInvoiceNumber();
+      
+      res.json({ success: true, data: { invoiceNumber } });
+    } catch (error) {
+      console.error('Error generating invoice number:', error);
+      res.status(500).json({ success: false, message: "Internal server error" });
     }
   });
 

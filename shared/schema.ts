@@ -380,7 +380,7 @@ export type InsertWhitepaperDownload = z.infer<typeof whitepaperDownloadSchema>;
 
 export const adminSessions = pgTable("admin_sessions", {
   id: serial("id").primaryKey(),
-  userId: integer("user_id").references(() => adminUsers.id).notNull(),
+  userId: integer("user_id").references(() => users.id).notNull(),
   sessionId: text("session_id").notNull().unique(),
   sessionData: text("session_data").notNull(),
   createdAt: timestamp("created_at").defaultNow().notNull(),
@@ -403,3 +403,141 @@ export type AdminSession = typeof adminSessions.$inferSelect;
 export type InsertAdminSession = typeof adminSessions.$inferInsert;
 export type Session = typeof sessions.$inferSelect;
 export type InsertSession = typeof sessions.$inferInsert;
+
+// Timesheet Management System Tables
+
+// Candidate Billing Configuration - stores hourly rates and other billing info for hired candidates
+export const candidateBilling = pgTable("candidate_billing", {
+  id: serial("id").primaryKey(),
+  candidateId: integer("candidate_id").notNull().references(() => users.id), // Reference to users table for hired candidates
+  hourlyRate: decimal("hourly_rate", { precision: 10, scale: 2 }).notNull().default('0'),
+  workingHoursPerWeek: integer("working_hours_per_week").notNull().default(40),
+  currency: text("currency").notNull().default("INR"),
+  isActive: boolean("is_active").notNull().default(true),
+  createdBy: integer("created_by").notNull().references(() => users.id), // Admin who set this
+  createdAt: timestamp("created_at").defaultNow().notNull(),
+  updatedAt: timestamp("updated_at").defaultNow().notNull(),
+});
+
+export const candidateBillingSchema = createInsertSchema(candidateBilling, {
+  hourlyRate: (schema) => schema.transform((val) => parseFloat(val.toString())),
+  workingHoursPerWeek: (schema) => schema.min(1, "Working hours must be at least 1").max(168, "Cannot exceed 168 hours per week"),
+  currency: (schema) => schema.optional(),
+});
+
+export type CandidateBilling = typeof candidateBilling.$inferSelect;
+export type InsertCandidateBilling = z.infer<typeof candidateBillingSchema>;
+
+// Weekly Timesheets - stores weekly timesheet data for hired candidates
+export const weeklyTimesheets = pgTable("weekly_timesheets", {
+  id: serial("id").primaryKey(),
+  candidateId: integer("candidate_id").notNull().references(() => users.id),
+  weekStartDate: date("week_start_date").notNull(), // Monday of the week
+  weekEndDate: date("week_end_date").notNull(), // Sunday of the week
+  mondayHours: decimal("monday_hours", { precision: 4, scale: 2 }).notNull().default('0'),
+  tuesdayHours: decimal("tuesday_hours", { precision: 4, scale: 2 }).notNull().default('0'),
+  wednesdayHours: decimal("wednesday_hours", { precision: 4, scale: 2 }).notNull().default('0'),
+  thursdayHours: decimal("thursday_hours", { precision: 4, scale: 2 }).notNull().default('0'),
+  fridayHours: decimal("friday_hours", { precision: 4, scale: 2 }).notNull().default('0'),
+  saturdayHours: decimal("saturday_hours", { precision: 4, scale: 2 }).notNull().default('0'),
+  sundayHours: decimal("sunday_hours", { precision: 4, scale: 2 }).notNull().default('0'),
+  totalWeeklyHours: decimal("total_weekly_hours", { precision: 4, scale: 2 }).notNull().default('0'),
+  totalWeeklyAmount: decimal("total_weekly_amount", { precision: 10, scale: 2 }).notNull().default('0'),
+  status: text("status").notNull().default("draft"), // draft, submitted, approved, rejected
+  submittedAt: timestamp("submitted_at"),
+  approvedAt: timestamp("approved_at"),
+  approvedBy: integer("approved_by").references(() => users.id),
+  rejectionReason: text("rejection_reason"),
+  createdAt: timestamp("created_at").defaultNow().notNull(),
+  updatedAt: timestamp("updated_at").defaultNow().notNull(),
+});
+
+export const weeklyTimesheetSchema = createInsertSchema(weeklyTimesheets, {
+  weekStartDate: (schema) => schema.transform((val) => new Date(val)),
+  weekEndDate: (schema) => schema.transform((val) => new Date(val)),
+  mondayHours: (schema) => schema.transform((val) => parseFloat(val.toString())).refine(val => val >= 0 && val <= 24, "Hours must be between 0 and 24"),
+  tuesdayHours: (schema) => schema.transform((val) => parseFloat(val.toString())).refine(val => val >= 0 && val <= 24, "Hours must be between 0 and 24"),
+  wednesdayHours: (schema) => schema.transform((val) => parseFloat(val.toString())).refine(val => val >= 0 && val <= 24, "Hours must be between 0 and 24"),
+  thursdayHours: (schema) => schema.transform((val) => parseFloat(val.toString())).refine(val => val >= 0 && val <= 24, "Hours must be between 0 and 24"),
+  fridayHours: (schema) => schema.transform((val) => parseFloat(val.toString())).refine(val => val >= 0 && val <= 24, "Hours must be between 0 and 24"),
+  saturdayHours: (schema) => schema.transform((val) => parseFloat(val.toString())).refine(val => val >= 0 && val <= 24, "Hours must be between 0 and 24"),
+  sundayHours: (schema) => schema.transform((val) => parseFloat(val.toString())).refine(val => val >= 0 && val <= 24, "Hours must be between 0 and 24"),
+  status: (schema) => schema.optional(),
+});
+
+export type WeeklyTimesheet = typeof weeklyTimesheets.$inferSelect;
+export type InsertWeeklyTimesheet = z.infer<typeof weeklyTimesheetSchema>;
+
+// Invoice Generation - stores generated invoices for weekly timesheets
+export const invoices = pgTable("invoices", {
+  id: serial("id").primaryKey(),
+  invoiceNumber: text("invoice_number").notNull().unique(),
+  candidateId: integer("candidate_id").notNull().references(() => users.id),
+  timesheetId: integer("timesheet_id").notNull().references(() => weeklyTimesheets.id),
+  weekStartDate: date("week_start_date").notNull(),
+  weekEndDate: date("week_end_date").notNull(),
+  totalHours: decimal("total_hours", { precision: 4, scale: 2 }).notNull(),
+  hourlyRate: decimal("hourly_rate", { precision: 10, scale: 2 }).notNull(),
+  totalAmount: decimal("total_amount", { precision: 10, scale: 2 }).notNull(),
+  currency: text("currency").notNull().default("INR"),
+  status: text("status").notNull().default("generated"), // generated, sent, paid, overdue
+  pdfUrl: text("pdf_url"), // URL to generated PDF invoice
+  issuedDate: date("issued_date").notNull(),
+  dueDate: date("due_date").notNull(),
+  paidDate: date("paid_date"),
+  generatedBy: integer("generated_by").notNull().references(() => users.id), // Admin who generated
+  notes: text("notes"),
+  createdAt: timestamp("created_at").defaultNow().notNull(),
+  updatedAt: timestamp("updated_at").defaultNow().notNull(),
+});
+
+export const invoiceSchema = createInsertSchema(invoices, {
+  invoiceNumber: (schema) => schema.min(1, "Invoice number is required"),
+  totalHours: (schema) => schema.transform((val) => parseFloat(val.toString())),
+  hourlyRate: (schema) => schema.transform((val) => parseFloat(val.toString())),
+  totalAmount: (schema) => schema.transform((val) => parseFloat(val.toString())),
+  issuedDate: (schema) => schema.transform((val) => new Date(val)),
+  dueDate: (schema) => schema.transform((val) => new Date(val)),
+});
+
+export type Invoice = typeof invoices.$inferSelect;
+export type InsertInvoice = z.infer<typeof invoiceSchema>;
+
+// Relations for timesheet system
+export const candidateBillingRelations = relations(candidateBilling, ({ one }) => ({
+  candidate: one(users, {
+    fields: [candidateBilling.candidateId],
+    references: [users.id],
+  }),
+  createdByUser: one(users, {
+    fields: [candidateBilling.createdBy],
+    references: [users.id],
+  }),
+}));
+
+export const weeklyTimesheetRelations = relations(weeklyTimesheets, ({ one, many }) => ({
+  candidate: one(users, {
+    fields: [weeklyTimesheets.candidateId],
+    references: [users.id],
+  }),
+  approvedByUser: one(users, {
+    fields: [weeklyTimesheets.approvedBy],
+    references: [users.id],
+  }),
+  invoices: many(invoices),
+}));
+
+export const invoiceRelations = relations(invoices, ({ one }) => ({
+  candidate: one(users, {
+    fields: [invoices.candidateId],
+    references: [users.id],
+  }),
+  timesheet: one(weeklyTimesheets, {
+    fields: [invoices.timesheetId],
+    references: [weeklyTimesheets.id],
+  }),
+  generatedByUser: one(users, {
+    fields: [invoices.generatedBy],
+    references: [users.id],
+  }),
+}));
