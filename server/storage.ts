@@ -1307,21 +1307,35 @@ async updateSeoPage(id: number, data: Partial<InsertSeoPage>): Promise<SeoPage |
   },
 
   async getAllCandidatesWithBilling(): Promise<any[]> {
+    // First get all hired candidate IDs
+    const hiredCandidateIds = await db
+      .selectDistinct({ candidateId: jobApplications.userId })
+      .from(jobApplications)
+      .where(eq(jobApplications.status, 'hired'));
+
+    if (hiredCandidateIds.length === 0) return [];
+
+    const candidateIds = hiredCandidateIds.map(c => c.candidateId);
+
+    // Then get their details with billing information
     return await db
       .select({
-        id: users.id,
-        fullName: users.fullName,
-        email: users.email,
+        id: candidateBilling.id,
+        candidateId: users.id,
+        candidateName: users.fullName,
+        candidateEmail: users.email,
         phone: users.phone,
         hourlyRate: candidateBilling.hourlyRate,
         workingHoursPerWeek: candidateBilling.workingHoursPerWeek,
         currency: candidateBilling.currency,
-        isActive: candidateBilling.isActive
+        isActive: candidateBilling.isActive,
+        createdAt: candidateBilling.createdAt,
+        updatedAt: candidateBilling.updatedAt
       })
-      .from(users)
-      .leftJoin(candidateBilling, eq(users.id, candidateBilling.candidateId))
-      .where(ne(users.role, 'admin'))
-      .orderBy(desc(users.createdAt));
+      .from(candidateBilling)
+      .innerJoin(users, eq(candidateBilling.candidateId, users.id))
+      .where(inArray(users.id, candidateIds))
+      .orderBy(desc(candidateBilling.createdAt));
   },
 
   async getHiredCandidates(): Promise<User[]> {

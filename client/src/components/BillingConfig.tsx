@@ -38,9 +38,9 @@ export default function BillingConfig() {
   });
   const [isDialogOpen, setIsDialogOpen] = useState(false);
 
-  // Fetch all users (potential candidates)
-  const { data: users } = useQuery({
-    queryKey: ['/api/admin/users'],
+  // Fetch hired candidates only
+  const { data: hiredCandidates } = useQuery({
+    queryKey: ['/api/admin/hired-candidates'],
   });
 
   // Fetch existing billing configurations
@@ -107,6 +107,7 @@ export default function BillingConfig() {
 
     createBillingMutation.mutate({
       candidateId: selectedCandidate,
+      createdBy: 5, // Admin user ID
       ...billingData
     });
   };
@@ -119,10 +120,10 @@ export default function BillingConfig() {
   };
 
   const getAvailableCandidates = () => {
-    if (!users?.data || !billingConfigs?.data) return [];
+    if (!hiredCandidates?.data || !billingConfigs?.data) return [];
     
     const configuredCandidateIds = billingConfigs.data.map((config: CandidateBilling) => config.candidateId);
-    return users.data.filter((user: User) => !configuredCandidateIds.includes(user.id));
+    return hiredCandidates.data.filter((user: User) => !configuredCandidateIds.includes(user.id));
   };
 
   return (
