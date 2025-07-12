@@ -393,15 +393,54 @@ export default function CandidateTimesheets() {
                     }}
                     className="rounded-md border"
                     modifiers={{
-                      submitted: timesheets?.data?.map((t: WeeklyTimesheet) => parseISO(t.weekStartDate)) || [],
-                      approved: timesheets?.data?.filter((t: WeeklyTimesheet) => t.status === 'approved')
-                        .map((t: WeeklyTimesheet) => parseISO(t.weekStartDate)) || [],
-                      current: [selectedWeek]
+                      submitted: timesheets?.data?.reduce((dates: Date[], t: WeeklyTimesheet) => {
+                        if (t.status === 'submitted') {
+                          const weekStart = parseISO(t.weekStartDate);
+                          for (let i = 0; i < workingDaysPerWeek; i++) {
+                            dates.push(addDays(weekStart, i));
+                          }
+                        }
+                        return dates;
+                      }, []) || [],
+                      approved: timesheets?.data?.reduce((dates: Date[], t: WeeklyTimesheet) => {
+                        if (t.status === 'approved') {
+                          const weekStart = parseISO(t.weekStartDate);
+                          for (let i = 0; i < workingDaysPerWeek; i++) {
+                            dates.push(addDays(weekStart, i));
+                          }
+                        }
+                        return dates;
+                      }, []) || [],
+                      rejected: timesheets?.data?.reduce((dates: Date[], t: WeeklyTimesheet) => {
+                        if (t.status === 'rejected') {
+                          const weekStart = parseISO(t.weekStartDate);
+                          for (let i = 0; i < workingDaysPerWeek; i++) {
+                            dates.push(addDays(weekStart, i));
+                          }
+                        }
+                        return dates;
+                      }, []) || [],
+                      selected: (() => {
+                        const dates: Date[] = [];
+                        const selectedWeekStart = format(selectedWeek, 'yyyy-MM-dd');
+                        // Only show selected if it's not already submitted/approved/rejected
+                        const hasTimesheet = timesheets?.data?.some((t: WeeklyTimesheet) => 
+                          format(parseISO(t.weekStartDate), 'yyyy-MM-dd') === selectedWeekStart
+                        );
+                        
+                        if (!hasTimesheet) {
+                          for (let i = 0; i < workingDaysPerWeek; i++) {
+                            dates.push(addDays(selectedWeek, i));
+                          }
+                        }
+                        return dates;
+                      })()
                     }}
                     modifiersStyles={{
                       submitted: { backgroundColor: '#fef3c7', color: '#92400e' },
                       approved: { backgroundColor: '#dcfce7', color: '#166534' },
-                      current: { backgroundColor: '#dbeafe', color: '#1e40af', fontWeight: 'bold' }
+                      rejected: { backgroundColor: '#fecaca', color: '#991b1b' },
+                      selected: { backgroundColor: '#dbeafe', color: '#1e40af', fontWeight: 'bold' }
                     }}
                   />
                   <div className="space-y-4">
@@ -415,6 +454,10 @@ export default function CandidateTimesheets() {
                         <div className="flex items-center gap-1">
                           <div className="w-3 h-3 bg-green-200 rounded"></div>
                           <span>Approved</span>
+                        </div>
+                        <div className="flex items-center gap-1">
+                          <div className="w-3 h-3 bg-red-200 rounded"></div>
+                          <span>Rejected</span>
                         </div>
                         <div className="flex items-center gap-1">
                           <div className="w-3 h-3 bg-blue-200 rounded"></div>
