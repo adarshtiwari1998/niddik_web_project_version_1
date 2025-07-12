@@ -370,14 +370,18 @@ export default function CandidateTimesheets() {
               <CardContent>
                 <div className="flex items-center gap-4">
                   <Calendar
-                    mode="single"
-                    selected={selectedWeek}
-                    onSelect={(date) => {
-                      if (date) {
-                        setSelectedWeek(startOfWeek(date, { weekStartsOn: 1 }));
+                    mode="range"
+                    selected={{
+                      from: selectedWeek,
+                      to: addDays(selectedWeek, workingDaysPerWeek === 6 ? 5 : 4)
+                    }}
+                    onSelect={(range) => {
+                      if (range?.from) {
+                        setSelectedWeek(startOfWeek(range.from, { weekStartsOn: 1 }));
                       }
                     }}
                     className="rounded-md border"
+                    numberOfMonths={1}
                   />
                   <div className="space-y-2">
                     <p className="font-medium">Selected Week:</p>
@@ -524,7 +528,7 @@ export default function CandidateTimesheets() {
                         <div className="flex items-center justify-between mb-2">
                           <div>
                             <p className="font-medium">
-                              Week of {format(parseISO(timesheet.weekStartDate), 'MMM dd, yyyy')}
+                              {format(parseISO(timesheet.weekStartDate), 'MMM dd')} - {format(addDays(parseISO(timesheet.weekStartDate), workingDaysPerWeek === 6 ? 5 : 4), 'MMM dd, yyyy')}
                             </p>
                             <p className="text-sm text-muted-foreground">
                               Submitted: {format(parseISO(timesheet.submittedAt), 'MMM dd, yyyy')}

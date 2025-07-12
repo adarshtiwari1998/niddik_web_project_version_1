@@ -132,8 +132,11 @@ The application follows a standard full-stack architecture with clear separation
 - **Working Days Display**: Fixed week display to show only working days (Mon-Fri for 5 days, Mon-Sat for 6 days)
 - **Week-End Submission Logic**: Added validation to prevent timesheet submission during current week - only allows submission after week ends
 - **User Experience**: Added helpful messages explaining submission rules and disabled inputs during current week
-- **Result**: All timesheet functionality now works correctly with proper week-end validation and working day configuration
-- **Files Modified**: `shared/schema.ts`, `client/src/pages/TimesheetManagement.tsx`, `client/src/pages/CandidateTimesheets.tsx`
+- **Admin Edit/Delete Features**: Added edit and delete functionality for approved timesheets (admin only)
+- **Calendar Range Highlighting**: Fixed calendar to show week range highlighting instead of just start date
+- **Previous Timesheet Display**: Fixed week titles to show correct date ranges instead of just start dates
+- **Result**: All timesheet functionality now works correctly with proper week-end validation, working day configuration, and enhanced admin controls
+- **Files Modified**: `shared/schema.ts`, `client/src/pages/TimesheetManagement.tsx`, `client/src/pages/CandidateTimesheets.tsx`, `server/routes.ts`
 
 # Recent Changes
 
