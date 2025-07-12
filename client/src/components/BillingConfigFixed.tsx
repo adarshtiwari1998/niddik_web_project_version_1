@@ -112,12 +112,12 @@ export default function BillingConfigFixed() {
 
   // Fetch client companies for dropdown
   const { data: clientCompanies } = useQuery({
-    queryKey: ['/api/client-companies'],
+    queryKey: ['/api/admin/client-companies'],
   });
 
   // Fetch company settings for dropdown
   const { data: companySettings } = useQuery({
-    queryKey: ['/api/company-settings'],
+    queryKey: ['/api/admin/company-settings'],
   });
 
   // Create billing configuration mutation
@@ -204,8 +204,8 @@ export default function BillingConfigFixed() {
       currency: 'USD',
       employmentType: 'subcontract',
       supervisorName: '',
-      clientCompanyId: undefined,
-      companySettingsId: undefined,
+      clientCompanyId: clientCompanies?.data?.[0]?.id || undefined,
+      companySettingsId: companySettings?.data?.[0]?.id || undefined,
       tdsRate: 10,
       benefits: []
     });
@@ -230,6 +230,17 @@ export default function BillingConfigFixed() {
       setSelectedBenefits(editingBilling.benefits || []);
     }
   }, [editingBilling]);
+
+  // Effect to set default values for client company and company settings when data is loaded
+  useEffect(() => {
+    if (clientCompanies?.data && companySettings?.data && !editingBilling) {
+      setBillingData(prev => ({
+        ...prev,
+        clientCompanyId: prev.clientCompanyId || clientCompanies.data[0]?.id,
+        companySettingsId: prev.companySettingsId || companySettings.data[0]?.id
+      }));
+    }
+  }, [clientCompanies, companySettings, editingBilling]);
 
   // Update benefits in billing data when selected benefits change
   useEffect(() => {
@@ -462,6 +473,20 @@ export default function BillingConfigFixed() {
                 </CardContent>
               </Card>
 
+              {/* Hidden fields for client company and company settings - auto-selected */}
+              <div style={{ display: 'none' }}>
+                <input 
+                  type="hidden" 
+                  value={billingData.clientCompanyId || ''} 
+                  onChange={() => {}} 
+                />
+                <input 
+                  type="hidden" 
+                  value={billingData.companySettingsId || ''} 
+                  onChange={() => {}} 
+                />
+              </div>
+
               {/* TDS Configuration (for Subcontract) */}
               {billingData.employmentType === 'subcontract' && (
                 <Card className="bg-orange-50">
@@ -615,6 +640,20 @@ export default function BillingConfigFixed() {
                   </SelectContent>
                 </Select>
               </div>
+            </div>
+            
+            {/* Hidden fields for client company and company settings - auto-selected */}
+            <div style={{ display: 'none' }}>
+              <input 
+                type="hidden" 
+                value={billingData.clientCompanyId || ''} 
+                onChange={() => {}} 
+              />
+              <input 
+                type="hidden" 
+                value={billingData.companySettingsId || ''} 
+                onChange={() => {}} 
+              />
             </div>
             
             <Button 
