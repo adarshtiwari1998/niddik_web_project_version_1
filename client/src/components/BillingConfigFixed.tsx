@@ -473,13 +473,38 @@ export default function BillingConfigFixed() {
                 </CardContent>
               </Card>
 
-              {/* Hidden fields for client company and company settings - auto-selected */}
+              {/* Client Company Selection */}
+              <Card className="bg-blue-50">
+                <CardHeader className="pb-3">
+                  <CardTitle className="text-lg flex items-center gap-2">
+                    <Building2 className="h-5 w-5 text-blue-600" />
+                    Client Company
+                  </CardTitle>
+                </CardHeader>
+                <CardContent>
+                  <div>
+                    <Label htmlFor="client-company">Client Company</Label>
+                    <Select 
+                      value={billingData.clientCompanyId?.toString() || ''} 
+                      onValueChange={(value) => setBillingData(prev => ({ ...prev, clientCompanyId: parseInt(value) }))}
+                    >
+                      <SelectTrigger>
+                        <SelectValue placeholder="Select client company" />
+                      </SelectTrigger>
+                      <SelectContent>
+                        {clientCompanies?.data?.companies?.map((company: any) => (
+                          <SelectItem key={company.id} value={company.id.toString()}>
+                            {company.name}
+                          </SelectItem>
+                        ))}
+                      </SelectContent>
+                    </Select>
+                  </div>
+                </CardContent>
+              </Card>
+
+              {/* Hidden field for company settings - auto-selected */}
               <div style={{ display: 'none' }}>
-                <input 
-                  type="hidden" 
-                  value={billingData.clientCompanyId || ''} 
-                  onChange={() => {}} 
-                />
                 <input 
                   type="hidden" 
                   value={billingData.companySettingsId || ''} 
@@ -642,13 +667,28 @@ export default function BillingConfigFixed() {
               </div>
             </div>
             
-            {/* Hidden fields for client company and company settings - auto-selected */}
+            {/* Client Company Selection */}
+            <div>
+              <Label htmlFor="edit-client-company">Client Company</Label>
+              <Select 
+                value={billingData.clientCompanyId?.toString() || ''} 
+                onValueChange={(value) => setBillingData(prev => ({ ...prev, clientCompanyId: parseInt(value) }))}
+              >
+                <SelectTrigger>
+                  <SelectValue placeholder="Select client company" />
+                </SelectTrigger>
+                <SelectContent>
+                  {clientCompanies?.data?.companies?.map((company: any) => (
+                    <SelectItem key={company.id} value={company.id.toString()}>
+                      {company.name}
+                    </SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
+            </div>
+
+            {/* Hidden field for company settings - auto-selected */}
             <div style={{ display: 'none' }}>
-              <input 
-                type="hidden" 
-                value={billingData.clientCompanyId || ''} 
-                onChange={() => {}} 
-              />
               <input 
                 type="hidden" 
                 value={billingData.companySettingsId || ''} 
