@@ -4275,6 +4275,103 @@ ${allUrls.map(url => `  <url>
     }
   });
 
+  // ======================= COMPANY MANAGEMENT API ROUTES =======================
+
+  // Client Companies Routes
+  app.get('/api/admin/client-companies', async (req: AuthenticatedRequest, res: Response) => {
+    try {
+      if (!req.isAuthenticated() || !req.user || req.user.role !== 'admin') {
+        return res.status(403).json({ success: false, message: "Admin access required" });
+      }
+
+      const page = parseInt(req.query.page as string) || 1;
+      const limit = parseInt(req.query.limit as string) || 10;
+      const search = req.query.search as string;
+      const isActive = req.query.isActive === 'true' ? true : req.query.isActive === 'false' ? false : undefined;
+
+      const result = await storage.getClientCompanies({ page, limit, search, isActive });
+      res.json({ success: true, ...result });
+    } catch (error) {
+      console.error('Error fetching client companies:', error);
+      res.status(500).json({ success: false, message: "Internal server error" });
+    }
+  });
+
+  app.post('/api/admin/client-companies', async (req: AuthenticatedRequest, res: Response) => {
+    try {
+      if (!req.isAuthenticated() || !req.user || req.user.role !== 'admin') {
+        return res.status(403).json({ success: false, message: "Admin access required" });
+      }
+
+      const validatedData = clientCompanySchema.parse({
+        ...req.body,
+        createdBy: req.user.id
+      });
+
+      const company = await storage.createClientCompany(validatedData);
+      res.status(201).json({ success: true, data: company });
+    } catch (error) {
+      if (error instanceof z.ZodError) {
+        return res.status(400).json({ 
+          success: false, 
+          message: "Validation error", 
+          errors: error.errors 
+        });
+      }
+      console.error('Error creating client company:', error);
+      res.status(500).json({ success: false, message: "Internal server error" });
+    }
+  });
+
+  app.put('/api/admin/client-companies/:id', async (req: AuthenticatedRequest, res: Response) => {
+    try {
+      if (!req.isAuthenticated() || !req.user || req.user.role !== 'admin') {
+        return res.status(403).json({ success: false, message: "Admin access required" });
+      }
+
+      const id = parseInt(req.params.id);
+      const validatedData = clientCompanySchema.partial().parse(req.body);
+      
+      const company = await storage.updateClientCompany(id, validatedData);
+      
+      if (!company) {
+        return res.status(404).json({ success: false, message: "Client company not found" });
+      }
+
+      res.json({ success: true, data: company });
+    } catch (error) {
+      if (error instanceof z.ZodError) {
+        return res.status(400).json({ 
+          success: false, 
+          message: "Validation error", 
+          errors: error.errors 
+        });
+      }
+      console.error('Error updating client company:', error);
+      res.status(500).json({ success: false, message: "Internal server error" });
+    }
+  });
+
+  app.delete('/api/admin/client-companies/:id', async (req: AuthenticatedRequest, res: Response) => {
+    try {
+      if (!req.isAuthenticated() || !req.user || req.user.role !== 'admin') {
+        return res.status(403).json({ success: false, message: "Admin access required" });
+      }
+
+      const id = parseInt(req.params.id);
+      const result = await storage.deleteClientCompany(id);
+      
+      if (!result) {
+        return res.status(404).json({ success: false, message: "Client company not found" });
+      }
+
+      res.json({ success: true, message: "Client company deleted successfully" });
+    } catch (error) {
+      console.error('Error deleting client company:', error);
+      res.status(500).json({ success: false, message: "Internal server error" });
+    }
+  });
+
   const server = createServer(app);
   return server;
 }

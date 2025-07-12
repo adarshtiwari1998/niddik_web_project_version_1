@@ -1999,4 +1999,160 @@ export async function getJobApplicationsWithDetails(
   };
 };
 
+// Client Companies Management
+export const createClientCompany = async (data: InsertClientCompany): Promise<ClientCompany> => {
+  return await withRetry(async () => {
+    const [result] = await db.insert(clientCompanies).values(data).returning();
+    return result;
+  });
+};
+
+export const getClientCompanies = async (params: { page?: number; limit?: number; search?: string; isActive?: boolean } = {}): Promise<{ data: ClientCompany[]; meta: { total: number; page: number; limit: number; pages: number } }> => {
+  return await withRetry(async () => {
+    const { page = 1, limit = 10, search, isActive } = params;
+    const offset = (page - 1) * limit;
+
+    let query = db.select().from(clientCompanies);
+    let countQuery = db.select({ count: count() }).from(clientCompanies);
+
+    // Add filters
+    const conditions = [];
+    if (search) {
+      conditions.push(ilike(clientCompanies.name, `%${search}%`));
+    }
+    if (isActive !== undefined) {
+      conditions.push(eq(clientCompanies.isActive, isActive));
+    }
+
+    if (conditions.length > 0) {
+      query = query.where(and(...conditions));
+      countQuery = countQuery.where(and(...conditions));
+    }
+
+    const [results, totalResults] = await Promise.all([
+      query.orderBy(desc(clientCompanies.createdAt)).limit(limit).offset(offset),
+      countQuery
+    ]);
+
+    const total = totalResults[0]?.count || 0;
+
+    return {
+      data: results,
+      meta: {
+        total,
+        page,
+        limit,
+        pages: Math.ceil(total / limit)
+      }
+    };
+  });
+};
+
+export const getClientCompanyById = async (id: number): Promise<ClientCompany | null> => {
+  return await withRetry(async () => {
+    const [result] = await db.select().from(clientCompanies).where(eq(clientCompanies.id, id));
+    return result || null;
+  });
+};
+
+export const updateClientCompany = async (id: number, data: Partial<InsertClientCompany>): Promise<ClientCompany | null> => {
+  return await withRetry(async () => {
+    const [result] = await db.update(clientCompanies)
+      .set({ ...data, updatedAt: new Date() })
+      .where(eq(clientCompanies.id, id))
+      .returning();
+    return result || null;
+  });
+};
+
+export const deleteClientCompany = async (id: number): Promise<boolean> => {
+  return await withRetry(async () => {
+    const result = await db.delete(clientCompanies).where(eq(clientCompanies.id, id));
+    return result.rowCount > 0;
+  });
+};
+
+// Company Settings Management
+export const createCompanySettings = async (data: InsertCompanySettings): Promise<CompanySettings> => {
+  return await withRetry(async () => {
+    // If this is set as default, remove default from others
+    if (data.isDefault) {
+      await db.update(companySettings).set({ isDefault: false }).where(eq(companySettings.isDefault, true));
+    }
+
+    const [result] = await db.insert(companySettings).values(data).returning();
+    return result;
+  });
+};
+
+export const getCompanySettings = async (params: { page?: number; limit?: number; search?: string } = {}): Promise<{ data: CompanySettings[]; meta: { total: number; page: number; limit: number; pages: number } }> => {
+  return await withRetry(async () => {
+    const { page = 1, limit = 10, search } = params;
+    const offset = (page - 1) * limit;
+
+    let query = db.select().from(companySettings);
+    let countQuery = db.select({ count: count() }).from(companySettings);
+
+    // Add search filter
+    if (search) {
+      const condition = ilike(companySettings.name, `%${search}%`);
+      query = query.where(condition);
+      countQuery = countQuery.where(condition);
+    }
+
+    const [results, totalResults] = await Promise.all([
+      query.orderBy(desc(companySettings.isDefault), desc(companySettings.createdAt)).limit(limit).offset(offset),
+      countQuery
+    ]);
+
+    const total = totalResults[0]?.count || 0;
+
+    return {
+      data: results,
+      meta: {
+        total,
+        page,
+        limit,
+        pages: Math.ceil(total / limit)
+      }
+    };
+  });
+};
+
+export const getDefaultCompanySettings = async (): Promise<CompanySettings | null> => {
+  return await withRetry(async () => {
+    const [result] = await db.select().from(companySettings).where(eq(companySettings.isDefault, true));
+    return result || null;
+  });
+};
+
+export const getCompanySettingsById = async (id: number): Promise<CompanySettings | null> => {
+  return await withRetry(async () => {
+    const [result] = await db.select().from(companySettings).where(eq(companySettings.id, id));
+    return result || null;
+  });
+};
+
+export const updateCompanySettings = async (id: number, data: Partial<InsertCompanySettings>): Promise<CompanySettings | null> => {
+  return await withRetry(async () => {
+    // If this is set as default, remove default from others
+    if (data.isDefault) {
+      await db.update(companySettings).set({ isDefault: false }).where(ne(companySettings.id, id));
+    }
+
+    const [result] = await db.update(companySettings)
+      .set({ ...data, updatedAt: new Date() })
+      .where(eq(companySettings.id, id))
+      .returning();
+    return result || null;
+  });
+};
+
+export const deleteCompanySettings = async (id: number): Promise<boolean> => {
+  return await withRetry(async () => {
+    const result = await db.delete(companySettings).where(eq(companySettings.id, id));
+    return result.rowCount > 0;
+  });
+};
+
 // This file includes database utility functions with added methods for user and job retrieval.

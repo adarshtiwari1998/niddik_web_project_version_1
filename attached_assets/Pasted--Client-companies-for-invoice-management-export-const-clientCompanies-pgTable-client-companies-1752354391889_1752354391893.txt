@@ -1,0 +1,109 @@
+// Client companies for invoice management
+export const clientCompanies = pgTable("client_companies", {
+  id: serial("id").primaryKey(),
+  name: text("name").notNull(),
+  logoUrl: text("logo_url"), // ImageKit URL
+  contactPerson: text("contact_person"),
+  
+  // Bill To Address
+  billToAddress: text("bill_to_address").notNull(),
+  billToCity: text("bill_to_city").notNull(),
+  billToState: text("bill_to_state").notNull(),
+  billToCountry: text("bill_to_country").notNull(),
+  billToZipCode: text("bill_to_zip_code").notNull(),
+  
+  // Ship To Address (can be same as Bill To)
+  shipToSameAsBillTo: boolean("ship_to_same_as_bill_to").default(false),
+  shipToAddress: text("ship_to_address"),
+  shipToCity: text("ship_to_city"),
+  shipToState: text("ship_to_state"),
+  shipToCountry: text("ship_to_country"),
+  shipToZipCode: text("ship_to_zip_code"),
+  
+  // Contact Information
+  phoneNumbers: text("phone_numbers").array().default([]), // Array of phone numbers
+  emailAddresses: text("email_addresses").array().default([]), // Array of email addresses
+  
+  isActive: boolean("is_active").default(true),
+  createdAt: timestamp("created_at").defaultNow().notNull(),
+  updatedAt: timestamp("updated_at").defaultNow().notNull(),
+  createdBy: integer("created_by").notNull().references(() => users.id),
+});
+
+export const clientCompanySchema = createInsertSchema(clientCompanies, {
+  name: (schema) => schema.min(1, "Company name is required"),
+  billToAddress: (schema) => schema.min(1, "Bill to address is required"),
+  billToCity: (schema) => schema.min(1, "Bill to city is required"),
+  billToState: (schema) => schema.min(1, "Bill to state is required"),
+  billToCountry: (schema) => schema.min(1, "Bill to country is required"),
+  billToZipCode: (schema) => schema.min(1, "Bill to zip code is required"),
+  phoneNumbers: (schema) => schema.array(z.string().min(1, "Phone number required")).min(1, "At least one phone number required"),
+  emailAddresses: (schema) => schema.array(z.string().email("Valid email required")).min(1, "At least one email address required"),
+}).omit({ id: true, createdAt: true, updatedAt: true });
+
+export type ClientCompany = typeof clientCompanies.$inferSelect;
+export type InsertClientCompany = z.infer<typeof clientCompanySchema>;
+
+// My company settings (default sender information)
+export const companySettings = pgTable("company_settings", {
+  id: serial("id").primaryKey(),
+  name: text("name").notNull(),
+  logoUrl: text("logo_url"), // ImageKit URL
+  tagline: text("tagline"),
+  
+  // Company Address
+  address: text("address").notNull(),
+  city: text("city").notNull(),
+  state: text("state").notNull(),
+  country: text("country").notNull(),
+  zipCode: text("zip_code").notNull(),
+  
+  // Contact Information
+  phoneNumbers: text("phone_numbers").array().default([]), // Array of phone numbers
+  emailAddresses: text("email_addresses").array().default([]), // Array of email addresses
+  website: text("website"),
+  
+  // Tax Information
+  taxId: text("tax_id"),
+  gstNumber: text("gst_number"),
+  
+  // Bank Details (for payment information)
+  bankName: text("bank_name"),
+  accountNumber: text("account_number"),
+  routingNumber: text("routing_number"),
+  
+  isDefault: boolean("is_default").default(false), // Only one company can be default
+  createdAt: timestamp("created_at").defaultNow().notNull(),
+  updatedAt: timestamp("updated_at").defaultNow().notNull(),
+  createdBy: integer("created_by").notNull().references(() => users.id),
+});
+
+export const companySettingsSchema = createInsertSchema(companySettings, {
+  name: (schema) => schema.min(1, "Company name is required"),
+  address: (schema) => schema.min(1, "Address is required"),
+  city: (schema) => schema.min(1, "City is required"),
+  state: (schema) => schema.min(1, "State is required"),
+  country: (schema) => schema.min(1, "Country is required"),
+  zipCode: (schema) => schema.min(1, "Zip code is required"),
+  phoneNumbers: (schema) => schema.array(z.string().min(1, "Phone number required")).min(1, "At least one phone number required"),
+  emailAddresses: (schema) => schema.array(z.string().email("Valid email required")).min(1, "At least one email address required"),
+}).omit({ id: true, createdAt: true, updatedAt: true });
+
+export type CompanySettings = typeof companySettings.$inferSelect;
+export type InsertCompanySettings = z.infer<typeof companySettingsSchema>;
+
+// Relations for client and company management
+export const clientCompanyRelations = relations(clientCompanies, ({ one, many }) => ({
+  createdByUser: one(users, {
+    fields: [clientCompanies.createdBy],
+    references: [users.id],
+  }),
+  // Future: invoices that belong to this client
+}));
+
+export const companySettingsRelations = relations(companySettings, ({ one }) => ({
+  createdByUser: one(users, {
+    fields: [companySettings.createdBy],
+    references: [users.id],
+  }),
+}));

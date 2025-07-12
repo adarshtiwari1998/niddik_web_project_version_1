@@ -67,6 +67,7 @@ import HealthcarePartners from './pages/HealthcarePartners';
 import SearchPage from "@/pages/SearchPage";
 import TimesheetManagement from "@/pages/TimesheetManagement";
 import CandidateTimesheets from "@/pages/CandidateTimesheets";
+import CompanyManagement from "@/pages/CompanyManagement";
 import { lazy, Suspense } from "react";
 
 // Component to handle scroll restoration
@@ -162,6 +163,7 @@ function Router() {
             <ProtectedRoute path="/admin/seo-pages" component={SEOPages} requiredRole="admin"/>
                  <ProtectedRoute path="/admin/account" component={() => <AdminPasswordChange />} requiredRole="admin"/>
             <ProtectedRoute path="/admin/timesheets" component={TimesheetManagement} requiredRole="admin"/>
+            <ProtectedRoute path="/admin/timesheets/companiesmanagement" component={CompanyManagement} requiredRole="admin"/>
 
             {/* Demo Request */}
             <Route path="/request-demo" component={RequestDemo} />

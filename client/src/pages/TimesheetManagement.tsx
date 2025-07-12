@@ -7,7 +7,8 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Badge } from "@/components/ui/badge";
-import { Calendar, Clock, DollarSign, FileText, Plus, Save, Check, X, Edit, Trash2 } from "lucide-react";
+import { Calendar, Clock, DollarSign, FileText, Plus, Save, Check, X, Edit, Trash2, Building } from "lucide-react";
+import { Link } from "wouter";
 import { useToast } from "@/hooks/use-toast";
 import { useUser } from "@/hooks/use-user";
 import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
@@ -347,6 +348,17 @@ export default function TimesheetManagement() {
         <meta property="og:title" content="Timesheet Management | Niddik Admin" />
         <meta property="og:description" content="Manage candidate timesheets, billing configuration, and invoice generation." />
       </Helmet>
+
+      {isAdmin && (
+        <div className="flex justify-end mb-4">
+          <Link href="/admin/timesheets/companiesmanagement">
+            <Button variant="outline" size="sm">
+              <Building className="w-4 h-4 mr-2" />
+              Company Management
+            </Button>
+          </Link>
+        </div>
+      )}
 
       <Tabs value={activeTab} onValueChange={setActiveTab}>
         <TabsList className="grid w-full grid-cols-3">
