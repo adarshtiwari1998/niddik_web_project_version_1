@@ -123,6 +123,14 @@ The application follows a standard full-stack architecture with clear separation
 
 # Recent Changes
 
+## Timesheet Submission Logic Fixed (July 12, 2025)
+- **Current Week Submission**: Fixed timesheet submission logic to allow submission during current week instead of waiting until Sunday
+- **Working Days Logic**: Updated logic to use proper working days configuration (5 or 6 days) for determining last working day
+- **Calendar Highlighting**: Improved calendar to show proper week range highlighting based on working days configuration
+- **User Experience**: Removed confusing "wait until Sunday" message and replaced with clear current week submission guidance
+- **Input Validation**: Fixed input field enabling/disabling logic to work with new submission rules
+- **Status Messages**: Updated all status messages to reflect new submission workflow
+
 ## Replit Agent to Replit Migration Complete (July 12, 2025)
 - **Migration Status**: Successfully completed migration from Replit Agent to standard Replit environment
 - **Client Company Display Fix**: Fixed data access issue where client companies weren't showing in the Company Management page

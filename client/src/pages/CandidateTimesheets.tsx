@@ -216,21 +216,29 @@ export default function CandidateTimesheets() {
   const totalHours = Object.values(newTimesheet).reduce((sum, hours) => sum + hours, 0);
   const totalAmount = totalHours * (billingConfig?.data?.hourlyRate || 0);
 
-  // Check submission rules
-  const selectedWeekEnd = endOfWeek(selectedWeek, { weekStartsOn: 1 });
-  const isCurrentWeek = !isAfter(new Date(), selectedWeekEnd);
-  const weekHasEnded = isAfter(new Date(), selectedWeekEnd);
+  // Check submission rules based on working days
+  const workingDaysPerWeek = billingConfig?.data?.workingDaysPerWeek || 5;
+  const today = new Date();
+  
+  // Calculate the last working day of the selected week
+  const lastWorkingDay = addDays(selectedWeek, workingDaysPerWeek - 1); // Friday for 5 days, Saturday for 6 days
+  
+  // Check if today is during the selected week
+  const isCurrentWeek = today >= selectedWeek && today <= addDays(selectedWeek, 6);
+  
+  // Check if the current work week has ended (last working day has passed)
+  const workWeekHasEnded = today > lastWorkingDay;
   
   // Check if user already submitted timesheet for this week
   const hasSubmittedThisWeek = timesheets?.data?.some((t: WeeklyTimesheet) => 
     format(parseISO(t.weekStartDate), 'yyyy-MM-dd') === format(selectedWeek, 'yyyy-MM-dd')
   );
   
-  // User can update existing timesheet only if it's current week and not approved
+  // User can update existing timesheet during current week if not approved
   const canUpdateTimesheet = isCurrentWeek && weekTimesheet?.data?.status !== 'approved';
   
-  // User can submit new timesheet only if week has ended and no timesheet exists for this week
-  const canSubmitNewTimesheet = weekHasEnded && !hasSubmittedThisWeek;
+  // User can submit new timesheet during current week (no need to wait for week end)
+  const canSubmitNewTimesheet = isCurrentWeek && !hasSubmittedThisWeek;
   
   // Show next week option if current week already has a submitted timesheet
   const shouldShowNextWeek = hasSubmittedThisWeek && isCurrentWeek;
@@ -248,8 +256,7 @@ export default function CandidateTimesheets() {
     }
   };
 
-  // Dynamic working days based on billing configuration
-  const workingDaysPerWeek = billingConfig?.data?.workingDaysPerWeek || 5;
+  // Dynamic working days based on billing configuration - reuse from above
   const allDayLabels = ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday'];
   const allDayKeys = ['mondayHours', 'tuesdayHours', 'wednesdayHours', 'thursdayHours', 'fridayHours', 'saturdayHours', 'sundayHours'] as const;
   
@@ -515,11 +522,11 @@ export default function CandidateTimesheets() {
                     </p>
                   </div>
                 )}
-                {!weekHasEnded && !hasSubmittedThisWeek && (
-                  <div className="bg-blue-50 border border-blue-200 rounded-lg p-3 mt-2">
-                    <p className="text-sm text-blue-800">
+                {isCurrentWeek && !hasSubmittedThisWeek && (
+                  <div className="bg-green-50 border border-green-200 rounded-lg p-3 mt-2">
+                    <p className="text-sm text-green-800">
                       <AlertCircle className="w-4 h-4 inline mr-1" />
-                      Current week: You can submit your timesheet after the week ends (Sunday night).
+                      Current week: You can submit your timesheet anytime during this week.
                     </p>
                   </div>
                 )}
@@ -527,7 +534,7 @@ export default function CandidateTimesheets() {
                   <div className="bg-green-50 border border-green-200 rounded-lg p-3 mt-2">
                     <p className="text-sm text-green-800">
                       <AlertCircle className="w-4 h-4 inline mr-1" />
-                      Current week: You can update your timesheet until the week ends.
+                      Current week: You can update your timesheet during this week.
                     </p>
                   </div>
                 )}
@@ -553,7 +560,7 @@ export default function CandidateTimesheets() {
                             ...prev,
                             [key]: parseFloat(e.target.value) || 0
                           }))}
-                          disabled={weekTimesheet?.data?.status === 'approved' || (!canUpdateTimesheet && weekTimesheet?.data) || (!weekHasEnded && !hasSubmittedThisWeek)}
+                          disabled={weekTimesheet?.data?.status === 'approved' || (!canUpdateTimesheet && weekTimesheet?.data) || (!isCurrentWeek && !hasSubmittedThisWeek)}
                           placeholder="0.0"
                         />
                       </div>
@@ -586,7 +593,7 @@ export default function CandidateTimesheets() {
                         </Button>
                       ) : (
                         <div className="text-sm text-muted-foreground">
-                          Timesheet submission available after week ends
+                          {isCurrentWeek ? 'Complete your timesheet to submit' : 'Select current week to submit timesheet'}
                         </div>
                       )
                     ) : weekTimesheet.data.status !== 'approved' ? (
@@ -601,7 +608,7 @@ export default function CandidateTimesheets() {
                         </Button>
                       ) : (
                         <div className="text-sm text-muted-foreground">
-                          Week ended - Timesheet locked for editing
+                          {isCurrentWeek ? 'Timesheet submitted - Contact admin for changes' : 'Week ended - Timesheet locked for editing'}
                         </div>
                       )
                     ) : (
