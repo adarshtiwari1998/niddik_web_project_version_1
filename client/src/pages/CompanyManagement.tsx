@@ -663,7 +663,15 @@ export default function CompanyManagement() {
                   <CardHeader>
                     <div className="flex justify-between items-start">
                       <div className="flex items-center gap-2">
-                        <Settings className="w-5 h-5 text-green-500" />
+                        {settings.logoUrl ? (
+                          <img 
+                            src={settings.logoUrl} 
+                            alt={`${settings.name} logo`}
+                            className="w-8 h-8 rounded object-contain"
+                          />
+                        ) : (
+                          <Settings className="w-5 h-5 text-green-500" />
+                        )}
                         <div>
                           <CardTitle className="text-lg">{settings.name}</CardTitle>
                           {settings.tagline && (
