@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useAuth } from '@/hooks/use-auth';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { getQueryFn, apiRequest } from '@/lib/queryClient';
@@ -103,15 +103,7 @@ export default function CandidateTimesheets() {
       });
       queryClient.invalidateQueries({ queryKey: [`/api/timesheets/candidate/${user?.id}`] });
       queryClient.invalidateQueries({ queryKey: [`/api/timesheets/${user?.id}/${weekStartString}`] });
-      setNewTimesheet({
-        mondayHours: 0,
-        tuesdayHours: 0,
-        wednesdayHours: 0,
-        thursdayHours: 0,
-        fridayHours: 0,
-        saturdayHours: 0,
-        sundayHours: 0
-      });
+      // Don't reset form - let useEffect handle form population based on loaded data
     },
     onError: (error: any) => {
       toast({
@@ -141,6 +133,33 @@ export default function CandidateTimesheets() {
       });
     }
   });
+
+  // Populate form when existing timesheet data is loaded or when week changes
+  useEffect(() => {
+    if (weekTimesheet?.data) {
+      // Populate form with existing data
+      setNewTimesheet({
+        mondayHours: parseFloat(weekTimesheet.data.mondayHours) || 0,
+        tuesdayHours: parseFloat(weekTimesheet.data.tuesdayHours) || 0,
+        wednesdayHours: parseFloat(weekTimesheet.data.wednesdayHours) || 0,
+        thursdayHours: parseFloat(weekTimesheet.data.thursdayHours) || 0,
+        fridayHours: parseFloat(weekTimesheet.data.fridayHours) || 0,
+        saturdayHours: parseFloat(weekTimesheet.data.saturdayHours) || 0,
+        sundayHours: parseFloat(weekTimesheet.data.sundayHours) || 0
+      });
+    } else {
+      // Reset form when no timesheet exists for the selected week
+      setNewTimesheet({
+        mondayHours: 0,
+        tuesdayHours: 0,
+        wednesdayHours: 0,
+        thursdayHours: 0,
+        fridayHours: 0,
+        saturdayHours: 0,
+        sundayHours: 0
+      });
+    }
+  }, [weekTimesheet?.data, selectedWeek]);
 
   const handleSubmitTimesheet = () => {
     if (!user || !billingConfig?.data) return;
