@@ -62,13 +62,8 @@ export default function CandidateTimesheets() {
   const { user } = useAuth();
   const { toast } = useToast();
   const queryClient = useQueryClient();
-  // Default to the most recent week that has ended (can submit timesheets for)
-  const [selectedWeek, setSelectedWeek] = useState<Date>(() => {
-    const currentWeekStart = startOfWeek(new Date(), { weekStartsOn: 1 });
-    const currentWeekEnd = endOfWeek(currentWeekStart, { weekStartsOn: 1 });
-    // If current week hasn't ended yet, default to previous week
-    return isAfter(new Date(), currentWeekEnd) ? currentWeekStart : startOfWeek(subWeeks(new Date(), 1), { weekStartsOn: 1 });
-  });
+  // Default to current week (the week user is working on)
+  const [selectedWeek, setSelectedWeek] = useState<Date>(startOfWeek(new Date(), { weekStartsOn: 1 }));
   const [activeTab, setActiveTab] = useState("timesheet");
   const [newTimesheet, setNewTimesheet] = useState({
     mondayHours: 0,
@@ -221,11 +216,24 @@ export default function CandidateTimesheets() {
   const totalHours = Object.values(newTimesheet).reduce((sum, hours) => sum + hours, 0);
   const totalAmount = totalHours * (billingConfig?.data?.hourlyRate || 0);
 
-  // Check if selected week has ended (can only update timesheets during current week)
+  // Check submission rules
   const selectedWeekEnd = endOfWeek(selectedWeek, { weekStartsOn: 1 });
   const isCurrentWeek = !isAfter(new Date(), selectedWeekEnd);
-  const canUpdateTimesheet = isCurrentWeek; // Can update only during current week
-  const canSubmitNewTimesheet = isAfter(new Date(), selectedWeekEnd); // Can submit new only after week ends
+  const weekHasEnded = isAfter(new Date(), selectedWeekEnd);
+  
+  // Check if user already submitted timesheet for this week
+  const hasSubmittedThisWeek = timesheets?.data?.some((t: WeeklyTimesheet) => 
+    format(parseISO(t.weekStartDate), 'yyyy-MM-dd') === format(selectedWeek, 'yyyy-MM-dd')
+  );
+  
+  // User can update existing timesheet only if it's current week and not approved
+  const canUpdateTimesheet = isCurrentWeek && weekTimesheet?.data?.status !== 'approved';
+  
+  // User can submit new timesheet only if week has ended and no timesheet exists for this week
+  const canSubmitNewTimesheet = weekHasEnded && !hasSubmittedThisWeek;
+  
+  // Show next week option if current week already has a submitted timesheet
+  const shouldShowNextWeek = hasSubmittedThisWeek && isCurrentWeek;
 
   const getStatusBadge = (status: string) => {
     switch (status) {
@@ -376,20 +384,45 @@ export default function CandidateTimesheets() {
               <CardContent>
                 <div className="flex items-center gap-4">
                   <Calendar
-                    mode="range"
-                    selected={{
-                      from: selectedWeek,
-                      to: addDays(selectedWeek, workingDaysPerWeek === 6 ? 5 : 4)
-                    }}
-                    onSelect={(range) => {
-                      if (range?.from) {
-                        setSelectedWeek(startOfWeek(range.from, { weekStartsOn: 1 }));
+                    mode="single"
+                    selected={selectedWeek}
+                    onSelect={(date) => {
+                      if (date) {
+                        setSelectedWeek(startOfWeek(date, { weekStartsOn: 1 }));
                       }
                     }}
                     className="rounded-md border"
-                    numberOfMonths={1}
+                    modifiers={{
+                      submitted: timesheets?.data?.map((t: WeeklyTimesheet) => parseISO(t.weekStartDate)) || [],
+                      approved: timesheets?.data?.filter((t: WeeklyTimesheet) => t.status === 'approved')
+                        .map((t: WeeklyTimesheet) => parseISO(t.weekStartDate)) || [],
+                      current: [selectedWeek]
+                    }}
+                    modifiersStyles={{
+                      submitted: { backgroundColor: '#fef3c7', color: '#92400e' },
+                      approved: { backgroundColor: '#dcfce7', color: '#166534' },
+                      current: { backgroundColor: '#dbeafe', color: '#1e40af', fontWeight: 'bold' }
+                    }}
                   />
-                  <div className="space-y-2">
+                  <div className="space-y-4">
+                    <div className="space-y-2">
+                      <p className="text-sm font-medium">Calendar Legend:</p>
+                      <div className="flex flex-wrap gap-2 text-xs">
+                        <div className="flex items-center gap-1">
+                          <div className="w-3 h-3 bg-yellow-200 rounded"></div>
+                          <span>Submitted</span>
+                        </div>
+                        <div className="flex items-center gap-1">
+                          <div className="w-3 h-3 bg-green-200 rounded"></div>
+                          <span>Approved</span>
+                        </div>
+                        <div className="flex items-center gap-1">
+                          <div className="w-3 h-3 bg-blue-200 rounded"></div>
+                          <span>Selected</span>
+                        </div>
+                      </div>
+                    </div>
+                    <div className="space-y-2">
                     <p className="font-medium">Selected Week:</p>
                     <p className="text-sm text-muted-foreground">
                       {format(selectedWeek, 'MMM dd')} - {format(addDays(selectedWeek, workingDaysPerWeek === 6 ? 5 : 4), 'MMM dd, yyyy')}
@@ -401,6 +434,23 @@ export default function CandidateTimesheets() {
                         {getStatusBadge(weekTimesheet.data.status)}
                       </div>
                     )}
+                    {shouldShowNextWeek && (
+                      <div className="bg-blue-50 border border-blue-200 rounded-lg p-3 mt-2">
+                        <p className="text-sm text-blue-800">
+                          <AlertCircle className="w-4 h-4 inline mr-1" />
+                          Next week available: {format(addDays(selectedWeek, 7), 'MMM dd')} - {format(addDays(selectedWeek, 7 + (workingDaysPerWeek === 6 ? 5 : 4)), 'MMM dd, yyyy')}
+                        </p>
+                        <Button
+                          size="sm"
+                          variant="outline"
+                          onClick={() => setSelectedWeek(addDays(selectedWeek, 7))}
+                          className="mt-2"
+                        >
+                          Switch to Next Week
+                        </Button>
+                      </div>
+                    )}
+                    </div>
                   </div>
                 </div>
               </CardContent>
@@ -414,11 +464,19 @@ export default function CandidateTimesheets() {
                   Enter your working hours for each day of the selected week
                   {workingDaysPerWeek === 6 ? ' (Monday - Saturday)' : ' (Monday - Friday)'}
                 </CardDescription>
-                {!canUpdateTimesheet && weekTimesheet?.data && (
+                {hasSubmittedThisWeek && !canUpdateTimesheet && (
+                  <div className="bg-yellow-50 border border-yellow-200 rounded-lg p-3 mt-2">
+                    <p className="text-sm text-yellow-800">
+                      <AlertCircle className="w-4 h-4 inline mr-1" />
+                      Already submitted: You have already submitted timesheet for this week. Wait for next week to submit again.
+                    </p>
+                  </div>
+                )}
+                {!weekHasEnded && !hasSubmittedThisWeek && (
                   <div className="bg-blue-50 border border-blue-200 rounded-lg p-3 mt-2">
                     <p className="text-sm text-blue-800">
                       <AlertCircle className="w-4 h-4 inline mr-1" />
-                      Week ended: This timesheet is locked for editing. You can only view the submitted data.
+                      Current week: You can submit your timesheet after the week ends (Sunday night).
                     </p>
                   </div>
                 )}
@@ -452,7 +510,7 @@ export default function CandidateTimesheets() {
                             ...prev,
                             [key]: parseFloat(e.target.value) || 0
                           }))}
-                          disabled={weekTimesheet?.data?.status === 'approved' || (!canUpdateTimesheet && weekTimesheet?.data)}
+                          disabled={weekTimesheet?.data?.status === 'approved' || (!canUpdateTimesheet && weekTimesheet?.data) || (!weekHasEnded && !hasSubmittedThisWeek)}
                           placeholder="0.0"
                         />
                       </div>
@@ -474,7 +532,7 @@ export default function CandidateTimesheets() {
 
                   <div className="flex gap-2">
                     {!weekTimesheet?.data ? (
-                      canSubmitNewTimesheet ? (
+                      canSubmitNewTimesheet && !hasSubmittedThisWeek ? (
                         <Button 
                           onClick={handleSubmitTimesheet}
                           disabled={createTimesheetMutation.isPending || totalHours === 0}
