@@ -22,7 +22,9 @@ import {
   AlertCircle,
   Plus,
   FileText,
-  Eye
+  Eye,
+  Edit,
+  Trash2
 } from 'lucide-react';
 
 interface WeeklyTimesheet {
@@ -61,6 +63,7 @@ export default function CandidateTimesheets() {
   const { toast } = useToast();
   const queryClient = useQueryClient();
   const [selectedWeek, setSelectedWeek] = useState<Date>(startOfWeek(new Date(), { weekStartsOn: 1 }));
+  const [activeTab, setActiveTab] = useState("timesheet");
   const [newTimesheet, setNewTimesheet] = useState({
     mondayHours: 0,
     tuesdayHours: 0,
@@ -184,6 +187,31 @@ export default function CandidateTimesheets() {
     });
   };
 
+  // Delete timesheet mutation
+  const deleteTimesheetMutation = useMutation({
+    mutationFn: (timesheetId: number) => apiRequest('DELETE', `/api/timesheets/${timesheetId}`),
+    onSuccess: () => {
+      toast({
+        title: "Timesheet deleted successfully",
+        description: "Your timesheet has been deleted",
+      });
+      queryClient.invalidateQueries({ queryKey: [`/api/timesheets/candidate/${user?.id}`] });
+    },
+    onError: (error: any) => {
+      toast({
+        title: "Error deleting timesheet",
+        description: error.message || "Failed to delete timesheet",
+        variant: "destructive",
+      });
+    }
+  });
+
+  const handleDeleteTimesheet = (timesheetId: number) => {
+    if (window.confirm('Are you sure you want to delete this timesheet?')) {
+      deleteTimesheetMutation.mutate(timesheetId);
+    }
+  };
+
   const totalHours = Object.values(newTimesheet).reduce((sum, hours) => sum + hours, 0);
   const totalAmount = totalHours * (billingConfig?.data?.hourlyRate || 0);
 
@@ -288,7 +316,7 @@ export default function CandidateTimesheets() {
           </div>
         </div>
 
-        <Tabs defaultValue="timesheet" className="space-y-6">
+        <Tabs value={activeTab} onValueChange={setActiveTab} defaultValue="timesheet" className="space-y-6">
           <TabsList className="grid w-full grid-cols-2">
             <TabsTrigger value="timesheet" className="flex items-center gap-2">
               <Clock className="h-4 w-4" />
@@ -524,6 +552,31 @@ export default function CandidateTimesheets() {
                             </div>
                           )}
                         </div>
+                        {timesheet.status !== 'approved' && (
+                          <div className="flex gap-2 mt-4">
+                            <Button
+                              size="sm"
+                              onClick={() => {
+                                setSelectedWeek(timesheet.weekStartDate);
+                                setActiveTab('timesheet');
+                              }}
+                              className="flex items-center gap-2"
+                            >
+                              <Edit className="h-4 w-4" />
+                              Update
+                            </Button>
+                            <Button
+                              size="sm"
+                              variant="destructive"
+                              onClick={() => handleDeleteTimesheet(timesheet.id)}
+                              disabled={deleteTimesheetMutation.isPending}
+                              className="flex items-center gap-2"
+                            >
+                              <Trash2 className="h-4 w-4" />
+                              Delete
+                            </Button>
+                          </div>
+                        )}
                       </div>
                     ))}
                   </div>

@@ -1387,6 +1387,20 @@ async updateSeoPage(id: number, data: Partial<InsertSeoPage>): Promise<SeoPage |
     return updated;
   },
 
+  async deleteWeeklyTimesheet(id: number): Promise<WeeklyTimesheet | undefined> {
+    const [deleted] = await db
+      .delete(weeklyTimesheets)
+      .where(eq(weeklyTimesheets.id, id))
+      .returning();
+    return deleted;
+  },
+
+  async getWeeklyTimesheetById(id: number): Promise<WeeklyTimesheet | undefined> {
+    return await db.query.weeklyTimesheets.findFirst({
+      where: eq(weeklyTimesheets.id, id)
+    });
+  },
+
   async getTimesheetsForCandidate(
     candidateId: number, 
     options: { page?: number; limit?: number; status?: string } = {}
@@ -1446,7 +1460,7 @@ async updateSeoPage(id: number, data: Partial<InsertSeoPage>): Promise<SeoPage |
 
     const total = countResult[0]?.count || 0;
 
-    // Get paginated timesheets with candidate information
+    // Get paginated timesheets with candidate information and currency
     const timesheets = await db
       .select({
         id: weeklyTimesheets.id,
@@ -1468,10 +1482,13 @@ async updateSeoPage(id: number, data: Partial<InsertSeoPage>): Promise<SeoPage |
         submittedAt: weeklyTimesheets.submittedAt,
         approvedAt: weeklyTimesheets.approvedAt,
         createdAt: weeklyTimesheets.createdAt,
-        updatedAt: weeklyTimesheets.updatedAt
+        updatedAt: weeklyTimesheets.updatedAt,
+        currency: candidateBilling.currency,
+        rejectionReason: weeklyTimesheets.rejectionReason
       })
       .from(weeklyTimesheets)
       .leftJoin(users, eq(weeklyTimesheets.candidateId, users.id))
+      .leftJoin(candidateBilling, eq(weeklyTimesheets.candidateId, candidateBilling.candidateId))
       .where(whereCondition)
       .orderBy(desc(weeklyTimesheets.weekStartDate))
       .limit(limit)

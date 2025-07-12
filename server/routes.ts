@@ -3806,6 +3806,44 @@ ${allUrls.map(url => `  <url>
     }
   });
 
+  // Delete timesheet (candidate only)
+  app.delete('/api/timesheets/:id', async (req: AuthenticatedRequest, res: Response) => {
+    try {
+      if (!req.isAuthenticated() || !req.user) {
+        return res.status(401).json({ success: false, message: "Not authenticated" });
+      }
+
+      const timesheetId = parseInt(req.params.id);
+      
+      // Get the timesheet first to check ownership
+      const existingTimesheet = await storage.getWeeklyTimesheetById(timesheetId);
+      if (!existingTimesheet) {
+        return res.status(404).json({ success: false, message: "Timesheet not found" });
+      }
+
+      // Candidates can only delete their own timesheets and only if not approved
+      if (req.user.role !== 'admin') {
+        if (req.user.id !== existingTimesheet.candidateId) {
+          return res.status(403).json({ success: false, message: "Unauthorized access" });
+        }
+        if (existingTimesheet.status === 'approved') {
+          return res.status(403).json({ success: false, message: "Cannot delete approved timesheet" });
+        }
+      }
+
+      const deletedTimesheet = await storage.deleteWeeklyTimesheet(timesheetId);
+      
+      if (!deletedTimesheet) {
+        return res.status(404).json({ success: false, message: "Timesheet not found" });
+      }
+
+      res.json({ success: true, data: deletedTimesheet });
+    } catch (error) {
+      console.error('Error deleting timesheet:', error);
+      res.status(500).json({ success: false, message: "Internal server error" });
+    }
+  });
+
   // Invoice Routes
   app.get('/api/invoices/candidate/:candidateId', async (req: AuthenticatedRequest, res: Response) => {
     try {
