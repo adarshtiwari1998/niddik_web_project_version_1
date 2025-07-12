@@ -22,7 +22,11 @@ import {
   invoiceSchema,
   candidateBilling,
   weeklyTimesheets,
-  invoices
+  invoices,
+  clientCompanySchema,
+  companySettingsSchema,
+  clientCompanies,
+  companySettings
 } from "@shared/schema";
 import { db } from "../db";
 import { eq, desc, asc, and, or, ilike, inArray, count, ne } from "drizzle-orm";
@@ -4043,6 +4047,230 @@ ${allUrls.map(url => `  <url>
       res.json({ success: true, data: { invoiceNumber } });
     } catch (error) {
       console.error('Error generating invoice number:', error);
+      res.status(500).json({ success: false, message: "Internal server error" });
+    }
+  });
+
+  // Client Company Management API Endpoints
+  
+  // Get all client companies
+  app.get('/api/admin/client-companies', async (req: AuthenticatedRequest, res: Response) => {
+    try {
+      if (!req.isAuthenticated() || !req.user || req.user.role !== 'admin') {
+        return res.status(403).json({ success: false, message: "Admin access required" });
+      }
+
+      const page = parseInt(req.query.page as string) || 1;
+      const limit = parseInt(req.query.limit as string) || 10;
+      const search = req.query.search as string || '';
+
+      const result = await storage.getAllClientCompanies({ page, limit, search });
+      
+      res.json({ success: true, data: result });
+    } catch (error) {
+      console.error('Error fetching client companies:', error);
+      res.status(500).json({ success: false, message: "Internal server error" });
+    }
+  });
+
+  // Get client company by ID
+  app.get('/api/admin/client-companies/:id', async (req: AuthenticatedRequest, res: Response) => {
+    try {
+      if (!req.isAuthenticated() || !req.user || req.user.role !== 'admin') {
+        return res.status(403).json({ success: false, message: "Admin access required" });
+      }
+
+      const id = parseInt(req.params.id);
+      const company = await storage.getClientCompanyById(id);
+      
+      if (!company) {
+        return res.status(404).json({ success: false, message: "Client company not found" });
+      }
+      
+      res.json({ success: true, data: company });
+    } catch (error) {
+      console.error('Error fetching client company:', error);
+      res.status(500).json({ success: false, message: "Internal server error" });
+    }
+  });
+
+  // Create client company
+  app.post('/api/admin/client-companies', async (req: AuthenticatedRequest, res: Response) => {
+    try {
+      if (!req.isAuthenticated() || !req.user || req.user.role !== 'admin') {
+        return res.status(403).json({ success: false, message: "Admin access required" });
+      }
+
+      const validatedData = clientCompanySchema.parse({
+        ...req.body,
+        createdBy: req.user.id
+      });
+
+      const company = await storage.createClientCompany(validatedData);
+      
+      res.status(201).json({ success: true, data: company });
+    } catch (error) {
+      console.error('Error creating client company:', error);
+      res.status(500).json({ success: false, message: "Internal server error" });
+    }
+  });
+
+  // Update client company
+  app.put('/api/admin/client-companies/:id', async (req: AuthenticatedRequest, res: Response) => {
+    try {
+      if (!req.isAuthenticated() || !req.user || req.user.role !== 'admin') {
+        return res.status(403).json({ success: false, message: "Admin access required" });
+      }
+
+      const id = parseInt(req.params.id);
+      const validatedData = clientCompanySchema.partial().parse(req.body);
+
+      const company = await storage.updateClientCompany(id, validatedData);
+      
+      if (!company) {
+        return res.status(404).json({ success: false, message: "Client company not found" });
+      }
+      
+      res.json({ success: true, data: company });
+    } catch (error) {
+      console.error('Error updating client company:', error);
+      res.status(500).json({ success: false, message: "Internal server error" });
+    }
+  });
+
+  // Delete client company
+  app.delete('/api/admin/client-companies/:id', async (req: AuthenticatedRequest, res: Response) => {
+    try {
+      if (!req.isAuthenticated() || !req.user || req.user.role !== 'admin') {
+        return res.status(403).json({ success: false, message: "Admin access required" });
+      }
+
+      const id = parseInt(req.params.id);
+      await storage.deleteClientCompany(id);
+      
+      res.json({ success: true, message: "Client company deleted successfully" });
+    } catch (error) {
+      console.error('Error deleting client company:', error);
+      res.status(500).json({ success: false, message: "Internal server error" });
+    }
+  });
+
+  // Company Settings API Endpoints
+  
+  // Get all company settings
+  app.get('/api/admin/company-settings', async (req: AuthenticatedRequest, res: Response) => {
+    try {
+      if (!req.isAuthenticated() || !req.user || req.user.role !== 'admin') {
+        return res.status(403).json({ success: false, message: "Admin access required" });
+      }
+
+      const settings = await storage.getAllCompanySettings();
+      
+      res.json({ success: true, data: settings });
+    } catch (error) {
+      console.error('Error fetching company settings:', error);
+      res.status(500).json({ success: false, message: "Internal server error" });
+    }
+  });
+
+  // Get company settings by ID
+  app.get('/api/admin/company-settings/:id', async (req: AuthenticatedRequest, res: Response) => {
+    try {
+      if (!req.isAuthenticated() || !req.user || req.user.role !== 'admin') {
+        return res.status(403).json({ success: false, message: "Admin access required" });
+      }
+
+      const id = parseInt(req.params.id);
+      const settings = await storage.getCompanySettingsById(id);
+      
+      if (!settings) {
+        return res.status(404).json({ success: false, message: "Company settings not found" });
+      }
+      
+      res.json({ success: true, data: settings });
+    } catch (error) {
+      console.error('Error fetching company settings:', error);
+      res.status(500).json({ success: false, message: "Internal server error" });
+    }
+  });
+
+  // Create company settings
+  app.post('/api/admin/company-settings', async (req: AuthenticatedRequest, res: Response) => {
+    try {
+      if (!req.isAuthenticated() || !req.user || req.user.role !== 'admin') {
+        return res.status(403).json({ success: false, message: "Admin access required" });
+      }
+
+      const validatedData = companySettingsSchema.parse({
+        ...req.body,
+        createdBy: req.user.id
+      });
+
+      const settings = await storage.createCompanySettings(validatedData);
+      
+      res.status(201).json({ success: true, data: settings });
+    } catch (error) {
+      console.error('Error creating company settings:', error);
+      res.status(500).json({ success: false, message: "Internal server error" });
+    }
+  });
+
+  // Update company settings
+  app.put('/api/admin/company-settings/:id', async (req: AuthenticatedRequest, res: Response) => {
+    try {
+      if (!req.isAuthenticated() || !req.user || req.user.role !== 'admin') {
+        return res.status(403).json({ success: false, message: "Admin access required" });
+      }
+
+      const id = parseInt(req.params.id);
+      const validatedData = companySettingsSchema.partial().parse(req.body);
+
+      const settings = await storage.updateCompanySettings(id, validatedData);
+      
+      if (!settings) {
+        return res.status(404).json({ success: false, message: "Company settings not found" });
+      }
+      
+      res.json({ success: true, data: settings });
+    } catch (error) {
+      console.error('Error updating company settings:', error);
+      res.status(500).json({ success: false, message: "Internal server error" });
+    }
+  });
+
+  // Delete company settings
+  app.delete('/api/admin/company-settings/:id', async (req: AuthenticatedRequest, res: Response) => {
+    try {
+      if (!req.isAuthenticated() || !req.user || req.user.role !== 'admin') {
+        return res.status(403).json({ success: false, message: "Admin access required" });
+      }
+
+      const id = parseInt(req.params.id);
+      await storage.deleteCompanySettings(id);
+      
+      res.json({ success: true, message: "Company settings deleted successfully" });
+    } catch (error) {
+      console.error('Error deleting company settings:', error);
+      res.status(500).json({ success: false, message: "Internal server error" });
+    }
+  });
+
+  // Get client companies with settings (joined data)
+  app.get('/api/admin/client-companies-with-settings', async (req: AuthenticatedRequest, res: Response) => {
+    try {
+      if (!req.isAuthenticated() || !req.user || req.user.role !== 'admin') {
+        return res.status(403).json({ success: false, message: "Admin access required" });
+      }
+
+      const page = parseInt(req.query.page as string) || 1;
+      const limit = parseInt(req.query.limit as string) || 10;
+      const search = req.query.search as string || '';
+
+      const result = await storage.getClientCompaniesWithSettings({ page, limit, search });
+      
+      res.json({ success: true, data: result });
+    } catch (error) {
+      console.error('Error fetching client companies with settings:', error);
       res.status(500).json({ success: false, message: "Internal server error" });
     }
   });

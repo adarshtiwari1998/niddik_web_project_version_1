@@ -25,7 +25,11 @@ import type {
   WeeklyTimesheet,
   InsertWeeklyTimesheet,
   Invoice,
-  InsertInvoice
+  InsertInvoice,
+  ClientCompany,
+  InsertClientCompany,
+  CompanySettings,
+  InsertCompanySettings
 } from "@shared/schema";
 import {
   users,
@@ -43,7 +47,9 @@ import {
   sessions,
   candidateBilling,
   weeklyTimesheets,
-  invoices
+  invoices,
+  clientCompanies,
+  companySettings
 } from "@shared/schema";
 import { db } from "@db";
 
@@ -1678,6 +1684,160 @@ async updateSeoPage(id: number, data: Partial<InsertSeoPage>): Promise<SeoPage |
 
     return `INV-${year}${month}-${String(nextNumber).padStart(4, '0')}`;
   },
+
+  // Client Company Management
+  async createClientCompany(data: InsertClientCompany): Promise<ClientCompany> {
+    const [company] = await db.insert(clientCompanies).values(data).returning();
+    return company;
+  },
+
+  async getClientCompanyById(id: number): Promise<ClientCompany | undefined> {
+    const [company] = await db.select().from(clientCompanies).where(eq(clientCompanies.id, id));
+    return company;
+  },
+
+  async getAllClientCompanies(params: {
+    page?: number;
+    limit?: number;
+    search?: string;
+    active?: boolean;
+  } = {}): Promise<{ companies: ClientCompany[]; total: number }> {
+    const { page = 1, limit = 10, search, active } = params;
+    const offset = (page - 1) * limit;
+
+    // Build where conditions
+    let whereConditions = [];
+
+    if (search) {
+      const searchPattern = `%${search}%`;
+      whereConditions.push(
+        or(
+          ilike(clientCompanies.name, searchPattern),
+          ilike(clientCompanies.contactPerson, searchPattern)
+        )
+      );
+    }
+
+    if (active !== undefined) {
+      whereConditions.push(eq(clientCompanies.isActive, active));
+    }
+
+    // Get total count
+    const countResult = await db
+      .select({ total: count() })
+      .from(clientCompanies)
+      .where(whereConditions.length > 0 ? and(...whereConditions) : undefined);
+
+    const total = countResult[0]?.total || 0;
+
+    // Get paginated results
+    const companies = await db
+      .select()
+      .from(clientCompanies)
+      .where(whereConditions.length > 0 ? and(...whereConditions) : undefined)
+      .orderBy(desc(clientCompanies.createdAt))
+      .limit(limit)
+      .offset(offset);
+
+    return { companies, total };
+  },
+
+  async updateClientCompany(id: number, data: Partial<InsertClientCompany>): Promise<ClientCompany | undefined> {
+    const [company] = await db
+      .update(clientCompanies)
+      .set(data)
+      .where(eq(clientCompanies.id, id))
+      .returning();
+    return company;
+  },
+
+  async deleteClientCompany(id: number): Promise<void> {
+    await db.delete(clientCompanies).where(eq(clientCompanies.id, id));
+  },
+
+  // Company Settings Management
+  async createCompanySettings(data: InsertCompanySettings): Promise<CompanySettings> {
+    const [settings] = await db.insert(companySettings).values(data).returning();
+    return settings;
+  },
+
+  async getCompanySettingsById(id: number): Promise<CompanySettings | undefined> {
+    const [settings] = await db.select().from(companySettings).where(eq(companySettings.id, id));
+    return settings;
+  },
+
+  async getAllCompanySettings(): Promise<CompanySettings[]> {
+    return await db.select().from(companySettings).orderBy(desc(companySettings.createdAt));
+  },
+
+  async updateCompanySettings(id: number, data: Partial<InsertCompanySettings>): Promise<CompanySettings | undefined> {
+    const [settings] = await db
+      .update(companySettings)
+      .set(data)
+      .where(eq(companySettings.id, id))
+      .returning();
+    return settings;
+  },
+
+  async deleteCompanySettings(id: number): Promise<void> {
+    await db.delete(companySettings).where(eq(companySettings.id, id));
+  },
+
+  // Get client companies with their settings
+  async getClientCompaniesWithSettings(params: {
+    page?: number;
+    limit?: number;
+    search?: string;
+    active?: boolean;
+  } = {}): Promise<{ companies: (ClientCompany & { settings?: CompanySettings })[]; total: number }> {
+    const { page = 1, limit = 10, search, active } = params;
+    const offset = (page - 1) * limit;
+
+    // Build where conditions
+    let whereConditions = [];
+
+    if (search) {
+      const searchPattern = `%${search}%`;
+      whereConditions.push(
+        or(
+          ilike(clientCompanies.name, searchPattern),
+          ilike(clientCompanies.contactPerson, searchPattern)
+        )
+      );
+    }
+
+    if (active !== undefined) {
+      whereConditions.push(eq(clientCompanies.isActive, active));
+    }
+
+    // Get total count
+    const countResult = await db
+      .select({ total: count() })
+      .from(clientCompanies)
+      .where(whereConditions.length > 0 ? and(...whereConditions) : undefined);
+
+    const total = countResult[0]?.total || 0;
+
+    // Get paginated results with settings
+    const results = await db
+      .select({
+        company: clientCompanies,
+        settings: companySettings,
+      })
+      .from(clientCompanies)
+      .leftJoin(companySettings, eq(clientCompanies.id, companySettings.clientId))
+      .where(whereConditions.length > 0 ? and(...whereConditions) : undefined)
+      .orderBy(desc(clientCompanies.createdAt))
+      .limit(limit)
+      .offset(offset);
+
+    const companies = results.map(result => ({
+      ...result.company,
+      settings: result.settings || undefined,
+    }));
+
+    return { companies, total };
+  }
 };
 
 export async function getJobApplicationsWithDetails(
@@ -1837,5 +1997,6 @@ export async function getJobApplicationsWithDetails(
       pages: Math.ceil(total / limit)
     }
   };
-}
+};
+
 // This file includes database utility functions with added methods for user and job retrieval.
