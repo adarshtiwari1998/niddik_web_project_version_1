@@ -220,24 +220,24 @@ export default function CandidateTimesheets() {
   const workingDaysPerWeek = billingConfig?.data?.workingDaysPerWeek || 5;
   const today = new Date();
   
-  // Calculate the last working day of the selected week
-  const lastWorkingDay = addDays(selectedWeek, workingDaysPerWeek - 1); // Friday for 5 days, Saturday for 6 days
+  // Calculate the end of the selected week (Sunday night)
+  const selectedWeekEnd = addDays(selectedWeek, 6); // Sunday of the selected week
   
-  // Check if today is during the selected week
-  const isCurrentWeek = today >= selectedWeek && today <= addDays(selectedWeek, 6);
+  // Check if today is during the selected week (Monday to Sunday)
+  const isCurrentWeek = today >= selectedWeek && today <= selectedWeekEnd;
   
-  // Check if the current work week has ended (last working day has passed)
-  const workWeekHasEnded = today > lastWorkingDay;
+  // Check if the week has completely ended (past Sunday night)
+  const weekHasEnded = today > selectedWeekEnd;
   
   // Check if user already submitted timesheet for this week
   const hasSubmittedThisWeek = timesheets?.data?.some((t: WeeklyTimesheet) => 
     format(parseISO(t.weekStartDate), 'yyyy-MM-dd') === format(selectedWeek, 'yyyy-MM-dd')
   );
   
-  // User can update existing timesheet during current week if not approved
+  // User can update existing timesheet during current week (until Sunday night) if not approved
   const canUpdateTimesheet = isCurrentWeek && weekTimesheet?.data?.status !== 'approved';
   
-  // User can submit new timesheet during current week (no need to wait for week end)
+  // User can submit new timesheet during current week (until Sunday night)
   const canSubmitNewTimesheet = isCurrentWeek && !hasSubmittedThisWeek;
   
   // Show next week option if current week already has a submitted timesheet
@@ -526,7 +526,15 @@ export default function CandidateTimesheets() {
                   <div className="bg-green-50 border border-green-200 rounded-lg p-3 mt-2">
                     <p className="text-sm text-green-800">
                       <AlertCircle className="w-4 h-4 inline mr-1" />
-                      Current week: You can submit your timesheet anytime during this week.
+                      Current week: You can submit your timesheet until Sunday night.
+                    </p>
+                  </div>
+                )}
+                {weekHasEnded && !hasSubmittedThisWeek && (
+                  <div className="bg-red-50 border border-red-200 rounded-lg p-3 mt-2">
+                    <p className="text-sm text-red-800">
+                      <AlertCircle className="w-4 h-4 inline mr-1" />
+                      Week ended: Submission deadline has passed for this week.
                     </p>
                   </div>
                 )}
@@ -534,7 +542,7 @@ export default function CandidateTimesheets() {
                   <div className="bg-green-50 border border-green-200 rounded-lg p-3 mt-2">
                     <p className="text-sm text-green-800">
                       <AlertCircle className="w-4 h-4 inline mr-1" />
-                      Current week: You can update your timesheet during this week.
+                      Current week: You can update your timesheet until Sunday night.
                     </p>
                   </div>
                 )}
@@ -560,7 +568,7 @@ export default function CandidateTimesheets() {
                             ...prev,
                             [key]: parseFloat(e.target.value) || 0
                           }))}
-                          disabled={weekTimesheet?.data?.status === 'approved' || (!canUpdateTimesheet && weekTimesheet?.data) || (!isCurrentWeek && !hasSubmittedThisWeek)}
+                          disabled={weekTimesheet?.data?.status === 'approved' || (!canUpdateTimesheet && weekTimesheet?.data) || weekHasEnded}
                           placeholder="0.0"
                         />
                       </div>
@@ -593,7 +601,7 @@ export default function CandidateTimesheets() {
                         </Button>
                       ) : (
                         <div className="text-sm text-muted-foreground">
-                          {isCurrentWeek ? 'Complete your timesheet to submit' : 'Select current week to submit timesheet'}
+                          {isCurrentWeek ? 'Complete your timesheet to submit' : weekHasEnded ? 'Submission deadline has passed' : 'Select current week to submit timesheet'}
                         </div>
                       )
                     ) : weekTimesheet.data.status !== 'approved' ? (
@@ -608,7 +616,7 @@ export default function CandidateTimesheets() {
                         </Button>
                       ) : (
                         <div className="text-sm text-muted-foreground">
-                          {isCurrentWeek ? 'Timesheet submitted - Contact admin for changes' : 'Week ended - Timesheet locked for editing'}
+                          {isCurrentWeek ? 'Timesheet submitted - Contact admin for changes' : weekHasEnded ? 'Week ended - Timesheet locked for editing' : 'Week ended - Timesheet locked for editing'}
                         </div>
                       )
                     ) : (
