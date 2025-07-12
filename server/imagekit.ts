@@ -39,7 +39,7 @@ export async function uploadLogoToImageKit(buffer: Buffer, filename: string, fol
       folder: `Niddik-Assets/${folder}`,
       useUniqueFileName: true,
       transformation: {
-        pre: 'w-200,h-200,c-maintain_ratio'
+        pre: 'w-150,h-75,c-at_max'
       }
     });
 

@@ -757,11 +757,13 @@ export default function CompanyManagement() {
                       <div className="space-y-4">
                         {field.value && (
                           <div className="flex items-center gap-4">
-                            <img
-                              src={field.value}
-                              alt="Company logo"
-                              className="w-16 h-16 object-contain border rounded"
-                            />
+                            <div className="w-32 h-16 border rounded flex items-center justify-center bg-gray-50">
+                              <img
+                                src={field.value}
+                                alt="Company logo"
+                                className="max-w-full max-h-full object-contain"
+                              />
+                            </div>
                             <Button
                               type="button"
                               variant="outline"
@@ -1091,11 +1093,13 @@ export default function CompanyManagement() {
                       <div className="space-y-4">
                         {field.value && (
                           <div className="flex items-center gap-4">
-                            <img
-                              src={field.value}
-                              alt="Company logo"
-                              className="w-16 h-16 object-contain border rounded"
-                            />
+                            <div className="w-32 h-16 border rounded flex items-center justify-center bg-gray-50">
+                              <img
+                                src={field.value}
+                                alt="Company logo"
+                                className="max-w-full max-h-full object-contain"
+                              />
+                            </div>
                             <Button
                               type="button"
                               variant="outline"
