@@ -414,6 +414,17 @@ export const candidateBilling = pgTable("candidate_billing", {
   workingHoursPerWeek: integer("working_hours_per_week").notNull().default(40),
   workingDaysPerWeek: integer("working_days_per_week").notNull().default(5), // 5 or 6 days per week
   currency: text("currency").notNull().default("INR"),
+  
+  // New fields for enhanced billing configuration
+  employmentType: text("employment_type").notNull().default("subcontract"), // "subcontract" or "fulltime"
+  supervisorName: text("supervisor_name"), // Supervisor name field
+  clientCompanyId: integer("client_company_id").references(() => clientCompanies.id), // Selected client company
+  companySettingsId: integer("company_settings_id").references(() => companySettings.id), // Selected company settings (preselected default)
+  
+  // TDS and benefits configuration
+  tdsRate: decimal("tds_rate", { precision: 5, scale: 2 }).default('0'), // TDS rate percentage for subcontract
+  benefits: text("benefits").array().default([]), // Array of benefits for full-time employees
+  
   isActive: boolean("is_active").notNull().default(true),
   createdBy: integer("created_by").notNull().references(() => users.id), // Admin who set this
   createdAt: timestamp("created_at").defaultNow().notNull(),
@@ -425,6 +436,12 @@ export const candidateBillingSchema = createInsertSchema(candidateBilling, {
   workingHoursPerWeek: (schema) => schema.min(1, "Working hours must be at least 1").max(168, "Cannot exceed 168 hours per week"),
   workingDaysPerWeek: (schema) => schema.min(5, "Must be at least 5 days").max(6, "Cannot exceed 6 days per week"),
   currency: (schema) => schema.optional(),
+  employmentType: (schema) => schema.refine(val => ["subcontract", "fulltime"].includes(val), "Employment type must be either 'subcontract' or 'fulltime'"),
+  supervisorName: (schema) => schema.optional(),
+  clientCompanyId: (schema) => schema.optional(),
+  companySettingsId: (schema) => schema.optional(),
+  tdsRate: (schema) => schema.transform((val) => parseFloat(val?.toString() || '0')).refine(val => val >= 0 && val <= 100, "TDS rate must be between 0 and 100"),
+  benefits: (schema) => schema.optional(),
 });
 
 export type CandidateBilling = typeof candidateBilling.$inferSelect;
@@ -436,6 +453,8 @@ export const weeklyTimesheets = pgTable("weekly_timesheets", {
   candidateId: integer("candidate_id").notNull().references(() => users.id),
   weekStartDate: date("week_start_date").notNull(), // Monday of the week
   weekEndDate: date("week_end_date").notNull(), // Sunday of the week
+  
+  // Basic hour tracking (same for both employment types)
   mondayHours: decimal("monday_hours", { precision: 4, scale: 2 }).notNull().default('0'),
   tuesdayHours: decimal("tuesday_hours", { precision: 4, scale: 2 }).notNull().default('0'),
   wednesdayHours: decimal("wednesday_hours", { precision: 4, scale: 2 }).notNull().default('0'),
@@ -443,8 +462,52 @@ export const weeklyTimesheets = pgTable("weekly_timesheets", {
   fridayHours: decimal("friday_hours", { precision: 4, scale: 2 }).notNull().default('0'),
   saturdayHours: decimal("saturday_hours", { precision: 4, scale: 2 }).notNull().default('0'),
   sundayHours: decimal("sunday_hours", { precision: 4, scale: 2 }).notNull().default('0'),
+  
+  // Enhanced tracking for different employment types
+  mondayOvertime: decimal("monday_overtime", { precision: 4, scale: 2 }).default('0'),
+  tuesdayOvertime: decimal("tuesday_overtime", { precision: 4, scale: 2 }).default('0'),
+  wednesdayOvertime: decimal("wednesday_overtime", { precision: 4, scale: 2 }).default('0'),
+  thursdayOvertime: decimal("thursday_overtime", { precision: 4, scale: 2 }).default('0'),
+  fridayOvertime: decimal("friday_overtime", { precision: 4, scale: 2 }).default('0'),
+  saturdayOvertime: decimal("saturday_overtime", { precision: 4, scale: 2 }).default('0'),
+  sundayOvertime: decimal("sunday_overtime", { precision: 4, scale: 2 }).default('0'),
+  
+  // Sick/Paid Leave tracking (for full-time employees)
+  mondaySickLeave: decimal("monday_sick_leave", { precision: 4, scale: 2 }).default('0'),
+  tuesdaySickLeave: decimal("tuesday_sick_leave", { precision: 4, scale: 2 }).default('0'),
+  wednesdaySickLeave: decimal("wednesday_sick_leave", { precision: 4, scale: 2 }).default('0'),
+  thursdaySickLeave: decimal("thursday_sick_leave", { precision: 4, scale: 2 }).default('0'),
+  fridaySickLeave: decimal("friday_sick_leave", { precision: 4, scale: 2 }).default('0'),
+  saturdaySickLeave: decimal("saturday_sick_leave", { precision: 4, scale: 2 }).default('0'),
+  sundaySickLeave: decimal("sunday_sick_leave", { precision: 4, scale: 2 }).default('0'),
+  
+  // Paid Leave tracking (for full-time employees)  
+  mondayPaidLeave: decimal("monday_paid_leave", { precision: 4, scale: 2 }).default('0'),
+  tuesdayPaidLeave: decimal("tuesday_paid_leave", { precision: 4, scale: 2 }).default('0'),
+  wednesdayPaidLeave: decimal("wednesday_paid_leave", { precision: 4, scale: 2 }).default('0'),
+  thursdayPaidLeave: decimal("thursday_paid_leave", { precision: 4, scale: 2 }).default('0'),
+  fridayPaidLeave: decimal("friday_paid_leave", { precision: 4, scale: 2 }).default('0'),
+  saturdayPaidLeave: decimal("saturday_paid_leave", { precision: 4, scale: 2 }).default('0'),
+  sundayPaidLeave: decimal("sunday_paid_leave", { precision: 4, scale: 2 }).default('0'),
+  
+  // Unpaid Leave tracking (for both employment types)
+  mondayUnpaidLeave: decimal("monday_unpaid_leave", { precision: 4, scale: 2 }).default('0'),
+  tuesdayUnpaidLeave: decimal("tuesday_unpaid_leave", { precision: 4, scale: 2 }).default('0'),
+  wednesdayUnpaidLeave: decimal("wednesday_unpaid_leave", { precision: 4, scale: 2 }).default('0'),
+  thursdayUnpaidLeave: decimal("thursday_unpaid_leave", { precision: 4, scale: 2 }).default('0'),
+  fridayUnpaidLeave: decimal("friday_unpaid_leave", { precision: 4, scale: 2 }).default('0'),
+  saturdayUnpaidLeave: decimal("saturday_unpaid_leave", { precision: 4, scale: 2 }).default('0'),
+  sundayUnpaidLeave: decimal("sunday_unpaid_leave", { precision: 4, scale: 2 }).default('0'),
+  
+  // Totals and calculations
   totalWeeklyHours: decimal("total_weekly_hours", { precision: 4, scale: 2 }).notNull().default('0'),
+  totalOvertimeHours: decimal("total_overtime_hours", { precision: 4, scale: 2 }).default('0'),
+  totalRegularAmount: decimal("total_regular_amount", { precision: 10, scale: 2 }).notNull().default('0'),
+  totalOvertimeAmount: decimal("total_overtime_amount", { precision: 10, scale: 2 }).default('0'),
   totalWeeklyAmount: decimal("total_weekly_amount", { precision: 10, scale: 2 }).notNull().default('0'),
+  tdsAmount: decimal("tds_amount", { precision: 10, scale: 2 }).default('0'), // TDS deduction for subcontract
+  netAmount: decimal("net_amount", { precision: 10, scale: 2 }).notNull().default('0'), // Amount after TDS
+  
   status: text("status").notNull().default("draft"), // draft, submitted, approved, rejected
   submittedAt: timestamp("submitted_at"),
   approvedAt: timestamp("approved_at"),
@@ -514,6 +577,14 @@ export const candidateBillingRelations = relations(candidateBilling, ({ one }) =
   createdByUser: one(users, {
     fields: [candidateBilling.createdBy],
     references: [users.id],
+  }),
+  clientCompany: one(clientCompanies, {
+    fields: [candidateBilling.clientCompanyId],
+    references: [clientCompanies.id],
+  }),
+  companySettings: one(companySettings, {
+    fields: [candidateBilling.companySettingsId],
+    references: [companySettings.id],
   }),
 }));
 
