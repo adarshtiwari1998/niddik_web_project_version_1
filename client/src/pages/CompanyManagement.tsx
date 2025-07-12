@@ -217,7 +217,7 @@ export default function CompanyManagement() {
   });
 
   // Debug logging
-  React.useEffect(() => {
+  useEffect(() => {
     console.log('=== COMPANY SETTINGS STATE ===');
     console.log('companySettings:', companySettings);
     console.log('loadingSettings:', loadingSettings);

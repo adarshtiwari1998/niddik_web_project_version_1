@@ -1,0 +1,37 @@
+Uncaught ReferenceError: React is not defined
+    at CompanyManagement (CompanyManagement.tsx:220:3)
+    at renderWithHooks (chunk-RPCDYKBN.js?v=14d8a5f0:11548:26)
+    at mountIndeterminateComponent (chunk-RPCDYKBN.js?v=14d8a5f0:14926:21)
+    at beginWork (chunk-RPCDYKBN.js?v=14d8a5f0:15914:22)
+    at HTMLUnknownElement.callCallback2 (chunk-RPCDYKBN.js?v=14d8a5f0:3674:22)
+    at Object.invokeGuardedCallbackDev (chunk-RPCDYKBN.js?v=14d8a5f0:3699:24)
+    at invokeGuardedCallback (chunk-RPCDYKBN.js?v=14d8a5f0:3733:39)
+    at beginWork$1 (chunk-RPCDYKBN.js?v=14d8a5f0:19765:15)
+    at performUnitOfWork (chunk-RPCDYKBN.js?v=14d8a5f0:19198:20)
+    at workLoopSync (chunk-RPCDYKBN.js?v=14d8a5f0:19137:13)Understand this error
+chunk-RPCDYKBN.js?v=14d8a5f0:14032 The above error occurred in the <CompanyManagement> component:
+
+    at CompanyManagement (https://9057e50c-00ac-4646-b1db-d4891007de26-00-z2iwicn81dr0.sisko.replit.dev/src/pages/CompanyManagement.tsx:181:39)
+    at Suspense
+    at ProtectedRoute (https://9057e50c-00ac-4646-b1db-d4891007de26-00-z2iwicn81dr0.sisko.replit.dev/src/lib/protected-route.tsx:22:45)
+    at Switch (https://9057e50c-00ac-4646-b1db-d4891007de26-00-z2iwicn81dr0.sisko.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/wouter.js?v=14d8a5f0:336:17)
+    at Router
+    at AuthProvider (https://9057e50c-00ac-4646-b1db-d4891007de26-00-z2iwicn81dr0.sisko.replit.dev/src/hooks/use-auth.tsx:32:32)
+    at QueryClientProvider (https://9057e50c-00ac-4646-b1db-d4891007de26-00-z2iwicn81dr0.sisko.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/@tanstack_react-query.js?v=14d8a5f0:2875:3)
+    at _a (https://9057e50c-00ac-4646-b1db-d4891007de26-00-z2iwicn81dr0.sisko.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/react-helmet-async.js?v=14d8a5f0:624:5)
+    at App
+
+Consider adding an error boundary to your tree to customize error handling behavior.
+Visit https://reactjs.org/link/error-boundaries to learn more about error boundaries.
+logCapturedError @ chunk-RPCDYKBN.js?v=14d8a5f0:14032Understand this error
+chunk-RPCDYKBN.js?v=14d8a5f0:9129 Uncaught ReferenceError: React is not defined
+    at CompanyManagement (CompanyManagement.tsx:220:3)
+    at renderWithHooks (chunk-RPCDYKBN.js?v=14d8a5f0:11548:26)
+    at mountIndeterminateComponent (chunk-RPCDYKBN.js?v=14d8a5f0:14926:21)
+    at beginWork (chunk-RPCDYKBN.js?v=14d8a5f0:15914:22)
+    at beginWork$1 (chunk-RPCDYKBN.js?v=14d8a5f0:19753:22)
+    at performUnitOfWork (chunk-RPCDYKBN.js?v=14d8a5f0:19198:20)
+    at workLoopSync (chunk-RPCDYKBN.js?v=14d8a5f0:19137:13)
+    at renderRootSync (chunk-RPCDYKBN.js?v=14d8a5f0:19116:15)
+    at recoverFromConcurrentError (chunk-RPCDYKBN.js?v=14d8a5f0:18736:28)
+    at performSyncWorkOnRoot (chunk-RPCDYKBN.js?v=14d8a5f0:18879:28)Understand this error
