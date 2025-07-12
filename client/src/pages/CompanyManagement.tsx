@@ -9,7 +9,7 @@ import { Badge } from "@/components/ui/badge";
 import { Switch } from "@/components/ui/switch";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { useToast } from "@/hooks/use-toast";
-import { Plus, Edit, Trash2, Building, Settings, Phone, Mail, MapPin, Search, Eye, EyeOff, ArrowLeft } from 'lucide-react';
+import { Plus, Edit, Trash2, Building, Settings, Phone, Mail, MapPin, Search, Eye, EyeOff, ArrowLeft, Upload, X } from 'lucide-react';
 import { Link } from 'wouter';
 import { apiRequest } from '@/lib/queryClient';
 import { z } from 'zod';
@@ -181,6 +181,7 @@ export default function CompanyManagement() {
   const [editingClient, setEditingClient] = useState<ClientCompany | null>(null);
   const [editingSettings, setEditingSettings] = useState<CompanySettings | null>(null);
   const [showInactiveClients, setShowInactiveClients] = useState(false);
+  const [uploadingLogo, setUploadingLogo] = useState(false);
   const { toast } = useToast();
   const queryClient = useQueryClient();
 
@@ -423,6 +424,48 @@ export default function CompanyManagement() {
 
   const watchShipToSameAsBillTo = clientForm.watch('shipToSameAsBillTo');
 
+  // Logo upload function
+  const handleLogoUpload = async (file: File, isSettings: boolean = false) => {
+    if (!file) return;
+
+    setUploadingLogo(true);
+    try {
+      const formData = new FormData();
+      formData.append('image', file);
+
+      const response = await fetch('/api/upload-seo-image', {
+        method: 'POST',
+        credentials: 'include',
+        body: formData,
+      });
+
+      if (!response.ok) {
+        throw new Error('Failed to upload logo');
+      }
+
+      const result = await response.json();
+      
+      if (isSettings) {
+        settingsForm.setValue('logoUrl', result.url);
+      } else {
+        clientForm.setValue('logoUrl', result.url);
+      }
+
+      toast({
+        title: "Success",
+        description: "Logo uploaded successfully",
+      });
+    } catch (error) {
+      toast({
+        title: "Error",
+        description: "Failed to upload logo",
+        variant: "destructive",
+      });
+    } finally {
+      setUploadingLogo(false);
+    }
+  };
+
   return (
     <AdminLayout title="Company Management" description="Manage client companies and company settings for invoicing">
       <Helmet>
@@ -441,10 +484,6 @@ export default function CompanyManagement() {
                 Back to Timesheets
               </Button>
             </Link>
-            <div>
-              <h1 className="text-2xl font-bold">Company Management</h1>
-              <p className="text-muted-foreground">Manage client companies and company settings</p>
-            </div>
           </div>
           <div className="flex items-center gap-2">
             <Button 
@@ -707,6 +746,62 @@ export default function CompanyManagement() {
                   )}
                 />
               </div>
+
+              <FormField
+                control={clientForm.control}
+                name="logoUrl"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Company Logo</FormLabel>
+                    <FormControl>
+                      <div className="space-y-4">
+                        {field.value && (
+                          <div className="flex items-center gap-4">
+                            <img
+                              src={field.value}
+                              alt="Company logo"
+                              className="w-16 h-16 object-contain border rounded"
+                            />
+                            <Button
+                              type="button"
+                              variant="outline"
+                              size="sm"
+                              onClick={() => field.onChange('')}
+                            >
+                              <X className="w-4 h-4 mr-2" />
+                              Remove
+                            </Button>
+                          </div>
+                        )}
+                        <div className="flex items-center gap-2">
+                          <Input
+                            type="file"
+                            accept="image/*"
+                            onChange={(e) => {
+                              const file = e.target.files?.[0];
+                              if (file) handleLogoUpload(file, false);
+                            }}
+                            disabled={uploadingLogo}
+                            className="hidden"
+                            id="client-logo-upload"
+                          />
+                          <Button
+                            type="button"
+                            variant="outline"
+                            size="sm"
+                            onClick={() => document.getElementById('client-logo-upload')?.click()}
+                            disabled={uploadingLogo}
+                          >
+                            <Upload className="w-4 h-4 mr-2" />
+                            {uploadingLogo ? 'Uploading...' : 'Upload Logo'}
+                          </Button>
+                        </div>
+                      </div>
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
 
               <div className="space-y-4">
                 <h3 className="text-lg font-semibold">Bill To Address</h3>
@@ -985,6 +1080,62 @@ export default function CompanyManagement() {
                   )}
                 />
               </div>
+
+              <FormField
+                control={settingsForm.control}
+                name="logoUrl"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Company Logo</FormLabel>
+                    <FormControl>
+                      <div className="space-y-4">
+                        {field.value && (
+                          <div className="flex items-center gap-4">
+                            <img
+                              src={field.value}
+                              alt="Company logo"
+                              className="w-16 h-16 object-contain border rounded"
+                            />
+                            <Button
+                              type="button"
+                              variant="outline"
+                              size="sm"
+                              onClick={() => field.onChange('')}
+                            >
+                              <X className="w-4 h-4 mr-2" />
+                              Remove
+                            </Button>
+                          </div>
+                        )}
+                        <div className="flex items-center gap-2">
+                          <Input
+                            type="file"
+                            accept="image/*"
+                            onChange={(e) => {
+                              const file = e.target.files?.[0];
+                              if (file) handleLogoUpload(file, true);
+                            }}
+                            disabled={uploadingLogo}
+                            className="hidden"
+                            id="settings-logo-upload"
+                          />
+                          <Button
+                            type="button"
+                            variant="outline"
+                            size="sm"
+                            onClick={() => document.getElementById('settings-logo-upload')?.click()}
+                            disabled={uploadingLogo}
+                          >
+                            <Upload className="w-4 h-4 mr-2" />
+                            {uploadingLogo ? 'Uploading...' : 'Upload Logo'}
+                          </Button>
+                        </div>
+                      </div>
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
 
               <div className="space-y-4">
                 <h3 className="text-lg font-semibold">Company Address</h3>
