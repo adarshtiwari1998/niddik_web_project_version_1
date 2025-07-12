@@ -550,7 +550,7 @@ export default function CompanyManagement() {
             </div>
           ) : (
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-              {clientCompanies?.data?.map((company: ClientCompany) => (
+              {clientCompanies?.companies?.map((company: ClientCompany) => (
                 <Card key={company.id} className={cn("relative", !company.isActive && "opacity-60")}>
                   <CardHeader>
                     <div className="flex justify-between items-start">
