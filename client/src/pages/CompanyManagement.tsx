@@ -210,9 +210,21 @@ export default function CompanyManagement() {
         ...(searchTerm && { search: searchTerm })
       });
       const response = await apiRequest(`/api/admin/company-settings?${params}`);
+      console.log('=== COMPANY SETTINGS RESPONSE ===', response);
+      console.log('=== COMPANY SETTINGS DATA ===', response.data);
       return response.data;
     },
   });
+
+  // Debug logging
+  React.useEffect(() => {
+    console.log('=== COMPANY SETTINGS STATE ===');
+    console.log('companySettings:', companySettings);
+    console.log('loadingSettings:', loadingSettings);
+    console.log('companySettings?.data:', companySettings?.data);
+    console.log('Array check:', Array.isArray(companySettings?.data));
+    console.log('Length check:', companySettings?.data?.length);
+  }, [companySettings, loadingSettings]);
 
   // Client company form
   const clientForm = useForm<ClientCompanyForm>({
