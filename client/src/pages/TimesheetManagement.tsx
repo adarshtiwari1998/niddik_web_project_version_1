@@ -7,7 +7,7 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Badge } from "@/components/ui/badge";
-import { Calendar, Clock, DollarSign, FileText, Plus, Save, Check, X } from "lucide-react";
+import { Calendar, Clock, DollarSign, FileText, Plus, Save, Check, X, Edit, Trash2 } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 import { useUser } from "@/hooks/use-user";
 import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
@@ -81,6 +81,16 @@ export default function TimesheetManagement() {
     return format(startOfWeek(today, { weekStartsOn: 1 }), 'yyyy-MM-dd');
   });
   const [timesheetData, setTimesheetData] = useState({
+    mondayHours: 0,
+    tuesdayHours: 0,
+    wednesdayHours: 0,
+    thursdayHours: 0,
+    fridayHours: 0,
+    saturdayHours: 0,
+    sundayHours: 0
+  });
+  const [editingTimesheet, setEditingTimesheet] = useState<WeeklyTimesheet | null>(null);
+  const [editData, setEditData] = useState({
     mondayHours: 0,
     tuesdayHours: 0,
     wednesdayHours: 0,
@@ -194,6 +204,47 @@ export default function TimesheetManagement() {
     },
     onSuccess: () => {
       toast({ title: "Success", description: "Timesheet rejected" });
+      queryClient.invalidateQueries({ queryKey: ['/api/admin/timesheets'] });
+    },
+    onError: (error: Error) => {
+      toast({ title: "Error", description: error.message, variant: "destructive" });
+    }
+  });
+
+  // Edit timesheet mutation (admin only)
+  const editTimesheetMutation = useMutation({
+    mutationFn: async ({ timesheetId, data }: { timesheetId: number; data: any }) => {
+      const response = await fetch(`/api/admin/timesheets/${timesheetId}`, {
+        method: 'PUT',
+        headers: { 'Content-Type': 'application/json' },
+        credentials: 'include',
+        body: JSON.stringify(data)
+      });
+      if (!response.ok) throw new Error('Failed to update timesheet');
+      return response.json();
+    },
+    onSuccess: () => {
+      toast({ title: "Success", description: "Timesheet updated successfully" });
+      queryClient.invalidateQueries({ queryKey: ['/api/admin/timesheets'] });
+      setEditingTimesheet(null);
+    },
+    onError: (error: Error) => {
+      toast({ title: "Error", description: error.message, variant: "destructive" });
+    }
+  });
+
+  // Delete timesheet mutation (admin only)
+  const deleteTimesheetMutation = useMutation({
+    mutationFn: async (timesheetId: number) => {
+      const response = await fetch(`/api/admin/timesheets/${timesheetId}`, {
+        method: 'DELETE',
+        credentials: 'include'
+      });
+      if (!response.ok) throw new Error('Failed to delete timesheet');
+      return response.json();
+    },
+    onSuccess: () => {
+      toast({ title: "Success", description: "Timesheet deleted successfully" });
       queryClient.invalidateQueries({ queryKey: ['/api/admin/timesheets'] });
     },
     onError: (error: Error) => {
@@ -455,6 +506,106 @@ export default function TimesheetManagement() {
                               </div>
                             </DialogContent>
                           </Dialog>
+                        </div>
+                      )}
+                      {timesheet.status === 'approved' && (
+                        <div className="flex gap-2 mt-4">
+                          <Dialog>
+                            <DialogTrigger asChild>
+                              <Button size="sm" variant="outline">
+                                <Edit className="w-4 h-4 mr-1" />
+                                Edit
+                              </Button>
+                            </DialogTrigger>
+                            <DialogContent className="max-w-2xl">
+                              <DialogHeader>
+                                <DialogTitle>Edit Timesheet</DialogTitle>
+                                <DialogDescription>
+                                  Edit the timesheet hours for {timesheet.candidateName}
+                                </DialogDescription>
+                              </DialogHeader>
+                              <div className="space-y-4">
+                                <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+                                  {[
+                                    { key: 'mondayHours', label: 'Monday' },
+                                    { key: 'tuesdayHours', label: 'Tuesday' },
+                                    { key: 'wednesdayHours', label: 'Wednesday' },
+                                    { key: 'thursdayHours', label: 'Thursday' },
+                                    { key: 'fridayHours', label: 'Friday' },
+                                    { key: 'saturdayHours', label: 'Saturday' },
+                                    { key: 'sundayHours', label: 'Sunday' },
+                                  ].map(({ key, label }) => (
+                                    <div key={key}>
+                                      <Label htmlFor={key}>{label}</Label>
+                                      <Input
+                                        id={key}
+                                        type="number"
+                                        min="0"
+                                        max="24"
+                                        step="0.5"
+                                        value={editingTimesheet?.id === timesheet.id ? editData[key as keyof typeof editData] : timesheet[key as keyof WeeklyTimesheet]}
+                                        onChange={(e) => {
+                                          if (editingTimesheet?.id !== timesheet.id) {
+                                            setEditingTimesheet(timesheet);
+                                            setEditData({
+                                              mondayHours: timesheet.mondayHours,
+                                              tuesdayHours: timesheet.tuesdayHours,
+                                              wednesdayHours: timesheet.wednesdayHours,
+                                              thursdayHours: timesheet.thursdayHours,
+                                              fridayHours: timesheet.fridayHours,
+                                              saturdayHours: timesheet.saturdayHours,
+                                              sundayHours: timesheet.sundayHours
+                                            });
+                                          }
+                                          const numHours = Math.max(0, Math.min(24, parseFloat(e.target.value) || 0));
+                                          setEditData(prev => ({ ...prev, [key]: numHours }));
+                                        }}
+                                      />
+                                    </div>
+                                  ))}
+                                </div>
+                                <div className="flex justify-end gap-2">
+                                  <Button
+                                    variant="outline"
+                                    onClick={() => setEditingTimesheet(null)}
+                                  >
+                                    Cancel
+                                  </Button>
+                                  <Button
+                                    onClick={() => {
+                                      if (editingTimesheet) {
+                                        const totalHours = Object.values(editData).reduce((sum, hours) => sum + hours, 0);
+                                        editTimesheetMutation.mutate({
+                                          timesheetId: timesheet.id,
+                                          data: {
+                                            ...editData,
+                                            totalWeeklyHours: totalHours,
+                                            totalWeeklyAmount: totalHours * (timesheet.hourlyRate || 0)
+                                          }
+                                        });
+                                      }
+                                    }}
+                                    disabled={editTimesheetMutation.isPending}
+                                  >
+                                    Save Changes
+                                  </Button>
+                                </div>
+                              </div>
+                            </DialogContent>
+                          </Dialog>
+                          <Button
+                            size="sm"
+                            variant="destructive"
+                            onClick={() => {
+                              if (confirm('Are you sure you want to delete this timesheet?')) {
+                                deleteTimesheetMutation.mutate(timesheet.id);
+                              }
+                            }}
+                            disabled={deleteTimesheetMutation.isPending}
+                          >
+                            <Trash2 className="w-4 h-4 mr-1" />
+                            Delete
+                          </Button>
                         </div>
                       )}
                       {timesheet.rejectionReason && (

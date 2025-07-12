@@ -3806,6 +3806,72 @@ ${allUrls.map(url => `  <url>
     }
   });
 
+  // Admin edit timesheet (admin only)
+  app.put('/api/admin/timesheets/:id', async (req: AuthenticatedRequest, res: Response) => {
+    try {
+      if (!req.isAuthenticated() || !req.user || req.user.role !== 'admin') {
+        return res.status(403).json({ success: false, message: "Admin access required" });
+      }
+
+      const timesheetId = parseInt(req.params.id);
+      
+      // Get the timesheet first to check if it exists
+      const existingTimesheet = await storage.getWeeklyTimesheetById(timesheetId);
+      if (!existingTimesheet) {
+        return res.status(404).json({ success: false, message: "Timesheet not found" });
+      }
+
+      // Validate request body
+      const validatedData = weeklyTimesheetSchema.omit({ id: true, candidateId: true, createdAt: true, updatedAt: true }).parse(req.body);
+      
+      const timesheet = await storage.updateWeeklyTimesheet(timesheetId, validatedData);
+      
+      if (!timesheet) {
+        return res.status(404).json({ success: false, message: "Timesheet not found" });
+      }
+
+      res.json({ success: true, data: timesheet });
+    } catch (error) {
+      if (error instanceof z.ZodError) {
+        return res.status(400).json({ 
+          success: false, 
+          message: "Validation error", 
+          errors: error.errors 
+        });
+      }
+      console.error('Error updating timesheet:', error);
+      res.status(500).json({ success: false, message: "Internal server error" });
+    }
+  });
+
+  // Admin delete timesheet (admin only)
+  app.delete('/api/admin/timesheets/:id', async (req: AuthenticatedRequest, res: Response) => {
+    try {
+      if (!req.isAuthenticated() || !req.user || req.user.role !== 'admin') {
+        return res.status(403).json({ success: false, message: "Admin access required" });
+      }
+
+      const timesheetId = parseInt(req.params.id);
+      
+      // Get the timesheet first to check if it exists
+      const existingTimesheet = await storage.getWeeklyTimesheetById(timesheetId);
+      if (!existingTimesheet) {
+        return res.status(404).json({ success: false, message: "Timesheet not found" });
+      }
+
+      const deletedTimesheet = await storage.deleteWeeklyTimesheet(timesheetId);
+      
+      if (!deletedTimesheet) {
+        return res.status(404).json({ success: false, message: "Timesheet not found" });
+      }
+
+      res.json({ success: true, data: deletedTimesheet });
+    } catch (error) {
+      console.error('Error deleting timesheet:', error);
+      res.status(500).json({ success: false, message: "Internal server error" });
+    }
+  });
+
   // Delete timesheet (candidate only)
   app.delete('/api/timesheets/:id', async (req: AuthenticatedRequest, res: Response) => {
     try {
