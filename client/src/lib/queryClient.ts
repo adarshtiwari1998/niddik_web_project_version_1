@@ -44,28 +44,8 @@ async function throwIfResNotOk(res: Response) {
   }
 }
 
-export const apiRequest = async (method: string, url: string, data?: any) => {
-  // Log request details for DELETE operations
-  if (method === 'DELETE') {
-    console.log('=== API REQUEST (DELETE) ===');
-    console.log('Method:', method);
-    console.log('URL:', url);
-    console.log('Data:', data);
-    console.log('Data type:', typeof data);
-    
-    // Special logging for bulk delete
-    if (url.includes('/bulk')) {
-      console.log('=== BULK DELETE REQUEST ===');
-      console.log('Is bulk delete:', true);
-      if (data && data.ids) {
-        console.log('IDs array:', data.ids);
-        console.log('IDs array length:', data.ids.length);
-        console.log('First few IDs:', data.ids.slice(0, 5));
-        console.log('IDs types:', data.ids.map((id: any) => typeof id));
-      }
-    }
-  }
-
+// Legacy API request function (for backwards compatibility)
+export const apiRequestLegacy = async (method: string, url: string, data?: any) => {
   const config: RequestInit = {
     method,
     headers: {
@@ -76,37 +56,32 @@ export const apiRequest = async (method: string, url: string, data?: any) => {
 
   if (data && (method === 'POST' || method === 'PUT' || method === 'PATCH' || method === 'DELETE')) {
     config.body = JSON.stringify(data);
-    if (method === 'DELETE') {
-      console.log('Request body:', config.body);
-      if (url.includes('/bulk')) {
-        console.log('Bulk delete request body length:', config.body.length);
-      }
-    }
-  }
-
-  if (method === 'DELETE') {
-    console.log('Final config:', config);
   }
 
   const response = await fetch(url, config);
   
-  if (method === 'DELETE') {
-    console.log('Response received:', response);
-    console.log('Response status:', response.status);
-    console.log('Response ok:', response.ok);
-    
-    if (url.includes('/bulk')) {
-      console.log('=== BULK DELETE RESPONSE ===');
-      try {
-        const responseClone = response.clone();
-        const responseText = await responseClone.text();
-        console.log('Response text:', responseText);
-      } catch (err) {
-        console.log('Could not read response text:', err);
-      }
-    }
+  // Handle response errors
+  if (!response.ok) {
+    const errorText = await response.text();
+    throw new Error(`${response.status}: ${errorText}`);
   }
 
+  return response.json();
+};
+
+// Modern API request function (compatible with current usage patterns)
+export const apiRequest = async (url: string, options?: RequestInit) => {
+  const config: RequestInit = {
+    method: 'GET',
+    headers: {
+      'Content-Type': 'application/json',
+    },
+    credentials: 'include',
+    ...options,
+  };
+
+  const response = await fetch(url, config);
+  
   // Handle response errors
   if (!response.ok) {
     const errorText = await response.text();
