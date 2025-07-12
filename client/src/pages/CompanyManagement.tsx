@@ -555,7 +555,15 @@ export default function CompanyManagement() {
                   <CardHeader>
                     <div className="flex justify-between items-start">
                       <div className="flex items-center gap-2">
-                        <Building className="w-5 h-5 text-blue-500" />
+                        {company.logoUrl ? (
+                          <img 
+                            src={company.logoUrl} 
+                            alt={`${company.name} logo`}
+                            className="w-8 h-8 rounded object-contain bg-gray-50 border"
+                          />
+                        ) : (
+                          <Building className="w-5 h-5 text-blue-500" />
+                        )}
                         <div>
                           <CardTitle className="text-lg">{company.name}</CardTitle>
                           {company.contactPerson && (
