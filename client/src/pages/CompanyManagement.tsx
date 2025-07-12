@@ -210,10 +210,22 @@ export default function CompanyManagement() {
         ...(searchTerm && { search: searchTerm })
       });
       const response = await apiRequest(`/api/admin/company-settings?${params}`);
-      console.log('=== COMPANY SETTINGS RESPONSE ===', response);
-      console.log('=== COMPANY SETTINGS DATA ===', response);
-      // apiRequest already extracts the 'data' field, so response is directly the array
-      return response;
+      console.log('=== RAW RESPONSE ===', response);
+      console.log('=== RESPONSE TYPE ===', typeof response);
+      console.log('=== IS ARRAY ===', Array.isArray(response));
+      console.log('=== RESPONSE KEYS ===', Object.keys(response || {}));
+      
+      // Handle different response structures
+      if (Array.isArray(response)) {
+        return response;
+      } else if (response && Array.isArray(response.data)) {
+        return response.data;
+      } else if (response && response.success && Array.isArray(response.data)) {
+        return response.data;
+      }
+      
+      console.error('Unexpected response structure:', response);
+      return [];
     },
   });
 
@@ -646,7 +658,7 @@ export default function CompanyManagement() {
             </div>
           ) : (
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-              {companySettings?.map((settings: CompanySettings) => (
+              {Array.isArray(companySettings) && companySettings.map((settings: CompanySettings) => (
                 <Card key={settings.id} className={cn("relative", settings.isDefault && "ring-2 ring-blue-500")}>
                   <CardHeader>
                     <div className="flex justify-between items-start">
