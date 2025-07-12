@@ -9,7 +9,8 @@ import { Badge } from "@/components/ui/badge";
 import { Switch } from "@/components/ui/switch";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { useToast } from "@/hooks/use-toast";
-import { Plus, Edit, Trash2, Building, Settings, Phone, Mail, MapPin, Search, Eye, EyeOff } from 'lucide-react';
+import { Plus, Edit, Trash2, Building, Settings, Phone, Mail, MapPin, Search, Eye, EyeOff, ArrowLeft } from 'lucide-react';
+import { Link } from 'wouter';
 import { apiRequest } from '@/lib/queryClient';
 import { z } from 'zod';
 import { useForm } from 'react-hook-form';
@@ -17,6 +18,8 @@ import { zodResolver } from '@hookform/resolvers/zod';
 import { Form, FormControl, FormDescription, FormField, FormItem, FormLabel, FormMessage } from '@/components/ui/form';
 import { Textarea } from '@/components/ui/textarea';
 import { cn } from '@/lib/utils';
+import AdminLayout from '@/components/layout/AdminLayout';
+import { Helmet } from 'react-helmet-async';
 
 // Types
 interface ClientCompany {
@@ -421,32 +424,48 @@ export default function CompanyManagement() {
   const watchShipToSameAsBillTo = clientForm.watch('shipToSameAsBillTo');
 
   return (
-    <div className="container mx-auto p-6 space-y-6">
-      <div className="flex justify-between items-center">
-        <div>
-          <h1 className="text-3xl font-bold">Company Management</h1>
-          <p className="text-muted-foreground">Manage client companies and company settings</p>
-        </div>
-        <div className="flex items-center gap-2">
-          <Button 
-            variant="outline" 
-            size="sm" 
-            onClick={() => setShowInactiveClients(!showInactiveClients)}
-          >
-            {showInactiveClients ? <EyeOff className="w-4 h-4 mr-2" /> : <Eye className="w-4 h-4 mr-2" />}
-            {showInactiveClients ? 'Hide' : 'Show'} Inactive
-          </Button>
-          <div className="relative">
-            <Search className="absolute left-3 top-3 h-4 w-4 text-muted-foreground" />
-            <Input
-              placeholder="Search companies..."
-              value={searchTerm}
-              onChange={(e) => setSearchTerm(e.target.value)}
-              className="pl-10 w-64"
-            />
+    <AdminLayout title="Company Management" description="Manage client companies and company settings for invoicing">
+      <Helmet>
+        <title>Company Management | Niddik Admin</title>
+        <meta name="description" content="Manage client companies and company settings for invoicing and billing." />
+        <meta property="og:title" content="Company Management | Niddik Admin" />
+        <meta property="og:description" content="Manage client companies and company settings for invoicing and billing." />
+      </Helmet>
+
+      <div className="space-y-6">
+        <div className="flex justify-between items-center">
+          <div className="flex items-center gap-4">
+            <Link href="/admin/timesheets">
+              <Button variant="outline" size="sm">
+                <ArrowLeft className="w-4 h-4 mr-2" />
+                Back to Timesheets
+              </Button>
+            </Link>
+            <div>
+              <h1 className="text-2xl font-bold">Company Management</h1>
+              <p className="text-muted-foreground">Manage client companies and company settings</p>
+            </div>
+          </div>
+          <div className="flex items-center gap-2">
+            <Button 
+              variant="outline" 
+              size="sm" 
+              onClick={() => setShowInactiveClients(!showInactiveClients)}
+            >
+              {showInactiveClients ? <EyeOff className="w-4 h-4 mr-2" /> : <Eye className="w-4 h-4 mr-2" />}
+              {showInactiveClients ? 'Hide' : 'Show'} Inactive
+            </Button>
+            <div className="relative">
+              <Search className="absolute left-3 top-3 h-4 w-4 text-muted-foreground" />
+              <Input
+                placeholder="Search companies..."
+                value={searchTerm}
+                onChange={(e) => setSearchTerm(e.target.value)}
+                className="pl-10 w-64"
+              />
+            </div>
           </div>
         </div>
-      </div>
 
       <Tabs defaultValue="clients" className="w-full">
         <TabsList className="grid w-full grid-cols-2">
@@ -1193,6 +1212,7 @@ export default function CompanyManagement() {
           </Form>
         </DialogContent>
       </Dialog>
-    </div>
+      </div>
+    </AdminLayout>
   );
 }
