@@ -33,6 +33,7 @@ import { eq, desc, asc, and, or, ilike, inArray, count, ne } from "drizzle-orm";
 import { z } from "zod";
 import { setupAuth } from "./auth";
 import { resumeUpload, seoMetaUpload, uploadToCloudinary } from "./cloudinary";
+import { logoUpload, uploadLogoToImageKit } from "./imagekit";
 import { scrypt, randomBytes, timingSafeEqual } from "crypto";
 import { promisify } from "util";
 import { emailService } from "./email"; // Import the email service
@@ -1255,6 +1256,49 @@ export async function registerRoutes(app: Express): Promise<Server> {
       });
     } catch (error) {
       console.error('SEO meta image upload error:', error);
+      if (error instanceof Error) {
+        console.error('Error details:', error.message, error.stack);
+      }
+      return res.status(500).json({ 
+        success: false, 
+        message: error instanceof Error ? error.message : 'Upload failed',
+        error: error
+      });
+    }
+  });
+
+  // API endpoint for uploading company logos (admin only)
+  app.post('/api/upload-company-logo', logoUpload.single('logo'), async (req: AuthenticatedRequest, res: Response) => {
+    try {
+      if (!req.isAuthenticated() || req.user?.role !== 'admin') {
+        return res.status(403).json({
+          success: false,
+          message: "Unauthorized access"
+        });
+      }
+
+      if (!req.file) {
+        return res.status(400).json({ success: false, message: 'No file uploaded' });
+      }
+
+      const file = req.file;
+      
+      // Upload to ImageKit
+      const imageKitUrl = await uploadLogoToImageKit(file.buffer, file.originalname);
+      
+      console.log('Company logo uploaded successfully:', {
+        originalName: file.originalname,
+        url: imageKitUrl,
+        size: file.buffer.length
+      });
+
+      return res.status(200).json({ 
+        success: true, 
+        url: imageKitUrl,
+        filename: file.originalname 
+      });
+    } catch (error) {
+      console.error('Company logo upload error:', error);
       if (error instanceof Error) {
         console.error('Error details:', error.message, error.stack);
       }

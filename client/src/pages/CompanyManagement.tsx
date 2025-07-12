@@ -431,9 +431,9 @@ export default function CompanyManagement() {
     setUploadingLogo(true);
     try {
       const formData = new FormData();
-      formData.append('image', file);
+      formData.append('logo', file);
 
-      const response = await fetch('/api/upload-seo-image', {
+      const response = await fetch('/api/upload-company-logo', {
         method: 'POST',
         credentials: 'include',
         body: formData,
@@ -453,7 +453,7 @@ export default function CompanyManagement() {
 
       toast({
         title: "Success",
-        description: "Logo uploaded successfully",
+        description: "Logo uploaded successfully to ImageKit",
       });
     } catch (error) {
       toast({
