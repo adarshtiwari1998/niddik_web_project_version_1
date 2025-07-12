@@ -13,7 +13,7 @@ import { useToast } from "@/hooks/use-toast";
 import { useUser } from "@/hooks/use-user";
 import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
 import { format, startOfWeek, endOfWeek, addDays } from "date-fns";
-import BillingConfigFixed from "@/components/BillingConfigFixed";
+import BillingConfig from "@/components/BillingConfig";
 import AdminLayout from "@/components/layout/AdminLayout";
 import { Helmet } from 'react-helmet-async';
 
@@ -727,7 +727,7 @@ export default function TimesheetManagement() {
 
         {isAdmin && (
           <TabsContent value="billing" className="space-y-6">
-            <BillingConfigFixed />
+            <BillingConfig />
           </TabsContent>
         )}
       </Tabs>

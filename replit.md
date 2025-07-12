@@ -129,7 +129,7 @@ The application follows a standard full-stack architecture with clear separation
 - **Hidden Company Settings**: Company settings field is automatically set to first option (Niddik) and hidden from admin view
 - **API Integration**: Fixed API endpoints to properly fetch client companies and company settings data
 - **User Experience**: Client company selection is prominently displayed in both create and edit dialogs
-- **Files Modified**: `client/src/components/BillingConfigFixed.tsx`
+- **Files Modified**: `client/src/components/BillingConfig.tsx`
 
 ## Timesheet Access Security Enhancement (July 12, 2025)
 - **Security Enforcement**: Enhanced candidate timesheet access control to require both hired status AND active billing configuration

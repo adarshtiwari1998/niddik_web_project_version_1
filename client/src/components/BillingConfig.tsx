@@ -112,12 +112,12 @@ export default function BillingConfig() {
 
   // Fetch client companies for dropdown
   const { data: clientCompanies } = useQuery({
-    queryKey: ['/api/client-companies'],
+    queryKey: ['/api/admin/client-companies'],
   });
 
   // Fetch company settings for dropdown
   const { data: companySettings } = useQuery({
-    queryKey: ['/api/company-settings'],
+    queryKey: ['/api/admin/company-settings'],
   });
 
   // Create billing configuration mutation
@@ -204,8 +204,8 @@ export default function BillingConfig() {
       currency: 'USD',
       employmentType: 'subcontract',
       supervisorName: '',
-      clientCompanyId: undefined,
-      companySettingsId: undefined,
+      clientCompanyId: clientCompanies?.data?.[0]?.id || undefined,
+      companySettingsId: companySettings?.data?.[0]?.id || undefined,
       tdsRate: 10,
       benefits: []
     });
@@ -231,6 +231,17 @@ export default function BillingConfig() {
     }
   }, [editingBilling]);
 
+  // Effect to set default values for client company and company settings when data is loaded
+  useEffect(() => {
+    if (clientCompanies?.data && companySettings?.data && !editingBilling) {
+      setBillingData(prev => ({
+        ...prev,
+        clientCompanyId: prev.clientCompanyId || clientCompanies.data[0]?.id,
+        companySettingsId: prev.companySettingsId || companySettings.data[0]?.id
+      }));
+    }
+  }, [clientCompanies, companySettings, editingBilling]);
+
   // Update benefits in billing data when selected benefits change
   useEffect(() => {
     setBillingData(prev => ({ ...prev, benefits: selectedBenefits }));
@@ -244,8 +255,8 @@ export default function BillingConfig() {
 
     createBillingMutation.mutate({
       candidateId: selectedCandidate,
-      createdBy: user?.id || 5, // Current admin user ID
-      hourlyRate: billingData.hourlyRate.toString(), // Convert to string for schema validation
+      createdBy: user?.id || 5,
+      hourlyRate: billingData.hourlyRate.toString(),
       workingHoursPerWeek: billingData.workingHoursPerWeek,
       workingDaysPerWeek: billingData.workingDaysPerWeek,
       currency: billingData.currency,
@@ -296,11 +307,8 @@ export default function BillingConfig() {
 
   const handleEdit = (billing: CandidateBilling) => {
     setEditingBilling(billing);
-    // The form data will be populated by the useEffect hook
     setIsEditDialogOpen(true);
   };
-
-
 
   const handleDelete = (candidateId: number) => {
     deleteBillingMutation.mutate(candidateId);
@@ -310,9 +318,9 @@ export default function BillingConfig() {
     <div className="space-y-6">
       <div className="flex justify-between items-center">
         <div>
-          <h2 className="text-2xl font-bold">Billing Configuration</h2>
+          <h2 className="text-2xl font-bold">Enhanced Billing Configuration</h2>
           <p className="text-muted-foreground">
-            Manage hourly rates and working hours for hired candidates
+            Manage employment types, rates, and working hours for hired candidates
           </p>
         </div>
         
@@ -320,14 +328,14 @@ export default function BillingConfig() {
           <DialogTrigger asChild>
             <Button>
               <Plus className="w-4 h-4 mr-2" />
-              Add Candidate
+              Add Enhanced Config
             </Button>
           </DialogTrigger>
-          <DialogContent>
+          <DialogContent className="max-w-4xl">
             <DialogHeader>
-              <DialogTitle>Add Billing Configuration</DialogTitle>
+              <DialogTitle>Enhanced Billing Configuration</DialogTitle>
               <DialogDescription>
-                Set up billing information for a new candidate
+                Set up comprehensive billing information with employment type, TDS, and benefits
               </DialogDescription>
             </DialogHeader>
             
@@ -352,60 +360,139 @@ export default function BillingConfig() {
               </div>
 
               {/* Employment Type Section */}
-              <div className="space-y-4 p-4 border rounded-lg">
-                <div className="flex items-center gap-2">
-                  <User className="h-5 w-5 text-blue-600" />
-                  <h4 className="font-semibold">Employment Information</h4>
-                </div>
-                
-                <div className="grid grid-cols-2 gap-4">
-                  <div>
-                    <Label htmlFor="employment-type">Employment Type</Label>
-                    <Select 
-                      value={billingData.employmentType} 
-                      onValueChange={(value: 'subcontract' | 'fulltime') => setBillingData(prev => ({ ...prev, employmentType: value }))}
-                    >
-                      <SelectTrigger>
-                        <SelectValue />
-                      </SelectTrigger>
-                      <SelectContent>
-                        <SelectItem value="subcontract">Subcontract</SelectItem>
-                        <SelectItem value="fulltime">Full-time Employee</SelectItem>
-                      </SelectContent>
-                    </Select>
+              <Card>
+                <CardHeader className="pb-3">
+                  <CardTitle className="text-lg flex items-center gap-2">
+                    <User className="h-5 w-5 text-blue-600" />
+                    Employment Information
+                  </CardTitle>
+                </CardHeader>
+                <CardContent className="space-y-4">
+                  <div className="grid grid-cols-2 gap-4">
+                    <div>
+                      <Label htmlFor="employment-type">Employment Type</Label>
+                      <Select 
+                        value={billingData.employmentType} 
+                        onValueChange={(value: 'subcontract' | 'fulltime') => setBillingData(prev => ({ ...prev, employmentType: value }))}
+                      >
+                        <SelectTrigger>
+                          <SelectValue />
+                        </SelectTrigger>
+                        <SelectContent>
+                          <SelectItem value="subcontract">Subcontract</SelectItem>
+                          <SelectItem value="fulltime">Full-time Employee</SelectItem>
+                        </SelectContent>
+                      </Select>
+                    </div>
+                    
+                    <div>
+                      <Label htmlFor="supervisor-name">Supervisor Name</Label>
+                      <Input
+                        id="supervisor-name"
+                        value={billingData.supervisorName}
+                        onChange={(e) => setBillingData(prev => ({ ...prev, supervisorName: e.target.value }))}
+                        placeholder="Enter supervisor name"
+                      />
+                    </div>
+                  </div>
+                </CardContent>
+              </Card>
+
+              {/* Rate & Hours Section */}
+              <Card>
+                <CardHeader className="pb-3">
+                  <CardTitle className="text-lg flex items-center gap-2">
+                    <DollarSign className="h-5 w-5 text-emerald-600" />
+                    Rate & Working Hours
+                  </CardTitle>
+                </CardHeader>
+                <CardContent className="space-y-4">
+                  <div className="grid grid-cols-2 gap-4">
+                    <div>
+                      <Label htmlFor="hourly-rate">Hourly Rate</Label>
+                      <Input
+                        id="hourly-rate"
+                        type="number"
+                        min="0"
+                        step="0.01"
+                        value={billingData.hourlyRate}
+                        onChange={(e) => setBillingData(prev => ({ ...prev, hourlyRate: parseFloat(e.target.value) || 0 }))}
+                        placeholder="50.00"
+                      />
+                    </div>
+                    
+                    <div>
+                      <Label htmlFor="currency">Currency</Label>
+                      <Select 
+                        value={billingData.currency} 
+                        onValueChange={(value) => setBillingData(prev => ({ ...prev, currency: value }))}
+                      >
+                        <SelectTrigger>
+                          <SelectValue />
+                        </SelectTrigger>
+                        <SelectContent>
+                          <SelectItem value="USD">USD</SelectItem>
+                          <SelectItem value="EUR">EUR</SelectItem>
+                          <SelectItem value="GBP">GBP</SelectItem>
+                          <SelectItem value="INR">INR</SelectItem>
+                        </SelectContent>
+                      </Select>
+                    </div>
                   </div>
                   
-                  <div>
-                    <Label htmlFor="supervisor-name">Supervisor Name</Label>
-                    <Input
-                      id="supervisor-name"
-                      value={billingData.supervisorName}
-                      onChange={(e) => setBillingData(prev => ({ ...prev, supervisorName: e.target.value }))}
-                      placeholder="Enter supervisor name"
-                    />
+                  <div className="grid grid-cols-2 gap-4">
+                    <div>
+                      <Label htmlFor="working-hours">Working Hours per Week</Label>
+                      <Input
+                        id="working-hours"
+                        type="number"
+                        min="1"
+                        max="80"
+                        value={billingData.workingHoursPerWeek}
+                        onChange={(e) => setBillingData(prev => ({ ...prev, workingHoursPerWeek: parseInt(e.target.value) || 40 }))}
+                        placeholder="40"
+                      />
+                    </div>
+                    
+                    <div>
+                      <Label htmlFor="working-days">Working Days per Week</Label>
+                      <Select 
+                        value={billingData.workingDaysPerWeek.toString()} 
+                        onValueChange={(value) => setBillingData(prev => ({ ...prev, workingDaysPerWeek: parseInt(value) }))}
+                      >
+                        <SelectTrigger>
+                          <SelectValue />
+                        </SelectTrigger>
+                        <SelectContent>
+                          <SelectItem value="5">5 Days (Mon-Fri)</SelectItem>
+                          <SelectItem value="6">6 Days (Mon-Sat)</SelectItem>
+                        </SelectContent>
+                      </Select>
+                    </div>
                   </div>
-                </div>
-              </div>
+                </CardContent>
+              </Card>
 
-              {/* Company & Settings Section */}
-              <div className="space-y-4 p-4 border rounded-lg">
-                <div className="flex items-center gap-2">
-                  <Building2 className="h-5 w-5 text-green-600" />
-                  <h4 className="font-semibold">Company Assignment</h4>
-                </div>
-                
-                <div className="grid grid-cols-2 gap-4">
+              {/* Client Company Selection */}
+              <Card className="bg-blue-50">
+                <CardHeader className="pb-3">
+                  <CardTitle className="text-lg flex items-center gap-2">
+                    <Building2 className="h-5 w-5 text-blue-600" />
+                    Client Company
+                  </CardTitle>
+                </CardHeader>
+                <CardContent>
                   <div>
                     <Label htmlFor="client-company">Client Company</Label>
                     <Select 
-                      value={billingData.clientCompanyId?.toString() || ""} 
-                      onValueChange={(value) => setBillingData(prev => ({ ...prev, clientCompanyId: value ? parseInt(value) : undefined }))}
+                      value={billingData.clientCompanyId?.toString() || ''} 
+                      onValueChange={(value) => setBillingData(prev => ({ ...prev, clientCompanyId: parseInt(value) }))}
                     >
                       <SelectTrigger>
                         <SelectValue placeholder="Select client company" />
                       </SelectTrigger>
                       <SelectContent>
-                        {clientCompanies?.companies?.map((company: ClientCompany) => (
+                        {clientCompanies?.data?.companies?.map((company: any) => (
                           <SelectItem key={company.id} value={company.id.toString()}>
                             {company.name}
                           </SelectItem>
@@ -413,158 +500,83 @@ export default function BillingConfig() {
                       </SelectContent>
                     </Select>
                   </div>
-                  
-                  <div>
-                    <Label htmlFor="company-settings">Company Settings</Label>
-                    <Select 
-                      value={billingData.companySettingsId?.toString() || ""} 
-                      onValueChange={(value) => setBillingData(prev => ({ ...prev, companySettingsId: value ? parseInt(value) : undefined }))}
-                    >
-                      <SelectTrigger>
-                        <SelectValue placeholder="Select settings template" />
-                      </SelectTrigger>
-                      <SelectContent>
-                        {companySettings?.data?.map((setting: CompanySettings) => (
-                          <SelectItem key={setting.id} value={setting.id.toString()}>
-                            {setting.companyName}
-                          </SelectItem>
-                        ))}
-                      </SelectContent>
-                    </Select>
-                  </div>
-                </div>
-              </div>
+                </CardContent>
+              </Card>
 
-              {/* Billing & Rate Section */}
-              <div className="space-y-4 p-4 border rounded-lg">
-                <div className="flex items-center gap-2">
-                  <DollarSign className="h-5 w-5 text-emerald-600" />
-                  <h4 className="font-semibold">Rate & Working Hours</h4>
-                </div>
-                
-                <div className="grid grid-cols-2 gap-4">
-                  <div>
-                    <Label htmlFor="hourly-rate">Hourly Rate</Label>
-                    <Input
-                      id="hourly-rate"
-                      type="number"
-                      min="0"
-                      step="0.01"
-                      value={billingData.hourlyRate}
-                      onChange={(e) => setBillingData(prev => ({ ...prev, hourlyRate: parseFloat(e.target.value) || 0 }))}
-                      placeholder="50.00"
-                    />
-                  </div>
-                  
-                  <div>
-                    <Label htmlFor="currency">Currency</Label>
-                    <Select 
-                      value={billingData.currency} 
-                      onValueChange={(value) => setBillingData(prev => ({ ...prev, currency: value }))}
-                    >
-                      <SelectTrigger>
-                        <SelectValue />
-                      </SelectTrigger>
-                      <SelectContent>
-                        <SelectItem value="USD">USD</SelectItem>
-                        <SelectItem value="EUR">EUR</SelectItem>
-                        <SelectItem value="GBP">GBP</SelectItem>
-                        <SelectItem value="INR">INR</SelectItem>
-                      </SelectContent>
-                    </Select>
-                  </div>
-                </div>
-                
-                <div className="grid grid-cols-2 gap-4">
-                  <div>
-                    <Label htmlFor="working-hours">Working Hours per Week</Label>
-                    <Input
-                      id="working-hours"
-                      type="number"
-                      min="1"
-                      max="80"
-                      value={billingData.workingHoursPerWeek}
-                      onChange={(e) => setBillingData(prev => ({ ...prev, workingHoursPerWeek: parseInt(e.target.value) || 40 }))}
-                      placeholder="40"
-                    />
-                  </div>
-                  
-                  <div>
-                    <Label htmlFor="working-days">Working Days per Week</Label>
-                    <Select 
-                      value={billingData.workingDaysPerWeek.toString()} 
-                      onValueChange={(value) => setBillingData(prev => ({ ...prev, workingDaysPerWeek: parseInt(value) }))}
-                    >
-                      <SelectTrigger>
-                        <SelectValue />
-                      </SelectTrigger>
-                    <SelectContent>
-                      <SelectItem value="5">5 Days (Mon-Fri)</SelectItem>
-                      <SelectItem value="6">6 Days (Mon-Sat)</SelectItem>
-                    </SelectContent>
-                  </Select>
-                </div>
+              {/* Hidden field for company settings - auto-selected */}
+              <div style={{ display: 'none' }}>
+                <input 
+                  type="hidden" 
+                  value={billingData.companySettingsId || ''} 
+                  onChange={() => {}} 
+                />
               </div>
 
               {/* TDS Configuration (for Subcontract) */}
               {billingData.employmentType === 'subcontract' && (
-                <div className="space-y-4 p-4 border rounded-lg bg-orange-50">
-                  <div className="flex items-center gap-2">
-                    <Percent className="h-5 w-5 text-orange-600" />
-                    <h4 className="font-semibold">TDS Configuration</h4>
-                  </div>
-                  
-                  <div>
-                    <Label htmlFor="tds-rate">TDS Rate (%)</Label>
-                    <Input
-                      id="tds-rate"
-                      type="number"
-                      min="0"
-                      max="100"
-                      step="0.1"
-                      value={billingData.tdsRate}
-                      onChange={(e) => setBillingData(prev => ({ ...prev, tdsRate: parseFloat(e.target.value) || 0 }))}
-                      placeholder="10.0"
-                    />
-                    <p className="text-sm text-muted-foreground mt-1">
-                      Tax Deducted at Source percentage for subcontract payments
-                    </p>
-                  </div>
-                </div>
+                <Card className="bg-orange-50">
+                  <CardHeader className="pb-3">
+                    <CardTitle className="text-lg flex items-center gap-2">
+                      <Percent className="h-5 w-5 text-orange-600" />
+                      TDS Configuration
+                    </CardTitle>
+                  </CardHeader>
+                  <CardContent>
+                    <div>
+                      <Label htmlFor="tds-rate">TDS Rate (%)</Label>
+                      <Input
+                        id="tds-rate"
+                        type="number"
+                        min="0"
+                        max="100"
+                        step="0.1"
+                        value={billingData.tdsRate}
+                        onChange={(e) => setBillingData(prev => ({ ...prev, tdsRate: parseFloat(e.target.value) || 0 }))}
+                        placeholder="10.0"
+                      />
+                      <p className="text-sm text-muted-foreground mt-1">
+                        Tax Deducted at Source percentage for subcontract payments
+                      </p>
+                    </div>
+                  </CardContent>
+                </Card>
               )}
 
               {/* Benefits Configuration (for Full-time) */}
               {billingData.employmentType === 'fulltime' && (
-                <div className="space-y-4 p-4 border rounded-lg bg-blue-50">
-                  <div className="flex items-center gap-2">
-                    <Gift className="h-5 w-5 text-blue-600" />
-                    <h4 className="font-semibold">Employee Benefits</h4>
-                  </div>
-                  
-                  <div className="grid grid-cols-2 gap-2">
-                    {benefitOptions.map((benefit) => (
-                      <div key={benefit} className="flex items-center space-x-2">
-                        <Checkbox
-                          id={benefit}
-                          checked={selectedBenefits.includes(benefit)}
-                          onCheckedChange={(checked) => {
-                            if (checked) {
-                              setSelectedBenefits(prev => [...prev, benefit]);
-                            } else {
-                              setSelectedBenefits(prev => prev.filter(b => b !== benefit));
-                            }
-                          }}
-                        />
-                        <Label
-                          htmlFor={benefit}
-                          className="text-sm font-normal cursor-pointer"
-                        >
-                          {benefit}
-                        </Label>
-                      </div>
-                    ))}
-                  </div>
-                </div>
+                <Card className="bg-blue-50">
+                  <CardHeader className="pb-3">
+                    <CardTitle className="text-lg flex items-center gap-2">
+                      <Gift className="h-5 w-5 text-blue-600" />
+                      Employee Benefits
+                    </CardTitle>
+                  </CardHeader>
+                  <CardContent>
+                    <div className="grid grid-cols-2 gap-2">
+                      {benefitOptions.map((benefit) => (
+                        <div key={benefit} className="flex items-center space-x-2">
+                          <Checkbox
+                            id={benefit}
+                            checked={selectedBenefits.includes(benefit)}
+                            onCheckedChange={(checked) => {
+                              if (checked) {
+                                setSelectedBenefits(prev => [...prev, benefit]);
+                              } else {
+                                setSelectedBenefits(prev => prev.filter(b => b !== benefit));
+                              }
+                            }}
+                          />
+                          <Label
+                            htmlFor={benefit}
+                            className="text-sm font-normal cursor-pointer"
+                          >
+                            {benefit}
+                          </Label>
+                        </div>
+                      ))}
+                    </div>
+                  </CardContent>
+                </Card>
               )}
               
               <Button 
@@ -573,7 +585,7 @@ export default function BillingConfig() {
                 className="w-full"
               >
                 <Save className="w-4 h-4 mr-2" />
-                Save Configuration
+                Save Enhanced Configuration
               </Button>
             </div>
           </DialogContent>
@@ -655,6 +667,35 @@ export default function BillingConfig() {
               </div>
             </div>
             
+            {/* Client Company Selection */}
+            <div>
+              <Label htmlFor="edit-client-company">Client Company</Label>
+              <Select 
+                value={billingData.clientCompanyId?.toString() || ''} 
+                onValueChange={(value) => setBillingData(prev => ({ ...prev, clientCompanyId: parseInt(value) }))}
+              >
+                <SelectTrigger>
+                  <SelectValue placeholder="Select client company" />
+                </SelectTrigger>
+                <SelectContent>
+                  {clientCompanies?.data?.companies?.map((company: any) => (
+                    <SelectItem key={company.id} value={company.id.toString()}>
+                      {company.name}
+                    </SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
+            </div>
+
+            {/* Hidden field for company settings - auto-selected */}
+            <div style={{ display: 'none' }}>
+              <input 
+                type="hidden" 
+                value={billingData.companySettingsId || ''} 
+                onChange={() => {}} 
+              />
+            </div>
+            
             <Button 
               onClick={handleUpdate} 
               disabled={updateBillingMutation.isPending}
@@ -726,14 +767,6 @@ export default function BillingConfig() {
                         <span>Benefits: {billing.benefits.slice(0, 3).join(', ')}{billing.benefits.length > 3 ? '...' : ''}</span>
                       </div>
                     )}
-                    
-                    {/* Company Assignment */}
-                    {billing.clientCompanyId && (
-                      <div className="flex items-center gap-1 text-sm text-green-600">
-                        <Building2 className="w-4 h-4" />
-                        <span>Client Company ID: {billing.clientCompanyId}</span>
-                      </div>
-                    )}
                   </div>
                   
                   <div className="flex gap-2">
@@ -786,9 +819,9 @@ export default function BillingConfig() {
           <Card>
             <CardContent className="p-8 text-center">
               <DollarSign className="w-12 h-12 mx-auto mb-4 text-muted-foreground" />
-              <h3 className="text-lg font-semibold mb-2">No Billing Configurations</h3>
+              <h3 className="text-lg font-semibold mb-2">No Enhanced Billing Configurations</h3>
               <p className="text-muted-foreground">
-                Get started by adding billing information for your hired candidates.
+                Get started by adding enhanced billing information for your hired candidates.
               </p>
             </CardContent>
           </Card>
