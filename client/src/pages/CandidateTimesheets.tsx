@@ -145,9 +145,11 @@ export default function CandidateTimesheets() {
   const handleSubmitTimesheet = () => {
     if (!user || !billingConfig?.data) return;
 
+    const weekEndDate = format(addDays(selectedWeek, 6), 'yyyy-MM-dd');
     const timesheetData = {
       candidateId: user.id,
       weekStartDate: weekStartString,
+      weekEndDate: weekEndDate,
       ...newTimesheet
     };
 
