@@ -210,10 +210,6 @@ export default function CompanyManagement() {
         ...(searchTerm && { search: searchTerm })
       });
       const response = await apiRequest(`/api/admin/company-settings?${params}`);
-      console.log('=== RAW RESPONSE ===', response);
-      console.log('=== RESPONSE TYPE ===', typeof response);
-      console.log('=== IS ARRAY ===', Array.isArray(response));
-      console.log('=== RESPONSE KEYS ===', Object.keys(response || {}));
       
       // Handle different response structures
       if (Array.isArray(response)) {
@@ -224,19 +220,11 @@ export default function CompanyManagement() {
         return response.data;
       }
       
-      console.error('Unexpected response structure:', response);
       return [];
     },
   });
 
-  // Debug logging
-  useEffect(() => {
-    console.log('=== COMPANY SETTINGS STATE ===');
-    console.log('companySettings:', companySettings);
-    console.log('loadingSettings:', loadingSettings);
-    console.log('Array check:', Array.isArray(companySettings));
-    console.log('Length check:', companySettings?.length);
-  }, [companySettings, loadingSettings]);
+
 
   // Client company form
   const clientForm = useForm<ClientCompanyForm>({
@@ -250,7 +238,7 @@ export default function CompanyManagement() {
       billToState: '',
       billToCountry: '',
       billToZipCode: '',
-      shipToSameAsBillTo: false,
+      shipToSameAsBillTo: true,
       shipToAddress: '',
       shipToCity: '',
       shipToState: '',
@@ -745,7 +733,7 @@ export default function CompanyManagement() {
               {editingClient ? 'Edit Client Company' : 'Add Client Company'}
             </DialogTitle>
             <DialogDescription>
-              {editingClient ? 'Update the client company information' : 'Add a new client company for invoicing'}
+              {editingClient ? 'Update the client company information' : 'Add a new client company for invoicing and Timesheet'}
             </DialogDescription>
           </DialogHeader>
           <Form {...clientForm}>
