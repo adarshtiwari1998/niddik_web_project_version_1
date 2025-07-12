@@ -187,9 +187,11 @@ export default function CandidateTimesheets() {
   const totalHours = Object.values(newTimesheet).reduce((sum, hours) => sum + hours, 0);
   const totalAmount = totalHours * (billingConfig?.data?.hourlyRate || 0);
 
-  // Check if selected week has ended (can only update timesheets for past weeks)
+  // Check if selected week has ended (can only update timesheets during current week)
   const selectedWeekEnd = endOfWeek(selectedWeek, { weekStartsOn: 1 });
-  const canEditTimesheet = isAfter(new Date(), selectedWeekEnd);
+  const isCurrentWeek = !isAfter(new Date(), selectedWeekEnd);
+  const canUpdateTimesheet = isCurrentWeek; // Can update only during current week
+  const canSubmitNewTimesheet = isAfter(new Date(), selectedWeekEnd); // Can submit new only after week ends
 
   const getStatusBadge = (status: string) => {
     switch (status) {
@@ -374,11 +376,19 @@ export default function CandidateTimesheets() {
                   Enter your working hours for each day of the selected week
                   {workingDaysPerWeek === 6 ? ' (Monday - Saturday)' : ' (Monday - Friday)'}
                 </CardDescription>
-                {!canEditTimesheet && (
-                  <div className="bg-yellow-50 border border-yellow-200 rounded-lg p-3 mt-2">
-                    <p className="text-sm text-yellow-800">
+                {!canUpdateTimesheet && weekTimesheet?.data && (
+                  <div className="bg-blue-50 border border-blue-200 rounded-lg p-3 mt-2">
+                    <p className="text-sm text-blue-800">
                       <AlertCircle className="w-4 h-4 inline mr-1" />
-                      Current week timesheet: You can track your hours but submission is only available after the week ends.
+                      Week ended: This timesheet is locked for editing. You can only view the submitted data.
+                    </p>
+                  </div>
+                )}
+                {canUpdateTimesheet && weekTimesheet?.data && (
+                  <div className="bg-green-50 border border-green-200 rounded-lg p-3 mt-2">
+                    <p className="text-sm text-green-800">
+                      <AlertCircle className="w-4 h-4 inline mr-1" />
+                      Current week: You can update your timesheet until the week ends.
                     </p>
                   </div>
                 )}
@@ -404,7 +414,7 @@ export default function CandidateTimesheets() {
                             ...prev,
                             [key]: parseFloat(e.target.value) || 0
                           }))}
-                          disabled={weekTimesheet?.data?.status === 'approved' || !canEditTimesheet}
+                          disabled={weekTimesheet?.data?.status === 'approved' || (!canUpdateTimesheet && weekTimesheet?.data)}
                           placeholder="0.0"
                         />
                       </div>
@@ -426,7 +436,7 @@ export default function CandidateTimesheets() {
 
                   <div className="flex gap-2">
                     {!weekTimesheet?.data ? (
-                      canEditTimesheet ? (
+                      canSubmitNewTimesheet ? (
                         <Button 
                           onClick={handleSubmitTimesheet}
                           disabled={createTimesheetMutation.isPending || totalHours === 0}
@@ -437,11 +447,11 @@ export default function CandidateTimesheets() {
                         </Button>
                       ) : (
                         <div className="text-sm text-muted-foreground">
-                          Timesheets can only be submitted after the week ends
+                          Timesheet submission available after week ends
                         </div>
                       )
                     ) : weekTimesheet.data.status !== 'approved' ? (
-                      canEditTimesheet ? (
+                      canUpdateTimesheet ? (
                         <Button 
                           onClick={handleUpdateTimesheet}
                           disabled={updateTimesheetMutation.isPending}
@@ -452,7 +462,7 @@ export default function CandidateTimesheets() {
                         </Button>
                       ) : (
                         <div className="text-sm text-muted-foreground">
-                          Timesheets can only be updated after the week ends
+                          Week ended - Timesheet locked for editing
                         </div>
                       )
                     ) : (
