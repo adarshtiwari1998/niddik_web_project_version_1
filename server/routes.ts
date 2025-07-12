@@ -4245,8 +4245,35 @@ ${allUrls.map(url => `  <url>
         return res.status(403).json({ success: false, message: "Admin access required" });
       }
 
-      const validatedData = companySettingsSchema.parse({
+      // Debug: Log the received data
+      console.log('=== COMPANY SETTINGS DATA RECEIVED ===');
+      console.log('Request body:', JSON.stringify(req.body, null, 2));
+      console.log('Phone numbers type:', typeof req.body.phoneNumbers);
+      console.log('Phone numbers value:', req.body.phoneNumbers);
+      console.log('Email addresses type:', typeof req.body.emailAddresses);
+      console.log('Email addresses value:', req.body.emailAddresses);
+
+      // Preprocess data to ensure arrays are properly handled
+      const processedBody = {
         ...req.body,
+        phoneNumbers: Array.isArray(req.body.phoneNumbers) 
+          ? req.body.phoneNumbers 
+          : typeof req.body.phoneNumbers === 'string' 
+            ? [req.body.phoneNumbers] 
+            : [],
+        emailAddresses: Array.isArray(req.body.emailAddresses) 
+          ? req.body.emailAddresses 
+          : typeof req.body.emailAddresses === 'string' 
+            ? [req.body.emailAddresses] 
+            : [],
+      };
+
+      console.log('=== PROCESSED DATA ===');
+      console.log('Processed phone numbers:', processedBody.phoneNumbers);
+      console.log('Processed email addresses:', processedBody.emailAddresses);
+
+      const validatedData = companySettingsSchema.parse({
+        ...processedBody,
         createdBy: req.user.id
       });
 
@@ -4255,6 +4282,9 @@ ${allUrls.map(url => `  <url>
       res.status(201).json({ success: true, data: settings });
     } catch (error) {
       console.error('Error creating company settings:', error);
+      if (error instanceof z.ZodError) {
+        console.error('Validation errors:', error.errors);
+      }
       res.status(500).json({ success: false, message: "Internal server error" });
     }
   });
@@ -4267,7 +4297,23 @@ ${allUrls.map(url => `  <url>
       }
 
       const id = parseInt(req.params.id);
-      const validatedData = companySettingsSchema.partial().parse(req.body);
+      
+      // Preprocess data to ensure arrays are properly handled
+      const processedBody = {
+        ...req.body,
+        phoneNumbers: Array.isArray(req.body.phoneNumbers) 
+          ? req.body.phoneNumbers 
+          : typeof req.body.phoneNumbers === 'string' 
+            ? [req.body.phoneNumbers] 
+            : req.body.phoneNumbers,
+        emailAddresses: Array.isArray(req.body.emailAddresses) 
+          ? req.body.emailAddresses 
+          : typeof req.body.emailAddresses === 'string' 
+            ? [req.body.emailAddresses] 
+            : req.body.emailAddresses,
+      };
+
+      const validatedData = companySettingsSchema.partial().parse(processedBody);
 
       const settings = await storage.updateCompanySettings(id, validatedData);
       
@@ -4278,6 +4324,9 @@ ${allUrls.map(url => `  <url>
       res.json({ success: true, data: settings });
     } catch (error) {
       console.error('Error updating company settings:', error);
+      if (error instanceof z.ZodError) {
+        console.error('Validation errors:', error.errors);
+      }
       res.status(500).json({ success: false, message: "Internal server error" });
     }
   });

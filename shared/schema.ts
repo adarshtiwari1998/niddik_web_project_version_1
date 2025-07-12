@@ -583,8 +583,8 @@ export const clientCompanySchema = createInsertSchema(clientCompanies, {
   billToState: (schema) => schema.min(1, "Bill to state is required"),
   billToCountry: (schema) => schema.min(1, "Bill to country is required"),
   billToZipCode: (schema) => schema.min(1, "Bill to zip code is required"),
-  phoneNumbers: (schema) => schema.array(z.string().min(1, "Phone number required")).min(1, "At least one phone number required"),
-  emailAddresses: (schema) => schema.array(z.string().email("Valid email required")).min(1, "At least one email address required"),
+  phoneNumbers: z.array(z.string().min(1, "Phone number required")).min(1, "At least one phone number required"),
+  emailAddresses: z.array(z.string().email("Valid email required")).min(1, "At least one email address required"),
 }).omit({ id: true, createdAt: true, updatedAt: true });
 
 export type ClientCompany = typeof clientCompanies.$inferSelect;
@@ -631,8 +631,8 @@ export const companySettingsSchema = createInsertSchema(companySettings, {
   state: (schema) => schema.min(1, "State is required"),
   country: (schema) => schema.min(1, "Country is required"),
   zipCode: (schema) => schema.min(1, "Zip code is required"),
-  phoneNumbers: (schema) => schema.array(z.string().min(1, "Phone number required")).min(1, "At least one phone number required"),
-  emailAddresses: (schema) => schema.array(z.string().email("Valid email required")).min(1, "At least one email address required"),
+  phoneNumbers: z.array(z.string().min(1, "Phone number required")).min(1, "At least one phone number required"),
+  emailAddresses: z.array(z.string().email("Valid email required")).min(1, "At least one email address required"),
 }).omit({ id: true, createdAt: true, updatedAt: true });
 
 export type CompanySettings = typeof companySettings.$inferSelect;
