@@ -12,7 +12,7 @@ import { Badge } from '@/components/ui/badge';
 import { Calendar } from '@/components/ui/calendar';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { useToast } from '@/hooks/use-toast';
-import { format, startOfWeek, addDays, parseISO, isAfter, endOfWeek } from 'date-fns';
+import { format, startOfWeek, addDays, parseISO, isAfter, endOfWeek, subWeeks } from 'date-fns';
 import { 
   Clock, 
   Calendar as CalendarIcon, 
@@ -62,7 +62,13 @@ export default function CandidateTimesheets() {
   const { user } = useAuth();
   const { toast } = useToast();
   const queryClient = useQueryClient();
-  const [selectedWeek, setSelectedWeek] = useState<Date>(startOfWeek(new Date(), { weekStartsOn: 1 }));
+  // Default to the most recent week that has ended (can submit timesheets for)
+  const [selectedWeek, setSelectedWeek] = useState<Date>(() => {
+    const currentWeekStart = startOfWeek(new Date(), { weekStartsOn: 1 });
+    const currentWeekEnd = endOfWeek(currentWeekStart, { weekStartsOn: 1 });
+    // If current week hasn't ended yet, default to previous week
+    return isAfter(new Date(), currentWeekEnd) ? currentWeekStart : startOfWeek(subWeeks(new Date(), 1), { weekStartsOn: 1 });
+  });
   const [activeTab, setActiveTab] = useState("timesheet");
   const [newTimesheet, setNewTimesheet] = useState({
     mondayHours: 0,
@@ -528,7 +534,7 @@ export default function CandidateTimesheets() {
                         <div className="flex items-center justify-between mb-2">
                           <div>
                             <p className="font-medium">
-                              {format(parseISO(timesheet.weekStartDate), 'MMM dd')} - {format(addDays(parseISO(timesheet.weekStartDate), workingDaysPerWeek === 6 ? 5 : 4), 'MMM dd, yyyy')}
+                              Week of {format(parseISO(timesheet.weekStartDate), 'MMM dd')} - {format(addDays(parseISO(timesheet.weekStartDate), workingDaysPerWeek === 6 ? 5 : 4), 'MMM dd, yyyy')} ({workingDaysPerWeek === 6 ? 'Mon-Sat' : 'Mon-Fri'})
                             </p>
                             <p className="text-sm text-muted-foreground">
                               Submitted: {format(parseISO(timesheet.submittedAt), 'MMM dd, yyyy')}
