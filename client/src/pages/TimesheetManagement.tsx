@@ -410,7 +410,7 @@ export default function TimesheetManagement() {
                           <span className="font-medium">Total Hours:</span> {timesheet.totalWeeklyHours}
                         </div>
                         <div>
-                          <span className="font-medium">Amount:</span> ${timesheet.totalWeeklyAmount?.toFixed(2)}
+                          <span className="font-medium">Amount:</span> ${parseFloat(timesheet.totalWeeklyAmount || '0').toFixed(2)}
                         </div>
                         <div>
                           <span className="font-medium">Submitted:</span> {timesheet.submittedAt ? format(new Date(timesheet.submittedAt), 'MMM dd, yyyy') : '-'}
@@ -481,7 +481,7 @@ export default function TimesheetManagement() {
                           <span className="font-medium">Total Hours:</span> {timesheet.totalWeeklyHours}
                         </div>
                         <div>
-                          <span className="font-medium">Amount:</span> ${timesheet.totalWeeklyAmount?.toFixed(2)}
+                          <span className="font-medium">Amount:</span> ${parseFloat(timesheet.totalWeeklyAmount || '0').toFixed(2)}
                         </div>
                         <div>
                           <span className="font-medium">Submitted:</span> {timesheet.submittedAt ? format(new Date(timesheet.submittedAt), 'MMM dd, yyyy') : '-'}

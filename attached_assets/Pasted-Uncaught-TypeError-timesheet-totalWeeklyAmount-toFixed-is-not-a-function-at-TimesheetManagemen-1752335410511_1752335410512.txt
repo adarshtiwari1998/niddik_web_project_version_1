@@ -1,0 +1,37 @@
+Uncaught TypeError: timesheet.totalWeeklyAmount?.toFixed is not a function
+    at TimesheetManagement.tsx:413:103
+    at Array.map (<anonymous>)
+    at TimesheetManagement (TimesheetManagement.tsx:396:42)
+    at renderWithHooks (chunk-RPCDYKBN.js?v=ab068aa8:11548:26)
+    at updateFunctionComponent (chunk-RPCDYKBN.js?v=ab068aa8:14582:28)
+    at beginWork (chunk-RPCDYKBN.js?v=ab068aa8:15924:22)
+    at HTMLUnknownElement.callCallback2 (chunk-RPCDYKBN.js?v=ab068aa8:3674:22)
+    at Object.invokeGuardedCallbackDev (chunk-RPCDYKBN.js?v=ab068aa8:3699:24)
+    at invokeGuardedCallback (chunk-RPCDYKBN.js?v=ab068aa8:3733:39)
+    at beginWork$1 (chunk-RPCDYKBN.js?v=ab068aa8:19765:15)Understand this error
+chunk-RPCDYKBN.js?v=ab068aa8:14032 The above error occurred in the <TimesheetManagement> component:
+
+    at TimesheetManagement (https://b5593d5b-ad64-4bed-a609-c283695dd49e-00-2r6j7l9n2c7y5.spock.replit.dev/src/pages/TimesheetManagement.tsx:36:20)
+    at Suspense
+    at ProtectedRoute (https://b5593d5b-ad64-4bed-a609-c283695dd49e-00-2r6j7l9n2c7y5.spock.replit.dev/src/lib/protected-route.tsx:22:45)
+    at Switch (https://b5593d5b-ad64-4bed-a609-c283695dd49e-00-2r6j7l9n2c7y5.spock.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/wouter.js?v=ab068aa8:336:17)
+    at Router
+    at AuthProvider (https://b5593d5b-ad64-4bed-a609-c283695dd49e-00-2r6j7l9n2c7y5.spock.replit.dev/src/hooks/use-auth.tsx:32:32)
+    at QueryClientProvider (https://b5593d5b-ad64-4bed-a609-c283695dd49e-00-2r6j7l9n2c7y5.spock.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/@tanstack_react-query.js?v=ab068aa8:2875:3)
+    at _a (https://b5593d5b-ad64-4bed-a609-c283695dd49e-00-2r6j7l9n2c7y5.spock.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/react-helmet-async.js?v=ab068aa8:624:5)
+    at App
+
+Consider adding an error boundary to your tree to customize error handling behavior.
+Visit https://reactjs.org/link/error-boundaries to learn more about error boundaries.
+logCapturedError @ chunk-RPCDYKBN.js?v=ab068aa8:14032Understand this error
+chunk-RPCDYKBN.js?v=ab068aa8:9129 Uncaught TypeError: timesheet.totalWeeklyAmount?.toFixed is not a function
+    at TimesheetManagement.tsx:413:103
+    at Array.map (<anonymous>)
+    at TimesheetManagement (TimesheetManagement.tsx:396:42)
+    at renderWithHooks (chunk-RPCDYKBN.js?v=ab068aa8:11548:26)
+    at updateFunctionComponent (chunk-RPCDYKBN.js?v=ab068aa8:14582:28)
+    at beginWork (chunk-RPCDYKBN.js?v=ab068aa8:15924:22)
+    at beginWork$1 (chunk-RPCDYKBN.js?v=ab068aa8:19753:22)
+    at performUnitOfWork (chunk-RPCDYKBN.js?v=ab068aa8:19198:20)
+    at workLoopSync (chunk-RPCDYKBN.js?v=ab068aa8:19137:13)
+    at renderRootSync (chunk-RPCDYKBN.js?v=ab068aa8:19116:15)Understand this error

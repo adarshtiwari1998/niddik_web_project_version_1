@@ -123,6 +123,16 @@ The application follows a standard full-stack architecture with clear separation
 
 # Recent Changes
 
+## Replit Agent to Replit Migration (July 12, 2025)
+- **Migration**: Successfully migrated project from Replit Agent to standard Replit environment
+- **Timesheet Validation Fix**: Fixed schema validation to accept both string and number inputs for hours fields
+- **JavaScript Error Resolution**: Fixed `TypeError: timesheet.totalWeeklyAmount?.toFixed is not a function` by properly handling decimal field conversion
+- **Database Field Handling**: Updated both admin and candidate timesheet views to properly parse decimal amounts from database
+- **Result**: All timesheet functionality now works correctly without validation errors or white screens
+- **Files Modified**: `shared/schema.ts`, `client/src/pages/TimesheetManagement.tsx`, `client/src/pages/CandidateTimesheets.tsx`
+
+# Recent Changes
+
 ## Dynamic Working Days Configuration Feature (July 10, 2025)
 - **Feature**: Configurable working days per week (5 or 6 days) set by admin with dynamic timesheet calendars
 - **Database Enhancement**: Added `workingDaysPerWeek` field to `candidateBilling` table with range validation (5-6 days)

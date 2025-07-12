@@ -72,14 +72,14 @@ export default function CandidateTimesheets() {
   });
 
   // Get billing configuration
-  const { data: billingConfig } = useQuery({
+  const { data: billingConfig, isLoading: billingLoading, error: billingError } = useQuery({
     queryKey: ['/api/candidate/billing-status'],
     queryFn: getQueryFn({ on401: "throw" }),
     enabled: !!user,
   });
 
   // Get timesheets for current candidate
-  const { data: timesheets, isLoading: timesheetsLoading } = useQuery({
+  const { data: timesheets, isLoading: timesheetsLoading, error: timesheetsError } = useQuery({
     queryKey: [`/api/timesheets/candidate/${user?.id}`, { page: 1, limit: 50 }],
     queryFn: getQueryFn({ on401: "throw" }),
     enabled: !!user,
@@ -87,7 +87,7 @@ export default function CandidateTimesheets() {
 
   // Get specific week timesheet
   const weekStartString = format(selectedWeek, 'yyyy-MM-dd');
-  const { data: weekTimesheet } = useQuery({
+  const { data: weekTimesheet, isLoading: weekTimesheetLoading, error: weekTimesheetError } = useQuery({
     queryKey: [`/api/timesheets/${user?.id}/${weekStartString}`],
     queryFn: getQueryFn({ on401: "throw" }),
     enabled: !!user && !!weekStartString,
@@ -191,6 +191,30 @@ export default function CandidateTimesheets() {
   const dayKeys = workingDaysPerWeek === 6 ? allDayKeys.slice(0, 6) : allDayKeys.slice(0, 5);
 
   if (!user) return null;
+
+  // Show loading state while fetching billing config
+  if (billingLoading) {
+    return (
+      <CandidateLayout activeTab="timesheets">
+        <div className="space-y-6">
+          <div className="flex items-center justify-between">
+            <div>
+              <h1 className="text-2xl font-bold tracking-tight">Timesheet & Billing</h1>
+              <p className="text-muted-foreground">Loading...</p>
+            </div>
+          </div>
+          <Card>
+            <CardContent className="pt-6">
+              <div className="text-center py-8">
+                <Clock className="w-16 h-16 mx-auto text-muted-foreground mb-4 animate-pulse" />
+                <p className="text-muted-foreground">Loading billing configuration...</p>
+              </div>
+            </CardContent>
+          </Card>
+        </div>
+      </CandidateLayout>
+    );
+  }
 
   // Check if candidate is hired
   const isHired = billingConfig?.data?.hasHiredApplication === true;
@@ -433,7 +457,7 @@ export default function CandidateTimesheets() {
                           </div>
                           <div>
                             <span className="text-muted-foreground">Total Amount:</span>
-                            <p className="font-medium">{billingConfig?.data?.currency || 'USD'} {timesheet.totalWeeklyAmount.toFixed(2)}</p>
+                            <p className="font-medium">{billingConfig?.data?.currency || 'USD'} {parseFloat(timesheet.totalWeeklyAmount || '0').toFixed(2)}</p>
                           </div>
                           <div>
                             <span className="text-muted-foreground">Status:</span>
