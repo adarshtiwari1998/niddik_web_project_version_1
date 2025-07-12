@@ -123,6 +123,17 @@ The application follows a standard full-stack architecture with clear separation
 
 # Recent Changes
 
+## Timesheet Access Security Enhancement (July 12, 2025)
+- **Security Enforcement**: Enhanced candidate timesheet access control to require both hired status AND active billing configuration
+- **Two-Level Protection**: 
+  - Level 1: Candidate must have a hired application (`hasHiredApplication: true`)
+  - Level 2: Admin must create an active billing configuration (`isActive: true`)
+- **User Experience**: Added clear messaging for different access states:
+  - "Not Available" - for candidates who aren't hired
+  - "Billing Configuration Required" - for hired candidates waiting for admin to set up billing
+- **Database Verification**: Confirmed billing configuration requirement is properly enforced at both API and UI levels
+- **Files Modified**: `client/src/pages/CandidateTimesheets.tsx`
+
 ## Timesheet Submission Logic Updated (July 12, 2025)
 - **Current Week Submission**: Updated timesheet submission logic to allow candidates to submit timesheets for the current week until Sunday night
 - **Week-End Logic**: Changed from working day-based submission to full week-based submission (Monday to Sunday)

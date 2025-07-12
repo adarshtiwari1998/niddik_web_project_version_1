@@ -291,8 +291,9 @@ export default function CandidateTimesheets() {
     );
   }
 
-  // Check if candidate is hired
+  // Check if candidate is hired and has billing configuration
   const isHired = billingConfig?.data?.hasHiredApplication === true;
+  const hasBillingConfig = billingConfig?.data?.isActive === true;
 
   if (!isHired) {
     return (
@@ -317,6 +318,38 @@ export default function CandidateTimesheets() {
                 </p>
                 <p className="text-sm text-muted-foreground">
                   Once you are hired for a position, you'll be able to submit weekly timesheets and track your working hours here.
+                </p>
+              </div>
+            </CardContent>
+          </Card>
+        </div>
+      </CandidateLayout>
+    );
+  }
+
+  if (!hasBillingConfig) {
+    return (
+      <CandidateLayout activeTab="timesheets">
+        <div className="space-y-6">
+          <div className="flex items-center justify-between">
+            <div>
+              <h1 className="text-2xl font-bold tracking-tight">Timesheet & Billing</h1>
+              <p className="text-muted-foreground">
+                Submit your weekly hours and track attendance
+              </p>
+            </div>
+          </div>
+
+          <Card>
+            <CardContent className="pt-6">
+              <div className="text-center py-8">
+                <Clock className="w-16 h-16 mx-auto text-muted-foreground mb-4" />
+                <h3 className="text-lg font-semibold mb-2">Billing Configuration Required</h3>
+                <p className="text-muted-foreground max-w-md mx-auto mb-4">
+                  Your timesheet access is being set up. Please wait for the admin to configure your billing settings.
+                </p>
+                <p className="text-sm text-muted-foreground">
+                  Once the admin adds your billing configuration, you'll be able to submit weekly timesheets and track your working hours here.
                 </p>
               </div>
             </CardContent>
