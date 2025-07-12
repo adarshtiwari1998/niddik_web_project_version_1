@@ -457,13 +457,13 @@ export const weeklyTimesheets = pgTable("weekly_timesheets", {
 export const weeklyTimesheetSchema = createInsertSchema(weeklyTimesheets, {
   weekStartDate: (schema) => schema.transform((val) => new Date(val)),
   weekEndDate: (schema) => schema.transform((val) => new Date(val)),
-  mondayHours: (schema) => schema.transform((val) => parseFloat(val.toString())).refine(val => val >= 0 && val <= 24, "Hours must be between 0 and 24"),
-  tuesdayHours: (schema) => schema.transform((val) => parseFloat(val.toString())).refine(val => val >= 0 && val <= 24, "Hours must be between 0 and 24"),
-  wednesdayHours: (schema) => schema.transform((val) => parseFloat(val.toString())).refine(val => val >= 0 && val <= 24, "Hours must be between 0 and 24"),
-  thursdayHours: (schema) => schema.transform((val) => parseFloat(val.toString())).refine(val => val >= 0 && val <= 24, "Hours must be between 0 and 24"),
-  fridayHours: (schema) => schema.transform((val) => parseFloat(val.toString())).refine(val => val >= 0 && val <= 24, "Hours must be between 0 and 24"),
-  saturdayHours: (schema) => schema.transform((val) => parseFloat(val.toString())).refine(val => val >= 0 && val <= 24, "Hours must be between 0 and 24"),
-  sundayHours: (schema) => schema.transform((val) => parseFloat(val.toString())).refine(val => val >= 0 && val <= 24, "Hours must be between 0 and 24"),
+  mondayHours: z.union([z.string(), z.number()]).transform((val) => parseFloat(val.toString())).refine(val => val >= 0 && val <= 24, "Hours must be between 0 and 24"),
+  tuesdayHours: z.union([z.string(), z.number()]).transform((val) => parseFloat(val.toString())).refine(val => val >= 0 && val <= 24, "Hours must be between 0 and 24"),
+  wednesdayHours: z.union([z.string(), z.number()]).transform((val) => parseFloat(val.toString())).refine(val => val >= 0 && val <= 24, "Hours must be between 0 and 24"),
+  thursdayHours: z.union([z.string(), z.number()]).transform((val) => parseFloat(val.toString())).refine(val => val >= 0 && val <= 24, "Hours must be between 0 and 24"),
+  fridayHours: z.union([z.string(), z.number()]).transform((val) => parseFloat(val.toString())).refine(val => val >= 0 && val <= 24, "Hours must be between 0 and 24"),
+  saturdayHours: z.union([z.string(), z.number()]).transform((val) => parseFloat(val.toString())).refine(val => val >= 0 && val <= 24, "Hours must be between 0 and 24"),
+  sundayHours: z.union([z.string(), z.number()]).transform((val) => parseFloat(val.toString())).refine(val => val >= 0 && val <= 24, "Hours must be between 0 and 24"),
   status: (schema) => schema.optional(),
 });
 
