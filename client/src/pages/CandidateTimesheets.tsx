@@ -12,7 +12,7 @@ import { Badge } from '@/components/ui/badge';
 import { Calendar } from '@/components/ui/calendar';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { useToast } from '@/hooks/use-toast';
-import { format, startOfWeek, addDays, parseISO } from 'date-fns';
+import { format, startOfWeek, addDays, parseISO, isAfter, endOfWeek } from 'date-fns';
 import { 
   Clock, 
   Calendar as CalendarIcon, 
@@ -187,6 +187,10 @@ export default function CandidateTimesheets() {
   const totalHours = Object.values(newTimesheet).reduce((sum, hours) => sum + hours, 0);
   const totalAmount = totalHours * (billingConfig?.data?.hourlyRate || 0);
 
+  // Check if selected week has ended (can only update timesheets for past weeks)
+  const selectedWeekEnd = endOfWeek(selectedWeek, { weekStartsOn: 1 });
+  const canEditTimesheet = isAfter(new Date(), selectedWeekEnd);
+
   const getStatusBadge = (status: string) => {
     switch (status) {
       case 'approved':
@@ -348,7 +352,8 @@ export default function CandidateTimesheets() {
                   <div className="space-y-2">
                     <p className="font-medium">Selected Week:</p>
                     <p className="text-sm text-muted-foreground">
-                      {format(selectedWeek, 'MMM dd')} - {format(addDays(selectedWeek, 6), 'MMM dd, yyyy')}
+                      {format(selectedWeek, 'MMM dd')} - {format(addDays(selectedWeek, workingDaysPerWeek === 6 ? 5 : 4), 'MMM dd, yyyy')}
+                      {workingDaysPerWeek === 6 ? ' (Mon-Sat)' : ' (Mon-Fri)'}
                     </p>
                     {weekTimesheet?.data && (
                       <div className="flex items-center gap-2">
@@ -369,6 +374,14 @@ export default function CandidateTimesheets() {
                   Enter your working hours for each day of the selected week
                   {workingDaysPerWeek === 6 ? ' (Monday - Saturday)' : ' (Monday - Friday)'}
                 </CardDescription>
+                {!canEditTimesheet && (
+                  <div className="bg-yellow-50 border border-yellow-200 rounded-lg p-3 mt-2">
+                    <p className="text-sm text-yellow-800">
+                      <AlertCircle className="w-4 h-4 inline mr-1" />
+                      Current week timesheet: You can track your hours but submission is only available after the week ends.
+                    </p>
+                  </div>
+                )}
               </CardHeader>
               <CardContent>
                 <div className={`grid gap-4 mb-6 ${
@@ -391,7 +404,7 @@ export default function CandidateTimesheets() {
                             ...prev,
                             [key]: parseFloat(e.target.value) || 0
                           }))}
-                          disabled={weekTimesheet?.data?.status === 'approved'}
+                          disabled={weekTimesheet?.data?.status === 'approved' || !canEditTimesheet}
                           placeholder="0.0"
                         />
                       </div>
@@ -413,23 +426,35 @@ export default function CandidateTimesheets() {
 
                   <div className="flex gap-2">
                     {!weekTimesheet?.data ? (
-                      <Button 
-                        onClick={handleSubmitTimesheet}
-                        disabled={createTimesheetMutation.isPending || totalHours === 0}
-                        className="flex items-center gap-2"
-                      >
-                        <Plus className="h-4 w-4" />
-                        Submit Timesheet
-                      </Button>
+                      canEditTimesheet ? (
+                        <Button 
+                          onClick={handleSubmitTimesheet}
+                          disabled={createTimesheetMutation.isPending || totalHours === 0}
+                          className="flex items-center gap-2"
+                        >
+                          <Plus className="h-4 w-4" />
+                          Submit Timesheet
+                        </Button>
+                      ) : (
+                        <div className="text-sm text-muted-foreground">
+                          Timesheets can only be submitted after the week ends
+                        </div>
+                      )
                     ) : weekTimesheet.data.status !== 'approved' ? (
-                      <Button 
-                        onClick={handleUpdateTimesheet}
-                        disabled={updateTimesheetMutation.isPending}
-                        className="flex items-center gap-2"
-                      >
-                        <FileText className="h-4 w-4" />
-                        Update Timesheet
-                      </Button>
+                      canEditTimesheet ? (
+                        <Button 
+                          onClick={handleUpdateTimesheet}
+                          disabled={updateTimesheetMutation.isPending}
+                          className="flex items-center gap-2"
+                        >
+                          <FileText className="h-4 w-4" />
+                          Update Timesheet
+                        </Button>
+                      ) : (
+                        <div className="text-sm text-muted-foreground">
+                          Timesheets can only be updated after the week ends
+                        </div>
+                      )
                     ) : (
                       <Badge className="bg-green-100 text-green-800">
                         <CheckCircle className="w-3 h-3 mr-1" />

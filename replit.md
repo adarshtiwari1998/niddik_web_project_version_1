@@ -128,7 +128,11 @@ The application follows a standard full-stack architecture with clear separation
 - **Timesheet Validation Fix**: Fixed schema validation to accept both string and number inputs for hours fields
 - **JavaScript Error Resolution**: Fixed `TypeError: timesheet.totalWeeklyAmount?.toFixed is not a function` by properly handling decimal field conversion
 - **Database Field Handling**: Updated both admin and candidate timesheet views to properly parse decimal amounts from database
-- **Result**: All timesheet functionality now works correctly without validation errors or white screens
+- **Timesheet Form Population**: Added useEffect to populate form with existing timesheet data when available
+- **Working Days Display**: Fixed week display to show only working days (Mon-Fri for 5 days, Mon-Sat for 6 days)
+- **Week-End Submission Logic**: Added validation to prevent timesheet submission during current week - only allows submission after week ends
+- **User Experience**: Added helpful messages explaining submission rules and disabled inputs during current week
+- **Result**: All timesheet functionality now works correctly with proper week-end validation and working day configuration
 - **Files Modified**: `shared/schema.ts`, `client/src/pages/TimesheetManagement.tsx`, `client/src/pages/CandidateTimesheets.tsx`
 
 # Recent Changes
