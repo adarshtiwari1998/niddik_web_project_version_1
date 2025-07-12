@@ -211,8 +211,9 @@ export default function CompanyManagement() {
       });
       const response = await apiRequest(`/api/admin/company-settings?${params}`);
       console.log('=== COMPANY SETTINGS RESPONSE ===', response);
-      console.log('=== COMPANY SETTINGS DATA ===', response.data);
-      return response.data;
+      console.log('=== COMPANY SETTINGS DATA ===', response);
+      // apiRequest already extracts the 'data' field, so response is directly the array
+      return response;
     },
   });
 
@@ -221,9 +222,8 @@ export default function CompanyManagement() {
     console.log('=== COMPANY SETTINGS STATE ===');
     console.log('companySettings:', companySettings);
     console.log('loadingSettings:', loadingSettings);
-    console.log('companySettings?.data:', companySettings?.data);
-    console.log('Array check:', Array.isArray(companySettings?.data));
-    console.log('Length check:', companySettings?.data?.length);
+    console.log('Array check:', Array.isArray(companySettings));
+    console.log('Length check:', companySettings?.length);
   }, [companySettings, loadingSettings]);
 
   // Client company form
@@ -646,7 +646,7 @@ export default function CompanyManagement() {
             </div>
           ) : (
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-              {companySettings?.data?.map((settings: CompanySettings) => (
+              {companySettings?.map((settings: CompanySettings) => (
                 <Card key={settings.id} className={cn("relative", settings.isDefault && "ring-2 ring-blue-500")}>
                   <CardHeader>
                     <div className="flex justify-between items-start">
