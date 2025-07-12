@@ -220,8 +220,9 @@ export default function CandidateTimesheets() {
   const workingDaysPerWeek = billingConfig?.data?.workingDaysPerWeek || 5;
   const today = new Date();
   
-  // Calculate the end of the selected week (Sunday night)
-  const selectedWeekEnd = addDays(selectedWeek, 6); // Sunday of the selected week
+  // Calculate the end of the selected week (Sunday night at 23:59:59)
+  const selectedWeekEnd = new Date(addDays(selectedWeek, 6));
+  selectedWeekEnd.setHours(23, 59, 59, 999); // Set to end of Sunday
   
   // Check if today is during the selected week (Monday to Sunday)
   const isCurrentWeek = today >= selectedWeek && today <= selectedWeekEnd;
