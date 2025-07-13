@@ -221,6 +221,7 @@ export default function BillingConfig() {
   // Effect to populate form when editing
   useEffect(() => {
     if (editingBilling) {
+      console.log('Populating edit form with billing data:', editingBilling);
       setBillingData({
         hourlyRate: editingBilling.hourlyRate,
         workingHoursPerWeek: editingBilling.workingHoursPerWeek,

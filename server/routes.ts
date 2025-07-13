@@ -3605,19 +3605,19 @@ ${allUrls.map(url => `  <url>
       }
 
       // Get client company and company settings
-      const [clientCompanies, companySettings] = await Promise.all([
-        storage.getClientCompanies(),
+      const [clientCompaniesResponse, companySettingsResponse] = await Promise.all([
+        storage.getAllClientCompanies({ active: true }),
         storage.getCompanySettings()
       ]);
 
       // Find the specific client company assigned to this candidate
-      const clientCompany = clientCompanies.find(company => company.id === billing.clientCompanyId);
+      const clientCompany = clientCompaniesResponse.companies.find(company => company.id === billing.clientCompanyId);
       
       res.json({ 
         success: true, 
         data: { 
           clientCompany: clientCompany || null,
-          companySettings: companySettings[0] || null // Niddik company info
+          companySettings: companySettingsResponse.data[0] || null // Niddik company info
         } 
       });
     } catch (error) {
