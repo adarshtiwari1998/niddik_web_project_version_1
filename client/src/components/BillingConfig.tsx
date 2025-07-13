@@ -676,6 +676,35 @@ export default function BillingConfig() {
               </div>
             </div>
             
+            {/* Employment Type Selection */}
+            <div>
+              <Label htmlFor="edit-employment-type">Employment Type</Label>
+              <Select 
+                value={billingData.employmentType || 'subcontract'} 
+                onValueChange={(value: 'subcontract' | 'fulltime') => setBillingData(prev => ({ ...prev, employmentType: value }))}
+              >
+                <SelectTrigger>
+                  <SelectValue placeholder="Select employment type" />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="subcontract">Subcontract</SelectItem>
+                  <SelectItem value="fulltime">Full-time Employee</SelectItem>
+                </SelectContent>
+              </Select>
+            </div>
+
+            {/* Supervisor Name */}
+            <div>
+              <Label htmlFor="edit-supervisor-name">Supervisor Name</Label>
+              <Input
+                id="edit-supervisor-name"
+                type="text"
+                value={billingData.supervisorName || ''}
+                onChange={(e) => setBillingData(prev => ({ ...prev, supervisorName: e.target.value }))}
+                placeholder="Enter supervisor name"
+              />
+            </div>
+
             {/* Client Company Selection */}
             <div>
               <Label htmlFor="edit-client-company">Client Company</Label>
@@ -695,6 +724,69 @@ export default function BillingConfig() {
                 </SelectContent>
               </Select>
             </div>
+
+            {/* TDS Configuration for Subcontract */}
+            {billingData.employmentType === 'subcontract' && (
+              <div className="space-y-4 p-4 bg-orange-50 dark:bg-orange-950/20 rounded-lg border border-orange-200 dark:border-orange-800">
+                <div className="flex items-center gap-2">
+                  <Percent className="h-5 w-5 text-orange-600" />
+                  <h3 className="font-medium text-orange-800 dark:text-orange-200">TDS Configuration</h3>
+                </div>
+                
+                <div>
+                  <Label htmlFor="edit-tds-rate">TDS Rate (%)</Label>
+                  <Input
+                    id="edit-tds-rate"
+                    type="number"
+                    min="0"
+                    max="30"
+                    step="0.1"
+                    value={billingData.tdsRate || 10}
+                    onChange={(e) => setBillingData(prev => ({ ...prev, tdsRate: parseFloat(e.target.value) || 10 }))}
+                    placeholder="10"
+                  />
+                  <p className="text-xs text-orange-600 mt-1">Tax Deducted at Source percentage for subcontract payments</p>
+                </div>
+              </div>
+            )}
+
+            {/* Benefits Configuration for Full-time */}
+            {billingData.employmentType === 'fulltime' && (
+              <div className="space-y-4 p-4 bg-blue-50 dark:bg-blue-950/20 rounded-lg border border-blue-200 dark:border-blue-800">
+                <div className="flex items-center gap-2">
+                  <Gift className="h-5 w-5 text-blue-600" />
+                  <h3 className="font-medium text-blue-800 dark:text-blue-200">Employee Benefits</h3>
+                </div>
+                
+                <div>
+                  <Label>Select Benefits</Label>
+                  <div className="grid grid-cols-2 gap-3 mt-2">
+                    {benefitOptions.map((benefit) => (
+                      <div key={benefit} className="flex items-center space-x-2">
+                        <Checkbox
+                          id={`edit-benefit-${benefit.replace(/\s+/g, '-').toLowerCase()}`}
+                          checked={selectedBenefits.includes(benefit)}
+                          onCheckedChange={(checked) => {
+                            if (checked) {
+                              setSelectedBenefits(prev => [...prev, benefit]);
+                            } else {
+                              setSelectedBenefits(prev => prev.filter(b => b !== benefit));
+                            }
+                          }}
+                        />
+                        <Label
+                          htmlFor={`edit-benefit-${benefit.replace(/\s+/g, '-').toLowerCase()}`}
+                          className="text-sm font-normal cursor-pointer"
+                        >
+                          {benefit}
+                        </Label>
+                      </div>
+                    ))}
+                  </div>
+                  <p className="text-xs text-blue-600 mt-2">Select applicable benefits for this full-time employee</p>
+                </div>
+              </div>
+            )}
 
             {/* Hidden field for company settings - auto-selected */}
             <div style={{ display: 'none' }}>

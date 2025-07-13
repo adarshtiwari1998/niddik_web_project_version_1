@@ -869,8 +869,17 @@ function TimesheetTemplate({ timesheet, billingConfig, user }: {
   const monthYear = format(weekStartDate, 'MMMM yyyy');
   const weekOf = format(weekStartDate, 'M/d/yyyy');
   
+  // Fetch company information for timesheet display
+  const { data: companyInfo } = useQuery({
+    queryKey: ['/api/candidate/timesheet-company-info'],
+  });
+
   // Employment type for conditional columns
   const isFullTime = billingConfig?.employmentType === 'fulltime';
+
+  // Get client company and company settings from API response
+  const clientCompany = companyInfo?.data?.clientCompany;
+  const niddikCompany = companyInfo?.data?.companySettings;
   
   // Days of the week
   const weekDays = [
@@ -890,7 +899,7 @@ function TimesheetTemplate({ timesheet, billingConfig, user }: {
       {/* Header */}
       <div className="flex justify-between items-start mb-6">
         <div>
-          <h3 className="text-xl font-bold">NIDDIK</h3>
+          <h3 className="text-xl font-bold">{niddikCompany?.name || 'NIDDIK'}</h3>
           <div className="text-sm text-gray-600 space-y-1">
             <p>Address 1</p>
             <p>Address 2</p>
@@ -901,9 +910,12 @@ function TimesheetTemplate({ timesheet, billingConfig, user }: {
         </div>
         
         <div className="text-right">
-          <div className="text-sm">
+          <div className="text-sm space-y-1">
             <p><strong>Employee Name:</strong> {user?.fullName || user?.username}</p>
             <p><strong>Supervisor Name:</strong> {billingConfig?.supervisorName || 'Not specified'}</p>
+            {clientCompany && (
+              <p><strong>Client Company:</strong> {clientCompany.name}</p>
+            )}
           </div>
           <div className="mt-4">
             <p className="font-semibold border-b border-black inline-block">Week of: {weekOf}</p>

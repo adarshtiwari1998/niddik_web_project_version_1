@@ -3584,6 +3584,48 @@ ${allUrls.map(url => `  <url>
     }
   });
 
+  // Get candidate timesheet company information (for timesheet display)
+  app.get('/api/candidate/timesheet-company-info', async (req: AuthenticatedRequest, res: Response) => {
+    try {
+      if (!req.isAuthenticated() || !req.user) {
+        return res.status(401).json({ success: false, message: "Not authenticated" });
+      }
+
+      // Get candidate's billing configuration to find client company
+      const billing = await storage.getCandidateBilling(req.user.id);
+      
+      if (!billing) {
+        return res.json({ 
+          success: true, 
+          data: { 
+            clientCompany: null, 
+            companySettings: null 
+          } 
+        });
+      }
+
+      // Get client company and company settings
+      const [clientCompanies, companySettings] = await Promise.all([
+        storage.getClientCompanies(),
+        storage.getCompanySettings()
+      ]);
+
+      // Find the specific client company assigned to this candidate
+      const clientCompany = clientCompanies.find(company => company.id === billing.clientCompanyId);
+      
+      res.json({ 
+        success: true, 
+        data: { 
+          clientCompany: clientCompany || null,
+          companySettings: companySettings[0] || null // Niddik company info
+        } 
+      });
+    } catch (error) {
+      console.error('Error fetching candidate timesheet company info:', error);
+      res.status(500).json({ success: false, message: "Internal server error" });
+    }
+  });
+
   // Weekly Timesheet Routes
   app.get('/api/timesheets/candidate/:candidateId', async (req: AuthenticatedRequest, res: Response) => {
     try {
