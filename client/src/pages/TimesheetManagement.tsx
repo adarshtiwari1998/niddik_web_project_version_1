@@ -321,8 +321,8 @@ export default function TimesheetManagement() {
 
   const approveTimesheetMutation = useMutation({
     mutationFn: async (timesheetId: number) => {
-      const response = await fetch(`/api/timesheets/${timesheetId}/approve`, {
-        method: 'POST'
+      const response = await fetch(`/api/admin/timesheets/${timesheetId}/approve`, {
+        method: 'PATCH'
       });
       if (!response.ok) throw new Error('Failed to approve timesheet');
       return response.json();
@@ -338,10 +338,10 @@ export default function TimesheetManagement() {
 
   const rejectTimesheetMutation = useMutation({
     mutationFn: async ({ timesheetId, reason }: { timesheetId: number; reason: string }) => {
-      const response = await fetch(`/api/timesheets/${timesheetId}/reject`, {
-        method: 'POST',
+      const response = await fetch(`/api/admin/timesheets/${timesheetId}/reject`, {
+        method: 'PATCH',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ reason })
+        body: JSON.stringify({ rejectionReason: reason })
       });
       if (!response.ok) throw new Error('Failed to reject timesheet');
       return response.json();

@@ -220,13 +220,16 @@ export default function CandidateTimesheets() {
 
   // Delete timesheet mutation
   const deleteTimesheetMutation = useMutation({
-    mutationFn: (timesheetId: number) => apiRequest('DELETE', `/api/timesheets/${timesheetId}`),
+    mutationFn: (timesheetId: number) => apiRequest(`/api/timesheets/${timesheetId}`, {
+      method: 'DELETE'
+    }),
     onSuccess: () => {
       toast({
         title: "Timesheet deleted successfully",
         description: "Your timesheet has been deleted",
       });
       queryClient.invalidateQueries({ queryKey: [`/api/timesheets/candidate/${user?.id}`] });
+      queryClient.invalidateQueries({ queryKey: [`/api/timesheets/${user?.id}/${weekStartString}`] });
     },
     onError: (error: any) => {
       toast({
