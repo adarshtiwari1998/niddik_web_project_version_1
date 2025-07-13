@@ -720,7 +720,7 @@ function WeeklyTableView({ timesheets, onApprove, onReject, getStatusBadge }: an
           <div className="bg-gray-50 p-4 border-t">
             <div className="flex justify-center gap-8 text-sm">
               <div className="text-center">
-                <div className="font-bold text-lg text-red-600">Total Hours Reported: {(timesheet.totalWeeklyHours || 0).toFixed(2)}</div>
+                <div className="font-bold text-lg text-red-600">Total Hours Reported: {(parseFloat(timesheet.totalWeeklyHours) || 0).toFixed(2)}</div>
               </div>
               <div className="text-center">
                 <div className="font-bold text-lg text-red-600">Total Pay: INR {parseFloat(timesheet.totalWeeklyAmount || '0').toFixed(2)}</div>
@@ -767,7 +767,7 @@ function BiWeeklyTableView({ groups, onApprove, onReject, getStatusBadge }: any)
                 {format(new Date(group.timesheets[0]?.weekStartDate), 'MMM dd')} - {format(new Date(group.timesheets[group.timesheets.length - 1]?.weekEndDate), 'MMM dd, yyyy')}
               </p>
               <div className="mt-2">
-                <span className="font-medium">Total: {group.totalHours} hours | Amount: INR {group.totalAmount.toFixed(2)}</span>
+                <span className="font-medium">Total: {group.totalHours} hours | Amount: INR {(parseFloat(group.totalAmount) || 0).toFixed(2)}</span>
               </div>
             </div>
 
@@ -802,14 +802,14 @@ function BiWeeklyTableView({ groups, onApprove, onReject, getStatusBadge }: any)
                           <td className="p-2 border-r font-medium">
                             {format(new Date(timesheet.weekStartDate), 'M/d')} - {format(new Date(timesheet.weekEndDate), 'M/d')}
                           </td>
-                          <td className="p-2 text-center border-r bg-green-50">{(timesheet.mondayHours || 0).toFixed(2)}</td>
-                          <td className="p-2 text-center border-r bg-green-50">{(timesheet.tuesdayHours || 0).toFixed(2)}</td>
-                          <td className="p-2 text-center border-r bg-green-50">{(timesheet.wednesdayHours || 0).toFixed(2)}</td>
-                          <td className="p-2 text-center border-r bg-green-50">{(timesheet.thursdayHours || 0).toFixed(2)}</td>
-                          <td className="p-2 text-center border-r bg-green-50">{(timesheet.fridayHours || 0).toFixed(2)}</td>
-                          <td className="p-2 text-center border-r bg-green-50">{(timesheet.saturdayHours || 0).toFixed(2)}</td>
-                          <td className="p-2 text-center border-r bg-green-50">{(timesheet.sundayHours || 0).toFixed(2)}</td>
-                          <td className="p-2 text-center font-medium bg-gray-100">{(timesheet.totalWeeklyHours || 0).toFixed(2)}</td>
+                          <td className="p-2 text-center border-r bg-green-50">{(parseFloat(timesheet.mondayHours) || 0).toFixed(2)}</td>
+                          <td className="p-2 text-center border-r bg-green-50">{(parseFloat(timesheet.tuesdayHours) || 0).toFixed(2)}</td>
+                          <td className="p-2 text-center border-r bg-green-50">{(parseFloat(timesheet.wednesdayHours) || 0).toFixed(2)}</td>
+                          <td className="p-2 text-center border-r bg-green-50">{(parseFloat(timesheet.thursdayHours) || 0).toFixed(2)}</td>
+                          <td className="p-2 text-center border-r bg-green-50">{(parseFloat(timesheet.fridayHours) || 0).toFixed(2)}</td>
+                          <td className="p-2 text-center border-r bg-green-50">{(parseFloat(timesheet.saturdayHours) || 0).toFixed(2)}</td>
+                          <td className="p-2 text-center border-r bg-green-50">{(parseFloat(timesheet.sundayHours) || 0).toFixed(2)}</td>
+                          <td className="p-2 text-center font-medium bg-gray-100">{(parseFloat(timesheet.totalWeeklyHours) || 0).toFixed(2)}</td>
                           <td className="p-2 text-center">{getStatusBadge(timesheet.status)}</td>
                           <td className="p-2 text-center">
                             {timesheet.status === 'submitted' && (
@@ -830,28 +830,28 @@ function BiWeeklyTableView({ groups, onApprove, onReject, getStatusBadge }: any)
                       <tr className="bg-blue-100 font-bold">
                         <td className="p-2 border-r">Bi-Weekly Total:</td>
                         <td className="p-2 text-center border-r">
-                          {candidate.timesheets.reduce((sum: number, ts: WeeklyTimesheet) => sum + (ts.mondayHours || 0), 0).toFixed(2)}
+                          {candidate.timesheets.reduce((sum: number, ts: WeeklyTimesheet) => sum + (parseFloat(ts.mondayHours) || 0), 0).toFixed(2)}
                         </td>
                         <td className="p-2 text-center border-r">
-                          {candidate.timesheets.reduce((sum: number, ts: WeeklyTimesheet) => sum + ts.tuesdayHours, 0).toFixed(2)}
+                          {candidate.timesheets.reduce((sum: number, ts: WeeklyTimesheet) => sum + (parseFloat(ts.tuesdayHours) || 0), 0).toFixed(2)}
                         </td>
                         <td className="p-2 text-center border-r">
-                          {candidate.timesheets.reduce((sum: number, ts: WeeklyTimesheet) => sum + ts.wednesdayHours, 0).toFixed(2)}
+                          {candidate.timesheets.reduce((sum: number, ts: WeeklyTimesheet) => sum + (parseFloat(ts.wednesdayHours) || 0), 0).toFixed(2)}
                         </td>
                         <td className="p-2 text-center border-r">
-                          {candidate.timesheets.reduce((sum: number, ts: WeeklyTimesheet) => sum + ts.thursdayHours, 0).toFixed(2)}
+                          {candidate.timesheets.reduce((sum: number, ts: WeeklyTimesheet) => sum + (parseFloat(ts.thursdayHours) || 0), 0).toFixed(2)}
                         </td>
                         <td className="p-2 text-center border-r">
-                          {candidate.timesheets.reduce((sum: number, ts: WeeklyTimesheet) => sum + ts.fridayHours, 0).toFixed(2)}
+                          {candidate.timesheets.reduce((sum: number, ts: WeeklyTimesheet) => sum + (parseFloat(ts.fridayHours) || 0), 0).toFixed(2)}
                         </td>
                         <td className="p-2 text-center border-r">
-                          {candidate.timesheets.reduce((sum: number, ts: WeeklyTimesheet) => sum + ts.saturdayHours, 0).toFixed(2)}
+                          {candidate.timesheets.reduce((sum: number, ts: WeeklyTimesheet) => sum + (parseFloat(ts.saturdayHours) || 0), 0).toFixed(2)}
                         </td>
                         <td className="p-2 text-center border-r">
-                          {candidate.timesheets.reduce((sum: number, ts: WeeklyTimesheet) => sum + ts.sundayHours, 0).toFixed(2)}
+                          {candidate.timesheets.reduce((sum: number, ts: WeeklyTimesheet) => sum + (parseFloat(ts.sundayHours) || 0), 0).toFixed(2)}
                         </td>
                         <td className="p-2 text-center bg-gray-200">
-                          {candidate.timesheets.reduce((sum: number, ts: WeeklyTimesheet) => sum + ts.totalWeeklyHours, 0).toFixed(2)}
+                          {candidate.timesheets.reduce((sum: number, ts: WeeklyTimesheet) => sum + (parseFloat(ts.totalWeeklyHours) || 0), 0).toFixed(2)}
                         </td>
                         <td className="p-2 text-center"></td>
                         <td className="p-2 text-center"></td>
@@ -907,7 +907,7 @@ function MonthlyTableView({ groups, onApprove, onReject, getStatusBadge }: any) 
                 {Object.keys(candidateGroups).length} candidate(s), {group.timesheets.length} timesheet(s)
               </p>
               <div className="mt-2">
-                <span className="font-medium">Total: {group.totalHours} hours | Amount: INR {group.totalAmount.toFixed(2)}</span>
+                <span className="font-medium">Total: {group.totalHours} hours | Amount: INR {(parseFloat(group.totalAmount) || 0).toFixed(2)}</span>
               </div>
             </div>
 
@@ -922,7 +922,7 @@ function MonthlyTableView({ groups, onApprove, onReject, getStatusBadge }: any) 
                     </div>
                     <div className="text-right">
                       <div className="font-medium">Monthly Total: {candidate.totalHours}h</div>
-                      <div className="text-sm text-muted-foreground">Amount: INR {candidate.totalAmount.toFixed(2)}</div>
+                      <div className="text-sm text-muted-foreground">Amount: INR {(parseFloat(candidate.totalAmount) || 0).toFixed(2)}</div>
                     </div>
                   </div>
                 </div>
@@ -951,14 +951,14 @@ function MonthlyTableView({ groups, onApprove, onReject, getStatusBadge }: any) 
                           <td className="p-2 border-r font-medium">
                             {format(new Date(timesheet.weekStartDate), 'M/d')} - {format(new Date(timesheet.weekEndDate), 'M/d')}
                           </td>
-                          <td className="p-2 text-center border-r bg-green-50">{timesheet.mondayHours.toFixed(2)}</td>
-                          <td className="p-2 text-center border-r bg-green-50">{timesheet.tuesdayHours.toFixed(2)}</td>
-                          <td className="p-2 text-center border-r bg-green-50">{timesheet.wednesdayHours.toFixed(2)}</td>
-                          <td className="p-2 text-center border-r bg-green-50">{timesheet.thursdayHours.toFixed(2)}</td>
-                          <td className="p-2 text-center border-r bg-green-50">{timesheet.fridayHours.toFixed(2)}</td>
-                          <td className="p-2 text-center border-r bg-green-50">{timesheet.saturdayHours.toFixed(2)}</td>
-                          <td className="p-2 text-center border-r bg-green-50">{timesheet.sundayHours.toFixed(2)}</td>
-                          <td className="p-2 text-center font-medium bg-gray-100">{timesheet.totalWeeklyHours.toFixed(2)}</td>
+                          <td className="p-2 text-center border-r bg-green-50">{(parseFloat(timesheet.mondayHours) || 0).toFixed(2)}</td>
+                          <td className="p-2 text-center border-r bg-green-50">{(parseFloat(timesheet.tuesdayHours) || 0).toFixed(2)}</td>
+                          <td className="p-2 text-center border-r bg-green-50">{(parseFloat(timesheet.wednesdayHours) || 0).toFixed(2)}</td>
+                          <td className="p-2 text-center border-r bg-green-50">{(parseFloat(timesheet.thursdayHours) || 0).toFixed(2)}</td>
+                          <td className="p-2 text-center border-r bg-green-50">{(parseFloat(timesheet.fridayHours) || 0).toFixed(2)}</td>
+                          <td className="p-2 text-center border-r bg-green-50">{(parseFloat(timesheet.saturdayHours) || 0).toFixed(2)}</td>
+                          <td className="p-2 text-center border-r bg-green-50">{(parseFloat(timesheet.sundayHours) || 0).toFixed(2)}</td>
+                          <td className="p-2 text-center font-medium bg-gray-100">{(parseFloat(timesheet.totalWeeklyHours) || 0).toFixed(2)}</td>
                           <td className="p-2 text-center font-medium">INR {timesheet.totalWeeklyAmount}</td>
                           <td className="p-2 text-center">{getStatusBadge(timesheet.status)}</td>
                           <td className="p-2 text-center">
@@ -980,28 +980,28 @@ function MonthlyTableView({ groups, onApprove, onReject, getStatusBadge }: any) 
                       <tr className="bg-green-100 font-bold">
                         <td className="p-2 border-r">Monthly Total:</td>
                         <td className="p-2 text-center border-r">
-                          {candidate.timesheets.reduce((sum: number, ts: WeeklyTimesheet) => sum + ts.mondayHours, 0).toFixed(2)}
+                          {candidate.timesheets.reduce((sum: number, ts: WeeklyTimesheet) => sum + (parseFloat(ts.mondayHours) || 0), 0).toFixed(2)}
                         </td>
                         <td className="p-2 text-center border-r">
-                          {candidate.timesheets.reduce((sum: number, ts: WeeklyTimesheet) => sum + ts.tuesdayHours, 0).toFixed(2)}
+                          {candidate.timesheets.reduce((sum: number, ts: WeeklyTimesheet) => sum + (parseFloat(ts.tuesdayHours) || 0), 0).toFixed(2)}
                         </td>
                         <td className="p-2 text-center border-r">
-                          {candidate.timesheets.reduce((sum: number, ts: WeeklyTimesheet) => sum + ts.wednesdayHours, 0).toFixed(2)}
+                          {candidate.timesheets.reduce((sum: number, ts: WeeklyTimesheet) => sum + (parseFloat(ts.wednesdayHours) || 0), 0).toFixed(2)}
                         </td>
                         <td className="p-2 text-center border-r">
-                          {candidate.timesheets.reduce((sum: number, ts: WeeklyTimesheet) => sum + ts.thursdayHours, 0).toFixed(2)}
+                          {candidate.timesheets.reduce((sum: number, ts: WeeklyTimesheet) => sum + (parseFloat(ts.thursdayHours) || 0), 0).toFixed(2)}
                         </td>
                         <td className="p-2 text-center border-r">
-                          {candidate.timesheets.reduce((sum: number, ts: WeeklyTimesheet) => sum + ts.fridayHours, 0).toFixed(2)}
+                          {candidate.timesheets.reduce((sum: number, ts: WeeklyTimesheet) => sum + (parseFloat(ts.fridayHours) || 0), 0).toFixed(2)}
                         </td>
                         <td className="p-2 text-center border-r">
-                          {candidate.timesheets.reduce((sum: number, ts: WeeklyTimesheet) => sum + ts.saturdayHours, 0).toFixed(2)}
+                          {candidate.timesheets.reduce((sum: number, ts: WeeklyTimesheet) => sum + (parseFloat(ts.saturdayHours) || 0), 0).toFixed(2)}
                         </td>
                         <td className="p-2 text-center border-r">
-                          {candidate.timesheets.reduce((sum: number, ts: WeeklyTimesheet) => sum + ts.sundayHours, 0).toFixed(2)}
+                          {candidate.timesheets.reduce((sum: number, ts: WeeklyTimesheet) => sum + (parseFloat(ts.sundayHours) || 0), 0).toFixed(2)}
                         </td>
                         <td className="p-2 text-center bg-gray-200">
-                          {candidate.timesheets.reduce((sum: number, ts: WeeklyTimesheet) => sum + ts.totalWeeklyHours, 0).toFixed(2)}
+                          {candidate.timesheets.reduce((sum: number, ts: WeeklyTimesheet) => sum + (parseFloat(ts.totalWeeklyHours) || 0), 0).toFixed(2)}
                         </td>
                         <td className="p-2 text-center font-medium">
                           INR {candidate.timesheets.reduce((sum: number, ts: WeeklyTimesheet) => sum + parseFloat(ts.totalWeeklyAmount || '0'), 0).toFixed(2)}
@@ -1016,7 +1016,7 @@ function MonthlyTableView({ groups, onApprove, onReject, getStatusBadge }: any) 
                 {/* Pay Summary */}
                 <div className="bg-gray-50 p-3 text-center">
                   <span className="font-bold text-red-600">
-                    Monthly Pay: INR {candidate.totalAmount.toFixed(2)}
+                    Monthly Pay: INR {(parseFloat(candidate.totalAmount) || 0).toFixed(2)}
                   </span>
                 </div>
               </div>
