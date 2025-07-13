@@ -444,7 +444,7 @@ export const candidateBillingSchema = createInsertSchema(candidateBilling, {
   workingDaysPerWeek: (schema) => schema.min(5, "Must be at least 5 days").max(6, "Cannot exceed 6 days per week"),
   currency: (schema) => schema.optional(),
   employmentType: (schema) => schema.refine(val => ["subcontract", "fulltime"].includes(val), "Employment type must be either 'subcontract' or 'fulltime'"),
-  supervisorName: (schema) => schema.optional(),
+  supervisorName: (schema) => schema.optional().nullable(),
   clientCompanyId: (schema) => schema.optional(),
   companySettingsId: (schema) => schema.optional(),
   tdsRate: (schema) => schema.transform((val) => {

@@ -259,20 +259,23 @@ export default function BillingConfig() {
       return;
     }
 
-    createBillingMutation.mutate({
+    const payload = {
       candidateId: selectedCandidate,
       createdBy: user?.id || 5,
       hourlyRate: billingData.hourlyRate.toString(),
       workingHoursPerWeek: billingData.workingHoursPerWeek,
       workingDaysPerWeek: billingData.workingDaysPerWeek,
-      currency: billingData.currency,
-      employmentType: billingData.employmentType,
-      supervisorName: billingData.supervisorName || null,
-      clientCompanyId: billingData.clientCompanyId || null,
-      companySettingsId: billingData.companySettingsId || null,
-      tdsRate: billingData.tdsRate,
-      benefits: billingData.benefits
-    });
+      currency: billingData.currency || 'USD',
+      employmentType: billingData.employmentType || 'subcontract',
+      supervisorName: billingData.supervisorName || '',
+      clientCompanyId: billingData.clientCompanyId || undefined,
+      companySettingsId: billingData.companySettingsId || undefined,
+      tdsRate: billingData.tdsRate?.toString() || '10',
+      benefits: billingData.benefits || []
+    };
+    
+    console.log('Submitting billing configuration:', payload);
+    createBillingMutation.mutate(payload);
   };
 
   const handleUpdate = () => {

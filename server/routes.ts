@@ -3459,12 +3459,14 @@ ${allUrls.map(url => `  <url>
         return res.status(403).json({ success: false, message: "Admin access required" });
       }
 
+      console.log('Billing configuration request body:', JSON.stringify(req.body, null, 2));
       const validatedData = candidateBillingSchema.parse(req.body);
       const billing = await storage.createCandidateBilling(validatedData);
 
       res.status(201).json({ success: true, data: billing });
     } catch (error) {
       if (error instanceof z.ZodError) {
+        console.error('Billing validation errors:', JSON.stringify(error.errors, null, 2));
         return res.status(400).json({ 
           success: false, 
           message: "Validation error", 
