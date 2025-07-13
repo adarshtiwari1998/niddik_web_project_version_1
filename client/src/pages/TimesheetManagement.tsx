@@ -352,45 +352,7 @@ export default function TimesheetManagement() {
     }
   });
 
-  // Bi-weekly timesheet generation mutation
-  const generateBiWeeklyTimesheetMutation = useMutation({
-    mutationFn: async ({ candidateId, periodStartDate }: { candidateId: number; periodStartDate: string }) => {
-      const response = await fetch(`/api/admin/biweekly-timesheets/${candidateId}/generate`, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ periodStartDate })
-      });
-      if (!response.ok) throw new Error('Failed to generate bi-weekly timesheet');
-      return response.json();
-    },
-    onSuccess: () => {
-      toast({ title: "Success", description: "Bi-weekly timesheet generated successfully" });
-      queryClient.invalidateQueries({ queryKey: ['/api/admin/biweekly-timesheets'] });
-    },
-    onError: (error: Error) => {
-      toast({ title: "Error", description: error.message, variant: "destructive" });
-    }
-  });
 
-  // Monthly timesheet generation mutation
-  const generateMonthlyTimesheetMutation = useMutation({
-    mutationFn: async ({ candidateId, year, month }: { candidateId: number; year: number; month: number }) => {
-      const response = await fetch(`/api/admin/monthly-timesheets/${candidateId}/generate`, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ year, month })
-      });
-      if (!response.ok) throw new Error('Failed to generate monthly timesheet');
-      return response.json();
-    },
-    onSuccess: () => {
-      toast({ title: "Success", description: "Monthly timesheet generated successfully" });
-      queryClient.invalidateQueries({ queryKey: ['/api/admin/monthly-timesheets'] });
-    },
-    onError: (error: Error) => {
-      toast({ title: "Error", description: error.message, variant: "destructive" });
-    }
-  });
 
   // Helper functions
   const handleHoursChange = (day: string, value: string) => {
@@ -642,19 +604,11 @@ export default function TimesheetManagement() {
                   ) : adminViewMode === 'bi-weekly' ? (
                     <BiWeeklyTableView
                       timesheets={biWeeklyTimesheets?.data || []}
-                      candidates={hiredCandidates?.data || []}
-                      onGenerateTimesheet={(candidateId, periodStart) => 
-                        generateBiWeeklyTimesheetMutation.mutate({ candidateId, periodStartDate: periodStart })
-                      }
                       getStatusBadge={getStatusBadge}
                     />
                   ) : adminViewMode === 'monthly' ? (
                     <MonthlyTableView
                       timesheets={monthlyTimesheets?.data || []}
-                      candidates={hiredCandidates?.data || []}
-                      onGenerateTimesheet={(candidateId, year, month) => 
-                        generateMonthlyTimesheetMutation.mutate({ candidateId, year, month })
-                      }
                       getStatusBadge={getStatusBadge}
                     />
                   ) : null
@@ -686,80 +640,28 @@ export default function TimesheetManagement() {
 }
 
 // Bi-Weekly Table View Component
-function BiWeeklyTableView({ timesheets, candidates, onGenerateTimesheet, getStatusBadge }: any) {
+function BiWeeklyTableView({ timesheets, getStatusBadge }: any) {
   return (
     <div className="space-y-6">
-      {/* Generate Timesheet Button */}
       <div className="flex justify-between items-center">
         <h3 className="text-lg font-medium">Bi-Weekly Timesheets</h3>
-        <Dialog>
-          <DialogTrigger asChild>
-            <Button>
-              <Plus className="w-4 h-4 mr-2" />
-              Generate Bi-Weekly Timesheet
-            </Button>
-          </DialogTrigger>
-          <DialogContent>
-            <DialogHeader>
-              <DialogTitle>Generate Bi-Weekly Timesheet</DialogTitle>
-              <DialogDescription>
-                Generate a bi-weekly timesheet for a candidate
-              </DialogDescription>
-            </DialogHeader>
-            <form onSubmit={(e) => {
-              e.preventDefault();
-              const formData = new FormData(e.target as HTMLFormElement);
-              const candidateId = parseInt(formData.get('candidateId') as string);
-              const periodStartDate = formData.get('periodStartDate') as string;
-              
-              if (candidateId && periodStartDate) {
-                onGenerateTimesheet(candidateId, periodStartDate);
-              }
-            }}>
-              <div className="space-y-4">
-                <div>
-                  <Label htmlFor="candidateId">Candidate</Label>
-                  <Select name="candidateId" required>
-                    <SelectTrigger>
-                      <SelectValue placeholder="Select candidate" />
-                    </SelectTrigger>
-                    <SelectContent>
-                      {candidates.map((candidate: any) => (
-                        <SelectItem key={candidate.id} value={candidate.id.toString()}>
-                          {candidate.fullName || candidate.username}
-                        </SelectItem>
-                      ))}
-                    </SelectContent>
-                  </Select>
-                </div>
-                <div>
-                  <Label htmlFor="periodStartDate">Period Start Date</Label>
-                  <Input
-                    type="date"
-                    name="periodStartDate"
-                    required
-                  />
-                </div>
-                <Button type="submit" className="w-full">
-                  Generate Timesheet
-                </Button>
-              </div>
-            </form>
-          </DialogContent>
-        </Dialog>
+        <div className="text-sm text-muted-foreground">
+          Automatically aggregated from approved weekly timesheets
+        </div>
       </div>
 
       {/* Timesheets List */}
       {timesheets.length > 0 ? (
         timesheets.map((timesheet: BiWeeklyTimesheet) => (
           <div key={timesheet.id} className="border rounded-lg overflow-hidden">
+            {/* Header with candidate info and status */}
             <div className="bg-gray-50 p-4 border-b">
               <div className="flex justify-between items-center">
                 <div>
                   <h3 className="font-medium text-lg">{timesheet.candidateName}</h3>
                   <p className="text-sm text-muted-foreground">{timesheet.candidateEmail}</p>
                   <p className="text-sm font-medium mt-1">
-                    Period: {format(new Date(timesheet.periodStartDate), 'M/d/yyyy')} - {format(new Date(timesheet.periodEndDate), 'M/d/yyyy')}
+                    Bi-Weekly Period: {format(new Date(timesheet.periodStartDate), 'M/d/yyyy')} - {format(new Date(timesheet.periodEndDate), 'M/d/yyyy')}
                   </p>
                 </div>
                 <div className="flex items-center gap-4">
@@ -771,7 +673,80 @@ function BiWeeklyTableView({ timesheets, candidates, onGenerateTimesheet, getSta
                 </div>
               </div>
             </div>
-            <div className="p-4">
+
+            {/* Table */}
+            <div className="overflow-x-auto">
+              <table className="w-full">
+                <thead>
+                  <tr className="bg-green-500 text-white">
+                    <th className="p-3 text-left font-medium">Day of Week</th>
+                    <th className="p-3 text-center font-medium">Regular<br/>[h:mm]</th>
+                    <th className="p-3 text-center font-medium">Overtime<br/>[h:mm]</th>
+                    <th className="p-3 text-center font-medium">Sick<br/>[h:mm]</th>
+                    <th className="p-3 text-center font-medium">Paid Leave<br/>[h:mm]</th>
+                    <th className="p-3 text-center font-medium">Unpaid Leave<br/>[h:mm]</th>
+                    <th className="p-3 text-center font-medium bg-gray-600">TOTAL<br/>[h:mm]</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {[
+                    { day: 'Mon (Total)', hours: timesheet.mondayHours },
+                    { day: 'Tue (Total)', hours: timesheet.tuesdayHours },
+                    { day: 'Wed (Total)', hours: timesheet.wednesdayHours },
+                    { day: 'Thu (Total)', hours: timesheet.thursdayHours },
+                    { day: 'Fri (Total)', hours: timesheet.fridayHours },
+                    { day: 'Sat (Total)', hours: timesheet.saturdayHours },
+                    { day: 'Sun (Total)', hours: timesheet.sundayHours }
+                  ].map((row, index) => (
+                    <tr key={index} className={index % 2 === 0 ? 'bg-white' : 'bg-gray-50'}>
+                      <td className="p-3 border-r font-medium">{row.day}</td>
+                      <td className="p-3 text-center border-r bg-green-50">{(parseFloat(row.hours) || 0).toFixed(2)}</td>
+                      <td className="p-3 text-center border-r">0.00</td>
+                      <td className="p-3 text-center border-r bg-green-50">0.00</td>
+                      <td className="p-3 text-center border-r bg-green-50">0.00</td>
+                      <td className="p-3 text-center border-r bg-green-50">0.00</td>
+                      <td className="p-3 text-center font-medium bg-gray-100">{(parseFloat(row.hours) || 0).toFixed(2)}</td>
+                    </tr>
+                  ))}
+                  
+                  {/* Totals Row */}
+                  <tr className="bg-green-100 font-medium">
+                    <td className="p-3 border-r">Total Hrs:</td>
+                    <td className="p-3 text-center border-r">{(parseFloat(timesheet.totalHours) || 0).toFixed(2)}</td>
+                    <td className="p-3 text-center border-r">0.00</td>
+                    <td className="p-3 text-center border-r">0.00</td>
+                    <td className="p-3 text-center border-r">0.00</td>
+                    <td className="p-3 text-center border-r">0.00</td>
+                    <td className="p-3 text-center bg-gray-200">{(parseFloat(timesheet.totalHours) || 0).toFixed(2)}</td>
+                  </tr>
+
+                  {/* Rate Row */}
+                  <tr className="bg-gray-50">
+                    <td className="p-3 border-r font-medium">Rate/Hour:</td>
+                    <td className="p-3 text-center border-r">INR {((parseFloat(timesheet.totalAmount || '0') / (parseFloat(timesheet.totalHours) || 1)) || 0).toFixed(2)}</td>
+                    <td className="p-3 text-center border-r">INR 0.00</td>
+                    <td className="p-3 text-center border-r">INR 0.00</td>
+                    <td className="p-3 text-center border-r">INR 0.00</td>
+                    <td className="p-3 text-center border-r">INR 0.00</td>
+                    <td className="p-3 text-center bg-gray-200"></td>
+                  </tr>
+
+                  {/* Pay Row */}
+                  <tr className="bg-white">
+                    <td className="p-3 border-r font-medium">Total Pay:</td>
+                    <td className="p-3 text-center border-r">INR {parseFloat(timesheet.totalAmount || '0').toFixed(2)}</td>
+                    <td className="p-3 text-center border-r">INR 0.00</td>
+                    <td className="p-3 text-center border-r">INR 0.00</td>
+                    <td className="p-3 text-center border-r">INR 0.00</td>
+                    <td className="p-3 text-center border-r">INR 0.00</td>
+                    <td className="p-3 text-center bg-red-500 text-white font-bold">INR {parseFloat(timesheet.totalAmount || '0').toFixed(2)}</td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+
+            {/* Week Breakdown Summary */}
+            <div className="bg-gray-50 p-4 border-t">
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 <div className="p-3 bg-blue-50 rounded-lg">
                   <h4 className="font-medium mb-2">Week 1</h4>
@@ -791,7 +766,7 @@ function BiWeeklyTableView({ timesheets, candidates, onGenerateTimesheet, getSta
         ))
       ) : (
         <div className="text-center py-8 text-muted-foreground">
-          No bi-weekly timesheets found
+          No bi-weekly timesheets found. Bi-weekly timesheets are automatically generated when candidates have approved weekly timesheets.
         </div>
       )}
     </div>
@@ -799,101 +774,28 @@ function BiWeeklyTableView({ timesheets, candidates, onGenerateTimesheet, getSta
 }
 
 // Monthly Table View Component
-function MonthlyTableView({ timesheets, candidates, onGenerateTimesheet, getStatusBadge }: any) {
+function MonthlyTableView({ timesheets, getStatusBadge }: any) {
   return (
     <div className="space-y-6">
-      {/* Generate Timesheet Button */}
       <div className="flex justify-between items-center">
         <h3 className="text-lg font-medium">Monthly Timesheets</h3>
-        <Dialog>
-          <DialogTrigger asChild>
-            <Button>
-              <Plus className="w-4 h-4 mr-2" />
-              Generate Monthly Timesheet
-            </Button>
-          </DialogTrigger>
-          <DialogContent>
-            <DialogHeader>
-              <DialogTitle>Generate Monthly Timesheet</DialogTitle>
-              <DialogDescription>
-                Generate a monthly timesheet for a candidate
-              </DialogDescription>
-            </DialogHeader>
-            <form onSubmit={(e) => {
-              e.preventDefault();
-              const formData = new FormData(e.target as HTMLFormElement);
-              const candidateId = parseInt(formData.get('candidateId') as string);
-              const year = parseInt(formData.get('year') as string);
-              const month = parseInt(formData.get('month') as string);
-              
-              if (candidateId && year && month) {
-                onGenerateTimesheet(candidateId, year, month);
-              }
-            }}>
-              <div className="space-y-4">
-                <div>
-                  <Label htmlFor="candidateId">Candidate</Label>
-                  <Select name="candidateId" required>
-                    <SelectTrigger>
-                      <SelectValue placeholder="Select candidate" />
-                    </SelectTrigger>
-                    <SelectContent>
-                      {candidates.map((candidate: any) => (
-                        <SelectItem key={candidate.id} value={candidate.id.toString()}>
-                          {candidate.fullName || candidate.username}
-                        </SelectItem>
-                      ))}
-                    </SelectContent>
-                  </Select>
-                </div>
-                <div className="grid grid-cols-2 gap-4">
-                  <div>
-                    <Label htmlFor="year">Year</Label>
-                    <Input
-                      type="number"
-                      name="year"
-                      min="2020"
-                      max="2030"
-                      defaultValue={new Date().getFullYear()}
-                      required
-                    />
-                  </div>
-                  <div>
-                    <Label htmlFor="month">Month</Label>
-                    <Select name="month" required>
-                      <SelectTrigger>
-                        <SelectValue placeholder="Select month" />
-                      </SelectTrigger>
-                      <SelectContent>
-                        {Array.from({ length: 12 }, (_, i) => (
-                          <SelectItem key={i + 1} value={(i + 1).toString()}>
-                            {format(new Date(2024, i, 1), 'MMMM')}
-                          </SelectItem>
-                        ))}
-                      </SelectContent>
-                    </Select>
-                  </div>
-                </div>
-                <Button type="submit" className="w-full">
-                  Generate Timesheet
-                </Button>
-              </div>
-            </form>
-          </DialogContent>
-        </Dialog>
+        <div className="text-sm text-muted-foreground">
+          Automatically aggregated from approved weekly timesheets
+        </div>
       </div>
 
       {/* Timesheets List */}
       {timesheets.length > 0 ? (
         timesheets.map((timesheet: MonthlyTimesheet) => (
           <div key={timesheet.id} className="border rounded-lg overflow-hidden">
+            {/* Header with candidate info and status */}
             <div className="bg-gray-50 p-4 border-b">
               <div className="flex justify-between items-center">
                 <div>
                   <h3 className="font-medium text-lg">{timesheet.candidateName}</h3>
                   <p className="text-sm text-muted-foreground">{timesheet.candidateEmail}</p>
                   <p className="text-sm font-medium mt-1">
-                    Period: {timesheet.monthName} {timesheet.year} ({format(new Date(timesheet.periodStartDate), 'M/d')} - {format(new Date(timesheet.periodEndDate), 'M/d')})
+                    Monthly Period: {timesheet.monthName} ({format(new Date(timesheet.periodStartDate), 'M/d/yyyy')} - {format(new Date(timesheet.periodEndDate), 'M/d/yyyy')})
                   </p>
                 </div>
                 <div className="flex items-center gap-4">
@@ -906,29 +808,100 @@ function MonthlyTableView({ timesheets, candidates, onGenerateTimesheet, getStat
                 </div>
               </div>
             </div>
-            <div className="p-4">
-              <div className="grid grid-cols-7 gap-2 text-sm">
-                <div className="font-medium">Mon</div>
-                <div className="font-medium">Tue</div>
-                <div className="font-medium">Wed</div>
-                <div className="font-medium">Thu</div>
-                <div className="font-medium">Fri</div>
-                <div className="font-medium">Sat</div>
-                <div className="font-medium">Sun</div>
-                <div className="text-center p-2 bg-blue-50 rounded">{parseFloat(timesheet.mondayHours).toFixed(2)}</div>
-                <div className="text-center p-2 bg-blue-50 rounded">{parseFloat(timesheet.tuesdayHours).toFixed(2)}</div>
-                <div className="text-center p-2 bg-blue-50 rounded">{parseFloat(timesheet.wednesdayHours).toFixed(2)}</div>
-                <div className="text-center p-2 bg-blue-50 rounded">{parseFloat(timesheet.thursdayHours).toFixed(2)}</div>
-                <div className="text-center p-2 bg-blue-50 rounded">{parseFloat(timesheet.fridayHours).toFixed(2)}</div>
-                <div className="text-center p-2 bg-blue-50 rounded">{parseFloat(timesheet.saturdayHours).toFixed(2)}</div>
-                <div className="text-center p-2 bg-blue-50 rounded">{parseFloat(timesheet.sundayHours).toFixed(2)}</div>
+
+            {/* Table */}
+            <div className="overflow-x-auto">
+              <table className="w-full">
+                <thead>
+                  <tr className="bg-green-500 text-white">
+                    <th className="p-3 text-left font-medium">Day of Week</th>
+                    <th className="p-3 text-center font-medium">Regular<br/>[h:mm]</th>
+                    <th className="p-3 text-center font-medium">Overtime<br/>[h:mm]</th>
+                    <th className="p-3 text-center font-medium">Sick<br/>[h:mm]</th>
+                    <th className="p-3 text-center font-medium">Paid Leave<br/>[h:mm]</th>
+                    <th className="p-3 text-center font-medium">Unpaid Leave<br/>[h:mm]</th>
+                    <th className="p-3 text-center font-medium bg-gray-600">TOTAL<br/>[h:mm]</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {[
+                    { day: 'Mon (Total)', hours: timesheet.mondayHours },
+                    { day: 'Tue (Total)', hours: timesheet.tuesdayHours },
+                    { day: 'Wed (Total)', hours: timesheet.wednesdayHours },
+                    { day: 'Thu (Total)', hours: timesheet.thursdayHours },
+                    { day: 'Fri (Total)', hours: timesheet.fridayHours },
+                    { day: 'Sat (Total)', hours: timesheet.saturdayHours },
+                    { day: 'Sun (Total)', hours: timesheet.sundayHours }
+                  ].map((row, index) => (
+                    <tr key={index} className={index % 2 === 0 ? 'bg-white' : 'bg-gray-50'}>
+                      <td className="p-3 border-r font-medium">{row.day}</td>
+                      <td className="p-3 text-center border-r bg-green-50">{(parseFloat(row.hours) || 0).toFixed(2)}</td>
+                      <td className="p-3 text-center border-r">0.00</td>
+                      <td className="p-3 text-center border-r bg-green-50">0.00</td>
+                      <td className="p-3 text-center border-r bg-green-50">0.00</td>
+                      <td className="p-3 text-center border-r bg-green-50">0.00</td>
+                      <td className="p-3 text-center font-medium bg-gray-100">{(parseFloat(row.hours) || 0).toFixed(2)}</td>
+                    </tr>
+                  ))}
+                  
+                  {/* Totals Row */}
+                  <tr className="bg-green-100 font-medium">
+                    <td className="p-3 border-r">Total Hrs:</td>
+                    <td className="p-3 text-center border-r">{(parseFloat(timesheet.totalHours) || 0).toFixed(2)}</td>
+                    <td className="p-3 text-center border-r">0.00</td>
+                    <td className="p-3 text-center border-r">0.00</td>
+                    <td className="p-3 text-center border-r">0.00</td>
+                    <td className="p-3 text-center border-r">0.00</td>
+                    <td className="p-3 text-center bg-gray-200">{(parseFloat(timesheet.totalHours) || 0).toFixed(2)}</td>
+                  </tr>
+
+                  {/* Rate Row */}
+                  <tr className="bg-gray-50">
+                    <td className="p-3 border-r font-medium">Rate/Hour:</td>
+                    <td className="p-3 text-center border-r">INR {((parseFloat(timesheet.totalAmount || '0') / (parseFloat(timesheet.totalHours) || 1)) || 0).toFixed(2)}</td>
+                    <td className="p-3 text-center border-r">INR 0.00</td>
+                    <td className="p-3 text-center border-r">INR 0.00</td>
+                    <td className="p-3 text-center border-r">INR 0.00</td>
+                    <td className="p-3 text-center border-r">INR 0.00</td>
+                    <td className="p-3 text-center bg-gray-200"></td>
+                  </tr>
+
+                  {/* Pay Row */}
+                  <tr className="bg-white">
+                    <td className="p-3 border-r font-medium">Total Pay:</td>
+                    <td className="p-3 text-center border-r">INR {parseFloat(timesheet.totalAmount || '0').toFixed(2)}</td>
+                    <td className="p-3 text-center border-r">INR 0.00</td>
+                    <td className="p-3 text-center border-r">INR 0.00</td>
+                    <td className="p-3 text-center border-r">INR 0.00</td>
+                    <td className="p-3 text-center border-r">INR 0.00</td>
+                    <td className="p-3 text-center bg-red-500 text-white font-bold">INR {parseFloat(timesheet.totalAmount || '0').toFixed(2)}</td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+
+            {/* Monthly Summary */}
+            <div className="bg-gray-50 p-4 border-t">
+              <div className="grid grid-cols-1 md:grid-cols-3 gap-4 text-center">
+                <div className="p-3 bg-blue-50 rounded-lg">
+                  <h4 className="font-medium mb-2">Total Weeks</h4>
+                  <p className="text-lg font-bold">{timesheet.totalWeeks}</p>
+                </div>
+                <div className="p-3 bg-green-50 rounded-lg">
+                  <h4 className="font-medium mb-2">Average Weekly Hours</h4>
+                  <p className="text-lg font-bold">{((parseFloat(timesheet.totalHours) || 0) / (timesheet.totalWeeks || 1)).toFixed(2)}</p>
+                </div>
+                <div className="p-3 bg-yellow-50 rounded-lg">
+                  <h4 className="font-medium mb-2">Average Weekly Pay</h4>
+                  <p className="text-lg font-bold">{timesheet.currency} {((parseFloat(timesheet.totalAmount) || 0) / (timesheet.totalWeeks || 1)).toFixed(2)}</p>
+                </div>
               </div>
             </div>
           </div>
         ))
       ) : (
         <div className="text-center py-8 text-muted-foreground">
-          No monthly timesheets found
+          No monthly timesheets found. Monthly timesheets are automatically generated when candidates have approved weekly timesheets.
         </div>
       )}
     </div>

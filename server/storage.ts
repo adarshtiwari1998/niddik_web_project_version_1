@@ -1527,7 +1527,124 @@ async updateSeoPage(id: number, data: Partial<InsertSeoPage>): Promise<SeoPage |
       })
       .where(eq(weeklyTimesheets.id, timesheetId))
       .returning();
+    
+    // Auto-generate aggregated timesheets when a timesheet is approved
+    if (updated) {
+      await this.autoGenerateAggregatedTimesheets(updated.candidateId);
+    }
+    
     return updated;
+  },
+
+  // Auto-generate bi-weekly and monthly timesheets based on approved weekly timesheets
+  async autoGenerateAggregatedTimesheets(candidateId: number): Promise<void> {
+    try {
+      // Get all approved weekly timesheets for this candidate
+      const approvedTimesheets = await db
+        .select()
+        .from(weeklyTimesheets)
+        .where(
+          and(
+            eq(weeklyTimesheets.candidateId, candidateId),
+            eq(weeklyTimesheets.status, 'approved')
+          )
+        )
+        .orderBy(desc(weeklyTimesheets.weekStartDate));
+
+      if (approvedTimesheets.length === 0) return;
+
+      // Group timesheets by bi-weekly periods and generate
+      await this.generateBiWeeklyAggregations(candidateId, approvedTimesheets);
+      
+      // Group timesheets by monthly periods and generate
+      await this.generateMonthlyAggregations(candidateId, approvedTimesheets);
+      
+    } catch (error) {
+      console.error('Error auto-generating aggregated timesheets:', error);
+    }
+  },
+
+  async generateBiWeeklyAggregations(candidateId: number, timesheets: any[]): Promise<void> {
+    // Group timesheets by bi-weekly periods
+    const biWeeklyGroups = new Map();
+    
+    for (const timesheet of timesheets) {
+      const weekStart = new Date(timesheet.weekStartDate);
+      const weekNumber = Math.floor((weekStart.getTime() - new Date(weekStart.getFullYear(), 0, 1).getTime()) / (7 * 24 * 60 * 60 * 1000));
+      const biWeeklyPeriod = Math.floor(weekNumber / 2);
+      const biWeeklyKey = `${weekStart.getFullYear()}-${biWeeklyPeriod}`;
+      
+      if (!biWeeklyGroups.has(biWeeklyKey)) {
+        biWeeklyGroups.set(biWeeklyKey, []);
+      }
+      biWeeklyGroups.get(biWeeklyKey).push(timesheet);
+    }
+
+    // Generate bi-weekly timesheets for groups with 2 weeks
+    for (const [key, groupTimesheets] of biWeeklyGroups) {
+      if (groupTimesheets.length >= 2) {
+        const sortedTimesheets = groupTimesheets.sort((a, b) => 
+          new Date(a.weekStartDate).getTime() - new Date(b.weekStartDate).getTime()
+        ).slice(0, 2); // Take first 2 weeks
+        
+        // Check if bi-weekly timesheet already exists
+        const periodStartDate = sortedTimesheets[0].weekStartDate;
+        const periodEndDate = sortedTimesheets[1].weekEndDate;
+        
+        const existing = await db
+          .select()
+          .from(biWeeklyTimesheets)
+          .where(
+            and(
+              eq(biWeeklyTimesheets.candidateId, candidateId),
+              eq(biWeeklyTimesheets.periodStartDate, periodStartDate),
+              eq(biWeeklyTimesheets.periodEndDate, periodEndDate)
+            )
+          );
+
+        if (existing.length === 0) {
+          await this.generateBiWeeklyTimesheet(candidateId, periodStartDate);
+        }
+      }
+    }
+  },
+
+  async generateMonthlyAggregations(candidateId: number, timesheets: any[]): Promise<void> {
+    // Group timesheets by month
+    const monthlyGroups = new Map();
+    
+    for (const timesheet of timesheets) {
+      const weekStart = new Date(timesheet.weekStartDate);
+      const monthKey = `${weekStart.getFullYear()}-${weekStart.getMonth() + 1}`;
+      
+      if (!monthlyGroups.has(monthKey)) {
+        monthlyGroups.set(monthKey, []);
+      }
+      monthlyGroups.get(monthKey).push(timesheet);
+    }
+
+    // Generate monthly timesheets
+    for (const [key, groupTimesheets] of monthlyGroups) {
+      if (groupTimesheets.length > 0) {
+        const [year, month] = key.split('-').map(Number);
+        
+        // Check if monthly timesheet already exists
+        const existing = await db
+          .select()
+          .from(monthlyTimesheets)
+          .where(
+            and(
+              eq(monthlyTimesheets.candidateId, candidateId),
+              eq(monthlyTimesheets.year, year),
+              eq(monthlyTimesheets.month, month)
+            )
+          );
+
+        if (existing.length === 0) {
+          await this.generateMonthlyTimesheet(candidateId, year, month);
+        }
+      }
+    }
   },
 
   async rejectTimesheet(timesheetId: number, rejectionReason: string): Promise<WeeklyTimesheet | undefined> {
