@@ -4414,25 +4414,7 @@ ${allUrls.map(url => `  <url>
 
   // ======================= COMPANY MANAGEMENT API ROUTES =======================
 
-  // Client Companies Routes
-  app.get('/api/admin/client-companies', async (req: AuthenticatedRequest, res: Response) => {
-    try {
-      if (!req.isAuthenticated() || !req.user || req.user.role !== 'admin') {
-        return res.status(403).json({ success: false, message: "Admin access required" });
-      }
-
-      const page = parseInt(req.query.page as string) || 1;
-      const limit = parseInt(req.query.limit as string) || 10;
-      const search = req.query.search as string;
-      const isActive = req.query.isActive === 'true' ? true : req.query.isActive === 'false' ? false : undefined;
-
-      const result = await storage.getClientCompanies({ page, limit, search, isActive });
-      res.json({ success: true, ...result });
-    } catch (error) {
-      console.error('Error fetching client companies:', error);
-      res.status(500).json({ success: false, message: "Internal server error" });
-    }
-  });
+  // Client Companies Routes - Duplicate removed
 
   app.post('/api/admin/client-companies', async (req: AuthenticatedRequest, res: Response) => {
     try {

@@ -111,13 +111,11 @@ export default function BillingConfig() {
   });
 
   // Fetch client companies for dropdown
-  const { data: clientCompanies } = useQuery({
+  const { data: clientCompanies, isLoading: isLoadingClientCompanies } = useQuery({
     queryKey: ['/api/admin/client-companies'],
-    onSuccess: (data) => {
+    select: (data) => {
       console.log('Client companies data loaded:', data);
-    },
-    onError: (error) => {
-      console.error('Error loading client companies:', error);
+      return data;
     }
   });
 
@@ -728,9 +726,12 @@ export default function BillingConfig() {
                     <SelectItem key={company.id} value={company.id.toString()}>
                       {company.name}
                     </SelectItem>
-                  ))}
+                  )) || []}
                 </SelectContent>
               </Select>
+              {isLoadingClientCompanies && (
+                <p className="text-sm text-muted-foreground mt-1">Loading companies...</p>
+              )}
             </div>
 
             {/* TDS Configuration for Subcontract */}
