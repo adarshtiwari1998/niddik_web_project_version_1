@@ -29,7 +29,11 @@ import type {
   ClientCompany,
   InsertClientCompany,
   CompanySettings,
-  InsertCompanySettings
+  InsertCompanySettings,
+  BiWeeklyTimesheet,
+  InsertBiWeeklyTimesheet,
+  MonthlyTimesheet,
+  InsertMonthlyTimesheet
 } from "@shared/schema";
 import {
   users,
@@ -49,7 +53,9 @@ import {
   weeklyTimesheets,
   invoices,
   clientCompanies,
-  companySettings
+  companySettings,
+  biWeeklyTimesheets,
+  monthlyTimesheets
 } from "@shared/schema";
 import { db } from "@db";
 
@@ -1879,6 +1885,339 @@ async updateSeoPage(id: number, data: Partial<InsertSeoPage>): Promise<SeoPage |
         }
       };
     });
+  },
+
+  // Bi-Weekly Timesheet Management
+  async createBiWeeklyTimesheet(data: InsertBiWeeklyTimesheet): Promise<BiWeeklyTimesheet> {
+    const [timesheet] = await db.insert(biWeeklyTimesheets).values(data).returning();
+    return timesheet;
+  },
+
+  async getBiWeeklyTimesheetById(id: number): Promise<BiWeeklyTimesheet | undefined> {
+    const [timesheet] = await db.select().from(biWeeklyTimesheets).where(eq(biWeeklyTimesheets.id, id));
+    return timesheet;
+  },
+
+  async getBiWeeklyTimesheetsByCandidate(candidateId: number): Promise<BiWeeklyTimesheet[]> {
+    return await db
+      .select()
+      .from(biWeeklyTimesheets)
+      .where(eq(biWeeklyTimesheets.candidateId, candidateId))
+      .orderBy(desc(biWeeklyTimesheets.periodStartDate));
+  },
+
+  async generateBiWeeklyTimesheet(candidateId: number, periodStartDate: Date): Promise<BiWeeklyTimesheet> {
+    // Calculate dates for the bi-weekly period
+    const periodEndDate = new Date(periodStartDate);
+    periodEndDate.setDate(periodStartDate.getDate() + 13); // 14 days total (2 weeks)
+
+    // Week 1 dates
+    const week1StartDate = new Date(periodStartDate);
+    const week1EndDate = new Date(periodStartDate);
+    week1EndDate.setDate(week1StartDate.getDate() + 6); // 7 days
+
+    // Week 2 dates
+    const week2StartDate = new Date(week1EndDate);
+    week2StartDate.setDate(week1EndDate.getDate() + 1);
+    const week2EndDate = new Date(periodEndDate);
+
+    // Get weekly timesheets for this period
+    const weeklyTimesheetsData = await db
+      .select()
+      .from(weeklyTimesheets)
+      .where(
+        and(
+          eq(weeklyTimesheets.candidateId, candidateId),
+          eq(weeklyTimesheets.status, 'approved'),
+          sql`${weeklyTimesheets.weekStartDate} >= ${week1StartDate.toISOString().split('T')[0]}`,
+          sql`${weeklyTimesheets.weekStartDate} <= ${week2StartDate.toISOString().split('T')[0]}`
+        )
+      );
+
+    // Calculate totals
+    let totalHours = 0;
+    let totalAmount = 0;
+    let week1TotalHours = 0;
+    let week1TotalAmount = 0;
+    let week2TotalHours = 0;
+    let week2TotalAmount = 0;
+
+    // Day-wise aggregation
+    let mondayHours = 0;
+    let tuesdayHours = 0;
+    let wednesdayHours = 0;
+    let thursdayHours = 0;
+    let fridayHours = 0;
+    let saturdayHours = 0;
+    let sundayHours = 0;
+
+    for (const weeklyTimesheet of weeklyTimesheetsData) {
+      const weekTotal = parseFloat(weeklyTimesheet.totalWeeklyHours?.toString() || '0');
+      const weekAmount = parseFloat(weeklyTimesheet.totalWeeklyAmount?.toString() || '0');
+
+      totalHours += weekTotal;
+      totalAmount += weekAmount;
+
+      // Determine if it's week 1 or week 2
+      const weekStart = new Date(weeklyTimesheet.weekStartDate);
+      if (weekStart.getTime() === week1StartDate.getTime()) {
+        week1TotalHours += weekTotal;
+        week1TotalAmount += weekAmount;
+      } else {
+        week2TotalHours += weekTotal;
+        week2TotalAmount += weekAmount;
+      }
+
+      // Aggregate daily hours
+      mondayHours += parseFloat(weeklyTimesheet.mondayHours?.toString() || '0');
+      tuesdayHours += parseFloat(weeklyTimesheet.tuesdayHours?.toString() || '0');
+      wednesdayHours += parseFloat(weeklyTimesheet.wednesdayHours?.toString() || '0');
+      thursdayHours += parseFloat(weeklyTimesheet.thursdayHours?.toString() || '0');
+      fridayHours += parseFloat(weeklyTimesheet.fridayHours?.toString() || '0');
+      saturdayHours += parseFloat(weeklyTimesheet.saturdayHours?.toString() || '0');
+      sundayHours += parseFloat(weeklyTimesheet.sundayHours?.toString() || '0');
+    }
+
+    // Create bi-weekly timesheet record
+    const biWeeklyData: InsertBiWeeklyTimesheet = {
+      candidateId,
+      periodStartDate: periodStartDate.toISOString().split('T')[0],
+      periodEndDate: periodEndDate.toISOString().split('T')[0],
+      totalHours: totalHours.toString(),
+      totalAmount: totalAmount.toString(),
+      week1StartDate: week1StartDate.toISOString().split('T')[0],
+      week1EndDate: week1EndDate.toISOString().split('T')[0],
+      week1TotalHours: week1TotalHours.toString(),
+      week1TotalAmount: week1TotalAmount.toString(),
+      week2StartDate: week2StartDate.toISOString().split('T')[0],
+      week2EndDate: week2EndDate.toISOString().split('T')[0],
+      week2TotalHours: week2TotalHours.toString(),
+      week2TotalAmount: week2TotalAmount.toString(),
+      mondayHours: mondayHours.toString(),
+      tuesdayHours: tuesdayHours.toString(),
+      wednesdayHours: wednesdayHours.toString(),
+      thursdayHours: thursdayHours.toString(),
+      fridayHours: fridayHours.toString(),
+      saturdayHours: saturdayHours.toString(),
+      sundayHours: sundayHours.toString(),
+      status: 'calculated'
+    };
+
+    return await this.createBiWeeklyTimesheet(biWeeklyData);
+  },
+
+  async getAllBiWeeklyTimesheets(options: { page?: number; limit?: number; candidateId?: number } = {}): Promise<{ timesheets: any[]; total: number }> {
+    const { page = 1, limit = 10, candidateId } = options;
+    const offset = (page - 1) * limit;
+
+    let whereConditions = [];
+    
+    if (candidateId) {
+      whereConditions.push(eq(biWeeklyTimesheets.candidateId, candidateId));
+    }
+
+    const whereCondition = whereConditions.length > 0 ? and(...whereConditions) : undefined;
+
+    // Get total count
+    const countResult = await db
+      .select({ count: count() })
+      .from(biWeeklyTimesheets)
+      .where(whereCondition);
+
+    const total = countResult[0]?.count || 0;
+
+    // Get paginated results with candidate information
+    const timesheets = await db
+      .select({
+        id: biWeeklyTimesheets.id,
+        candidateId: biWeeklyTimesheets.candidateId,
+        candidateName: users.fullName,
+        candidateEmail: users.email,
+        periodStartDate: biWeeklyTimesheets.periodStartDate,
+        periodEndDate: biWeeklyTimesheets.periodEndDate,
+        totalHours: biWeeklyTimesheets.totalHours,
+        totalAmount: biWeeklyTimesheets.totalAmount,
+        week1StartDate: biWeeklyTimesheets.week1StartDate,
+        week1EndDate: biWeeklyTimesheets.week1EndDate,
+        week1TotalHours: biWeeklyTimesheets.week1TotalHours,
+        week1TotalAmount: biWeeklyTimesheets.week1TotalAmount,
+        week2StartDate: biWeeklyTimesheets.week2StartDate,
+        week2EndDate: biWeeklyTimesheets.week2EndDate,
+        week2TotalHours: biWeeklyTimesheets.week2TotalHours,
+        week2TotalAmount: biWeeklyTimesheets.week2TotalAmount,
+        mondayHours: biWeeklyTimesheets.mondayHours,
+        tuesdayHours: biWeeklyTimesheets.tuesdayHours,
+        wednesdayHours: biWeeklyTimesheets.wednesdayHours,
+        thursdayHours: biWeeklyTimesheets.thursdayHours,
+        fridayHours: biWeeklyTimesheets.fridayHours,
+        saturdayHours: biWeeklyTimesheets.saturdayHours,
+        sundayHours: biWeeklyTimesheets.sundayHours,
+        status: biWeeklyTimesheets.status,
+        createdAt: biWeeklyTimesheets.createdAt,
+        currency: candidateBilling.currency
+      })
+      .from(biWeeklyTimesheets)
+      .leftJoin(users, eq(biWeeklyTimesheets.candidateId, users.id))
+      .leftJoin(candidateBilling, eq(biWeeklyTimesheets.candidateId, candidateBilling.candidateId))
+      .where(whereCondition)
+      .orderBy(desc(biWeeklyTimesheets.periodStartDate))
+      .limit(limit)
+      .offset(offset);
+
+    return { timesheets, total };
+  },
+
+  // Monthly Timesheet Management
+  async createMonthlyTimesheet(data: InsertMonthlyTimesheet): Promise<MonthlyTimesheet> {
+    const [timesheet] = await db.insert(monthlyTimesheets).values(data).returning();
+    return timesheet;
+  },
+
+  async getMonthlyTimesheetById(id: number): Promise<MonthlyTimesheet | undefined> {
+    const [timesheet] = await db.select().from(monthlyTimesheets).where(eq(monthlyTimesheets.id, id));
+    return timesheet;
+  },
+
+  async getMonthlyTimesheetsByCandidate(candidateId: number): Promise<MonthlyTimesheet[]> {
+    return await db
+      .select()
+      .from(monthlyTimesheets)
+      .where(eq(monthlyTimesheets.candidateId, candidateId))
+      .orderBy(desc(monthlyTimesheets.year), desc(monthlyTimesheets.month));
+  },
+
+  async generateMonthlyTimesheet(candidateId: number, year: number, month: number): Promise<MonthlyTimesheet> {
+    // Calculate dates for the monthly period
+    const periodStartDate = new Date(year, month - 1, 1); // First day of month
+    const periodEndDate = new Date(year, month, 0); // Last day of month
+    
+    const monthNames = ['January', 'February', 'March', 'April', 'May', 'June', 
+                       'July', 'August', 'September', 'October', 'November', 'December'];
+    const monthName = `${monthNames[month - 1]} ${year}`;
+
+    // Get weekly timesheets for this month
+    const weeklyTimesheetsData = await db
+      .select()
+      .from(weeklyTimesheets)
+      .where(
+        and(
+          eq(weeklyTimesheets.candidateId, candidateId),
+          eq(weeklyTimesheets.status, 'approved'),
+          sql`${weeklyTimesheets.weekStartDate} >= ${periodStartDate.toISOString().split('T')[0]}`,
+          sql`${weeklyTimesheets.weekStartDate} <= ${periodEndDate.toISOString().split('T')[0]}`
+        )
+      );
+
+    // Calculate totals
+    let totalHours = 0;
+    let totalAmount = 0;
+    let totalWeeks = weeklyTimesheetsData.length;
+
+    // Day-wise aggregation
+    let mondayHours = 0;
+    let tuesdayHours = 0;
+    let wednesdayHours = 0;
+    let thursdayHours = 0;
+    let fridayHours = 0;
+    let saturdayHours = 0;
+    let sundayHours = 0;
+
+    for (const weeklyTimesheet of weeklyTimesheetsData) {
+      const weekTotal = parseFloat(weeklyTimesheet.totalWeeklyHours?.toString() || '0');
+      const weekAmount = parseFloat(weeklyTimesheet.totalWeeklyAmount?.toString() || '0');
+
+      totalHours += weekTotal;
+      totalAmount += weekAmount;
+
+      // Aggregate daily hours
+      mondayHours += parseFloat(weeklyTimesheet.mondayHours?.toString() || '0');
+      tuesdayHours += parseFloat(weeklyTimesheet.tuesdayHours?.toString() || '0');
+      wednesdayHours += parseFloat(weeklyTimesheet.wednesdayHours?.toString() || '0');
+      thursdayHours += parseFloat(weeklyTimesheet.thursdayHours?.toString() || '0');
+      fridayHours += parseFloat(weeklyTimesheet.fridayHours?.toString() || '0');
+      saturdayHours += parseFloat(weeklyTimesheet.saturdayHours?.toString() || '0');
+      sundayHours += parseFloat(weeklyTimesheet.sundayHours?.toString() || '0');
+    }
+
+    // Create monthly timesheet record
+    const monthlyData: InsertMonthlyTimesheet = {
+      candidateId,
+      year,
+      month,
+      monthName,
+      periodStartDate: periodStartDate.toISOString().split('T')[0],
+      periodEndDate: periodEndDate.toISOString().split('T')[0],
+      totalHours: totalHours.toString(),
+      totalAmount: totalAmount.toString(),
+      totalWeeks,
+      mondayHours: mondayHours.toString(),
+      tuesdayHours: tuesdayHours.toString(),
+      wednesdayHours: wednesdayHours.toString(),
+      thursdayHours: thursdayHours.toString(),
+      fridayHours: fridayHours.toString(),
+      saturdayHours: saturdayHours.toString(),
+      sundayHours: sundayHours.toString(),
+      status: 'calculated'
+    };
+
+    return await this.createMonthlyTimesheet(monthlyData);
+  },
+
+  async getAllMonthlyTimesheets(options: { page?: number; limit?: number; candidateId?: number } = {}): Promise<{ timesheets: any[]; total: number }> {
+    const { page = 1, limit = 10, candidateId } = options;
+    const offset = (page - 1) * limit;
+
+    let whereConditions = [];
+    
+    if (candidateId) {
+      whereConditions.push(eq(monthlyTimesheets.candidateId, candidateId));
+    }
+
+    const whereCondition = whereConditions.length > 0 ? and(...whereConditions) : undefined;
+
+    // Get total count
+    const countResult = await db
+      .select({ count: count() })
+      .from(monthlyTimesheets)
+      .where(whereCondition);
+
+    const total = countResult[0]?.count || 0;
+
+    // Get paginated results with candidate information
+    const timesheets = await db
+      .select({
+        id: monthlyTimesheets.id,
+        candidateId: monthlyTimesheets.candidateId,
+        candidateName: users.fullName,
+        candidateEmail: users.email,
+        year: monthlyTimesheets.year,
+        month: monthlyTimesheets.month,
+        monthName: monthlyTimesheets.monthName,
+        periodStartDate: monthlyTimesheets.periodStartDate,
+        periodEndDate: monthlyTimesheets.periodEndDate,
+        totalHours: monthlyTimesheets.totalHours,
+        totalAmount: monthlyTimesheets.totalAmount,
+        totalWeeks: monthlyTimesheets.totalWeeks,
+        mondayHours: monthlyTimesheets.mondayHours,
+        tuesdayHours: monthlyTimesheets.tuesdayHours,
+        wednesdayHours: monthlyTimesheets.wednesdayHours,
+        thursdayHours: monthlyTimesheets.thursdayHours,
+        fridayHours: monthlyTimesheets.fridayHours,
+        saturdayHours: monthlyTimesheets.saturdayHours,
+        sundayHours: monthlyTimesheets.sundayHours,
+        status: monthlyTimesheets.status,
+        createdAt: monthlyTimesheets.createdAt,
+        currency: candidateBilling.currency
+      })
+      .from(monthlyTimesheets)
+      .leftJoin(users, eq(monthlyTimesheets.candidateId, users.id))
+      .leftJoin(candidateBilling, eq(monthlyTimesheets.candidateId, candidateBilling.candidateId))
+      .where(whereCondition)
+      .orderBy(desc(monthlyTimesheets.year), desc(monthlyTimesheets.month))
+      .limit(limit)
+      .offset(offset);
+
+    return { timesheets, total };
   }
 };
 

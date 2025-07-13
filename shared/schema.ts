@@ -727,6 +727,109 @@ export const companySettingsSchema = createInsertSchema(companySettings, {
 export type CompanySettings = typeof companySettings.$inferSelect;
 export type InsertCompanySettings = z.infer<typeof companySettingsSchema>;
 
+// Bi-Weekly Timesheets - aggregates data from weekly_timesheets for 2-week periods
+export const biWeeklyTimesheets = pgTable("bi_weekly_timesheets", {
+  id: serial("id").primaryKey(),
+  candidateId: integer("candidate_id").notNull().references(() => users.id),
+  periodStartDate: date("period_start_date").notNull(), // Start date of bi-weekly period
+  periodEndDate: date("period_end_date").notNull(), // End date of bi-weekly period
+  
+  // Aggregated data from weekly timesheets
+  totalHours: decimal("total_hours", { precision: 6, scale: 2 }).notNull().default('0'),
+  totalAmount: decimal("total_amount", { precision: 10, scale: 2 }).notNull().default('0'),
+  
+  // Week 1 data
+  week1StartDate: date("week1_start_date").notNull(),
+  week1EndDate: date("week1_end_date").notNull(),
+  week1TotalHours: decimal("week1_total_hours", { precision: 4, scale: 2 }).notNull().default('0'),
+  week1TotalAmount: decimal("week1_total_amount", { precision: 10, scale: 2 }).notNull().default('0'),
+  
+  // Week 2 data
+  week2StartDate: date("week2_start_date").notNull(),
+  week2EndDate: date("week2_end_date").notNull(),
+  week2TotalHours: decimal("week2_total_hours", { precision: 4, scale: 2 }).notNull().default('0'),
+  week2TotalAmount: decimal("week2_total_amount", { precision: 10, scale: 2 }).notNull().default('0'),
+  
+  // Day-wise aggregated hours for entire bi-weekly period
+  mondayHours: decimal("monday_hours", { precision: 4, scale: 2 }).notNull().default('0'),
+  tuesdayHours: decimal("tuesday_hours", { precision: 4, scale: 2 }).notNull().default('0'),
+  wednesdayHours: decimal("wednesday_hours", { precision: 4, scale: 2 }).notNull().default('0'),
+  thursdayHours: decimal("thursday_hours", { precision: 4, scale: 2 }).notNull().default('0'),
+  fridayHours: decimal("friday_hours", { precision: 4, scale: 2 }).notNull().default('0'),
+  saturdayHours: decimal("saturday_hours", { precision: 4, scale: 2 }).notNull().default('0'),
+  sundayHours: decimal("sunday_hours", { precision: 4, scale: 2 }).notNull().default('0'),
+  
+  status: text("status").notNull().default("calculated"), // calculated, approved, rejected
+  createdAt: timestamp("created_at").defaultNow().notNull(),
+  updatedAt: timestamp("updated_at").defaultNow().notNull(),
+});
+
+export const biWeeklyTimesheetSchema = createInsertSchema(biWeeklyTimesheets, {
+  periodStartDate: (schema) => schema.transform((val) => new Date(val)),
+  periodEndDate: (schema) => schema.transform((val) => new Date(val)),
+  week1StartDate: (schema) => schema.transform((val) => new Date(val)),
+  week1EndDate: (schema) => schema.transform((val) => new Date(val)),
+  week2StartDate: (schema) => schema.transform((val) => new Date(val)),
+  week2EndDate: (schema) => schema.transform((val) => new Date(val)),
+});
+
+export type BiWeeklyTimesheet = typeof biWeeklyTimesheets.$inferSelect;
+export type InsertBiWeeklyTimesheet = z.infer<typeof biWeeklyTimesheetSchema>;
+
+// Monthly Timesheets - aggregates data from weekly_timesheets for monthly periods
+export const monthlyTimesheets = pgTable("monthly_timesheets", {
+  id: serial("id").primaryKey(),
+  candidateId: integer("candidate_id").notNull().references(() => users.id),
+  year: integer("year").notNull(),
+  month: integer("month").notNull(), // 1-12
+  monthName: text("month_name").notNull(), // "January 2025", "February 2025", etc.
+  periodStartDate: date("period_start_date").notNull(), // First day of month
+  periodEndDate: date("period_end_date").notNull(), // Last day of month
+  
+  // Aggregated data from weekly timesheets
+  totalHours: decimal("total_hours", { precision: 6, scale: 2 }).notNull().default('0'),
+  totalAmount: decimal("total_amount", { precision: 10, scale: 2 }).notNull().default('0'),
+  totalWeeks: integer("total_weeks").notNull().default(0), // Number of weeks in the month
+  
+  // Day-wise aggregated hours for entire month
+  mondayHours: decimal("monday_hours", { precision: 4, scale: 2 }).notNull().default('0'),
+  tuesdayHours: decimal("tuesday_hours", { precision: 4, scale: 2 }).notNull().default('0'),
+  wednesdayHours: decimal("wednesday_hours", { precision: 4, scale: 2 }).notNull().default('0'),
+  thursdayHours: decimal("thursday_hours", { precision: 4, scale: 2 }).notNull().default('0'),
+  fridayHours: decimal("friday_hours", { precision: 4, scale: 2 }).notNull().default('0'),
+  saturdayHours: decimal("saturday_hours", { precision: 4, scale: 2 }).notNull().default('0'),
+  sundayHours: decimal("sunday_hours", { precision: 4, scale: 2 }).notNull().default('0'),
+  
+  status: text("status").notNull().default("calculated"), // calculated, approved, rejected
+  createdAt: timestamp("created_at").defaultNow().notNull(),
+  updatedAt: timestamp("updated_at").defaultNow().notNull(),
+});
+
+export const monthlyTimesheetSchema = createInsertSchema(monthlyTimesheets, {
+  year: (schema) => schema.min(2020, "Year must be valid").max(2030, "Year must be valid"),
+  month: (schema) => schema.min(1, "Month must be between 1-12").max(12, "Month must be between 1-12"),
+  periodStartDate: (schema) => schema.transform((val) => new Date(val)),
+  periodEndDate: (schema) => schema.transform((val) => new Date(val)),
+});
+
+export type MonthlyTimesheet = typeof monthlyTimesheets.$inferSelect;
+export type InsertMonthlyTimesheet = z.infer<typeof monthlyTimesheetSchema>;
+
+// Relations for new timesheet tables
+export const biWeeklyTimesheetRelations = relations(biWeeklyTimesheets, ({ one }) => ({
+  candidate: one(users, {
+    fields: [biWeeklyTimesheets.candidateId],
+    references: [users.id],
+  }),
+}));
+
+export const monthlyTimesheetRelations = relations(monthlyTimesheets, ({ one }) => ({
+  candidate: one(users, {
+    fields: [monthlyTimesheets.candidateId],
+    references: [users.id],
+  }),
+}));
+
 // Relations for client and company management
 export const clientCompanyRelations = relations(clientCompanies, ({ one, many }) => ({
   createdByUser: one(users, {

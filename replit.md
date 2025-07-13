@@ -123,6 +123,28 @@ The application follows a standard full-stack architecture with clear separation
 
 # Recent Changes
 
+## Bi-Weekly and Monthly Timesheet Aggregation Implementation (July 13, 2025)
+- **Feature**: Complete bi-weekly and monthly timesheet aggregation system with separate database tables
+- **Database Enhancement**: Added `biweekly_timesheets` and `monthly_timesheets` tables with proper relations to existing weekly timesheets
+- **Backend Implementation**:
+  - Added comprehensive storage methods for bi-weekly and monthly timesheet generation and retrieval
+  - Implemented dynamic aggregation functions that calculate totals from weekly timesheet data
+  - Created protected API endpoints for generating aggregated timesheets with proper admin authentication
+  - Added proper error handling and data validation for all aggregation operations
+- **Frontend Implementation**:
+  - Enhanced TimesheetManagement component with three-view mode selector (weekly, bi-weekly, monthly)
+  - Created BiWeeklyTableView component with period selection and candidate filtering
+  - Created MonthlyTableView component with year/month selection and comprehensive hourly breakdown
+  - Added admin controls for generating bi-weekly and monthly timesheets on-demand
+  - Implemented proper loading states and error handling for all aggregated views
+- **User Experience**: 
+  - Admin can switch between weekly, bi-weekly, and monthly timesheet views seamlessly
+  - Generate bi-weekly timesheets by selecting candidate and period start date
+  - Generate monthly timesheets by selecting candidate, year, and month
+  - View aggregated data with proper totals, calculations, and formatted currency display
+- **Data Integration**: All aggregated timesheets reference original weekly timesheets for audit trail and data consistency
+- **Files Modified**: `shared/schema.ts`, `server/storage.ts`, `server/routes.ts`, `client/src/pages/TimesheetManagement.tsx`
+
 ## Timesheet Layout Enhancement (July 13, 2025)
 - **Issue Fixed**: Employee Name and Supervisor Name were displaying in the same block as Client Company information on candidate timesheet page
 - **Solution**: Separated Employee/Supervisor information into distinct section with gray background

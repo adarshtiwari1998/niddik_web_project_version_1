@@ -4002,6 +4002,176 @@ ${allUrls.map(url => `  <url>
     }
   });
 
+  // Bi-Weekly Timesheet Routes
+  app.get('/api/admin/biweekly-timesheets', async (req: AuthenticatedRequest, res: Response) => {
+    try {
+      if (!req.isAuthenticated() || !req.user || req.user.role !== 'admin') {
+        return res.status(403).json({ success: false, message: "Admin access required" });
+      }
+
+      const page = parseInt(req.query.page as string) || 1;
+      const limit = parseInt(req.query.limit as string) || 10;
+      const candidateId = req.query.candidateId ? parseInt(req.query.candidateId as string) : undefined;
+      
+      const result = await storage.getAllBiWeeklyTimesheets({ page, limit, candidateId });
+      
+      res.json({ 
+        success: true, 
+        data: result.timesheets,
+        meta: {
+          total: result.total,
+          page,
+          limit,
+          pages: Math.ceil(result.total / limit)
+        }
+      });
+    } catch (error) {
+      console.error('Error fetching bi-weekly timesheets:', error);
+      res.status(500).json({ success: false, message: "Internal server error" });
+    }
+  });
+
+  app.post('/api/admin/biweekly-timesheets/:candidateId/generate', async (req: AuthenticatedRequest, res: Response) => {
+    try {
+      if (!req.isAuthenticated() || !req.user || req.user.role !== 'admin') {
+        return res.status(403).json({ success: false, message: "Admin access required" });
+      }
+
+      const candidateId = parseInt(req.params.candidateId);
+      const { periodStartDate } = req.body;
+
+      if (!periodStartDate) {
+        return res.status(400).json({ success: false, message: "Period start date is required" });
+      }
+
+      const biWeeklyTimesheet = await storage.generateBiWeeklyTimesheet(candidateId, new Date(periodStartDate));
+      
+      res.json({ success: true, data: biWeeklyTimesheet });
+    } catch (error) {
+      console.error('Error generating bi-weekly timesheet:', error);
+      res.status(500).json({ success: false, message: "Internal server error" });
+    }
+  });
+
+  app.get('/api/biweekly-timesheets/candidate/:candidateId', async (req: AuthenticatedRequest, res: Response) => {
+    try {
+      if (!req.isAuthenticated() || !req.user) {
+        return res.status(401).json({ success: false, message: "Not authenticated" });
+      }
+
+      const candidateId = parseInt(req.params.candidateId);
+      const page = parseInt(req.query.page as string) || 1;
+      const limit = parseInt(req.query.limit as string) || 10;
+      const isAdmin = req.user.role === 'admin';
+      
+      // Candidates can only view their own timesheets
+      if (!isAdmin && req.user.id !== candidateId) {
+        return res.status(403).json({ success: false, message: "Unauthorized access" });
+      }
+
+      const result = await storage.getAllBiWeeklyTimesheets({ page, limit, candidateId });
+      
+      res.json({ 
+        success: true, 
+        data: result.timesheets,
+        meta: {
+          total: result.total,
+          page,
+          limit,
+          pages: Math.ceil(result.total / limit)
+        }
+      });
+    } catch (error) {
+      console.error('Error fetching candidate bi-weekly timesheets:', error);
+      res.status(500).json({ success: false, message: "Internal server error" });
+    }
+  });
+
+  // Monthly Timesheet Routes
+  app.get('/api/admin/monthly-timesheets', async (req: AuthenticatedRequest, res: Response) => {
+    try {
+      if (!req.isAuthenticated() || !req.user || req.user.role !== 'admin') {
+        return res.status(403).json({ success: false, message: "Admin access required" });
+      }
+
+      const page = parseInt(req.query.page as string) || 1;
+      const limit = parseInt(req.query.limit as string) || 10;
+      const candidateId = req.query.candidateId ? parseInt(req.query.candidateId as string) : undefined;
+      
+      const result = await storage.getAllMonthlyTimesheets({ page, limit, candidateId });
+      
+      res.json({ 
+        success: true, 
+        data: result.timesheets,
+        meta: {
+          total: result.total,
+          page,
+          limit,
+          pages: Math.ceil(result.total / limit)
+        }
+      });
+    } catch (error) {
+      console.error('Error fetching monthly timesheets:', error);
+      res.status(500).json({ success: false, message: "Internal server error" });
+    }
+  });
+
+  app.post('/api/admin/monthly-timesheets/:candidateId/generate', async (req: AuthenticatedRequest, res: Response) => {
+    try {
+      if (!req.isAuthenticated() || !req.user || req.user.role !== 'admin') {
+        return res.status(403).json({ success: false, message: "Admin access required" });
+      }
+
+      const candidateId = parseInt(req.params.candidateId);
+      const { year, month } = req.body;
+
+      if (!year || !month) {
+        return res.status(400).json({ success: false, message: "Year and month are required" });
+      }
+
+      const monthlyTimesheet = await storage.generateMonthlyTimesheet(candidateId, year, month);
+      
+      res.json({ success: true, data: monthlyTimesheet });
+    } catch (error) {
+      console.error('Error generating monthly timesheet:', error);
+      res.status(500).json({ success: false, message: "Internal server error" });
+    }
+  });
+
+  app.get('/api/monthly-timesheets/candidate/:candidateId', async (req: AuthenticatedRequest, res: Response) => {
+    try {
+      if (!req.isAuthenticated() || !req.user) {
+        return res.status(401).json({ success: false, message: "Not authenticated" });
+      }
+
+      const candidateId = parseInt(req.params.candidateId);
+      const page = parseInt(req.query.page as string) || 1;
+      const limit = parseInt(req.query.limit as string) || 10;
+      const isAdmin = req.user.role === 'admin';
+      
+      // Candidates can only view their own timesheets
+      if (!isAdmin && req.user.id !== candidateId) {
+        return res.status(403).json({ success: false, message: "Unauthorized access" });
+      }
+
+      const result = await storage.getAllMonthlyTimesheets({ page, limit, candidateId });
+      
+      res.json({ 
+        success: true, 
+        data: result.timesheets,
+        meta: {
+          total: result.total,
+          page,
+          limit,
+          pages: Math.ceil(result.total / limit)
+        }
+      });
+    } catch (error) {
+      console.error('Error fetching candidate monthly timesheets:', error);
+      res.status(500).json({ success: false, message: "Internal server error" });
+    }
+  });
+
   // Invoice Routes
   app.get('/api/invoices/candidate/:candidateId', async (req: AuthenticatedRequest, res: Response) => {
     try {
