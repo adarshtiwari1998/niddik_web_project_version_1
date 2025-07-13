@@ -113,6 +113,12 @@ export default function BillingConfig() {
   // Fetch client companies for dropdown
   const { data: clientCompanies } = useQuery({
     queryKey: ['/api/admin/client-companies'],
+    onSuccess: (data) => {
+      console.log('Client companies data loaded:', data);
+    },
+    onError: (error) => {
+      console.error('Error loading client companies:', error);
+    }
   });
 
   // Fetch company settings for dropdown
@@ -222,6 +228,7 @@ export default function BillingConfig() {
   useEffect(() => {
     if (editingBilling) {
       console.log('Populating edit form with billing data:', editingBilling);
+      console.log('Client companies available:', clientCompanies);
       setBillingData({
         hourlyRate: editingBilling.hourlyRate,
         workingHoursPerWeek: editingBilling.workingHoursPerWeek,
@@ -236,7 +243,7 @@ export default function BillingConfig() {
       });
       setSelectedBenefits(editingBilling.benefits || []);
     }
-  }, [editingBilling]);
+  }, [editingBilling, clientCompanies]);
 
   // Effect to set default values for client company and company settings when data is loaded
   useEffect(() => {

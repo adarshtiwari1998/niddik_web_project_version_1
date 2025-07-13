@@ -123,6 +123,14 @@ The application follows a standard full-stack architecture with clear separation
 
 # Recent Changes
 
+## Billing Configuration Data Fix (July 13, 2025)
+- **Issue Fixed**: Billing configuration edit dialog was not showing client company data properly
+- **Root Cause**: Frontend was accessing wrong data structure path (`clientCompanies?.data?.companies` instead of `clientCompanies?.companies`)
+- **Solution**: Updated data access patterns in BillingConfig.tsx to match actual API response structure
+- **Database Storage Enhanced**: Updated `getAllCandidatesWithBilling` to include all required fields (supervisorName, clientCompanyId, companySettingsId, etc.)
+- **User Experience**: Edit dialog now properly displays supervisor name and client company selection
+- **Result**: All billing configuration data including supervisor names and client companies now display correctly in both create and edit forms
+
 ## Replit Agent to Replit Migration Complete (July 13, 2025)
 - **Migration Status**: Successfully completed migration from Replit Agent to standard Replit environment
 - **Packages**: All Node.js dependencies properly installed and verified working
