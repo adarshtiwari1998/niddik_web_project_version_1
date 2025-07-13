@@ -123,6 +123,25 @@ The application follows a standard full-stack architecture with clear separation
 
 # Recent Changes
 
+## Invoice Management Tab and Timesheet UI Enhancement (July 13, 2025)
+- **New Invoice Tab**: Added comprehensive invoice management tab to timesheet management page
+  - **Three-tab layout**: Timesheets, Billing Configuration, and Invoice tabs for organized navigation
+  - **Invoice Management Component**: Full-featured invoice listing with status badges and admin controls
+  - **Role-based Access**: Admin can manage invoice status, candidates can view their invoices
+  - **Status Updates**: Admin can change invoice status (draft, sent, paid, overdue) with dropdown selection
+  - **PDF Integration**: Support for PDF viewing when invoice URLs are available
+  - **Invoice Generation**: Integration with existing invoice generation API endpoints
+- **Timesheet Page Header Enhancement**: Added missing page heading with title and description
+  - **Page Title**: "Timesheet Management" with descriptive subtitle
+  - **Company Management Link**: Added button linking to /admin/timesheets/companiesmanagement
+  - **Visual Consistency**: Proper spacing and layout with building icon
+- **Migration Completed**: Successfully migrated from Replit Agent to standard Replit environment
+  - **All packages installed**: Node.js dependencies verified and working
+  - **Application running**: Express server and frontend serving on port 5000
+  - **Database connectivity**: PostgreSQL connections established and API endpoints responding
+  - **Import path fixes**: Corrected AdminPasswordChange component import path
+- **Files Modified**: `client/src/pages/TimesheetManagement.tsx`, `client/src/App.tsx`, `.local/state/replit/agent/progress_tracker.md`
+
 ## Employment Type Conditional Timesheet Views and Bi-Weekly Calendar Enhancement (July 13, 2025)
 - **Employment Type Conditional Logic**: Implemented dynamic column display based on billing configuration employment type
   - **Subcontract employees**: Show only Regular, Overtime, and Total columns

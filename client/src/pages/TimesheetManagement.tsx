@@ -434,15 +434,20 @@ export default function TimesheetManagement() {
       </div>
 
       <Tabs value={activeTab} onValueChange={setActiveTab} className="space-y-6">
-        <TabsList className="grid w-full grid-cols-2">
+        <TabsList className="grid w-full grid-cols-3">
           <TabsTrigger value="timesheets">Timesheets</TabsTrigger>
           <TabsTrigger value="billing-config">
             {isAdmin ? "Billing Configuration" : "My Billing"}
           </TabsTrigger>
+          <TabsTrigger value="invoices">Invoice</TabsTrigger>
         </TabsList>
 
         <TabsContent value="billing-config" className="space-y-6">
           <BillingConfig />
+        </TabsContent>
+
+        <TabsContent value="invoices" className="space-y-6">
+          <InvoiceManagement />
         </TabsContent>
 
         <TabsContent value="timesheets" className="space-y-6">
@@ -1765,6 +1770,162 @@ function WeeklyTableView({ timesheets, onApprove, onReject, getStatusBadge }: an
           </div>
         );
       })}
+    </div>
+  );
+}
+
+// Invoice Management Component
+function InvoiceManagement() {
+  const { user } = useUser();
+  const isAdmin = user?.role === 'admin';
+  const { toast } = useToast();
+  
+  // Fetch invoices based on user role
+  const { data: invoices, isLoading: invoicesLoading } = useQuery({
+    queryKey: isAdmin ? ['/api/admin/invoices'] : ['/api/invoices/candidate', user?.id],
+    enabled: !!user
+  });
+
+  // Fetch hired candidates for admin filtering
+  const { data: hiredCandidates } = useQuery({
+    queryKey: ['/api/admin/hired-candidates'],
+    enabled: isAdmin
+  });
+
+  // Generate invoice mutation
+  const generateInvoiceMutation = useMutation({
+    mutationFn: async (timesheetId: number) => {
+      const response = await fetch('/api/admin/generate-invoice', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ timesheetId })
+      });
+      if (!response.ok) throw new Error('Failed to generate invoice');
+      return response.json();
+    },
+    onSuccess: () => {
+      toast({ title: "Success", description: "Invoice generated successfully" });
+      queryClient.invalidateQueries({ queryKey: ['/api/admin/invoices'] });
+    },
+    onError: (error: Error) => {
+      toast({ title: "Error", description: error.message, variant: "destructive" });
+    }
+  });
+
+  // Update invoice status mutation
+  const updateInvoiceStatusMutation = useMutation({
+    mutationFn: async ({ invoiceId, status }: { invoiceId: number; status: string }) => {
+      const response = await fetch(`/api/admin/invoices/${invoiceId}/status`, {
+        method: 'PATCH',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ status })
+      });
+      if (!response.ok) throw new Error('Failed to update invoice status');
+      return response.json();
+    },
+    onSuccess: () => {
+      toast({ title: "Success", description: "Invoice status updated successfully" });
+      queryClient.invalidateQueries({ queryKey: ['/api/admin/invoices'] });
+    },
+    onError: (error: Error) => {
+      toast({ title: "Error", description: error.message, variant: "destructive" });
+    }
+  });
+
+  const getStatusBadge = (status: string) => {
+    const statusConfig = {
+      draft: { label: 'Draft', variant: 'secondary' },
+      sent: { label: 'Sent', variant: 'default' },
+      paid: { label: 'Paid', variant: 'success' },
+      overdue: { label: 'Overdue', variant: 'destructive' }
+    };
+
+    const config = statusConfig[status] || { label: status, variant: 'secondary' };
+    return <Badge variant={config.variant as any}>{config.label}</Badge>;
+  };
+
+  const invoiceData = invoices?.data || [];
+
+  return (
+    <div className="space-y-6">
+      <Card>
+        <CardHeader>
+          <CardTitle className="flex items-center gap-2">
+            <FileText className="w-5 h-5" />
+            {isAdmin ? "Invoice Management" : "My Invoices"}
+          </CardTitle>
+          <CardDescription>
+            {isAdmin ? "Generate and manage invoices for approved timesheets" : "View your generated invoices"}
+          </CardDescription>
+        </CardHeader>
+        <CardContent>
+          {invoicesLoading ? (
+            <div className="text-center py-8">Loading invoices...</div>
+          ) : invoiceData.length === 0 ? (
+            <div className="text-center py-8 text-muted-foreground">
+              No invoices found
+            </div>
+          ) : (
+            <div className="space-y-4">
+              <div className="grid gap-4">
+                {invoiceData.map((invoice: Invoice) => (
+                  <Card key={invoice.id} className="border-l-4 border-l-blue-500">
+                    <CardContent className="p-6">
+                      <div className="flex items-start justify-between">
+                        <div className="space-y-2">
+                          <div className="flex items-center gap-2">
+                            <span className="font-semibold text-lg">#{invoice.invoiceNumber}</span>
+                            {getStatusBadge(invoice.status)}
+                          </div>
+                          <div className="text-sm text-muted-foreground">
+                            <div>Candidate: {invoice.candidateName}</div>
+                            <div>Period: {format(new Date(invoice.weekStartDate), 'MMM dd')} - {format(new Date(invoice.weekEndDate), 'MMM dd, yyyy')}</div>
+                            <div>Issued: {format(new Date(invoice.issuedDate), 'MMM dd, yyyy')}</div>
+                          </div>
+                        </div>
+                        <div className="text-right">
+                          <div className="text-2xl font-bold">{invoice.currency} {invoice.totalAmount?.toFixed(2)}</div>
+                          <div className="text-sm text-muted-foreground">
+                            {invoice.totalHours} hours @ {invoice.currency} {invoice.hourlyRate}/hr
+                          </div>
+                        </div>
+                      </div>
+                      
+                      {isAdmin && (
+                        <div className="flex gap-2 mt-4">
+                          <Select 
+                            value={invoice.status} 
+                            onValueChange={(status) => updateInvoiceStatusMutation.mutate({ invoiceId: invoice.id, status })}
+                          >
+                            <SelectTrigger className="w-32">
+                              <SelectValue />
+                            </SelectTrigger>
+                            <SelectContent>
+                              <SelectItem value="draft">Draft</SelectItem>
+                              <SelectItem value="sent">Sent</SelectItem>
+                              <SelectItem value="paid">Paid</SelectItem>
+                              <SelectItem value="overdue">Overdue</SelectItem>
+                            </SelectContent>
+                          </Select>
+                          
+                          {invoice.pdfUrl && (
+                            <Button variant="outline" size="sm" asChild>
+                              <a href={invoice.pdfUrl} target="_blank" rel="noopener noreferrer">
+                                <FileText className="w-4 h-4 mr-2" />
+                                View PDF
+                              </a>
+                            </Button>
+                          )}
+                        </div>
+                      )}
+                    </CardContent>
+                  </Card>
+                ))}
+              </div>
+            </div>
+          )}
+        </CardContent>
+      </Card>
     </div>
   );
 }
