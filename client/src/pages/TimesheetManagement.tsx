@@ -648,7 +648,7 @@ function BiWeeklyTableView({ timesheets, getStatusBadge }: any) {
   });
 
   const getBillingConfig = (candidateId: number) => {
-    return billingData?.find((config: any) => config.candidateId === candidateId);
+    return billingData?.data?.find((config: any) => config.candidateId === candidateId);
   };
 
   return (
@@ -838,7 +838,7 @@ function MonthlyTableView({ timesheets, getStatusBadge }: any) {
   });
 
   const getBillingConfig = (candidateId: number) => {
-    return billingData?.find((config: any) => config.candidateId === candidateId);
+    return billingData?.data?.find((config: any) => config.candidateId === candidateId);
   };
 
   const queryClient = useQueryClient();
@@ -1060,7 +1060,7 @@ function WeeklyTableView({ timesheets, onApprove, onReject, getStatusBadge }: an
   });
 
   const getBillingConfig = (candidateId: number) => {
-    return billingData?.find((config: any) => config.candidateId === candidateId);
+    return billingData?.data?.find((config: any) => config.candidateId === candidateId);
   };
 
   return (
