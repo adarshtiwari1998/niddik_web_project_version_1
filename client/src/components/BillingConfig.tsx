@@ -131,6 +131,11 @@ export default function BillingConfig() {
       });
       if (!response.ok) {
         const error = await response.json();
+        console.error('API Error Response:', error);
+        if (error.errors) {
+          const validationErrors = error.errors.map((e: any) => `${e.path?.join('.')}: ${e.message}`).join('\n');
+          throw new Error(`Validation errors:\n${validationErrors}`);
+        }
         throw new Error(error.message || 'Failed to create billing configuration');
       }
       return response.json();
@@ -143,6 +148,7 @@ export default function BillingConfig() {
       setSelectedCandidate(null);
     },
     onError: (error: Error) => {
+      console.error('Create billing configuration error:', error);
       toast({ title: "Error", description: error.message, variant: "destructive" });
     }
   });
