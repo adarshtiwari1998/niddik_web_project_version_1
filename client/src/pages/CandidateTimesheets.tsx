@@ -996,9 +996,9 @@ function TimesheetTemplate({ timesheet, billingConfig, user }: {
       <div className="flex justify-between items-start mb-6">
         <div className="flex items-start gap-4">
           {/* Niddik Logo */}
-          {niddikCompany?.logo_url && (
+          {(niddikCompany?.logoUrl || niddikCompany?.logo_url) && (
             <img 
-              src={niddikCompany.logo_url} 
+              src={niddikCompany.logoUrl || niddikCompany.logo_url} 
               alt={niddikCompany.name || 'NIDDIK'} 
               className="w-16 h-16 object-contain"
             />
@@ -1006,11 +1006,11 @@ function TimesheetTemplate({ timesheet, billingConfig, user }: {
           <div>
             <h3 className="text-xl font-bold">{niddikCompany?.name || 'NIDDIK'}</h3>
             <div className="text-sm text-gray-600 space-y-1">
-              <p>{niddikCompany?.address || 'Address'}</p>
-              <p>{niddikCompany?.city && niddikCompany?.state && niddikCompany?.country ? `${niddikCompany.city}, ${niddikCompany.state} ${niddikCompany.zipCode || niddikCompany.zip_code || ''}` : 'City, State ZIP'}</p>
-              <p>{niddikCompany?.country || 'Country'}</p>
-              <p>{niddikCompany?.phoneNumbers?.[0] || niddikCompany?.phone_numbers?.[0] || '(000) 000-0000'}</p>
-              <p>{niddikCompany?.website || 'www.company-name.com'}</p>
+              <p>{niddikCompany?.address || 'Platina Heights, Sector 59'}</p>
+              <p>{niddikCompany?.city && niddikCompany?.state && niddikCompany?.country ? `${niddikCompany.city}, ${niddikCompany.state} ${niddikCompany.zipCode || niddikCompany.zip_code || ''}` : 'Noida, UP 201301'}</p>
+              <p>{niddikCompany?.country || 'India'}</p>
+              <p>{niddikCompany?.phoneNumbers?.[0] || niddikCompany?.phone_numbers?.[0] || '+91 9717312058'}</p>
+              <p>{niddikCompany?.website || 'https://niddik.com'}</p>
             </div>
           </div>
         </div>
