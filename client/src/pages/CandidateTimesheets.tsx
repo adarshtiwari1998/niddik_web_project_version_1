@@ -90,6 +90,29 @@ export default function CandidateTimesheets() {
     enabled: !!user,
   });
 
+  // Auto-select the most recent timesheet (current week if available)
+  useEffect(() => {
+    if (timesheets?.data && timesheets.data.length > 0 && selectedTimesheetId === null) {
+      // Find the current week's timesheet or the most recent one
+      const currentWeekStart = format(startOfWeek(new Date(), { weekStartsOn: 1 }), 'yyyy-MM-dd');
+      
+      // First try to find current week's timesheet
+      const currentWeekTimesheet = timesheets.data.find((t: WeeklyTimesheet) => 
+        t.weekStartDate === currentWeekStart
+      );
+      
+      if (currentWeekTimesheet) {
+        setSelectedTimesheetId(currentWeekTimesheet.id);
+      } else {
+        // If no current week timesheet, select the most recent one
+        const sortedTimesheets = [...timesheets.data].sort((a: WeeklyTimesheet, b: WeeklyTimesheet) => 
+          new Date(b.weekStartDate).getTime() - new Date(a.weekStartDate).getTime()
+        );
+        setSelectedTimesheetId(sortedTimesheets[0].id);
+      }
+    }
+  }, [timesheets?.data, selectedTimesheetId]);
+
   // Get specific week timesheet
   const weekStartString = format(selectedWeek, 'yyyy-MM-dd');
   const { data: weekTimesheet, isLoading: weekTimesheetLoading, error: weekTimesheetError } = useQuery({
@@ -847,7 +870,7 @@ export default function CandidateTimesheets() {
                         onChange={(e) => setSelectedTimesheetId(e.target.value ? parseInt(e.target.value) : null)}
                         className="px-4 py-2 border border-gray-300 rounded-md text-sm bg-white min-w-[280px] focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
                       >
-                        <option value="" disabled>Select a week range</option>
+                        {!selectedTimesheetId && <option value="" disabled>Select a week range</option>}
                         {timesheets.data
                           .sort((a: WeeklyTimesheet, b: WeeklyTimesheet) => 
                             new Date(b.weekStartDate).getTime() - new Date(a.weekStartDate).getTime()
