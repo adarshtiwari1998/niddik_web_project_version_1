@@ -96,7 +96,7 @@ export function setupAuth(app: Express) {
             connectTimeout: 10000,
             queryTimeout: 10000
         }),
-        name: 'admin.sid',
+        name: 'connect.sid',
         cookie: {
             secure: false, // Set to false for development
             maxAge: 30 * 24 * 60 * 60 * 1000, // 30 days
