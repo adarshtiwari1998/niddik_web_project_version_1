@@ -7,12 +7,14 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Badge } from "@/components/ui/badge";
-import { Calendar, Clock, DollarSign, FileText, Plus, Save, Check, X, Edit, Trash2, Building, Filter, User, ChevronDown } from "lucide-react";
+import { Calendar, Clock, DollarSign, FileText, Plus, Save, Check, X, Edit, Trash2, Building, Filter, User, ChevronDown, CalendarIcon } from "lucide-react";
 import { Link } from "wouter";
 import { useToast } from "@/hooks/use-toast";
 import { useUser } from "@/hooks/use-user";
 import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
-import { format, startOfWeek, endOfWeek, addDays, startOfMonth, endOfMonth, subWeeks, addWeeks, parseISO } from "date-fns";
+import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
+import { Calendar as CalendarComponent } from "@/components/ui/calendar";
+import { format, startOfWeek, endOfWeek, addDays, startOfMonth, endOfMonth, subWeeks, addWeeks, parseISO, startOfYear, endOfYear, eachWeekOfInterval } from "date-fns";
 import BillingConfig from "@/components/BillingConfig";
 import AdminLayout from "@/components/layout/AdminLayout";
 import { Helmet } from 'react-helmet-async';
@@ -640,221 +642,450 @@ export default function TimesheetManagement() {
   );
 }
 
-// Bi-Weekly Table View Component with Working Days Support
+// Bi-Weekly Table View Component with Working Days Support and Dynamic Generation
 function BiWeeklyTableView({ timesheets, getStatusBadge }: any) {
   // Fetch billing configuration to get working days
   const { data: billingData } = useQuery({
     queryKey: ['/api/admin/candidates-billing'],
   });
 
+  // Fetch weekly timesheets to create dynamic bi-weekly view
+  const { data: weeklyTimesheets } = useQuery({
+    queryKey: ['/api/admin/timesheets'],
+  });
+
+  // Timeframe filtering state
+  const [selectedTimeframe, setSelectedTimeframe] = useState<Date | undefined>();
+  const [calendarOpen, setCalendarOpen] = useState(false);
+
   const getBillingConfig = (candidateId: number) => {
     return billingData?.data?.find((config: any) => config.candidateId === candidateId);
   };
+
+  // Get available timeframe options based on weekly timesheets
+  const getTimeframeOptions = () => {
+    if (!weeklyTimesheets?.data) return [];
+    
+    const weeks = weeklyTimesheets.data.map((ts: any) => new Date(ts.weekStartDate));
+    const uniqueWeeks = [...new Set(weeks.map(w => w.getTime()))].map(t => new Date(t));
+    
+    return uniqueWeeks.sort((a, b) => a.getTime() - b.getTime()).map(week => ({
+      value: week,
+      label: `Week of ${format(week, 'MM/dd/yyyy')} to ${format(addDays(week, 6), 'MM/dd/yyyy')}`
+    }));
+  };
+
+  // Filter and group weekly timesheets into bi-weekly periods
+  const getBiWeeklyData = () => {
+    if (!weeklyTimesheets?.data) return [];
+    
+    let filteredTimesheets = weeklyTimesheets.data.filter((ts: any) => ts.status === 'approved');
+    
+    // Apply timeframe filter if selected
+    if (selectedTimeframe) {
+      const targetWeekStart = startOfWeek(selectedTimeframe, { weekStartsOn: 1 });
+      const targetWeekEnd = endOfWeek(addDays(targetWeekStart, 7), { weekStartsOn: 1 });
+      
+      filteredTimesheets = filteredTimesheets.filter((ts: any) => {
+        const tsStart = new Date(ts.weekStartDate);
+        return tsStart >= targetWeekStart && tsStart <= targetWeekEnd;
+      });
+    }
+
+    // Group by candidate and create bi-weekly periods
+    const groupedByCandidate = filteredTimesheets.reduce((acc: any, ts: any) => {
+      if (!acc[ts.candidateId]) {
+        acc[ts.candidateId] = [];
+      }
+      acc[ts.candidateId].push(ts);
+      return acc;
+    }, {});
+
+    const biWeeklyData: any[] = [];
+    
+    Object.entries(groupedByCandidate).forEach(([candidateId, timesheets]: [string, any]) => {
+      const sortedTimesheets = (timesheets as any[]).sort((a, b) => 
+        new Date(a.weekStartDate).getTime() - new Date(b.weekStartDate).getTime()
+      );
+
+      // Group consecutive weeks into bi-weekly periods
+      for (let i = 0; i < sortedTimesheets.length; i += 2) {
+        const week1 = sortedTimesheets[i];
+        const week2 = sortedTimesheets[i + 1];
+        
+        // Only create bi-weekly record if we have at least one week of data
+        if (week1) {
+          const billingConfig = getBillingConfig(parseInt(candidateId));
+          const workingDays = billingConfig?.workingDaysPerWeek || 5;
+          
+          biWeeklyData.push({
+            id: `bi-${candidateId}-${i}`,
+            candidateId: parseInt(candidateId),
+            candidateName: week1.candidateName,
+            candidateEmail: week1.candidateEmail,
+            week1Data: week1,
+            week2Data: week2 || null, // Only include week2 if it exists
+            totalHours: (parseFloat(week1.totalWeeklyHours) + (week2 ? parseFloat(week2.totalWeeklyHours) : 0)).toFixed(2),
+            totalAmount: (parseFloat(week1.totalWeeklyAmount) + (week2 ? parseFloat(week2.totalWeeklyAmount) : 0)).toFixed(2),
+            workingDays,
+            periodStart: week1.weekStartDate,
+            periodEnd: week2 ? week2.weekEndDate : week1.weekEndDate
+          });
+        }
+      }
+    });
+
+    return biWeeklyData;
+  };
+
+  const biWeeklyData = getBiWeeklyData();
+  const timeframeOptions = getTimeframeOptions();
 
   return (
     <div className="space-y-6">
       <div className="flex justify-between items-center">
         <h3 className="text-lg font-medium">Bi-Weekly Timesheets</h3>
         <div className="text-sm text-muted-foreground">
-          Automatically aggregated from approved weekly timesheets
+          Dynamically created from approved weekly timesheets
         </div>
       </div>
 
-      {/* Timesheets List */}
-      {timesheets.length > 0 ? (
-        timesheets.map((timesheet: BiWeeklyTimesheet) => {
-          const billingConfig = getBillingConfig(timesheet.candidateId);
-          const workingDays = billingConfig?.workingDaysPerWeek || 5;
-          const dailyHoursWeek1 = (parseFloat(timesheet.week1TotalHours) / workingDays) || 0;
-          const dailyHoursWeek2 = (parseFloat(timesheet.week2TotalHours) / workingDays) || 0;
+      {/* Timeframe Filter */}
+      <div className="flex gap-4 items-center bg-gray-50 p-4 rounded-lg">
+        <Label className="font-medium">Timeframe</Label>
+        <Select
+          value={selectedTimeframe ? format(selectedTimeframe, 'yyyy-MM-dd') : ''}
+          onValueChange={(value) => {
+            if (value) {
+              setSelectedTimeframe(new Date(value));
+            } else {
+              setSelectedTimeframe(undefined);
+            }
+          }}
+        >
+          <SelectTrigger className="w-80">
+            <SelectValue placeholder="Select timeframe" />
+          </SelectTrigger>
+          <SelectContent>
+            <SelectItem value="">All Timeframes</SelectItem>
+            {timeframeOptions.map((option) => (
+              <SelectItem key={option.value.getTime()} value={format(option.value, 'yyyy-MM-dd')}>
+                {option.label}
+              </SelectItem>
+            ))}
+          </SelectContent>
+        </Select>
+
+        {/* Calendar Popover */}
+        <Popover open={calendarOpen} onOpenChange={setCalendarOpen}>
+          <PopoverTrigger asChild>
+            <Button variant="outline" size="sm">
+              <CalendarIcon className="w-4 h-4 mr-2" />
+              Calendar
+            </Button>
+          </PopoverTrigger>
+          <PopoverContent className="w-auto p-0" align="start">
+            <div className="p-3 border-b">
+              <div className="bg-green-500 text-white text-center py-2 rounded font-medium">
+                {selectedTimeframe ? format(selectedTimeframe, 'MMMM yyyy') : format(new Date(), 'MMMM yyyy')}
+              </div>
+            </div>
+            <CalendarComponent
+              mode="single"
+              selected={selectedTimeframe}
+              onSelect={(date) => {
+                if (date) {
+                  setSelectedTimeframe(startOfWeek(date, { weekStartsOn: 1 }));
+                }
+                setCalendarOpen(false);
+              }}
+              className="rounded-md"
+            />
+            {selectedTimeframe && (
+              <div className="p-3 border-t text-center">
+                <div className="text-sm font-medium text-green-600">Week Range</div>
+                <div className="text-xs text-gray-600">
+                  {format(selectedTimeframe, 'MMM d')} - {format(addDays(selectedTimeframe, 13), 'MMM d, yyyy')}
+                </div>
+              </div>
+            )}
+          </PopoverContent>
+        </Popover>
+
+        {selectedTimeframe && (
+          <Button
+            variant="outline"
+            size="sm"
+            onClick={() => setSelectedTimeframe(undefined)}
+          >
+            Clear Filter
+          </Button>
+        )}
+      </div>
+
+      {/* Bi-Weekly Timesheets List */}
+      {biWeeklyData.length > 0 ? (
+        biWeeklyData.map((biWeekly: any) => {
+          const week1 = biWeekly.week1Data;
+          const week2 = biWeekly.week2Data;
 
           // Define working days based on configuration
-          const getWorkingDaysData = (weekHours: number, weekNumber: number) => {
+          const getWeekDaysData = (weekData: any) => {
+            if (!weekData) return [];
+            
             const baseData = [
-              { day: 'Mon (Total)', hours: weekHours, isWorking: true },
-              { day: 'Tue (Total)', hours: weekHours, isWorking: true },
-              { day: 'Wed (Total)', hours: weekHours, isWorking: true },
-              { day: 'Thu (Total)', hours: weekHours, isWorking: true },
-              { day: 'Fri (Total)', hours: weekHours, isWorking: true },
-              { day: 'Sat (Total)', hours: 0, isWorking: workingDays === 6 },
-              { day: 'Sun (Total)', hours: 0, isWorking: false }
+              { day: 'Mon (Total)', hours: weekData.mondayHours },
+              { day: 'Tue (Total)', hours: weekData.tuesdayHours },
+              { day: 'Wed (Total)', hours: weekData.wednesdayHours },
+              { day: 'Thu (Total)', hours: weekData.thursdayHours },
+              { day: 'Fri (Total)', hours: weekData.fridayHours },
+              { day: 'Sat (Total)', hours: weekData.saturdayHours, isWorking: biWeekly.workingDays === 6 }
             ];
-            return baseData.filter(day => day.isWorking);
+            return baseData.filter(day => day.isWorking !== false);
           };
 
-          const week1Data = getWorkingDaysData(dailyHoursWeek1, 1);
-          const week2Data = getWorkingDaysData(dailyHoursWeek2, 2);
+          const week1Data = getWeekDaysData(week1);
+          const week2Data = week2 ? getWeekDaysData(week2) : [];
 
           return (
-            <div key={timesheet.id} className="border rounded-lg overflow-hidden">
+            <div key={biWeekly.id} className="border rounded-lg overflow-hidden">
               {/* Header with candidate info and status */}
               <div className="bg-blue-50 p-4 border-b">
                 <div className="flex justify-between items-center">
                   <div>
-                    <h3 className="font-medium text-lg">{timesheet.candidateName}</h3>
-                    <p className="text-sm text-muted-foreground">{timesheet.candidateEmail}</p>
+                    <h3 className="font-medium text-lg">{biWeekly.candidateName}</h3>
+                    <p className="text-sm text-muted-foreground">{biWeekly.candidateEmail}</p>
                     <p className="text-sm font-medium mt-1">
-                      Bi-Weekly Period: {format(new Date(timesheet.week1StartDate), 'M/d/yyyy')} - {format(new Date(timesheet.week2EndDate), 'M/d/yyyy')}
+                      Bi-Weekly Period: {format(new Date(biWeekly.periodStart), 'M/d/yyyy')} - {format(new Date(biWeekly.periodEnd), 'M/d/yyyy')}
                     </p>
                     <p className="text-xs text-blue-600 mt-1">
-                      Working Days: {workingDays} days/week
+                      Working Days: {biWeekly.workingDays} days/week
                     </p>
                   </div>
                   <div className="flex items-center gap-4">
-                    {getStatusBadge(timesheet.status)}
+                    <Badge variant="outline" className="bg-blue-100 text-blue-800">
+                      calculated
+                    </Badge>
                     <div className="text-right">
-                      <p className="text-sm font-medium">Total Hours: {parseFloat(timesheet.totalHours).toFixed(2)}</p>
-                      <p className="text-sm text-muted-foreground">Total Amount: {timesheet.currency || 'INR'} {parseFloat(timesheet.totalAmount).toFixed(2)}</p>
+                      <p className="text-sm font-medium">Total Hours: {biWeekly.totalHours}</p>
+                      <p className="text-sm text-muted-foreground">Total Amount: INR {biWeekly.totalAmount}</p>
                     </div>
                   </div>
                 </div>
               </div>
 
-              {/* Table with Week-by-Week Data */}
+              {/* Table */}
               <div className="overflow-x-auto">
-                <table className="w-full">
+                <table className="w-full border-collapse border border-gray-300">
                   <thead>
                     <tr className="bg-green-500 text-white">
-                      <th className="p-3 text-left font-medium">Day of Week</th>
-                      <th className="p-3 text-center font-medium">Regular<br/>[h:mm]</th>
-                      <th className="p-3 text-center font-medium">Overtime<br/>[h:mm]</th>
-                      <th className="p-3 text-center font-medium">Sick<br/>[h:mm]</th>
-                      <th className="p-3 text-center font-medium">Paid Leave<br/>[h:mm]</th>
-                      <th className="p-3 text-center font-medium">Unpaid Leave<br/>[h:mm]</th>
-                      <th className="p-3 text-center font-medium bg-gray-600">TOTAL<br/>[h:mm]</th>
+                      <th className="border border-gray-300 p-3 text-left font-medium">Day of Week</th>
+                      <th className="border border-gray-300 p-3 text-center font-medium">Regular<br/>[h:mm]</th>
+                      <th className="border border-gray-300 p-3 text-center font-medium">Overtime<br/>[h:mm]</th>
+                      <th className="border border-gray-300 p-3 text-center font-medium">Sick<br/>[h:mm]</th>
+                      <th className="border border-gray-300 p-3 text-center font-medium">Paid Leave<br/>[h:mm]</th>
+                      <th className="border border-gray-300 p-3 text-center font-medium">Unpaid Leave<br/>[h:mm]</th>
+                      <th className="border border-gray-300 p-3 text-center font-medium bg-gray-600">TOTAL<br/>[h:mm]</th>
                     </tr>
                   </thead>
                   <tbody>
                     {/* Week 1 Header */}
-                    <tr className="bg-blue-200 font-semibold">
-                      <td colSpan={7} className="p-2 text-center text-blue-800">
-                        Week 1: {format(new Date(timesheet.week1StartDate), 'M/d')} - {format(new Date(timesheet.week1EndDate), 'M/d')}
+                    <tr className="bg-blue-100 font-semibold">
+                      <td colSpan={7} className="border border-gray-300 p-2 text-center text-gray-800">
+                        Week 1: {format(new Date(week1.weekStartDate), 'M/d')} - {format(new Date(week1.weekEndDate), 'M/d')}
                       </td>
                     </tr>
-                    
                     {/* Week 1 Data */}
-                    {week1Data.map((row, index) => (
+                    {week1Data.map((dayData, index) => (
                       <tr key={`week1-${index}`} className="bg-blue-50">
-                        <td className="p-3 border-r font-medium">{row.day}</td>
-                        <td className="p-3 text-center border-r">{row.hours.toFixed(2)}</td>
-                        <td className="p-3 text-center border-r">0.00</td>
-                        <td className="p-3 text-center border-r">0.00</td>
-                        <td className="p-3 text-center border-r">0.00</td>
-                        <td className="p-3 text-center border-r">0.00</td>
-                        <td className="p-3 text-center font-medium bg-blue-100">{row.hours.toFixed(2)}</td>
+                        <td className="border border-gray-300 p-3 font-medium">{dayData.day}</td>
+                        <td className="border border-gray-300 p-3 text-center">{parseFloat(dayData.hours || 0).toFixed(2)}</td>
+                        <td className="border border-gray-300 p-3 text-center">0.00</td>
+                        <td className="border border-gray-300 p-3 text-center">0.00</td>
+                        <td className="border border-gray-300 p-3 text-center">0.00</td>
+                        <td className="border border-gray-300 p-3 text-center">0.00</td>
+                        <td className="border border-gray-300 p-3 text-center font-medium bg-gray-100">{parseFloat(dayData.hours || 0).toFixed(2)}</td>
                       </tr>
                     ))}
-
-                    {/* Week 2 Header */}
-                    <tr className="bg-green-200 font-semibold">
-                      <td colSpan={7} className="p-2 text-center text-green-800">
-                        Week 2: {format(new Date(timesheet.week2StartDate), 'M/d')} - {format(new Date(timesheet.week2EndDate), 'M/d')}
-                      </td>
-                    </tr>
                     
-                    {/* Week 2 Data with Different Background */}
-                    {week2Data.map((row, index) => (
-                      <tr key={`week2-${index}`} className="bg-green-50">
-                        <td className="p-3 border-r font-medium">{row.day}</td>
-                        <td className="p-3 text-center border-r">{row.hours.toFixed(2)}</td>
-                        <td className="p-3 text-center border-r">0.00</td>
-                        <td className="p-3 text-center border-r">0.00</td>
-                        <td className="p-3 text-center border-r">0.00</td>
-                        <td className="p-3 text-center border-r">0.00</td>
-                        <td className="p-3 text-center font-medium bg-green-100">{row.hours.toFixed(2)}</td>
-                      </tr>
-                    ))}
+                    {/* Week 2 Header - Only show if week2 exists */}
+                    {week2 && (
+                      <>
+                        <tr className="bg-green-100 font-semibold">
+                          <td colSpan={7} className="border border-gray-300 p-2 text-center text-gray-800">
+                            Week 2: {format(new Date(week2.weekStartDate), 'M/d')} - {format(new Date(week2.weekEndDate), 'M/d')}
+                          </td>
+                        </tr>
+                        {/* Week 2 Data */}
+                        {week2Data.map((dayData, index) => (
+                          <tr key={`week2-${index}`} className="bg-green-50">
+                            <td className="border border-gray-300 p-3 font-medium">{dayData.day}</td>
+                            <td className="border border-gray-300 p-3 text-center">{parseFloat(dayData.hours || 0).toFixed(2)}</td>
+                            <td className="border border-gray-300 p-3 text-center">0.00</td>
+                            <td className="border border-gray-300 p-3 text-center">0.00</td>
+                            <td className="border border-gray-300 p-3 text-center">0.00</td>
+                            <td className="border border-gray-300 p-3 text-center">0.00</td>
+                            <td className="border border-gray-300 p-3 text-center font-medium bg-gray-100">{parseFloat(dayData.hours || 0).toFixed(2)}</td>
+                          </tr>
+                        ))}
+                      </>
+                    )}
                     
                     {/* Totals Row */}
-                    <tr className="bg-yellow-100 font-medium">
-                      <td className="p-3 border-r">Total Hrs:</td>
-                      <td className="p-3 text-center border-r">{(parseFloat(timesheet.totalHours) || 0).toFixed(2)}</td>
-                      <td className="p-3 text-center border-r">0.00</td>
-                      <td className="p-3 text-center border-r">0.00</td>
-                      <td className="p-3 text-center border-r">0.00</td>
-                      <td className="p-3 text-center border-r">0.00</td>
-                      <td className="p-3 text-center bg-yellow-200">{(parseFloat(timesheet.totalHours) || 0).toFixed(2)}</td>
+                    <tr className="bg-yellow-200 font-bold">
+                      <td className="border border-gray-300 p-3">Total Hrs:</td>
+                      <td className="border border-gray-300 p-3 text-center">{biWeekly.totalHours}</td>
+                      <td className="border border-gray-300 p-3 text-center">0.00</td>
+                      <td className="border border-gray-300 p-3 text-center">0.00</td>
+                      <td className="border border-gray-300 p-3 text-center">0.00</td>
+                      <td className="border border-gray-300 p-3 text-center">0.00</td>
+                      <td className="border border-gray-300 p-3 text-center bg-gray-200">{biWeekly.totalHours}</td>
                     </tr>
 
                     {/* Rate Row */}
-                    <tr className="bg-gray-50">
-                      <td className="p-3 border-r font-medium">Rate/Hour:</td>
-                      <td className="p-3 text-center border-r">INR {((parseFloat(timesheet.totalAmount || '0') / (parseFloat(timesheet.totalHours) || 1)) || 0).toFixed(2)}</td>
-                      <td className="p-3 text-center border-r">INR 0.00</td>
-                      <td className="p-3 text-center border-r">INR 0.00</td>
-                      <td className="p-3 text-center border-r">INR 0.00</td>
-                      <td className="p-3 text-center border-r">INR 0.00</td>
-                      <td className="p-3 text-center bg-gray-200"></td>
+                    <tr className="bg-gray-100">
+                      <td className="border border-gray-300 p-3 font-medium">Rate/Hour:</td>
+                      <td className="border border-gray-300 p-3 text-center">INR {(parseFloat(biWeekly.totalAmount) / parseFloat(biWeekly.totalHours) || 0).toFixed(2)}</td>
+                      <td className="border border-gray-300 p-3 text-center">INR 0.00</td>
+                      <td className="border border-gray-300 p-3 text-center">INR 0.00</td>
+                      <td className="border border-gray-300 p-3 text-center">INR 0.00</td>
+                      <td className="border border-gray-300 p-3 text-center">INR 0.00</td>
+                      <td className="border border-gray-300 p-3 text-center bg-gray-200"></td>
                     </tr>
 
-                    {/* Pay Row */}
+                    {/* Total Pay Row */}
                     <tr className="bg-white">
-                      <td className="p-3 border-r font-medium">Total Pay:</td>
-                      <td className="p-3 text-center border-r">INR {parseFloat(timesheet.totalAmount || '0').toFixed(2)}</td>
-                      <td className="p-3 text-center border-r">INR 0.00</td>
-                      <td className="p-3 text-center border-r">INR 0.00</td>
-                      <td className="p-3 text-center border-r">INR 0.00</td>
-                      <td className="p-3 text-center border-r">INR 0.00</td>
-                      <td className="p-3 text-center bg-red-500 text-white font-bold">INR {parseFloat(timesheet.totalAmount || '0').toFixed(2)}</td>
+                      <td className="border border-gray-300 p-3 font-medium">Total Pay:</td>
+                      <td className="border border-gray-300 p-3 text-center">INR {biWeekly.totalAmount}</td>
+                      <td className="border border-gray-300 p-3 text-center">INR 0.00</td>
+                      <td className="border border-gray-300 p-3 text-center">INR 0.00</td>
+                      <td className="border border-gray-300 p-3 text-center">INR 0.00</td>
+                      <td className="border border-gray-300 p-3 text-center">INR 0.00</td>
+                      <td className="border border-gray-300 p-3 text-center bg-red-500 text-white font-bold">INR {biWeekly.totalAmount}</td>
                     </tr>
                   </tbody>
                 </table>
               </div>
 
-              {/* Week Breakdown Summary */}
-              <div className="bg-gray-50 p-4 border-t">
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                  <div className="p-3 bg-blue-50 rounded-lg border-l-4 border-blue-400">
-                    <h4 className="font-medium mb-2 text-blue-800">Week 1</h4>
-                    <p className="text-sm">Period: {format(new Date(timesheet.week1StartDate), 'M/d')} - {format(new Date(timesheet.week1EndDate), 'M/d')}</p>
-                    <p className="text-sm">Hours: {parseFloat(timesheet.week1TotalHours).toFixed(2)}</p>
-                    <p className="text-sm">Amount: INR {parseFloat(timesheet.week1TotalAmount).toFixed(2)}</p>
-                  </div>
-                  <div className="p-3 bg-green-50 rounded-lg border-l-4 border-green-400">
-                    <h4 className="font-medium mb-2 text-green-800">Week 2</h4>
-                    <p className="text-sm">Period: {format(new Date(timesheet.week2StartDate), 'M/d')} - {format(new Date(timesheet.week2EndDate), 'M/d')}</p>
-                    <p className="text-sm">Hours: {parseFloat(timesheet.week2TotalHours).toFixed(2)}</p>
-                    <p className="text-sm">Amount: INR {parseFloat(timesheet.week2TotalAmount).toFixed(2)}</p>
+              {/* Week Breakdown Summary - Only show if both weeks exist */}
+              {week2 && (
+                <div className="bg-gray-50 p-4 border-t">
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <div className="p-3 bg-blue-50 rounded-lg border-l-4 border-blue-400">
+                      <h4 className="font-medium mb-2 text-blue-800">Week 1</h4>
+                      <p className="text-sm">Period: {format(new Date(week1.weekStartDate), 'M/d')} - {format(new Date(week1.weekEndDate), 'M/d')}</p>
+                      <p className="text-sm">Hours: {parseFloat(week1.totalWeeklyHours).toFixed(2)}</p>
+                      <p className="text-sm">Amount: INR {parseFloat(week1.totalWeeklyAmount).toFixed(2)}</p>
+                    </div>
+                    <div className="p-3 bg-green-50 rounded-lg border-l-4 border-green-400">
+                      <h4 className="font-medium mb-2 text-green-800">Week 2</h4>
+                      <p className="text-sm">Period: {format(new Date(week2.weekStartDate), 'M/d')} - {format(new Date(week2.weekEndDate), 'M/d')}</p>
+                      <p className="text-sm">Hours: {parseFloat(week2.totalWeeklyHours).toFixed(2)}</p>
+                      <p className="text-sm">Amount: INR {parseFloat(week2.totalWeeklyAmount).toFixed(2)}</p>
+                    </div>
                   </div>
                 </div>
-              </div>
+              )}
             </div>
           );
         })
       ) : (
         <div className="text-center py-8 text-muted-foreground">
-          No bi-weekly timesheets found. Bi-weekly timesheets are automatically generated when candidates have approved weekly timesheets.
+          No bi-weekly data found. Data is dynamically created from approved weekly timesheets.
         </div>
       )}
     </div>
   );
 }
 
-// Monthly Table View Component with Working Days Support - Auto-Aggregated
+// Monthly Table View Component with Working Days Support and Dynamic Filtering
 function MonthlyTableView({ timesheets, getStatusBadge }: any) {
   // Fetch billing configuration to get working days
   const { data: billingData } = useQuery({
     queryKey: ['/api/admin/candidates-billing'],
   });
 
+  // Fetch weekly timesheets for dynamic aggregation
+  const { data: weeklyTimesheets } = useQuery({
+    queryKey: ['/api/admin/timesheets'],
+  });
+
+  // Monthly filtering state
+  const [selectedMonth, setSelectedMonth] = useState<Date | undefined>();
+  const [selectedYear, setSelectedYear] = useState<string>('');
+  const [calendarOpen, setCalendarOpen] = useState(false);
+
   const getBillingConfig = (candidateId: number) => {
     return billingData?.data?.find((config: any) => config.candidateId === candidateId);
   };
 
+  // Get available month/year options based on weekly timesheets
+  const getMonthYearOptions = () => {
+    if (!weeklyTimesheets?.data) return { months: [], years: [] };
+    
+    const monthsSet = new Set<string>();
+    const yearsSet = new Set<string>();
+    
+    weeklyTimesheets.data.forEach((ts: any) => {
+      const weekStart = new Date(ts.weekStartDate);
+      const year = weekStart.getFullYear().toString();
+      const monthYear = `${year}-${(weekStart.getMonth() + 1).toString().padStart(2, '0')}`;
+      
+      yearsSet.add(year);
+      monthsSet.add(monthYear);
+    });
+    
+    const months = Array.from(monthsSet).sort().map(monthYear => {
+      const [year, month] = monthYear.split('-');
+      const date = new Date(parseInt(year), parseInt(month) - 1, 1);
+      return {
+        value: monthYear,
+        label: format(date, 'MMMM yyyy')
+      };
+    });
+    
+    const years = Array.from(yearsSet).sort().map(year => ({
+      value: year,
+      label: year
+    }));
+    
+    return { months, years };
+  };
+
   // Function to group weekly timesheets by candidate and month
-  const groupTimesheetsByMonth = (weeklyTimesheets: any[]) => {
+  const groupTimesheetsByMonth = (weeklyTimesheetsList: any[]) => {
     const monthlyGroups: { [key: string]: any[] } = {};
     
-    weeklyTimesheets.forEach((timesheet: any) => {
-      if (timesheet.status === 'approved') {
-        const weekStart = new Date(timesheet.weekStartDate);
-        const monthKey = `${timesheet.candidateId}-${weekStart.getFullYear()}-${weekStart.getMonth()}`;
-        
-        if (!monthlyGroups[monthKey]) {
-          monthlyGroups[monthKey] = [];
-        }
-        monthlyGroups[monthKey].push(timesheet);
+    let filteredTimesheets = weeklyTimesheetsList.filter((ts: any) => ts.status === 'approved');
+    
+    // Apply month filter if selected
+    if (selectedMonth) {
+      const targetMonth = selectedMonth.getMonth();
+      const targetYear = selectedMonth.getFullYear();
+      
+      filteredTimesheets = filteredTimesheets.filter((ts: any) => {
+        const weekStart = new Date(ts.weekStartDate);
+        return weekStart.getMonth() === targetMonth && weekStart.getFullYear() === targetYear;
+      });
+    }
+    
+    // Apply year filter if selected
+    if (selectedYear) {
+      const targetYear = parseInt(selectedYear);
+      filteredTimesheets = filteredTimesheets.filter((ts: any) => {
+        const weekStart = new Date(ts.weekStartDate);
+        return weekStart.getFullYear() === targetYear;
+      });
+    }
+    
+    filteredTimesheets.forEach((timesheet: any) => {
+      const weekStart = new Date(timesheet.weekStartDate);
+      const monthKey = `${timesheet.candidateId}-${weekStart.getFullYear()}-${weekStart.getMonth()}`;
+      
+      if (!monthlyGroups[monthKey]) {
+        monthlyGroups[monthKey] = [];
       }
+      monthlyGroups[monthKey].push(timesheet);
     });
     
     return monthlyGroups;
@@ -862,19 +1093,19 @@ function MonthlyTableView({ timesheets, getStatusBadge }: any) {
 
   // Function to aggregate weekly data into monthly data
   const aggregateMonthlyData = (monthlyGroups: { [key: string]: any[] }) => {
-    return Object.entries(monthlyGroups).map(([monthKey, weeklyTimesheets]) => {
-      const firstTimesheet = weeklyTimesheets[0];
+    return Object.entries(monthlyGroups).map(([monthKey, weeklyTimesheetsList]) => {
+      const firstTimesheet = weeklyTimesheetsList[0];
       const candidateId = firstTimesheet.candidateId;
       const billingConfig = getBillingConfig(candidateId);
       
       // Calculate month boundaries
-      const firstWeekStart = new Date(weeklyTimesheets[0].weekStartDate);
+      const firstWeekStart = new Date(weeklyTimesheetsList[0].weekStartDate);
       const monthStart = new Date(firstWeekStart.getFullYear(), firstWeekStart.getMonth(), 1);
       const monthEnd = new Date(firstWeekStart.getFullYear(), firstWeekStart.getMonth() + 1, 0);
       
       // Calculate totals
-      const totalHours = weeklyTimesheets.reduce((sum, ts) => sum + parseFloat(ts.totalWeeklyHours || 0), 0);
-      const totalAmount = weeklyTimesheets.reduce((sum, ts) => sum + parseFloat(ts.totalWeeklyAmount || 0), 0);
+      const totalHours = weeklyTimesheetsList.reduce((sum, ts) => sum + parseFloat(ts.totalWeeklyHours || 0), 0);
+      const totalAmount = weeklyTimesheetsList.reduce((sum, ts) => sum + parseFloat(ts.totalWeeklyAmount || 0), 0);
       
       return {
         id: monthKey,
@@ -886,23 +1117,128 @@ function MonthlyTableView({ timesheets, getStatusBadge }: any) {
         periodEndDate: monthEnd.toISOString(),
         totalHours: totalHours.toString(),
         totalAmount: totalAmount.toString(),
-        totalWeeks: weeklyTimesheets.length,
-        weeklyTimesheets: weeklyTimesheets.sort((a, b) => new Date(a.weekStartDate).getTime() - new Date(b.weekStartDate).getTime()),
+        totalWeeks: weeklyTimesheetsList.length,
+        weeklyTimesheets: weeklyTimesheetsList.sort((a, b) => new Date(a.weekStartDate).getTime() - new Date(b.weekStartDate).getTime()),
         workingDaysPerWeek: billingConfig?.workingDaysPerWeek || 5
       };
     });
   };
 
-  const monthlyGroups = groupTimesheetsByMonth(timesheets);
+  const monthlyGroups = groupTimesheetsByMonth(weeklyTimesheets?.data || []);
   const monthlyData = aggregateMonthlyData(monthlyGroups);
+  const { months, years } = getMonthYearOptions();
 
   return (
     <div className="space-y-6">
       <div className="flex justify-between items-center">
         <h3 className="text-lg font-medium">Monthly Timesheets</h3>
         <div className="text-sm text-muted-foreground">
-          Automatically aggregated from approved weekly timesheets
+          Dynamically aggregated from approved weekly timesheets
         </div>
+      </div>
+
+      {/* Month/Year Filter */}
+      <div className="flex gap-4 items-center bg-gray-50 p-4 rounded-lg">
+        <Label className="font-medium">Filter by</Label>
+        
+        {/* Month Selector */}
+        <Select
+          value={selectedMonth ? format(selectedMonth, 'yyyy-MM') : ''}
+          onValueChange={(value) => {
+            if (value) {
+              const [year, month] = value.split('-');
+              setSelectedMonth(new Date(parseInt(year), parseInt(month) - 1, 1));
+              setSelectedYear(''); // Clear year filter when month is selected
+            } else {
+              setSelectedMonth(undefined);
+            }
+          }}
+        >
+          <SelectTrigger className="w-60">
+            <SelectValue placeholder="Select month" />
+          </SelectTrigger>
+          <SelectContent>
+            <SelectItem value="">All Months</SelectItem>
+            {months.map((month) => (
+              <SelectItem key={month.value} value={month.value}>
+                {month.label}
+              </SelectItem>
+            ))}
+          </SelectContent>
+        </Select>
+
+        {/* Year Selector */}
+        <Select
+          value={selectedYear}
+          onValueChange={(value) => {
+            setSelectedYear(value);
+            if (value) {
+              setSelectedMonth(undefined); // Clear month filter when year is selected
+            }
+          }}
+        >
+          <SelectTrigger className="w-32">
+            <SelectValue placeholder="Year" />
+          </SelectTrigger>
+          <SelectContent>
+            <SelectItem value="">All Years</SelectItem>
+            {years.map((year) => (
+              <SelectItem key={year.value} value={year.value}>
+                {year.label}
+              </SelectItem>
+            ))}
+          </SelectContent>
+        </Select>
+
+        {/* Calendar Popover */}
+        <Popover open={calendarOpen} onOpenChange={setCalendarOpen}>
+          <PopoverTrigger asChild>
+            <Button variant="outline" size="sm">
+              <CalendarIcon className="w-4 h-4 mr-2" />
+              Calendar
+            </Button>
+          </PopoverTrigger>
+          <PopoverContent className="w-auto p-0" align="start">
+            <div className="p-3 border-b">
+              <div className="bg-green-500 text-white text-center py-2 rounded font-medium">
+                {selectedMonth ? format(selectedMonth, 'MMMM yyyy') : format(new Date(), 'MMMM yyyy')}
+              </div>
+            </div>
+            <CalendarComponent
+              mode="single"
+              selected={selectedMonth}
+              onSelect={(date) => {
+                if (date) {
+                  setSelectedMonth(startOfMonth(date));
+                  setSelectedYear('');
+                }
+                setCalendarOpen(false);
+              }}
+              className="rounded-md"
+            />
+            {selectedMonth && (
+              <div className="p-3 border-t text-center">
+                <div className="text-sm font-medium text-green-600">Month Range</div>
+                <div className="text-xs text-gray-600">
+                  {format(selectedMonth, 'MMM 1')} - {format(endOfMonth(selectedMonth), 'MMM d, yyyy')}
+                </div>
+              </div>
+            )}
+          </PopoverContent>
+        </Popover>
+
+        {(selectedMonth || selectedYear) && (
+          <Button
+            variant="outline"
+            size="sm"
+            onClick={() => {
+              setSelectedMonth(undefined);
+              setSelectedYear('');
+            }}
+          >
+            Clear Filter
+          </Button>
+        )}
       </div>
 
       {/* Monthly Data List */}

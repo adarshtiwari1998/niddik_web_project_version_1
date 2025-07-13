@@ -123,17 +123,31 @@ The application follows a standard full-stack architecture with clear separation
 
 # Recent Changes
 
-## Migration and Monthly Timesheet Enhancement (July 13, 2025)
+## Enhanced Bi-Weekly and Monthly Timesheet Views with Dynamic Filtering (July 13, 2025)
+- **Bi-Weekly View Enhancement**: Completely rewrote BiWeeklyTableView with dynamic aggregation from weekly timesheets
+  - **Dynamic Generation**: Replaced static bi-weekly data with real-time aggregation from approved weekly timesheets
+  - **Smart Week Detection**: Only shows weeks with actual submitted data, eliminating empty week displays
+  - **Timeframe Filtering**: Added dropdown and calendar-based filtering to select specific bi-weekly periods
+  - **Color-Coded Layout**: Week 1 in blue, Week 2 in green with proper visual distinction
+  - **Conditional Display**: Only shows Week 2 section when data exists, clean single-week display otherwise
+  - **Calendar Integration**: Interactive calendar popover for easy date selection with week range display
+- **Monthly View Enhancement**: Added comprehensive filtering and improved data aggregation
+  - **Month/Year Filtering**: Separate dropdowns for month and year selection with dynamic options
+  - **Calendar Navigation**: Interactive calendar for month selection with visual month range display
+  - **Dynamic Options**: Filter options automatically generated from available weekly timesheet data
+  - **Improved Aggregation**: Enhanced monthly data calculation with proper weekly timesheet grouping
+  - **Real-time Updates**: All data refreshes automatically when filters are applied or cleared
+- **User Experience Improvements**:
+  - **Clear Filter Options**: Both views have "Clear Filter" buttons to reset selections
+  - **Loading States**: Proper handling of data loading with fallback to empty arrays
+  - **Visual Consistency**: Consistent table styling with bordered cells and color-coded sections
+  - **Responsive Design**: All filtering controls work properly on different screen sizes
+- **Technical Enhancements**:
+  - **API Integration**: Both views fetch weekly timesheets directly for dynamic aggregation
+  - **Date Range Logic**: Proper start/end week and month boundary calculations
+  - **Data Validation**: Handles missing or null data gracefully with proper fallbacks
 - **Migration Status**: Successfully completed migration from Replit Agent to standard Replit environment
 - **Issue Fixed**: Resolved `billingData?.find is not a function` error by correcting API response structure access
-- **Monthly View Enhancement**: 
-  - Replaced manual monthly timesheet generation with automatic aggregation from weekly timesheets
-  - Monthly view now shows real-time week-by-week breakdown with individual weekly timesheet cards
-  - Each weekly card displays daily hours breakdown, status, and totals
-  - Added comprehensive monthly summary with total hours, amount, and averages
-  - Color-coded weekly cards for easy visual distinction
-- **Auto-Aggregation Logic**: Monthly timesheets are now automatically created by grouping approved weekly timesheets by candidate and month
-- **User Experience**: Admin can now view monthly data immediately without manual generation, similar to bi-weekly view
 - **Files Modified**: `client/src/pages/TimesheetManagement.tsx`
 
 ## Bi-Weekly and Monthly Timesheet Aggregation Implementation (July 13, 2025)
