@@ -196,7 +196,7 @@ export default function TimesheetManagement() {
 
   // Fetch hired candidates for admin filtering
   const { data: hiredCandidates } = useQuery({
-    queryKey: ['/api/admin/submitted-candidates'],
+    queryKey: ['/api/admin/hired-candidates'],
     enabled: isAdmin
   });
 
@@ -517,41 +517,33 @@ export default function TimesheetManagement() {
               <div className="space-y-4">
                 {isAdmin ? (
                   adminViewMode === 'weekly' ? (
-                    getFilteredTimesheets().map((timesheet: WeeklyTimesheet) => (
-                      <TimesheetCard 
-                        key={timesheet.id} 
-                        timesheet={timesheet} 
-                        onApprove={(id) => approveTimesheetMutation.mutate(id)}
-                        onReject={(id, reason) => rejectTimesheetMutation.mutate({ timesheetId: id, reason })}
-                        getStatusBadge={getStatusBadge}
-                      />
-                    ))
+                    <WeeklyTableView 
+                      timesheets={getFilteredTimesheets()}
+                      onApprove={(id) => approveTimesheetMutation.mutate(id)}
+                      onReject={(id, reason) => rejectTimesheetMutation.mutate({ timesheetId: id, reason })}
+                      getStatusBadge={getStatusBadge}
+                    />
                   ) : adminViewMode === 'bi-weekly' ? (
-                    getGroupedTimesheets().map((group: any) => (
-                      <BiWeeklyTimesheetCard 
-                        key={group.period} 
-                        group={group}
-                        getStatusBadge={getStatusBadge}
-                      />
-                    ))
+                    <BiWeeklyTableView 
+                      groups={getGroupedTimesheets()}
+                      onApprove={(id) => approveTimesheetMutation.mutate(id)}
+                      onReject={(id, reason) => rejectTimesheetMutation.mutate({ timesheetId: id, reason })}
+                      getStatusBadge={getStatusBadge}
+                    />
                   ) : (
-                    getGroupedTimesheets().map((group: any) => (
-                      <MonthlyTimesheetCard 
-                        key={group.period} 
-                        group={group}
-                        getStatusBadge={getStatusBadge}
-                      />
-                    ))
+                    <MonthlyTableView 
+                      groups={getGroupedTimesheets()}
+                      onApprove={(id) => approveTimesheetMutation.mutate(id)}
+                      onReject={(id, reason) => rejectTimesheetMutation.mutate({ timesheetId: id, reason })}
+                      getStatusBadge={getStatusBadge}
+                    />
                   )
                 ) : (
-                  candidateTimesheets?.data?.map((timesheet: WeeklyTimesheet) => (
-                    <TimesheetCard 
-                      key={timesheet.id} 
-                      timesheet={timesheet} 
-                      getStatusBadge={getStatusBadge}
-                      isCandidate={true}
-                    />
-                  ))
+                  <WeeklyTableView 
+                    timesheets={candidateTimesheets?.data || []}
+                    getStatusBadge={getStatusBadge}
+                    isCandidate={true}
+                  />
                 )}
 
                 {(isAdmin ? adminTimesheetsLoading : timesheetsLoading) && (
@@ -573,200 +565,465 @@ export default function TimesheetManagement() {
   );
 }
 
-// Individual Timesheet Card Component
-function TimesheetCard({ 
-  timesheet, 
-  onApprove, 
-  onReject, 
-  getStatusBadge,
-  isCandidate = false
-}: any) {
+// Weekly Table View Component
+function WeeklyTableView({ timesheets, onApprove, onReject, getStatusBadge }: any) {
   return (
-    <div className="border rounded-lg p-4">
-      <div className="flex justify-between items-start mb-2">
-        <div>
-          <h4 className="font-medium">{timesheet.candidateName || 'My Timesheet'}</h4>
-          {timesheet.candidateEmail && <p className="text-sm text-muted-foreground">{timesheet.candidateEmail}</p>}
-        </div>
-        {getStatusBadge(timesheet.status)}
-      </div>
-      <div className="grid grid-cols-2 md:grid-cols-4 gap-4 text-sm">
-        <div>
-          <span className="font-medium">Week:</span> {format(new Date(timesheet.weekStartDate), 'MMM dd')} - {format(new Date(timesheet.weekEndDate), 'MMM dd')}
-        </div>
-        <div>
-          <span className="font-medium">Total Hours:</span> {timesheet.totalWeeklyHours}
-        </div>
-        <div>
-          <span className="font-medium">Amount:</span> {timesheet.currency || 'USD'} {parseFloat(timesheet.totalWeeklyAmount || '0').toFixed(2)}
-        </div>
-        <div>
-          <span className="font-medium">Submitted:</span> {timesheet.submittedAt ? format(new Date(timesheet.submittedAt), 'MMM dd, yyyy') : '-'}
-        </div>
-      </div>
-      
-      {!isCandidate && timesheet.status === 'submitted' && (
-        <div className="flex gap-2 mt-4">
-          <Button
-            size="sm"
-            onClick={() => onApprove(timesheet.id)}
-          >
-            <Check className="w-4 h-4 mr-1" />
-            Approve
-          </Button>
-          <Dialog>
-            <DialogTrigger asChild>
-              <Button size="sm" variant="outline">
-                <X className="w-4 h-4 mr-1" />
-                Reject
-              </Button>
-            </DialogTrigger>
-            <DialogContent>
-              <DialogHeader>
-                <DialogTitle>Reject Timesheet</DialogTitle>
-                <DialogDescription>
-                  Please provide a reason for rejecting this timesheet.
-                </DialogDescription>
-              </DialogHeader>
-              <div className="space-y-4">
-                <textarea
-                  className="w-full p-3 border rounded-md"
-                  rows={3}
-                  placeholder="Rejection reason..."
-                  onChange={(e) => {
-                    const reason = e.target.value;
-                    if (reason.trim()) {
-                      onReject(timesheet.id, reason);
-                    }
-                  }}
-                />
-              </div>
-            </DialogContent>
-          </Dialog>
-        </div>
-      )}
-      
-      {timesheet.rejectionReason && (
-        <div className="mt-4 p-3 bg-red-50 border border-red-200 rounded-md">
-          <p className="text-sm font-medium text-red-800">Rejection Reason:</p>
-          <p className="text-sm text-red-700">{timesheet.rejectionReason}</p>
-        </div>
-      )}
-    </div>
-  );
-}
-
-// Bi-Weekly Timesheet Card Component  
-function BiWeeklyTimesheetCard({ group, getStatusBadge }: any) {
-  const startDate = group.timesheets[0]?.weekStartDate;
-  const endDate = group.timesheets[group.timesheets.length - 1]?.weekEndDate || group.timesheets[0]?.weekEndDate;
-  
-  return (
-    <div className="border rounded-lg p-4 bg-blue-50">
-      <div className="flex justify-between items-start mb-4">
-        <div>
-          <h4 className="font-medium text-lg">Bi-Weekly Period</h4>
-          <p className="text-sm text-muted-foreground">
-            {format(new Date(startDate), 'MMM dd')} - {format(new Date(endDate), 'MMM dd, yyyy')}
-          </p>
-        </div>
-        <div className="text-right">
-          <div className="font-medium">Total: {group.totalHours} hours</div>
-          <div className="text-sm text-muted-foreground">
-            Amount: ${group.totalAmount.toFixed(2)}
-          </div>
-        </div>
-      </div>
-      
-      <div className="space-y-3">
-        {group.timesheets.map((timesheet: WeeklyTimesheet) => (
-          <div key={timesheet.id} className="bg-white p-3 rounded border">
+    <div className="space-y-6">
+      {timesheets.map((timesheet: WeeklyTimesheet) => (
+        <div key={timesheet.id} className="border rounded-lg overflow-hidden">
+          {/* Header with candidate info and status */}
+          <div className="bg-gray-50 p-4 border-b">
             <div className="flex justify-between items-center">
               <div>
-                <span className="font-medium">{timesheet.candidateName}</span>
-                <span className="text-sm text-muted-foreground ml-2">
-                  Week {format(new Date(timesheet.weekStartDate), 'MMM dd')}
-                </span>
+                <h3 className="font-medium text-lg">{timesheet.candidateName}</h3>
+                <p className="text-sm text-muted-foreground">{timesheet.candidateEmail}</p>
+                <p className="text-sm font-medium mt-1">
+                  Week of: {format(new Date(timesheet.weekStartDate), 'M/d/yyyy')} - {format(new Date(timesheet.weekEndDate), 'M/d/yyyy')}
+                </p>
               </div>
               <div className="flex items-center gap-4">
-                <span className="text-sm">{timesheet.totalWeeklyHours}h</span>
                 {getStatusBadge(timesheet.status)}
+                {timesheet.status === 'submitted' && (
+                  <div className="flex gap-2">
+                    <Button size="sm" onClick={() => onApprove(timesheet.id)}>
+                      <Check className="w-4 h-4 mr-1" />
+                      Approve
+                    </Button>
+                    <Dialog>
+                      <DialogTrigger asChild>
+                        <Button size="sm" variant="outline">
+                          <X className="w-4 h-4 mr-1" />
+                          Reject
+                        </Button>
+                      </DialogTrigger>
+                      <DialogContent>
+                        <DialogHeader>
+                          <DialogTitle>Reject Timesheet</DialogTitle>
+                          <DialogDescription>
+                            Please provide a reason for rejecting this timesheet.
+                          </DialogDescription>
+                        </DialogHeader>
+                        <div className="space-y-4">
+                          <textarea
+                            className="w-full p-3 border rounded-md"
+                            rows={3}
+                            placeholder="Rejection reason..."
+                            onChange={(e) => {
+                              const reason = e.target.value;
+                              if (reason.trim()) {
+                                onReject(timesheet.id, reason);
+                              }
+                            }}
+                          />
+                        </div>
+                      </DialogContent>
+                    </Dialog>
+                  </div>
+                )}
               </div>
             </div>
           </div>
-        ))}
-      </div>
+
+          {/* Table */}
+          <div className="overflow-x-auto">
+            <table className="w-full">
+              <thead>
+                <tr className="bg-green-500 text-white">
+                  <th className="p-3 text-left font-medium">Day of Week</th>
+                  <th className="p-3 text-center font-medium">Regular<br/>[h:mm]</th>
+                  <th className="p-3 text-center font-medium">Overtime<br/>[h:mm]</th>
+                  <th className="p-3 text-center font-medium">Sick<br/>[h:mm]</th>
+                  <th className="p-3 text-center font-medium">Paid Leave<br/>[h:mm]</th>
+                  <th className="p-3 text-center font-medium">Unpaid Leave<br/>[h:mm]</th>
+                  <th className="p-3 text-center font-medium bg-gray-600">TOTAL<br/>[h:mm]</th>
+                </tr>
+              </thead>
+              <tbody>
+                {[
+                  { 
+                    day: `Mon ${format(addDays(new Date(timesheet.weekStartDate), 0), 'M/d')}`, 
+                    hours: timesheet.mondayHours 
+                  },
+                  { 
+                    day: `Tue ${format(addDays(new Date(timesheet.weekStartDate), 1), 'M/d')}`, 
+                    hours: timesheet.tuesdayHours 
+                  },
+                  { 
+                    day: `Wed ${format(addDays(new Date(timesheet.weekStartDate), 2), 'M/d')}`, 
+                    hours: timesheet.wednesdayHours 
+                  },
+                  { 
+                    day: `Thu ${format(addDays(new Date(timesheet.weekStartDate), 3), 'M/d')}`, 
+                    hours: timesheet.thursdayHours 
+                  },
+                  { 
+                    day: `Fri ${format(addDays(new Date(timesheet.weekStartDate), 4), 'M/d')}`, 
+                    hours: timesheet.fridayHours 
+                  },
+                  { 
+                    day: `Sat ${format(addDays(new Date(timesheet.weekStartDate), 5), 'M/d')}`, 
+                    hours: timesheet.saturdayHours 
+                  },
+                  { 
+                    day: `Sun ${format(addDays(new Date(timesheet.weekStartDate), 6), 'M/d')}`, 
+                    hours: timesheet.sundayHours 
+                  }
+                ].map((row, index) => (
+                  <tr key={index} className={index % 2 === 0 ? 'bg-white' : 'bg-gray-50'}>
+                    <td className="p-3 border-r font-medium">{row.day}</td>
+                    <td className="p-3 text-center border-r bg-green-50">{row.hours.toFixed(2)}</td>
+                    <td className="p-3 text-center border-r">0.00</td>
+                    <td className="p-3 text-center border-r bg-green-50">0.00</td>
+                    <td className="p-3 text-center border-r bg-green-50">0.00</td>
+                    <td className="p-3 text-center border-r bg-green-50">0.00</td>
+                    <td className="p-3 text-center font-medium bg-gray-100">{row.hours.toFixed(2)}</td>
+                  </tr>
+                ))}
+                
+                {/* Totals Row */}
+                <tr className="bg-green-100 font-medium">
+                  <td className="p-3 border-r">Total Hrs:</td>
+                  <td className="p-3 text-center border-r">{timesheet.totalWeeklyHours.toFixed(2)}</td>
+                  <td className="p-3 text-center border-r">0.00</td>
+                  <td className="p-3 text-center border-r">0.00</td>
+                  <td className="p-3 text-center border-r">0.00</td>
+                  <td className="p-3 text-center border-r">0.00</td>
+                  <td className="p-3 text-center bg-gray-200">{timesheet.totalWeeklyHours.toFixed(2)}</td>
+                </tr>
+
+                {/* Rate Row */}
+                <tr className="bg-gray-50">
+                  <td className="p-3 border-r font-medium">Rate/Hour:</td>
+                  <td className="p-3 text-center border-r">INR {(parseFloat(timesheet.totalWeeklyAmount || '0') / timesheet.totalWeeklyHours || 0).toFixed(2)}</td>
+                  <td className="p-3 text-center border-r">INR 0.00</td>
+                  <td className="p-3 text-center border-r">INR 0.00</td>
+                  <td className="p-3 text-center border-r">INR 0.00</td>
+                  <td className="p-3 text-center border-r">INR 0.00</td>
+                  <td className="p-3 text-center bg-gray-200"></td>
+                </tr>
+
+                {/* Pay Row */}
+                <tr className="bg-white">
+                  <td className="p-3 border-r font-medium">Total Pay:</td>
+                  <td className="p-3 text-center border-r">INR {timesheet.totalWeeklyAmount}</td>
+                  <td className="p-3 text-center border-r">INR 0.00</td>
+                  <td className="p-3 text-center border-r">INR 0.00</td>
+                  <td className="p-3 text-center border-r">INR 0.00</td>
+                  <td className="p-3 text-center border-r">INR 0.00</td>
+                  <td className="p-3 text-center bg-red-500 text-white font-bold">INR {timesheet.totalWeeklyAmount}</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+
+          {/* Summary */}
+          <div className="bg-gray-50 p-4 border-t">
+            <div className="flex justify-center gap-8 text-sm">
+              <div className="text-center">
+                <div className="font-bold text-lg text-red-600">Total Hours Reported: {timesheet.totalWeeklyHours.toFixed(2)}</div>
+              </div>
+              <div className="text-center">
+                <div className="font-bold text-lg text-red-600">Total Pay: INR {timesheet.totalWeeklyAmount}</div>
+              </div>
+            </div>
+          </div>
+
+          {timesheet.rejectionReason && (
+            <div className="bg-red-50 border-t border-red-200 p-4">
+              <p className="text-sm font-medium text-red-800">Rejection Reason:</p>
+              <p className="text-sm text-red-700">{timesheet.rejectionReason}</p>
+            </div>
+          )}
+        </div>
+      ))}
     </div>
   );
 }
 
-// Monthly Timesheet Card Component
-function MonthlyTimesheetCard({ group, getStatusBadge }: any) {
-  const monthName = format(new Date(group.period + '-01'), 'MMMM yyyy');
-  const candidateGroups = group.timesheets.reduce((acc: any, ts: WeeklyTimesheet) => {
-    const key = `${ts.candidateId}-${ts.candidateName}`;
-    if (!acc[key]) {
-      acc[key] = {
-        candidateName: ts.candidateName,
-        candidateEmail: ts.candidateEmail,
-        timesheets: [],
-        totalHours: 0,
-        totalAmount: 0
-      };
-    }
-    acc[key].timesheets.push(ts);
-    acc[key].totalHours += ts.totalWeeklyHours;
-    acc[key].totalAmount += parseFloat(ts.totalWeeklyAmount || '0');
-    return acc;
-  }, {});
-  
+// Bi-Weekly Table View Component
+function BiWeeklyTableView({ groups, onApprove, onReject, getStatusBadge }: any) {
   return (
-    <div className="border rounded-lg p-4 bg-green-50">
-      <div className="flex justify-between items-start mb-4">
-        <div>
-          <h4 className="font-medium text-lg">Monthly Summary - {monthName}</h4>
-          <p className="text-sm text-muted-foreground">
-            {Object.keys(candidateGroups).length} candidate(s), {group.timesheets.length} timesheet(s)
-          </p>
-        </div>
-        <div className="text-right">
-          <div className="font-medium">Total: {group.totalHours} hours</div>
-          <div className="text-sm text-muted-foreground">
-            Amount: ${group.totalAmount.toFixed(2)}
-          </div>
-        </div>
-      </div>
-      
-      <div className="space-y-4">
-        {Object.entries(candidateGroups).map(([key, candidate]: [string, any]) => (
-          <div key={key} className="bg-white p-4 rounded border">
-            <div className="flex justify-between items-start mb-3">
-              <div>
-                <h5 className="font-medium">{candidate.candidateName}</h5>
-                <p className="text-sm text-muted-foreground">{candidate.candidateEmail}</p>
-              </div>
-              <div className="text-right">
-                <div className="font-medium">{candidate.totalHours}h</div>
-                <div className="text-sm text-muted-foreground">
-                  ${candidate.totalAmount.toFixed(2)}
-                </div>
+    <div className="space-y-8">
+      {groups.map((group: any) => {
+        const candidateGroups = group.timesheets.reduce((acc: any, ts: WeeklyTimesheet) => {
+          const key = `${ts.candidateId}-${ts.candidateName}`;
+          if (!acc[key]) {
+            acc[key] = {
+              candidateName: ts.candidateName,
+              candidateEmail: ts.candidateEmail,
+              timesheets: []
+            };
+          }
+          acc[key].timesheets.push(ts);
+          return acc;
+        }, {});
+
+        return (
+          <div key={group.period} className="border rounded-lg overflow-hidden">
+            {/* Bi-Weekly Header */}
+            <div className="bg-blue-100 p-4 border-b">
+              <h3 className="font-bold text-xl">Bi-Weekly Period</h3>
+              <p className="text-sm text-muted-foreground">
+                {format(new Date(group.timesheets[0]?.weekStartDate), 'MMM dd')} - {format(new Date(group.timesheets[group.timesheets.length - 1]?.weekEndDate), 'MMM dd, yyyy')}
+              </p>
+              <div className="mt-2">
+                <span className="font-medium">Total: {group.totalHours} hours | Amount: INR {group.totalAmount.toFixed(2)}</span>
               </div>
             </div>
-            
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-2">
-              {candidate.timesheets.map((timesheet: WeeklyTimesheet) => (
-                <div key={timesheet.id} className="flex justify-between items-center p-2 bg-gray-50 rounded text-sm">
-                  <span>Week {format(new Date(timesheet.weekStartDate), 'MMM dd')}</span>
-                  <div className="flex items-center gap-2">
-                    <span>{timesheet.totalWeeklyHours}h</span>
-                    {getStatusBadge(timesheet.status)}
+
+            {/* Individual Candidate Tables */}
+            {Object.entries(candidateGroups).map(([key, candidate]: [string, any]) => (
+              <div key={key} className="border-b last:border-b-0">
+                <div className="bg-gray-50 p-3 border-b">
+                  <h4 className="font-medium">{candidate.candidateName}</h4>
+                  <p className="text-sm text-muted-foreground">{candidate.candidateEmail}</p>
+                </div>
+                
+                <div className="overflow-x-auto">
+                  <table className="w-full">
+                    <thead>
+                      <tr className="bg-blue-500 text-white">
+                        <th className="p-2 text-left font-medium">Week</th>
+                        <th className="p-2 text-center font-medium">Mon</th>
+                        <th className="p-2 text-center font-medium">Tue</th>
+                        <th className="p-2 text-center font-medium">Wed</th>
+                        <th className="p-2 text-center font-medium">Thu</th>
+                        <th className="p-2 text-center font-medium">Fri</th>
+                        <th className="p-2 text-center font-medium">Sat</th>
+                        <th className="p-2 text-center font-medium">Sun</th>
+                        <th className="p-2 text-center font-medium bg-gray-600">Total</th>
+                        <th className="p-2 text-center font-medium">Status</th>
+                        <th className="p-2 text-center font-medium">Actions</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      {candidate.timesheets.map((timesheet: WeeklyTimesheet, index: number) => (
+                        <tr key={timesheet.id} className={index % 2 === 0 ? 'bg-white' : 'bg-gray-50'}>
+                          <td className="p-2 border-r font-medium">
+                            {format(new Date(timesheet.weekStartDate), 'M/d')} - {format(new Date(timesheet.weekEndDate), 'M/d')}
+                          </td>
+                          <td className="p-2 text-center border-r bg-green-50">{timesheet.mondayHours.toFixed(2)}</td>
+                          <td className="p-2 text-center border-r bg-green-50">{timesheet.tuesdayHours.toFixed(2)}</td>
+                          <td className="p-2 text-center border-r bg-green-50">{timesheet.wednesdayHours.toFixed(2)}</td>
+                          <td className="p-2 text-center border-r bg-green-50">{timesheet.thursdayHours.toFixed(2)}</td>
+                          <td className="p-2 text-center border-r bg-green-50">{timesheet.fridayHours.toFixed(2)}</td>
+                          <td className="p-2 text-center border-r bg-green-50">{timesheet.saturdayHours.toFixed(2)}</td>
+                          <td className="p-2 text-center border-r bg-green-50">{timesheet.sundayHours.toFixed(2)}</td>
+                          <td className="p-2 text-center font-medium bg-gray-100">{timesheet.totalWeeklyHours.toFixed(2)}</td>
+                          <td className="p-2 text-center">{getStatusBadge(timesheet.status)}</td>
+                          <td className="p-2 text-center">
+                            {timesheet.status === 'submitted' && (
+                              <div className="flex gap-1 justify-center">
+                                <Button size="sm" onClick={() => onApprove(timesheet.id)}>
+                                  <Check className="w-3 h-3" />
+                                </Button>
+                                <Button size="sm" variant="outline" onClick={() => onReject(timesheet.id, 'Rejected by admin')}>
+                                  <X className="w-3 h-3" />
+                                </Button>
+                              </div>
+                            )}
+                          </td>
+                        </tr>
+                      ))}
+                      
+                      {/* Totals */}
+                      <tr className="bg-blue-100 font-bold">
+                        <td className="p-2 border-r">Bi-Weekly Total:</td>
+                        <td className="p-2 text-center border-r">
+                          {candidate.timesheets.reduce((sum: number, ts: WeeklyTimesheet) => sum + ts.mondayHours, 0).toFixed(2)}
+                        </td>
+                        <td className="p-2 text-center border-r">
+                          {candidate.timesheets.reduce((sum: number, ts: WeeklyTimesheet) => sum + ts.tuesdayHours, 0).toFixed(2)}
+                        </td>
+                        <td className="p-2 text-center border-r">
+                          {candidate.timesheets.reduce((sum: number, ts: WeeklyTimesheet) => sum + ts.wednesdayHours, 0).toFixed(2)}
+                        </td>
+                        <td className="p-2 text-center border-r">
+                          {candidate.timesheets.reduce((sum: number, ts: WeeklyTimesheet) => sum + ts.thursdayHours, 0).toFixed(2)}
+                        </td>
+                        <td className="p-2 text-center border-r">
+                          {candidate.timesheets.reduce((sum: number, ts: WeeklyTimesheet) => sum + ts.fridayHours, 0).toFixed(2)}
+                        </td>
+                        <td className="p-2 text-center border-r">
+                          {candidate.timesheets.reduce((sum: number, ts: WeeklyTimesheet) => sum + ts.saturdayHours, 0).toFixed(2)}
+                        </td>
+                        <td className="p-2 text-center border-r">
+                          {candidate.timesheets.reduce((sum: number, ts: WeeklyTimesheet) => sum + ts.sundayHours, 0).toFixed(2)}
+                        </td>
+                        <td className="p-2 text-center bg-gray-200">
+                          {candidate.timesheets.reduce((sum: number, ts: WeeklyTimesheet) => sum + ts.totalWeeklyHours, 0).toFixed(2)}
+                        </td>
+                        <td className="p-2 text-center"></td>
+                        <td className="p-2 text-center"></td>
+                      </tr>
+                    </tbody>
+                  </table>
+                </div>
+
+                {/* Pay Summary */}
+                <div className="bg-gray-50 p-3 text-center">
+                  <span className="font-bold text-red-600">
+                    Total Pay: INR {candidate.timesheets.reduce((sum: number, ts: WeeklyTimesheet) => sum + parseFloat(ts.totalWeeklyAmount || '0'), 0).toFixed(2)}
+                  </span>
+                </div>
+              </div>
+            ))}
+          </div>
+        );
+      })}
+    </div>
+  );
+}
+
+// Monthly Table View Component
+function MonthlyTableView({ groups, onApprove, onReject, getStatusBadge }: any) {
+  return (
+    <div className="space-y-8">
+      {groups.map((group: any) => {
+        const monthName = format(new Date(group.period + '-01'), 'MMMM yyyy');
+        const candidateGroups = group.timesheets.reduce((acc: any, ts: WeeklyTimesheet) => {
+          const key = `${ts.candidateId}-${ts.candidateName}`;
+          if (!acc[key]) {
+            acc[key] = {
+              candidateName: ts.candidateName,
+              candidateEmail: ts.candidateEmail,
+              timesheets: [],
+              totalHours: 0,
+              totalAmount: 0
+            };
+          }
+          acc[key].timesheets.push(ts);
+          acc[key].totalHours += ts.totalWeeklyHours;
+          acc[key].totalAmount += parseFloat(ts.totalWeeklyAmount || '0');
+          return acc;
+        }, {});
+
+        return (
+          <div key={group.period} className="border rounded-lg overflow-hidden">
+            {/* Monthly Header */}
+            <div className="bg-green-100 p-4 border-b">
+              <h3 className="font-bold text-xl">Monthly Summary - {monthName}</h3>
+              <p className="text-sm text-muted-foreground">
+                {Object.keys(candidateGroups).length} candidate(s), {group.timesheets.length} timesheet(s)
+              </p>
+              <div className="mt-2">
+                <span className="font-medium">Total: {group.totalHours} hours | Amount: INR {group.totalAmount.toFixed(2)}</span>
+              </div>
+            </div>
+
+            {/* Individual Candidate Tables */}
+            {Object.entries(candidateGroups).map(([key, candidate]: [string, any]) => (
+              <div key={key} className="border-b last:border-b-0">
+                <div className="bg-gray-50 p-3 border-b">
+                  <div className="flex justify-between items-center">
+                    <div>
+                      <h4 className="font-medium">{candidate.candidateName}</h4>
+                      <p className="text-sm text-muted-foreground">{candidate.candidateEmail}</p>
+                    </div>
+                    <div className="text-right">
+                      <div className="font-medium">Monthly Total: {candidate.totalHours}h</div>
+                      <div className="text-sm text-muted-foreground">Amount: INR {candidate.totalAmount.toFixed(2)}</div>
+                    </div>
                   </div>
                 </div>
-              ))}
-            </div>
+                
+                <div className="overflow-x-auto">
+                  <table className="w-full">
+                    <thead>
+                      <tr className="bg-green-500 text-white">
+                        <th className="p-2 text-left font-medium">Week</th>
+                        <th className="p-2 text-center font-medium">Mon</th>
+                        <th className="p-2 text-center font-medium">Tue</th>
+                        <th className="p-2 text-center font-medium">Wed</th>
+                        <th className="p-2 text-center font-medium">Thu</th>
+                        <th className="p-2 text-center font-medium">Fri</th>
+                        <th className="p-2 text-center font-medium">Sat</th>
+                        <th className="p-2 text-center font-medium">Sun</th>
+                        <th className="p-2 text-center font-medium bg-gray-600">Total</th>
+                        <th className="p-2 text-center font-medium">Amount</th>
+                        <th className="p-2 text-center font-medium">Status</th>
+                        <th className="p-2 text-center font-medium">Actions</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      {candidate.timesheets.map((timesheet: WeeklyTimesheet, index: number) => (
+                        <tr key={timesheet.id} className={index % 2 === 0 ? 'bg-white' : 'bg-gray-50'}>
+                          <td className="p-2 border-r font-medium">
+                            {format(new Date(timesheet.weekStartDate), 'M/d')} - {format(new Date(timesheet.weekEndDate), 'M/d')}
+                          </td>
+                          <td className="p-2 text-center border-r bg-green-50">{timesheet.mondayHours.toFixed(2)}</td>
+                          <td className="p-2 text-center border-r bg-green-50">{timesheet.tuesdayHours.toFixed(2)}</td>
+                          <td className="p-2 text-center border-r bg-green-50">{timesheet.wednesdayHours.toFixed(2)}</td>
+                          <td className="p-2 text-center border-r bg-green-50">{timesheet.thursdayHours.toFixed(2)}</td>
+                          <td className="p-2 text-center border-r bg-green-50">{timesheet.fridayHours.toFixed(2)}</td>
+                          <td className="p-2 text-center border-r bg-green-50">{timesheet.saturdayHours.toFixed(2)}</td>
+                          <td className="p-2 text-center border-r bg-green-50">{timesheet.sundayHours.toFixed(2)}</td>
+                          <td className="p-2 text-center font-medium bg-gray-100">{timesheet.totalWeeklyHours.toFixed(2)}</td>
+                          <td className="p-2 text-center font-medium">INR {timesheet.totalWeeklyAmount}</td>
+                          <td className="p-2 text-center">{getStatusBadge(timesheet.status)}</td>
+                          <td className="p-2 text-center">
+                            {timesheet.status === 'submitted' && (
+                              <div className="flex gap-1 justify-center">
+                                <Button size="sm" onClick={() => onApprove(timesheet.id)}>
+                                  <Check className="w-3 h-3" />
+                                </Button>
+                                <Button size="sm" variant="outline" onClick={() => onReject(timesheet.id, 'Rejected by admin')}>
+                                  <X className="w-3 h-3" />
+                                </Button>
+                              </div>
+                            )}
+                          </td>
+                        </tr>
+                      ))}
+                      
+                      {/* Monthly Totals */}
+                      <tr className="bg-green-100 font-bold">
+                        <td className="p-2 border-r">Monthly Total:</td>
+                        <td className="p-2 text-center border-r">
+                          {candidate.timesheets.reduce((sum: number, ts: WeeklyTimesheet) => sum + ts.mondayHours, 0).toFixed(2)}
+                        </td>
+                        <td className="p-2 text-center border-r">
+                          {candidate.timesheets.reduce((sum: number, ts: WeeklyTimesheet) => sum + ts.tuesdayHours, 0).toFixed(2)}
+                        </td>
+                        <td className="p-2 text-center border-r">
+                          {candidate.timesheets.reduce((sum: number, ts: WeeklyTimesheet) => sum + ts.wednesdayHours, 0).toFixed(2)}
+                        </td>
+                        <td className="p-2 text-center border-r">
+                          {candidate.timesheets.reduce((sum: number, ts: WeeklyTimesheet) => sum + ts.thursdayHours, 0).toFixed(2)}
+                        </td>
+                        <td className="p-2 text-center border-r">
+                          {candidate.timesheets.reduce((sum: number, ts: WeeklyTimesheet) => sum + ts.fridayHours, 0).toFixed(2)}
+                        </td>
+                        <td className="p-2 text-center border-r">
+                          {candidate.timesheets.reduce((sum: number, ts: WeeklyTimesheet) => sum + ts.saturdayHours, 0).toFixed(2)}
+                        </td>
+                        <td className="p-2 text-center border-r">
+                          {candidate.timesheets.reduce((sum: number, ts: WeeklyTimesheet) => sum + ts.sundayHours, 0).toFixed(2)}
+                        </td>
+                        <td className="p-2 text-center bg-gray-200">
+                          {candidate.timesheets.reduce((sum: number, ts: WeeklyTimesheet) => sum + ts.totalWeeklyHours, 0).toFixed(2)}
+                        </td>
+                        <td className="p-2 text-center font-medium">
+                          INR {candidate.timesheets.reduce((sum: number, ts: WeeklyTimesheet) => sum + parseFloat(ts.totalWeeklyAmount || '0'), 0).toFixed(2)}
+                        </td>
+                        <td className="p-2 text-center"></td>
+                        <td className="p-2 text-center"></td>
+                      </tr>
+                    </tbody>
+                  </table>
+                </div>
+
+                {/* Pay Summary */}
+                <div className="bg-gray-50 p-3 text-center">
+                  <span className="font-bold text-red-600">
+                    Monthly Pay: INR {candidate.totalAmount.toFixed(2)}
+                  </span>
+                </div>
+              </div>
+            ))}
           </div>
-        ))}
-      </div>
+        );
+      })}
     </div>
   );
 }
