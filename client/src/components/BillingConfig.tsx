@@ -108,13 +108,17 @@ export default function BillingConfig() {
   // Fetch existing billing configurations
   const { data: billingConfigs, isLoading } = useQuery({
     queryKey: ['/api/admin/candidates-billing'],
+    select: (data) => {
+      console.log('Billing configs API response:', data);
+      return data;
+    }
   });
 
   // Fetch client companies for dropdown
   const { data: clientCompanies, isLoading: isLoadingClientCompanies } = useQuery({
     queryKey: ['/api/admin/client-companies'],
     select: (data) => {
-      console.log('Client companies data loaded:', data);
+      console.log('Client companies API response:', data);
       return data;
     }
   });
@@ -331,8 +335,16 @@ export default function BillingConfig() {
 
   // Helper function to get client company information
   const getClientCompanyInfo = (clientCompanyId: number | null) => {
-    if (!clientCompanyId || !clientCompanies?.companies) return null;
-    return clientCompanies.companies.find((company: any) => company.id === clientCompanyId);
+    console.log('getClientCompanyInfo called with:', { clientCompanyId, clientCompanies });
+    if (!clientCompanyId || !clientCompanies?.companies) {
+      console.log('Early return - no clientCompanyId or companies');
+      return null;
+    }
+    // Convert clientCompanyId to number to handle both string and number types
+    const companyId = typeof clientCompanyId === 'string' ? parseInt(clientCompanyId) : clientCompanyId;
+    const company = clientCompanies.companies.find((company: any) => company.id === companyId);
+    console.log('Found company:', company);
+    return company;
   };
 
   return (
@@ -854,6 +866,7 @@ export default function BillingConfig() {
                     
                     {/* Client Company Information */}
                     {(() => {
+                      console.log('Rendering client company for billing:', billing);
                       const clientCompany = getClientCompanyInfo(billing.clientCompanyId);
                       if (clientCompany) {
                         return (
