@@ -881,17 +881,16 @@ export default function BillingConfig() {
                       if (clientCompany) {
                         return (
                           <div className="flex items-center gap-2 text-sm">
-                            {clientCompany.logoUrl && (
+                            {clientCompany.logoUrl ? (
                               <img 
                                 src={clientCompany.logoUrl} 
                                 alt={`${clientCompany.name} logo`}
                                 className="w-6 h-6 rounded object-cover border"
                               />
-                            )}
-                            <div className="flex items-center gap-1">
+                            ) : (
                               <Building2 className="w-4 h-4 text-green-600" />
-                              <span>Client: {clientCompany.name}</span>
-                            </div>
+                            )}
+                            <span>Client: {clientCompany.name}</span>
                           </div>
                         );
                       }

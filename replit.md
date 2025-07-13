@@ -163,7 +163,8 @@ The application follows a standard full-stack architecture with clear separation
 - **Project Status**: All core functionality verified working - job listings, admin dashboard, timesheet management, billing configuration
 - **Environment**: Application running cleanly in standard Replit environment without errors
 - **Client Company Dropdown Fix**: Fixed data access path from `clientCompanies.companies` to `clientCompanies.data.companies` to match API response structure
-- **Resolution**: Client company dropdown now properly displays all available companies including "WIMMER SOLUTIONS"
+- **Client Company Logo Display**: Fixed logo display logic to show actual company logos when available, with building icon only as fallback
+- **Resolution**: Client company dropdown now properly displays all available companies, and billing cards show actual company logos instead of generic icons
 
 ## Billing Configuration Enhancement (July 12, 2025)
 - **Enhanced Billing Configuration**: Added client company selection field to admin billing configuration popup
