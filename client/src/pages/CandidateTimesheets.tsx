@@ -816,8 +816,272 @@ export default function CandidateTimesheets() {
               </CardContent>
             </Card>
           </TabsContent>
+
+          <TabsContent value="attendance" className="space-y-6">
+            {/* Attendance Tracking */}
+            <Card>
+              <CardHeader>
+                <CardTitle className="flex items-center gap-2">
+                  <CalendarIcon className="h-5 w-5" />
+                  Weekly Employee Timesheet
+                </CardTitle>
+                <CardDescription>
+                  Professional timesheet template showing submitted and approved hours
+                </CardDescription>
+              </CardHeader>
+              <CardContent>
+                {timesheets?.data && timesheets.data.length > 0 ? (
+                  <div className="space-y-6">
+                    {timesheets.data.map((timesheet: WeeklyTimesheet) => (
+                      <TimesheetTemplate 
+                        key={timesheet.id}
+                        timesheet={timesheet}
+                        billingConfig={billingConfig?.data}
+                        user={user}
+                      />
+                    ))}
+                  </div>
+                ) : (
+                  <div className="text-center py-8">
+                    <CalendarIcon className="mx-auto h-12 w-12 text-gray-400" />
+                    <h3 className="mt-2 text-sm font-medium text-gray-900">No timesheets submitted</h3>
+                    <p className="mt-1 text-sm text-gray-500">
+                      Submit your first timesheet to see it displayed here.
+                    </p>
+                  </div>
+                )}
+              </CardContent>
+            </Card>
+          </TabsContent>
         </Tabs>
       </div>
     </CandidateLayout>
+  );
+}
+
+// Professional Timesheet Template Component
+function TimesheetTemplate({ timesheet, billingConfig, user }: {
+  timesheet: WeeklyTimesheet;
+  billingConfig?: BillingConfig;
+  user: any;
+}) {
+  const weekStartDate = parseISO(timesheet.weekStartDate);
+  const monthYear = format(weekStartDate, 'MMMM yyyy');
+  const weekOf = format(weekStartDate, 'M/d/yyyy');
+  
+  // Employment type for conditional columns
+  const isFullTime = billingConfig?.employmentType === 'fulltime';
+  
+  // Days of the week
+  const weekDays = [
+    { label: 'Mon', key: 'mondayHours', date: format(addDays(weekStartDate, 0), 'M/d') },
+    { label: 'Tue', key: 'tuesdayHours', date: format(addDays(weekStartDate, 1), 'M/d') },
+    { label: 'Wed', key: 'wednesdayHours', date: format(addDays(weekStartDate, 2), 'M/d') },
+    { label: 'Thu', key: 'thursdayHours', date: format(addDays(weekStartDate, 3), 'M/d') },
+    { label: 'Fri', key: 'fridayHours', date: format(addDays(weekStartDate, 4), 'M/d') },
+    { label: 'Sat', key: 'saturdayHours', date: format(addDays(weekStartDate, 5), 'M/d') },
+    { label: 'Sun', key: 'sundayHours', date: format(addDays(weekStartDate, 6), 'M/d') }
+  ];
+
+  const workingDays = billingConfig?.workingDaysPerWeek === 6 ? weekDays : weekDays.slice(0, 5);
+
+  return (
+    <div className="border rounded-lg p-6 bg-white shadow-sm">
+      {/* Header */}
+      <div className="flex justify-between items-start mb-6">
+        <div>
+          <h3 className="text-xl font-bold">NIDDIK</h3>
+          <div className="text-sm text-gray-600 space-y-1">
+            <p>Address 1</p>
+            <p>Address 2</p>
+            <p>City, State ZIP</p>
+            <p>(000) 000-0000</p>
+            <p>www.company-name.com</p>
+          </div>
+        </div>
+        
+        <div className="text-right">
+          <div className="text-sm">
+            <p><strong>Employee Name:</strong> {user?.fullName || user?.username}</p>
+            <p><strong>Supervisor Name:</strong> {billingConfig?.supervisorName || 'Not specified'}</p>
+          </div>
+          <div className="mt-4">
+            <p className="font-semibold border-b border-black inline-block">Week of: {weekOf}</p>
+          </div>
+        </div>
+        
+        <div className="text-center">
+          <div className="bg-green-600 text-white px-3 py-1 text-sm">
+            {monthYear}
+          </div>
+          <div className="mt-2 text-xs">
+            <div className="grid grid-cols-7 gap-1">
+              {['Su', 'Mo', 'Tu', 'We', 'Th', 'Fr', 'Sa'].map(day => (
+                <div key={day} className="w-6 h-6 text-center font-medium">{day}</div>
+              ))}
+            </div>
+            <div className="grid grid-cols-7 gap-1 mt-1">
+              {Array.from({ length: 31 }, (_, i) => i + 1).map(day => (
+                <div key={day} className="w-6 h-6 text-center text-xs">{day}</div>
+              ))}
+            </div>
+          </div>
+        </div>
+      </div>
+
+      {/* Status Badge */}
+      <div className="mb-4">
+        <Badge 
+          className={
+            timesheet.status === 'approved' 
+              ? 'bg-green-100 text-green-800' 
+              : timesheet.status === 'rejected'
+              ? 'bg-red-100 text-red-800'
+              : 'bg-yellow-100 text-yellow-800'
+          }
+        >
+          {timesheet.status === 'approved' && <CheckCircle className="w-3 h-3 mr-1" />}
+          {timesheet.status === 'rejected' && <XCircle className="w-3 h-3 mr-1" />}
+          {timesheet.status === 'submitted' && <AlertCircle className="w-3 h-3 mr-1" />}
+          {timesheet.status.charAt(0).toUpperCase() + timesheet.status.slice(1)}
+        </Badge>
+      </div>
+
+      {/* Timesheet Table */}
+      <div className="overflow-x-auto">
+        <table className="w-full border-collapse border border-gray-400 text-sm">
+          <thead>
+            <tr className="bg-green-600 text-white">
+              <th className="border border-gray-400 px-2 py-1 font-bold">Day of Week</th>
+              <th className="border border-gray-400 px-2 py-1 font-bold">Regular<br/>[h:mm]</th>
+              <th className="border border-gray-400 px-2 py-1 font-bold">Overtime<br/>[h:mm]</th>
+              {isFullTime && (
+                <>
+                  <th className="border border-gray-400 px-2 py-1 font-bold">Sick<br/>[h:mm]</th>
+                  <th className="border border-gray-400 px-2 py-1 font-bold">Paid Leave<br/>[h:mm]</th>
+                  <th className="border border-gray-400 px-2 py-1 font-bold">Unpaid Leave<br/>[h:mm]</th>
+                </>
+              )}
+              <th className="border border-gray-400 px-2 py-1 font-bold">TOTAL<br/>[h:mm]</th>
+            </tr>
+          </thead>
+          <tbody>
+            {workingDays.map((day) => {
+              const hours = parseFloat(timesheet[day.key as keyof WeeklyTimesheet] as string) || 0;
+              const hoursFormatted = hours.toFixed(2);
+              
+              return (
+                <tr key={day.label}>
+                  <td className="border border-gray-400 px-2 py-1 font-medium">
+                    {day.label} {day.date}
+                  </td>
+                  <td className="border border-gray-400 px-2 py-1 text-center">
+                    {hoursFormatted}
+                  </td>
+                  <td className="border border-gray-400 px-2 py-1 text-center">0.00</td>
+                  {isFullTime && (
+                    <>
+                      <td className="border border-gray-400 px-2 py-1 text-center bg-green-100"></td>
+                      <td className="border border-gray-400 px-2 py-1 text-center bg-green-100"></td>
+                      <td className="border border-gray-400 px-2 py-1 text-center bg-green-100"></td>
+                    </>
+                  )}
+                  <td className="border border-gray-400 px-2 py-1 text-center font-medium">
+                    {hoursFormatted}
+                  </td>
+                </tr>
+              );
+            })}
+            
+            {/* Total Row */}
+            <tr className="bg-green-100">
+              <td className="border border-gray-400 px-2 py-1 font-bold">Total Hrs:</td>
+              <td className="border border-gray-400 px-2 py-1 text-center font-bold">
+                {parseFloat(timesheet.totalWeeklyHours).toFixed(2)}
+              </td>
+              <td className="border border-gray-400 px-2 py-1 text-center font-bold">0.00</td>
+              {isFullTime && (
+                <>
+                  <td className="border border-gray-400 px-2 py-1 text-center font-bold">0.00</td>
+                  <td className="border border-gray-400 px-2 py-1 text-center font-bold">0.00</td>
+                  <td className="border border-gray-400 px-2 py-1 text-center font-bold">0.00</td>
+                </>
+              )}
+              <td className="border border-gray-400 px-2 py-1 text-center font-bold">
+                {parseFloat(timesheet.totalWeeklyHours).toFixed(2)}
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+
+      {/* Rate and Pay Information */}
+      <div className="mt-4">
+        <table className="w-full border-collapse border border-gray-400 text-sm">
+          <tbody>
+            <tr>
+              <td className="border border-gray-400 px-2 py-1 font-medium">Rate/Hour:</td>
+              <td className="border border-gray-400 px-2 py-1 text-center">
+                {billingConfig?.currency} {parseFloat(billingConfig?.hourlyRate || '0').toFixed(2)}
+              </td>
+              <td className="border border-gray-400 px-2 py-1 text-center">
+                {billingConfig?.currency} 0.00
+              </td>
+              {isFullTime && (
+                <>
+                  <td className="border border-gray-400 px-2 py-1 text-center">{billingConfig?.currency} 0.00</td>
+                  <td className="border border-gray-400 px-2 py-1 text-center">{billingConfig?.currency} 0.00</td>
+                  <td className="border border-gray-400 px-2 py-1 text-center">{billingConfig?.currency} 0.00</td>
+                </>
+              )}
+              <td className="border border-gray-400 px-2 py-1 text-center"></td>
+            </tr>
+            <tr className="bg-gray-50">
+              <td className="border border-gray-400 px-2 py-1 font-bold">Total Pay:</td>
+              <td className="border border-gray-400 px-2 py-1 text-center font-bold">
+                {billingConfig?.currency} {parseFloat(timesheet.totalWeeklyAmount).toFixed(2)}
+              </td>
+              <td className="border border-gray-400 px-2 py-1 text-center font-bold">
+                {billingConfig?.currency} 0.00
+              </td>
+              {isFullTime && (
+                <>
+                  <td className="border border-gray-400 px-2 py-1 text-center font-bold">{billingConfig?.currency} 0.00</td>
+                  <td className="border border-gray-400 px-2 py-1 text-center font-bold">{billingConfig?.currency} 0.00</td>
+                  <td className="border border-gray-400 px-2 py-1 text-center font-bold">{billingConfig?.currency} 0.00</td>
+                </>
+              )}
+              <td className="border border-gray-400 px-2 py-1 text-center font-bold bg-red-600 text-white">
+                {billingConfig?.currency} {parseFloat(timesheet.totalWeeklyAmount).toFixed(2)}
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+
+      {/* Summary */}
+      <div className="mt-4 text-center">
+        <div className="inline-block border-2 border-red-600 p-2">
+          <p className="font-bold">Total Hours Reported: <span className="text-red-600">{parseFloat(timesheet.totalWeeklyHours).toFixed(2)}</span></p>
+          <p className="font-bold">Total Pay: <span className="bg-red-600 text-white px-2">{billingConfig?.currency} {parseFloat(timesheet.totalWeeklyAmount).toFixed(2)}</span></p>
+        </div>
+      </div>
+
+      {/* Signature Lines */}
+      <div className="mt-8 grid grid-cols-2 gap-8">
+        <div>
+          <div className="border-b border-black mb-1"></div>
+          <p className="text-sm">Employee Signature</p>
+          <div className="border-b border-black mb-1 mt-6"></div>
+          <p className="text-sm">Date</p>
+        </div>
+        <div>
+          <div className="border-b border-black mb-1"></div>
+          <p className="text-sm">Supervisor Signature</p>
+          <div className="border-b border-black mb-1 mt-6"></div>
+          <p className="text-sm">Date</p>
+        </div>
+      </div>
+    </div>
   );
 }
