@@ -1000,7 +1000,8 @@ function TimesheetTemplate({ timesheet, billingConfig, user }: {
 }) {
   const weekStartDate = parseISO(timesheet.weekStartDate);
   const monthYear = format(weekStartDate, 'MMMM yyyy');
-  const weekOf = format(weekStartDate, 'M/d/yyyy');
+  const weekEndDate = addDays(weekStartDate, workingDays.length - 1);
+  const weekOf = `${format(weekStartDate, 'M/d/yyyy')} - ${format(weekEndDate, 'M/d/yyyy')}`;
   
   // Fetch company information for timesheet display
   const { data: companyInfo } = useQuery({
