@@ -432,7 +432,8 @@ export const candidateBilling = pgTable("candidate_billing", {
 });
 
 export const candidateBillingSchema = createInsertSchema(candidateBilling, {
-  hourlyRate: (schema) => schema.transform((val) => parseFloat(val.toString())),
+  candidateId: (schema) => schema.min(1, "Candidate ID is required"),
+  hourlyRate: (schema) => schema.transform((val) => parseFloat(val.toString())).refine((val) => val > 0, "Hourly rate must be greater than 0"),
   workingHoursPerWeek: (schema) => schema.min(1, "Working hours must be at least 1").max(168, "Cannot exceed 168 hours per week"),
   workingDaysPerWeek: (schema) => schema.min(5, "Must be at least 5 days").max(6, "Cannot exceed 6 days per week"),
   currency: (schema) => schema.optional(),
@@ -442,6 +443,11 @@ export const candidateBillingSchema = createInsertSchema(candidateBilling, {
   companySettingsId: (schema) => schema.optional(),
   tdsRate: (schema) => schema.transform((val) => parseFloat(val?.toString() || '0')).refine(val => val >= 0 && val <= 100, "TDS rate must be between 0 and 100"),
   benefits: (schema) => schema.optional(),
+  createdBy: (schema) => schema.min(1, "Created by is required"),
+}).omit({ 
+  id: true, 
+  createdAt: true, 
+  updatedAt: true 
 });
 
 export type CandidateBilling = typeof candidateBilling.$inferSelect;
