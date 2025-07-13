@@ -417,6 +417,22 @@ export default function TimesheetManagement() {
         <meta name="description" content="Manage timesheets and billing for candidates and employees" />
       </Helmet>
 
+      {/* Page Header */}
+      <div className="flex items-center justify-between mb-6">
+        <div>
+          <h1 className="text-2xl font-bold text-gray-900">Timesheet Management</h1>
+          <p className="text-gray-600 mt-1">Manage employee timesheets, billing, and company settings</p>
+        </div>
+        <div className="flex items-center gap-4">
+          <Link href="/admin/timesheets/companiesmanagement">
+            <Button variant="outline" className="flex items-center gap-2">
+              <Building className="w-4 h-4" />
+              Company Management
+            </Button>
+          </Link>
+        </div>
+      </div>
+
       <Tabs value={activeTab} onValueChange={setActiveTab} className="space-y-6">
         <TabsList className="grid w-full grid-cols-2">
           <TabsTrigger value="timesheets">Timesheets</TabsTrigger>

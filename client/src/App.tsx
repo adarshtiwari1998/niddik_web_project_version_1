@@ -68,6 +68,7 @@ import SearchPage from "@/pages/SearchPage";
 import TimesheetManagement from "@/pages/TimesheetManagement";
 import CandidateTimesheets from "@/pages/CandidateTimesheets";
 import CompanyManagement from "@/pages/CompanyManagement";
+import AdminPasswordChange from "@/components/admin/AdminPasswordChange";
 import { lazy, Suspense } from "react";
 
 // Component to handle scroll restoration
