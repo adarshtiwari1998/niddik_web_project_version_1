@@ -123,6 +123,18 @@ The application follows a standard full-stack architecture with clear separation
 
 # Recent Changes
 
+## Client Company Display Enhancement (July 13, 2025)
+- **Feature**: Added client company name and logo display to billing configuration cards
+- **Implementation**: 
+  - Added helper function `getClientCompanyInfo()` to fetch client company data by ID
+  - Enhanced billing cards to show client company logo (when available) and name
+  - Added green building icon for visual consistency
+  - Used existing API data structure from `/api/admin/client-companies`
+- **User Experience**: Billing cards now clearly show which client company each candidate is assigned to
+- **Visual Enhancement**: Company logos are displayed when available, with fallback to building icon
+- **Data Integration**: Seamlessly integrated with existing client_companies table data
+- **Files Modified**: `client/src/components/BillingConfig.tsx`
+
 ## Billing Configuration Data Fix (July 13, 2025)
 - **Issue Fixed**: Billing configuration edit dialog was not showing client company data properly
 - **Root Cause**: Frontend was accessing wrong data structure path (`clientCompanies?.data?.companies` instead of `clientCompanies?.companies`)

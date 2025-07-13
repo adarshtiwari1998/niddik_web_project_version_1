@@ -329,6 +329,12 @@ export default function BillingConfig() {
     deleteBillingMutation.mutate(candidateId);
   };
 
+  // Helper function to get client company information
+  const getClientCompanyInfo = (clientCompanyId: number | null) => {
+    if (!clientCompanyId || !clientCompanies?.companies) return null;
+    return clientCompanies.companies.find((company: any) => company.id === clientCompanyId);
+  };
+
   return (
     <div className="space-y-6">
       <div className="flex justify-between items-center">
@@ -845,6 +851,29 @@ export default function BillingConfig() {
                         <span>Supervisor: {billing.supervisorName}</span>
                       </div>
                     )}
+                    
+                    {/* Client Company Information */}
+                    {(() => {
+                      const clientCompany = getClientCompanyInfo(billing.clientCompanyId);
+                      if (clientCompany) {
+                        return (
+                          <div className="flex items-center gap-2 text-sm">
+                            {clientCompany.logoUrl && (
+                              <img 
+                                src={clientCompany.logoUrl} 
+                                alt={`${clientCompany.name} logo`}
+                                className="w-6 h-6 rounded object-cover border"
+                              />
+                            )}
+                            <div className="flex items-center gap-1">
+                              <Building2 className="w-4 h-4 text-green-600" />
+                              <span>Client: {clientCompany.name}</span>
+                            </div>
+                          </div>
+                        );
+                      }
+                      return null;
+                    })()}
                     
                     {/* Basic Rate & Hours Info */}
                     <div className="flex gap-4 text-sm">
