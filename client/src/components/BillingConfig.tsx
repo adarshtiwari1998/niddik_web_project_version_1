@@ -268,6 +268,11 @@ export default function BillingConfig() {
       return;
     }
 
+    // Ensure we only send valid leave types for full-time employees
+    const finalBenefits = billingData.employmentType === 'fulltime' 
+      ? selectedBenefits.filter(benefit => leaveTypes.includes(benefit))
+      : [];
+
     const payload = {
       candidateId: selectedCandidate,
       createdBy: user?.id || 5,
@@ -280,7 +285,7 @@ export default function BillingConfig() {
       clientCompanyId: billingData.clientCompanyId || undefined,
       companySettingsId: billingData.companySettingsId || undefined,
       tdsRate: billingData.tdsRate?.toString() || '10',
-      benefits: billingData.benefits || []
+      benefits: finalBenefits
     };
     
     console.log('Submitting billing configuration:', payload);
@@ -293,7 +298,12 @@ export default function BillingConfig() {
       return;
     }
 
-    console.log('handleUpdate - billingData.benefits:', billingData.benefits);
+    // Ensure we only send valid leave types for full-time employees
+    const finalBenefits = billingData.employmentType === 'fulltime' 
+      ? selectedBenefits.filter(benefit => leaveTypes.includes(benefit))
+      : [];
+
+    console.log('handleUpdate - finalBenefits:', finalBenefits);
     console.log('handleUpdate - selectedBenefits:', selectedBenefits);
 
     updateBillingMutation.mutate({
@@ -307,7 +317,7 @@ export default function BillingConfig() {
       clientCompanyId: billingData.clientCompanyId || null,
       companySettingsId: billingData.companySettingsId || null,
       tdsRate: billingData.tdsRate,
-      benefits: billingData.benefits,
+      benefits: finalBenefits,
       isActive: editingBilling.isActive
     });
   };
