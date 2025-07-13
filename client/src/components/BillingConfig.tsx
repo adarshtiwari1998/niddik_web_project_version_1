@@ -220,7 +220,7 @@ export default function BillingConfig() {
       currency: 'USD',
       employmentType: 'subcontract',
       supervisorName: '',
-      clientCompanyId: clientCompanies?.companies?.[0]?.id || undefined,
+      clientCompanyId: clientCompanies?.data?.companies?.[0]?.id || undefined,
       companySettingsId: companySettings?.data?.[0]?.id || undefined,
       tdsRate: 10,
       benefits: []
@@ -251,10 +251,10 @@ export default function BillingConfig() {
 
   // Effect to set default values for client company and company settings when data is loaded
   useEffect(() => {
-    if (clientCompanies?.companies && companySettings?.data && !editingBilling) {
+    if (clientCompanies?.data?.companies && companySettings?.data && !editingBilling) {
       setBillingData(prev => ({
         ...prev,
-        clientCompanyId: prev.clientCompanyId || clientCompanies.companies[0]?.id,
+        clientCompanyId: prev.clientCompanyId || clientCompanies.data.companies[0]?.id,
         companySettingsId: prev.companySettingsId || companySettings.data[0]?.id
       }));
     }
@@ -337,12 +337,12 @@ export default function BillingConfig() {
 
   // Helper function to get client company information
   const getClientCompanyInfo = (clientCompanyId: number | null) => {
-    if (!clientCompanyId || !clientCompanies?.companies) {
+    if (!clientCompanyId || !clientCompanies?.data?.companies) {
       return null;
     }
     // Convert clientCompanyId to number to handle both string and number types
     const companyId = typeof clientCompanyId === 'string' ? parseInt(clientCompanyId) : clientCompanyId;
-    const company = clientCompanies.companies.find((company: any) => company.id === companyId);
+    const company = clientCompanies.data.companies.find((company: any) => company.id === companyId);
     return company;
   };
 
@@ -526,8 +526,8 @@ export default function BillingConfig() {
                       <SelectContent>
                         {isLoadingClientCompanies ? (
                           <div className="p-2 text-sm text-muted-foreground">Loading companies...</div>
-                        ) : clientCompanies?.companies?.length > 0 ? (
-                          clientCompanies.companies.map((company: any) => (
+                        ) : clientCompanies?.data?.companies?.length > 0 ? (
+                          clientCompanies.data.companies.map((company: any) => (
                             <SelectItem key={company.id} value={company.id.toString()}>
                               {company.name}
                             </SelectItem>
@@ -747,8 +747,8 @@ export default function BillingConfig() {
                 <SelectContent>
                   {isLoadingClientCompanies ? (
                     <div className="p-2 text-sm text-muted-foreground">Loading companies...</div>
-                  ) : clientCompanies?.companies?.length > 0 ? (
-                    clientCompanies.companies.map((company: any) => (
+                  ) : clientCompanies?.data?.companies?.length > 0 ? (
+                    clientCompanies.data.companies.map((company: any) => (
                       <SelectItem key={company.id} value={company.id.toString()}>
                         {company.name}
                       </SelectItem>

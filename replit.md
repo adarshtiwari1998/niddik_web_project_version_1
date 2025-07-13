@@ -162,6 +162,8 @@ The application follows a standard full-stack architecture with clear separation
 - **Security**: Enhanced client/server separation maintained with proper role-based access control
 - **Project Status**: All core functionality verified working - job listings, admin dashboard, timesheet management, billing configuration
 - **Environment**: Application running cleanly in standard Replit environment without errors
+- **Client Company Dropdown Fix**: Fixed data access path from `clientCompanies.companies` to `clientCompanies.data.companies` to match API response structure
+- **Resolution**: Client company dropdown now properly displays all available companies including "WIMMER SOLUTIONS"
 
 ## Billing Configuration Enhancement (July 12, 2025)
 - **Enhanced Billing Configuration**: Added client company selection field to admin billing configuration popup
