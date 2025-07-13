@@ -939,6 +939,11 @@ function TimesheetTemplate({ timesheet, billingConfig, user }: {
   // Get client company and company settings from API response
   const clientCompany = companyInfo?.data?.clientCompany;
   const niddikCompany = companyInfo?.data?.companySettings;
+
+  // Debug logging to see actual data structure
+  console.log('Company Info Response:', companyInfo);
+  console.log('Niddik Company Data:', niddikCompany);
+  console.log('Client Company Data:', clientCompany);
   
   // Days of the week
   const weekDays = [
@@ -960,10 +965,10 @@ function TimesheetTemplate({ timesheet, billingConfig, user }: {
         <div>
           <h3 className="text-xl font-bold">{niddikCompany?.name || 'NIDDIK'}</h3>
           <div className="text-sm text-gray-600 space-y-1">
-            <p>{niddikCompany?.address1 || 'Address 1'}</p>
-            <p>{niddikCompany?.address2 || 'Address 2'}</p>
-            <p>{niddikCompany?.city && niddikCompany?.state ? `${niddikCompany.city}, ${niddikCompany.state} ${niddikCompany.zipCode || ''}` : 'City, State ZIP'}</p>
-            <p>{niddikCompany?.phone || '(000) 000-0000'}</p>
+            <p>{niddikCompany?.address || 'Address'}</p>
+            <p>{niddikCompany?.city && niddikCompany?.state && niddikCompany?.country ? `${niddikCompany.city}, ${niddikCompany.state} ${niddikCompany.zipCode || niddikCompany.zip_code || ''}` : 'City, State ZIP'}</p>
+            <p>{niddikCompany?.country || 'Country'}</p>
+            <p>{niddikCompany?.phoneNumbers?.[0] || niddikCompany?.phone_numbers?.[0] || '(000) 000-0000'}</p>
             <p>{niddikCompany?.website || 'www.company-name.com'}</p>
           </div>
         </div>
