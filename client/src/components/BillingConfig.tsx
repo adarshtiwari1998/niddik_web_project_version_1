@@ -119,6 +119,8 @@ export default function BillingConfig() {
     queryKey: ['/api/admin/client-companies'],
     select: (data) => {
       console.log('Client companies API response:', data);
+      console.log('Client companies array:', data?.companies);
+      console.log('Companies length:', data?.companies?.length);
       return data;
     }
   });
@@ -522,11 +524,17 @@ export default function BillingConfig() {
                         <SelectValue placeholder="Select client company" />
                       </SelectTrigger>
                       <SelectContent>
-                        {clientCompanies?.companies?.map((company: any) => (
-                          <SelectItem key={company.id} value={company.id.toString()}>
-                            {company.name}
-                          </SelectItem>
-                        ))}
+                        {isLoadingClientCompanies ? (
+                          <div className="p-2 text-sm text-muted-foreground">Loading companies...</div>
+                        ) : clientCompanies?.companies?.length > 0 ? (
+                          clientCompanies.companies.map((company: any) => (
+                            <SelectItem key={company.id} value={company.id.toString()}>
+                              {company.name}
+                            </SelectItem>
+                          ))
+                        ) : (
+                          <div className="p-2 text-sm text-muted-foreground">No companies available</div>
+                        )}
                       </SelectContent>
                     </Select>
                   </div>
@@ -737,11 +745,17 @@ export default function BillingConfig() {
                   <SelectValue placeholder="Select client company" />
                 </SelectTrigger>
                 <SelectContent>
-                  {clientCompanies?.companies?.map((company: any) => (
-                    <SelectItem key={company.id} value={company.id.toString()}>
-                      {company.name}
-                    </SelectItem>
-                  )) || []}
+                  {isLoadingClientCompanies ? (
+                    <div className="p-2 text-sm text-muted-foreground">Loading companies...</div>
+                  ) : clientCompanies?.companies?.length > 0 ? (
+                    clientCompanies.companies.map((company: any) => (
+                      <SelectItem key={company.id} value={company.id.toString()}>
+                        {company.name}
+                      </SelectItem>
+                    ))
+                  ) : (
+                    <div className="p-2 text-sm text-muted-foreground">No companies available</div>
+                  )}
                 </SelectContent>
               </Select>
               {isLoadingClientCompanies && (
