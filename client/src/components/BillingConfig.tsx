@@ -224,6 +224,12 @@ export default function BillingConfig() {
     if (editingBilling) {
       console.log('Populating edit form with billing data:', editingBilling);
       console.log('Client companies available:', clientCompanies);
+      
+      // Filter benefits to only include valid leave types
+      const validBenefits = (editingBilling.benefits || []).filter(benefit => 
+        leaveTypes.includes(benefit)
+      );
+      
       setBillingData({
         hourlyRate: editingBilling.hourlyRate,
         workingHoursPerWeek: editingBilling.workingHoursPerWeek,
@@ -234,9 +240,9 @@ export default function BillingConfig() {
         clientCompanyId: editingBilling.clientCompanyId,
         companySettingsId: editingBilling.companySettingsId,
         tdsRate: editingBilling.tdsRate || 10,
-        benefits: editingBilling.benefits || []
+        benefits: validBenefits
       });
-      setSelectedBenefits(editingBilling.benefits || []);
+      setSelectedBenefits(validBenefits);
     }
   }, [editingBilling, clientCompanies]);
 
@@ -286,6 +292,9 @@ export default function BillingConfig() {
       toast({ title: "Error", description: "Please enter a valid hourly rate", variant: "destructive" });
       return;
     }
+
+    console.log('handleUpdate - billingData.benefits:', billingData.benefits);
+    console.log('handleUpdate - selectedBenefits:', selectedBenefits);
 
     updateBillingMutation.mutate({
       candidateId: editingBilling.candidateId,

@@ -123,6 +123,18 @@ The application follows a standard full-stack architecture with clear separation
 
 # Recent Changes
 
+## Timesheet Leave Types Fix (July 13, 2025)
+- **Issue Fixed**: Billing configuration was showing generic employee benefits instead of proper leave types for full-time employees
+- **Root Cause**: Component was using outdated benefit options list with items like "Health Insurance", "Life Insurance", etc.
+- **Solution**: 
+  - Updated benefit options to only show proper leave types: "Sick Leave", "Paid Leave", "Unpaid Leave"
+  - Changed layout from 2-column to single-column for better display
+  - Updated both create and edit dialogs for consistency
+  - Added filtering in edit form to only load valid leave types from existing data
+- **User Experience**: Full-time employees now see only the three appropriate leave types instead of generic benefits
+- **Database Cleanup**: Edit form now filters out old invalid benefits when loading existing records
+- **Files Modified**: `client/src/components/BillingConfig.tsx`
+
 ## Client Company Dropdown Data Fix (July 13, 2025)
 - **Issue Fixed**: Client company dropdown in billing configuration was not showing company names properly
 - **Root Cause**: Missing loading states and error handling in dropdown component
