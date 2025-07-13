@@ -847,6 +847,10 @@ function BiWeeklyTableView({ timesheets, getStatusBadge }: any) {
           const week1Data = getWeekDaysData(week1);
           const week2Data = week2 ? getWeekDaysData(week2) : [];
 
+          // Get billing configuration for employment type
+          const billingConfig = getBillingConfig(biWeekly.candidateId);
+          const isFullTime = billingConfig?.employmentType === 'fulltime';
+
           return (
             <div key={biWeekly.id} className="border rounded-lg overflow-hidden">
               {/* Header with candidate info and status */}
@@ -859,7 +863,7 @@ function BiWeeklyTableView({ timesheets, getStatusBadge }: any) {
                       Bi-Weekly Period: {format(new Date(biWeekly.periodStart), 'M/d/yyyy')} - {format(new Date(biWeekly.periodEnd), 'M/d/yyyy')}
                     </p>
                     <p className="text-xs text-blue-600 mt-1">
-                      Working Days: {biWeekly.workingDays} days/week
+                      Working Days: {biWeekly.workingDays} days/week • Employment: {billingConfig?.employmentType || 'Unknown'}
                     </p>
                   </div>
                   <div className="flex items-center gap-4">
@@ -882,16 +886,20 @@ function BiWeeklyTableView({ timesheets, getStatusBadge }: any) {
                       <th className="border border-gray-300 p-3 text-left font-medium">Day of Week</th>
                       <th className="border border-gray-300 p-3 text-center font-medium">Regular<br/>[h:mm]</th>
                       <th className="border border-gray-300 p-3 text-center font-medium">Overtime<br/>[h:mm]</th>
-                      <th className="border border-gray-300 p-3 text-center font-medium">Sick<br/>[h:mm]</th>
-                      <th className="border border-gray-300 p-3 text-center font-medium">Paid Leave<br/>[h:mm]</th>
-                      <th className="border border-gray-300 p-3 text-center font-medium">Unpaid Leave<br/>[h:mm]</th>
+                      {isFullTime && (
+                        <>
+                          <th className="border border-gray-300 p-3 text-center font-medium">Sick<br/>[h:mm]</th>
+                          <th className="border border-gray-300 p-3 text-center font-medium">Paid Leave<br/>[h:mm]</th>
+                          <th className="border border-gray-300 p-3 text-center font-medium">Unpaid Leave<br/>[h:mm]</th>
+                        </>
+                      )}
                       <th className="border border-gray-300 p-3 text-center font-medium bg-gray-600">TOTAL<br/>[h:mm]</th>
                     </tr>
                   </thead>
                   <tbody>
                     {/* Week 1 Header */}
                     <tr className="bg-blue-100 font-semibold">
-                      <td colSpan={7} className="border border-gray-300 p-2 text-center text-gray-800">
+                      <td colSpan={isFullTime ? 7 : 4} className="border border-gray-300 p-2 text-center text-gray-800">
                         Week 1: {format(new Date(week1.weekStartDate), 'M/d')} - {format(new Date(week1.weekEndDate), 'M/d')}
                       </td>
                     </tr>
@@ -901,9 +909,13 @@ function BiWeeklyTableView({ timesheets, getStatusBadge }: any) {
                         <td className="border border-gray-300 p-3 font-medium">{dayData.day}</td>
                         <td className="border border-gray-300 p-3 text-center">{parseFloat(dayData.hours || 0).toFixed(2)}</td>
                         <td className="border border-gray-300 p-3 text-center">0.00</td>
-                        <td className="border border-gray-300 p-3 text-center">0.00</td>
-                        <td className="border border-gray-300 p-3 text-center">0.00</td>
-                        <td className="border border-gray-300 p-3 text-center">0.00</td>
+                        {isFullTime && (
+                          <>
+                            <td className="border border-gray-300 p-3 text-center">0.00</td>
+                            <td className="border border-gray-300 p-3 text-center">0.00</td>
+                            <td className="border border-gray-300 p-3 text-center">0.00</td>
+                          </>
+                        )}
                         <td className="border border-gray-300 p-3 text-center font-medium bg-gray-100">{parseFloat(dayData.hours || 0).toFixed(2)}</td>
                       </tr>
                     ))}
@@ -912,7 +924,7 @@ function BiWeeklyTableView({ timesheets, getStatusBadge }: any) {
                     {week2 && (
                       <>
                         <tr className="bg-green-100 font-semibold">
-                          <td colSpan={7} className="border border-gray-300 p-2 text-center text-gray-800">
+                          <td colSpan={isFullTime ? 7 : 4} className="border border-gray-300 p-2 text-center text-gray-800">
                             Week 2: {format(new Date(week2.weekStartDate), 'M/d')} - {format(new Date(week2.weekEndDate), 'M/d')}
                           </td>
                         </tr>
@@ -922,9 +934,13 @@ function BiWeeklyTableView({ timesheets, getStatusBadge }: any) {
                             <td className="border border-gray-300 p-3 font-medium">{dayData.day}</td>
                             <td className="border border-gray-300 p-3 text-center">{parseFloat(dayData.hours || 0).toFixed(2)}</td>
                             <td className="border border-gray-300 p-3 text-center">0.00</td>
-                            <td className="border border-gray-300 p-3 text-center">0.00</td>
-                            <td className="border border-gray-300 p-3 text-center">0.00</td>
-                            <td className="border border-gray-300 p-3 text-center">0.00</td>
+                            {isFullTime && (
+                              <>
+                                <td className="border border-gray-300 p-3 text-center">0.00</td>
+                                <td className="border border-gray-300 p-3 text-center">0.00</td>
+                                <td className="border border-gray-300 p-3 text-center">0.00</td>
+                              </>
+                            )}
                             <td className="border border-gray-300 p-3 text-center font-medium bg-gray-100">{parseFloat(dayData.hours || 0).toFixed(2)}</td>
                           </tr>
                         ))}
@@ -936,9 +952,13 @@ function BiWeeklyTableView({ timesheets, getStatusBadge }: any) {
                       <td className="border border-gray-300 p-3">Total Hrs:</td>
                       <td className="border border-gray-300 p-3 text-center">{biWeekly.totalHours}</td>
                       <td className="border border-gray-300 p-3 text-center">0.00</td>
-                      <td className="border border-gray-300 p-3 text-center">0.00</td>
-                      <td className="border border-gray-300 p-3 text-center">0.00</td>
-                      <td className="border border-gray-300 p-3 text-center">0.00</td>
+                      {isFullTime && (
+                        <>
+                          <td className="border border-gray-300 p-3 text-center">0.00</td>
+                          <td className="border border-gray-300 p-3 text-center">0.00</td>
+                          <td className="border border-gray-300 p-3 text-center">0.00</td>
+                        </>
+                      )}
                       <td className="border border-gray-300 p-3 text-center bg-gray-200">{biWeekly.totalHours}</td>
                     </tr>
 
@@ -947,9 +967,13 @@ function BiWeeklyTableView({ timesheets, getStatusBadge }: any) {
                       <td className="border border-gray-300 p-3 font-medium">Rate/Hour:</td>
                       <td className="border border-gray-300 p-3 text-center">INR {(parseFloat(biWeekly.totalAmount) / parseFloat(biWeekly.totalHours) || 0).toFixed(2)}</td>
                       <td className="border border-gray-300 p-3 text-center">INR 0.00</td>
-                      <td className="border border-gray-300 p-3 text-center">INR 0.00</td>
-                      <td className="border border-gray-300 p-3 text-center">INR 0.00</td>
-                      <td className="border border-gray-300 p-3 text-center">INR 0.00</td>
+                      {isFullTime && (
+                        <>
+                          <td className="border border-gray-300 p-3 text-center">INR 0.00</td>
+                          <td className="border border-gray-300 p-3 text-center">INR 0.00</td>
+                          <td className="border border-gray-300 p-3 text-center">INR 0.00</td>
+                        </>
+                      )}
                       <td className="border border-gray-300 p-3 text-center bg-gray-200"></td>
                     </tr>
 
@@ -958,9 +982,13 @@ function BiWeeklyTableView({ timesheets, getStatusBadge }: any) {
                       <td className="border border-gray-300 p-3 font-medium">Total Pay:</td>
                       <td className="border border-gray-300 p-3 text-center">INR {biWeekly.totalAmount}</td>
                       <td className="border border-gray-300 p-3 text-center">INR 0.00</td>
-                      <td className="border border-gray-300 p-3 text-center">INR 0.00</td>
-                      <td className="border border-gray-300 p-3 text-center">INR 0.00</td>
-                      <td className="border border-gray-300 p-3 text-center">INR 0.00</td>
+                      {isFullTime && (
+                        <>
+                          <td className="border border-gray-300 p-3 text-center">INR 0.00</td>
+                          <td className="border border-gray-300 p-3 text-center">INR 0.00</td>
+                          <td className="border border-gray-300 p-3 text-center">INR 0.00</td>
+                        </>
+                      )}
                       <td className="border border-gray-300 p-3 text-center bg-red-500 text-white font-bold">INR {biWeekly.totalAmount}</td>
                     </tr>
                   </tbody>
@@ -1249,6 +1277,10 @@ function MonthlyTableView({ timesheets, getStatusBadge }: any) {
           const workingDays = monthlyTimesheet.workingDaysPerWeek;
           const weeklyTimesheets = monthlyTimesheet.weeklyTimesheets;
           
+          // Get billing configuration for employment type
+          const billingConfig = getBillingConfig(monthlyTimesheet.candidateId);
+          const isFullTime = billingConfig?.employmentType === 'fulltime';
+          
           return (
             <div key={monthlyTimesheet.id} className="border rounded-lg overflow-hidden">
               {/* Header with candidate info and status */}
@@ -1261,7 +1293,7 @@ function MonthlyTableView({ timesheets, getStatusBadge }: any) {
                       Monthly Period: {monthlyTimesheet.monthName} ({format(new Date(monthlyTimesheet.periodStartDate), 'M/d/yyyy')} - {format(new Date(monthlyTimesheet.periodEndDate), 'M/d/yyyy')})
                     </p>
                     <p className="text-xs text-blue-600 mt-1">
-                      Working Days: {workingDays} days/week
+                      Working Days: {workingDays} days/week • Employment: {billingConfig?.employmentType || 'Unknown'}
                     </p>
                   </div>
                   <div className="flex items-center gap-4">
@@ -1306,9 +1338,13 @@ function MonthlyTableView({ timesheets, getStatusBadge }: any) {
                         <th className="border border-gray-300 p-3 text-left font-medium">Day of Week</th>
                         <th className="border border-gray-300 p-3 text-center font-medium">Regular<br/>[h:mm]</th>
                         <th className="border border-gray-300 p-3 text-center font-medium">Overtime<br/>[h:mm]</th>
-                        <th className="border border-gray-300 p-3 text-center font-medium">Sick<br/>[h:mm]</th>
-                        <th className="border border-gray-300 p-3 text-center font-medium">Paid Leave<br/>[h:mm]</th>
-                        <th className="border border-gray-300 p-3 text-center font-medium">Unpaid Leave<br/>[h:mm]</th>
+                        {isFullTime && (
+                          <>
+                            <th className="border border-gray-300 p-3 text-center font-medium">Sick<br/>[h:mm]</th>
+                            <th className="border border-gray-300 p-3 text-center font-medium">Paid Leave<br/>[h:mm]</th>
+                            <th className="border border-gray-300 p-3 text-center font-medium">Unpaid Leave<br/>[h:mm]</th>
+                          </>
+                        )}
                         <th className="border border-gray-300 p-3 text-center font-medium bg-gray-600">TOTAL<br/>[h:mm]</th>
                       </tr>
                     </thead>
@@ -1331,7 +1367,7 @@ function MonthlyTableView({ timesheets, getStatusBadge }: any) {
                         return [
                           // Week Header Row
                           <tr key={`week-${weekIndex}-header`} className={`${weekColor} font-semibold`}>
-                            <td colSpan={7} className="border border-gray-300 p-2 text-center text-gray-800">
+                            <td colSpan={isFullTime ? 7 : 4} className="border border-gray-300 p-2 text-center text-gray-800">
                               Week {weekIndex + 1}: {format(weekStart, 'M/d')} - {format(weekEnd, 'M/d')}
                             </td>
                           </tr>,
@@ -1341,9 +1377,13 @@ function MonthlyTableView({ timesheets, getStatusBadge }: any) {
                               <td className="border border-gray-300 p-3 font-medium">{dayData.day}</td>
                               <td className="border border-gray-300 p-3 text-center">{parseFloat(dayData.hours || 0).toFixed(2)}</td>
                               <td className="border border-gray-300 p-3 text-center">0.00</td>
-                              <td className="border border-gray-300 p-3 text-center">0.00</td>
-                              <td className="border border-gray-300 p-3 text-center">0.00</td>
-                              <td className="border border-gray-300 p-3 text-center">0.00</td>
+                              {isFullTime && (
+                                <>
+                                  <td className="border border-gray-300 p-3 text-center">0.00</td>
+                                  <td className="border border-gray-300 p-3 text-center">0.00</td>
+                                  <td className="border border-gray-300 p-3 text-center">0.00</td>
+                                </>
+                              )}
                               <td className="border border-gray-300 p-3 text-center font-medium bg-gray-100">{parseFloat(dayData.hours || 0).toFixed(2)}</td>
                             </tr>
                           ))
@@ -1355,9 +1395,13 @@ function MonthlyTableView({ timesheets, getStatusBadge }: any) {
                         <td className="border border-gray-300 p-3">Total Hrs:</td>
                         <td className="border border-gray-300 p-3 text-center">{parseFloat(monthlyTimesheet.totalHours).toFixed(2)}</td>
                         <td className="border border-gray-300 p-3 text-center">0.00</td>
-                        <td className="border border-gray-300 p-3 text-center">0.00</td>
-                        <td className="border border-gray-300 p-3 text-center">0.00</td>
-                        <td className="border border-gray-300 p-3 text-center">0.00</td>
+                        {isFullTime && (
+                          <>
+                            <td className="border border-gray-300 p-3 text-center">0.00</td>
+                            <td className="border border-gray-300 p-3 text-center">0.00</td>
+                            <td className="border border-gray-300 p-3 text-center">0.00</td>
+                          </>
+                        )}
                         <td className="border border-gray-300 p-3 text-center bg-gray-200">{parseFloat(monthlyTimesheet.totalHours).toFixed(2)}</td>
                       </tr>
 
@@ -1366,9 +1410,13 @@ function MonthlyTableView({ timesheets, getStatusBadge }: any) {
                         <td className="border border-gray-300 p-3 font-medium">Rate/Hour:</td>
                         <td className="border border-gray-300 p-3 text-center">INR {(parseFloat(monthlyTimesheet.totalAmount) / parseFloat(monthlyTimesheet.totalHours) || 0).toFixed(2)}</td>
                         <td className="border border-gray-300 p-3 text-center">INR 0.00</td>
-                        <td className="border border-gray-300 p-3 text-center">INR 0.00</td>
-                        <td className="border border-gray-300 p-3 text-center">INR 0.00</td>
-                        <td className="border border-gray-300 p-3 text-center">INR 0.00</td>
+                        {isFullTime && (
+                          <>
+                            <td className="border border-gray-300 p-3 text-center">INR 0.00</td>
+                            <td className="border border-gray-300 p-3 text-center">INR 0.00</td>
+                            <td className="border border-gray-300 p-3 text-center">INR 0.00</td>
+                          </>
+                        )}
                         <td className="border border-gray-300 p-3 text-center bg-gray-200"></td>
                       </tr>
 
@@ -1377,9 +1425,13 @@ function MonthlyTableView({ timesheets, getStatusBadge }: any) {
                         <td className="border border-gray-300 p-3 font-medium">Total Pay:</td>
                         <td className="border border-gray-300 p-3 text-center">INR {parseFloat(monthlyTimesheet.totalAmount).toFixed(2)}</td>
                         <td className="border border-gray-300 p-3 text-center">INR 0.00</td>
-                        <td className="border border-gray-300 p-3 text-center">INR 0.00</td>
-                        <td className="border border-gray-300 p-3 text-center">INR 0.00</td>
-                        <td className="border border-gray-300 p-3 text-center">INR 0.00</td>
+                        {isFullTime && (
+                          <>
+                            <td className="border border-gray-300 p-3 text-center">INR 0.00</td>
+                            <td className="border border-gray-300 p-3 text-center">INR 0.00</td>
+                            <td className="border border-gray-300 p-3 text-center">INR 0.00</td>
+                          </>
+                        )}
                         <td className="border border-gray-300 p-3 text-center bg-red-500 text-white font-bold">INR {parseFloat(monthlyTimesheet.totalAmount).toFixed(2)}</td>
                       </tr>
                     </tbody>
@@ -1414,6 +1466,7 @@ function WeeklyTableView({ timesheets, onApprove, onReject, getStatusBadge }: an
       {timesheets.map((timesheet: WeeklyTimesheet) => {
         const billingConfig = getBillingConfig(timesheet.candidateId);
         const workingDays = billingConfig?.workingDaysPerWeek || 5; // Default to 5 days
+        const isFullTime = billingConfig?.employmentType === 'fulltime';
 
         // Define all days but filter based on working days
         const allDays = [
@@ -1476,7 +1529,7 @@ function WeeklyTableView({ timesheets, onApprove, onReject, getStatusBadge }: an
                     Week of: {format(new Date(timesheet.weekStartDate), 'M/d/yyyy')} - {format(new Date(timesheet.weekEndDate), 'M/d/yyyy')}
                   </p>
                   <p className="text-xs text-blue-600 mt-1">
-                    Working Days: {workingDays} days/week
+                    Working Days: {workingDays} days/week • Employment: {billingConfig?.employmentType || 'Unknown'}
                   </p>
                 </div>
                 <div className="flex items-center gap-4">
@@ -1530,9 +1583,13 @@ function WeeklyTableView({ timesheets, onApprove, onReject, getStatusBadge }: an
                     <th className="p-3 text-left font-medium">Day of Week</th>
                     <th className="p-3 text-center font-medium">Regular<br/>[h:mm]</th>
                     <th className="p-3 text-center font-medium">Overtime<br/>[h:mm]</th>
-                    <th className="p-3 text-center font-medium">Sick<br/>[h:mm]</th>
-                    <th className="p-3 text-center font-medium">Paid Leave<br/>[h:mm]</th>
-                    <th className="p-3 text-center font-medium">Unpaid Leave<br/>[h:mm]</th>
+                    {isFullTime && (
+                      <>
+                        <th className="p-3 text-center font-medium">Sick<br/>[h:mm]</th>
+                        <th className="p-3 text-center font-medium">Paid Leave<br/>[h:mm]</th>
+                        <th className="p-3 text-center font-medium">Unpaid Leave<br/>[h:mm]</th>
+                      </>
+                    )}
                     <th className="p-3 text-center font-medium bg-gray-600">TOTAL<br/>[h:mm]</th>
                   </tr>
                 </thead>
@@ -1542,9 +1599,13 @@ function WeeklyTableView({ timesheets, onApprove, onReject, getStatusBadge }: an
                       <td className="p-3 border-r font-medium">{row.day}</td>
                       <td className="p-3 text-center border-r bg-green-50">{(parseFloat(row.hours) || 0).toFixed(2)}</td>
                       <td className="p-3 text-center border-r">0.00</td>
-                      <td className="p-3 text-center border-r bg-green-50">0.00</td>
-                      <td className="p-3 text-center border-r bg-green-50">0.00</td>
-                      <td className="p-3 text-center border-r bg-green-50">0.00</td>
+                      {isFullTime && (
+                        <>
+                          <td className="p-3 text-center border-r bg-green-50">0.00</td>
+                          <td className="p-3 text-center border-r bg-green-50">0.00</td>
+                          <td className="p-3 text-center border-r bg-green-50">0.00</td>
+                        </>
+                      )}
                       <td className="p-3 text-center font-medium bg-gray-100">{(parseFloat(row.hours) || 0).toFixed(2)}</td>
                     </tr>
                   ))}
@@ -1554,9 +1615,13 @@ function WeeklyTableView({ timesheets, onApprove, onReject, getStatusBadge }: an
                     <td className="p-3 border-r">Total Hrs:</td>
                     <td className="p-3 text-center border-r">{(parseFloat(timesheet.totalWeeklyHours) || 0).toFixed(2)}</td>
                     <td className="p-3 text-center border-r">0.00</td>
-                    <td className="p-3 text-center border-r">0.00</td>
-                    <td className="p-3 text-center border-r">0.00</td>
-                    <td className="p-3 text-center border-r">0.00</td>
+                    {isFullTime && (
+                      <>
+                        <td className="p-3 text-center border-r">0.00</td>
+                        <td className="p-3 text-center border-r">0.00</td>
+                        <td className="p-3 text-center border-r">0.00</td>
+                      </>
+                    )}
                     <td className="p-3 text-center bg-gray-200">{(parseFloat(timesheet.totalWeeklyHours) || 0).toFixed(2)}</td>
                   </tr>
 
@@ -1565,9 +1630,13 @@ function WeeklyTableView({ timesheets, onApprove, onReject, getStatusBadge }: an
                     <td className="p-3 border-r font-medium">Rate/Hour:</td>
                     <td className="p-3 text-center border-r">INR {((parseFloat(timesheet.totalWeeklyAmount || '0') / (parseFloat(timesheet.totalWeeklyHours) || 1)) || 0).toFixed(2)}</td>
                     <td className="p-3 text-center border-r">INR 0.00</td>
-                    <td className="p-3 text-center border-r">INR 0.00</td>
-                    <td className="p-3 text-center border-r">INR 0.00</td>
-                    <td className="p-3 text-center border-r">INR 0.00</td>
+                    {isFullTime && (
+                      <>
+                        <td className="p-3 text-center border-r">INR 0.00</td>
+                        <td className="p-3 text-center border-r">INR 0.00</td>
+                        <td className="p-3 text-center border-r">INR 0.00</td>
+                      </>
+                    )}
                     <td className="p-3 text-center bg-gray-200"></td>
                   </tr>
 
@@ -1576,9 +1645,13 @@ function WeeklyTableView({ timesheets, onApprove, onReject, getStatusBadge }: an
                     <td className="p-3 border-r font-medium">Total Pay:</td>
                     <td className="p-3 text-center border-r">INR {parseFloat(timesheet.totalWeeklyAmount || '0').toFixed(2)}</td>
                     <td className="p-3 text-center border-r">INR 0.00</td>
-                    <td className="p-3 text-center border-r">INR 0.00</td>
-                    <td className="p-3 text-center border-r">INR 0.00</td>
-                    <td className="p-3 text-center border-r">INR 0.00</td>
+                    {isFullTime && (
+                      <>
+                        <td className="p-3 text-center border-r">INR 0.00</td>
+                        <td className="p-3 text-center border-r">INR 0.00</td>
+                        <td className="p-3 text-center border-r">INR 0.00</td>
+                      </>
+                    )}
                     <td className="p-3 text-center bg-red-500 text-white font-bold">INR {parseFloat(timesheet.totalWeeklyAmount || '0').toFixed(2)}</td>
                   </tr>
                 </tbody>
