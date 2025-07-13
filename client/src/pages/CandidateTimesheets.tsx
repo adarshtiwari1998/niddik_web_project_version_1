@@ -282,11 +282,11 @@ export default function CandidateTimesheets() {
     format(parseISO(t.weekStartDate), 'yyyy-MM-dd') === format(selectedWeek, 'yyyy-MM-dd')
   );
   
-  // User can update existing timesheet if it's not approved (regardless of week timing)
+  // User can update existing timesheet if it's not approved
   const canUpdateTimesheet = currentWeekTimesheet && currentWeekTimesheet.status !== 'approved';
   
-  // User can submit new timesheet for current week or future weeks (no past week submissions)
-  const canSubmitNewTimesheet = !hasSubmittedThisWeek && !weekHasEnded;
+  // User can submit new timesheet for current week or future weeks (allow future week submissions)
+  const canSubmitNewTimesheet = !hasSubmittedThisWeek;
   
   // Show next week option if current week already has a submitted timesheet
   const shouldShowNextWeek = hasSubmittedThisWeek && isCurrentWeek;
@@ -599,35 +599,38 @@ export default function CandidateTimesheets() {
                   Enter your working hours for each day of the selected week
                   {workingDaysPerWeek === 6 ? ' (Monday - Saturday)' : ' (Monday - Friday)'}
                 </CardDescription>
-                {hasSubmittedThisWeek && !canUpdateTimesheet && (
+                {hasSubmittedThisWeek && currentWeekTimesheet?.status === 'approved' && (
+                  <div className="bg-green-50 border border-green-200 rounded-lg p-3 mt-2">
+                    <p className="text-sm text-green-800">
+                      <CheckCircle className="w-4 h-4 inline mr-1" />
+                      Timesheet approved - Cannot edit. Navigate to next week to submit new timesheet.
+                    </p>
+                  </div>
+                )}
+                {hasSubmittedThisWeek && currentWeekTimesheet?.status === 'submitted' && (
                   <div className="bg-yellow-50 border border-yellow-200 rounded-lg p-3 mt-2">
                     <p className="text-sm text-yellow-800">
                       <AlertCircle className="w-4 h-4 inline mr-1" />
-                      Already submitted: You have already submitted timesheet for this week. Wait for next week to submit again.
+                      Timesheet submitted - Waiting for admin approval. You can still edit until approved.
                     </p>
                   </div>
                 )}
-                {isCurrentWeek && !hasSubmittedThisWeek && (
-                  <div className="bg-green-50 border border-green-200 rounded-lg p-3 mt-2">
-                    <p className="text-sm text-green-800">
-                      <AlertCircle className="w-4 h-4 inline mr-1" />
-                      Current week: You can submit your timesheet until Sunday night.
-                    </p>
-                  </div>
-                )}
-                {weekHasEnded && !hasSubmittedThisWeek && (
+                {hasSubmittedThisWeek && currentWeekTimesheet?.status === 'rejected' && (
                   <div className="bg-red-50 border border-red-200 rounded-lg p-3 mt-2">
                     <p className="text-sm text-red-800">
-                      <AlertCircle className="w-4 h-4 inline mr-1" />
-                      Week ended: Submission deadline has passed for this week.
+                      <XCircle className="w-4 h-4 inline mr-1" />
+                      Timesheet rejected - You can edit and resubmit.
+                      {currentWeekTimesheet.rejectionReason && (
+                        <span className="block mt-1 font-medium">Reason: {currentWeekTimesheet.rejectionReason}</span>
+                      )}
                     </p>
                   </div>
                 )}
-                {canUpdateTimesheet && weekTimesheet?.data && (
-                  <div className="bg-green-50 border border-green-200 rounded-lg p-3 mt-2">
-                    <p className="text-sm text-green-800">
+                {!hasSubmittedThisWeek && (
+                  <div className="bg-blue-50 border border-blue-200 rounded-lg p-3 mt-2">
+                    <p className="text-sm text-blue-800">
                       <AlertCircle className="w-4 h-4 inline mr-1" />
-                      Current week: You can update your timesheet until Sunday night.
+                      Ready to submit: Enter your hours for the selected week and submit.
                     </p>
                   </div>
                 )}

@@ -967,6 +967,7 @@ export default function BillingConfig() {
                           <AlertDialogTitle>Delete Billing Configuration</AlertDialogTitle>
                           <AlertDialogDescription>
                             Are you sure you want to delete the billing configuration for {billing.candidateName}? 
+                            This will also delete all related timesheet data (weekly, bi-weekly, monthly) and invoices.
                             This action cannot be undone.
                           </AlertDialogDescription>
                         </AlertDialogHeader>

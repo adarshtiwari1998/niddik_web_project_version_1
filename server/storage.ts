@@ -1319,10 +1319,33 @@ async updateSeoPage(id: number, data: Partial<InsertSeoPage>): Promise<SeoPage |
   },
 
   async deleteCandidateBilling(candidateId: number): Promise<boolean> {
-    const result = await db
-      .delete(candidateBilling)
-      .where(eq(candidateBilling.candidateId, candidateId));
-    return result.rowCount > 0;
+    try {
+      // Delete all related timesheet data first
+      await db.delete(weeklyTimesheets).where(eq(weeklyTimesheets.candidateId, candidateId));
+      
+      // Delete bi-weekly timesheets if they exist
+      if (db.query.biweeklyTimesheets) {
+        await db.delete(biweeklyTimesheets).where(eq(biweeklyTimesheets.candidateId, candidateId));
+      }
+      
+      // Delete monthly timesheets if they exist
+      if (db.query.monthlyTimesheets) {
+        await db.delete(monthlyTimesheets).where(eq(monthlyTimesheets.candidateId, candidateId));
+      }
+      
+      // Delete invoices related to this candidate
+      await db.delete(invoices).where(eq(invoices.candidateId, candidateId));
+      
+      // Finally delete the billing configuration
+      const result = await db
+        .delete(candidateBilling)
+        .where(eq(candidateBilling.candidateId, candidateId));
+        
+      return result.rowCount > 0;
+    } catch (error) {
+      console.error('Error deleting candidate billing and related data:', error);
+      throw error;
+    }
   },
 
   async getAllCandidatesWithBilling(): Promise<any[]> {
