@@ -65,6 +65,7 @@ export default function CandidateTimesheets() {
   // Default to current week (the week user is working on)
   const [selectedWeek, setSelectedWeek] = useState<Date>(startOfWeek(new Date(), { weekStartsOn: 1 }));
   const [activeTab, setActiveTab] = useState("timesheet");
+  const [selectedTimesheetId, setSelectedTimesheetId] = useState<number | null>(null);
   const [newTimesheet, setNewTimesheet] = useState({
     mondayHours: 0,
     tuesdayHours: 0,
@@ -825,18 +826,49 @@ export default function CandidateTimesheets() {
             {/* Weekly Employee Timesheet */}
             <Card>
               <CardHeader>
-                <CardTitle className="flex items-center gap-2">
-                  <FileText className="h-5 w-5" />
-                  Weekly Employee Timesheet
-                </CardTitle>
-                <CardDescription>
-                  Professional timesheet template showing submitted and approved hours
-                </CardDescription>
+                <div className="flex items-center justify-between">
+                  <div>
+                    <CardTitle className="flex items-center gap-2">
+                      <FileText className="h-5 w-5" />
+                      Weekly Employee Timesheet
+                    </CardTitle>
+                    <CardDescription>
+                      Professional timesheet template showing submitted and approved hours
+                    </CardDescription>
+                  </div>
+                  
+                  {/* Week Filter */}
+                  {timesheets?.data && timesheets.data.length > 1 && (
+                    <div className="flex items-center gap-2">
+                      <label htmlFor="week-select" className="text-sm font-medium">Select Week:</label>
+                      <select 
+                        id="week-select"
+                        value={selectedTimesheetId || ''}
+                        onChange={(e) => setSelectedTimesheetId(e.target.value ? parseInt(e.target.value) : null)}
+                        className="px-3 py-1 border rounded-md text-sm bg-white"
+                      >
+                        <option value="">All Weeks</option>
+                        {timesheets.data
+                          .sort((a: WeeklyTimesheet, b: WeeklyTimesheet) => 
+                            new Date(b.weekStartDate).getTime() - new Date(a.weekStartDate).getTime()
+                          )
+                          .map((timesheet: WeeklyTimesheet) => (
+                            <option key={timesheet.id} value={timesheet.id}>
+                              Week of {format(parseISO(timesheet.weekStartDate), 'MMM d, yyyy')} - {timesheet.status}
+                            </option>
+                          ))}
+                      </select>
+                    </div>
+                  )}
+                </div>
               </CardHeader>
               <CardContent>
                 {timesheets?.data && timesheets.data.length > 0 ? (
                   <div className="space-y-6">
-                    {timesheets.data.map((timesheet: WeeklyTimesheet) => (
+                    {(selectedTimesheetId 
+                      ? timesheets.data.filter((t: WeeklyTimesheet) => t.id === selectedTimesheetId)
+                      : timesheets.data
+                    ).map((timesheet: WeeklyTimesheet) => (
                       <TimesheetTemplate 
                         key={timesheet.id}
                         timesheet={timesheet}
@@ -1021,15 +1053,27 @@ function TimesheetTemplate({ timesheet, billingConfig, user }: {
             {monthYear}
           </div>
           <div className="mt-2 text-xs">
-            <div className="grid grid-cols-7 gap-1">
+            <div className="grid grid-cols-7 gap-1 mb-2">
               {['Su', 'Mo', 'Tu', 'We', 'Th', 'Fr', 'Sa'].map(day => (
                 <div key={day} className="w-6 h-6 text-center font-medium">{day}</div>
               ))}
             </div>
-            <div className="grid grid-cols-7 gap-1 mt-1">
-              {Array.from({ length: 31 }, (_, i) => i + 1).map(day => (
-                <div key={day} className="w-6 h-6 text-center text-xs">{day}</div>
+            <div className="text-sm font-medium text-green-600 mb-1">
+              Week Range
+            </div>
+            <div className="grid grid-cols-7 gap-1">
+              {workingDays.map((day, index) => (
+                <div key={day.label} className="w-6 h-6 text-center text-xs bg-green-100 rounded flex items-center justify-center">
+                  {day.date.split('/')[1]}
+                </div>
               ))}
+              {/* Fill remaining days if working days < 7 */}
+              {Array.from({ length: 7 - workingDays.length }, (_, i) => (
+                <div key={`empty-${i}`} className="w-6 h-6"></div>
+              ))}
+            </div>
+            <div className="text-xs text-gray-600 mt-1">
+              {format(weekStartDate, 'MMM d')} - {format(addDays(weekStartDate, workingDays.length - 1), 'MMM d, yyyy')}
             </div>
           </div>
         </div>

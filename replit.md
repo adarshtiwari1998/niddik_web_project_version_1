@@ -171,7 +171,10 @@ The application follows a standard full-stack architecture with clear separation
 - **Company Logo Display Fix**: Added Niddik company logo display in timesheet template using logo_url from company_settings table
 - **Client Company Enhancement**: Enhanced client company section to display logo and complete billing address information including bill_to_address, bill_to_city, bill_to_state, bill_to_country, bill_to_zip_code
 - **Field Mapping Compatibility**: Updated template to handle both camelCase and snake_case database field names for maximum compatibility
-- **Resolution**: Client company dropdown now properly displays all available companies, billing cards show actual company logos, and timesheet templates display real NIDDIK and client company information from database with complete logos and billing addresses
+- **Week Filter Enhancement**: Added dropdown filter to select specific timesheet weeks when multiple timesheets exist, allowing users to view week-wise data easily
+- **Calendar Improvement**: Enhanced calendar component to show actual working week range instead of full month, with highlighted working days and date range display
+- **Logo Display Integration**: Successfully integrated company logos from database URLs (Niddik and WIMMER SOLUTIONS) into timesheet template
+- **Resolution**: Complete timesheet template now displays real company data with logos, week filtering capability, accurate calendar ranges, and all client company billing address fields from database
 
 ## Billing Configuration Enhancement (July 12, 2025)
 - **Enhanced Billing Configuration**: Added client company selection field to admin billing configuration popup
