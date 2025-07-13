@@ -378,10 +378,14 @@ export default function CandidateTimesheets() {
         </div>
 
         <Tabs value={activeTab} onValueChange={setActiveTab} defaultValue="timesheet" className="space-y-6">
-          <TabsList className="grid w-full grid-cols-2">
+          <TabsList className="grid w-full grid-cols-3">
             <TabsTrigger value="timesheet" className="flex items-center gap-2">
               <Clock className="h-4 w-4" />
               Timesheet Submission
+            </TabsTrigger>
+            <TabsTrigger value="weekly-timesheet" className="flex items-center gap-2">
+              <FileText className="h-4 w-4" />
+              Weekly Timesheet
             </TabsTrigger>
             <TabsTrigger value="attendance" className="flex items-center gap-2">
               <CalendarIcon className="h-4 w-4" />
@@ -817,12 +821,12 @@ export default function CandidateTimesheets() {
             </Card>
           </TabsContent>
 
-          <TabsContent value="attendance" className="space-y-6">
-            {/* Attendance Tracking */}
+          <TabsContent value="weekly-timesheet" className="space-y-6">
+            {/* Weekly Employee Timesheet */}
             <Card>
               <CardHeader>
                 <CardTitle className="flex items-center gap-2">
-                  <CalendarIcon className="h-5 w-5" />
+                  <FileText className="h-5 w-5" />
                   Weekly Employee Timesheet
                 </CardTitle>
                 <CardDescription>
@@ -843,13 +847,68 @@ export default function CandidateTimesheets() {
                   </div>
                 ) : (
                   <div className="text-center py-8">
-                    <CalendarIcon className="mx-auto h-12 w-12 text-gray-400" />
+                    <FileText className="mx-auto h-12 w-12 text-gray-400" />
                     <h3 className="mt-2 text-sm font-medium text-gray-900">No timesheets submitted</h3>
                     <p className="mt-1 text-sm text-gray-500">
                       Submit your first timesheet to see it displayed here.
                     </p>
                   </div>
                 )}
+              </CardContent>
+            </Card>
+          </TabsContent>
+
+          <TabsContent value="attendance" className="space-y-6">
+            {/* Attendance Tracking */}
+            <Card>
+              <CardHeader>
+                <CardTitle className="flex items-center gap-2">
+                  <CalendarIcon className="h-5 w-5" />
+                  Attendance Tracking
+                </CardTitle>
+                <CardDescription>
+                  View your attendance summary and statistics
+                </CardDescription>
+              </CardHeader>
+              <CardContent>
+                {/* Attendance Summary */}
+                <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                  <Card>
+                    <CardContent className="pt-6">
+                      <div className="text-center">
+                        <CheckCircle className="h-8 w-8 mx-auto text-green-600 mb-2" />
+                        <p className="text-2xl font-bold text-green-600">
+                          {timesheets?.data?.filter((t: WeeklyTimesheet) => t.status === 'approved').length || 0}
+                        </p>
+                        <p className="text-sm text-muted-foreground">Approved Timesheets</p>
+                      </div>
+                    </CardContent>
+                  </Card>
+
+                  <Card>
+                    <CardContent className="pt-6">
+                      <div className="text-center">
+                        <AlertCircle className="h-8 w-8 mx-auto text-yellow-600 mb-2" />
+                        <p className="text-2xl font-bold text-yellow-600">
+                          {timesheets?.data?.filter((t: WeeklyTimesheet) => t.status === 'submitted').length || 0}
+                        </p>
+                        <p className="text-sm text-muted-foreground">Pending Review</p>
+                      </div>
+                    </CardContent>
+                  </Card>
+
+                  <Card>
+                    <CardContent className="pt-6">
+                      <div className="text-center">
+                        <Clock className="h-8 w-8 mx-auto text-blue-600 mb-2" />
+                        <p className="text-2xl font-bold text-blue-600">
+                          {timesheets?.data?.reduce((sum: number, t: WeeklyTimesheet) => sum + t.totalWeeklyHours, 0) || 0}
+                        </p>
+                        <p className="text-sm text-muted-foreground">Total Hours</p>
+                      </div>
+                    </CardContent>
+                  </Card>
+                </div>
               </CardContent>
             </Card>
           </TabsContent>
@@ -901,11 +960,11 @@ function TimesheetTemplate({ timesheet, billingConfig, user }: {
         <div>
           <h3 className="text-xl font-bold">{niddikCompany?.name || 'NIDDIK'}</h3>
           <div className="text-sm text-gray-600 space-y-1">
-            <p>Address 1</p>
-            <p>Address 2</p>
-            <p>City, State ZIP</p>
-            <p>(000) 000-0000</p>
-            <p>www.company-name.com</p>
+            <p>{niddikCompany?.address1 || 'Address 1'}</p>
+            <p>{niddikCompany?.address2 || 'Address 2'}</p>
+            <p>{niddikCompany?.city && niddikCompany?.state ? `${niddikCompany.city}, ${niddikCompany.state} ${niddikCompany.zipCode || ''}` : 'City, State ZIP'}</p>
+            <p>{niddikCompany?.phone || '(000) 000-0000'}</p>
+            <p>{niddikCompany?.website || 'www.company-name.com'}</p>
           </div>
         </div>
         

@@ -164,7 +164,11 @@ The application follows a standard full-stack architecture with clear separation
 - **Environment**: Application running cleanly in standard Replit environment without errors
 - **Client Company Dropdown Fix**: Fixed data access path from `clientCompanies.companies` to `clientCompanies.data.companies` to match API response structure
 - **Client Company Logo Display**: Fixed logo display logic to show actual company logos when available, with building icon only as fallback
-- **Resolution**: Client company dropdown now properly displays all available companies, and billing cards show actual company logos instead of generic icons
+- **Weekly Timesheet Tab Separation**: Moved Weekly Employee Timesheet from "Attendance Tracking" tab to separate "Weekly Timesheet" tab for better organization
+- **Real Company Data Integration**: Updated timesheet template to fetch authentic company data from database tables (company_settings and client_companies) instead of dummy data
+- **Backend API Fix**: Added missing getCompanySettings function to storage object to resolve 500 errors in timesheet company info endpoint
+- **Enhanced Tab Structure**: Created three-tab layout: Timesheet Submission, Weekly Timesheet, and Attendance Tracking for improved user experience
+- **Resolution**: Client company dropdown now properly displays all available companies, billing cards show actual company logos, and timesheet templates display real NIDDIK and client company information from database
 
 ## Billing Configuration Enhancement (July 12, 2025)
 - **Enhanced Billing Configuration**: Added client company selection field to admin billing configuration popup

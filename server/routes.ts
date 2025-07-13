@@ -3607,7 +3607,7 @@ ${allUrls.map(url => `  <url>
       // Get client company and company settings
       const [clientCompaniesResponse, companySettingsResponse] = await Promise.all([
         storage.getAllClientCompanies({ active: true }),
-        storage.getCompanySettings()
+        storage.getCompanySettings({})
       ]);
 
       // Find the specific client company assigned to this candidate

@@ -1844,6 +1844,41 @@ async updateSeoPage(id: number, data: Partial<InsertSeoPage>): Promise<SeoPage |
     }));
 
     return { companies, total };
+  },
+
+  // Company Settings
+  async getCompanySettings(params: { page?: number; limit?: number; search?: string } = {}): Promise<{ data: CompanySettings[]; meta: { total: number; page: number; limit: number; pages: number } }> {
+    return await withRetry(async () => {
+      const { page = 1, limit = 10, search } = params;
+      const offset = (page - 1) * limit;
+
+      let query = db.select().from(companySettings);
+      let countQuery = db.select({ count: count() }).from(companySettings);
+
+      // Add search filter
+      if (search) {
+        const condition = ilike(companySettings.name, `%${search}%`);
+        query = query.where(condition);
+        countQuery = countQuery.where(condition);
+      }
+
+      const [results, totalResults] = await Promise.all([
+        query.orderBy(desc(companySettings.isDefault), desc(companySettings.createdAt)).limit(limit).offset(offset),
+        countQuery
+      ]);
+
+      const total = totalResults[0]?.count || 0;
+
+      return {
+        data: results,
+        meta: {
+          total,
+          page,
+          limit,
+          pages: Math.ceil(total / limit)
+        }
+      };
+    });
   }
 };
 
