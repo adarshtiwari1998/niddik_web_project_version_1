@@ -754,12 +754,12 @@ function BiWeeklyTableView({ timesheets, getStatusBadge }: any) {
       <div className="flex gap-4 items-center bg-gray-50 p-4 rounded-lg">
         <Label className="font-medium">Timeframe</Label>
         <Select
-          value={selectedTimeframe ? format(selectedTimeframe, 'yyyy-MM-dd') : ''}
+          value={selectedTimeframe ? format(selectedTimeframe, 'yyyy-MM-dd') : 'all'}
           onValueChange={(value) => {
-            if (value) {
-              setSelectedTimeframe(new Date(value));
-            } else {
+            if (value === 'all') {
               setSelectedTimeframe(undefined);
+            } else {
+              setSelectedTimeframe(new Date(value));
             }
           }}
         >
@@ -767,7 +767,7 @@ function BiWeeklyTableView({ timesheets, getStatusBadge }: any) {
             <SelectValue placeholder="Select timeframe" />
           </SelectTrigger>
           <SelectContent>
-            <SelectItem value="">All Timeframes</SelectItem>
+            <SelectItem value="all">All Timeframes</SelectItem>
             {timeframeOptions.map((option) => (
               <SelectItem key={option.value.getTime()} value={format(option.value, 'yyyy-MM-dd')}>
                 {option.label}
@@ -1143,14 +1143,14 @@ function MonthlyTableView({ timesheets, getStatusBadge }: any) {
         
         {/* Month Selector */}
         <Select
-          value={selectedMonth ? format(selectedMonth, 'yyyy-MM') : ''}
+          value={selectedMonth ? format(selectedMonth, 'yyyy-MM') : 'all'}
           onValueChange={(value) => {
-            if (value) {
+            if (value === 'all') {
+              setSelectedMonth(undefined);
+            } else {
               const [year, month] = value.split('-');
               setSelectedMonth(new Date(parseInt(year), parseInt(month) - 1, 1));
               setSelectedYear(''); // Clear year filter when month is selected
-            } else {
-              setSelectedMonth(undefined);
             }
           }}
         >
@@ -1158,7 +1158,7 @@ function MonthlyTableView({ timesheets, getStatusBadge }: any) {
             <SelectValue placeholder="Select month" />
           </SelectTrigger>
           <SelectContent>
-            <SelectItem value="">All Months</SelectItem>
+            <SelectItem value="all">All Months</SelectItem>
             {months.map((month) => (
               <SelectItem key={month.value} value={month.value}>
                 {month.label}
@@ -1169,10 +1169,12 @@ function MonthlyTableView({ timesheets, getStatusBadge }: any) {
 
         {/* Year Selector */}
         <Select
-          value={selectedYear}
+          value={selectedYear || 'all'}
           onValueChange={(value) => {
-            setSelectedYear(value);
-            if (value) {
+            if (value === 'all') {
+              setSelectedYear('');
+            } else {
+              setSelectedYear(value);
               setSelectedMonth(undefined); // Clear month filter when year is selected
             }
           }}
@@ -1181,7 +1183,7 @@ function MonthlyTableView({ timesheets, getStatusBadge }: any) {
             <SelectValue placeholder="Year" />
           </SelectTrigger>
           <SelectContent>
-            <SelectItem value="">All Years</SelectItem>
+            <SelectItem value="all">All Years</SelectItem>
             {years.map((year) => (
               <SelectItem key={year.value} value={year.value}>
                 {year.label}
