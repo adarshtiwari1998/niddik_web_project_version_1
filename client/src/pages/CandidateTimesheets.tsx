@@ -1000,6 +1000,21 @@ function TimesheetTemplate({ timesheet, billingConfig, user }: {
 }) {
   const weekStartDate = parseISO(timesheet.weekStartDate);
   const monthYear = format(weekStartDate, 'MMMM yyyy');
+  
+  // Days of the week - define this first
+  const weekDays = [
+    { label: 'Mon', key: 'mondayHours', date: format(addDays(weekStartDate, 0), 'M/d') },
+    { label: 'Tue', key: 'tuesdayHours', date: format(addDays(weekStartDate, 1), 'M/d') },
+    { label: 'Wed', key: 'wednesdayHours', date: format(addDays(weekStartDate, 2), 'M/d') },
+    { label: 'Thu', key: 'thursdayHours', date: format(addDays(weekStartDate, 3), 'M/d') },
+    { label: 'Fri', key: 'fridayHours', date: format(addDays(weekStartDate, 4), 'M/d') },
+    { label: 'Sat', key: 'saturdayHours', date: format(addDays(weekStartDate, 5), 'M/d') },
+    { label: 'Sun', key: 'sundayHours', date: format(addDays(weekStartDate, 6), 'M/d') }
+  ];
+
+  const workingDays = billingConfig?.workingDaysPerWeek === 6 ? weekDays : weekDays.slice(0, 5);
+  
+  // Now calculate week range using workingDays
   const weekEndDate = addDays(weekStartDate, workingDays.length - 1);
   const weekOf = `${format(weekStartDate, 'M/d/yyyy')} - ${format(weekEndDate, 'M/d/yyyy')}`;
   
@@ -1019,19 +1034,6 @@ function TimesheetTemplate({ timesheet, billingConfig, user }: {
   console.log('Company Info Response:', companyInfo);
   console.log('Niddik Company Data:', niddikCompany);
   console.log('Client Company Data:', clientCompany);
-  
-  // Days of the week
-  const weekDays = [
-    { label: 'Mon', key: 'mondayHours', date: format(addDays(weekStartDate, 0), 'M/d') },
-    { label: 'Tue', key: 'tuesdayHours', date: format(addDays(weekStartDate, 1), 'M/d') },
-    { label: 'Wed', key: 'wednesdayHours', date: format(addDays(weekStartDate, 2), 'M/d') },
-    { label: 'Thu', key: 'thursdayHours', date: format(addDays(weekStartDate, 3), 'M/d') },
-    { label: 'Fri', key: 'fridayHours', date: format(addDays(weekStartDate, 4), 'M/d') },
-    { label: 'Sat', key: 'saturdayHours', date: format(addDays(weekStartDate, 5), 'M/d') },
-    { label: 'Sun', key: 'sundayHours', date: format(addDays(weekStartDate, 6), 'M/d') }
-  ];
-
-  const workingDays = billingConfig?.workingDaysPerWeek === 6 ? weekDays : weekDays.slice(0, 5);
 
   return (
     <div className="border rounded-lg p-6 bg-white shadow-sm">
