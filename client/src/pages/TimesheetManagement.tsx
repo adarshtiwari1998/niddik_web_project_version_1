@@ -671,30 +671,30 @@ function WeeklyTableView({ timesheets, onApprove, onReject, getStatusBadge }: an
                 ].map((row, index) => (
                   <tr key={index} className={index % 2 === 0 ? 'bg-white' : 'bg-gray-50'}>
                     <td className="p-3 border-r font-medium">{row.day}</td>
-                    <td className="p-3 text-center border-r bg-green-50">{(row.hours || 0).toFixed(2)}</td>
+                    <td className="p-3 text-center border-r bg-green-50">{(parseFloat(row.hours) || 0).toFixed(2)}</td>
                     <td className="p-3 text-center border-r">0.00</td>
                     <td className="p-3 text-center border-r bg-green-50">0.00</td>
                     <td className="p-3 text-center border-r bg-green-50">0.00</td>
                     <td className="p-3 text-center border-r bg-green-50">0.00</td>
-                    <td className="p-3 text-center font-medium bg-gray-100">{(row.hours || 0).toFixed(2)}</td>
+                    <td className="p-3 text-center font-medium bg-gray-100">{(parseFloat(row.hours) || 0).toFixed(2)}</td>
                   </tr>
                 ))}
                 
                 {/* Totals Row */}
                 <tr className="bg-green-100 font-medium">
                   <td className="p-3 border-r">Total Hrs:</td>
-                  <td className="p-3 text-center border-r">{(timesheet.totalWeeklyHours || 0).toFixed(2)}</td>
+                  <td className="p-3 text-center border-r">{(parseFloat(timesheet.totalWeeklyHours) || 0).toFixed(2)}</td>
                   <td className="p-3 text-center border-r">0.00</td>
                   <td className="p-3 text-center border-r">0.00</td>
                   <td className="p-3 text-center border-r">0.00</td>
                   <td className="p-3 text-center border-r">0.00</td>
-                  <td className="p-3 text-center bg-gray-200">{(timesheet.totalWeeklyHours || 0).toFixed(2)}</td>
+                  <td className="p-3 text-center bg-gray-200">{(parseFloat(timesheet.totalWeeklyHours) || 0).toFixed(2)}</td>
                 </tr>
 
                 {/* Rate Row */}
                 <tr className="bg-gray-50">
                   <td className="p-3 border-r font-medium">Rate/Hour:</td>
-                  <td className="p-3 text-center border-r">INR {((parseFloat(timesheet.totalWeeklyAmount || '0') / (timesheet.totalWeeklyHours || 1)) || 0).toFixed(2)}</td>
+                  <td className="p-3 text-center border-r">INR {((parseFloat(timesheet.totalWeeklyAmount || '0') / (parseFloat(timesheet.totalWeeklyHours) || 1)) || 0).toFixed(2)}</td>
                   <td className="p-3 text-center border-r">INR 0.00</td>
                   <td className="p-3 text-center border-r">INR 0.00</td>
                   <td className="p-3 text-center border-r">INR 0.00</td>
