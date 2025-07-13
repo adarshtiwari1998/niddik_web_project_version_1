@@ -103,12 +103,16 @@ export default function CandidateTimesheets() {
       
       if (currentWeekTimesheet) {
         setSelectedTimesheetId(currentWeekTimesheet.id);
+        // Set selected week to current week
+        setSelectedWeek(startOfWeek(new Date(), { weekStartsOn: 1 }));
       } else {
         // If no current week timesheet, select the most recent one
         const sortedTimesheets = [...timesheets.data].sort((a: WeeklyTimesheet, b: WeeklyTimesheet) => 
           new Date(b.weekStartDate).getTime() - new Date(a.weekStartDate).getTime()
         );
         setSelectedTimesheetId(sortedTimesheets[0].id);
+        // Set selected week to match the most recent timesheet
+        setSelectedWeek(startOfWeek(parseISO(sortedTimesheets[0].weekStartDate), { weekStartsOn: 1 }));
       }
     }
   }, [timesheets?.data, selectedTimesheetId]);
@@ -246,6 +250,11 @@ export default function CandidateTimesheets() {
     }
   };
 
+  const handleNextWeek = () => {
+    const nextWeek = addDays(selectedWeek, 7);
+    setSelectedWeek(nextWeek);
+  };
+
   const totalHours = Object.values(newTimesheet).reduce((sum, hours) => sum + hours, 0);
   const totalAmount = totalHours * (billingConfig?.data?.hourlyRate || 0);
 
@@ -268,11 +277,16 @@ export default function CandidateTimesheets() {
     format(parseISO(t.weekStartDate), 'yyyy-MM-dd') === format(selectedWeek, 'yyyy-MM-dd')
   );
   
-  // User can update existing timesheet during current week (until Sunday night) if not approved
-  const canUpdateTimesheet = isCurrentWeek && weekTimesheet?.data?.status !== 'approved';
+  // Get current week's timesheet if it exists
+  const currentWeekTimesheet = timesheets?.data?.find((t: WeeklyTimesheet) => 
+    format(parseISO(t.weekStartDate), 'yyyy-MM-dd') === format(selectedWeek, 'yyyy-MM-dd')
+  );
   
-  // User can submit new timesheet during current week (until Sunday night)
-  const canSubmitNewTimesheet = isCurrentWeek && !hasSubmittedThisWeek;
+  // User can update existing timesheet if it's not approved (regardless of week timing)
+  const canUpdateTimesheet = currentWeekTimesheet && currentWeekTimesheet.status !== 'approved';
+  
+  // User can submit new timesheet for current week or future weeks (no past week submissions)
+  const canSubmitNewTimesheet = !hasSubmittedThisWeek && !weekHasEnded;
   
   // Show next week option if current week already has a submitted timesheet
   const shouldShowNextWeek = hasSubmittedThisWeek && isCurrentWeek;
@@ -564,7 +578,7 @@ export default function CandidateTimesheets() {
                         <Button
                           size="sm"
                           variant="outline"
-                          onClick={() => setSelectedWeek(addDays(selectedWeek, 7))}
+                          onClick={handleNextWeek}
                           className="mt-2"
                         >
                           Switch to Next Week
@@ -639,7 +653,7 @@ export default function CandidateTimesheets() {
                             ...prev,
                             [key]: parseFloat(e.target.value) || 0
                           }))}
-                          disabled={weekTimesheet?.data?.status === 'approved' || (!canUpdateTimesheet && weekTimesheet?.data) || weekHasEnded}
+                          disabled={!canSubmitNewTimesheet && !canUpdateTimesheet}
                           placeholder="0.0"
                         />
                       </div>
@@ -687,7 +701,7 @@ export default function CandidateTimesheets() {
                         </Button>
                       ) : (
                         <div className="text-sm text-muted-foreground">
-                          {isCurrentWeek ? 'Timesheet submitted - Contact admin for changes' : weekHasEnded ? 'Week ended - Timesheet locked for editing' : 'Week ended - Timesheet locked for editing'}
+                          {weekTimesheet.data.status === 'approved' ? 'Timesheet approved - Cannot edit' : isCurrentWeek ? 'Timesheet submitted - Contact admin for changes' : 'Week ended - Timesheet locked for editing'}
                         </div>
                       )
                     ) : (
