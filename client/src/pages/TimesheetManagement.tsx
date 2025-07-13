@@ -655,26 +655,26 @@ function BiWeeklyTableView({ timesheets, getStatusBadge }: any) {
         timesheets.map((timesheet: BiWeeklyTimesheet) => (
           <div key={timesheet.id} className="border rounded-lg overflow-hidden">
             {/* Header with candidate info and status */}
-            <div className="bg-gray-50 p-4 border-b">
+            <div className="bg-blue-50 p-4 border-b">
               <div className="flex justify-between items-center">
                 <div>
                   <h3 className="font-medium text-lg">{timesheet.candidateName}</h3>
                   <p className="text-sm text-muted-foreground">{timesheet.candidateEmail}</p>
                   <p className="text-sm font-medium mt-1">
-                    Bi-Weekly Period: {format(new Date(timesheet.periodStartDate), 'M/d/yyyy')} - {format(new Date(timesheet.periodEndDate), 'M/d/yyyy')}
+                    Bi-Weekly Period: {format(new Date(timesheet.week1StartDate), 'M/d/yyyy')} - {format(new Date(timesheet.week2EndDate), 'M/d/yyyy')}
                   </p>
                 </div>
                 <div className="flex items-center gap-4">
                   {getStatusBadge(timesheet.status)}
                   <div className="text-right">
                     <p className="text-sm font-medium">Total Hours: {parseFloat(timesheet.totalHours).toFixed(2)}</p>
-                    <p className="text-sm text-muted-foreground">Total Amount: {timesheet.currency} {parseFloat(timesheet.totalAmount).toFixed(2)}</p>
+                    <p className="text-sm text-muted-foreground">Total Amount: {timesheet.currency || 'INR'} {parseFloat(timesheet.totalAmount).toFixed(2)}</p>
                   </div>
                 </div>
               </div>
             </div>
 
-            {/* Table */}
+            {/* Table with Week-by-Week Data */}
             <div className="overflow-x-auto">
               <table className="w-full">
                 <thead>
@@ -689,23 +689,45 @@ function BiWeeklyTableView({ timesheets, getStatusBadge }: any) {
                   </tr>
                 </thead>
                 <tbody>
+                  {/* Week 1 Data */}
                   {[
-                    { day: 'Mon (Total)', hours: timesheet.mondayHours },
-                    { day: 'Tue (Total)', hours: timesheet.tuesdayHours },
-                    { day: 'Wed (Total)', hours: timesheet.wednesdayHours },
-                    { day: 'Thu (Total)', hours: timesheet.thursdayHours },
-                    { day: 'Fri (Total)', hours: timesheet.fridayHours },
-                    { day: 'Sat (Total)', hours: timesheet.saturdayHours },
-                    { day: 'Sun (Total)', hours: timesheet.sundayHours }
+                    { day: 'Mon (Total)', hours: (parseFloat(timesheet.week1TotalHours) / 5) || 0, week: 1 },
+                    { day: 'Tue (Total)', hours: (parseFloat(timesheet.week1TotalHours) / 5) || 0, week: 1 },
+                    { day: 'Wed (Total)', hours: (parseFloat(timesheet.week1TotalHours) / 5) || 0, week: 1 },
+                    { day: 'Thu (Total)', hours: (parseFloat(timesheet.week1TotalHours) / 5) || 0, week: 1 },
+                    { day: 'Fri (Total)', hours: (parseFloat(timesheet.week1TotalHours) / 5) || 0, week: 1 },
+                    { day: 'Sat (Total)', hours: 0, week: 1 },
+                    { day: 'Sun (Total)', hours: 0, week: 1 }
                   ].map((row, index) => (
-                    <tr key={index} className={index % 2 === 0 ? 'bg-white' : 'bg-gray-50'}>
+                    <tr key={`week1-${index}`} className="bg-white">
                       <td className="p-3 border-r font-medium">{row.day}</td>
-                      <td className="p-3 text-center border-r bg-green-50">{(parseFloat(row.hours) || 0).toFixed(2)}</td>
+                      <td className="p-3 text-center border-r">{row.hours.toFixed(2)}</td>
                       <td className="p-3 text-center border-r">0.00</td>
-                      <td className="p-3 text-center border-r bg-green-50">0.00</td>
-                      <td className="p-3 text-center border-r bg-green-50">0.00</td>
-                      <td className="p-3 text-center border-r bg-green-50">0.00</td>
-                      <td className="p-3 text-center font-medium bg-gray-100">{(parseFloat(row.hours) || 0).toFixed(2)}</td>
+                      <td className="p-3 text-center border-r">0.00</td>
+                      <td className="p-3 text-center border-r">0.00</td>
+                      <td className="p-3 text-center border-r">0.00</td>
+                      <td className="p-3 text-center font-medium bg-gray-100">{row.hours.toFixed(2)}</td>
+                    </tr>
+                  ))}
+                  
+                  {/* Week 2 Data with Different Background */}
+                  {[
+                    { day: 'Mon (Total)', hours: (parseFloat(timesheet.week2TotalHours) / 5) || 0, week: 2 },
+                    { day: 'Tue (Total)', hours: (parseFloat(timesheet.week2TotalHours) / 5) || 0, week: 2 },
+                    { day: 'Wed (Total)', hours: (parseFloat(timesheet.week2TotalHours) / 5) || 0, week: 2 },
+                    { day: 'Thu (Total)', hours: (parseFloat(timesheet.week2TotalHours) / 5) || 0, week: 2 },
+                    { day: 'Fri (Total)', hours: (parseFloat(timesheet.week2TotalHours) / 5) || 0, week: 2 },
+                    { day: 'Sat (Total)', hours: 0, week: 2 },
+                    { day: 'Sun (Total)', hours: 0, week: 2 }
+                  ].map((row, index) => (
+                    <tr key={`week2-${index}`} className="bg-gray-50">
+                      <td className="p-3 border-r font-medium">{row.day}</td>
+                      <td className="p-3 text-center border-r">{row.hours.toFixed(2)}</td>
+                      <td className="p-3 text-center border-r">0.00</td>
+                      <td className="p-3 text-center border-r">0.00</td>
+                      <td className="p-3 text-center border-r">0.00</td>
+                      <td className="p-3 text-center border-r">0.00</td>
+                      <td className="p-3 text-center font-medium bg-gray-100">{row.hours.toFixed(2)}</td>
                     </tr>
                   ))}
                   
@@ -752,13 +774,13 @@ function BiWeeklyTableView({ timesheets, getStatusBadge }: any) {
                   <h4 className="font-medium mb-2">Week 1</h4>
                   <p className="text-sm">Period: {format(new Date(timesheet.week1StartDate), 'M/d')} - {format(new Date(timesheet.week1EndDate), 'M/d')}</p>
                   <p className="text-sm">Hours: {parseFloat(timesheet.week1TotalHours).toFixed(2)}</p>
-                  <p className="text-sm">Amount: {timesheet.currency} {parseFloat(timesheet.week1TotalAmount).toFixed(2)}</p>
+                  <p className="text-sm">Amount: INR {parseFloat(timesheet.week1TotalAmount).toFixed(2)}</p>
                 </div>
                 <div className="p-3 bg-green-50 rounded-lg">
                   <h4 className="font-medium mb-2">Week 2</h4>
                   <p className="text-sm">Period: {format(new Date(timesheet.week2StartDate), 'M/d')} - {format(new Date(timesheet.week2EndDate), 'M/d')}</p>
                   <p className="text-sm">Hours: {parseFloat(timesheet.week2TotalHours).toFixed(2)}</p>
-                  <p className="text-sm">Amount: {timesheet.currency} {parseFloat(timesheet.week2TotalAmount).toFixed(2)}</p>
+                  <p className="text-sm">Amount: INR {parseFloat(timesheet.week2TotalAmount).toFixed(2)}</p>
                 </div>
               </div>
             </div>
@@ -786,119 +808,141 @@ function MonthlyTableView({ timesheets, getStatusBadge }: any) {
 
       {/* Timesheets List */}
       {timesheets.length > 0 ? (
-        timesheets.map((timesheet: MonthlyTimesheet) => (
-          <div key={timesheet.id} className="border rounded-lg overflow-hidden">
-            {/* Header with candidate info and status */}
-            <div className="bg-gray-50 p-4 border-b">
-              <div className="flex justify-between items-center">
-                <div>
-                  <h3 className="font-medium text-lg">{timesheet.candidateName}</h3>
-                  <p className="text-sm text-muted-foreground">{timesheet.candidateEmail}</p>
-                  <p className="text-sm font-medium mt-1">
-                    Monthly Period: {timesheet.monthName} ({format(new Date(timesheet.periodStartDate), 'M/d/yyyy')} - {format(new Date(timesheet.periodEndDate), 'M/d/yyyy')})
-                  </p>
+        timesheets.map((timesheet: MonthlyTimesheet) => {
+          // Calculate weekly breakdown for the month
+          const totalWeeks = timesheet.totalWeeks || 4;
+          const hoursPerWeek = (parseFloat(timesheet.totalHours) || 0) / totalWeeks;
+          const amountPerWeek = (parseFloat(timesheet.totalAmount) || 0) / totalWeeks;
+          const dailyHours = hoursPerWeek / 5; // Assuming 5 working days per week
+
+          return (
+            <div key={timesheet.id} className="border rounded-lg overflow-hidden">
+              {/* Header with candidate info and status */}
+              <div className="bg-blue-50 p-4 border-b">
+                <div className="flex justify-between items-center">
+                  <div>
+                    <h3 className="font-medium text-lg">{timesheet.candidateName}</h3>
+                    <p className="text-sm text-muted-foreground">{timesheet.candidateEmail}</p>
+                    <p className="text-sm font-medium mt-1">
+                      Monthly Period: {timesheet.monthName} ({format(new Date(timesheet.periodStartDate), 'M/d/yyyy')} - {format(new Date(timesheet.periodEndDate), 'M/d/yyyy')})
+                    </p>
+                  </div>
+                  <div className="flex items-center gap-4">
+                    {getStatusBadge(timesheet.status)}
+                    <div className="text-right">
+                      <p className="text-sm font-medium">Total Hours: {parseFloat(timesheet.totalHours).toFixed(2)}</p>
+                      <p className="text-sm text-muted-foreground">Total Amount: {timesheet.currency || 'INR'} {parseFloat(timesheet.totalAmount).toFixed(2)}</p>
+                      <p className="text-sm text-muted-foreground">Total Weeks: {totalWeeks}</p>
+                    </div>
+                  </div>
                 </div>
-                <div className="flex items-center gap-4">
-                  {getStatusBadge(timesheet.status)}
-                  <div className="text-right">
-                    <p className="text-sm font-medium">Total Hours: {parseFloat(timesheet.totalHours).toFixed(2)}</p>
-                    <p className="text-sm text-muted-foreground">Total Amount: {timesheet.currency} {parseFloat(timesheet.totalAmount).toFixed(2)}</p>
-                    <p className="text-sm text-muted-foreground">Total Weeks: {timesheet.totalWeeks}</p>
+              </div>
+
+              {/* Table with Week-by-Week Data */}
+              <div className="overflow-x-auto">
+                <table className="w-full">
+                  <thead>
+                    <tr className="bg-green-500 text-white">
+                      <th className="p-3 text-left font-medium">Day of Week</th>
+                      <th className="p-3 text-center font-medium">Regular<br/>[h:mm]</th>
+                      <th className="p-3 text-center font-medium">Overtime<br/>[h:mm]</th>
+                      <th className="p-3 text-center font-medium">Sick<br/>[h:mm]</th>
+                      <th className="p-3 text-center font-medium">Paid Leave<br/>[h:mm]</th>
+                      <th className="p-3 text-center font-medium">Unpaid Leave<br/>[h:mm]</th>
+                      <th className="p-3 text-center font-medium bg-gray-600">TOTAL<br/>[h:mm]</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {/* Generate week-by-week data with alternating colors */}
+                    {Array.from({ length: totalWeeks }, (_, weekIndex) => {
+                      const weekBgColor = weekIndex % 2 === 0 ? 'bg-white' : 'bg-gray-50';
+                      return [
+                        { day: 'Mon (Total)', hours: dailyHours, week: weekIndex + 1 },
+                        { day: 'Tue (Total)', hours: dailyHours, week: weekIndex + 1 },
+                        { day: 'Wed (Total)', hours: dailyHours, week: weekIndex + 1 },
+                        { day: 'Thu (Total)', hours: dailyHours, week: weekIndex + 1 },
+                        { day: 'Fri (Total)', hours: dailyHours, week: weekIndex + 1 },
+                        { day: 'Sat (Total)', hours: 0, week: weekIndex + 1 },
+                        { day: 'Sun (Total)', hours: 0, week: weekIndex + 1 }
+                      ].map((row, dayIndex) => (
+                        <tr key={`week${weekIndex + 1}-${dayIndex}`} className={weekBgColor}>
+                          <td className="p-3 border-r font-medium">{row.day}</td>
+                          <td className="p-3 text-center border-r">{row.hours.toFixed(2)}</td>
+                          <td className="p-3 text-center border-r">0.00</td>
+                          <td className="p-3 text-center border-r">0.00</td>
+                          <td className="p-3 text-center border-r">0.00</td>
+                          <td className="p-3 text-center border-r">0.00</td>
+                          <td className="p-3 text-center font-medium bg-gray-100">{row.hours.toFixed(2)}</td>
+                        </tr>
+                      ));
+                    }).flat()}
+                    
+                    {/* Totals Row */}
+                    <tr className="bg-green-100 font-medium">
+                      <td className="p-3 border-r">Total Hrs:</td>
+                      <td className="p-3 text-center border-r">{(parseFloat(timesheet.totalHours) || 0).toFixed(2)}</td>
+                      <td className="p-3 text-center border-r">0.00</td>
+                      <td className="p-3 text-center border-r">0.00</td>
+                      <td className="p-3 text-center border-r">0.00</td>
+                      <td className="p-3 text-center border-r">0.00</td>
+                      <td className="p-3 text-center bg-gray-200">{(parseFloat(timesheet.totalHours) || 0).toFixed(2)}</td>
+                    </tr>
+
+                    {/* Rate Row */}
+                    <tr className="bg-gray-50">
+                      <td className="p-3 border-r font-medium">Rate/Hour:</td>
+                      <td className="p-3 text-center border-r">INR {((parseFloat(timesheet.totalAmount || '0') / (parseFloat(timesheet.totalHours) || 1)) || 0).toFixed(2)}</td>
+                      <td className="p-3 text-center border-r">INR 0.00</td>
+                      <td className="p-3 text-center border-r">INR 0.00</td>
+                      <td className="p-3 text-center border-r">INR 0.00</td>
+                      <td className="p-3 text-center border-r">INR 0.00</td>
+                      <td className="p-3 text-center bg-gray-200"></td>
+                    </tr>
+
+                    {/* Pay Row */}
+                    <tr className="bg-white">
+                      <td className="p-3 border-r font-medium">Total Pay:</td>
+                      <td className="p-3 text-center border-r">INR {parseFloat(timesheet.totalAmount || '0').toFixed(2)}</td>
+                      <td className="p-3 text-center border-r">INR 0.00</td>
+                      <td className="p-3 text-center border-r">INR 0.00</td>
+                      <td className="p-3 text-center border-r">INR 0.00</td>
+                      <td className="p-3 text-center border-r">INR 0.00</td>
+                      <td className="p-3 text-center bg-red-500 text-white font-bold">INR {parseFloat(timesheet.totalAmount || '0').toFixed(2)}</td>
+                    </tr>
+                  </tbody>
+                </table>
+              </div>
+
+              {/* Weekly Breakdown Summary */}
+              <div className="bg-gray-50 p-4 border-t">
+                <div className="grid grid-cols-2 md:grid-cols-4 gap-4 text-center">
+                  {Array.from({ length: totalWeeks }, (_, weekIndex) => (
+                    <div key={`week-summary-${weekIndex}`} className={`p-3 rounded-lg ${weekIndex % 2 === 0 ? 'bg-blue-50' : 'bg-green-50'}`}>
+                      <h4 className="font-medium mb-2">Week {weekIndex + 1}</h4>
+                      <p className="text-sm">Hours: {hoursPerWeek.toFixed(2)}</p>
+                      <p className="text-sm">Amount: INR {amountPerWeek.toFixed(2)}</p>
+                    </div>
+                  ))}
+                </div>
+                
+                <div className="grid grid-cols-1 md:grid-cols-3 gap-4 text-center mt-4">
+                  <div className="p-3 bg-yellow-50 rounded-lg">
+                    <h4 className="font-medium mb-2">Total Weeks</h4>
+                    <p className="text-lg font-bold">{totalWeeks}</p>
+                  </div>
+                  <div className="p-3 bg-purple-50 rounded-lg">
+                    <h4 className="font-medium mb-2">Average Weekly Hours</h4>
+                    <p className="text-lg font-bold">{hoursPerWeek.toFixed(2)}</p>
+                  </div>
+                  <div className="p-3 bg-orange-50 rounded-lg">
+                    <h4 className="font-medium mb-2">Average Weekly Pay</h4>
+                    <p className="text-lg font-bold">INR {amountPerWeek.toFixed(2)}</p>
                   </div>
                 </div>
               </div>
             </div>
-
-            {/* Table */}
-            <div className="overflow-x-auto">
-              <table className="w-full">
-                <thead>
-                  <tr className="bg-green-500 text-white">
-                    <th className="p-3 text-left font-medium">Day of Week</th>
-                    <th className="p-3 text-center font-medium">Regular<br/>[h:mm]</th>
-                    <th className="p-3 text-center font-medium">Overtime<br/>[h:mm]</th>
-                    <th className="p-3 text-center font-medium">Sick<br/>[h:mm]</th>
-                    <th className="p-3 text-center font-medium">Paid Leave<br/>[h:mm]</th>
-                    <th className="p-3 text-center font-medium">Unpaid Leave<br/>[h:mm]</th>
-                    <th className="p-3 text-center font-medium bg-gray-600">TOTAL<br/>[h:mm]</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  {[
-                    { day: 'Mon (Total)', hours: timesheet.mondayHours },
-                    { day: 'Tue (Total)', hours: timesheet.tuesdayHours },
-                    { day: 'Wed (Total)', hours: timesheet.wednesdayHours },
-                    { day: 'Thu (Total)', hours: timesheet.thursdayHours },
-                    { day: 'Fri (Total)', hours: timesheet.fridayHours },
-                    { day: 'Sat (Total)', hours: timesheet.saturdayHours },
-                    { day: 'Sun (Total)', hours: timesheet.sundayHours }
-                  ].map((row, index) => (
-                    <tr key={index} className={index % 2 === 0 ? 'bg-white' : 'bg-gray-50'}>
-                      <td className="p-3 border-r font-medium">{row.day}</td>
-                      <td className="p-3 text-center border-r bg-green-50">{(parseFloat(row.hours) || 0).toFixed(2)}</td>
-                      <td className="p-3 text-center border-r">0.00</td>
-                      <td className="p-3 text-center border-r bg-green-50">0.00</td>
-                      <td className="p-3 text-center border-r bg-green-50">0.00</td>
-                      <td className="p-3 text-center border-r bg-green-50">0.00</td>
-                      <td className="p-3 text-center font-medium bg-gray-100">{(parseFloat(row.hours) || 0).toFixed(2)}</td>
-                    </tr>
-                  ))}
-                  
-                  {/* Totals Row */}
-                  <tr className="bg-green-100 font-medium">
-                    <td className="p-3 border-r">Total Hrs:</td>
-                    <td className="p-3 text-center border-r">{(parseFloat(timesheet.totalHours) || 0).toFixed(2)}</td>
-                    <td className="p-3 text-center border-r">0.00</td>
-                    <td className="p-3 text-center border-r">0.00</td>
-                    <td className="p-3 text-center border-r">0.00</td>
-                    <td className="p-3 text-center border-r">0.00</td>
-                    <td className="p-3 text-center bg-gray-200">{(parseFloat(timesheet.totalHours) || 0).toFixed(2)}</td>
-                  </tr>
-
-                  {/* Rate Row */}
-                  <tr className="bg-gray-50">
-                    <td className="p-3 border-r font-medium">Rate/Hour:</td>
-                    <td className="p-3 text-center border-r">INR {((parseFloat(timesheet.totalAmount || '0') / (parseFloat(timesheet.totalHours) || 1)) || 0).toFixed(2)}</td>
-                    <td className="p-3 text-center border-r">INR 0.00</td>
-                    <td className="p-3 text-center border-r">INR 0.00</td>
-                    <td className="p-3 text-center border-r">INR 0.00</td>
-                    <td className="p-3 text-center border-r">INR 0.00</td>
-                    <td className="p-3 text-center bg-gray-200"></td>
-                  </tr>
-
-                  {/* Pay Row */}
-                  <tr className="bg-white">
-                    <td className="p-3 border-r font-medium">Total Pay:</td>
-                    <td className="p-3 text-center border-r">INR {parseFloat(timesheet.totalAmount || '0').toFixed(2)}</td>
-                    <td className="p-3 text-center border-r">INR 0.00</td>
-                    <td className="p-3 text-center border-r">INR 0.00</td>
-                    <td className="p-3 text-center border-r">INR 0.00</td>
-                    <td className="p-3 text-center border-r">INR 0.00</td>
-                    <td className="p-3 text-center bg-red-500 text-white font-bold">INR {parseFloat(timesheet.totalAmount || '0').toFixed(2)}</td>
-                  </tr>
-                </tbody>
-              </table>
-            </div>
-
-            {/* Monthly Summary */}
-            <div className="bg-gray-50 p-4 border-t">
-              <div className="grid grid-cols-1 md:grid-cols-3 gap-4 text-center">
-                <div className="p-3 bg-blue-50 rounded-lg">
-                  <h4 className="font-medium mb-2">Total Weeks</h4>
-                  <p className="text-lg font-bold">{timesheet.totalWeeks}</p>
-                </div>
-                <div className="p-3 bg-green-50 rounded-lg">
-                  <h4 className="font-medium mb-2">Average Weekly Hours</h4>
-                  <p className="text-lg font-bold">{((parseFloat(timesheet.totalHours) || 0) / (timesheet.totalWeeks || 1)).toFixed(2)}</p>
-                </div>
-                <div className="p-3 bg-yellow-50 rounded-lg">
-                  <h4 className="font-medium mb-2">Average Weekly Pay</h4>
-                  <p className="text-lg font-bold">{timesheet.currency} {((parseFloat(timesheet.totalAmount) || 0) / (timesheet.totalWeeks || 1)).toFixed(2)}</p>
-                </div>
-              </div>
-            </div>
-          </div>
-        ))
+          );
+        })
       ) : (
         <div className="text-center py-8 text-muted-foreground">
           No monthly timesheets found. Monthly timesheets are automatically generated when candidates have approved weekly timesheets.
