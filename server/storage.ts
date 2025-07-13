@@ -1330,7 +1330,7 @@ async updateSeoPage(id: number, data: Partial<InsertSeoPage>): Promise<SeoPage |
 
     const candidateIds = hiredCandidateIds.map(c => c.candidateId);
 
-    // Then get their details with billing information
+    // Then get their details with billing information including all fields
     return await db
       .select({
         id: candidateBilling.id,
@@ -1340,7 +1340,14 @@ async updateSeoPage(id: number, data: Partial<InsertSeoPage>): Promise<SeoPage |
         phone: users.phone,
         hourlyRate: candidateBilling.hourlyRate,
         workingHoursPerWeek: candidateBilling.workingHoursPerWeek,
+        workingDaysPerWeek: candidateBilling.workingDaysPerWeek,
         currency: candidateBilling.currency,
+        employmentType: candidateBilling.employmentType,
+        supervisorName: candidateBilling.supervisorName,
+        clientCompanyId: candidateBilling.clientCompanyId,
+        companySettingsId: candidateBilling.companySettingsId,
+        tdsRate: candidateBilling.tdsRate,
+        benefits: candidateBilling.benefits,
         isActive: candidateBilling.isActive,
         createdAt: candidateBilling.createdAt,
         updatedAt: candidateBilling.updatedAt

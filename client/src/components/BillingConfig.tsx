@@ -210,7 +210,7 @@ export default function BillingConfig() {
       currency: 'USD',
       employmentType: 'subcontract',
       supervisorName: '',
-      clientCompanyId: clientCompanies?.data?.[0]?.id || undefined,
+      clientCompanyId: clientCompanies?.companies?.[0]?.id || undefined,
       companySettingsId: companySettings?.data?.[0]?.id || undefined,
       tdsRate: 10,
       benefits: []
@@ -240,10 +240,10 @@ export default function BillingConfig() {
 
   // Effect to set default values for client company and company settings when data is loaded
   useEffect(() => {
-    if (clientCompanies?.data && companySettings?.data && !editingBilling) {
+    if (clientCompanies?.companies && companySettings?.data && !editingBilling) {
       setBillingData(prev => ({
         ...prev,
-        clientCompanyId: prev.clientCompanyId || clientCompanies.data[0]?.id,
+        clientCompanyId: prev.clientCompanyId || clientCompanies.companies[0]?.id,
         companySettingsId: prev.companySettingsId || companySettings.data[0]?.id
       }));
     }
@@ -502,7 +502,7 @@ export default function BillingConfig() {
                         <SelectValue placeholder="Select client company" />
                       </SelectTrigger>
                       <SelectContent>
-                        {clientCompanies?.data?.companies?.map((company: any) => (
+                        {clientCompanies?.companies?.map((company: any) => (
                           <SelectItem key={company.id} value={company.id.toString()}>
                             {company.name}
                           </SelectItem>
@@ -717,7 +717,7 @@ export default function BillingConfig() {
                   <SelectValue placeholder="Select client company" />
                 </SelectTrigger>
                 <SelectContent>
-                  {clientCompanies?.data?.companies?.map((company: any) => (
+                  {clientCompanies?.companies?.map((company: any) => (
                     <SelectItem key={company.id} value={company.id.toString()}>
                       {company.name}
                     </SelectItem>
