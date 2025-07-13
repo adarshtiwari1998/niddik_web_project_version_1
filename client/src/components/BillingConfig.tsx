@@ -81,20 +81,11 @@ export default function BillingConfig() {
   // Track selected benefits for full-time employees
   const [selectedBenefits, setSelectedBenefits] = useState<string[]>([]);
   
-  // Available benefit options
-  const benefitOptions = [
-    'Health Insurance',
-    'Dental Insurance',
-    'Life Insurance',
-    'Paid Time Off',
+  // Available leave types for full-time employees  
+  const leaveTypes = [
     'Sick Leave',
-    'Retirement Plan',
-    'Flexible Working Hours',
-    'Remote Work',
-    'Professional Development',
-    'Training Budget',
-    'Stock Options',
-    'Performance Bonus'
+    'Paid Leave', 
+    'Unpaid Leave'
   ];
   const [isDialogOpen, setIsDialogOpen] = useState(false);
   const [editingBilling, setEditingBilling] = useState<CandidateBilling | null>(null);
@@ -580,35 +571,35 @@ export default function BillingConfig() {
                 </Card>
               )}
 
-              {/* Benefits Configuration (for Full-time) */}
+              {/* Leave Types Configuration (for Full-time) */}
               {billingData.employmentType === 'fulltime' && (
                 <Card className="bg-blue-50">
                   <CardHeader className="pb-3">
                     <CardTitle className="text-lg flex items-center gap-2">
                       <Gift className="h-5 w-5 text-blue-600" />
-                      Employee Benefits
+                      Leave Types
                     </CardTitle>
                   </CardHeader>
                   <CardContent>
-                    <div className="grid grid-cols-2 gap-2">
-                      {benefitOptions.map((benefit) => (
-                        <div key={benefit} className="flex items-center space-x-2">
+                    <div className="grid grid-cols-1 gap-2">
+                      {leaveTypes.map((leaveType) => (
+                        <div key={leaveType} className="flex items-center space-x-2">
                           <Checkbox
-                            id={benefit}
-                            checked={selectedBenefits.includes(benefit)}
+                            id={leaveType}
+                            checked={selectedBenefits.includes(leaveType)}
                             onCheckedChange={(checked) => {
                               if (checked) {
-                                setSelectedBenefits(prev => [...prev, benefit]);
+                                setSelectedBenefits(prev => [...prev, leaveType]);
                               } else {
-                                setSelectedBenefits(prev => prev.filter(b => b !== benefit));
+                                setSelectedBenefits(prev => prev.filter(b => b !== leaveType));
                               }
                             }}
                           />
                           <Label
-                            htmlFor={benefit}
+                            htmlFor={leaveType}
                             className="text-sm font-normal cursor-pointer"
                           >
-                            {benefit}
+                            {leaveType}
                           </Label>
                         </div>
                       ))}
@@ -788,40 +779,40 @@ export default function BillingConfig() {
               </div>
             )}
 
-            {/* Benefits Configuration for Full-time */}
+            {/* Leave Types Configuration for Full-time */}
             {billingData.employmentType === 'fulltime' && (
               <div className="space-y-4 p-4 bg-blue-50 dark:bg-blue-950/20 rounded-lg border border-blue-200 dark:border-blue-800">
                 <div className="flex items-center gap-2">
                   <Gift className="h-5 w-5 text-blue-600" />
-                  <h3 className="font-medium text-blue-800 dark:text-blue-200">Employee Benefits</h3>
+                  <h3 className="font-medium text-blue-800 dark:text-blue-200">Leave Types</h3>
                 </div>
                 
                 <div>
-                  <Label>Select Benefits</Label>
-                  <div className="grid grid-cols-2 gap-3 mt-2">
-                    {benefitOptions.map((benefit) => (
-                      <div key={benefit} className="flex items-center space-x-2">
+                  <Label>Select Leave Types</Label>
+                  <div className="grid grid-cols-1 gap-3 mt-2">
+                    {leaveTypes.map((leaveType) => (
+                      <div key={leaveType} className="flex items-center space-x-2">
                         <Checkbox
-                          id={`edit-benefit-${benefit.replace(/\s+/g, '-').toLowerCase()}`}
-                          checked={selectedBenefits.includes(benefit)}
+                          id={`edit-leave-${leaveType.replace(/\s+/g, '-').toLowerCase()}`}
+                          checked={selectedBenefits.includes(leaveType)}
                           onCheckedChange={(checked) => {
                             if (checked) {
-                              setSelectedBenefits(prev => [...prev, benefit]);
+                              setSelectedBenefits(prev => [...prev, leaveType]);
                             } else {
-                              setSelectedBenefits(prev => prev.filter(b => b !== benefit));
+                              setSelectedBenefits(prev => prev.filter(b => b !== leaveType));
                             }
                           }}
                         />
                         <Label
-                          htmlFor={`edit-benefit-${benefit.replace(/\s+/g, '-').toLowerCase()}`}
+                          htmlFor={`edit-leave-${leaveType.replace(/\s+/g, '-').toLowerCase()}`}
                           className="text-sm font-normal cursor-pointer"
                         >
-                          {benefit}
+                          {leaveType}
                         </Label>
                       </div>
                     ))}
                   </div>
-                  <p className="text-xs text-blue-600 mt-2">Select applicable benefits for this full-time employee</p>
+                  <p className="text-xs text-blue-600 mt-2">Select applicable leave types for this full-time employee</p>
                 </div>
               </div>
             )}
@@ -921,11 +912,11 @@ export default function BillingConfig() {
                       </div>
                     )}
 
-                    {/* Benefits Information for Full-time */}
+                    {/* Leave Types Information for Full-time */}
                     {billing.employmentType === 'fulltime' && billing.benefits && billing.benefits.length > 0 && (
                       <div className="flex items-center gap-1 text-sm text-blue-600">
                         <Gift className="w-4 h-4" />
-                        <span>Benefits: {billing.benefits.slice(0, 3).join(', ')}{billing.benefits.length > 3 ? '...' : ''}</span>
+                        <span>Leave Types: {billing.benefits.slice(0, 3).join(', ')}{billing.benefits.length > 3 ? '...' : ''}</span>
                       </div>
                     )}
                   </div>
