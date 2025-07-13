@@ -123,6 +123,21 @@ The application follows a standard full-stack architecture with clear separation
 
 # Recent Changes
 
+## Bi-Weekly Timesheet Logic Enhancement (July 13, 2025)
+- **Two-Week Period Logic**: Fixed bi-weekly view to properly show 2-week periods instead of single week
+- **Dynamic Timeframe Options**: Updated timeframe dropdown to show actual bi-weekly periods (e.g., "Week of 07/07/2025 to 07/20/2025")
+- **Always-Visible Calendar**: Replaced popup calendar with always-visible small calendar component
+- **Proper Week Display**: 
+  - Week 1 shows in blue background with date range header
+  - Week 2 shows in green background with date range header (only if Week 2 data exists)
+  - Conditional display - only shows Week 2 section when actual data exists
+- **Employment Type Integration**: All bi-weekly views now properly show/hide leave columns based on employment type (subcontract vs full-time)
+- **Enhanced Filtering**: Bi-weekly period filter now correctly filters for 14-day periods instead of 7-day periods
+- **Calendar Improvements**: 
+  - Compact design with smaller text and tighter spacing
+  - Shows "Bi-Weekly Range" instead of "Week Range"
+  - Displays proper 2-week date ranges when timeframe is selected
+
 ## Enhanced Bi-Weekly and Monthly Timesheet Views with Dynamic Filtering (July 13, 2025)
 - **Bi-Weekly View Enhancement**: Completely rewrote BiWeeklyTableView with dynamic aggregation from weekly timesheets
   - **Dynamic Generation**: Replaced static bi-weekly data with real-time aggregation from approved weekly timesheets

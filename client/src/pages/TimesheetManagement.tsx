@@ -662,17 +662,32 @@ function BiWeeklyTableView({ timesheets, getStatusBadge }: any) {
     return billingData?.data?.find((config: any) => config.candidateId === candidateId);
   };
 
-  // Get available timeframe options based on weekly timesheets
+  // Get available timeframe options based on weekly timesheets (bi-weekly periods)
   const getTimeframeOptions = () => {
     if (!weeklyTimesheets?.data) return [];
     
     const weeks = weeklyTimesheets.data.map((ts: any) => new Date(ts.weekStartDate));
     const uniqueWeeks = [...new Set(weeks.map(w => w.getTime()))].map(t => new Date(t));
+    const sortedWeeks = uniqueWeeks.sort((a, b) => a.getTime() - b.getTime());
     
-    return uniqueWeeks.sort((a, b) => a.getTime() - b.getTime()).map(week => ({
-      value: week,
-      label: `Week of ${format(week, 'MM/dd/yyyy')} to ${format(addDays(week, 6), 'MM/dd/yyyy')}`
-    }));
+    // Create bi-weekly periods
+    const biweeklyPeriods = [];
+    for (let i = 0; i < sortedWeeks.length; i += 2) {
+      const week1Start = sortedWeeks[i];
+      const week2Start = sortedWeeks[i + 1];
+      
+      if (week1Start) {
+        const periodStart = week1Start;
+        const periodEnd = week2Start ? addDays(week2Start, 6) : addDays(week1Start, 6);
+        
+        biweeklyPeriods.push({
+          value: periodStart,
+          label: `Week of ${format(periodStart, 'MM/dd/yyyy')} to ${format(periodEnd, 'MM/dd/yyyy')}`
+        });
+      }
+    }
+    
+    return biweeklyPeriods;
   };
 
   // Filter and group weekly timesheets into bi-weekly periods
@@ -681,10 +696,10 @@ function BiWeeklyTableView({ timesheets, getStatusBadge }: any) {
     
     let filteredTimesheets = weeklyTimesheets.data.filter((ts: any) => ts.status === 'approved');
     
-    // Apply timeframe filter if selected
+    // Apply timeframe filter if selected (2-week period)
     if (selectedTimeframe) {
       const targetWeekStart = startOfWeek(selectedTimeframe, { weekStartsOn: 1 });
-      const targetWeekEnd = endOfWeek(addDays(targetWeekStart, 7), { weekStartsOn: 1 });
+      const targetWeekEnd = endOfWeek(addDays(targetWeekStart, 13), { weekStartsOn: 1 }); // 2 weeks = 14 days
       
       filteredTimesheets = filteredTimesheets.filter((ts: any) => {
         const tsStart = new Date(ts.weekStartDate);
@@ -776,41 +791,54 @@ function BiWeeklyTableView({ timesheets, getStatusBadge }: any) {
           </SelectContent>
         </Select>
 
-        {/* Calendar Popover */}
-        <Popover open={calendarOpen} onOpenChange={setCalendarOpen}>
-          <PopoverTrigger asChild>
-            <Button variant="outline" size="sm">
-              <CalendarIcon className="w-4 h-4 mr-2" />
-              Calendar
-            </Button>
-          </PopoverTrigger>
-          <PopoverContent className="w-auto p-0" align="start">
-            <div className="p-3 border-b">
-              <div className="bg-green-500 text-white text-center py-2 rounded font-medium">
-                {selectedTimeframe ? format(selectedTimeframe, 'MMMM yyyy') : format(new Date(), 'MMMM yyyy')}
+        {/* Always Visible Calendar (Small) */}
+        <div className="border rounded-lg bg-white">
+          <div className="p-2 border-b">
+            <div className="bg-green-500 text-white text-center py-1 rounded text-sm font-medium">
+              {selectedTimeframe ? format(selectedTimeframe, 'MMMM yyyy') : format(new Date(), 'MMMM yyyy')}
+            </div>
+          </div>
+          <CalendarComponent
+            mode="single"
+            selected={selectedTimeframe}
+            onSelect={(date) => {
+              if (date) {
+                setSelectedTimeframe(startOfWeek(date, { weekStartsOn: 1 }));
+              }
+            }}
+            className="rounded-md text-xs"
+            classNames={{
+              months: "flex flex-col space-y-2",
+              month: "space-y-2",
+              caption: "flex justify-center pt-1 relative items-center text-xs",
+              caption_label: "text-xs font-medium",
+              nav: "space-x-1 flex items-center",
+              nav_button: "h-6 w-6 bg-transparent p-0 opacity-50 hover:opacity-100 text-xs",
+              nav_button_previous: "absolute left-1",
+              nav_button_next: "absolute right-1",
+              table: "w-full border-collapse space-y-1",
+              head_row: "flex",
+              head_cell: "text-muted-foreground rounded-md w-6 font-normal text-[0.6rem]",
+              row: "flex w-full mt-1",
+              cell: "text-center text-xs p-0 relative [&:has([aria-selected])]:bg-accent first:[&:has([aria-selected])]:rounded-l-md last:[&:has([aria-selected])]:rounded-r-md focus-within:relative focus-within:z-20",
+              day: "h-6 w-6 p-0 font-normal text-[0.6rem] aria-selected:opacity-100",
+              day_selected: "bg-primary text-primary-foreground hover:bg-primary hover:text-primary-foreground focus:bg-primary focus:text-primary-foreground",
+              day_today: "bg-accent text-accent-foreground",
+              day_outside: "text-muted-foreground opacity-50",
+              day_disabled: "text-muted-foreground opacity-50",
+              day_range_middle: "aria-selected:bg-accent aria-selected:text-accent-foreground",
+              day_hidden: "invisible"
+            }}
+          />
+          {selectedTimeframe && (
+            <div className="p-2 border-t text-center">
+              <div className="text-xs font-medium text-green-600">Bi-Weekly Range</div>
+              <div className="text-[0.6rem] text-gray-600">
+                {format(selectedTimeframe, 'MMM d')} - {format(addDays(selectedTimeframe, 13), 'MMM d, yyyy')}
               </div>
             </div>
-            <CalendarComponent
-              mode="single"
-              selected={selectedTimeframe}
-              onSelect={(date) => {
-                if (date) {
-                  setSelectedTimeframe(startOfWeek(date, { weekStartsOn: 1 }));
-                }
-                setCalendarOpen(false);
-              }}
-              className="rounded-md"
-            />
-            {selectedTimeframe && (
-              <div className="p-3 border-t text-center">
-                <div className="text-sm font-medium text-green-600">Week Range</div>
-                <div className="text-xs text-gray-600">
-                  {format(selectedTimeframe, 'MMM d')} - {format(addDays(selectedTimeframe, 13), 'MMM d, yyyy')}
-                </div>
-              </div>
-            )}
-          </PopoverContent>
-        </Popover>
+          )}
+        </div>
 
         {selectedTimeframe && (
           <Button
