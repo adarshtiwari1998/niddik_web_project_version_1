@@ -837,26 +837,31 @@ export default function CandidateTimesheets() {
                     </CardDescription>
                   </div>
                   
-                  {/* Week Filter */}
-                  {timesheets?.data && timesheets.data.length > 1 && (
-                    <div className="flex items-center gap-2">
-                      <label htmlFor="week-select" className="text-sm font-medium">Select Week:</label>
+                  {/* Enhanced Week Range Filter */}
+                  {timesheets?.data && timesheets.data.length > 0 && (
+                    <div className="flex items-center gap-3">
+                      <label htmlFor="timeframe-select" className="text-sm font-semibold text-gray-700">Timeframe</label>
                       <select 
-                        id="week-select"
+                        id="timeframe-select"
                         value={selectedTimesheetId || ''}
                         onChange={(e) => setSelectedTimesheetId(e.target.value ? parseInt(e.target.value) : null)}
-                        className="px-3 py-1 border rounded-md text-sm bg-white"
+                        className="px-4 py-2 border border-gray-300 rounded-md text-sm bg-white min-w-[280px] focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
                       >
-                        <option value="">All Weeks</option>
+                        <option value="" disabled>Select a week range</option>
                         {timesheets.data
                           .sort((a: WeeklyTimesheet, b: WeeklyTimesheet) => 
                             new Date(b.weekStartDate).getTime() - new Date(a.weekStartDate).getTime()
                           )
-                          .map((timesheet: WeeklyTimesheet) => (
-                            <option key={timesheet.id} value={timesheet.id}>
-                              Week of {format(parseISO(timesheet.weekStartDate), 'MMM d, yyyy')} - {timesheet.status}
-                            </option>
-                          ))}
+                          .map((timesheet: WeeklyTimesheet) => {
+                            const startDate = parseISO(timesheet.weekStartDate);
+                            const endDate = addDays(startDate, billingConfig?.data?.workingDaysPerWeek === 6 ? 5 : 4);
+                            const dateRange = `${format(startDate, 'dd/MM/yyyy')} to ${format(endDate, 'dd/MM/yyyy')}`;
+                            return (
+                              <option key={timesheet.id} value={timesheet.id}>
+                                Week of {dateRange}
+                              </option>
+                            );
+                          })}
                       </select>
                     </div>
                   )}
@@ -865,17 +870,31 @@ export default function CandidateTimesheets() {
               <CardContent>
                 {timesheets?.data && timesheets.data.length > 0 ? (
                   <div className="space-y-6">
-                    {(selectedTimesheetId 
-                      ? timesheets.data.filter((t: WeeklyTimesheet) => t.id === selectedTimesheetId)
-                      : timesheets.data
-                    ).map((timesheet: WeeklyTimesheet) => (
-                      <TimesheetTemplate 
-                        key={timesheet.id}
-                        timesheet={timesheet}
-                        billingConfig={billingConfig?.data}
-                        user={user}
-                      />
-                    ))}
+                    {selectedTimesheetId ? (
+                      // Show selected timesheet
+                      timesheets.data
+                        .filter((t: WeeklyTimesheet) => t.id === selectedTimesheetId)
+                        .map((timesheet: WeeklyTimesheet) => (
+                          <TimesheetTemplate 
+                            key={timesheet.id}
+                            timesheet={timesheet}
+                            billingConfig={billingConfig?.data}
+                            user={user}
+                          />
+                        ))
+                    ) : (
+                      // Show message to select a timesheet
+                      <div className="text-center py-12">
+                        <FileText className="mx-auto h-16 w-16 text-gray-400 mb-4" />
+                        <h3 className="text-lg font-medium text-gray-900 mb-2">Select a Timesheet Week</h3>
+                        <p className="text-sm text-gray-500 mb-4">
+                          Please select a week from the dropdown above to view the timesheet template.
+                        </p>
+                        <p className="text-xs text-gray-400">
+                          {timesheets.data.length} timesheet{timesheets.data.length !== 1 ? 's' : ''} available
+                        </p>
+                      </div>
+                    )}
                   </div>
                 ) : (
                   <div className="text-center py-8">
@@ -1016,11 +1035,15 @@ function TimesheetTemplate({ timesheet, billingConfig, user }: {
         </div>
         
         <div className="text-right">
-          <div className="text-sm space-y-1">
-            <p><strong>Employee Name:</strong> {user?.fullName || user?.username}</p>
-            <p><strong>Supervisor Name:</strong> {billingConfig?.supervisorName || 'Not specified'}</p>
+          <div className="text-sm space-y-2">
+            <div>
+              <p className="font-medium"><strong>Employee Name:</strong> {user?.fullName || user?.username}</p>
+            </div>
+            <div>
+              <p className="font-medium"><strong>Supervisor Name:</strong> {billingConfig?.supervisorName || 'Test'}</p>
+            </div>
             {clientCompany && (
-              <div>
+              <div className="mt-3">
                 <div className="flex items-center justify-end gap-2 mb-1">
                   {(clientCompany.logoUrl || clientCompany.logo_url) && (
                     <img 
@@ -1029,10 +1052,10 @@ function TimesheetTemplate({ timesheet, billingConfig, user }: {
                       className="w-8 h-8 object-contain"
                     />
                   )}
-                  <p><strong>Client Company:</strong> {clientCompany.name}</p>
+                  <p className="font-medium"><strong>Client Company:</strong> {clientCompany.name}</p>
                 </div>
                 {(clientCompany.billToAddress || clientCompany.bill_to_address) && (
-                  <div className="text-xs text-gray-600 space-y-0.5">
+                  <div className="text-xs text-gray-600 space-y-0.5 text-right">
                     <p>{clientCompany.billToAddress || clientCompany.bill_to_address}</p>
                     {(clientCompany.billToCity || clientCompany.bill_to_city) && (clientCompany.billToState || clientCompany.bill_to_state) && (
                       <p>{clientCompany.billToCity || clientCompany.bill_to_city}, {clientCompany.billToState || clientCompany.bill_to_state} {clientCompany.billToZipCode || clientCompany.bill_to_zip_code || ''}</p>
@@ -1044,35 +1067,39 @@ function TimesheetTemplate({ timesheet, billingConfig, user }: {
             )}
           </div>
           <div className="mt-4">
-            <p className="font-semibold border-b border-black inline-block">Week of: {weekOf}</p>
+            <p className="font-semibold border-b-2 border-black inline-block text-lg">Week of: {weekOf}</p>
           </div>
         </div>
         
         <div className="text-center">
-          <div className="bg-green-600 text-white px-3 py-1 text-sm">
+          <div className="bg-green-600 text-white px-3 py-1 text-sm font-medium">
             {monthYear}
           </div>
           <div className="mt-2 text-xs">
             <div className="grid grid-cols-7 gap-1 mb-2">
               {['Su', 'Mo', 'Tu', 'We', 'Th', 'Fr', 'Sa'].map(day => (
-                <div key={day} className="w-6 h-6 text-center font-medium">{day}</div>
+                <div key={day} className="w-6 h-6 text-center font-medium text-gray-600">{day}</div>
               ))}
             </div>
             <div className="text-sm font-medium text-green-600 mb-1">
               Week Range
             </div>
             <div className="grid grid-cols-7 gap-1">
-              {workingDays.map((day, index) => (
-                <div key={day.label} className="w-6 h-6 text-center text-xs bg-green-100 rounded flex items-center justify-center">
-                  {day.date.split('/')[1]}
-                </div>
-              ))}
+              {/* Show week range based on working days */}
+              {workingDays.map((day, index) => {
+                const dayNumber = format(addDays(weekStartDate, index), 'd');
+                return (
+                  <div key={day.label} className="w-6 h-6 text-center text-xs bg-green-100 rounded flex items-center justify-center font-medium">
+                    {dayNumber}
+                  </div>
+                );
+              })}
               {/* Fill remaining days if working days < 7 */}
               {Array.from({ length: 7 - workingDays.length }, (_, i) => (
                 <div key={`empty-${i}`} className="w-6 h-6"></div>
               ))}
             </div>
-            <div className="text-xs text-gray-600 mt-1">
+            <div className="text-xs text-gray-600 mt-1 font-medium">
               {format(weekStartDate, 'MMM d')} - {format(addDays(weekStartDate, workingDays.length - 1), 'MMM d, yyyy')}
             </div>
           </div>
