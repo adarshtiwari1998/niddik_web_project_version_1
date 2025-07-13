@@ -335,15 +335,12 @@ export default function BillingConfig() {
 
   // Helper function to get client company information
   const getClientCompanyInfo = (clientCompanyId: number | null) => {
-    console.log('getClientCompanyInfo called with:', { clientCompanyId, clientCompanies });
     if (!clientCompanyId || !clientCompanies?.companies) {
-      console.log('Early return - no clientCompanyId or companies');
       return null;
     }
     // Convert clientCompanyId to number to handle both string and number types
     const companyId = typeof clientCompanyId === 'string' ? parseInt(clientCompanyId) : clientCompanyId;
     const company = clientCompanies.companies.find((company: any) => company.id === companyId);
-    console.log('Found company:', company);
     return company;
   };
 
@@ -866,7 +863,6 @@ export default function BillingConfig() {
                     
                     {/* Client Company Information */}
                     {(() => {
-                      console.log('Rendering client company for billing:', billing);
                       const clientCompany = getClientCompanyInfo(billing.clientCompanyId);
                       if (clientCompany) {
                         return (
