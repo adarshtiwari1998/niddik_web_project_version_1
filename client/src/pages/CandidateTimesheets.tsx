@@ -1057,38 +1057,41 @@ function TimesheetTemplate({ timesheet, billingConfig, user }: {
           </div>
         </div>
         
-        <div className="text-right">
-          <div className="text-sm space-y-2">
+        <div className="text-right space-y-4">
+          {/* Employee and Supervisor Information - Separate Block */}
+          <div className="text-sm space-y-2 p-3 bg-gray-50 rounded-lg border">
             <div>
               <p className="font-medium"><strong>Employee Name:</strong> {user?.fullName || user?.username}</p>
             </div>
             <div>
               <p className="font-medium"><strong>Supervisor Name:</strong> {billingConfig?.supervisorName || 'Test'}</p>
             </div>
-            {clientCompany && (
-              <div className="mt-3">
-                <div className="flex items-center justify-end gap-2 mb-1">
-                  {(clientCompany.logoUrl || clientCompany.logo_url) && (
-                    <img 
-                      src={clientCompany.logoUrl || clientCompany.logo_url} 
-                      alt={clientCompany.name} 
-                      className="w-8 h-8 object-contain"
-                    />
-                  )}
-                  <p className="font-medium"><strong>Client Company:</strong> {clientCompany.name}</p>
-                </div>
-                {(clientCompany.billToAddress || clientCompany.bill_to_address) && (
-                  <div className="text-xs text-gray-600 space-y-0.5 text-right">
-                    <p>{clientCompany.billToAddress || clientCompany.bill_to_address}</p>
-                    {(clientCompany.billToCity || clientCompany.bill_to_city) && (clientCompany.billToState || clientCompany.bill_to_state) && (
-                      <p>{clientCompany.billToCity || clientCompany.bill_to_city}, {clientCompany.billToState || clientCompany.bill_to_state} {clientCompany.billToZipCode || clientCompany.bill_to_zip_code || ''}</p>
-                    )}
-                    {(clientCompany.billToCountry || clientCompany.bill_to_country) && <p>{clientCompany.billToCountry || clientCompany.bill_to_country}</p>}
-                  </div>
-                )}
-              </div>
-            )}
           </div>
+          
+          {/* Client Company Information - Separate Block */}
+          {clientCompany && (
+            <div className="text-sm p-3 bg-blue-50 rounded-lg border">
+              <div className="flex items-center justify-end gap-2 mb-2">
+                {(clientCompany.logoUrl || clientCompany.logo_url) && (
+                  <img 
+                    src={clientCompany.logoUrl || clientCompany.logo_url} 
+                    alt={clientCompany.name} 
+                    className="w-8 h-8 object-contain"
+                  />
+                )}
+                <p className="font-medium"><strong>Client Company:</strong> {clientCompany.name}</p>
+              </div>
+              {(clientCompany.billToAddress || clientCompany.bill_to_address) && (
+                <div className="text-xs text-gray-600 space-y-0.5 text-right">
+                  <p>{clientCompany.billToAddress || clientCompany.bill_to_address}</p>
+                  {(clientCompany.billToCity || clientCompany.bill_to_city) && (clientCompany.billToState || clientCompany.bill_to_state) && (
+                    <p>{clientCompany.billToCity || clientCompany.bill_to_city}, {clientCompany.billToState || clientCompany.bill_to_state} {clientCompany.billToZipCode || clientCompany.bill_to_zip_code || ''}</p>
+                  )}
+                  {(clientCompany.billToCountry || clientCompany.bill_to_country) && <p>{clientCompany.billToCountry || clientCompany.bill_to_country}</p>}
+                </div>
+              )}
+            </div>
+          )}
           <div className="mt-4">
             <p className="font-semibold border-b-2 border-black inline-block text-lg">Week of: {weekOf}</p>
           </div>
