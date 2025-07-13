@@ -123,20 +123,22 @@ The application follows a standard full-stack architecture with clear separation
 
 # Recent Changes
 
-## Bi-Weekly Timesheet Logic Enhancement (July 13, 2025)
-- **Two-Week Period Logic**: Fixed bi-weekly view to properly show 2-week periods instead of single week
-- **Dynamic Timeframe Options**: Updated timeframe dropdown to show actual bi-weekly periods (e.g., "Week of 07/07/2025 to 07/20/2025")
-- **Always-Visible Calendar**: Replaced popup calendar with always-visible small calendar component
-- **Proper Week Display**: 
-  - Week 1 shows in blue background with date range header
-  - Week 2 shows in green background with date range header (only if Week 2 data exists)
-  - Conditional display - only shows Week 2 section when actual data exists
-- **Employment Type Integration**: All bi-weekly views now properly show/hide leave columns based on employment type (subcontract vs full-time)
-- **Enhanced Filtering**: Bi-weekly period filter now correctly filters for 14-day periods instead of 7-day periods
-- **Calendar Improvements**: 
-  - Compact design with smaller text and tighter spacing
-  - Shows "Bi-Weekly Range" instead of "Week Range"
-  - Displays proper 2-week date ranges when timeframe is selected
+## Employment Type Conditional Timesheet Views and Bi-Weekly Calendar Enhancement (July 13, 2025)
+- **Employment Type Conditional Logic**: Implemented dynamic column display based on billing configuration employment type
+  - **Subcontract employees**: Show only Regular, Overtime, and Total columns
+  - **Full-time employees**: Show all columns including Sick Leave, Paid Leave, and Unpaid Leave
+  - **Applied to all views**: Weekly, Bi-weekly, and Monthly timesheet views now conditionally render columns
+  - **Header indicators**: Added employment type display in timesheet headers for clear identification
+- **Bi-Weekly Calendar Enhancement**: Fixed bi-weekly view to properly show 2-week periods instead of single weeks
+  - **True 2-week periods**: Updated logic to aggregate consecutive weeks into proper bi-weekly displays
+  - **Dynamic timeframe options**: Timeframe dropdown now shows actual 2-week period ranges
+  - **Always-visible small calendar**: Replaced popup calendar with compact, always-visible calendar
+  - **Interactive range highlighting**: Calendar highlights selected bi-weekly periods (14 days) dynamically
+  - **Clickable date selection**: Users can click calendar dates to select bi-weekly periods
+  - **Proper Week 1 and Week 2 display**: Table now shows separate sections for Week 1 and Week 2 data
+- **Fixed Select component errors**: Resolved empty string value errors in bi-weekly and monthly views
+- **Migration completed**: Successfully migrated from Replit Agent to standard Replit environment
+- **Files Modified**: `client/src/pages/TimesheetManagement.tsx`, `client/src/pages/CandidateTimesheets.tsx`
 
 ## Enhanced Bi-Weekly and Monthly Timesheet Views with Dynamic Filtering (July 13, 2025)
 - **Bi-Weekly View Enhancement**: Completely rewrote BiWeeklyTableView with dynamic aggregation from weekly timesheets

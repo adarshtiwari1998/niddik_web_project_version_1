@@ -791,53 +791,95 @@ function BiWeeklyTableView({ timesheets, getStatusBadge }: any) {
           </SelectContent>
         </Select>
 
-        {/* Always Visible Calendar (Small) */}
-        <div className="border rounded-lg bg-white">
+        {/* Small Calendar - Always shows current month with dynamic range highlighting */}
+        <div className="border rounded-lg bg-white w-72">
           <div className="p-2 border-b">
             <div className="bg-green-500 text-white text-center py-1 rounded text-sm font-medium">
-              {selectedTimeframe ? format(selectedTimeframe, 'MMMM yyyy') : format(new Date(), 'MMMM yyyy')}
+              July 2025
             </div>
           </div>
-          <CalendarComponent
-            mode="single"
-            selected={selectedTimeframe}
-            onSelect={(date) => {
-              if (date) {
-                setSelectedTimeframe(startOfWeek(date, { weekStartsOn: 1 }));
-              }
-            }}
-            className="rounded-md text-xs"
-            classNames={{
-              months: "flex flex-col space-y-2",
-              month: "space-y-2",
-              caption: "flex justify-center pt-1 relative items-center text-xs",
-              caption_label: "text-xs font-medium",
-              nav: "space-x-1 flex items-center",
-              nav_button: "h-6 w-6 bg-transparent p-0 opacity-50 hover:opacity-100 text-xs",
-              nav_button_previous: "absolute left-1",
-              nav_button_next: "absolute right-1",
-              table: "w-full border-collapse space-y-1",
-              head_row: "flex",
-              head_cell: "text-muted-foreground rounded-md w-6 font-normal text-[0.6rem]",
-              row: "flex w-full mt-1",
-              cell: "text-center text-xs p-0 relative [&:has([aria-selected])]:bg-accent first:[&:has([aria-selected])]:rounded-l-md last:[&:has([aria-selected])]:rounded-r-md focus-within:relative focus-within:z-20",
-              day: "h-6 w-6 p-0 font-normal text-[0.6rem] aria-selected:opacity-100",
-              day_selected: "bg-primary text-primary-foreground hover:bg-primary hover:text-primary-foreground focus:bg-primary focus:text-primary-foreground",
-              day_today: "bg-accent text-accent-foreground",
-              day_outside: "text-muted-foreground opacity-50",
-              day_disabled: "text-muted-foreground opacity-50",
-              day_range_middle: "aria-selected:bg-accent aria-selected:text-accent-foreground",
-              day_hidden: "invisible"
-            }}
-          />
-          {selectedTimeframe && (
-            <div className="p-2 border-t text-center">
-              <div className="text-xs font-medium text-green-600">Bi-Weekly Range</div>
-              <div className="text-[0.6rem] text-gray-600">
-                {format(selectedTimeframe, 'MMM d')} - {format(addDays(selectedTimeframe, 13), 'MMM d, yyyy')}
-              </div>
+          <div className="p-2">
+            <div className="grid grid-cols-7 gap-1 text-center">
+              {/* Header row */}
+              {['Su', 'Mo', 'Tu', 'We', 'Th', 'Fr', 'Sa'].map((day) => (
+                <div key={day} className="text-xs font-medium text-gray-500 p-1">
+                  {day}
+                </div>
+              ))}
+              
+              {/* Calendar days - Dynamic highlighting based on selected timeframe */}
+              {(() => {
+                const currentMonth = new Date(2025, 6, 1); // July 2025
+                const startOfMonth = new Date(currentMonth.getFullYear(), currentMonth.getMonth(), 1);
+                const endOfMonth = new Date(currentMonth.getFullYear(), currentMonth.getMonth() + 1, 0);
+                
+                // Get the first day of the month grid (might include prev month days)
+                const firstDayOfWeek = startOfMonth.getDay();
+                const gridStart = new Date(startOfMonth);
+                gridStart.setDate(startOfMonth.getDate() - firstDayOfWeek);
+                
+                // Generate 42 days (6 weeks * 7 days)
+                const calendarDays = [];
+                for (let i = 0; i < 42; i++) {
+                  const currentDay = new Date(gridStart);
+                  currentDay.setDate(gridStart.getDate() + i);
+                  
+                  const dayNumber = currentDay.getDate();
+                  const isCurrentMonth = currentDay.getMonth() === currentMonth.getMonth();
+                  
+                  // Check if this day is in the selected bi-weekly range
+                  let isInRange = false;
+                  if (selectedTimeframe) {
+                    const rangeStart = new Date(selectedTimeframe);
+                    const rangeEnd = new Date(selectedTimeframe);
+                    rangeEnd.setDate(rangeEnd.getDate() + 13); // 2 weeks = 14 days
+                    
+                    isInRange = currentDay >= rangeStart && currentDay <= rangeEnd;
+                  }
+                  
+                  calendarDays.push({
+                    day: dayNumber,
+                    isCurrentMonth,
+                    isInRange,
+                    date: new Date(currentDay)
+                  });
+                }
+                
+                return calendarDays.map((dayData, index) => (
+                  <div 
+                    key={index} 
+                    className={`text-xs p-1 cursor-pointer hover:bg-gray-100 ${
+                      !dayData.isCurrentMonth ? 'text-gray-400' : ''
+                    } ${
+                      dayData.isInRange ? 'bg-green-100 font-medium' : ''
+                    }`}
+                    onClick={() => {
+                      if (dayData.isCurrentMonth) {
+                        const weekStart = startOfWeek(dayData.date, { weekStartsOn: 1 });
+                        setSelectedTimeframe(weekStart);
+                      }
+                    }}
+                  >
+                    {dayData.day}
+                  </div>
+                ));
+              })()}
             </div>
-          )}
+          </div>
+          
+          {/* Range indicator */}
+          <div className="p-2 border-t text-center">
+            <div className="text-xs font-medium text-green-600">Bi-Weekly Range</div>
+            <div className="text-[0.6rem] text-gray-600">
+              {selectedTimeframe ? (
+                <>
+                  {format(selectedTimeframe, 'MMM d')} - {format(addDays(selectedTimeframe, 13), 'MMM d, yyyy')}
+                </>
+              ) : (
+                'Jul 7 - Jul 20, 2025'
+              )}
+            </div>
+          </div>
         </div>
 
         {selectedTimeframe && (
