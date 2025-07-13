@@ -962,14 +962,24 @@ function TimesheetTemplate({ timesheet, billingConfig, user }: {
     <div className="border rounded-lg p-6 bg-white shadow-sm">
       {/* Header */}
       <div className="flex justify-between items-start mb-6">
-        <div>
-          <h3 className="text-xl font-bold">{niddikCompany?.name || 'NIDDIK'}</h3>
-          <div className="text-sm text-gray-600 space-y-1">
-            <p>{niddikCompany?.address || 'Address'}</p>
-            <p>{niddikCompany?.city && niddikCompany?.state && niddikCompany?.country ? `${niddikCompany.city}, ${niddikCompany.state} ${niddikCompany.zipCode || niddikCompany.zip_code || ''}` : 'City, State ZIP'}</p>
-            <p>{niddikCompany?.country || 'Country'}</p>
-            <p>{niddikCompany?.phoneNumbers?.[0] || niddikCompany?.phone_numbers?.[0] || '(000) 000-0000'}</p>
-            <p>{niddikCompany?.website || 'www.company-name.com'}</p>
+        <div className="flex items-start gap-4">
+          {/* Niddik Logo */}
+          {niddikCompany?.logo_url && (
+            <img 
+              src={niddikCompany.logo_url} 
+              alt={niddikCompany.name || 'NIDDIK'} 
+              className="w-16 h-16 object-contain"
+            />
+          )}
+          <div>
+            <h3 className="text-xl font-bold">{niddikCompany?.name || 'NIDDIK'}</h3>
+            <div className="text-sm text-gray-600 space-y-1">
+              <p>{niddikCompany?.address || 'Address'}</p>
+              <p>{niddikCompany?.city && niddikCompany?.state && niddikCompany?.country ? `${niddikCompany.city}, ${niddikCompany.state} ${niddikCompany.zipCode || niddikCompany.zip_code || ''}` : 'City, State ZIP'}</p>
+              <p>{niddikCompany?.country || 'Country'}</p>
+              <p>{niddikCompany?.phoneNumbers?.[0] || niddikCompany?.phone_numbers?.[0] || '(000) 000-0000'}</p>
+              <p>{niddikCompany?.website || 'www.company-name.com'}</p>
+            </div>
           </div>
         </div>
         
@@ -978,7 +988,27 @@ function TimesheetTemplate({ timesheet, billingConfig, user }: {
             <p><strong>Employee Name:</strong> {user?.fullName || user?.username}</p>
             <p><strong>Supervisor Name:</strong> {billingConfig?.supervisorName || 'Not specified'}</p>
             {clientCompany && (
-              <p><strong>Client Company:</strong> {clientCompany.name}</p>
+              <div>
+                <div className="flex items-center justify-end gap-2 mb-1">
+                  {(clientCompany.logoUrl || clientCompany.logo_url) && (
+                    <img 
+                      src={clientCompany.logoUrl || clientCompany.logo_url} 
+                      alt={clientCompany.name} 
+                      className="w-8 h-8 object-contain"
+                    />
+                  )}
+                  <p><strong>Client Company:</strong> {clientCompany.name}</p>
+                </div>
+                {(clientCompany.billToAddress || clientCompany.bill_to_address) && (
+                  <div className="text-xs text-gray-600 space-y-0.5">
+                    <p>{clientCompany.billToAddress || clientCompany.bill_to_address}</p>
+                    {(clientCompany.billToCity || clientCompany.bill_to_city) && (clientCompany.billToState || clientCompany.bill_to_state) && (
+                      <p>{clientCompany.billToCity || clientCompany.bill_to_city}, {clientCompany.billToState || clientCompany.bill_to_state} {clientCompany.billToZipCode || clientCompany.bill_to_zip_code || ''}</p>
+                    )}
+                    {(clientCompany.billToCountry || clientCompany.bill_to_country) && <p>{clientCompany.billToCountry || clientCompany.bill_to_country}</p>}
+                  </div>
+                )}
+              </div>
             )}
           </div>
           <div className="mt-4">

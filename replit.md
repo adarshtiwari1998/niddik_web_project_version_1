@@ -168,7 +168,10 @@ The application follows a standard full-stack architecture with clear separation
 - **Real Company Data Integration**: Updated timesheet template to fetch authentic company data from database tables (company_settings and client_companies) instead of dummy data
 - **Backend API Fix**: Added missing getCompanySettings function to storage object to resolve 500 errors in timesheet company info endpoint
 - **Enhanced Tab Structure**: Created three-tab layout: Timesheet Submission, Weekly Timesheet, and Attendance Tracking for improved user experience
-- **Resolution**: Client company dropdown now properly displays all available companies, billing cards show actual company logos, and timesheet templates display real NIDDIK and client company information from database
+- **Company Logo Display Fix**: Added Niddik company logo display in timesheet template using logo_url from company_settings table
+- **Client Company Enhancement**: Enhanced client company section to display logo and complete billing address information including bill_to_address, bill_to_city, bill_to_state, bill_to_country, bill_to_zip_code
+- **Field Mapping Compatibility**: Updated template to handle both camelCase and snake_case database field names for maximum compatibility
+- **Resolution**: Client company dropdown now properly displays all available companies, billing cards show actual company logos, and timesheet templates display real NIDDIK and client company information from database with complete logos and billing addresses
 
 ## Billing Configuration Enhancement (July 12, 2025)
 - **Enhanced Billing Configuration**: Added client company selection field to admin billing configuration popup
