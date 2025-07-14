@@ -1591,11 +1591,21 @@ function WeeklyTableView({ timesheets, onApprove, onReject, onEdit, onDelete, ge
   const [selectedWeekTimeframe, setSelectedWeekTimeframe] = useState<Date | undefined>();
   const [weekCalendarOpen, setWeekCalendarOpen] = useState(false);
 
-  // Get current week as default selection only when timesheets are loaded
+  // Auto-select the most recent timesheet week when data loads, instead of current week
   React.useEffect(() => {
     if (timesheets && timesheets.length > 0 && !selectedWeekTimeframe) {
-      const currentWeek = startOfWeek(new Date(), { weekStartsOn: 1 });
-      setSelectedWeekTimeframe(currentWeek);
+      // Find the most recent timesheet week
+      const latestTimesheet = timesheets.reduce((latest: any, current: any) => {
+        const latestDate = new Date(latest.weekStartDate);
+        const currentDate = new Date(current.weekStartDate);
+        return currentDate > latestDate ? current : latest;
+      });
+      
+      if (latestTimesheet) {
+        const timesheetWeek = new Date(latestTimesheet.weekStartDate);
+        setSelectedWeekTimeframe(timesheetWeek);
+        console.log('Auto-selected timesheet week:', timesheetWeek, 'from timesheet:', latestTimesheet);
+      }
     }
   }, [timesheets, selectedWeekTimeframe]);
 
@@ -1627,8 +1637,12 @@ function WeeklyTableView({ timesheets, onApprove, onReject, onEdit, onDelete, ge
     console.log('Filtering timesheets:', {
       totalTimesheets: timesheets.length,
       selectedWeek: selectedWeekTimeframe,
+      selectedWeekString: selectedWeekTimeframe ? format(selectedWeekTimeframe, 'yyyy-MM-dd') : 'none',
       filteredCount: filtered.length,
-      availableWeeks: timesheets.map((ts: any) => ts.weekStartDate)
+      availableWeeks: timesheets.map((ts: any) => ({
+        weekStart: ts.weekStartDate,
+        formatted: format(new Date(ts.weekStartDate), 'yyyy-MM-dd')
+      }))
     });
     
     return filtered;
@@ -1682,7 +1696,10 @@ function WeeklyTableView({ timesheets, onApprove, onReject, onEdit, onDelete, ge
         </div>
 
         {selectedWeekTimeframe && (
-          <Button variant="outline" onClick={() => setSelectedWeekTimeframe(undefined)}>
+          <Button variant="outline" onClick={() => {
+            setSelectedWeekTimeframe(undefined);
+            console.log('Cleared week filter - showing all timesheets');
+          }}>
             Clear Filter
           </Button>
         )}
