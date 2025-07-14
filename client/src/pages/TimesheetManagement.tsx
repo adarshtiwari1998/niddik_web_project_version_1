@@ -1591,11 +1591,13 @@ function WeeklyTableView({ timesheets, onApprove, onReject, onEdit, onDelete, ge
   const [selectedWeekTimeframe, setSelectedWeekTimeframe] = useState<Date | undefined>();
   const [weekCalendarOpen, setWeekCalendarOpen] = useState(false);
 
-  // Get current week as default selection
+  // Get current week as default selection only when timesheets are loaded
   React.useEffect(() => {
-    const currentWeek = startOfWeek(new Date(), { weekStartsOn: 1 });
-    setSelectedWeekTimeframe(currentWeek);
-  }, []);
+    if (timesheets && timesheets.length > 0 && !selectedWeekTimeframe) {
+      const currentWeek = startOfWeek(new Date(), { weekStartsOn: 1 });
+      setSelectedWeekTimeframe(currentWeek);
+    }
+  }, [timesheets, selectedWeekTimeframe]);
 
   // Get available week options from timesheets
   const getWeekOptions = () => {
@@ -1613,13 +1615,23 @@ function WeeklyTableView({ timesheets, onApprove, onReject, onEdit, onDelete, ge
 
   // Filter timesheets by selected week
   const getFilteredWeeklyTimesheets = () => {
-    if (!selectedWeekTimeframe || !timesheets) return timesheets;
+    if (!timesheets) return [];
+    if (!selectedWeekTimeframe) return timesheets;
     
-    return timesheets.filter((timesheet: any) => {
+    const filtered = timesheets.filter((timesheet: any) => {
       const timesheetStart = new Date(timesheet.weekStartDate);
       const selectedStart = selectedWeekTimeframe;
       return timesheetStart.getTime() === selectedStart.getTime();
     });
+    
+    console.log('Filtering timesheets:', {
+      totalTimesheets: timesheets.length,
+      selectedWeek: selectedWeekTimeframe,
+      filteredCount: filtered.length,
+      availableWeeks: timesheets.map((ts: any) => ts.weekStartDate)
+    });
+    
+    return filtered;
   };
 
   const getBillingConfig = (candidateId: number) => {
@@ -1676,7 +1688,7 @@ function WeeklyTableView({ timesheets, onApprove, onReject, onEdit, onDelete, ge
         )}
       </div>
 
-      {getFilteredWeeklyTimesheets().map((timesheet: WeeklyTimesheet) => {
+      {getFilteredWeeklyTimesheets().length > 0 ? getFilteredWeeklyTimesheets().map((timesheet: WeeklyTimesheet) => {
         const billingConfig = getBillingConfig(timesheet.candidateId);
         const workingDays = billingConfig?.workingDaysPerWeek || 5; // Default to 5 days
         const isFullTime = billingConfig?.employmentType === 'fulltime';
@@ -2024,7 +2036,17 @@ function WeeklyTableView({ timesheets, onApprove, onReject, onEdit, onDelete, ge
             )}
           </div>
         );
-      })}
+      }) : (
+        <div className="text-center py-8 text-muted-foreground">
+          <p>No timesheets found for the selected week.</p>
+          <p className="text-sm mt-2">
+            {selectedWeekTimeframe 
+              ? `No data available for week of ${format(selectedWeekTimeframe, 'MMM d, yyyy')}`
+              : 'No timesheet data available'
+            }
+          </p>
+        </div>
+      )}
     </div>
   );
 }
