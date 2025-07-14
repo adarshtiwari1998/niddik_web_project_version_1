@@ -355,6 +355,44 @@ export default function TimesheetManagement() {
     }
   });
 
+  const editTimesheetMutation = useMutation({
+    mutationFn: async ({ timesheetId, data }: { timesheetId: number; data: any }) => {
+      const response = await fetch(`/api/admin/timesheets/${timesheetId}`, {
+        method: 'PUT',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(data)
+      });
+      if (!response.ok) throw new Error('Failed to update timesheet');
+      return response.json();
+    },
+    onSuccess: () => {
+      toast({ title: "Success", description: "Timesheet updated successfully" });
+      queryClient.invalidateQueries({ queryKey: ['/api/admin/timesheets'] });
+      queryClient.invalidateQueries({ queryKey: ['/api/admin/biweekly-timesheets'] });
+    },
+    onError: (error: Error) => {
+      toast({ title: "Error", description: error.message, variant: "destructive" });
+    }
+  });
+
+  const deleteTimesheetMutation = useMutation({
+    mutationFn: async (timesheetId: number) => {
+      const response = await fetch(`/api/admin/timesheets/${timesheetId}`, {
+        method: 'DELETE'
+      });
+      if (!response.ok) throw new Error('Failed to delete timesheet');
+      return response.json();
+    },
+    onSuccess: () => {
+      toast({ title: "Success", description: "Timesheet deleted successfully" });
+      queryClient.invalidateQueries({ queryKey: ['/api/admin/timesheets'] });
+      queryClient.invalidateQueries({ queryKey: ['/api/admin/biweekly-timesheets'] });
+    },
+    onError: (error: Error) => {
+      toast({ title: "Error", description: error.message, variant: "destructive" });
+    }
+  });
+
 
 
   // Helper functions
@@ -623,12 +661,18 @@ export default function TimesheetManagement() {
                       timesheets={getFilteredTimesheets()}
                       onApprove={(id) => approveTimesheetMutation.mutate(id)}
                       onReject={(id, reason) => rejectTimesheetMutation.mutate({ timesheetId: id, reason })}
+                      onEdit={(id, data) => editTimesheetMutation.mutate({ timesheetId: id, data })}
+                      onDelete={(id) => deleteTimesheetMutation.mutate(id)}
                       getStatusBadge={getStatusBadge}
+                      isAdmin={true}
                     />
                   ) : adminViewMode === 'bi-weekly' ? (
                     <BiWeeklyTableView
                       timesheets={biWeeklyTimesheets?.data || []}
+                      onEdit={(id, data) => editTimesheetMutation.mutate({ timesheetId: id, data })}
+                      onDelete={(id) => deleteTimesheetMutation.mutate(id)}
                       getStatusBadge={getStatusBadge}
+                      isAdmin={true}
                     />
                   ) : adminViewMode === 'monthly' ? (
                     <MonthlyTableView
@@ -664,7 +708,7 @@ export default function TimesheetManagement() {
 }
 
 // Bi-Weekly Table View Component with Working Days Support and Dynamic Generation
-function BiWeeklyTableView({ timesheets, getStatusBadge }: any) {
+function BiWeeklyTableView({ timesheets, onEdit, onDelete, getStatusBadge, isAdmin }: any) {
   // Fetch billing configuration to get working days
   const { data: billingData } = useQuery({
     queryKey: ['/api/admin/candidates-billing'],
@@ -678,6 +722,10 @@ function BiWeeklyTableView({ timesheets, getStatusBadge }: any) {
   // Timeframe filtering state
   const [selectedTimeframe, setSelectedTimeframe] = useState<Date | undefined>();
   const [calendarOpen, setCalendarOpen] = useState(false);
+  
+  // Edit state for individual weekly timesheets within bi-weekly view
+  const [editingWeeklyTimesheet, setEditingWeeklyTimesheet] = useState<number | null>(null);
+  const [editWeeklyData, setEditWeeklyData] = useState<any>({});
 
   const getBillingConfig = (candidateId: number) => {
     return billingData?.data?.find((config: any) => config.candidateId === candidateId);
@@ -812,92 +860,17 @@ function BiWeeklyTableView({ timesheets, getStatusBadge }: any) {
           </SelectContent>
         </Select>
 
-        {/* Small Calendar - Always shows current month with dynamic range highlighting */}
-        <div className="border rounded-lg bg-white w-72">
-          <div className="p-2 border-b">
-            <div className="bg-green-500 text-white text-center py-1 rounded text-sm font-medium">
-              July 2025
-            </div>
-          </div>
-          <div className="p-2">
-            <div className="grid grid-cols-7 gap-1 text-center">
-              {/* Header row */}
-              {['Su', 'Mo', 'Tu', 'We', 'Th', 'Fr', 'Sa'].map((day) => (
-                <div key={day} className="text-xs font-medium text-gray-500 p-1">
-                  {day}
-                </div>
-              ))}
-              
-              {/* Calendar days - Dynamic highlighting based on selected timeframe */}
-              {(() => {
-                const currentMonth = new Date(2025, 6, 1); // July 2025
-                const startOfMonth = new Date(currentMonth.getFullYear(), currentMonth.getMonth(), 1);
-                const endOfMonth = new Date(currentMonth.getFullYear(), currentMonth.getMonth() + 1, 0);
-                
-                // Get the first day of the month grid (might include prev month days)
-                const firstDayOfWeek = startOfMonth.getDay();
-                const gridStart = new Date(startOfMonth);
-                gridStart.setDate(startOfMonth.getDate() - firstDayOfWeek);
-                
-                // Generate 42 days (6 weeks * 7 days)
-                const calendarDays = [];
-                for (let i = 0; i < 42; i++) {
-                  const currentDay = new Date(gridStart);
-                  currentDay.setDate(gridStart.getDate() + i);
-                  
-                  const dayNumber = currentDay.getDate();
-                  const isCurrentMonth = currentDay.getMonth() === currentMonth.getMonth();
-                  
-                  // Check if this day is in the selected bi-weekly range
-                  let isInRange = false;
-                  if (selectedTimeframe) {
-                    const rangeStart = new Date(selectedTimeframe);
-                    const rangeEnd = new Date(selectedTimeframe);
-                    rangeEnd.setDate(rangeEnd.getDate() + 13); // 2 weeks = 14 days
-                    
-                    isInRange = currentDay >= rangeStart && currentDay <= rangeEnd;
-                  }
-                  
-                  calendarDays.push({
-                    day: dayNumber,
-                    isCurrentMonth,
-                    isInRange,
-                    date: new Date(currentDay)
-                  });
-                }
-                
-                return calendarDays.map((dayData, index) => (
-                  <div 
-                    key={index} 
-                    className={`text-xs p-1 cursor-pointer hover:bg-gray-100 ${
-                      !dayData.isCurrentMonth ? 'text-gray-400' : ''
-                    } ${
-                      dayData.isInRange ? 'bg-green-100 font-medium' : ''
-                    }`}
-                    onClick={() => {
-                      if (dayData.isCurrentMonth) {
-                        const weekStart = startOfWeek(dayData.date, { weekStartsOn: 1 });
-                        setSelectedTimeframe(weekStart);
-                      }
-                    }}
-                  >
-                    {dayData.day}
-                  </div>
-                ));
-              })()}
-            </div>
-          </div>
-          
-          {/* Range indicator */}
-          <div className="p-2 border-t text-center">
-            <div className="text-xs font-medium text-green-600">Bi-Weekly Range</div>
-            <div className="text-[0.6rem] text-gray-600">
+        {/* Compact Date Range Display */}
+        <div className="border rounded-lg bg-white px-4 py-2 w-48">
+          <div className="text-center">
+            <div className="text-xs font-medium text-gray-600 mb-1">Current Range</div>
+            <div className="text-sm font-medium text-green-600">
               {selectedTimeframe ? (
                 <>
                   {format(selectedTimeframe, 'MMM d')} - {format(addDays(selectedTimeframe, 13), 'MMM d, yyyy')}
                 </>
               ) : (
-                'Jul 7 - Jul 20, 2025'
+                'All Periods'
               )}
             </div>
           </div>
@@ -1542,7 +1515,7 @@ function MonthlyTableView({ timesheets, getStatusBadge }: any) {
 }
 
 // Weekly Table View Component with Working Days Support
-function WeeklyTableView({ timesheets, onApprove, onReject, getStatusBadge }: any) {
+function WeeklyTableView({ timesheets, onApprove, onReject, onEdit, onDelete, getStatusBadge, isAdmin }: any) {
   // Fetch billing configuration to get working days
   const { data: billingData } = useQuery({
     queryKey: ['/api/admin/candidates-billing'],
@@ -1551,6 +1524,9 @@ function WeeklyTableView({ timesheets, onApprove, onReject, getStatusBadge }: an
   const getBillingConfig = (candidateId: number) => {
     return billingData?.data?.find((config: any) => config.candidateId === candidateId);
   };
+
+  const [editingTimesheet, setEditingTimesheet] = useState<number | null>(null);
+  const [editData, setEditData] = useState<any>({});
 
   return (
     <div className="space-y-6">
@@ -1625,7 +1601,7 @@ function WeeklyTableView({ timesheets, onApprove, onReject, getStatusBadge }: an
                 </div>
                 <div className="flex items-center gap-4">
                   {getStatusBadge(timesheet.status)}
-                  {timesheet.status === 'submitted' && (
+                  {timesheet.status === 'submitted' && isAdmin && onApprove && onReject && (
                     <div className="flex gap-2">
                       <Button size="sm" onClick={() => onApprove(timesheet.id)}>
                         <Check className="w-4 h-4 mr-1" />
@@ -1662,6 +1638,89 @@ function WeeklyTableView({ timesheets, onApprove, onReject, getStatusBadge }: an
                       </Dialog>
                     </div>
                   )}
+                  {timesheet.status === 'approved' && isAdmin && onEdit && onDelete && editingTimesheet !== timesheet.id && (
+                    <div className="flex gap-2">
+                      <Button 
+                        size="sm" 
+                        variant="outline" 
+                        onClick={() => {
+                          setEditingTimesheet(timesheet.id);
+                          setEditData({
+                            mondayHours: timesheet.mondayHours,
+                            tuesdayHours: timesheet.tuesdayHours,
+                            wednesdayHours: timesheet.wednesdayHours,
+                            thursdayHours: timesheet.thursdayHours,
+                            fridayHours: timesheet.fridayHours,
+                            saturdayHours: timesheet.saturdayHours,
+                            sundayHours: timesheet.sundayHours
+                          });
+                        }}
+                      >
+                        <Edit className="w-4 h-4 mr-1" />
+                        Edit
+                      </Button>
+                      <Dialog>
+                        <DialogTrigger asChild>
+                          <Button size="sm" variant="destructive">
+                            <Trash2 className="w-4 h-4 mr-1" />
+                            Delete
+                          </Button>
+                        </DialogTrigger>
+                        <DialogContent>
+                          <DialogHeader>
+                            <DialogTitle>Delete Timesheet</DialogTitle>
+                            <DialogDescription>
+                              Are you sure you want to delete this approved timesheet? This action cannot be undone.
+                            </DialogDescription>
+                          </DialogHeader>
+                          <div className="flex justify-end gap-2 mt-4">
+                            <Button variant="outline">Cancel</Button>
+                            <Button 
+                              variant="destructive" 
+                              onClick={() => onDelete(timesheet.id)}
+                            >
+                              Delete Timesheet
+                            </Button>
+                          </div>
+                        </DialogContent>
+                      </Dialog>
+                    </div>
+                  )}
+                  {editingTimesheet === timesheet.id && (
+                    <div className="flex gap-2">
+                      <Button 
+                        size="sm" 
+                        onClick={() => {
+                          const totalHours = Object.values(editData).reduce((sum: number, hours: any) => sum + (parseFloat(hours) || 0), 0);
+                          const billingConfig = getBillingConfig(timesheet.candidateId);
+                          const hourlyRate = parseFloat(billingConfig?.hourlyRate || '0');
+                          const totalAmount = totalHours * hourlyRate;
+                          
+                          onEdit(timesheet.id, {
+                            ...editData,
+                            totalWeeklyHours: totalHours,
+                            totalWeeklyAmount: totalAmount
+                          });
+                          setEditingTimesheet(null);
+                          setEditData({});
+                        }}
+                      >
+                        <Save className="w-4 h-4 mr-1" />
+                        Save
+                      </Button>
+                      <Button 
+                        size="sm" 
+                        variant="outline"
+                        onClick={() => {
+                          setEditingTimesheet(null);
+                          setEditData({});
+                        }}
+                      >
+                        <X className="w-4 h-4 mr-1" />
+                        Cancel
+                      </Button>
+                    </div>
+                  )}
                 </div>
               </div>
             </div>
@@ -1685,26 +1744,54 @@ function WeeklyTableView({ timesheets, onApprove, onReject, getStatusBadge }: an
                   </tr>
                 </thead>
                 <tbody>
-                  {displayDays.map((row, index) => (
-                    <tr key={row.key} className={index % 2 === 0 ? 'bg-white' : 'bg-gray-50'}>
-                      <td className="p-3 border-r font-medium">{row.day}</td>
-                      <td className="p-3 text-center border-r bg-green-50">{(parseFloat(row.hours) || 0).toFixed(2)}</td>
-                      <td className="p-3 text-center border-r">0.00</td>
-                      {isFullTime && (
-                        <>
-                          <td className="p-3 text-center border-r bg-green-50">0.00</td>
-                          <td className="p-3 text-center border-r bg-green-50">0.00</td>
-                          <td className="p-3 text-center border-r bg-green-50">0.00</td>
-                        </>
-                      )}
-                      <td className="p-3 text-center font-medium bg-gray-100">{(parseFloat(row.hours) || 0).toFixed(2)}</td>
-                    </tr>
-                  ))}
+                  {displayDays.map((row, index) => {
+                    const isEditing = editingTimesheet === timesheet.id;
+                    const fieldName = `${row.key}Hours`;
+                    const currentValue = isEditing ? (editData[fieldName] || 0) : (parseFloat(row.hours) || 0);
+                    
+                    return (
+                      <tr key={row.key} className={index % 2 === 0 ? 'bg-white' : 'bg-gray-50'}>
+                        <td className="p-3 border-r font-medium">{row.day}</td>
+                        <td className="p-3 text-center border-r bg-green-50">
+                          {isEditing ? (
+                            <Input
+                              type="number"
+                              step="0.01"
+                              min="0"
+                              max="24"
+                              value={currentValue}
+                              onChange={(e) => {
+                                const value = Math.max(0, Math.min(24, parseFloat(e.target.value) || 0));
+                                setEditData(prev => ({ ...prev, [fieldName]: value }));
+                              }}
+                              className="w-20 text-center"
+                            />
+                          ) : (
+                            currentValue.toFixed(2)
+                          )}
+                        </td>
+                        <td className="p-3 text-center border-r">0.00</td>
+                        {isFullTime && (
+                          <>
+                            <td className="p-3 text-center border-r bg-green-50">0.00</td>
+                            <td className="p-3 text-center border-r bg-green-50">0.00</td>
+                            <td className="p-3 text-center border-r bg-green-50">0.00</td>
+                          </>
+                        )}
+                        <td className="p-3 text-center font-medium bg-gray-100">{currentValue.toFixed(2)}</td>
+                      </tr>
+                    );
+                  })}
                   
                   {/* Totals Row */}
                   <tr className="bg-green-100 font-medium">
                     <td className="p-3 border-r">Total Hrs:</td>
-                    <td className="p-3 text-center border-r">{(parseFloat(timesheet.totalWeeklyHours) || 0).toFixed(2)}</td>
+                    <td className="p-3 text-center border-r">
+                      {editingTimesheet === timesheet.id 
+                        ? Object.values(editData).reduce((sum: number, hours: any) => sum + (parseFloat(hours) || 0), 0).toFixed(2)
+                        : (parseFloat(timesheet.totalWeeklyHours) || 0).toFixed(2)
+                      }
+                    </td>
                     <td className="p-3 text-center border-r">0.00</td>
                     {isFullTime && (
                       <>
@@ -1713,7 +1800,12 @@ function WeeklyTableView({ timesheets, onApprove, onReject, getStatusBadge }: an
                         <td className="p-3 text-center border-r">0.00</td>
                       </>
                     )}
-                    <td className="p-3 text-center bg-gray-200">{(parseFloat(timesheet.totalWeeklyHours) || 0).toFixed(2)}</td>
+                    <td className="p-3 text-center bg-gray-200">
+                      {editingTimesheet === timesheet.id 
+                        ? Object.values(editData).reduce((sum: number, hours: any) => sum + (parseFloat(hours) || 0), 0).toFixed(2)
+                        : (parseFloat(timesheet.totalWeeklyHours) || 0).toFixed(2)
+                      }
+                    </td>
                   </tr>
 
                   {/* Rate Row */}
