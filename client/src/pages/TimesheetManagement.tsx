@@ -393,6 +393,32 @@ export default function TimesheetManagement() {
     }
   });
 
+  // Status change mutation for approve/revert functionality
+  const changeTimesheetStatusMutation = useMutation({
+    mutationFn: async ({ timesheetId, status }: { timesheetId: number; status: string }) => {
+      const response = await fetch(`/api/admin/timesheets/${timesheetId}/status`, {
+        method: 'PATCH',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ status })
+      });
+      if (!response.ok) throw new Error('Failed to update timesheet status');
+      return response.json();
+    },
+    onSuccess: (data, variables) => {
+      const statusMessage = variables.status === 'pending' ? 'reverted to pending' : `changed to ${variables.status}`;
+      toast({ 
+        title: "Success", 
+        description: `Timesheet status ${statusMessage} successfully`,
+        duration: 3000
+      });
+      queryClient.invalidateQueries({ queryKey: ['/api/admin/timesheets'] });
+      queryClient.invalidateQueries({ queryKey: ['/api/admin/biweekly-timesheets'] });
+    },
+    onError: (error: Error) => {
+      toast({ title: "Error", description: error.message, variant: "destructive" });
+    }
+  });
+
 
 
   // Helper functions
@@ -659,12 +685,13 @@ export default function TimesheetManagement() {
                   adminViewMode === 'weekly' ? (
                     <WeeklyTableView 
                       timesheets={getFilteredTimesheets()}
-                      onApprove={(id) => approveTimesheetMutation.mutate(id)}
+                      onApprove={(id) => changeTimesheetStatusMutation.mutate({ timesheetId: id, status: 'approved' })}
                       onReject={(id, reason) => rejectTimesheetMutation.mutate({ timesheetId: id, reason })}
                       onEdit={(id, data) => editTimesheetMutation.mutate({ timesheetId: id, data })}
                       onDelete={(id) => deleteTimesheetMutation.mutate(id)}
                       getStatusBadge={getStatusBadge}
                       isAdmin={true}
+                      changeTimesheetStatusMutation={changeTimesheetStatusMutation}
                     />
                   ) : adminViewMode === 'bi-weekly' ? (
                     <BiWeeklyTableView
@@ -1581,7 +1608,7 @@ function MonthlyTableView({ timesheets, getStatusBadge }: any) {
 }
 
 // Weekly Table View Component with Working Days Support
-function WeeklyTableView({ timesheets, onApprove, onReject, onEdit, onDelete, getStatusBadge, isAdmin }: any) {
+function WeeklyTableView({ timesheets, onApprove, onReject, onEdit, onDelete, getStatusBadge, isAdmin, changeTimesheetStatusMutation }: any) {
   // Fetch billing configuration to get working days
   const { data: billingData } = useQuery({
     queryKey: ['/api/admin/candidates-billing'],
@@ -1776,11 +1803,15 @@ function WeeklyTableView({ timesheets, onApprove, onReject, onEdit, onDelete, ge
                 </div>
                 <div className="flex items-center gap-4">
                   {getStatusBadge(timesheet.status)}
-                  {timesheet.status === 'submitted' && isAdmin && onApprove && onReject && (
+                  {(timesheet.status === 'submitted' || timesheet.status === 'pending') && isAdmin && onApprove && onReject && (
                     <div className="flex gap-2">
-                      <Button size="sm" onClick={() => onApprove(timesheet.id)}>
+                      <Button 
+                        size="sm" 
+                        onClick={() => onApprove(timesheet.id)}
+                        disabled={changeTimesheetStatusMutation.isPending}
+                      >
                         <Check className="w-4 h-4 mr-1" />
-                        Approve
+                        {changeTimesheetStatusMutation.isPending ? 'Approving...' : 'Approve'}
                       </Button>
                       <Dialog>
                         <DialogTrigger asChild>
@@ -1819,18 +1850,15 @@ function WeeklyTableView({ timesheets, onApprove, onReject, onEdit, onDelete, ge
                         size="sm"
                         variant="outline"
                         onClick={() => {
-                          // Revert to pending status
-                          fetch(`/api/admin/timesheets/${timesheet.id}/status`, {
-                            method: 'PATCH',
-                            headers: { 'Content-Type': 'application/json' },
-                            body: JSON.stringify({ status: 'pending' })
-                          }).then(() => {
-                            queryClient.invalidateQueries({ queryKey: ['/api/admin/timesheets'] });
+                          changeTimesheetStatusMutation.mutate({
+                            timesheetId: timesheet.id,
+                            status: 'pending'
                           });
                         }}
+                        disabled={changeTimesheetStatusMutation.isPending}
                       >
                         <RotateCcw className="h-4 w-4 mr-1" />
-                        Revert
+                        {changeTimesheetStatusMutation.isPending ? 'Reverting...' : 'Revert'}
                       </Button>
                       <Button 
                         size="sm" 

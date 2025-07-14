@@ -141,6 +141,11 @@ The application follows a standard full-stack architecture with clear separation
   - **Edit Mode**: Click edit button to enable inline editing of approved timesheets
   - **Delete Functionality**: Admin can permanently delete approved timesheets with confirmation
   - **Real-time Updates**: All changes reflect immediately in the interface with proper error handling
+  - **Improved Status Management**: Enhanced approve/revert functionality with proper toast notifications and loading states
+    - **Revert with Notifications**: When admin clicks "Revert", timesheet status changes to pending with success toast notification
+    - **Dynamic Button Display**: After revert, "Approve" button automatically appears for re-approval
+    - **Loading States**: Buttons show loading text ("Reverting...", "Approving...") during API calls
+    - **Unified Status Mutation**: Both approve and revert operations use same mutation for consistent behavior
 - **Technical Fixes**: 
   - Fixed API method from PATCH to PUT for timesheet updates
   - Resolved `currentValue.toFixed is not a function` error with proper type conversion
