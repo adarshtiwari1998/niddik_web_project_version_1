@@ -3936,6 +3936,39 @@ ${allUrls.map(url => `  <url>
     }
   });
 
+  // Admin update timesheet status (admin only)
+  app.patch('/api/admin/timesheets/:id/status', async (req: AuthenticatedRequest, res: Response) => {
+    try {
+      if (!req.isAuthenticated() || !req.user || req.user.role !== 'admin') {
+        return res.status(403).json({ success: false, message: "Admin access required" });
+      }
+
+      const timesheetId = parseInt(req.params.id);
+      const { status } = req.body;
+      
+      if (!['pending', 'approved', 'rejected'].includes(status)) {
+        return res.status(400).json({ success: false, message: "Invalid status" });
+      }
+
+      // Get the timesheet first to check if it exists
+      const existingTimesheet = await storage.getWeeklyTimesheetById(timesheetId);
+      if (!existingTimesheet) {
+        return res.status(404).json({ success: false, message: "Timesheet not found" });
+      }
+
+      const timesheet = await storage.updateWeeklyTimesheet(timesheetId, { status });
+      
+      if (!timesheet) {
+        return res.status(404).json({ success: false, message: "Timesheet not found" });
+      }
+
+      res.json({ success: true, data: timesheet });
+    } catch (error) {
+      console.error('Error updating timesheet status:', error);
+      res.status(500).json({ success: false, message: "Internal server error" });
+    }
+  });
+
   // Admin delete timesheet (admin only)
   app.delete('/api/admin/timesheets/:id', async (req: AuthenticatedRequest, res: Response) => {
     try {

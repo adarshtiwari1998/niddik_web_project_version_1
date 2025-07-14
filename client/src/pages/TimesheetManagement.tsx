@@ -1,4 +1,4 @@
-import { useState } from "react";
+import React, { useState } from "react";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
@@ -7,7 +7,7 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Badge } from "@/components/ui/badge";
-import { Calendar, Clock, DollarSign, FileText, Plus, Save, Check, X, Edit, Trash2, Building, Filter, User, ChevronDown, CalendarIcon } from "lucide-react";
+import { Calendar, Clock, DollarSign, FileText, Plus, Save, Check, X, Edit, Trash2, Building, Filter, User, ChevronDown, CalendarIcon, RotateCcw, Edit2 } from "lucide-react";
 import { Link } from "wouter";
 import { useToast } from "@/hooks/use-toast";
 import { useUser } from "@/hooks/use-user";
@@ -938,6 +938,72 @@ function BiWeeklyTableView({ timesheets, onEdit, onDelete, getStatusBadge, isAdm
                       <p className="text-sm font-medium">Total Hours: {biWeekly.totalHours}</p>
                       <p className="text-sm text-muted-foreground">Total Amount: INR {biWeekly.totalAmount}</p>
                     </div>
+                    
+                    {/* Edit and Delete Buttons for Admin */}
+                    {isAdmin && onEdit && onDelete && (
+                      <div className="flex gap-2">
+                        <Button
+                          size="sm"
+                          variant="outline"
+                          onClick={() => {
+                            // Edit the underlying weekly timesheets that make up this bi-weekly period
+                            if (biWeekly.week1Data?.id) {
+                              onEdit(biWeekly.week1Data.id, biWeekly.week1Data);
+                            }
+                          }}
+                        >
+                          <Edit2 className="h-4 w-4 mr-1" />
+                          Edit Week 1
+                        </Button>
+                        
+                        {biWeekly.week2Data?.id && (
+                          <Button
+                            size="sm"
+                            variant="outline"
+                            onClick={() => {
+                              onEdit(biWeekly.week2Data.id, biWeekly.week2Data);
+                            }}
+                          >
+                            <Edit2 className="h-4 w-4 mr-1" />
+                            Edit Week 2
+                          </Button>
+                        )}
+                        
+                        <Dialog>
+                          <DialogTrigger asChild>
+                            <Button size="sm" variant="destructive">
+                              <Trash2 className="w-4 h-4 mr-1" />
+                              Delete
+                            </Button>
+                          </DialogTrigger>
+                          <DialogContent>
+                            <DialogHeader>
+                              <DialogTitle>Delete Bi-Weekly Timesheets</DialogTitle>
+                              <DialogDescription>
+                                Are you sure you want to delete the underlying weekly timesheets for this bi-weekly period? This action cannot be undone.
+                              </DialogDescription>
+                            </DialogHeader>
+                            <div className="flex justify-end gap-2 mt-4">
+                              <Button variant="outline">Cancel</Button>
+                              <Button 
+                                variant="destructive" 
+                                onClick={() => {
+                                  // Delete both weekly timesheets that make up this bi-weekly period
+                                  if (biWeekly.week1Data?.id) {
+                                    onDelete(biWeekly.week1Data.id);
+                                  }
+                                  if (biWeekly.week2Data?.id) {
+                                    onDelete(biWeekly.week2Data.id);
+                                  }
+                                }}
+                              >
+                                Delete Timesheets
+                              </Button>
+                            </div>
+                          </DialogContent>
+                        </Dialog>
+                      </div>
+                    )}
                   </div>
                 </div>
               </div>
@@ -1521,6 +1587,41 @@ function WeeklyTableView({ timesheets, onApprove, onReject, onEdit, onDelete, ge
     queryKey: ['/api/admin/candidates-billing'],
   });
 
+  // Timeframe filtering state for weekly view
+  const [selectedWeekTimeframe, setSelectedWeekTimeframe] = useState<Date | undefined>();
+  const [weekCalendarOpen, setWeekCalendarOpen] = useState(false);
+
+  // Get current week as default selection
+  React.useEffect(() => {
+    const currentWeek = startOfWeek(new Date(), { weekStartsOn: 1 });
+    setSelectedWeekTimeframe(currentWeek);
+  }, []);
+
+  // Get available week options from timesheets
+  const getWeekOptions = () => {
+    if (!timesheets) return [];
+    
+    const weeks = timesheets.map((ts: any) => new Date(ts.weekStartDate));
+    const uniqueWeeks = [...new Set(weeks.map(w => w.getTime()))].map(t => new Date(t));
+    const sortedWeeks = uniqueWeeks.sort((a, b) => a.getTime() - b.getTime());
+    
+    return sortedWeeks.map(week => ({
+      value: week,
+      label: `Week of ${format(week, 'MM/dd/yyyy')} - ${format(addDays(week, 6), 'MM/dd/yyyy')}`
+    }));
+  };
+
+  // Filter timesheets by selected week
+  const getFilteredWeeklyTimesheets = () => {
+    if (!selectedWeekTimeframe || !timesheets) return timesheets;
+    
+    return timesheets.filter((timesheet: any) => {
+      const timesheetStart = new Date(timesheet.weekStartDate);
+      const selectedStart = selectedWeekTimeframe;
+      return timesheetStart.getTime() === selectedStart.getTime();
+    });
+  };
+
   const getBillingConfig = (candidateId: number) => {
     return billingData?.data?.find((config: any) => config.candidateId === candidateId);
   };
@@ -1530,7 +1631,50 @@ function WeeklyTableView({ timesheets, onApprove, onReject, onEdit, onDelete, ge
 
   return (
     <div className="space-y-6">
-      {timesheets.map((timesheet: WeeklyTimesheet) => {
+      {/* Timeframe Filtering Controls */}
+      <div className="flex gap-4 items-center">
+        <Select value={selectedWeekTimeframe ? format(selectedWeekTimeframe, 'yyyy-MM-dd') : ""} onValueChange={(value) => {
+          if (value) {
+            setSelectedWeekTimeframe(new Date(value));
+          }
+        }}>
+          <SelectTrigger className="w-72">
+            <SelectValue placeholder="Select Timeframe" />
+          </SelectTrigger>
+          <SelectContent>
+            <SelectItem value="">All Timeframes</SelectItem>
+            {getWeekOptions().map((option) => (
+              <SelectItem key={option.value.getTime()} value={format(option.value, 'yyyy-MM-dd')}>
+                {option.label}
+              </SelectItem>
+            ))}
+          </SelectContent>
+        </Select>
+
+        {/* Compact Date Range Display */}
+        <div className="border rounded-lg bg-white px-4 py-2 w-48">
+          <div className="text-center">
+            <div className="text-xs font-medium text-gray-600 mb-1">Current Range</div>
+            <div className="text-sm font-medium text-green-600">
+              {selectedWeekTimeframe ? (
+                <>
+                  {format(selectedWeekTimeframe, 'MMM d')} - {format(addDays(selectedWeekTimeframe, 6), 'MMM d, yyyy')}
+                </>
+              ) : (
+                'All Periods'
+              )}
+            </div>
+          </div>
+        </div>
+
+        {selectedWeekTimeframe && (
+          <Button variant="outline" onClick={() => setSelectedWeekTimeframe(undefined)}>
+            Clear Filter
+          </Button>
+        )}
+      </div>
+
+      {getFilteredWeeklyTimesheets().map((timesheet: WeeklyTimesheet) => {
         const billingConfig = getBillingConfig(timesheet.candidateId);
         const workingDays = billingConfig?.workingDaysPerWeek || 5; // Default to 5 days
         const isFullTime = billingConfig?.employmentType === 'fulltime';
@@ -1640,6 +1784,23 @@ function WeeklyTableView({ timesheets, onApprove, onReject, onEdit, onDelete, ge
                   )}
                   {timesheet.status === 'approved' && isAdmin && onEdit && onDelete && editingTimesheet !== timesheet.id && (
                     <div className="flex gap-2">
+                      <Button
+                        size="sm"
+                        variant="outline"
+                        onClick={() => {
+                          // Revert to pending status
+                          fetch(`/api/admin/timesheets/${timesheet.id}/status`, {
+                            method: 'PATCH',
+                            headers: { 'Content-Type': 'application/json' },
+                            body: JSON.stringify({ status: 'pending' })
+                          }).then(() => {
+                            queryClient.invalidateQueries({ queryKey: ['/api/admin/timesheets'] });
+                          });
+                        }}
+                      >
+                        <RotateCcw className="h-4 w-4 mr-1" />
+                        Revert
+                      </Button>
                       <Button 
                         size="sm" 
                         variant="outline" 

@@ -123,7 +123,7 @@ The application follows a standard full-stack architecture with clear separation
 
 # Recent Changes
 
-## Complete Timesheet Admin Editing System Enhancement (July 14, 2025)
+## Advanced Timesheet Management System with Full Admin Controls (July 14, 2025)
 - **Migration Completed**: Successfully migrated from Replit Agent to standard Replit environment
   - All packages installed and verified working
   - Express server and frontend running properly on port 5000
@@ -145,7 +145,24 @@ The application follows a standard full-stack architecture with clear separation
   - Fixed API method from PATCH to PUT for timesheet updates
   - Resolved `currentValue.toFixed is not a function` error with proper type conversion
   - Enhanced data validation and null checking throughout edit functionality
-- **Files Modified**: `client/src/pages/TimesheetManagement.tsx`, `.local/state/replit/agent/progress_tracker.md`, `replit.md`
+- **Advanced Status Management**: 
+  - **Approve/Reject Toggle**: Admin can revert approved timesheets back to pending status with single click
+  - **Status API Endpoint**: Added `/api/admin/timesheets/:id/status` PATCH endpoint for status updates
+  - **Flexible Workflow**: Admins can now approve, reject, and revert timesheet statuses as needed
+- **Bi-Weekly Edit Controls**: Added comprehensive edit and delete functionality to bi-weekly view
+  - **Individual Week Editing**: Separate "Edit Week 1" and "Edit Week 2" buttons for granular control
+  - **Delete Confirmation**: Dialog confirmation for deleting underlying weekly timesheets
+  - **Week-Specific Actions**: Admin can edit or delete specific weeks within bi-weekly periods
+- **Weekly View Timeframe Filtering**: Added dropdown and calendar filtering to weekly timesheets
+  - **Auto-Selected Current Week**: System automatically selects current week range on load
+  - **Dropdown Selection**: Easy week selection with formatted date ranges
+  - **Compact Display**: Shows current selected week range with "Clear Filter" option
+  - **Visual Consistency**: Matches bi-weekly and monthly filtering patterns
+- **Enhanced User Experience**:
+  - **Real-time Query Invalidation**: Proper cache updates after status changes
+  - **Intuitive Controls**: Clear visual feedback with icons and color-coded buttons
+  - **Responsive Design**: All controls work properly across different screen sizes
+- **Files Modified**: `client/src/pages/TimesheetManagement.tsx`, `server/routes.ts`, `replit.md`
 
 ## Invoice Management Tab and Timesheet UI Enhancement (July 13, 2025)
 - **New Invoice Tab**: Added comprehensive invoice management tab to timesheet management page
