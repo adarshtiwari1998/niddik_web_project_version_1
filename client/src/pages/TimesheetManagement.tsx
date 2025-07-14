@@ -1633,8 +1633,10 @@ function WeeklyTableView({ timesheets, onApprove, onReject, onEdit, onDelete, ge
     <div className="space-y-6">
       {/* Timeframe Filtering Controls */}
       <div className="flex gap-4 items-center">
-        <Select value={selectedWeekTimeframe ? format(selectedWeekTimeframe, 'yyyy-MM-dd') : ""} onValueChange={(value) => {
-          if (value) {
+        <Select value={selectedWeekTimeframe ? format(selectedWeekTimeframe, 'yyyy-MM-dd') : "all-timeframes"} onValueChange={(value) => {
+          if (value === "all-timeframes") {
+            setSelectedWeekTimeframe(undefined);
+          } else {
             setSelectedWeekTimeframe(new Date(value));
           }
         }}>
@@ -1642,7 +1644,7 @@ function WeeklyTableView({ timesheets, onApprove, onReject, onEdit, onDelete, ge
             <SelectValue placeholder="Select Timeframe" />
           </SelectTrigger>
           <SelectContent>
-            <SelectItem value="">All Timeframes</SelectItem>
+            <SelectItem value="all-timeframes">All Timeframes</SelectItem>
             {getWeekOptions().map((option) => (
               <SelectItem key={option.value.getTime()} value={format(option.value, 'yyyy-MM-dd')}>
                 {option.label}
