@@ -1767,7 +1767,7 @@ function WeeklyTableView({ timesheets, onApprove, onReject, onEdit, onDelete, ge
                               className="w-20 text-center"
                             />
                           ) : (
-                            currentValue.toFixed(2)
+                            (parseFloat(currentValue) || 0).toFixed(2)
                           )}
                         </td>
                         <td className="p-3 text-center border-r">0.00</td>
@@ -1778,7 +1778,7 @@ function WeeklyTableView({ timesheets, onApprove, onReject, onEdit, onDelete, ge
                             <td className="p-3 text-center border-r bg-green-50">0.00</td>
                           </>
                         )}
-                        <td className="p-3 text-center font-medium bg-gray-100">{currentValue.toFixed(2)}</td>
+                        <td className="p-3 text-center font-medium bg-gray-100">{(parseFloat(currentValue) || 0).toFixed(2)}</td>
                       </tr>
                     );
                   })}
