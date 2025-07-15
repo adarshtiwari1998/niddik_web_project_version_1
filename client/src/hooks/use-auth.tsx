@@ -94,8 +94,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
 
   const registerMutation = useMutation({
     mutationFn: async (credentials: InsertUser) => {
-      const res = await apiRequest("POST", "/api/register", credentials);
-      return await res.json();
+      return await apiRequest("/api/register", { method: "POST", body: JSON.stringify(credentials) });
     },
     onSuccess: (userData: any) => {
       // Store JWT token if available
@@ -123,7 +122,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
 
   const logoutMutation = useMutation({
     mutationFn: async () => {
-      await apiRequest("POST", "/api/logout");
+      await apiRequest("/api/logout", { method: "POST" });
     },
     onSuccess: () => {
       // Remove JWT token from localStorage

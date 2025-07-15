@@ -87,11 +87,6 @@ export default function JobForm() {
   // If editing, fetch the job data
   const { data: jobData, isLoading: isLoadingJob } = useQuery({
     queryKey: [`/api/job-listings/${jobId}`],
-    queryFn: async () => {
-      const response = await apiRequest("GET", `/api/job-listings/${jobId}`);
-      const data = await response.json();
-      return data;
-    },
     enabled: !isNewJob && jobId !== null,
   });
 
@@ -101,7 +96,10 @@ export default function JobForm() {
     defaultValues: async () => {
       if (!isNewJob && jobId) {
         try {
-          const response = await apiRequest("GET", `/api/job-listings/${jobId}`);
+          const response = await fetch(`/api/job-listings/${jobId}`, {
+            headers: { 'Content-Type': 'application/json' },
+            credentials: 'include'
+          });
           const data = await response.json();
           const job = data.data;
 
@@ -224,13 +222,7 @@ export default function JobForm() {
   const createMutation = useMutation({
     mutationFn: async (data: z.infer<typeof formSchema>) => {
       console.log("Mutation: Sending data to API:", data);
-      const response = await apiRequest("POST", "/api/job-listings", data);
-      const result = await response.json();
-      console.log("Mutation: API response:", result);
-      if (!response.ok) {
-        throw new Error(result.message || 'Failed to create job listing');
-      }
-      return result;
+      return await apiRequest("/api/job-listings", { method: "POST", body: JSON.stringify(data) });
     },
     onSuccess: (result) => {
       console.log("Mutation: Job created successfully:", result);
@@ -255,7 +247,7 @@ export default function JobForm() {
   // Update job mutation
   const updateMutation = useMutation({
     mutationFn: (data: z.infer<typeof formSchema>) =>
-      apiRequest("PUT", `/api/job-listings/${jobId}`, data),
+      apiRequest(`/api/job-listings/${jobId}`, { method: "PUT", body: JSON.stringify(data) }),
     onSuccess: () => {
       // Invalidate both the list and the individual job query
       queryClient.invalidateQueries({ queryKey: ["/api/job-listings"] });

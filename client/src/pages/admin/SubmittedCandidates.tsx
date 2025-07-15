@@ -327,66 +327,16 @@ function SubmittedCandidates() {
   // Query to fetch submitted candidates
   const { data: candidatesData, isLoading: isLoadingCandidates, refetch: refetchCandidates } = useQuery({
     queryKey: ['/api/submitted-candidates', { page, limit, search, statusFilter, clientFilter, sourcedByFilter, pocFilter, marginFilter }],
-    queryFn: async ({ queryKey }) => {
-      const [url, params] = queryKey;
-      const queryParams = new URLSearchParams();
-      
-      if (params && typeof params === 'object') {
-        Object.entries(params).forEach(([key, value]) => {
-          if (value !== undefined && value !== null && value !== '' && value !== 'all_statuses' && value !== 'all_clients' && value !== 'all_sourced_by' && value !== 'all_pocs' && value !== 'all_margins') {
-            queryParams.append(key, String(value));
-          }
-        });
-      }
-
-      const response = await fetch(`${url}?${queryParams}`, {
-        headers: { 'Content-Type': 'application/json' },
-        credentials: 'include'
-      });
-      
-      if (!response.ok) throw new Error("Failed to fetch candidates");
-      return await response.json();
-    }
   });
 
   // Query to fetch all statuses and clients for filter dropdowns (unfiltered)
   const { data: allCandidatesData } = useQuery({
-    queryKey: ['/api/submitted-candidates/all-options', { page: 1, limit: 1000 }],
-    queryFn: async ({ queryKey }) => {
-      const [url, params] = queryKey;
-      const queryParams = new URLSearchParams();
-      
-      if (params && typeof params === 'object') {
-        Object.entries(params).forEach(([key, value]) => {
-          if (value !== undefined && value !== null) {
-            queryParams.append(key, String(value));
-          }
-        });
-      }
-
-      const response = await fetch(`${url.replace('/all-options', '')}?${queryParams}`, {
-        headers: { 'Content-Type': 'application/json' },
-        credentials: 'include'
-      });
-      
-      if (!response.ok) throw new Error("Failed to fetch all candidates");
-      return await response.json();
-    }
+    queryKey: ['/api/submitted-candidates', { page: 1, limit: 1000 }],
   });
 
   // Query to fetch analytics data
   const { data: analyticsData, isLoading: isLoadingAnalytics } = useQuery({
     queryKey: ['/api/submitted-candidates/analytics/summary'],
-    queryFn: async ({ queryKey }) => {
-      const [url] = queryKey;
-      const response = await fetch(url, {
-        headers: { 'Content-Type': 'application/json' },
-        credentials: 'include'
-      });
-      
-      if (!response.ok) throw new Error("Failed to fetch analytics");
-      return await response.json();
-    }
   });
 
   // Mutation to create a candidate
@@ -398,7 +348,7 @@ function SubmittedCandidates() {
         profitPerMonth
       };
 
-      return await apiRequest("POST", "/api/submitted-candidates", combinedData);
+      return await apiRequest("/api/submitted-candidates", { method: "POST", body: JSON.stringify(combinedData) });
     },
     onSuccess: () => {
       toast({
@@ -430,7 +380,7 @@ function SubmittedCandidates() {
         profitPerMonth
       };
 
-      return await apiRequest("PUT", `/api/submitted-candidates/${selectedCandidate.id}`, combinedData);
+      return await apiRequest(`/api/submitted-candidates/${selectedCandidate.id}`, { method: "PUT", body: JSON.stringify(combinedData) });
     },
     onSuccess: () => {
       toast({
@@ -460,7 +410,7 @@ function SubmittedCandidates() {
       console.log('ID type:', typeof id);
       console.log('URL being called:', `/api/submitted-candidates/${id}`);
 
-      return await apiRequest("DELETE", `/api/submitted-candidates/${id}`);
+      return await apiRequest(`/api/submitted-candidates/${id}`, { method: "DELETE" });
     },
     onSuccess: () => {
       toast({
