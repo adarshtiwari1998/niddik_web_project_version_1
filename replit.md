@@ -123,7 +123,16 @@ The application follows a standard full-stack architecture with clear separation
 
 # Recent Changes
 
-## Replit Migration Complete with Enhanced Filter Functionality (July 15, 2025)
+## Column Visibility Control and Enhanced Filter Functionality (July 15, 2025)
+- **Column Visibility Control**: Implemented customizable column visibility for submitted candidates table
+  - **Admin Control**: Added "Columns" button with settings icon in Sort & Display section
+  - **Persistent State**: Column preferences saved to localStorage and restored on page reload
+  - **Required Columns**: ID, Candidate Name, Status, and Actions columns are required and cannot be hidden
+  - **Optional Columns**: All other columns can be toggled on/off including Sourced By, Client, POC, Skills, Contact, Email, Experience, Notice Period, Location, CTC fields, Bill/Pay rates, and Margin/Profit calculations
+  - **Default View**: Shows commonly used columns (ID, Sourced By, Client, POC, Skills, Candidate Name, Contact, Status, Actions)
+  - **Quick Actions**: "Default" button to reset to default columns, "Show All" to display all columns
+  - **Dynamic Table**: Table headers and cells render conditionally based on visibility settings
+  - **Reduced Scrolling**: Admins can now focus on relevant columns for their workflow
 - **Migration Status**: Successfully completed migration from Replit Agent to standard Replit environment
 - **Filter Functionality Fixed**: Resolved submitted candidates filtering issue where client filters weren't working
   - **Root Cause**: Query parameters were not correctly mapped between frontend (`clientFilter`) and backend (`client`)
@@ -138,7 +147,7 @@ The application follows a standard full-stack architecture with clear separation
 - **Authentication System**: Admin and user authentication working properly with session management
 - **All Core Features Verified**: Job listings, admin dashboard, timesheet management, billing configuration, and submitted candidates all operational
 - **Security Maintained**: Client/server separation and role-based access control preserved throughout migration
-- **Files Modified**: `client/src/pages/admin/SubmittedCandidates.tsx`, `server/auth.ts`, `.local/state/replit/agent/progress_tracker.md`
+- **Files Modified**: `client/src/pages/admin/SubmittedCandidates.tsx`, `server/auth.ts`, `replit.md`
 
 ## Advanced Timesheet Management System with Full Admin Controls (July 14, 2025)
 - **Migration Completed**: Successfully migrated from Replit Agent to standard Replit environment

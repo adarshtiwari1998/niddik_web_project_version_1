@@ -9,10 +9,11 @@ import { Label } from "@/components/ui/label";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Table, TableBody, TableCaption, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
+import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
 import { Badge } from "@/components/ui/badge";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle, AlertDialogTrigger } from "@/components/ui/alert-dialog";
-import { Loader2, Edit, Trash2, Info, Plus, Download, Upload, Filter, Search, FileSpreadsheet, Check, X } from "lucide-react";
+import { Loader2, Edit, Trash2, Info, Plus, Download, Upload, Filter, Search, FileSpreadsheet, Check, X, Settings } from "lucide-react";
 import { formatDistanceToNow } from "date-fns";
 import { apiRequest } from "@/lib/queryClient";
 import { useForm, SubmitHandler } from "react-hook-form";
@@ -170,6 +171,35 @@ const statusOptions = [
   { value: "selected", label: "Selected" }
 ];
 
+// Column configuration for visibility control
+const columnConfig = [
+  { key: 'id', label: 'ID', required: true },
+  { key: 'sourcedBy', label: 'Sourced By', required: false },
+  { key: 'client', label: 'Client', required: false },
+  { key: 'poc', label: 'POC', required: false },
+  { key: 'skills', label: 'Skills', required: false },
+  { key: 'candidateName', label: 'Candidate Name', required: true },
+  { key: 'contactNo', label: 'Contact No', required: false },
+  { key: 'emailId', label: 'Email ID', required: false },
+  { key: 'experience', label: 'Experience', required: false },
+  { key: 'noticePeriod', label: 'Notice Period', required: false },
+  { key: 'location', label: 'Location', required: false },
+  { key: 'currentCtc', label: 'Current CTC', required: false },
+  { key: 'expectedCtc', label: 'Expected CTC', required: false },
+  { key: 'billRate', label: 'Bill Rate', required: false },
+  { key: 'payRate', label: 'Pay Rate', required: false },
+  { key: 'marginPerHour', label: 'Margin Per Hour', required: false },
+  { key: 'profitPerMonth', label: 'Profit Per Month', required: false },
+  { key: 'status', label: 'Status', required: true },
+  { key: 'actions', label: 'Actions', required: true }
+];
+
+// Default visible columns (commonly used ones)
+const defaultVisibleColumns = [
+  'id', 'sourcedBy', 'client', 'poc', 'skills', 'candidateName', 
+  'contactNo', 'status', 'actions'
+];
+
 function SubmittedCandidates() {
   const { toast } = useToast();
   const queryClient = useQueryClient();
@@ -211,6 +241,65 @@ function SubmittedCandidates() {
   const [isSelectAllPages, setIsSelectAllPages] = useState(false);
   const [bulkDeleteConfirmOpen, setBulkDeleteConfirmOpen] = useState(false);
   const [bulkDeleteIds, setBulkDeleteIds] = useState<number[]>([]);
+
+  // Column visibility state with persistence
+  const [visibleColumns, setVisibleColumns] = useState<string[]>(() => {
+    const savedColumns = localStorage.getItem('submittedCandidates_visibleColumns');
+    return savedColumns ? JSON.parse(savedColumns) : defaultVisibleColumns;
+  });
+
+  // Save column preferences to localStorage whenever they change
+  useEffect(() => {
+    localStorage.setItem('submittedCandidates_visibleColumns', JSON.stringify(visibleColumns));
+  }, [visibleColumns]);
+
+  // Toggle column visibility
+  const toggleColumn = (columnKey: string) => {
+    const column = columnConfig.find(col => col.key === columnKey);
+    if (column?.required) return; // Don't allow hiding required columns
+
+    setVisibleColumns(prev => 
+      prev.includes(columnKey) 
+        ? prev.filter(key => key !== columnKey)
+        : [...prev, columnKey]
+    );
+  };
+
+  // Reset to default columns
+  const resetToDefaultColumns = () => {
+    setVisibleColumns(defaultVisibleColumns);
+  };
+
+  // Show all columns
+  const showAllColumns = () => {
+    setVisibleColumns(columnConfig.map(col => col.key));
+  };
+
+  // Helper function to render table header conditionally
+  const renderTableHeader = (columnKey: string, label: string, sortable: boolean = true, className: string = "") => {
+    if (!visibleColumns.includes(columnKey)) return null;
+    
+    return (
+      <TableHead 
+        key={columnKey}
+        className={`${className} ${sortable ? 'cursor-pointer hover:bg-muted/50' : ''}`}
+        onClick={sortable ? () => handleSort(columnKey) : undefined}
+      >
+        {label} {sortable && sortField === columnKey && (sortDirection === 'asc' ? '↑' : '↓')}
+      </TableHead>
+    );
+  };
+
+  // Helper function to render table cell conditionally
+  const renderTableCell = (columnKey: string, content: React.ReactNode, className: string = "") => {
+    if (!visibleColumns.includes(columnKey)) return null;
+    
+    return (
+      <TableCell key={columnKey} className={className}>
+        {content}
+      </TableCell>
+    );
+  };
 
   // Calculate margin and profit based on bill rate and pay rate
   const calculateMarginAndProfit = (billRate: string, payRate: string) => {
@@ -1756,6 +1845,69 @@ function SubmittedCandidates() {
                     <SelectItem value="100">100 per page</SelectItem>
                   </SelectContent>
                 </Select>
+
+                {/* Column Visibility Control */}
+                <Popover>
+                  <PopoverTrigger asChild>
+                    <Button variant="outline" size="sm" className="gap-2">
+                      <Settings className="h-4 w-4" />
+                      Columns ({visibleColumns.length})
+                    </Button>
+                  </PopoverTrigger>
+                  <PopoverContent className="w-80 p-4" align="start">
+                    <div className="space-y-4">
+                      <div className="flex items-center justify-between">
+                        <h4 className="font-medium">Customize Columns</h4>
+                        <div className="flex gap-2">
+                          <Button
+                            variant="outline"
+                            size="sm"
+                            onClick={resetToDefaultColumns}
+                            className="text-xs"
+                          >
+                            Default
+                          </Button>
+                          <Button
+                            variant="outline"
+                            size="sm"
+                            onClick={showAllColumns}
+                            className="text-xs"
+                          >
+                            Show All
+                          </Button>
+                        </div>
+                      </div>
+                      
+                      <div className="grid grid-cols-1 gap-2 max-h-64 overflow-y-auto">
+                        {columnConfig.map((column) => (
+                          <div key={column.key} className="flex items-center space-x-2">
+                            <Checkbox
+                              id={`column-${column.key}`}
+                              checked={visibleColumns.includes(column.key)}
+                              onCheckedChange={() => toggleColumn(column.key)}
+                              disabled={column.required}
+                            />
+                            <Label 
+                              htmlFor={`column-${column.key}`}
+                              className={`text-sm cursor-pointer flex-1 ${
+                                column.required ? 'text-muted-foreground' : ''
+                              }`}
+                            >
+                              {column.label}
+                              {column.required && (
+                                <span className="text-xs text-muted-foreground ml-1">(required)</span>
+                              )}
+                            </Label>
+                          </div>
+                        ))}
+                      </div>
+                      
+                      <div className="text-xs text-muted-foreground">
+                        {visibleColumns.length} of {columnConfig.length} columns visible
+                      </div>
+                    </div>
+                  </PopoverContent>
+                </Popover>
               </div>
             </div>
           </div>
@@ -1887,121 +2039,25 @@ function SubmittedCandidates() {
                           onChange={(e) => handleSelectAll(e.target.checked)}
                         />
                       </TableHead>
-                      <TableHead 
-                        className="min-w-[50px] cursor-pointer hover:bg-muted/50" 
-                        onClick={() => handleSort('id')}
-                      >
-                        ID {sortField === 'id' && (sortDirection === 'asc' ? '↑' : '↓')}
-                      </TableHead>
-                      <TableHead 
-                        className="min-w-[150px] cursor-pointer hover:bg-muted/50"
-                        onClick={() => handleSort('sourcedBy')}
-                      >
-                        Sourced By {sortField === 'sourcedBy' && (sortDirection === 'asc' ? '↑' : '↓')}
-                      </TableHead>
-                      <TableHead 
-                        className="min-w-[150px] cursor-pointer hover:bg-muted/50"
-                        onClick={() => handleSort('client')}
-                      >
-                        Client {sortField === 'client' && (sortDirection === 'asc' ? '↑' : '↓')}
-                      </TableHead>
-                      <TableHead 
-                        className="min-w-[150px] cursor-pointer hover:bg-muted/50"
-                        onClick={() => handleSort('poc')}
-                      >
-                        POC {sortField === 'poc' && (sortDirection === 'asc' ? '↑' : '↓')}
-                      </TableHead>
-                      <TableHead 
-                        className="min-w-[180px] cursor-pointer hover:bg-muted/50"
-                        onClick={() => handleSort('skills')}
-                      >
-                        Skills {sortField === 'skills' && (sortDirection === 'asc' ? '↑' : '↓')}
-                      </TableHead>
-                      <TableHead 
-                        className="sticky left-0 bg-background z-20 min-w-[200px] cursor-pointer hover:bg-muted/50"
-                        onClick={() => handleSort('candidateName')}
-                      >
-                        Candidate Name {sortField === 'candidateName' && (sortDirection === 'asc' ? '↑' : '↓')}
-                      </TableHead>
-                      <TableHead 
-                        className="min-w-[150px] cursor-pointer hover:bg-muted/50"
-                        onClick={() => handleSort('contactNo')}
-                      >
-                        Contact No {sortField === 'contactNo' && (sortDirection === 'asc' ? '↑' : '↓')}
-                      </TableHead>
-                      <TableHead 
-                        className="min-w-[180px] cursor-pointer hover:bg-muted/50"
-                        onClick={() => handleSort('emailId')}
-                      >
-                        Email ID {sortField === 'emailId' && (sortDirection === 'asc' ? '↑' : '↓')}
-                      </TableHead>
-                      <TableHead 
-                        className="min-w-[120px] cursor-pointer hover:bg-muted/50"
-                        onClick={() => handleSort('experience')}
-                      >
-                        Experience {sortField === 'experience' && (sortDirection === 'asc' ? '↑' : '↓')}
-                      </TableHead>
-                      <TableHead 
-                        className="min-w-[120px] cursor-pointer hover:bg-muted/50"
-                        onClick={() => handleSort('noticePeriod')}
-                      >
-                        Notice Period {sortField === 'noticePeriod' && (sortDirection === 'asc' ? '↑' : '↓')}
-                      </TableHead>
-                      <TableHead 
-                        className="min-w-[120px] cursor-pointer hover:bg-muted/50"
-                        onClick={() => handleSort('location')}
-                      >
-                        Location {sortField === 'location' && (sortDirection === 'asc' ? '↑' : '↓')}
-                      </TableHead>
-                      <TableHead 
-                        className="min-w-[120px] cursor-pointer hover:bg-muted/50"
-                        onClick={() => handleSort('currentCtc')}
-                      >
-                        Current CTC {sortField === 'currentCtc' && (sortDirection === 'asc' ? '↑' : '↓')}
-                      </TableHead>
-                      <TableHead 
-                        className="min-w-[120px] cursor-pointer hover:bg-muted/50"
-                        onClick={() => handleSort('expectedCtc')}
-                      >
-                        Expected CTC {sortField === 'expectedCtc' && (sortDirection === 'asc' ? '↑' : '↓')}
-                      </TableHead>
-                      <TableHead 
-                        className="min-w-[120px] cursor-pointer hover:bg-muted/50"
-                        onClick={() => handleSort('billRate')}
-                      >
-                        Bill Rate ($$) {sortField === 'billRate' && (sortDirection === 'asc' ? '↑' : '↓')}
-                      </TableHead>
-                      <TableHead 
-                        className="min-w-[120px] cursor-pointer hover:bg-muted/50"
-                        onClick={() => handleSort('payRate')}
-                      >
-                        Pay/hr {sortField === 'payRate' && (sortDirection === 'asc' ? '↑' : '↓')}
-                      </TableHead>
-                      <TableHead 
-                        className="min-w-[120px] cursor-pointer hover:bg-muted/50"
-                        onClick={() => handleSort('marginPerHour')}
-                      >
-                        Margin/hr {sortField === 'marginPerHour' && (sortDirection === 'asc' ? '↑' : '↓')}
-                      </TableHead>
-                      <TableHead 
-                        className="min-w-[120px] cursor-pointer hover:bg-muted/50"
-                        onClick={() => handleSort('profitPerMonth')}
-                      >
-                        Profit/Month {sortField === 'profitPerMonth' && (sortDirection === 'asc' ? '↑' : '↓')}
-                      </TableHead>
-                      <TableHead 
-                        className="min-w-[180px] cursor-pointer hover:bg-muted/50"
-                        onClick={() => handleSort('status')}
-                      >
-                        Status {sortField === 'status' && (sortDirection === 'asc' ? '↑' : '↓')}
-                      </TableHead>
-                      <TableHead 
-                        className="min-w-[120px] cursor-pointer hover:bg-muted/50"
-                        onClick={() => handleSort('salaryInLacs')}
-                      >
-                        Salary (Lacs) {sortField === 'salaryInLacs' && (sortDirection === 'asc' ? '↑' : '↓')}
-                      </TableHead>
-                      <TableHead className="sticky right-0 bg-background z-20 min-w-[100px] text-right">Actions</TableHead>
+                      {renderTableHeader('id', 'ID', true, 'min-w-[50px]')}
+                      {renderTableHeader('sourcedBy', 'Sourced By', true, 'min-w-[150px]')}
+                      {renderTableHeader('client', 'Client', true, 'min-w-[150px]')}
+                      {renderTableHeader('poc', 'POC', true, 'min-w-[150px]')}
+                      {renderTableHeader('skills', 'Skills', true, 'min-w-[180px]')}
+                      {renderTableHeader('candidateName', 'Candidate Name', true, 'sticky left-0 bg-background z-20 min-w-[200px]')}
+                      {renderTableHeader('contactNo', 'Contact No', true, 'min-w-[150px]')}
+                      {renderTableHeader('emailId', 'Email ID', true, 'min-w-[180px]')}
+                      {renderTableHeader('experience', 'Experience', true, 'min-w-[120px]')}
+                      {renderTableHeader('noticePeriod', 'Notice Period', true, 'min-w-[120px]')}
+                      {renderTableHeader('location', 'Location', true, 'min-w-[120px]')}
+                      {renderTableHeader('currentCtc', 'Current CTC', true, 'min-w-[120px]')}
+                      {renderTableHeader('expectedCtc', 'Expected CTC', true, 'min-w-[120px]')}
+                      {renderTableHeader('billRate', 'Bill Rate ($$)', true, 'min-w-[120px]')}
+                      {renderTableHeader('payRate', 'Pay/hr', true, 'min-w-[120px]')}
+                      {renderTableHeader('marginPerHour', 'Margin/hr', true, 'min-w-[120px]')}
+                      {renderTableHeader('profitPerMonth', 'Profit/Month', true, 'min-w-[120px]')}
+                      {renderTableHeader('status', 'Status', true, 'min-w-[180px]')}
+                      {renderTableHeader('actions', 'Actions', false, 'sticky right-0 bg-background z-20 min-w-[100px] text-right')}
                     </TableRow>
                   </TableHeader>
                 <TableBody>
@@ -2241,103 +2297,106 @@ function SubmittedCandidates() {
                       </TableCell>
                     </TableRow>
                   ) : (
-                    sortedCandidates?.map((candidate: SubmittedCandidate) => (
-                      <TableRow key={candidate.id}>
-                         <TableCell className="w-10">
-                          <input
-                            type="checkbox"
-                            checked={selectedCandidateIds.includes(parseInt(String(candidate.id), 10))}
-                            onChange={(e) => {
-                              const candidateId = parseInt(String(candidate.id), 10);
-                              console.log("Checkbox changed for candidate:", candidateId, "checked:", e.target.checked, "original ID:", candidate.id);
-                              if (Number.isInteger(candidateId) && candidateId > 0) {
-                                handleSelectCandidate(candidateId, e.target.checked);
-                              } else {
-                                console.error("Invalid candidate ID:", candidate.id, "converted to:", candidateId);
-                              }
-                            }}
-                          />
-                        </TableCell>
-                        <TableCell className="font-mono text-sm">{candidate.id}</TableCell>
-                        <TableCell>{candidate.sourcedBy || '-'}</TableCell>
-                        <TableCell>{candidate.client || '-'}</TableCell>
-                        <TableCell>{candidate.poc || '-'}</TableCell>
-                        <TableCell>
-                          <div className="max-w-[150px] truncate" title={candidate.skills}>
-                            {candidate.skills}
-                          </div>
-                        </TableCell>
-                        <TableCell className="sticky left-0 bg-background z-20">
-                          <div className="font-medium">{candidate.candidateName}</div>
-                        </TableCell>
-                        <TableCell>{candidate.contactNo || '-'}</TableCell>
-                        <TableCell>{candidate.emailId || '-'}</TableCell>
-                        <TableCell>{candidate.experience || '-'}</TableCell>
-                        <TableCell>{candidate.noticePeriod || '-'}</TableCell>
-                        <TableCell>{candidate.location || '-'}</TableCell>
-                        <TableCell>{candidate.currentCtc || '-'}</TableCell>
-                        <TableCell>{candidate.expectedCtc || '-'}</TableCell>
-                        <TableCell>${candidate.billRate || '-'}</TableCell>
-                        <TableCell>${candidate.payRate || '-'}</TableCell>
-                        <TableCell>${candidate.marginPerHour || '-'}</TableCell>
-                        <TableCell>${candidate.profitPerMonth || '-'}</TableCell>
-                        <TableCell>
-                          <StatusBadge status={candidate.status} />
-                        </TableCell>
-                        <TableCell>{candidate.salaryInLacs || candidate.currentCtc}</TableCell>
-                        <TableCell className="sticky right-0 bg-background z-20 text-right">
-                          <div className="flex justify-end gap-2">
-                            <Button 
-                              variant="ghost" 
-                              size="icon"
-                              onClick={() => initializeEditForm(candidate)}
-                            >
-                              <Edit className="h-4 w-4" />
-                            </Button>
+                    sortedCandidates?.map((candidate: SubmittedCandidate) => {
+                      const { marginPerHour, profitPerMonth } = calculateMarginAndProfit(candidate.billRate, candidate.payRate);
+                      
+                      return (
+                        <TableRow key={candidate.id}>
+                          <TableCell className="w-10">
+                            <input
+                              type="checkbox"
+                              checked={selectedCandidateIds.includes(parseInt(String(candidate.id), 10))}
+                              onChange={(e) => {
+                                const candidateId = parseInt(String(candidate.id), 10);
+                                console.log("Checkbox changed for candidate:", candidateId, "checked:", e.target.checked, "original ID:", candidate.id);
+                                if (Number.isInteger(candidateId) && candidateId > 0) {
+                                  handleSelectCandidate(candidateId, e.target.checked);
+                                } else {
+                                  console.error("Invalid candidate ID:", candidate.id, "converted to:", candidateId);
+                                }
+                              }}
+                            />
+                          </TableCell>
+                          {renderTableCell('id', <span className="font-mono text-sm">{candidate.id}</span>)}
+                          {renderTableCell('sourcedBy', candidate.sourcedBy || '-')}
+                          {renderTableCell('client', candidate.client || '-')}
+                          {renderTableCell('poc', candidate.poc || '-')}
+                          {renderTableCell('skills', 
+                            <div className="max-w-[150px] truncate" title={candidate.skills}>
+                              {candidate.skills}
+                            </div>
+                          )}
+                          {renderTableCell('candidateName', 
+                            <div className="font-medium">{candidate.candidateName}</div>, 
+                            'sticky left-0 bg-background z-20'
+                          )}
+                          {renderTableCell('contactNo', candidate.contactNo || '-')}
+                          {renderTableCell('emailId', candidate.emailId || '-')}
+                          {renderTableCell('experience', candidate.experience || '-')}
+                          {renderTableCell('noticePeriod', candidate.noticePeriod || '-')}
+                          {renderTableCell('location', candidate.location || '-')}
+                          {renderTableCell('currentCtc', candidate.currentCtc || '-')}
+                          {renderTableCell('expectedCtc', candidate.expectedCtc || '-')}
+                          {renderTableCell('billRate', `$${candidate.billRate || '-'}`)}
+                          {renderTableCell('payRate', `$${candidate.payRate || '-'}`)}
+                          {renderTableCell('marginPerHour', `$${marginPerHour || '-'}`)}
+                          {renderTableCell('profitPerMonth', `$${profitPerMonth || '-'}`)}
+                          {renderTableCell('status', <StatusBadge status={candidate.status} />)}
+                          {renderTableCell('actions', 
+                            <div className="flex justify-end gap-2">
+                              <Button 
+                                variant="ghost" 
+                                size="icon"
+                                onClick={() => initializeEditForm(candidate)}
+                              >
+                                <Edit className="h-4 w-4" />
+                              </Button>
 
-                            <AlertDialog>
-                              <AlertDialogTrigger asChild>
-                                <Button variant="ghost" size="icon">
-                                  <Trash2 className="h-4 w-4 text-red-500" />
-                                </Button>
-                              </AlertDialogTrigger>
-                              <AlertDialogContent>
-                                <AlertDialogHeader>
-                                  <AlertDialogTitle>Are you sure?</AlertDialogTitle>
-                                  <AlertDialogDescription>
-                                    This will permanently delete the candidate record for {candidate.candidateName}.
-                                    This action cannot be undone.
-                                  </AlertDialogDescription>
-                                </AlertDialogHeader>
-                                <AlertDialogFooter>
-                                  <AlertDialogCancel>Cancel</AlertDialogCancel>
-                                  <AlertDialogAction 
-                                    onClick={() => {
-                                      console.log('=== DELETE BUTTON CLICKED ===');
-                                      console.log('Candidate object:', candidate);
-                                      console.log('Candidate ID:', candidate.id);
-                                      console.log('Candidate ID type:', typeof candidate.id);
-                                      console.log('Candidate name:', candidate.candidateName);
-                                      deleteMutation.mutate(candidate.id);
-                                    }}
-                                    className="bg-red-500 hover:bg-red-600"
-                                  >
-                                    {deleteMutation.isPending ? (
-                                      <>
-                                        <Loader2 className="h-4 w-4 mr-2 animate-spin" />
-                                        Deleting
-                                      </>
-                                    ) : (
-                                      "Delete"
-                                    )}
-                                  </AlertDialogAction>
-                                </AlertDialogFooter>
-                              </AlertDialogContent>
-                            </AlertDialog>
-                          </div>
-                        </TableCell>
-                      </TableRow>
-                    ))
+                              <AlertDialog>
+                                <AlertDialogTrigger asChild>
+                                  <Button variant="ghost" size="icon">
+                                    <Trash2 className="h-4 w-4 text-red-500" />
+                                  </Button>
+                                </AlertDialogTrigger>
+                                <AlertDialogContent>
+                                  <AlertDialogHeader>
+                                    <AlertDialogTitle>Are you sure?</AlertDialogTitle>
+                                    <AlertDialogDescription>
+                                      This will permanently delete the candidate record for {candidate.candidateName}.
+                                      This action cannot be undone.
+                                    </AlertDialogDescription>
+                                  </AlertDialogHeader>
+                                  <AlertDialogFooter>
+                                    <AlertDialogCancel>Cancel</AlertDialogCancel>
+                                    <AlertDialogAction 
+                                      onClick={() => {
+                                        console.log('=== DELETE BUTTON CLICKED ===');
+                                        console.log('Candidate object:', candidate);
+                                        console.log('Candidate ID:', candidate.id);
+                                        console.log('Candidate ID type:', typeof candidate.id);
+                                        console.log('Candidate name:', candidate.candidateName);
+                                        deleteMutation.mutate(candidate.id);
+                                      }}
+                                      className="bg-red-500 hover:bg-red-600"
+                                    >
+                                      {deleteMutation.isPending ? (
+                                        <>
+                                          <Loader2 className="h-4 w-4 mr-2 animate-spin" />
+                                          Deleting
+                                        </>
+                                      ) : (
+                                        "Delete"
+                                      )}
+                                    </AlertDialogAction>
+                                  </AlertDialogFooter>
+                                </AlertDialogContent>
+                              </AlertDialog>
+                            </div>, 
+                            'sticky right-0 bg-background z-20 text-right'
+                          )}
+                        </TableRow>
+                      );
+                    })
                   )}
                 </TableBody>
               </Table>
