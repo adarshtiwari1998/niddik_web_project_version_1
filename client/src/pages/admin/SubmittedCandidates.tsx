@@ -326,7 +326,16 @@ function SubmittedCandidates() {
 
   // Query to fetch submitted candidates
   const { data: candidatesData, isLoading: isLoadingCandidates, refetch: refetchCandidates } = useQuery({
-    queryKey: ['/api/submitted-candidates', { page, limit, search, statusFilter, clientFilter, sourcedByFilter, pocFilter, marginFilter }],
+    queryKey: ['/api/submitted-candidates', { 
+      page, 
+      limit, 
+      search, 
+      status: statusFilter !== 'all_statuses' ? statusFilter : undefined,
+      client: clientFilter !== 'all_clients' ? clientFilter : undefined,
+      sourcedBy: sourcedByFilter !== 'all_sourced_by' ? sourcedByFilter : undefined,
+      poc: pocFilter !== 'all_pocs' ? pocFilter : undefined,
+      margin: marginFilter !== 'all_margins' ? marginFilter : undefined
+    }],
   });
 
   // Query to fetch all statuses and clients for filter dropdowns (unfiltered)
@@ -1597,6 +1606,115 @@ function SubmittedCandidates() {
                 </Select>
               </div>
             </div>
+
+            {/* Active Filter Labels */}
+            {(statusFilter !== "all_statuses" || clientFilter !== "all_clients" || sourcedByFilter !== "all_sourced_by" || pocFilter !== "all_pocs" || marginFilter !== "all_margins" || search) && (
+              <div className="mb-4">
+                <h3 className="text-sm font-medium text-muted-foreground mb-2">Active Filters</h3>
+                <div className="flex flex-wrap gap-2">
+                  {statusFilter !== "all_statuses" && (
+                    <div className="flex items-center gap-1 bg-blue-50 border border-blue-200 rounded-md px-2 py-1">
+                      <span className="text-xs font-medium text-blue-700">Status:</span>
+                      <span className="text-xs text-blue-600">{statusFilter}</span>
+                      <Button
+                        variant="ghost"
+                        size="sm"
+                        className="h-4 w-4 p-0 ml-1 hover:bg-blue-100"
+                        onClick={() => setStatusFilter("all_statuses")}
+                      >
+                        <X className="h-3 w-3" />
+                      </Button>
+                    </div>
+                  )}
+                  {clientFilter !== "all_clients" && (
+                    <div className="flex items-center gap-1 bg-green-50 border border-green-200 rounded-md px-2 py-1">
+                      <span className="text-xs font-medium text-green-700">Client:</span>
+                      <span className="text-xs text-green-600">{clientFilter}</span>
+                      <Button
+                        variant="ghost"
+                        size="sm"
+                        className="h-4 w-4 p-0 ml-1 hover:bg-green-100"
+                        onClick={() => setClientFilter("all_clients")}
+                      >
+                        <X className="h-3 w-3" />
+                      </Button>
+                    </div>
+                  )}
+                  {sourcedByFilter !== "all_sourced_by" && (
+                    <div className="flex items-center gap-1 bg-purple-50 border border-purple-200 rounded-md px-2 py-1">
+                      <span className="text-xs font-medium text-purple-700">Sourced By:</span>
+                      <span className="text-xs text-purple-600">{sourcedByFilter}</span>
+                      <Button
+                        variant="ghost"
+                        size="sm"
+                        className="h-4 w-4 p-0 ml-1 hover:bg-purple-100"
+                        onClick={() => setSourcedByFilter("all_sourced_by")}
+                      >
+                        <X className="h-3 w-3" />
+                      </Button>
+                    </div>
+                  )}
+                  {pocFilter !== "all_pocs" && (
+                    <div className="flex items-center gap-1 bg-orange-50 border border-orange-200 rounded-md px-2 py-1">
+                      <span className="text-xs font-medium text-orange-700">POC:</span>
+                      <span className="text-xs text-orange-600">{pocFilter}</span>
+                      <Button
+                        variant="ghost"
+                        size="sm"
+                        className="h-4 w-4 p-0 ml-1 hover:bg-orange-100"
+                        onClick={() => setPocFilter("all_pocs")}
+                      >
+                        <X className="h-3 w-3" />
+                      </Button>
+                    </div>
+                  )}
+                  {marginFilter !== "all_margins" && (
+                    <div className="flex items-center gap-1 bg-yellow-50 border border-yellow-200 rounded-md px-2 py-1">
+                      <span className="text-xs font-medium text-yellow-700">Margin:</span>
+                      <span className="text-xs text-yellow-600">${marginFilter}</span>
+                      <Button
+                        variant="ghost"
+                        size="sm"
+                        className="h-4 w-4 p-0 ml-1 hover:bg-yellow-100"
+                        onClick={() => setMarginFilter("all_margins")}
+                      >
+                        <X className="h-3 w-3" />
+                      </Button>
+                    </div>
+                  )}
+                  {search && (
+                    <div className="flex items-center gap-1 bg-gray-50 border border-gray-200 rounded-md px-2 py-1">
+                      <span className="text-xs font-medium text-gray-700">Search:</span>
+                      <span className="text-xs text-gray-600">{search}</span>
+                      <Button
+                        variant="ghost"
+                        size="sm"
+                        className="h-4 w-4 p-0 ml-1 hover:bg-gray-100"
+                        onClick={() => setSearch("")}
+                      >
+                        <X className="h-3 w-3" />
+                      </Button>
+                    </div>
+                  )}
+                  <Button
+                    variant="outline"
+                    size="sm"
+                    onClick={() => {
+                      setStatusFilter("all_statuses");
+                      setClientFilter("all_clients");
+                      setSourcedByFilter("all_sourced_by");
+                      setPocFilter("all_pocs");
+                      setMarginFilter("all_margins");
+                      setSearch("");
+                      setPage(1);
+                    }}
+                    className="text-xs"
+                  >
+                    Clear All Filters
+                  </Button>
+                </div>
+              </div>
+            )}
 
             {/* Sorting and Display Controls */}
             <div>
