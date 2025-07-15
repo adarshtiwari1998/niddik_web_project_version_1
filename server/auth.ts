@@ -377,13 +377,13 @@ export function setupAuth(app: Express) {
 
             req.logout((err) => {
                 if (err) return next(err);
-                res.sendStatus(200);
+                res.status(200).json({ success: true, message: "Logged out successfully" });
             });
         } catch (error) {
             console.error("Logout error:", error);
             req.logout((err) => {
                 if (err) return next(err);
-                res.sendStatus(200);
+                res.status(200).json({ success: true, message: "Logged out successfully" });
             });
         }
     });
