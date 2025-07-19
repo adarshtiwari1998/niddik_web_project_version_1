@@ -307,58 +307,61 @@ export default function JobDetail() {
   const applyMutation = useMutation({
     mutationFn: async (data: ApplicationFormValues) => {
       if (!user) throw new Error("User not authenticated");
+      if (!resumeFile && !user.resumeUrl) throw new Error("Resume is required");
 
       try {
-        // Prepare application data - simplified for direct submission
-        const applicationData = {
-          jobId: jobId,
-          coverLetter: data.note,
-          resumeUrl: resumeFile ? resumeFile.name : user.resumeUrl,
-          skills: user.skills || job.skills || '', // Use user skills if available, otherwise job skills or empty string
-        };
-
-        const response = await apiRequest("POST", "/api/job-applications", applicationData);
-
-        if (!response.ok) {
-          const errorData = await response.json();
-          throw new Error(errorData.message || "Failed to submit application");
-        }
-
-        // After successful application submission, update user's resume URL in the database if a new resume was uploaded
+        // If a new resume is being uploaded, upload it first and then submit application
         if (resumeFile) {
-          try {
-            // Fetch the updated user information to get the new resume URL after upload
-            const updatedUserResponse = await apiRequest("GET", "/api/user");
-            if (updatedUserResponse.ok) {
-              const updatedUserData = await updatedUserResponse.json();
-              // Optimistically update the user object in the auth context if available
-              // This assumes that the /api/user endpoint returns the complete user object
-              // which includes the updated resume URL
-              if (updatedUserData && updatedUserData.resumeUrl) {
-                // Assuming useAuth provides a method to update the user object
-                // For example: updateUser(updatedUserData)
-                // You'll need to adapt this part to match the actual implementation of useAuth
-                // If useAuth does not provide such a method, you may need to refetch user data
-                // or manually update the user object in the component's state
+          // Create form data for resume upload
+          const uploadFormData = new FormData();
+          uploadFormData.append('resume', resumeFile);
 
-                // Placeholder for the actual update logic
-                // updateUser(updatedUserData);
-                console.log("Resume URL updated in user profile:", updatedUserData.resumeUrl);
-              }
-            } else {
-              console.error("Failed to fetch updated user data:", updatedUserResponse.status);
-            }
-          } catch (updateError) {
-            console.error("Error updating resume URL in user profile:", updateError);
-            toast({
-              title: "Update failed",
-              description: "Unable to update resume URL in your profile. Please try again.",
-              variant: "destructive",
-            });
+          // Upload the resume first
+          const uploadResponse = await fetch('/api/upload-resume', {
+            method: 'POST',
+            body: uploadFormData,
+          });
+
+          if (!uploadResponse.ok) {
+            throw new Error("Failed to upload resume");
           }
-        }
 
-        return response.json();
+          const uploadResult = await uploadResponse.json();
+
+          // Now create the application with the resume URL
+          const applicationData = {
+            jobId: jobId,
+            coverLetter: data.note,
+            resumeUrl: uploadResult.url, // Use the cloudinary URL from upload response
+            skills: user.skills || job?.skills || '', // Use user skills if available, otherwise job skills or empty string
+          };
+
+          const response = await apiRequest("POST", "/api/job-applications", applicationData);
+
+          if (!response.ok) {
+            const errorData = await response.json();
+            throw new Error(errorData.message || "Failed to submit application");
+          }
+
+          return response.json();
+        } else {
+          // No new resume, use the existing resume URL and JSON request
+          const applicationData = {
+            jobId: jobId,
+            coverLetter: data.note,
+            resumeUrl: user.resumeUrl,
+            skills: user.skills || job?.skills || '', // Use user skills if available, otherwise job skills or empty string
+          };
+
+          const response = await apiRequest("POST", "/api/job-applications", applicationData);
+
+          if (!response.ok) {
+            const errorData = await response.json();
+            throw new Error(errorData.message || "Failed to submit application");
+          }
+
+          return response.json();
+        }
       } catch (error) {
         console.error("Application error:", error);
         throw error;
