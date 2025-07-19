@@ -50,4 +50,29 @@ export async function uploadLogoToImageKit(buffer: Buffer, filename: string, fol
   }
 }
 
+// Function to upload signature to ImageKit
+export async function uploadSignatureToImageKit(buffer: Buffer, filename: string): Promise<string> {
+  try {
+    const timestamp = Date.now();
+    const nameWithoutExt = filename.split('.')[0];
+    const extension = filename.split('.').pop() || 'png';
+    const fileName = `signature_${timestamp}_${nameWithoutExt}.${extension}`;
+
+    const result = await imagekit.upload({
+      file: buffer,
+      fileName: fileName,
+      folder: 'Niddik-Assets/signatures',
+      useUniqueFileName: true,
+      transformation: {
+        pre: 'w-200,h-100,c-at_max'
+      }
+    });
+
+    return result.url;
+  } catch (error) {
+    console.error('ImageKit signature upload error:', error);
+    throw new Error('Failed to upload signature to ImageKit');
+  }
+}
+
 export { imagekit };

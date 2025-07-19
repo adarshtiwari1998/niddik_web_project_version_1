@@ -53,6 +53,7 @@ interface CompanySettings {
   id: number;
   name: string;
   logoUrl?: string;
+  signatureUrl?: string;
   tagline?: string;
   address: string;
   city: string;
@@ -99,6 +100,7 @@ const clientCompanySchema = z.object({
 const companySettingsSchema = z.object({
   name: z.string().min(1, "Company name is required"),
   logoUrl: z.string().optional(),
+  signatureUrl: z.string().optional(),
   tagline: z.string().optional(),
   address: z.string().min(1, "Address is required"),
   city: z.string().min(1, "City is required"),
@@ -196,6 +198,7 @@ export default function CompanyManagement() {
   const [editingSettings, setEditingSettings] = useState<CompanySettings | null>(null);
   const [showInactiveClients, setShowInactiveClients] = useState(false);
   const [uploadingLogo, setUploadingLogo] = useState(false);
+  const [uploadingSignature, setUploadingSignature] = useState(false);
   const { toast } = useToast();
   const queryClient = useQueryClient();
 
@@ -272,6 +275,7 @@ export default function CompanyManagement() {
     defaultValues: {
       name: '',
       logoUrl: '',
+      signatureUrl: '',
       tagline: '',
       address: '',
       city: '',
@@ -441,6 +445,7 @@ export default function CompanyManagement() {
       settingsForm.reset({
         name: editingSettings.name,
         logoUrl: editingSettings.logoUrl || '',
+        signatureUrl: editingSettings.signatureUrl || '',
         tagline: editingSettings.tagline || '',
         address: editingSettings.address,
         city: editingSettings.city,
@@ -496,6 +501,7 @@ export default function CompanyManagement() {
     settingsForm.reset({
       name: '',
       logoUrl: '',
+      signatureUrl: '',
       tagline: '',
       address: '',
       city: '',
@@ -546,6 +552,7 @@ export default function CompanyManagement() {
     settingsForm.reset({
       name: '',
       logoUrl: '',
+      signatureUrl: '',
       tagline: '',
       address: '',
       city: '',
@@ -615,6 +622,44 @@ export default function CompanyManagement() {
       });
     } finally {
       setUploadingLogo(false);
+    }
+  };
+
+  // Handle signature upload with proper folder structure
+  const handleSignatureUpload = async (file: File) => {
+    if (!file) return;
+
+    setUploadingSignature(true);
+    try {
+      const formData = new FormData();
+      formData.append('signature', file);
+
+      const response = await fetch('/api/upload-signature', {
+        method: 'POST',
+        credentials: 'include',
+        body: formData,
+      });
+
+      if (!response.ok) {
+        throw new Error('Failed to upload signature');
+      }
+
+      const result = await response.json();
+      
+      settingsForm.setValue('signatureUrl', result.url);
+
+      toast({
+        title: "Success",
+        description: "Signature uploaded successfully to ImageKit",
+      });
+    } catch (error) {
+      toast({
+        title: "Error",
+        description: "Failed to upload signature",
+        variant: "destructive",
+      });
+    } finally {
+      setUploadingSignature(false);
     }
   };
 
@@ -1215,13 +1260,14 @@ export default function CompanyManagement() {
                 />
               </div>
 
-              <FormField
-                control={settingsForm.control}
-                name="logoUrl"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel>Company Logo</FormLabel>
-                    <FormControl>
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <FormField
+                  control={settingsForm.control}
+                  name="logoUrl"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>Company Logo</FormLabel>
+                      <FormControl>
                       <div className="space-y-4">
                         {field.value && (
                           <div className="flex items-center gap-4">
@@ -1271,7 +1317,66 @@ export default function CompanyManagement() {
                     <FormMessage />
                   </FormItem>
                 )}
-              />
+                />
+
+                <FormField
+                  control={settingsForm.control}
+                  name="signatureUrl"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>Company Signature</FormLabel>
+                      <FormControl>
+                        <div className="space-y-4">
+                          {field.value && (
+                            <div className="flex items-center gap-4">
+                              <div className="w-32 h-16 border rounded flex items-center justify-center bg-gray-50">
+                                <img
+                                  src={field.value}
+                                  alt="Company signature"
+                                  className="max-w-full max-h-full object-contain"
+                                />
+                              </div>
+                              <Button
+                                type="button"
+                                variant="outline"
+                                size="sm"
+                                onClick={() => field.onChange('')}
+                              >
+                                <X className="w-4 h-4 mr-2" />
+                                Remove
+                              </Button>
+                            </div>
+                          )}
+                          <div className="flex items-center gap-2">
+                            <Input
+                              type="file"
+                              accept="image/*"
+                              onChange={(e) => {
+                                const file = e.target.files?.[0];
+                                if (file) handleSignatureUpload(file);
+                              }}
+                              disabled={uploadingSignature}
+                              className="hidden"
+                              id="settings-signature-upload"
+                            />
+                            <Button
+                              type="button"
+                              variant="outline"
+                              size="sm"
+                              onClick={() => document.getElementById('settings-signature-upload')?.click()}
+                              disabled={uploadingSignature}
+                            >
+                              <Upload className="w-4 h-4 mr-2" />
+                              {uploadingSignature ? 'Uploading...' : 'Upload Signature'}
+                            </Button>
+                          </div>
+                        </div>
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+              </div>
 
               <div className="space-y-4">
                 <h3 className="text-lg font-semibold">Company Address</h3>

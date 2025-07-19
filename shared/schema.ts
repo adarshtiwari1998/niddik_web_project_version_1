@@ -686,7 +686,8 @@ export type InsertClientCompany = z.infer<typeof clientCompanySchema>;
 export const companySettings = pgTable("company_settings", {
   id: serial("id").primaryKey(),
   name: text("name").notNull(),
-  logoUrl: text("logo_url"), // ImageKit URL
+  logoUrl: text("logo_url"), // ImageKit URL for logos folder
+  signatureUrl: text("signature_url"), // ImageKit URL for signatures folder
   tagline: text("tagline"),
   
   // Company Address
