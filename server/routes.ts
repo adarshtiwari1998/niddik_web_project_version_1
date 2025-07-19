@@ -1597,6 +1597,14 @@ export async function registerRoutes(app: Express): Promise<Server> {
       const limit = parseInt(req.query.limit as string) || 10;
       const status = req.query.status as string;
 
+      console.log('🔍 My Applications API - Query params:', {
+        page,
+        limit,
+        status,
+        userId,
+        rawQuery: req.query
+      });
+
       // Get user's job applications with detailed job info
       const applications = await storage.getJobApplicationsForUser(userId);
 
@@ -1605,11 +1613,17 @@ export async function registerRoutes(app: Express): Promise<Server> {
         ? applications.filter(app => app.status === status)
         : applications;
 
+      console.log('📊 Applications filtering result:', {
+        totalApplications: applications.length,
+        requestedStatus: status,
+        filteredCount: filteredApplications.length,
+        applicationStatuses: applications.map(app => ({ id: app.id, status: app.status }))
+      });
+
       // Calculate pagination
       const total = filteredApplications.length;
-      const startIndex = (page - 1) * limit
-
-const endIndex = page * limit;
+      const startIndex = (page - 1) * limit;
+      const endIndex = page * limit;
       const paginatedApplications = filteredApplications.slice(startIndex, endIndex);
 
       return res.status(200).json({ 
