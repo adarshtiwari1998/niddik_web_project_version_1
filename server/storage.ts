@@ -2735,22 +2735,22 @@ export const getEndUsersFromSubmittedCandidates = async (clientCompanyName: stri
         const companyPart = parts[0].trim();
         const endUserPart = parts.slice(1).join('/').trim();
         
-        // Precise matching algorithm
+        // Precise matching algorithm - more strict matching
         const normalizedClientName = clientCompanyName.toLowerCase().trim();
         const normalizedCompanyPart = companyPart.toLowerCase().trim();
         
         // Check for exact match or specific name mappings
         let isMatch = false;
         
-        // Exact match
+        // Exact match first
         if (normalizedCompanyPart === normalizedClientName) {
           isMatch = true;
         }
-        // Check for common variations
-        else if (normalizedClientName.includes('wimmer') && normalizedCompanyPart.includes('wimmer')) {
+        // More precise company mappings - check if the selected company name contains the database company name
+        else if (normalizedClientName.includes('wimmer') && normalizedCompanyPart === 'wimmer') {
           isMatch = true;
         }
-        else if (normalizedClientName.includes('scadea') && normalizedCompanyPart.includes('scadea')) {
+        else if (normalizedClientName.includes('scadea') && normalizedCompanyPart === 'scadea') {
           isMatch = true;
         }
         else if (normalizedClientName.includes('capwave') && normalizedCompanyPart.includes('capwave')) {
@@ -2767,6 +2767,7 @@ export const getEndUsersFromSubmittedCandidates = async (clientCompanyName: stri
           endUsers.push(endUserPart);
         }
       }
+      // Note: We don't process clients without '/' (like "SCADEA") since they have no end users
     }
     
     // Remove duplicates and return

@@ -123,6 +123,19 @@ The application follows a standard full-stack architecture with clear separation
 
 # Recent Changes
 
+## End User Data Extraction Logic Fix in Billing Configuration (July 19, 2025)
+- **Fixed End User Matching Algorithm**: Resolved incorrect end user data showing for selected companies in timesheets billing configuration
+  - **Root Cause**: Matching algorithm was not precise enough and was incorrectly associating end users from one company with another
+  - **Data Structure**: Database contains entries like "Capwave AI/DataNova" (with end user) and "SCADEA" (standalone company)
+  - **Bug**: When selecting "SCADEA SOFTWARE SOLUTIONS INC.", it was incorrectly showing "DataNova" from "Capwave AI/DataNova"
+  - **Solution**: Enhanced matching logic to be more precise and strict in company name matching
+  - **Algorithm Changes**: 
+    - Only processes client entries that contain '/' (indicating they have end users)
+    - Improved exact matching and company name variations matching
+    - Prevents companies without end users from incorrectly matching other companies' data
+- **Result**: SCADEA now correctly shows no end users, while Capwave AI correctly shows DataNova
+- **Files Modified**: `server/storage.ts`, `replit.md`
+
 ## Easy Apply Functionality Added to Candidate Dashboard (July 19, 2025)
 - **Dashboard Enhancement**: Extended Easy Apply functionality from JobDetail page to candidate dashboard Recent Job Listings section
   - **Easy Apply Buttons**: Added "Easy Apply" buttons to each job listing in Recent Job Listings section
