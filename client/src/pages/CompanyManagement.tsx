@@ -55,6 +55,7 @@ interface CompanySettings {
   logoUrl?: string;
   signatureUrl?: string;
   tagline?: string;
+  mainOffice?: string;
   address: string;
   city: string;
   state: string;
@@ -102,6 +103,7 @@ const companySettingsSchema = z.object({
   logoUrl: z.string().optional(),
   signatureUrl: z.string().optional(),
   tagline: z.string().optional(),
+  mainOffice: z.string().optional(),
   address: z.string().min(1, "Address is required"),
   city: z.string().min(1, "City is required"),
   state: z.string().min(1, "State is required"),
@@ -277,6 +279,7 @@ export default function CompanyManagement() {
       logoUrl: '',
       signatureUrl: '',
       tagline: '',
+      mainOffice: '',
       address: '',
       city: '',
       state: '',
@@ -447,6 +450,7 @@ export default function CompanyManagement() {
         logoUrl: editingSettings.logoUrl || '',
         signatureUrl: editingSettings.signatureUrl || '',
         tagline: editingSettings.tagline || '',
+        mainOffice: editingSettings.mainOffice || '',
         address: editingSettings.address,
         city: editingSettings.city,
         state: editingSettings.state,
@@ -503,6 +507,7 @@ export default function CompanyManagement() {
       logoUrl: '',
       signatureUrl: '',
       tagline: '',
+      mainOffice: '',
       address: '',
       city: '',
       state: '',
@@ -554,6 +559,7 @@ export default function CompanyManagement() {
       logoUrl: '',
       signatureUrl: '',
       tagline: '',
+      mainOffice: '',
       address: '',
       city: '',
       state: '',
@@ -1432,7 +1438,7 @@ export default function CompanyManagement() {
                 </div>
               </div>
 
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
                 <FormField
                   control={settingsForm.control}
                   name="phoneNumbers"
@@ -1445,6 +1451,19 @@ export default function CompanyManagement() {
                         placeholder="Enter phone number"
                         type="tel"
                       />
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+                <FormField
+                  control={settingsForm.control}
+                  name="mainOffice"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>Main/Office</FormLabel>
+                      <FormControl>
+                        <Input {...field} placeholder="Enter main office location" />
+                      </FormControl>
                       <FormMessage />
                     </FormItem>
                   )}

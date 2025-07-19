@@ -123,6 +123,21 @@ The application follows a standard full-stack architecture with clear separation
 
 # Recent Changes
 
+## Main/Office Field Addition to Company Settings (July 19, 2025)
+- **Enhanced Company Settings Form**: Added "Main/Office" field to company settings popup form
+  - **Database Schema**: Added `main_office` column to `company_settings` table  
+  - **Form Layout**: Updated phone/email section from 2-column to 3-column grid layout
+  - **Field Positioning**: Main/Office field positioned between Phone Numbers and Email Addresses as requested
+  - **Complete Integration**: Added field to schema validation, form defaults, edit population, and reset functions
+  - **User Experience**: Clean 3-column responsive layout (Phone Numbers | Main/Office | Email Addresses)
+- **Signature Upload System Implementation**: Completed signature field functionality for company settings
+  - **Database Enhancement**: Added `signature_url` column to `company_settings` table
+  - **File Organization**: Created organized ImageKit folder structure (logos in 'company-logos', signatures in 'signatures')
+  - **Upload API**: Implemented `/api/upload-signature` endpoint with proper admin authentication
+  - **Frontend Integration**: Added signature upload field next to logo upload in Company Settings dialog
+  - **Form Enhancement**: Both logo and signature fields displayed side-by-side with preview and remove functionality
+- **Files Modified**: `client/src/pages/CompanyManagement.tsx`, `server/routes.ts`, `server/imagekit.ts`, `shared/schema.ts`, `replit.md`
+
 ## Replit Agent to Replit Migration Completed (July 19, 2025)
 - **Migration Success**: Successfully migrated job portal application from Replit Agent to standard Replit environment
   - **Package Installation**: All Node.js dependencies verified and working correctly
