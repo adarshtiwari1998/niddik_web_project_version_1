@@ -345,19 +345,19 @@ export default function BillingConfig() {
     }
   });
 
-  // Reset billing form to defaults
+  // Reset billing form to completely blank state for new entries
   const resetBillingForm = () => {
     setBillingData({
       hourlyRate: 0,
-      workingHoursPerWeek: 40,
-      workingDaysPerWeek: 5,
+      workingHoursPerWeek: 0,
+      workingDaysPerWeek: 5, // Keep this as 5 as minimum working days
       currency: 'USD',
       employmentType: 'subcontract',
       supervisorName: '',
-      clientCompanyId: undefined, // Don't auto-select first company
+      clientCompanyId: undefined,
       endUserId: undefined,
       companySettingsId: companySettings?.data?.[0]?.id || undefined,
-      tdsRate: 10,
+      tdsRate: 0,
       benefits: []
     });
     setSelectedBenefits([]);
