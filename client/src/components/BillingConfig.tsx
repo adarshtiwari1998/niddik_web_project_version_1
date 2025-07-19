@@ -817,7 +817,7 @@ export default function BillingConfig() {
                       )}
                       
                       <p className="text-sm text-muted-foreground mt-1">
-                        End user assignment based on client company selection
+                        End user assignment based on customer selection
                       </p>
                     </div>
                   )}
