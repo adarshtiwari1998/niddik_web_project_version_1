@@ -100,6 +100,11 @@ export default function BillingConfig() {
   const [isDialogOpen, setIsDialogOpen] = useState(false);
   const [editingBilling, setEditingBilling] = useState<CandidateBilling | null>(null);
   const [isEditDialogOpen, setIsEditDialogOpen] = useState(false);
+  
+  // State for creating new end users
+  const [isCreatingNewEndUser, setIsCreatingNewEndUser] = useState(false);
+  const [newEndUserName, setNewEndUserName] = useState('');
+  const [showCreateEndUserInput, setShowCreateEndUserInput] = useState(false);
 
   // Fetch hired candidates only
   const { data: hiredCandidates } = useQuery({
@@ -148,6 +153,50 @@ export default function BillingConfig() {
     if (!billingData.clientCompanyId || !clientCompanies?.data?.companies) return '';
     const selectedCompany = clientCompanies.data.companies.find(c => c.id === billingData.clientCompanyId);
     return selectedCompany?.name || '';
+  }
+
+  // Helper function to get combined end users without duplicates
+  function getCombinedEndUsers() {
+    const existingEndUsers = endUsers?.data || [];
+    const candidateEndUserNames = candidateEndUsers?.data || [];
+    
+    // Create a Set to track existing end user names (case-insensitive)
+    const existingNames = new Set(existingEndUsers.map(user => user.name.toLowerCase()));
+    
+    // Filter candidate end users to exclude duplicates
+    const uniqueCandidateEndUsers = candidateEndUserNames.filter(name => 
+      !existingNames.has(name.toLowerCase())
+    );
+    
+    return {
+      existingEndUsers,
+      uniqueCandidateEndUsers
+    };
+  }
+
+  // Handle end user selection
+  function handleEndUserSelection(value: string) {
+    if (value === 'create-new') {
+      setShowCreateEndUserInput(true);
+      setBillingData(prev => ({ ...prev, endUserId: undefined }));
+    } else if (value.startsWith('candidate-')) {
+      // Handle selection from candidates - for now just clear the selection
+      // In a full implementation, you might want to create the end user automatically
+      setBillingData(prev => ({ ...prev, endUserId: undefined }));
+    } else {
+      setShowCreateEndUserInput(false);
+      setBillingData(prev => ({ ...prev, endUserId: parseInt(value) }));
+    }
+  }
+
+  // Handle creating new end user
+  function handleCreateEndUser() {
+    if (!newEndUserName.trim() || !billingData.clientCompanyId) return;
+    
+    createEndUserMutation.mutate({
+      name: newEndUserName.trim(),
+      clientCompanyId: billingData.clientCompanyId
+    });
   }
 
   // Create billing configuration mutation
@@ -225,6 +274,33 @@ export default function BillingConfig() {
     onSuccess: () => {
       toast({ title: "Success", description: "Billing configuration deleted successfully" });
       queryClient.invalidateQueries({ queryKey: ['/api/admin/candidates-billing'] });
+    },
+    onError: (error: Error) => {
+      toast({ title: "Error", description: error.message, variant: "destructive" });
+    }
+  });
+
+  // Create new end user mutation
+  const createEndUserMutation = useMutation({
+    mutationFn: async (data: { name: string; clientCompanyId: number }) => {
+      const response = await fetch('/api/admin/end-users', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        credentials: 'include',
+        body: JSON.stringify(data)
+      });
+      if (!response.ok) {
+        const error = await response.json();
+        throw new Error(error.message || 'Failed to create end user');
+      }
+      return response.json();
+    },
+    onSuccess: (newEndUser) => {
+      toast({ title: "Success", description: "End user created successfully" });
+      queryClient.invalidateQueries({ queryKey: [`/api/admin/end-users/by-company/${billingData.clientCompanyId}`] });
+      setBillingData(prev => ({ ...prev, endUserId: newEndUser.data.id }));
+      setShowCreateEndUserInput(false);
+      setNewEndUserName('');
     },
     onError: (error: Error) => {
       toast({ title: "Error", description: error.message, variant: "destructive" });
@@ -593,7 +669,7 @@ export default function BillingConfig() {
                       <Label htmlFor="end-user">End User</Label>
                       <Select 
                         value={billingData.endUserId?.toString() || ''} 
-                        onValueChange={(value) => setBillingData(prev => ({ ...prev, endUserId: value ? parseInt(value) : undefined }))}
+                        onValueChange={handleEndUserSelection}
                       >
                         <SelectTrigger>
                           <SelectValue placeholder="Select end user" />
@@ -603,35 +679,75 @@ export default function BillingConfig() {
                             <div className="p-2 text-sm text-muted-foreground">Loading end users...</div>
                           ) : (
                             <>
-                              {/* Show existing end users from the end_users table */}
-                              {endUsers?.data?.length > 0 && endUsers.data.map((endUser: EndUser) => (
-                                <SelectItem key={endUser.id} value={endUser.id.toString()}>
-                                  {endUser.name}
-                                </SelectItem>
-                              ))}
-                              
-                              {/* Show dynamic end users from submitted candidates */}
-                              {candidateEndUsers?.data?.length > 0 && candidateEndUsers.data.map((endUserName: string, index: number) => (
-                                <SelectItem key={`candidate-${index}`} value={`candidate-${endUserName}`}>
-                                  {endUserName} (from candidates)
-                                </SelectItem>
-                              ))}
-                              
-                              {/* Always show Create End User option */}
-                              <SelectItem value="create-new" className="text-blue-600 font-medium">
-                                + Create New End User
-                              </SelectItem>
-                              
-                              {/* Show message if no end users found */}
-                              {(!endUsers?.data?.length && !candidateEndUsers?.data?.length) && (
-                                <div className="p-2 text-sm text-muted-foreground">
-                                  No end users found for "{getSelectedClientCompanyName()}"
-                                </div>
-                              )}
+                              {(() => {
+                                const { existingEndUsers, uniqueCandidateEndUsers } = getCombinedEndUsers();
+                                return (
+                                  <>
+                                    {existingEndUsers.map((endUser: EndUser) => (
+                                      <SelectItem key={endUser.id} value={endUser.id.toString()}>
+                                        {endUser.name}
+                                      </SelectItem>
+                                    ))}
+                                    
+                                    {/* Show unique candidate end users (no duplicates) */}
+                                    {uniqueCandidateEndUsers.map((endUserName: string, index: number) => (
+                                      <SelectItem key={`candidate-${index}`} value={`candidate-${endUserName}`}>
+                                        {endUserName} (from candidates)
+                                      </SelectItem>
+                                    ))}
+                                    
+                                    {/* Always show Create End User option */}
+                                    <SelectItem value="create-new" className="text-blue-600 font-medium">
+                                      + Create New End User
+                                    </SelectItem>
+                                    
+                                    {/* Show message if no end users found */}
+                                    {(existingEndUsers.length === 0 && uniqueCandidateEndUsers.length === 0) && (
+                                      <div className="p-2 text-sm text-muted-foreground">
+                                        No end users found for "{getSelectedClientCompanyName()}"
+                                      </div>
+                                    )}
+                                  </>
+                                );
+                              })()}
                             </>
                           )}
                         </SelectContent>
                       </Select>
+                      
+                      {/* Input field for creating new end user */}
+                      {showCreateEndUserInput && (
+                        <div className="flex gap-2 mt-2">
+                          <Input
+                            placeholder="Enter new end user name"
+                            value={newEndUserName}
+                            onChange={(e) => setNewEndUserName(e.target.value)}
+                            onKeyPress={(e) => {
+                              if (e.key === 'Enter') {
+                                handleCreateEndUser();
+                              }
+                            }}
+                          />
+                          <Button 
+                            size="sm" 
+                            onClick={handleCreateEndUser}
+                            disabled={!newEndUserName.trim() || createEndUserMutation.isPending}
+                          >
+                            {createEndUserMutation.isPending ? '...' : '✓'}
+                          </Button>
+                          <Button 
+                            size="sm" 
+                            variant="outline" 
+                            onClick={() => {
+                              setShowCreateEndUserInput(false);
+                              setNewEndUserName('');
+                            }}
+                          >
+                            ✕
+                          </Button>
+                        </div>
+                      )}
+                      
                       <p className="text-sm text-muted-foreground mt-1">
                         End user assignment based on client company selection
                       </p>
@@ -868,7 +984,7 @@ export default function BillingConfig() {
                 <Label htmlFor="edit-end-user">End User</Label>
                 <Select 
                   value={billingData.endUserId?.toString() || ''} 
-                  onValueChange={(value) => setBillingData(prev => ({ ...prev, endUserId: value ? parseInt(value) : undefined }))}
+                  onValueChange={handleEndUserSelection}
                 >
                   <SelectTrigger>
                     <SelectValue placeholder="Select end user" />
@@ -879,34 +995,75 @@ export default function BillingConfig() {
                     ) : (
                       <>
                         {/* Show existing end users from the end_users table */}
-                        {endUsers?.data?.length > 0 && endUsers.data.map((endUser: EndUser) => (
-                          <SelectItem key={endUser.id} value={endUser.id.toString()}>
-                            {endUser.name}
-                          </SelectItem>
-                        ))}
-                        
-                        {/* Show dynamic end users from submitted candidates */}
-                        {candidateEndUsers?.data?.length > 0 && candidateEndUsers.data.map((endUserName: string, index: number) => (
-                          <SelectItem key={`candidate-${index}`} value={`candidate-${endUserName}`}>
-                            {endUserName} (from candidates)
-                          </SelectItem>
-                        ))}
-                        
-                        {/* Always show Create End User option */}
-                        <SelectItem value="create-new" className="text-blue-600 font-medium">
-                          + Create New End User
-                        </SelectItem>
-                        
-                        {/* Show message if no end users found */}
-                        {(!endUsers?.data?.length && !candidateEndUsers?.data?.length) && (
-                          <div className="p-2 text-sm text-muted-foreground">
-                            No end users found for "{getSelectedClientCompanyName()}"
-                          </div>
-                        )}
+                        {(() => {
+                          const { existingEndUsers, uniqueCandidateEndUsers } = getCombinedEndUsers();
+                          return (
+                            <>
+                              {existingEndUsers.map((endUser: EndUser) => (
+                                <SelectItem key={endUser.id} value={endUser.id.toString()}>
+                                  {endUser.name}
+                                </SelectItem>
+                              ))}
+                              
+                              {/* Show unique candidate end users (no duplicates) */}
+                              {uniqueCandidateEndUsers.map((endUserName: string, index: number) => (
+                                <SelectItem key={`candidate-${index}`} value={`candidate-${endUserName}`}>
+                                  {endUserName} (from candidates)
+                                </SelectItem>
+                              ))}
+                              
+                              {/* Always show Create End User option */}
+                              <SelectItem value="create-new" className="text-blue-600 font-medium">
+                                + Create New End User
+                              </SelectItem>
+                              
+                              {/* Show message if no end users found */}
+                              {(existingEndUsers.length === 0 && uniqueCandidateEndUsers.length === 0) && (
+                                <div className="p-2 text-sm text-muted-foreground">
+                                  No end users found for "{getSelectedClientCompanyName()}"
+                                </div>
+                              )}
+                            </>
+                          );
+                        })()}
                       </>
                     )}
                   </SelectContent>
                 </Select>
+                
+                {/* Input field for creating new end user */}
+                {showCreateEndUserInput && (
+                  <div className="flex gap-2 mt-2">
+                    <Input
+                      placeholder="Enter new end user name"
+                      value={newEndUserName}
+                      onChange={(e) => setNewEndUserName(e.target.value)}
+                      onKeyPress={(e) => {
+                        if (e.key === 'Enter') {
+                          handleCreateEndUser();
+                        }
+                      }}
+                    />
+                    <Button 
+                      size="sm" 
+                      onClick={handleCreateEndUser}
+                      disabled={!newEndUserName.trim() || createEndUserMutation.isPending}
+                    >
+                      {createEndUserMutation.isPending ? '...' : '✓'}
+                    </Button>
+                    <Button 
+                      size="sm" 
+                      variant="outline" 
+                      onClick={() => {
+                        setShowCreateEndUserInput(false);
+                        setNewEndUserName('');
+                      }}
+                    >
+                      ✕
+                    </Button>
+                  </div>
+                )}
+                
                 <p className="text-sm text-muted-foreground mt-1">
                   End user assignment based on client company selection
                 </p>

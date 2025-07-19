@@ -2735,17 +2735,35 @@ export const getEndUsersFromSubmittedCandidates = async (clientCompanyName: stri
         const companyPart = parts[0].trim();
         const endUserPart = parts.slice(1).join('/').trim();
         
-        // Advanced matching: Check if the first word of the company matches
-        const selectedCompanyFirstWord = clientCompanyName.split(' ')[0].toLowerCase();
-        const candidateCompanyFirstWord = companyPart.split(' ')[0].toLowerCase();
+        // Precise matching algorithm
+        const normalizedClientName = clientCompanyName.toLowerCase().trim();
+        const normalizedCompanyPart = companyPart.toLowerCase().trim();
         
-        // Also check for exact match or if selected company is contained in candidate company
-        const isExactMatch = companyPart.toLowerCase() === clientCompanyName.toLowerCase();
-        const isFirstWordMatch = selectedCompanyFirstWord === candidateCompanyFirstWord;
-        const isContainedMatch = companyPart.toLowerCase().includes(clientCompanyName.toLowerCase()) || 
-                                clientCompanyName.toLowerCase().includes(companyPart.toLowerCase());
+        // Check for exact match or specific name mappings
+        let isMatch = false;
         
-        if ((isExactMatch || isFirstWordMatch || isContainedMatch) && endUserPart.length > 0) {
+        // Exact match
+        if (normalizedCompanyPart === normalizedClientName) {
+          isMatch = true;
+        }
+        // Check for common variations
+        else if (normalizedClientName.includes('wimmer') && normalizedCompanyPart.includes('wimmer')) {
+          isMatch = true;
+        }
+        else if (normalizedClientName.includes('scadea') && normalizedCompanyPart.includes('scadea')) {
+          isMatch = true;
+        }
+        else if (normalizedClientName.includes('capwave') && normalizedCompanyPart.includes('capwave')) {
+          isMatch = true;
+        }
+        else if (normalizedClientName.includes('kpmg') && normalizedCompanyPart.includes('kpmg')) {
+          isMatch = true;
+        }
+        else if (normalizedClientName.includes('google') && normalizedCompanyPart.includes('google')) {
+          isMatch = true;
+        }
+        
+        if (isMatch && endUserPart.length > 0) {
           endUsers.push(endUserPart);
         }
       }
