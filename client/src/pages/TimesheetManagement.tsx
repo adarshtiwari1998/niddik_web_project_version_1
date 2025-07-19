@@ -829,6 +829,22 @@ function BiWeeklyTableView({ timesheets, onEdit, onDelete, getStatusBadge, isAdm
           const billingConfig = getBillingConfig(parseInt(candidateId));
           const workingDays = billingConfig?.workingDaysPerWeek || 5;
           
+          // Calculate overtime totals
+          const week1RegularHours = parseFloat(week1.mondayHours || 0) + parseFloat(week1.tuesdayHours || 0) + parseFloat(week1.wednesdayHours || 0) + parseFloat(week1.thursdayHours || 0) + parseFloat(week1.fridayHours || 0) + parseFloat(week1.saturdayHours || 0) + parseFloat(week1.sundayHours || 0);
+          const week1OvertimeHours = parseFloat(week1.mondayOvertime || 0) + parseFloat(week1.tuesdayOvertime || 0) + parseFloat(week1.wednesdayOvertime || 0) + parseFloat(week1.thursdayOvertime || 0) + parseFloat(week1.fridayOvertime || 0) + parseFloat(week1.saturdayOvertime || 0) + parseFloat(week1.sundayOvertime || 0);
+          const week1RegularAmount = parseFloat(week1.totalRegularAmount || 0);
+          const week1OvertimeAmount = parseFloat(week1.totalOvertimeAmount || 0);
+
+          const week2RegularHours = week2 ? (parseFloat(week2.mondayHours || 0) + parseFloat(week2.tuesdayHours || 0) + parseFloat(week2.wednesdayHours || 0) + parseFloat(week2.thursdayHours || 0) + parseFloat(week2.fridayHours || 0) + parseFloat(week2.saturdayHours || 0) + parseFloat(week2.sundayHours || 0)) : 0;
+          const week2OvertimeHours = week2 ? (parseFloat(week2.mondayOvertime || 0) + parseFloat(week2.tuesdayOvertime || 0) + parseFloat(week2.wednesdayOvertime || 0) + parseFloat(week2.thursdayOvertime || 0) + parseFloat(week2.fridayOvertime || 0) + parseFloat(week2.saturdayOvertime || 0) + parseFloat(week2.sundayOvertime || 0)) : 0;
+          const week2RegularAmount = week2 ? parseFloat(week2.totalRegularAmount || 0) : 0;
+          const week2OvertimeAmount = week2 ? parseFloat(week2.totalOvertimeAmount || 0) : 0;
+
+          const totalRegularHours = week1RegularHours + week2RegularHours;
+          const totalOvertimeHours = week1OvertimeHours + week2OvertimeHours;
+          const totalRegularAmount = week1RegularAmount + week2RegularAmount;
+          const totalOvertimeAmount = week1OvertimeAmount + week2OvertimeAmount;
+
           biWeeklyData.push({
             id: `bi-${candidateId}-${i}`,
             candidateId: parseInt(candidateId),
@@ -836,8 +852,12 @@ function BiWeeklyTableView({ timesheets, onEdit, onDelete, getStatusBadge, isAdm
             candidateEmail: week1.candidateEmail,
             week1Data: week1,
             week2Data: week2 || null, // Only include week2 if it exists
-            totalHours: (parseFloat(week1.totalWeeklyHours) + (week2 ? parseFloat(week2.totalWeeklyHours) : 0)).toFixed(2),
-            totalAmount: (parseFloat(week1.totalWeeklyAmount) + (week2 ? parseFloat(week2.totalWeeklyAmount) : 0)).toFixed(2),
+            totalHours: (totalRegularHours + totalOvertimeHours).toFixed(2),
+            totalAmount: (totalRegularAmount + totalOvertimeAmount).toFixed(2),
+            totalRegularHours: totalRegularHours.toFixed(2),
+            totalOvertimeHours: totalOvertimeHours.toFixed(2),
+            totalRegularAmount: totalRegularAmount.toFixed(2),
+            totalOvertimeAmount: totalOvertimeAmount.toFixed(2),
             workingDays,
             periodStart: week1.weekStartDate,
             periodEnd: week2 ? week2.weekEndDate : week1.weekEndDate
@@ -925,12 +945,43 @@ function BiWeeklyTableView({ timesheets, onEdit, onDelete, getStatusBadge, isAdm
             if (!weekData) return [];
             
             const baseData = [
-              { day: 'Mon (Total)', hours: weekData.mondayHours },
-              { day: 'Tue (Total)', hours: weekData.tuesdayHours },
-              { day: 'Wed (Total)', hours: weekData.wednesdayHours },
-              { day: 'Thu (Total)', hours: weekData.thursdayHours },
-              { day: 'Fri (Total)', hours: weekData.fridayHours },
-              { day: 'Sat (Total)', hours: weekData.saturdayHours, isWorking: biWeekly.workingDays === 6 }
+              { 
+                day: 'Mon (Total)', 
+                regularHours: weekData.mondayHours, 
+                overtimeHours: weekData.mondayOvertime || 0,
+                totalHours: (parseFloat(weekData.mondayHours || 0) + parseFloat(weekData.mondayOvertime || 0))
+              },
+              { 
+                day: 'Tue (Total)', 
+                regularHours: weekData.tuesdayHours, 
+                overtimeHours: weekData.tuesdayOvertime || 0,
+                totalHours: (parseFloat(weekData.tuesdayHours || 0) + parseFloat(weekData.tuesdayOvertime || 0))
+              },
+              { 
+                day: 'Wed (Total)', 
+                regularHours: weekData.wednesdayHours, 
+                overtimeHours: weekData.wednesdayOvertime || 0,
+                totalHours: (parseFloat(weekData.wednesdayHours || 0) + parseFloat(weekData.wednesdayOvertime || 0))
+              },
+              { 
+                day: 'Thu (Total)', 
+                regularHours: weekData.thursdayHours, 
+                overtimeHours: weekData.thursdayOvertime || 0,
+                totalHours: (parseFloat(weekData.thursdayHours || 0) + parseFloat(weekData.thursdayOvertime || 0))
+              },
+              { 
+                day: 'Fri (Total)', 
+                regularHours: weekData.fridayHours, 
+                overtimeHours: weekData.fridayOvertime || 0,
+                totalHours: (parseFloat(weekData.fridayHours || 0) + parseFloat(weekData.fridayOvertime || 0))
+              },
+              { 
+                day: 'Sat (Total)', 
+                regularHours: weekData.saturdayHours, 
+                overtimeHours: weekData.saturdayOvertime || 0,
+                totalHours: (parseFloat(weekData.saturdayHours || 0) + parseFloat(weekData.saturdayOvertime || 0)),
+                isWorking: biWeekly.workingDays === 6 
+              }
             ];
             return baseData.filter(day => day.isWorking !== false);
           };
@@ -1064,8 +1115,8 @@ function BiWeeklyTableView({ timesheets, onEdit, onDelete, getStatusBadge, isAdm
                     {week1Data.map((dayData, index) => (
                       <tr key={`week1-${index}`} className="bg-blue-50">
                         <td className="border border-gray-300 p-3 font-medium">{dayData.day}</td>
-                        <td className="border border-gray-300 p-3 text-center">{parseFloat(dayData.hours || 0).toFixed(2)}</td>
-                        <td className="border border-gray-300 p-3 text-center">0.00</td>
+                        <td className="border border-gray-300 p-3 text-center">{parseFloat(dayData.regularHours || 0).toFixed(2)}</td>
+                        <td className="border border-gray-300 p-3 text-center">{parseFloat(dayData.overtimeHours || 0).toFixed(2)}</td>
                         {isFullTime && (
                           <>
                             <td className="border border-gray-300 p-3 text-center">0.00</td>
@@ -1073,7 +1124,7 @@ function BiWeeklyTableView({ timesheets, onEdit, onDelete, getStatusBadge, isAdm
                             <td className="border border-gray-300 p-3 text-center">0.00</td>
                           </>
                         )}
-                        <td className="border border-gray-300 p-3 text-center font-medium bg-gray-100">{parseFloat(dayData.hours || 0).toFixed(2)}</td>
+                        <td className="border border-gray-300 p-3 text-center font-medium bg-gray-100">{dayData.totalHours.toFixed(2)}</td>
                       </tr>
                     ))}
                     
@@ -1089,8 +1140,8 @@ function BiWeeklyTableView({ timesheets, onEdit, onDelete, getStatusBadge, isAdm
                         {week2Data.map((dayData, index) => (
                           <tr key={`week2-${index}`} className="bg-green-50">
                             <td className="border border-gray-300 p-3 font-medium">{dayData.day}</td>
-                            <td className="border border-gray-300 p-3 text-center">{parseFloat(dayData.hours || 0).toFixed(2)}</td>
-                            <td className="border border-gray-300 p-3 text-center">0.00</td>
+                            <td className="border border-gray-300 p-3 text-center">{parseFloat(dayData.regularHours || 0).toFixed(2)}</td>
+                            <td className="border border-gray-300 p-3 text-center">{parseFloat(dayData.overtimeHours || 0).toFixed(2)}</td>
                             {isFullTime && (
                               <>
                                 <td className="border border-gray-300 p-3 text-center">0.00</td>
@@ -1098,7 +1149,7 @@ function BiWeeklyTableView({ timesheets, onEdit, onDelete, getStatusBadge, isAdm
                                 <td className="border border-gray-300 p-3 text-center">0.00</td>
                               </>
                             )}
-                            <td className="border border-gray-300 p-3 text-center font-medium bg-gray-100">{parseFloat(dayData.hours || 0).toFixed(2)}</td>
+                            <td className="border border-gray-300 p-3 text-center font-medium bg-gray-100">{dayData.totalHours.toFixed(2)}</td>
                           </tr>
                         ))}
                       </>
@@ -1107,8 +1158,8 @@ function BiWeeklyTableView({ timesheets, onEdit, onDelete, getStatusBadge, isAdm
                     {/* Totals Row */}
                     <tr className="bg-yellow-200 font-bold">
                       <td className="border border-gray-300 p-3">Total Hrs:</td>
-                      <td className="border border-gray-300 p-3 text-center">{biWeekly.totalHours}</td>
-                      <td className="border border-gray-300 p-3 text-center">0.00</td>
+                      <td className="border border-gray-300 p-3 text-center">{biWeekly.totalRegularHours}</td>
+                      <td className="border border-gray-300 p-3 text-center">{biWeekly.totalOvertimeHours}</td>
                       {isFullTime && (
                         <>
                           <td className="border border-gray-300 p-3 text-center">0.00</td>
@@ -1122,8 +1173,8 @@ function BiWeeklyTableView({ timesheets, onEdit, onDelete, getStatusBadge, isAdm
                     {/* Rate Row */}
                     <tr className="bg-gray-100">
                       <td className="border border-gray-300 p-3 font-medium">Rate/Hour:</td>
-                      <td className="border border-gray-300 p-3 text-center">INR {(parseFloat(biWeekly.totalAmount) / parseFloat(biWeekly.totalHours) || 0).toFixed(2)}</td>
-                      <td className="border border-gray-300 p-3 text-center">INR 0.00</td>
+                      <td className="border border-gray-300 p-3 text-center">INR {(parseFloat(biWeekly.totalRegularAmount) / parseFloat(biWeekly.totalRegularHours) || 0).toFixed(2)}</td>
+                      <td className="border border-gray-300 p-3 text-center">INR {(parseFloat(biWeekly.totalOvertimeAmount) / parseFloat(biWeekly.totalOvertimeHours) || 0).toFixed(2)}</td>
                       {isFullTime && (
                         <>
                           <td className="border border-gray-300 p-3 text-center">INR 0.00</td>
@@ -1137,8 +1188,8 @@ function BiWeeklyTableView({ timesheets, onEdit, onDelete, getStatusBadge, isAdm
                     {/* Total Pay Row */}
                     <tr className="bg-white">
                       <td className="border border-gray-300 p-3 font-medium">Total Pay:</td>
-                      <td className="border border-gray-300 p-3 text-center">INR {biWeekly.totalAmount}</td>
-                      <td className="border border-gray-300 p-3 text-center">INR 0.00</td>
+                      <td className="border border-gray-300 p-3 text-center">INR {biWeekly.totalRegularAmount}</td>
+                      <td className="border border-gray-300 p-3 text-center">INR {biWeekly.totalOvertimeAmount}</td>
                       {isFullTime && (
                         <>
                           <td className="border border-gray-300 p-3 text-center">INR 0.00</td>
@@ -1288,9 +1339,29 @@ function MonthlyTableView({ timesheets, getStatusBadge }: any) {
       const monthStart = new Date(firstWeekStart.getFullYear(), firstWeekStart.getMonth(), 1);
       const monthEnd = new Date(firstWeekStart.getFullYear(), firstWeekStart.getMonth() + 1, 0);
       
-      // Calculate totals
+      // Calculate totals with overtime breakdown
       const totalHours = weeklyTimesheetsList.reduce((sum, ts) => sum + parseFloat(ts.totalWeeklyHours || 0), 0);
       const totalAmount = weeklyTimesheetsList.reduce((sum, ts) => sum + parseFloat(ts.totalWeeklyAmount || 0), 0);
+      
+      // Calculate regular and overtime totals
+      const totalRegularHours = weeklyTimesheetsList.reduce((sum, ts) => {
+        const regularSum = 
+          parseFloat(ts.mondayHours || 0) + parseFloat(ts.tuesdayHours || 0) + parseFloat(ts.wednesdayHours || 0) + 
+          parseFloat(ts.thursdayHours || 0) + parseFloat(ts.fridayHours || 0) + parseFloat(ts.saturdayHours || 0) + 
+          parseFloat(ts.sundayHours || 0);
+        return sum + regularSum;
+      }, 0);
+      
+      const totalOvertimeHours = weeklyTimesheetsList.reduce((sum, ts) => {
+        const overtimeSum = 
+          parseFloat(ts.mondayOvertime || 0) + parseFloat(ts.tuesdayOvertime || 0) + parseFloat(ts.wednesdayOvertime || 0) + 
+          parseFloat(ts.thursdayOvertime || 0) + parseFloat(ts.fridayOvertime || 0) + parseFloat(ts.saturdayOvertime || 0) + 
+          parseFloat(ts.sundayOvertime || 0);
+        return sum + overtimeSum;
+      }, 0);
+      
+      const totalRegularAmount = weeklyTimesheetsList.reduce((sum, ts) => sum + parseFloat(ts.totalRegularAmount || 0), 0);
+      const totalOvertimeAmount = weeklyTimesheetsList.reduce((sum, ts) => sum + parseFloat(ts.totalOvertimeAmount || 0), 0);
       
       return {
         id: monthKey,
@@ -1302,6 +1373,10 @@ function MonthlyTableView({ timesheets, getStatusBadge }: any) {
         periodEndDate: monthEnd.toISOString(),
         totalHours: totalHours.toString(),
         totalAmount: totalAmount.toString(),
+        totalRegularHours: totalRegularHours.toString(),
+        totalOvertimeHours: totalOvertimeHours.toString(),
+        totalRegularAmount: totalRegularAmount.toString(),
+        totalOvertimeAmount: totalOvertimeAmount.toString(),
         totalWeeks: weeklyTimesheetsList.length,
         weeklyTimesheets: weeklyTimesheetsList.sort((a, b) => new Date(a.weekStartDate).getTime() - new Date(b.weekStartDate).getTime()),
         workingDaysPerWeek: billingConfig?.workingDaysPerWeek || 5
@@ -1513,12 +1588,42 @@ function MonthlyTableView({ timesheets, getStatusBadge }: any) {
                         const weekColor = weekColors[weekIndex % weekColors.length];
                         
                         const dailyHours = [
-                          { day: 'Mon (Total)', hours: weekTimesheet.mondayHours },
-                          { day: 'Tue (Total)', hours: weekTimesheet.tuesdayHours },
-                          { day: 'Wed (Total)', hours: weekTimesheet.wednesdayHours },
-                          { day: 'Thu (Total)', hours: weekTimesheet.thursdayHours },
-                          { day: 'Fri (Total)', hours: weekTimesheet.fridayHours },
-                          { day: 'Sat (Total)', hours: weekTimesheet.saturdayHours }
+                          { 
+                            day: 'Mon (Total)', 
+                            regularHours: weekTimesheet.mondayHours, 
+                            overtimeHours: weekTimesheet.mondayOvertime || 0,
+                            totalHours: (parseFloat(weekTimesheet.mondayHours || 0) + parseFloat(weekTimesheet.mondayOvertime || 0))
+                          },
+                          { 
+                            day: 'Tue (Total)', 
+                            regularHours: weekTimesheet.tuesdayHours, 
+                            overtimeHours: weekTimesheet.tuesdayOvertime || 0,
+                            totalHours: (parseFloat(weekTimesheet.tuesdayHours || 0) + parseFloat(weekTimesheet.tuesdayOvertime || 0))
+                          },
+                          { 
+                            day: 'Wed (Total)', 
+                            regularHours: weekTimesheet.wednesdayHours, 
+                            overtimeHours: weekTimesheet.wednesdayOvertime || 0,
+                            totalHours: (parseFloat(weekTimesheet.wednesdayHours || 0) + parseFloat(weekTimesheet.wednesdayOvertime || 0))
+                          },
+                          { 
+                            day: 'Thu (Total)', 
+                            regularHours: weekTimesheet.thursdayHours, 
+                            overtimeHours: weekTimesheet.thursdayOvertime || 0,
+                            totalHours: (parseFloat(weekTimesheet.thursdayHours || 0) + parseFloat(weekTimesheet.thursdayOvertime || 0))
+                          },
+                          { 
+                            day: 'Fri (Total)', 
+                            regularHours: weekTimesheet.fridayHours, 
+                            overtimeHours: weekTimesheet.fridayOvertime || 0,
+                            totalHours: (parseFloat(weekTimesheet.fridayHours || 0) + parseFloat(weekTimesheet.fridayOvertime || 0))
+                          },
+                          { 
+                            day: 'Sat (Total)', 
+                            regularHours: weekTimesheet.saturdayHours, 
+                            overtimeHours: weekTimesheet.saturdayOvertime || 0,
+                            totalHours: (parseFloat(weekTimesheet.saturdayHours || 0) + parseFloat(weekTimesheet.saturdayOvertime || 0))
+                          }
                         ].slice(0, workingDays);
 
                         return [
@@ -1532,8 +1637,8 @@ function MonthlyTableView({ timesheets, getStatusBadge }: any) {
                           ...dailyHours.map((dayData) => (
                             <tr key={`week-${weekIndex}-${dayData.day}`} className={weekColor}>
                               <td className="border border-gray-300 p-3 font-medium">{dayData.day}</td>
-                              <td className="border border-gray-300 p-3 text-center">{parseFloat(dayData.hours || 0).toFixed(2)}</td>
-                              <td className="border border-gray-300 p-3 text-center">0.00</td>
+                              <td className="border border-gray-300 p-3 text-center">{parseFloat(dayData.regularHours || 0).toFixed(2)}</td>
+                              <td className="border border-gray-300 p-3 text-center">{parseFloat(dayData.overtimeHours || 0).toFixed(2)}</td>
                               {isFullTime && (
                                 <>
                                   <td className="border border-gray-300 p-3 text-center">0.00</td>
@@ -1541,7 +1646,7 @@ function MonthlyTableView({ timesheets, getStatusBadge }: any) {
                                   <td className="border border-gray-300 p-3 text-center">0.00</td>
                                 </>
                               )}
-                              <td className="border border-gray-300 p-3 text-center font-medium bg-gray-100">{parseFloat(dayData.hours || 0).toFixed(2)}</td>
+                              <td className="border border-gray-300 p-3 text-center font-medium bg-gray-100">{dayData.totalHours.toFixed(2)}</td>
                             </tr>
                           ))
                         ];
@@ -1550,8 +1655,8 @@ function MonthlyTableView({ timesheets, getStatusBadge }: any) {
                       {/* Monthly Totals Row */}
                       <tr className="bg-yellow-200 font-bold">
                         <td className="border border-gray-300 p-3">Total Hrs:</td>
-                        <td className="border border-gray-300 p-3 text-center">{parseFloat(monthlyTimesheet.totalHours).toFixed(2)}</td>
-                        <td className="border border-gray-300 p-3 text-center">0.00</td>
+                        <td className="border border-gray-300 p-3 text-center">{parseFloat(monthlyTimesheet.totalRegularHours).toFixed(2)}</td>
+                        <td className="border border-gray-300 p-3 text-center">{parseFloat(monthlyTimesheet.totalOvertimeHours).toFixed(2)}</td>
                         {isFullTime && (
                           <>
                             <td className="border border-gray-300 p-3 text-center">0.00</td>
@@ -1565,8 +1670,8 @@ function MonthlyTableView({ timesheets, getStatusBadge }: any) {
                       {/* Rate Row */}
                       <tr className="bg-gray-100">
                         <td className="border border-gray-300 p-3 font-medium">Rate/Hour:</td>
-                        <td className="border border-gray-300 p-3 text-center">INR {(parseFloat(monthlyTimesheet.totalAmount) / parseFloat(monthlyTimesheet.totalHours) || 0).toFixed(2)}</td>
-                        <td className="border border-gray-300 p-3 text-center">INR 0.00</td>
+                        <td className="border border-gray-300 p-3 text-center">INR {(parseFloat(monthlyTimesheet.totalRegularAmount) / parseFloat(monthlyTimesheet.totalRegularHours) || 0).toFixed(2)}</td>
+                        <td className="border border-gray-300 p-3 text-center">INR {(parseFloat(monthlyTimesheet.totalOvertimeAmount) / parseFloat(monthlyTimesheet.totalOvertimeHours) || 0).toFixed(2)}</td>
                         {isFullTime && (
                           <>
                             <td className="border border-gray-300 p-3 text-center">INR 0.00</td>
@@ -1580,8 +1685,8 @@ function MonthlyTableView({ timesheets, getStatusBadge }: any) {
                       {/* Total Pay Row */}
                       <tr className="bg-white">
                         <td className="border border-gray-300 p-3 font-medium">Total Pay:</td>
-                        <td className="border border-gray-300 p-3 text-center">INR {parseFloat(monthlyTimesheet.totalAmount).toFixed(2)}</td>
-                        <td className="border border-gray-300 p-3 text-center">INR 0.00</td>
+                        <td className="border border-gray-300 p-3 text-center">INR {parseFloat(monthlyTimesheet.totalRegularAmount).toFixed(2)}</td>
+                        <td className="border border-gray-300 p-3 text-center">INR {parseFloat(monthlyTimesheet.totalOvertimeAmount).toFixed(2)}</td>
                         {isFullTime && (
                           <>
                             <td className="border border-gray-300 p-3 text-center">INR 0.00</td>
