@@ -1,4 +1,4 @@
-import { and, eq, desc, asc, ilike, inArray, count, gt, lt, sql, or, ne } from "drizzle-orm";
+import { and, eq, desc, asc, ilike, inArray, count, gt, lt, sql, or, ne, isNotNull } from "drizzle-orm";
 import type { 
   User, 
   InsertUser, 
@@ -2722,19 +2722,37 @@ export const deleteEndUser = async (id: number): Promise<boolean> => {
 // Extract end users from submitted candidates data (format: "Company/EndUser")
 export const getEndUsersFromSubmittedCandidates = async (clientCompanyName: string): Promise<string[]> => {
   return await withRetry(async () => {
+    // Get all submitted candidates with client data
     const results = await db.select({ client: submittedCandidates.client })
       .from(submittedCandidates)
-      .where(ilike(submittedCandidates.client, `${clientCompanyName}/%`));
+      .where(isNotNull(submittedCandidates.client));
     
-    const endUsers = results
-      .map(result => {
+    const endUsers: string[] = [];
+    
+    for (const result of results) {
+      if (result.client && result.client.includes('/')) {
         const parts = result.client.split('/');
-        return parts.length > 1 ? parts.slice(1).join('/').trim() : null; // Get everything after first slash
-      })
-      .filter((endUser): endUser is string => endUser !== null && endUser.length > 0)
-      .filter((endUser, index, array) => array.indexOf(endUser) === index); // Remove duplicates
+        const companyPart = parts[0].trim();
+        const endUserPart = parts.slice(1).join('/').trim();
+        
+        // Advanced matching: Check if the first word of the company matches
+        const selectedCompanyFirstWord = clientCompanyName.split(' ')[0].toLowerCase();
+        const candidateCompanyFirstWord = companyPart.split(' ')[0].toLowerCase();
+        
+        // Also check for exact match or if selected company is contained in candidate company
+        const isExactMatch = companyPart.toLowerCase() === clientCompanyName.toLowerCase();
+        const isFirstWordMatch = selectedCompanyFirstWord === candidateCompanyFirstWord;
+        const isContainedMatch = companyPart.toLowerCase().includes(clientCompanyName.toLowerCase()) || 
+                                clientCompanyName.toLowerCase().includes(companyPart.toLowerCase());
+        
+        if ((isExactMatch || isFirstWordMatch || isContainedMatch) && endUserPart.length > 0) {
+          endUsers.push(endUserPart);
+        }
+      }
+    }
     
-    return endUsers;
+    // Remove duplicates and return
+    return [...new Set(endUsers)];
   });
 };
 

@@ -599,22 +599,36 @@ export default function BillingConfig() {
                           <SelectValue placeholder="Select end user" />
                         </SelectTrigger>
                         <SelectContent>
-                          {isLoadingEndUsers ? (
+                          {isLoadingEndUsers || isLoadingCandidateEndUsers ? (
                             <div className="p-2 text-sm text-muted-foreground">Loading end users...</div>
-                          ) : endUsers?.data?.length > 0 ? (
-                            endUsers.data.map((endUser: EndUser) => (
-                              <SelectItem key={endUser.id} value={endUser.id.toString()}>
-                                {endUser.name}
-                              </SelectItem>
-                            ))
-                          ) : candidateEndUsers?.data?.length > 0 ? (
-                            candidateEndUsers.data.map((endUserName: string, index: number) => (
-                              <SelectItem key={index} value={`new-${index}`}>
-                                {endUserName} (from candidates)
-                              </SelectItem>
-                            ))
                           ) : (
-                            <div className="p-2 text-sm text-muted-foreground">No end users available</div>
+                            <>
+                              {/* Show existing end users from the end_users table */}
+                              {endUsers?.data?.length > 0 && endUsers.data.map((endUser: EndUser) => (
+                                <SelectItem key={endUser.id} value={endUser.id.toString()}>
+                                  {endUser.name}
+                                </SelectItem>
+                              ))}
+                              
+                              {/* Show dynamic end users from submitted candidates */}
+                              {candidateEndUsers?.data?.length > 0 && candidateEndUsers.data.map((endUserName: string, index: number) => (
+                                <SelectItem key={`candidate-${index}`} value={`candidate-${endUserName}`}>
+                                  {endUserName} (from candidates)
+                                </SelectItem>
+                              ))}
+                              
+                              {/* Always show Create End User option */}
+                              <SelectItem value="create-new" className="text-blue-600 font-medium">
+                                + Create New End User
+                              </SelectItem>
+                              
+                              {/* Show message if no end users found */}
+                              {(!endUsers?.data?.length && !candidateEndUsers?.data?.length) && (
+                                <div className="p-2 text-sm text-muted-foreground">
+                                  No end users found for "{getSelectedClientCompanyName()}"
+                                </div>
+                              )}
+                            </>
                           )}
                         </SelectContent>
                       </Select>
@@ -860,22 +874,36 @@ export default function BillingConfig() {
                     <SelectValue placeholder="Select end user" />
                   </SelectTrigger>
                   <SelectContent>
-                    {isLoadingEndUsers ? (
+                    {isLoadingEndUsers || isLoadingCandidateEndUsers ? (
                       <div className="p-2 text-sm text-muted-foreground">Loading end users...</div>
-                    ) : endUsers?.data?.length > 0 ? (
-                      endUsers.data.map((endUser: EndUser) => (
-                        <SelectItem key={endUser.id} value={endUser.id.toString()}>
-                          {endUser.name}
-                        </SelectItem>
-                      ))
-                    ) : candidateEndUsers?.data?.length > 0 ? (
-                      candidateEndUsers.data.map((endUserName: string, index: number) => (
-                        <SelectItem key={index} value={`new-${index}`}>
-                          {endUserName} (from candidates)
-                        </SelectItem>
-                      ))
                     ) : (
-                      <div className="p-2 text-sm text-muted-foreground">No end users available</div>
+                      <>
+                        {/* Show existing end users from the end_users table */}
+                        {endUsers?.data?.length > 0 && endUsers.data.map((endUser: EndUser) => (
+                          <SelectItem key={endUser.id} value={endUser.id.toString()}>
+                            {endUser.name}
+                          </SelectItem>
+                        ))}
+                        
+                        {/* Show dynamic end users from submitted candidates */}
+                        {candidateEndUsers?.data?.length > 0 && candidateEndUsers.data.map((endUserName: string, index: number) => (
+                          <SelectItem key={`candidate-${index}`} value={`candidate-${endUserName}`}>
+                            {endUserName} (from candidates)
+                          </SelectItem>
+                        ))}
+                        
+                        {/* Always show Create End User option */}
+                        <SelectItem value="create-new" className="text-blue-600 font-medium">
+                          + Create New End User
+                        </SelectItem>
+                        
+                        {/* Show message if no end users found */}
+                        {(!endUsers?.data?.length && !candidateEndUsers?.data?.length) && (
+                          <div className="p-2 text-sm text-muted-foreground">
+                            No end users found for "{getSelectedClientCompanyName()}"
+                          </div>
+                        )}
+                      </>
                     )}
                   </SelectContent>
                 </Select>
