@@ -106,6 +106,15 @@ export default function BillingConfig() {
   const [newEndUserName, setNewEndUserName] = useState('');
   const [showCreateEndUserInput, setShowCreateEndUserInput] = useState(false);
 
+  // Force refresh all end user caches on component mount to handle stale data
+  useEffect(() => {
+    queryClient.invalidateQueries({ 
+      predicate: (query) => {
+        return query.queryKey[0]?.toString().includes('/api/admin/end-users/');
+      }
+    });
+  }, [queryClient]);
+
   // Fetch hired candidates only
   const { data: hiredCandidates } = useQuery({
     queryKey: ['/api/admin/hired-candidates'],
