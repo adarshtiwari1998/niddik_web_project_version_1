@@ -178,7 +178,12 @@ The application follows a standard full-stack architecture with clear separation
   - **Feature Verification**: Job listings, admin dashboard, authentication, and SEO functionality operational
   - **Security Maintained**: Client/server separation and role-based access control preserved throughout migration
   - **Environment Setup**: Proper port binding (0.0.0.0:5000) and Vite development server configured
-- **Files Modified**: `.local/state/replit/agent/progress_tracker.md`, `replit.md`
+- **End User Dropdown Fix**: Resolved issue in timesheets billing configuration where End User dropdown wasn't dynamically populating
+  - **API Endpoint Fix**: Corrected API call from `/api/admin/end-users/from-candidates` to proper URL parameter format `/api/admin/end-users/from-candidates/${clientCompanyName}`
+  - **Data Structure**: End users extracted from submitted candidates data using `CompanyName/EndUserName` format in client field
+  - **Debug Logging**: Added console logging to track company selection and API calls for troubleshooting
+  - **Dynamic Population**: End User dropdown now properly fetches and displays data from submitted candidates when client company is selected
+- **Files Modified**: `.local/state/replit/agent/progress_tracker.md`, `client/src/components/BillingConfig.tsx`, `replit.md`
 
 ## Dynamic Country/State Dropdown Enhancement with International Labels (July 19, 2025)
 - **Enhanced CountryStateSelect Component**: Updated labels from "State" to "State/Province" for better international clarity

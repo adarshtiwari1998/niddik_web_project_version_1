@@ -139,14 +139,14 @@ export default function BillingConfig() {
 
   // Fetch end users from submitted candidates data when client company is selected
   const { data: candidateEndUsers, isLoading: isLoadingCandidateEndUsers } = useQuery({
-    queryKey: ['/api/admin/end-users/from-candidates', getSelectedClientCompanyName()],
+    queryKey: [`/api/admin/end-users/from-candidates/${getSelectedClientCompanyName()}`],
     enabled: !!billingData.clientCompanyId && !!getSelectedClientCompanyName(),
   });
 
   // Helper function to get selected client company name
   function getSelectedClientCompanyName(): string {
-    if (!billingData.clientCompanyId || !clientCompanies?.companies) return '';
-    const selectedCompany = clientCompanies.companies.find(c => c.id === billingData.clientCompanyId);
+    if (!billingData.clientCompanyId || !clientCompanies?.data?.companies) return '';
+    const selectedCompany = clientCompanies.data.companies.find(c => c.id === billingData.clientCompanyId);
     return selectedCompany?.name || '';
   }
 
