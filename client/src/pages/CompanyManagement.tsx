@@ -882,7 +882,7 @@ export default function CompanyManagement() {
                     stateName="billToState"
                     customCountryName="billToCustomCountry"
                     countryLabel="Country"
-                    stateLabel="State"
+                    stateLabel="State/Province"
                     customCountryLabel="Custom Country"
                   />
                   <FormField
@@ -959,7 +959,7 @@ export default function CompanyManagement() {
                         stateName="shipToState"
                         customCountryName="shipToCustomCountry"
                         countryLabel="Country"
-                        stateLabel="State"
+                        stateLabel="State/Province"
                         customCountryLabel="Custom Country"
                       />
                       <FormField
@@ -1184,7 +1184,7 @@ export default function CompanyManagement() {
                     stateName="state"
                     customCountryName="customCountry"
                     countryLabel="Country"
-                    stateLabel="State"
+                    stateLabel="State/Province"
                     customCountryLabel="Custom Country"
                   />
                   <FormField

@@ -151,7 +151,7 @@ export const CountryStateSelect: React.FC<CountryStateSelectProps> = ({
   stateName,
   customCountryName,
   countryLabel = "Country",
-  stateLabel = "State",
+  stateLabel = "State/Province",
   customCountryLabel = "Custom Country",
   disabled = false
 }) => {
@@ -237,7 +237,7 @@ export const CountryStateSelect: React.FC<CountryStateSelectProps> = ({
                 {isCustomCountry ? (
                   <Input 
                     {...field} 
-                    placeholder="Enter state/province name"
+                    placeholder="Enter state/province"
                     disabled={disabled}
                   />
                 ) : availableStates && availableStates.length > 0 ? (
@@ -260,7 +260,7 @@ export const CountryStateSelect: React.FC<CountryStateSelectProps> = ({
                 ) : (
                   <Input 
                     {...field} 
-                    placeholder="Enter state/province name"
+                    placeholder="Enter state/province"
                     disabled={disabled || !selectedCountry}
                   />
                 )}

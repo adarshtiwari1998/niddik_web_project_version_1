@@ -123,6 +123,25 @@ The application follows a standard full-stack architecture with clear separation
 
 # Recent Changes
 
+## Dynamic Country/State Dropdown Enhancement with International Labels (July 19, 2025)
+- **Enhanced CountryStateSelect Component**: Updated labels from "State" to "State/Province" for better international clarity
+  - **International Support**: Accommodates different naming conventions (states in India/USA, provinces in Canada, etc.)
+  - **Consistent Labeling**: All forms now show "State/Province" label for better user understanding
+  - **Placeholder Text**: Updated placeholder text to "Enter state/province" for manual entry fields
+- **Fixed React Hook Form Integration**: Resolved JavaScript errors with proper useFormContext() hook usage
+  - **Hook Placement**: Moved useFormContext() to component level instead of inside event handlers
+  - **Error Resolution**: Fixed "TypeError: control.getValues is not a function" errors
+  - **Dynamic State Management**: Maintained automatic state clearing when country selection changes
+- **Complete Form Integration**: Updated all instances in CompanyManagement.tsx to use new international labels
+  - **Bill-To Address**: Updated client company billing address state/province field
+  - **Ship-To Address**: Updated client company shipping address state/province field  
+  - **Company Settings**: Updated company settings address state/province field
+- **User Experience**: Enhanced dropdown functionality with proper country-based state population
+  - **Smart Dropdowns**: USA, India, Canada, Australia show predefined states/provinces
+  - **Custom Entry**: "Others" option enables manual country and state/province entry
+  - **Visual Clarity**: Clear labeling helps international users understand field purpose
+- **Files Modified**: `client/src/components/CountryStateSelect.tsx`, `client/src/pages/CompanyManagement.tsx`, `replit.md`
+
 ## Column Visibility Control and Enhanced Filter Functionality (July 15, 2025)
 - **Column Visibility Control**: Implemented customizable column visibility for submitted candidates table
   - **Admin Control**: Added "Columns" button with settings icon in Sort & Display section
