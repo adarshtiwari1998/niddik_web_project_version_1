@@ -123,6 +123,21 @@ The application follows a standard full-stack architecture with clear separation
 
 # Recent Changes
 
+## Billing Configuration Dialog Layout Optimization (July 19, 2025)
+- **2-Column Grid Layout**: Optimized edit billing dialog layout for better space utilization
+  - **Hourly Rate & Currency**: Organized in 2-column row for compact display
+  - **Working Hours & Days**: Kept existing 2-column layout for work schedule fields
+  - **Employment Type & Supervisor**: Combined in 2-column row to save vertical space
+  - **Client Company & End User**: Grouped related fields together in 2-column layout
+  - **Dialog Width**: Maintained wide dialog (sm:max-w-4xl) for optimal field display
+- **Layout Benefits**: 
+  - **Space Efficiency**: Reduced vertical scrolling by using horizontal space better
+  - **Logical Grouping**: Related fields positioned side-by-side for better user experience
+  - **Viewport Optimization**: Fields no longer cut off at top/bottom due to better space usage
+- **Removed Duplicate Sections**: Cleaned up duplicate End User selection sections
+- **Preserved Functionality**: All existing features including end user creation and TDS configuration maintained
+- **Files Modified**: `client/src/components/BillingConfig.tsx`, `replit.md`
+
 ## Overtime Calculation System Implementation (July 19, 2025)
 - **Overtime Calculation Logic**: Implemented comprehensive overtime calculation system for timesheets
   - **Daily Limit Calculation**: Calculates daily hour limits by dividing weekly working hours by working days

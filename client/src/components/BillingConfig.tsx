@@ -894,7 +894,7 @@ export default function BillingConfig() {
           </DialogHeader>
           
           <div className="space-y-4">
-            <div className="grid grid-cols-1 gap-4">
+            <div className="grid grid-cols-2 gap-4">
               <div>
                 <Label htmlFor="edit-hourly-rate">Hourly Rate</Label>
                 <Input
@@ -958,71 +958,65 @@ export default function BillingConfig() {
               </div>
             </div>
             
-            {/* Employment Type Selection */}
-            <div>
-              <Label htmlFor="edit-employment-type">Employment Type</Label>
-              <Select 
-                value={billingData.employmentType || 'subcontract'} 
-                onValueChange={(value: 'subcontract' | 'fulltime') => setBillingData(prev => ({ ...prev, employmentType: value }))}
-              >
-                <SelectTrigger>
-                  <SelectValue placeholder="Select employment type" />
-                </SelectTrigger>
-                <SelectContent>
-                  <SelectItem value="subcontract">Subcontract</SelectItem>
-                  <SelectItem value="fulltime">Full-time Employee</SelectItem>
-                </SelectContent>
-              </Select>
+            <div className="grid grid-cols-2 gap-4">
+              <div>
+                <Label htmlFor="edit-employment-type">Employment Type</Label>
+                <Select 
+                  value={billingData.employmentType || 'subcontract'} 
+                  onValueChange={(value: 'subcontract' | 'fulltime') => setBillingData(prev => ({ ...prev, employmentType: value }))}
+                >
+                  <SelectTrigger>
+                    <SelectValue placeholder="Select employment type" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="subcontract">Subcontract</SelectItem>
+                    <SelectItem value="fulltime">Full-time Employee</SelectItem>
+                  </SelectContent>
+                </Select>
+              </div>
+
+              <div>
+                <Label htmlFor="edit-supervisor-name">Supervisor Name</Label>
+                <Input
+                  id="edit-supervisor-name"
+                  type="text"
+                  value={billingData.supervisorName || ''}
+                  onChange={(e) => setBillingData(prev => ({ ...prev, supervisorName: e.target.value }))}
+                  placeholder="Enter supervisor name"
+                />
+              </div>
             </div>
 
-            {/* Supervisor Name */}
-            <div>
-              <Label htmlFor="edit-supervisor-name">Supervisor Name</Label>
-              <Input
-                id="edit-supervisor-name"
-                type="text"
-                value={billingData.supervisorName || ''}
-                onChange={(e) => setBillingData(prev => ({ ...prev, supervisorName: e.target.value }))}
-                placeholder="Enter supervisor name"
-              />
-            </div>
-
-            {/* Client Company Selection */}
-            <div>
-              <Label htmlFor="edit-client-company">Client Company</Label>
-              <Select 
-                value={billingData.clientCompanyId?.toString() || ''} 
-                onValueChange={(value) => setBillingData(prev => ({ ...prev, clientCompanyId: parseInt(value) }))}
-              >
-                <SelectTrigger>
-                  <SelectValue placeholder="Select client company" />
-                </SelectTrigger>
-                <SelectContent>
-                  {isLoadingClientCompanies ? (
-                    <div className="p-2 text-sm text-muted-foreground">Loading companies...</div>
-                  ) : clientCompanies?.data?.companies?.length > 0 ? (
-                    clientCompanies.data.companies.map((company: any) => (
+            <div className="grid grid-cols-2 gap-4">
+              <div>
+                <Label htmlFor="edit-client-company">Client Company</Label>
+                <Select 
+                  value={billingData.clientCompanyId?.toString() || ''} 
+                  onValueChange={(value) => {
+                    const clientCompanyId = value ? parseInt(value) : undefined;
+                    setBillingData(prev => ({ ...prev, clientCompanyId, endUserId: undefined }));
+                    handleClientCompanyChange(clientCompanyId);
+                  }}
+                >
+                  <SelectTrigger>
+                    <SelectValue placeholder="Select client company" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    {clientCompanies?.companies?.map((company: any) => (
                       <SelectItem key={company.id} value={company.id.toString()}>
                         {company.name}
                       </SelectItem>
-                    ))
-                  ) : (
-                    <div className="p-2 text-sm text-muted-foreground">No companies available</div>
-                  )}
-                </SelectContent>
-              </Select>
-              {isLoadingClientCompanies && (
-                <p className="text-sm text-muted-foreground mt-1">Loading companies...</p>
-              )}
-            </div>
-
-            {/* End User Selection */}
-            {billingData.clientCompanyId && (
+                    ))}
+                  </SelectContent>
+                </Select>
+              </div>
+              
               <div>
                 <Label htmlFor="edit-end-user">End User</Label>
                 <Select 
                   value={billingData.endUserId?.toString() || ''} 
                   onValueChange={handleEndUserSelection}
+                  disabled={!billingData.clientCompanyId}
                 >
                   <SelectTrigger>
                     <SelectValue placeholder="Select end user" />
@@ -1032,7 +1026,6 @@ export default function BillingConfig() {
                       <div className="p-2 text-sm text-muted-foreground">Loading end users...</div>
                     ) : (
                       <>
-                        {/* Show existing end users from the end_users table */}
                         {(() => {
                           const { existingEndUsers, uniqueCandidateEndUsers } = getCombinedEndUsers();
                           return (
@@ -1043,24 +1036,15 @@ export default function BillingConfig() {
                                 </SelectItem>
                               ))}
                               
-                              {/* Show unique candidate end users (no duplicates) */}
                               {uniqueCandidateEndUsers.map((endUserName: string, index: number) => (
                                 <SelectItem key={`candidate-${index}`} value={`candidate-${endUserName}`}>
                                   {endUserName} (from candidates)
                                 </SelectItem>
                               ))}
                               
-                              {/* Always show Create End User option */}
                               <SelectItem value="create-new" className="text-blue-600 font-medium">
                                 + Create New End User
                               </SelectItem>
-                              
-                              {/* Show message if no end users found */}
-                              {(existingEndUsers.length === 0 && uniqueCandidateEndUsers.length === 0) && (
-                                <div className="p-2 text-sm text-muted-foreground">
-                                  No end users found for "{getSelectedClientCompanyName()}"
-                                </div>
-                              )}
                             </>
                           );
                         })()}
@@ -1068,43 +1052,39 @@ export default function BillingConfig() {
                     )}
                   </SelectContent>
                 </Select>
-                
-                {/* Input field for creating new end user */}
-                {showCreateEndUserInput && (
-                  <div className="flex gap-2 mt-2">
-                    <Input
-                      placeholder="Enter new end user name"
-                      value={newEndUserName}
-                      onChange={(e) => setNewEndUserName(e.target.value)}
-                      onKeyPress={(e) => {
-                        if (e.key === 'Enter') {
-                          handleCreateEndUser();
-                        }
-                      }}
-                    />
-                    <Button 
-                      size="sm" 
-                      onClick={handleCreateEndUser}
-                      disabled={!newEndUserName.trim() || createEndUserMutation.isPending}
-                    >
-                      {createEndUserMutation.isPending ? '...' : '✓'}
-                    </Button>
-                    <Button 
-                      size="sm" 
-                      variant="outline" 
-                      onClick={() => {
-                        setShowCreateEndUserInput(false);
-                        setNewEndUserName('');
-                      }}
-                    >
-                      ✕
-                    </Button>
-                  </div>
-                )}
-                
-                <p className="text-sm text-muted-foreground mt-1">
-                  End user assignment based on client company selection
-                </p>
+              </div>
+            </div>
+
+            {/* Create new end user input - shown when needed */}
+            {showCreateEndUserInput && (
+              <div className="flex gap-2">
+                <Input
+                  placeholder="Enter new end user name"
+                  value={newEndUserName}
+                  onChange={(e) => setNewEndUserName(e.target.value)}
+                  onKeyPress={(e) => {
+                    if (e.key === 'Enter') {
+                      handleCreateEndUser();
+                    }
+                  }}
+                />
+                <Button 
+                  size="sm" 
+                  onClick={handleCreateEndUser}
+                  disabled={!newEndUserName.trim() || createEndUserMutation.isPending}
+                >
+                  {createEndUserMutation.isPending ? '...' : '✓'}
+                </Button>
+                <Button 
+                  size="sm" 
+                  variant="outline" 
+                  onClick={() => {
+                    setShowCreateEndUserInput(false);
+                    setNewEndUserName('');
+                  }}
+                >
+                  ✕
+                </Button>
               </div>
             )}
 
