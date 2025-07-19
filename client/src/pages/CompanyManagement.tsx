@@ -8,8 +8,10 @@ import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, Di
 import { Badge } from "@/components/ui/badge";
 import { Switch } from "@/components/ui/switch";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { useToast } from "@/hooks/use-toast";
 import { Plus, Edit, Trash2, Building, Settings, Phone, Mail, MapPin, Search, Eye, EyeOff, ArrowLeft, Upload, X } from 'lucide-react';
+import { CountryStateSelect } from '@/components/CountryStateSelect';
 import { Link } from 'wouter';
 import { apiRequest } from '@/lib/queryClient';
 import { z } from 'zod';
@@ -31,12 +33,14 @@ interface ClientCompany {
   billToCity: string;
   billToState: string;
   billToCountry: string;
+  billToCustomCountry?: string;
   billToZipCode: string;
   shipToSameAsBillTo: boolean;
   shipToAddress?: string;
   shipToCity?: string;
   shipToState?: string;
   shipToCountry?: string;
+  shipToCustomCountry?: string;
   shipToZipCode?: string;
   phoneNumbers: string[];
   emailAddresses: string[];
@@ -54,6 +58,7 @@ interface CompanySettings {
   city: string;
   state: string;
   country: string;
+  customCountry?: string;
   zipCode: string;
   phoneNumbers: string[];
   emailAddresses: string[];
@@ -77,12 +82,14 @@ const clientCompanySchema = z.object({
   billToCity: z.string().min(1, "Bill to city is required"),
   billToState: z.string().min(1, "Bill to state is required"),
   billToCountry: z.string().min(1, "Bill to country is required"),
+  billToCustomCountry: z.string().optional(),
   billToZipCode: z.string().min(1, "Bill to zip code is required"),
   shipToSameAsBillTo: z.boolean().default(false),
   shipToAddress: z.string().optional(),
   shipToCity: z.string().optional(),
   shipToState: z.string().optional(),
   shipToCountry: z.string().optional(),
+  shipToCustomCountry: z.string().optional(),
   shipToZipCode: z.string().optional(),
   phoneNumbers: z.array(z.string().min(1, "Phone number required")).min(1, "At least one phone number required"),
   emailAddresses: z.array(z.string().email("Valid email required")).min(1, "At least one email address required"),
@@ -97,6 +104,7 @@ const companySettingsSchema = z.object({
   city: z.string().min(1, "City is required"),
   state: z.string().min(1, "State is required"),
   country: z.string().min(1, "Country is required"),
+  customCountry: z.string().optional(),
   zipCode: z.string().min(1, "Zip code is required"),
   phoneNumbers: z.array(z.string().min(1, "Phone number required")).min(1, "At least one phone number required"),
   emailAddresses: z.array(z.string().email("Valid email required")).min(1, "At least one email address required"),
@@ -237,12 +245,14 @@ export default function CompanyManagement() {
       billToCity: '',
       billToState: '',
       billToCountry: '',
+      billToCustomCountry: '',
       billToZipCode: '',
       shipToSameAsBillTo: true,
       shipToAddress: '',
       shipToCity: '',
       shipToState: '',
       shipToCountry: '',
+      shipToCustomCountry: '',
       shipToZipCode: '',
       phoneNumbers: [],
       emailAddresses: [],
@@ -261,6 +271,7 @@ export default function CompanyManagement() {
       city: '',
       state: '',
       country: '',
+      customCountry: '',
       zipCode: '',
       phoneNumbers: [],
       emailAddresses: [],
@@ -396,12 +407,14 @@ export default function CompanyManagement() {
         billToCity: editingClient.billToCity,
         billToState: editingClient.billToState,
         billToCountry: editingClient.billToCountry,
+        billToCustomCountry: editingClient.billToCustomCountry || '',
         billToZipCode: editingClient.billToZipCode,
         shipToSameAsBillTo: editingClient.shipToSameAsBillTo,
         shipToAddress: editingClient.shipToAddress || '',
         shipToCity: editingClient.shipToCity || '',
         shipToState: editingClient.shipToState || '',
         shipToCountry: editingClient.shipToCountry || '',
+        shipToCustomCountry: editingClient.shipToCustomCountry || '',
         shipToZipCode: editingClient.shipToZipCode || '',
         phoneNumbers: editingClient.phoneNumbers,
         emailAddresses: editingClient.emailAddresses,
@@ -420,6 +433,7 @@ export default function CompanyManagement() {
         city: editingSettings.city,
         state: editingSettings.state,
         country: editingSettings.country,
+        customCountry: editingSettings.customCountry || '',
         zipCode: editingSettings.zipCode,
         phoneNumbers: editingSettings.phoneNumbers,
         emailAddresses: editingSettings.emailAddresses,
@@ -862,31 +876,14 @@ export default function CompanyManagement() {
                       </FormItem>
                     )}
                   />
-                  <FormField
+                  <CountryStateSelect
                     control={clientForm.control}
-                    name="billToState"
-                    render={({ field }) => (
-                      <FormItem>
-                        <FormLabel>State</FormLabel>
-                        <FormControl>
-                          <Input {...field} />
-                        </FormControl>
-                        <FormMessage />
-                      </FormItem>
-                    )}
-                  />
-                  <FormField
-                    control={clientForm.control}
-                    name="billToCountry"
-                    render={({ field }) => (
-                      <FormItem>
-                        <FormLabel>Country</FormLabel>
-                        <FormControl>
-                          <Input {...field} />
-                        </FormControl>
-                        <FormMessage />
-                      </FormItem>
-                    )}
+                    countryName="billToCountry"
+                    stateName="billToState"
+                    customCountryName="billToCustomCountry"
+                    countryLabel="Country"
+                    stateLabel="State"
+                    customCountryLabel="Custom Country"
                   />
                   <FormField
                     control={clientForm.control}
@@ -956,31 +953,14 @@ export default function CompanyManagement() {
                           </FormItem>
                         )}
                       />
-                      <FormField
+                      <CountryStateSelect
                         control={clientForm.control}
-                        name="shipToState"
-                        render={({ field }) => (
-                          <FormItem>
-                            <FormLabel>State</FormLabel>
-                            <FormControl>
-                              <Input {...field} />
-                            </FormControl>
-                            <FormMessage />
-                          </FormItem>
-                        )}
-                      />
-                      <FormField
-                        control={clientForm.control}
-                        name="shipToCountry"
-                        render={({ field }) => (
-                          <FormItem>
-                            <FormLabel>Country</FormLabel>
-                            <FormControl>
-                              <Input {...field} />
-                            </FormControl>
-                            <FormMessage />
-                          </FormItem>
-                        )}
+                        countryName="shipToCountry"
+                        stateName="shipToState"
+                        customCountryName="shipToCustomCountry"
+                        countryLabel="Country"
+                        stateLabel="State"
+                        customCountryLabel="Custom Country"
                       />
                       <FormField
                         control={clientForm.control}
@@ -1198,31 +1178,14 @@ export default function CompanyManagement() {
                       </FormItem>
                     )}
                   />
-                  <FormField
+                  <CountryStateSelect
                     control={settingsForm.control}
-                    name="state"
-                    render={({ field }) => (
-                      <FormItem>
-                        <FormLabel>State</FormLabel>
-                        <FormControl>
-                          <Input {...field} />
-                        </FormControl>
-                        <FormMessage />
-                      </FormItem>
-                    )}
-                  />
-                  <FormField
-                    control={settingsForm.control}
-                    name="country"
-                    render={({ field }) => (
-                      <FormItem>
-                        <FormLabel>Country</FormLabel>
-                        <FormControl>
-                          <Input {...field} />
-                        </FormControl>
-                        <FormMessage />
-                      </FormItem>
-                    )}
+                    countryName="country"
+                    stateName="state"
+                    customCountryName="customCountry"
+                    countryLabel="Country"
+                    stateLabel="State"
+                    customCountryLabel="Custom Country"
                   />
                   <FormField
                     control={settingsForm.control}

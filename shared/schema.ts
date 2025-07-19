@@ -645,6 +645,7 @@ export const clientCompanies = pgTable("client_companies", {
   billToCity: text("bill_to_city").notNull(),
   billToState: text("bill_to_state").notNull(),
   billToCountry: text("bill_to_country").notNull(),
+  billToCustomCountry: text("bill_to_custom_country"), // For "Others" country option
   billToZipCode: text("bill_to_zip_code").notNull(),
   
   // Ship To Address (can be same as Bill To)
@@ -653,6 +654,7 @@ export const clientCompanies = pgTable("client_companies", {
   shipToCity: text("ship_to_city"),
   shipToState: text("ship_to_state"),
   shipToCountry: text("ship_to_country"),
+  shipToCustomCountry: text("ship_to_custom_country"), // For "Others" country option
   shipToZipCode: text("ship_to_zip_code"),
   
   // Contact Information
@@ -671,6 +673,7 @@ export const clientCompanySchema = createInsertSchema(clientCompanies, {
   billToCity: (schema) => schema.min(1, "Bill to city is required"),
   billToState: (schema) => schema.min(1, "Bill to state is required"),
   billToCountry: (schema) => schema.min(1, "Bill to country is required"),
+  billToCustomCountry: (schema) => schema.optional(),
   billToZipCode: (schema) => schema.min(1, "Bill to zip code is required"),
   phoneNumbers: z.array(z.string().min(1, "Phone number required")).min(1, "At least one phone number required"),
   emailAddresses: z.array(z.string().email("Valid email required")).min(1, "At least one email address required"),
@@ -691,6 +694,7 @@ export const companySettings = pgTable("company_settings", {
   city: text("city").notNull(),
   state: text("state").notNull(),
   country: text("country").notNull(),
+  customCountry: text("custom_country"), // For "Others" country option
   zipCode: text("zip_code").notNull(),
   
   // Contact Information
@@ -719,6 +723,7 @@ export const companySettingsSchema = createInsertSchema(companySettings, {
   city: (schema) => schema.min(1, "City is required"),
   state: (schema) => schema.min(1, "State is required"),
   country: (schema) => schema.min(1, "Country is required"),
+  customCountry: (schema) => schema.optional(),
   zipCode: (schema) => schema.min(1, "Zip code is required"),
   phoneNumbers: z.array(z.string().min(1, "Phone number required")).min(1, "At least one phone number required"),
   emailAddresses: z.array(z.string().email("Valid email required")).min(1, "At least one email address required"),
