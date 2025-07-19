@@ -2,6 +2,14 @@ import type { Express, Request, Response, NextFunction } from "express";
 import { createServer, type Server } from "http";
 import { storage } from "./storage";
 import { 
+  createEndUser, 
+  getEndUsersByClientCompany, 
+  getEndUserById, 
+  updateEndUser, 
+  deleteEndUser, 
+  getEndUsersFromSubmittedCandidates 
+} from "./storage";
+import { 
   contactSubmissionSchema, 
   jobListingSchema, 
   jobApplicationSchema,
@@ -26,7 +34,9 @@ import {
   clientCompanySchema,
   companySettingsSchema,
   clientCompanies,
-  companySettings
+  companySettings,
+  endUserSchema,
+  endUsers
 } from "@shared/schema";
 import { db } from "../db";
 import { eq, desc, asc, and, or, ilike, inArray, count, ne } from "drizzle-orm";
@@ -4747,6 +4757,120 @@ ${allUrls.map(url => `  <url>
       res.json({ success: true, message: "Client company deleted successfully" });
     } catch (error) {
       console.error('Error deleting client company:', error);
+      res.status(500).json({ success: false, message: "Internal server error" });
+    }
+  });
+
+  // ======================= END USER MANAGEMENT API ROUTES =======================
+
+  // Get end users by client company
+  app.get('/api/admin/end-users/by-company/:clientCompanyId', async (req: AuthenticatedRequest, res: Response) => {
+    try {
+      if (!req.isAuthenticated() || !req.user || req.user.role !== 'admin') {
+        return res.status(403).json({ success: false, message: "Admin access required" });
+      }
+
+      const clientCompanyId = parseInt(req.params.clientCompanyId);
+      const endUsers = await getEndUsersByClientCompany(clientCompanyId);
+      
+      res.json({ success: true, data: endUsers });
+    } catch (error) {
+      console.error('Error fetching end users by client company:', error);
+      res.status(500).json({ success: false, message: "Internal server error" });
+    }
+  });
+
+  // Get end users from submitted candidates data
+  app.get('/api/admin/end-users/from-candidates/:clientCompanyName', async (req: AuthenticatedRequest, res: Response) => {
+    try {
+      if (!req.isAuthenticated() || !req.user || req.user.role !== 'admin') {
+        return res.status(403).json({ success: false, message: "Admin access required" });
+      }
+
+      const clientCompanyName = req.params.clientCompanyName;
+      const endUsers = await getEndUsersFromSubmittedCandidates(clientCompanyName);
+      
+      res.json({ success: true, data: endUsers });
+    } catch (error) {
+      console.error('Error fetching end users from submitted candidates:', error);
+      res.status(500).json({ success: false, message: "Internal server error" });
+    }
+  });
+
+  // Create new end user
+  app.post('/api/admin/end-users', async (req: AuthenticatedRequest, res: Response) => {
+    try {
+      if (!req.isAuthenticated() || !req.user || req.user.role !== 'admin') {
+        return res.status(403).json({ success: false, message: "Admin access required" });
+      }
+
+      const validatedData = endUserSchema.parse({
+        ...req.body,
+        createdBy: req.user.id
+      });
+
+      const endUser = await createEndUser(validatedData);
+      res.status(201).json({ success: true, data: endUser });
+    } catch (error) {
+      if (error instanceof z.ZodError) {
+        return res.status(400).json({ 
+          success: false, 
+          message: "Validation error", 
+          errors: error.errors 
+        });
+      }
+      console.error('Error creating end user:', error);
+      res.status(500).json({ success: false, message: "Internal server error" });
+    }
+  });
+
+  // Update end user
+  app.put('/api/admin/end-users/:id', async (req: AuthenticatedRequest, res: Response) => {
+    try {
+      if (!req.isAuthenticated() || !req.user || req.user.role !== 'admin') {
+        return res.status(403).json({ success: false, message: "Admin access required" });
+      }
+
+      const id = parseInt(req.params.id);
+      const validatedData = endUserSchema.partial().parse(req.body);
+      
+      const endUser = await updateEndUser(id, validatedData);
+      
+      if (!endUser) {
+        return res.status(404).json({ success: false, message: "End user not found" });
+      }
+
+      res.json({ success: true, data: endUser });
+    } catch (error) {
+      if (error instanceof z.ZodError) {
+        return res.status(400).json({ 
+          success: false, 
+          message: "Validation error", 
+          errors: error.errors 
+        });
+      }
+      console.error('Error updating end user:', error);
+      res.status(500).json({ success: false, message: "Internal server error" });
+    }
+  });
+
+  // Delete end user
+  app.delete('/api/admin/end-users/:id', async (req: AuthenticatedRequest, res: Response) => {
+    try {
+      if (!req.isAuthenticated() || !req.user || req.user.role !== 'admin') {
+        return res.status(403).json({ success: false, message: "Admin access required" });
+      }
+
+      const id = parseInt(req.params.id);
+      const result = await deleteEndUser(id);
+      
+      if (!result) {
+        return res.status(404).json({ success: false, message: "End user not found" });
+      }
+
+      res.json({ success: true, message: "End user deleted successfully" });
+    } catch (error) {
+      console.error('Error deleting end user:', error);
       res.status(500).json({ success: false, message: "Internal server error" });
     }
   });

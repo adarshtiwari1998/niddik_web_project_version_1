@@ -419,6 +419,7 @@ export const candidateBilling = pgTable("candidate_billing", {
   employmentType: text("employment_type").notNull().default("subcontract"), // "subcontract" or "fulltime"
   supervisorName: text("supervisor_name"), // Supervisor name field
   clientCompanyId: integer("client_company_id").references(() => clientCompanies.id), // Selected client company
+  endUserId: integer("end_user_id").references(() => endUsers.id), // Selected end user for the client company
   companySettingsId: integer("company_settings_id").references(() => companySettings.id), // Selected company settings (preselected default)
   
   // TDS and benefits configuration
@@ -446,6 +447,7 @@ export const candidateBillingSchema = createInsertSchema(candidateBilling, {
   employmentType: (schema) => schema.refine(val => ["subcontract", "fulltime"].includes(val), "Employment type must be either 'subcontract' or 'fulltime'"),
   supervisorName: (schema) => schema.optional().nullable(),
   clientCompanyId: (schema) => schema.optional(),
+  endUserId: (schema) => schema.optional(),
   companySettingsId: (schema) => schema.optional(),
   tdsRate: (schema) => schema.transform((val) => {
     if (typeof val === 'string') return val;
@@ -600,6 +602,10 @@ export const candidateBillingRelations = relations(candidateBilling, ({ one }) =
     fields: [candidateBilling.clientCompanyId],
     references: [clientCompanies.id],
   }),
+  endUser: one(endUsers, {
+    fields: [candidateBilling.endUserId],
+    references: [endUsers.id],
+  }),
   companySettings: one(companySettings, {
     fields: [candidateBilling.companySettingsId],
     references: [companySettings.id],
@@ -683,6 +689,25 @@ export const clientCompanySchema = createInsertSchema(clientCompanies, {
 
 export type ClientCompany = typeof clientCompanies.$inferSelect;
 export type InsertClientCompany = z.infer<typeof clientCompanySchema>;
+
+// End Users table - companies can have multiple end users
+export const endUsers = pgTable("end_users", {
+  id: serial("id").primaryKey(),
+  name: text("name").notNull(),
+  clientCompanyId: integer("client_company_id").references(() => clientCompanies.id).notNull(),
+  isActive: boolean("is_active").default(true),
+  createdAt: timestamp("created_at").defaultNow().notNull(),
+  updatedAt: timestamp("updated_at").defaultNow().notNull(),
+  createdBy: integer("created_by").notNull().references(() => users.id),
+});
+
+export const endUserSchema = createInsertSchema(endUsers, {
+  name: (schema) => schema.min(1, "End user name is required"),
+  clientCompanyId: (schema) => schema.min(1, "Client company is required"),
+}).omit({ id: true, createdAt: true, updatedAt: true });
+
+export type EndUser = typeof endUsers.$inferSelect;
+export type InsertEndUser = z.infer<typeof endUserSchema>;
 
 // My company settings (default sender information)
 export const companySettings = pgTable("company_settings", {
@@ -846,7 +871,19 @@ export const clientCompanyRelations = relations(clientCompanies, ({ one, many })
     fields: [clientCompanies.createdBy],
     references: [users.id],
   }),
+  endUsers: many(endUsers),
   // Future: invoices that belong to this client
+}));
+
+export const endUserRelations = relations(endUsers, ({ one }) => ({
+  clientCompany: one(clientCompanies, {
+    fields: [endUsers.clientCompanyId],
+    references: [clientCompanies.id],
+  }),
+  createdByUser: one(users, {
+    fields: [endUsers.createdBy],
+    references: [users.id],
+  }),
 }));
 
 export const companySettingsRelations = relations(companySettings, ({ one }) => ({

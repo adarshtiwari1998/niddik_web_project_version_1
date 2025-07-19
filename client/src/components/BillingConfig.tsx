@@ -27,6 +27,7 @@ interface CandidateBilling {
   supervisorName?: string;
   clientCompanyId?: number;
   companySettingsId?: number;
+  endUserId?: number;
   tdsRate?: number;
   benefits?: string[];
   isActive: boolean;
@@ -60,6 +61,14 @@ interface CompanySettings {
   paidLeavePolicy?: string;
 }
 
+interface EndUser {
+  id: number;
+  name: string;
+  clientCompanyId: number;
+  description?: string;
+  isActive: boolean;
+}
+
 export default function BillingConfig() {
   const { toast } = useToast();
   const queryClient = useQueryClient();
@@ -73,6 +82,7 @@ export default function BillingConfig() {
     employmentType: 'subcontract' as 'subcontract' | 'fulltime',
     supervisorName: '',
     clientCompanyId: undefined as number | undefined,
+    endUserId: undefined as number | undefined,
     companySettingsId: undefined as number | undefined,
     tdsRate: 10,
     benefits: [] as string[]
@@ -120,6 +130,25 @@ export default function BillingConfig() {
   const { data: companySettings } = useQuery({
     queryKey: ['/api/admin/company-settings'],
   });
+
+  // Fetch end users for the selected client company
+  const { data: endUsers, isLoading: isLoadingEndUsers } = useQuery({
+    queryKey: [`/api/admin/end-users/by-company/${billingData.clientCompanyId}`],
+    enabled: !!billingData.clientCompanyId,
+  });
+
+  // Fetch end users from submitted candidates data when client company is selected
+  const { data: candidateEndUsers, isLoading: isLoadingCandidateEndUsers } = useQuery({
+    queryKey: ['/api/admin/end-users/from-candidates', getSelectedClientCompanyName()],
+    enabled: !!billingData.clientCompanyId && !!getSelectedClientCompanyName(),
+  });
+
+  // Helper function to get selected client company name
+  function getSelectedClientCompanyName(): string {
+    if (!billingData.clientCompanyId || !clientCompanies?.companies) return '';
+    const selectedCompany = clientCompanies.companies.find(c => c.id === billingData.clientCompanyId);
+    return selectedCompany?.name || '';
+  }
 
   // Create billing configuration mutation
   const createBillingMutation = useMutation({
@@ -212,6 +241,7 @@ export default function BillingConfig() {
       employmentType: 'subcontract',
       supervisorName: '',
       clientCompanyId: clientCompanies?.data?.companies?.[0]?.id || undefined,
+      endUserId: undefined,
       companySettingsId: companySettings?.data?.[0]?.id || undefined,
       tdsRate: 10,
       benefits: []
@@ -238,6 +268,7 @@ export default function BillingConfig() {
         employmentType: editingBilling.employmentType || 'subcontract',
         supervisorName: editingBilling.supervisorName || '',
         clientCompanyId: editingBilling.clientCompanyId,
+        endUserId: editingBilling.endUserId,
         companySettingsId: editingBilling.companySettingsId,
         tdsRate: editingBilling.tdsRate || 10,
         benefits: validBenefits
@@ -262,6 +293,11 @@ export default function BillingConfig() {
     setBillingData(prev => ({ ...prev, benefits: selectedBenefits }));
   }, [selectedBenefits]);
 
+  // Clear endUserId when client company changes
+  useEffect(() => {
+    setBillingData(prev => ({ ...prev, endUserId: undefined }));
+  }, [billingData.clientCompanyId]);
+
   const handleSubmit = () => {
     if (!selectedCandidate || billingData.hourlyRate <= 0) {
       toast({ title: "Error", description: "Please select a candidate and enter a valid hourly rate", variant: "destructive" });
@@ -283,6 +319,7 @@ export default function BillingConfig() {
       employmentType: billingData.employmentType || 'subcontract',
       supervisorName: billingData.supervisorName || '',
       clientCompanyId: billingData.clientCompanyId || undefined,
+      endUserId: billingData.endUserId || undefined,
       companySettingsId: billingData.companySettingsId || undefined,
       tdsRate: billingData.tdsRate?.toString() || '10',
       benefits: finalBenefits
@@ -315,6 +352,7 @@ export default function BillingConfig() {
       employmentType: billingData.employmentType,
       supervisorName: billingData.supervisorName || null,
       clientCompanyId: billingData.clientCompanyId || null,
+      endUserId: billingData.endUserId || null,
       companySettingsId: billingData.companySettingsId || null,
       tdsRate: billingData.tdsRate,
       benefits: finalBenefits,
@@ -548,6 +586,43 @@ export default function BillingConfig() {
                       </SelectContent>
                     </Select>
                   </div>
+                  
+                  {/* End User Selection */}
+                  {billingData.clientCompanyId && (
+                    <div className="mt-4">
+                      <Label htmlFor="end-user">End User</Label>
+                      <Select 
+                        value={billingData.endUserId?.toString() || ''} 
+                        onValueChange={(value) => setBillingData(prev => ({ ...prev, endUserId: value ? parseInt(value) : undefined }))}
+                      >
+                        <SelectTrigger>
+                          <SelectValue placeholder="Select end user" />
+                        </SelectTrigger>
+                        <SelectContent>
+                          {isLoadingEndUsers ? (
+                            <div className="p-2 text-sm text-muted-foreground">Loading end users...</div>
+                          ) : endUsers?.data?.length > 0 ? (
+                            endUsers.data.map((endUser: EndUser) => (
+                              <SelectItem key={endUser.id} value={endUser.id.toString()}>
+                                {endUser.name}
+                              </SelectItem>
+                            ))
+                          ) : candidateEndUsers?.data?.length > 0 ? (
+                            candidateEndUsers.data.map((endUserName: string, index: number) => (
+                              <SelectItem key={index} value={`new-${index}`}>
+                                {endUserName} (from candidates)
+                              </SelectItem>
+                            ))
+                          ) : (
+                            <div className="p-2 text-sm text-muted-foreground">No end users available</div>
+                          )}
+                        </SelectContent>
+                      </Select>
+                      <p className="text-sm text-muted-foreground mt-1">
+                        End user assignment based on client company selection
+                      </p>
+                    </div>
+                  )}
                 </CardContent>
               </Card>
 
@@ -772,6 +847,43 @@ export default function BillingConfig() {
                 <p className="text-sm text-muted-foreground mt-1">Loading companies...</p>
               )}
             </div>
+
+            {/* End User Selection */}
+            {billingData.clientCompanyId && (
+              <div>
+                <Label htmlFor="edit-end-user">End User</Label>
+                <Select 
+                  value={billingData.endUserId?.toString() || ''} 
+                  onValueChange={(value) => setBillingData(prev => ({ ...prev, endUserId: value ? parseInt(value) : undefined }))}
+                >
+                  <SelectTrigger>
+                    <SelectValue placeholder="Select end user" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    {isLoadingEndUsers ? (
+                      <div className="p-2 text-sm text-muted-foreground">Loading end users...</div>
+                    ) : endUsers?.data?.length > 0 ? (
+                      endUsers.data.map((endUser: EndUser) => (
+                        <SelectItem key={endUser.id} value={endUser.id.toString()}>
+                          {endUser.name}
+                        </SelectItem>
+                      ))
+                    ) : candidateEndUsers?.data?.length > 0 ? (
+                      candidateEndUsers.data.map((endUserName: string, index: number) => (
+                        <SelectItem key={index} value={`new-${index}`}>
+                          {endUserName} (from candidates)
+                        </SelectItem>
+                      ))
+                    ) : (
+                      <div className="p-2 text-sm text-muted-foreground">No end users available</div>
+                    )}
+                  </SelectContent>
+                </Select>
+                <p className="text-sm text-muted-foreground mt-1">
+                  End user assignment based on client company selection
+                </p>
+              </div>
+            )}
 
             {/* TDS Configuration for Subcontract */}
             {billingData.employmentType === 'subcontract' && (

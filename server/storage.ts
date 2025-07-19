@@ -33,7 +33,9 @@ import type {
   BiWeeklyTimesheet,
   InsertBiWeeklyTimesheet,
   MonthlyTimesheet,
-  InsertMonthlyTimesheet
+  InsertMonthlyTimesheet,
+  EndUser,
+  InsertEndUser
 } from "@shared/schema";
 import {
   users,
@@ -55,7 +57,8 @@ import {
   clientCompanies,
   companySettings,
   biWeeklyTimesheets,
-  monthlyTimesheets
+  monthlyTimesheets,
+  endUsers
 } from "@shared/schema";
 import { db } from "@db";
 
@@ -2673,6 +2676,65 @@ export const deleteCompanySettings = async (id: number): Promise<boolean> => {
   return await withRetry(async () => {
     const result = await db.delete(companySettings).where(eq(companySettings.id, id));
     return result.rowCount > 0;
+  });
+};
+
+// End Users Management
+export const createEndUser = async (data: InsertEndUser): Promise<EndUser> => {
+  return await withRetry(async () => {
+    const [result] = await db.insert(endUsers).values(data).returning();
+    return result;
+  });
+};
+
+export const getEndUsersByClientCompany = async (clientCompanyId: number): Promise<EndUser[]> => {
+  return await withRetry(async () => {
+    return await db.select().from(endUsers)
+      .where(and(eq(endUsers.clientCompanyId, clientCompanyId), eq(endUsers.isActive, true)))
+      .orderBy(asc(endUsers.name));
+  });
+};
+
+export const getEndUserById = async (id: number): Promise<EndUser | null> => {
+  return await withRetry(async () => {
+    const [result] = await db.select().from(endUsers).where(eq(endUsers.id, id));
+    return result || null;
+  });
+};
+
+export const updateEndUser = async (id: number, data: Partial<InsertEndUser>): Promise<EndUser | null> => {
+  return await withRetry(async () => {
+    const [result] = await db.update(endUsers)
+      .set({ ...data, updatedAt: new Date() })
+      .where(eq(endUsers.id, id))
+      .returning();
+    return result || null;
+  });
+};
+
+export const deleteEndUser = async (id: number): Promise<boolean> => {
+  return await withRetry(async () => {
+    const result = await db.delete(endUsers).where(eq(endUsers.id, id));
+    return result.rowCount > 0;
+  });
+};
+
+// Extract end users from submitted candidates data (format: "Company/EndUser")
+export const getEndUsersFromSubmittedCandidates = async (clientCompanyName: string): Promise<string[]> => {
+  return await withRetry(async () => {
+    const results = await db.select({ client: submittedCandidates.client })
+      .from(submittedCandidates)
+      .where(ilike(submittedCandidates.client, `${clientCompanyName}/%`));
+    
+    const endUsers = results
+      .map(result => {
+        const parts = result.client.split('/');
+        return parts.length > 1 ? parts.slice(1).join('/').trim() : null; // Get everything after first slash
+      })
+      .filter((endUser): endUser is string => endUser !== null && endUser.length > 0)
+      .filter((endUser, index, array) => array.indexOf(endUser) === index); // Remove duplicates
+    
+    return endUsers;
   });
 };
 
