@@ -155,6 +155,8 @@ export const CountryStateSelect: React.FC<CountryStateSelectProps> = ({
   customCountryLabel = "Custom Country",
   disabled = false
 }) => {
+  const form = useFormContext();
+  
   return (
     <>
       <FormField
@@ -167,7 +169,6 @@ export const CountryStateSelect: React.FC<CountryStateSelectProps> = ({
               <Select 
                 value={field.value} 
                 onValueChange={(value) => {
-                  const form = useFormContext();
                   field.onChange(value);
                   // Clear state when country changes
                   form.setValue(stateName, '');
@@ -201,7 +202,6 @@ export const CountryStateSelect: React.FC<CountryStateSelectProps> = ({
           control={control}
           name={customCountryName}
           render={({ field }) => {
-            const form = useFormContext();
             const selectedCountry = form.watch(countryName);
             if (selectedCountry !== 'Others') return null;
             
@@ -226,7 +226,6 @@ export const CountryStateSelect: React.FC<CountryStateSelectProps> = ({
         control={control}
         name={stateName}
         render={({ field }) => {
-          const form = useFormContext();
           const selectedCountry = form.watch(countryName);
           const isCustomCountry = selectedCountry === 'Others';
           const availableStates = selectedCountry && !isCustomCountry ? STATES_BY_COUNTRY[selectedCountry as keyof typeof STATES_BY_COUNTRY] : [];
