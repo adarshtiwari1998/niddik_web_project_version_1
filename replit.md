@@ -136,6 +136,11 @@ The application follows a standard full-stack architecture with clear separation
   - **Viewport Optimization**: Fields no longer cut off at top/bottom due to better space usage
 - **Removed Duplicate Sections**: Cleaned up duplicate End User selection sections
 - **Preserved Functionality**: All existing features including end user creation and TDS configuration maintained
+- **Major Bug Fixes Resolved**:
+  - **Edit Dialog Client Company Field**: Fixed data access pattern from `clientCompanies?.companies` to `clientCompanies?.data?.companies` with proper loading states
+  - **Auto-Selection Issue**: Fixed `resetBillingForm()` function to not auto-select first client company when creating new billing configuration
+  - **Form State Management**: Removed automatic client company pre-selection to prevent previous values appearing in new forms
+  - **Enhanced Error Handling**: Added loading states and proper fallback messages for both create and edit dialogs
 - **Files Modified**: `client/src/components/BillingConfig.tsx`, `replit.md`
 
 ## Overtime Calculation System Implementation (July 19, 2025)

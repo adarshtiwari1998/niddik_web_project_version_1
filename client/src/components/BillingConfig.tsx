@@ -184,8 +184,8 @@ export default function BillingConfig() {
   }
 
   // Handle client company selection change
-  function handleClientCompanyChange(value: string) {
-    const newClientCompanyId = parseInt(value);
+  function handleClientCompanyChange(value: string | number) {
+    const newClientCompanyId = typeof value === 'string' ? parseInt(value) : value;
     const previousCompanyName = getSelectedClientCompanyName();
     
     setBillingData(prev => ({ 
@@ -354,7 +354,7 @@ export default function BillingConfig() {
       currency: 'USD',
       employmentType: 'subcontract',
       supervisorName: '',
-      clientCompanyId: clientCompanies?.data?.companies?.[0]?.id || undefined,
+      clientCompanyId: undefined, // Don't auto-select first company
       endUserId: undefined,
       companySettingsId: companySettings?.data?.[0]?.id || undefined,
       tdsRate: 10,
@@ -391,16 +391,15 @@ export default function BillingConfig() {
     }
   }, [editingBilling, clientCompanies]);
 
-  // Effect to set default values for client company and company settings when data is loaded
+  // Effect to set default values for company settings when data is loaded (no auto-select for client company)
   useEffect(() => {
-    if (clientCompanies?.data?.companies && companySettings?.data && !editingBilling) {
+    if (companySettings?.data && !editingBilling) {
       setBillingData(prev => ({
         ...prev,
-        clientCompanyId: prev.clientCompanyId || clientCompanies.data.companies[0]?.id,
         companySettingsId: prev.companySettingsId || companySettings.data[0]?.id
       }));
     }
-  }, [clientCompanies, companySettings, editingBilling]);
+  }, [companySettings, editingBilling]);
 
   // Update benefits in billing data when selected benefits change
   useEffect(() => {
@@ -1002,11 +1001,17 @@ export default function BillingConfig() {
                     <SelectValue placeholder="Select client company" />
                   </SelectTrigger>
                   <SelectContent>
-                    {clientCompanies?.companies?.map((company: any) => (
-                      <SelectItem key={company.id} value={company.id.toString()}>
-                        {company.name}
-                      </SelectItem>
-                    ))}
+                    {isLoadingClientCompanies ? (
+                      <div className="p-2 text-sm text-muted-foreground">Loading companies...</div>
+                    ) : clientCompanies?.data?.companies?.length > 0 ? (
+                      clientCompanies.data.companies.map((company: any) => (
+                        <SelectItem key={company.id} value={company.id.toString()}>
+                          {company.name}
+                        </SelectItem>
+                      ))
+                    ) : (
+                      <div className="p-2 text-sm text-muted-foreground">No companies available</div>
+                    )}
                   </SelectContent>
                 </Select>
               </div>
