@@ -251,10 +251,15 @@ export default function MyApplications() {
       ) : data?.data.length === 0 ? (
         <Card>
           <CardContent className="py-10 text-center">
-            <p>You haven't applied to any jobs yet.</p>
-            <Link href="/careers">
+            <p>
+              {activeTab === "all" 
+                ? "You haven't applied to any jobs yet." 
+                : `No applications found with "${activeTab}" status.`
+              }
+            </p>
+            <Link href={activeTab === "all" ? "/careers" : "/candidate/applications"}>
               <Button className="mt-4">
-                Browse Jobs
+                {activeTab === "all" ? "Browse Jobs" : "View All Applications"}
               </Button>
             </Link>
           </CardContent>
