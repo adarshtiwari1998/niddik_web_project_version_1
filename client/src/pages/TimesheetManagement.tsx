@@ -2012,12 +2012,15 @@ function WeeklyTableView({ timesheets, onApprove, onReject, onEdit, onDelete, ge
                   {displayDays.map((row, index) => {
                     const isEditing = editingTimesheet === timesheet.id;
                     const fieldName = `${row.key}Hours`;
-                    const overtimeFieldName = `${row.key}Overtime`;
+                    // Map to database field names with underscores
+                    const overtimeFieldName = `${row.key.toLowerCase()}Overtime`;
                     
                     // Get regular and overtime hours from timesheet data
                     const regularHours = isEditing ? (editData[fieldName] || 0) : (parseFloat(row.hours) || 0);
                     const overtimeHours = parseFloat(timesheet[overtimeFieldName] || '0');
                     const totalDayHours = regularHours + overtimeHours;
+                    
+                    console.log(`Day ${row.key}: Regular=${regularHours}, Overtime=${overtimeHours} (field: ${overtimeFieldName})`, timesheet);
                     
                     return (
                       <tr key={row.key} className={index % 2 === 0 ? 'bg-white' : 'bg-gray-50'}>
