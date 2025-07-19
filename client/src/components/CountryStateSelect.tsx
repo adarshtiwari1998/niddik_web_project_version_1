@@ -3,7 +3,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { FormField, FormItem, FormLabel, FormControl, FormMessage } from "@/components/ui/form";
-import { Control } from "react-hook-form";
+import { Control, useFormContext } from "react-hook-form";
 
 // Country and state data
 export const COUNTRIES = [
@@ -167,12 +167,13 @@ export const CountryStateSelect: React.FC<CountryStateSelectProps> = ({
               <Select 
                 value={field.value} 
                 onValueChange={(value) => {
+                  const form = useFormContext();
                   field.onChange(value);
                   // Clear state when country changes
-                  control.setValue(stateName, '');
+                  form.setValue(stateName, '');
                   // Clear custom country when switching to predefined countries
                   if (customCountryName && value !== 'Others') {
-                    control.setValue(customCountryName, '');
+                    form.setValue(customCountryName, '');
                   }
                 }}
                 disabled={disabled}
@@ -200,7 +201,8 @@ export const CountryStateSelect: React.FC<CountryStateSelectProps> = ({
           control={control}
           name={customCountryName}
           render={({ field }) => {
-            const selectedCountry = control.getValues(countryName);
+            const form = useFormContext();
+            const selectedCountry = form.watch(countryName);
             if (selectedCountry !== 'Others') return null;
             
             return (
@@ -224,7 +226,8 @@ export const CountryStateSelect: React.FC<CountryStateSelectProps> = ({
         control={control}
         name={stateName}
         render={({ field }) => {
-          const selectedCountry = control.getValues(countryName);
+          const form = useFormContext();
+          const selectedCountry = form.watch(countryName);
           const isCustomCountry = selectedCountry === 'Others';
           const availableStates = selectedCountry && !isCustomCountry ? STATES_BY_COUNTRY[selectedCountry as keyof typeof STATES_BY_COUNTRY] : [];
           

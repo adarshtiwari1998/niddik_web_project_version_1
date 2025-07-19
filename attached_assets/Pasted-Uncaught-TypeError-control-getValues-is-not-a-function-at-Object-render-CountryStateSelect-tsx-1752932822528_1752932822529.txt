@@ -1,0 +1,105 @@
+Uncaught TypeError: control.getValues is not a function
+    at Object.render (CountryStateSelect.tsx:203:45)
+    at Controller (chunk-MGW4VB6R.js?v=14d8a5f0:328:35)
+    at renderWithHooks (chunk-RPCDYKBN.js?v=14d8a5f0:11548:26)
+    at mountIndeterminateComponent (chunk-RPCDYKBN.js?v=14d8a5f0:14926:21)
+    at beginWork (chunk-RPCDYKBN.js?v=14d8a5f0:15914:22)
+    at HTMLUnknownElement.callCallback2 (chunk-RPCDYKBN.js?v=14d8a5f0:3674:22)
+    at Object.invokeGuardedCallbackDev (chunk-RPCDYKBN.js?v=14d8a5f0:3699:24)
+    at invokeGuardedCallback (chunk-RPCDYKBN.js?v=14d8a5f0:3733:39)
+    at beginWork$1 (chunk-RPCDYKBN.js?v=14d8a5f0:19765:15)
+    at performUnitOfWork (chunk-RPCDYKBN.js?v=14d8a5f0:19198:20)Understand this error
+CountryStateSelect.tsx:227 Uncaught TypeError: control.getValues is not a function
+    at Object.render (CountryStateSelect.tsx:227:43)
+    at Controller (chunk-MGW4VB6R.js?v=14d8a5f0:328:35)
+    at renderWithHooks (chunk-RPCDYKBN.js?v=14d8a5f0:11548:26)
+    at mountIndeterminateComponent (chunk-RPCDYKBN.js?v=14d8a5f0:14926:21)
+    at beginWork (chunk-RPCDYKBN.js?v=14d8a5f0:15914:22)
+    at HTMLUnknownElement.callCallback2 (chunk-RPCDYKBN.js?v=14d8a5f0:3674:22)
+    at Object.invokeGuardedCallbackDev (chunk-RPCDYKBN.js?v=14d8a5f0:3699:24)
+    at invokeGuardedCallback (chunk-RPCDYKBN.js?v=14d8a5f0:3733:39)
+    at beginWork$1 (chunk-RPCDYKBN.js?v=14d8a5f0:19765:15)
+    at performUnitOfWork (chunk-RPCDYKBN.js?v=14d8a5f0:19198:20)Understand this error
+CountryStateSelect.tsx:203 Uncaught TypeError: control.getValues is not a function
+    at Object.render (CountryStateSelect.tsx:203:45)
+    at Controller (chunk-MGW4VB6R.js?v=14d8a5f0:328:35)
+    at renderWithHooks (chunk-RPCDYKBN.js?v=14d8a5f0:11548:26)
+    at mountIndeterminateComponent (chunk-RPCDYKBN.js?v=14d8a5f0:14926:21)
+    at beginWork (chunk-RPCDYKBN.js?v=14d8a5f0:15914:22)
+    at HTMLUnknownElement.callCallback2 (chunk-RPCDYKBN.js?v=14d8a5f0:3674:22)
+    at Object.invokeGuardedCallbackDev (chunk-RPCDYKBN.js?v=14d8a5f0:3699:24)
+    at invokeGuardedCallback (chunk-RPCDYKBN.js?v=14d8a5f0:3733:39)
+    at beginWork$1 (chunk-RPCDYKBN.js?v=14d8a5f0:19765:15)
+    at performUnitOfWork (chunk-RPCDYKBN.js?v=14d8a5f0:19198:20)Understand this error
+CountryStateSelect.tsx:227 Uncaught TypeError: control.getValues is not a function
+    at Object.render (CountryStateSelect.tsx:227:43)
+    at Controller (chunk-MGW4VB6R.js?v=14d8a5f0:328:35)
+    at renderWithHooks (chunk-RPCDYKBN.js?v=14d8a5f0:11548:26)
+    at mountIndeterminateComponent (chunk-RPCDYKBN.js?v=14d8a5f0:14926:21)
+    at beginWork (chunk-RPCDYKBN.js?v=14d8a5f0:15914:22)
+    at HTMLUnknownElement.callCallback2 (chunk-RPCDYKBN.js?v=14d8a5f0:3674:22)
+    at Object.invokeGuardedCallbackDev (chunk-RPCDYKBN.js?v=14d8a5f0:3699:24)
+    at invokeGuardedCallback (chunk-RPCDYKBN.js?v=14d8a5f0:3733:39)
+    at beginWork$1 (chunk-RPCDYKBN.js?v=14d8a5f0:19765:15)
+    at performUnitOfWork (chunk-RPCDYKBN.js?v=14d8a5f0:19198:20)Understand this error
+2chunk-RPCDYKBN.js?v=14d8a5f0:14032 The above error occurred in the <Controller> component:
+
+    at Controller (https://5f027320-764f-4b5f-89bd-df83fb647214-00-1ajxv2ug70bsy.janeway.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/chunk-MGW4VB6R.js?v=14d8a5f0:328:35)
+    at FormField (https://5f027320-764f-4b5f-89bd-df83fb647214-00-1ajxv2ug70bsy.janeway.replit.dev/src/components/ui/form.tsx:32:6)
+    at CountryStateSelect (https://5f027320-764f-4b5f-89bd-df83fb647214-00-1ajxv2ug70bsy.janeway.replit.dev/src/components/CountryStateSelect.tsx:147:3)
+    at div
+    at div
+    at form
+    at FormProvider (https://5f027320-764f-4b5f-89bd-df83fb647214-00-1ajxv2ug70bsy.janeway.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/chunk-MGW4VB6R.js?v=14d8a5f0:103:11)
+    at div
+    at https://5f027320-764f-4b5f-89bd-df83fb647214-00-1ajxv2ug70bsy.janeway.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/chunk-AXMZZQ2X.js?v=14d8a5f0:42:13
+    at https://5f027320-764f-4b5f-89bd-df83fb647214-00-1ajxv2ug70bsy.janeway.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/chunk-TPEMFX7K.js?v=14d8a5f0:61:7
+    at https://5f027320-764f-4b5f-89bd-df83fb647214-00-1ajxv2ug70bsy.janeway.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/chunk-2K77HOHX.js?v=14d8a5f0:79:13
+    at https://5f027320-764f-4b5f-89bd-df83fb647214-00-1ajxv2ug70bsy.janeway.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/chunk-2K77HOHX.js?v=14d8a5f0:56:13
+    at https://5f027320-764f-4b5f-89bd-df83fb647214-00-1ajxv2ug70bsy.janeway.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/chunk-AXMZZQ2X.js?v=14d8a5f0:42:13
+    at https://5f027320-764f-4b5f-89bd-df83fb647214-00-1ajxv2ug70bsy.janeway.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/chunk-TQT7K6GT.js?v=14d8a5f0:29:5
+    at https://5f027320-764f-4b5f-89bd-df83fb647214-00-1ajxv2ug70bsy.janeway.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/chunk-EBT4D7XX.js?v=14d8a5f0:233:13
+    at https://5f027320-764f-4b5f-89bd-df83fb647214-00-1ajxv2ug70bsy.janeway.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/chunk-EBT4D7XX.js?v=14d8a5f0:156:58
+    at Presence (https://5f027320-764f-4b5f-89bd-df83fb647214-00-1ajxv2ug70bsy.janeway.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/chunk-7ZIEIKXH.js?v=14d8a5f0:24:11)
+    at https://5f027320-764f-4b5f-89bd-df83fb647214-00-1ajxv2ug70bsy.janeway.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/chunk-EBT4D7XX.js?v=14d8a5f0:147:64
+    at https://5f027320-764f-4b5f-89bd-df83fb647214-00-1ajxv2ug70bsy.janeway.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/chunk-2K77HOHX.js?v=14d8a5f0:79:13
+    at https://5f027320-764f-4b5f-89bd-df83fb647214-00-1ajxv2ug70bsy.janeway.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/chunk-2K77HOHX.js?v=14d8a5f0:56:13
+    at https://5f027320-764f-4b5f-89bd-df83fb647214-00-1ajxv2ug70bsy.janeway.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/chunk-AXMZZQ2X.js?v=14d8a5f0:42:13
+    at https://5f027320-764f-4b5f-89bd-df83fb647214-00-1ajxv2ug70bsy.janeway.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/chunk-TPEMFX7K.js?v=14d8a5f0:260:22
+    at Presence (https://5f027320-764f-4b5f-89bd-df83fb647214-00-1ajxv2ug70bsy.janeway.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/chunk-7ZIEIKXH.js?v=14d8a5f0:24:11)
+    at Provider (https://5f027320-764f-4b5f-89bd-df83fb647214-00-1ajxv2ug70bsy.janeway.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/chunk-E7IAXTU4.js?v=14d8a5f0:38:15)
+    at DialogPortal (https://5f027320-764f-4b5f-89bd-df83fb647214-00-1ajxv2ug70bsy.janeway.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/chunk-EBT4D7XX.js?v=14d8a5f0:109:11)
+    at _c3 (https://5f027320-764f-4b5f-89bd-df83fb647214-00-1ajxv2ug70bsy.janeway.replit.dev/src/components/ui/dialog.tsx:49:12)
+    at Provider (https://5f027320-764f-4b5f-89bd-df83fb647214-00-1ajxv2ug70bsy.janeway.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/chunk-E7IAXTU4.js?v=14d8a5f0:38:15)
+    at Dialog (https://5f027320-764f-4b5f-89bd-df83fb647214-00-1ajxv2ug70bsy.janeway.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/chunk-EBT4D7XX.js?v=14d8a5f0:50:5)
+    at div
+    at div
+    at main
+    at div
+    at div
+    at div
+    at AdminLayout (https://5f027320-764f-4b5f-89bd-df83fb647214-00-1ajxv2ug70bsy.janeway.replit.dev/src/components/layout/AdminLayout.tsx:24:39)
+    at CompanyManagement (https://5f027320-764f-4b5f-89bd-df83fb647214-00-1ajxv2ug70bsy.janeway.replit.dev/src/pages/CompanyManagement.tsx:185:39)
+    at Suspense
+    at ProtectedRoute (https://5f027320-764f-4b5f-89bd-df83fb647214-00-1ajxv2ug70bsy.janeway.replit.dev/src/lib/protected-route.tsx:22:45)
+    at Switch (https://5f027320-764f-4b5f-89bd-df83fb647214-00-1ajxv2ug70bsy.janeway.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/wouter.js?v=14d8a5f0:336:17)
+    at Router
+    at AuthProvider (https://5f027320-764f-4b5f-89bd-df83fb647214-00-1ajxv2ug70bsy.janeway.replit.dev/src/hooks/use-auth.tsx:32:32)
+    at QueryClientProvider (https://5f027320-764f-4b5f-89bd-df83fb647214-00-1ajxv2ug70bsy.janeway.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/@tanstack_react-query.js?v=14d8a5f0:2875:3)
+    at _a (https://5f027320-764f-4b5f-89bd-df83fb647214-00-1ajxv2ug70bsy.janeway.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/react-helmet-async.js?v=14d8a5f0:624:5)
+    at App
+
+Consider adding an error boundary to your tree to customize error handling behavior.
+Visit https://reactjs.org/link/error-boundaries to learn more about error boundaries.
+logCapturedError @ chunk-RPCDYKBN.js?v=14d8a5f0:14032Understand this error
+chunk-RPCDYKBN.js?v=14d8a5f0:9129 Uncaught TypeError: control.getValues is not a function
+    at Object.render (CountryStateSelect.tsx:203:45)
+    at Controller (chunk-MGW4VB6R.js?v=14d8a5f0:328:35)
+    at renderWithHooks (chunk-RPCDYKBN.js?v=14d8a5f0:11548:26)
+    at mountIndeterminateComponent (chunk-RPCDYKBN.js?v=14d8a5f0:14926:21)
+    at beginWork (chunk-RPCDYKBN.js?v=14d8a5f0:15914:22)
+    at beginWork$1 (chunk-RPCDYKBN.js?v=14d8a5f0:19753:22)
+    at performUnitOfWork (chunk-RPCDYKBN.js?v=14d8a5f0:19198:20)
+    at workLoopSync (chunk-RPCDYKBN.js?v=14d8a5f0:19137:13)
+    at renderRootSync (chunk-RPCDYKBN.js?v=14d8a5f0:19116:15)
+    at recoverFromConcurrentError (chunk-RPCDYKBN.js?v=14d8a5f0:18736:28)Understand this error
