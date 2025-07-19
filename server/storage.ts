@@ -1499,6 +1499,7 @@ async updateSeoPage(id: number, data: Partial<InsertSeoPage>): Promise<SeoPage |
 
     // Add calculated totals to the processed data
     processedData.totalWeeklyHours = totalWeeklyHours.toString() as any;
+    processedData.totalRegularHours = totalRegularHours.toString() as any;
     processedData.totalOvertimeHours = totalOvertimeHours.toString() as any;
     processedData.totalRegularAmount = totalRegularAmount.toString() as any;
     processedData.totalOvertimeAmount = totalOvertimeAmount.toString() as any;
@@ -1583,6 +1584,7 @@ async updateSeoPage(id: number, data: Partial<InsertSeoPage>): Promise<SeoPage |
 
       // Update totals
       data.totalWeeklyHours = (totalRegularHours + totalOvertimeHours).toString() as any;
+      data.totalRegularHours = totalRegularHours.toString() as any;
       data.totalOvertimeHours = totalOvertimeHours.toString() as any;
       data.totalRegularAmount = totalRegularAmount.toString() as any;
       data.totalOvertimeAmount = totalOvertimeAmount.toString() as any;
@@ -2272,10 +2274,22 @@ async updateSeoPage(id: number, data: Partial<InsertSeoPage>): Promise<SeoPage |
     // Calculate totals
     let totalHours = 0;
     let totalAmount = 0;
+    let totalRegularHours = 0;
+    let totalOvertimeHours = 0;
+    let totalRegularAmount = 0;
+    let totalOvertimeAmount = 0;
     let week1TotalHours = 0;
     let week1TotalAmount = 0;
+    let week1RegularHours = 0;
+    let week1OvertimeHours = 0;
+    let week1RegularAmount = 0;
+    let week1OvertimeAmount = 0;
     let week2TotalHours = 0;
     let week2TotalAmount = 0;
+    let week2RegularHours = 0;
+    let week2OvertimeHours = 0;
+    let week2RegularAmount = 0;
+    let week2OvertimeAmount = 0;
 
     // Day-wise aggregation
     let mondayHours = 0;
@@ -2285,22 +2299,47 @@ async updateSeoPage(id: number, data: Partial<InsertSeoPage>): Promise<SeoPage |
     let fridayHours = 0;
     let saturdayHours = 0;
     let sundayHours = 0;
+    
+    // Day-wise overtime aggregation
+    let mondayOvertime = 0;
+    let tuesdayOvertime = 0;
+    let wednesdayOvertime = 0;
+    let thursdayOvertime = 0;
+    let fridayOvertime = 0;
+    let saturdayOvertime = 0;
+    let sundayOvertime = 0;
 
     for (const weeklyTimesheet of weeklyTimesheetsData) {
       const weekTotal = parseFloat(weeklyTimesheet.totalWeeklyHours?.toString() || '0');
       const weekAmount = parseFloat(weeklyTimesheet.totalWeeklyAmount?.toString() || '0');
+      const weekRegular = parseFloat(weeklyTimesheet.totalRegularHours?.toString() || '0');
+      const weekOvertime = parseFloat(weeklyTimesheet.totalOvertimeHours?.toString() || '0');
+      const weekRegularAmount = parseFloat(weeklyTimesheet.totalRegularAmount?.toString() || '0');
+      const weekOvertimeAmount = parseFloat(weeklyTimesheet.totalOvertimeAmount?.toString() || '0');
 
       totalHours += weekTotal;
       totalAmount += weekAmount;
+      totalRegularHours += weekRegular;
+      totalOvertimeHours += weekOvertime;
+      totalRegularAmount += weekRegularAmount;
+      totalOvertimeAmount += weekOvertimeAmount;
 
       // Determine if it's week 1 or week 2
       const weekStart = new Date(weeklyTimesheet.weekStartDate);
       if (weekStart.getTime() === week1StartDate.getTime()) {
         week1TotalHours += weekTotal;
         week1TotalAmount += weekAmount;
+        week1RegularHours += weekRegular;
+        week1OvertimeHours += weekOvertime;
+        week1RegularAmount += weekRegularAmount;
+        week1OvertimeAmount += weekOvertimeAmount;
       } else {
         week2TotalHours += weekTotal;
         week2TotalAmount += weekAmount;
+        week2RegularHours += weekRegular;
+        week2OvertimeHours += weekOvertime;
+        week2RegularAmount += weekRegularAmount;
+        week2OvertimeAmount += weekOvertimeAmount;
       }
 
       // Aggregate daily hours
@@ -2311,6 +2350,15 @@ async updateSeoPage(id: number, data: Partial<InsertSeoPage>): Promise<SeoPage |
       fridayHours += parseFloat(weeklyTimesheet.fridayHours?.toString() || '0');
       saturdayHours += parseFloat(weeklyTimesheet.saturdayHours?.toString() || '0');
       sundayHours += parseFloat(weeklyTimesheet.sundayHours?.toString() || '0');
+      
+      // Aggregate daily overtime hours
+      mondayOvertime += parseFloat(weeklyTimesheet.mondayOvertime?.toString() || '0');
+      tuesdayOvertime += parseFloat(weeklyTimesheet.tuesdayOvertime?.toString() || '0');
+      wednesdayOvertime += parseFloat(weeklyTimesheet.wednesdayOvertime?.toString() || '0');
+      thursdayOvertime += parseFloat(weeklyTimesheet.thursdayOvertime?.toString() || '0');
+      fridayOvertime += parseFloat(weeklyTimesheet.fridayOvertime?.toString() || '0');
+      saturdayOvertime += parseFloat(weeklyTimesheet.saturdayOvertime?.toString() || '0');
+      sundayOvertime += parseFloat(weeklyTimesheet.sundayOvertime?.toString() || '0');
     }
 
     // Create bi-weekly timesheet record
@@ -2320,14 +2368,26 @@ async updateSeoPage(id: number, data: Partial<InsertSeoPage>): Promise<SeoPage |
       periodEndDate: periodEndDate.toISOString().split('T')[0],
       totalHours: totalHours.toString(),
       totalAmount: totalAmount.toString(),
+      totalRegularHours: totalRegularHours.toString(),
+      totalOvertimeHours: totalOvertimeHours.toString(),
+      totalRegularAmount: totalRegularAmount.toString(),
+      totalOvertimeAmount: totalOvertimeAmount.toString(),
       week1StartDate: week1StartDate.toISOString().split('T')[0],
       week1EndDate: week1EndDate.toISOString().split('T')[0],
       week1TotalHours: week1TotalHours.toString(),
       week1TotalAmount: week1TotalAmount.toString(),
+      week1RegularHours: week1RegularHours.toString(),
+      week1OvertimeHours: week1OvertimeHours.toString(),
+      week1RegularAmount: week1RegularAmount.toString(),
+      week1OvertimeAmount: week1OvertimeAmount.toString(),
       week2StartDate: week2StartDate.toISOString().split('T')[0],
       week2EndDate: week2EndDate.toISOString().split('T')[0],
       week2TotalHours: week2TotalHours.toString(),
       week2TotalAmount: week2TotalAmount.toString(),
+      week2RegularHours: week2RegularHours.toString(),
+      week2OvertimeHours: week2OvertimeHours.toString(),
+      week2RegularAmount: week2RegularAmount.toString(),
+      week2OvertimeAmount: week2OvertimeAmount.toString(),
       mondayHours: mondayHours.toString(),
       tuesdayHours: tuesdayHours.toString(),
       wednesdayHours: wednesdayHours.toString(),
@@ -2335,6 +2395,13 @@ async updateSeoPage(id: number, data: Partial<InsertSeoPage>): Promise<SeoPage |
       fridayHours: fridayHours.toString(),
       saturdayHours: saturdayHours.toString(),
       sundayHours: sundayHours.toString(),
+      mondayOvertime: mondayOvertime.toString(),
+      tuesdayOvertime: tuesdayOvertime.toString(),
+      wednesdayOvertime: wednesdayOvertime.toString(),
+      thursdayOvertime: thursdayOvertime.toString(),
+      fridayOvertime: fridayOvertime.toString(),
+      saturdayOvertime: saturdayOvertime.toString(),
+      sundayOvertime: sundayOvertime.toString(),
       status: 'calculated'
     };
 
@@ -2446,6 +2513,10 @@ async updateSeoPage(id: number, data: Partial<InsertSeoPage>): Promise<SeoPage |
     // Calculate totals
     let totalHours = 0;
     let totalAmount = 0;
+    let totalRegularHours = 0;
+    let totalOvertimeHours = 0;
+    let totalRegularAmount = 0;
+    let totalOvertimeAmount = 0;
     let totalWeeks = weeklyTimesheetsData.length;
 
     // Day-wise aggregation
@@ -2456,13 +2527,30 @@ async updateSeoPage(id: number, data: Partial<InsertSeoPage>): Promise<SeoPage |
     let fridayHours = 0;
     let saturdayHours = 0;
     let sundayHours = 0;
+    
+    // Day-wise overtime aggregation
+    let mondayOvertime = 0;
+    let tuesdayOvertime = 0;
+    let wednesdayOvertime = 0;
+    let thursdayOvertime = 0;
+    let fridayOvertime = 0;
+    let saturdayOvertime = 0;
+    let sundayOvertime = 0;
 
     for (const weeklyTimesheet of weeklyTimesheetsData) {
       const weekTotal = parseFloat(weeklyTimesheet.totalWeeklyHours?.toString() || '0');
       const weekAmount = parseFloat(weeklyTimesheet.totalWeeklyAmount?.toString() || '0');
+      const weekRegular = parseFloat(weeklyTimesheet.totalRegularHours?.toString() || '0');
+      const weekOvertime = parseFloat(weeklyTimesheet.totalOvertimeHours?.toString() || '0');
+      const weekRegularAmount = parseFloat(weeklyTimesheet.totalRegularAmount?.toString() || '0');
+      const weekOvertimeAmount = parseFloat(weeklyTimesheet.totalOvertimeAmount?.toString() || '0');
 
       totalHours += weekTotal;
       totalAmount += weekAmount;
+      totalRegularHours += weekRegular;
+      totalOvertimeHours += weekOvertime;
+      totalRegularAmount += weekRegularAmount;
+      totalOvertimeAmount += weekOvertimeAmount;
 
       // Aggregate daily hours
       mondayHours += parseFloat(weeklyTimesheet.mondayHours?.toString() || '0');
@@ -2472,6 +2560,15 @@ async updateSeoPage(id: number, data: Partial<InsertSeoPage>): Promise<SeoPage |
       fridayHours += parseFloat(weeklyTimesheet.fridayHours?.toString() || '0');
       saturdayHours += parseFloat(weeklyTimesheet.saturdayHours?.toString() || '0');
       sundayHours += parseFloat(weeklyTimesheet.sundayHours?.toString() || '0');
+      
+      // Aggregate daily overtime hours
+      mondayOvertime += parseFloat(weeklyTimesheet.mondayOvertime?.toString() || '0');
+      tuesdayOvertime += parseFloat(weeklyTimesheet.tuesdayOvertime?.toString() || '0');
+      wednesdayOvertime += parseFloat(weeklyTimesheet.wednesdayOvertime?.toString() || '0');
+      thursdayOvertime += parseFloat(weeklyTimesheet.thursdayOvertime?.toString() || '0');
+      fridayOvertime += parseFloat(weeklyTimesheet.fridayOvertime?.toString() || '0');
+      saturdayOvertime += parseFloat(weeklyTimesheet.saturdayOvertime?.toString() || '0');
+      sundayOvertime += parseFloat(weeklyTimesheet.sundayOvertime?.toString() || '0');
     }
 
     // Create monthly timesheet record
@@ -2484,6 +2581,10 @@ async updateSeoPage(id: number, data: Partial<InsertSeoPage>): Promise<SeoPage |
       periodEndDate: periodEndDate.toISOString().split('T')[0],
       totalHours: totalHours.toString(),
       totalAmount: totalAmount.toString(),
+      totalRegularHours: totalRegularHours.toString(),
+      totalOvertimeHours: totalOvertimeHours.toString(),
+      totalRegularAmount: totalRegularAmount.toString(),
+      totalOvertimeAmount: totalOvertimeAmount.toString(),
       totalWeeks,
       mondayHours: mondayHours.toString(),
       tuesdayHours: tuesdayHours.toString(),
@@ -2492,6 +2593,13 @@ async updateSeoPage(id: number, data: Partial<InsertSeoPage>): Promise<SeoPage |
       fridayHours: fridayHours.toString(),
       saturdayHours: saturdayHours.toString(),
       sundayHours: sundayHours.toString(),
+      mondayOvertime: mondayOvertime.toString(),
+      tuesdayOvertime: tuesdayOvertime.toString(),
+      wednesdayOvertime: wednesdayOvertime.toString(),
+      thursdayOvertime: thursdayOvertime.toString(),
+      fridayOvertime: fridayOvertime.toString(),
+      saturdayOvertime: saturdayOvertime.toString(),
+      sundayOvertime: sundayOvertime.toString(),
       status: 'calculated'
     };
 

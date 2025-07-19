@@ -521,6 +521,7 @@ export const weeklyTimesheets = pgTable("weekly_timesheets", {
   
   // Totals and calculations
   totalWeeklyHours: decimal("total_weekly_hours", { precision: 4, scale: 2 }).notNull().default('0'),
+  totalRegularHours: decimal("total_regular_hours", { precision: 4, scale: 2 }).notNull().default('0'),
   totalOvertimeHours: decimal("total_overtime_hours", { precision: 4, scale: 2 }).default('0'),
   totalRegularAmount: decimal("total_regular_amount", { precision: 10, scale: 2 }).notNull().default('0'),
   totalOvertimeAmount: decimal("total_overtime_amount", { precision: 10, scale: 2 }).default('0'),
@@ -773,17 +774,31 @@ export const biWeeklyTimesheets = pgTable("bi_weekly_timesheets", {
   totalHours: decimal("total_hours", { precision: 6, scale: 2 }).notNull().default('0'),
   totalAmount: decimal("total_amount", { precision: 10, scale: 2 }).notNull().default('0'),
   
+  // Overtime totals
+  totalRegularHours: decimal("total_regular_hours", { precision: 6, scale: 2 }).notNull().default('0'),
+  totalOvertimeHours: decimal("total_overtime_hours", { precision: 6, scale: 2 }).notNull().default('0'),
+  totalRegularAmount: decimal("total_regular_amount", { precision: 10, scale: 2 }).notNull().default('0'),
+  totalOvertimeAmount: decimal("total_overtime_amount", { precision: 10, scale: 2 }).notNull().default('0'),
+  
   // Week 1 data
   week1StartDate: date("week1_start_date").notNull(),
   week1EndDate: date("week1_end_date").notNull(),
   week1TotalHours: decimal("week1_total_hours", { precision: 4, scale: 2 }).notNull().default('0'),
   week1TotalAmount: decimal("week1_total_amount", { precision: 10, scale: 2 }).notNull().default('0'),
+  week1RegularHours: decimal("week1_regular_hours", { precision: 4, scale: 2 }).notNull().default('0'),
+  week1OvertimeHours: decimal("week1_overtime_hours", { precision: 4, scale: 2 }).notNull().default('0'),
+  week1RegularAmount: decimal("week1_regular_amount", { precision: 10, scale: 2 }).notNull().default('0'),
+  week1OvertimeAmount: decimal("week1_overtime_amount", { precision: 10, scale: 2 }).notNull().default('0'),
   
   // Week 2 data
   week2StartDate: date("week2_start_date").notNull(),
   week2EndDate: date("week2_end_date").notNull(),
   week2TotalHours: decimal("week2_total_hours", { precision: 4, scale: 2 }).notNull().default('0'),
   week2TotalAmount: decimal("week2_total_amount", { precision: 10, scale: 2 }).notNull().default('0'),
+  week2RegularHours: decimal("week2_regular_hours", { precision: 4, scale: 2 }).notNull().default('0'),
+  week2OvertimeHours: decimal("week2_overtime_hours", { precision: 4, scale: 2 }).notNull().default('0'),
+  week2RegularAmount: decimal("week2_regular_amount", { precision: 10, scale: 2 }).notNull().default('0'),
+  week2OvertimeAmount: decimal("week2_overtime_amount", { precision: 10, scale: 2 }).notNull().default('0'),
   
   // Day-wise aggregated hours for entire bi-weekly period
   mondayHours: decimal("monday_hours", { precision: 4, scale: 2 }).notNull().default('0'),
@@ -793,6 +808,15 @@ export const biWeeklyTimesheets = pgTable("bi_weekly_timesheets", {
   fridayHours: decimal("friday_hours", { precision: 4, scale: 2 }).notNull().default('0'),
   saturdayHours: decimal("saturday_hours", { precision: 4, scale: 2 }).notNull().default('0'),
   sundayHours: decimal("sunday_hours", { precision: 4, scale: 2 }).notNull().default('0'),
+  
+  // Day-wise overtime hours for entire bi-weekly period
+  mondayOvertime: decimal("monday_overtime", { precision: 4, scale: 2 }).notNull().default('0'),
+  tuesdayOvertime: decimal("tuesday_overtime", { precision: 4, scale: 2 }).notNull().default('0'),
+  wednesdayOvertime: decimal("wednesday_overtime", { precision: 4, scale: 2 }).notNull().default('0'),
+  thursdayOvertime: decimal("thursday_overtime", { precision: 4, scale: 2 }).notNull().default('0'),
+  fridayOvertime: decimal("friday_overtime", { precision: 4, scale: 2 }).notNull().default('0'),
+  saturdayOvertime: decimal("saturday_overtime", { precision: 4, scale: 2 }).notNull().default('0'),
+  sundayOvertime: decimal("sunday_overtime", { precision: 4, scale: 2 }).notNull().default('0'),
   
   status: text("status").notNull().default("calculated"), // calculated, approved, rejected
   createdAt: timestamp("created_at").defaultNow().notNull(),
@@ -826,6 +850,12 @@ export const monthlyTimesheets = pgTable("monthly_timesheets", {
   totalAmount: decimal("total_amount", { precision: 10, scale: 2 }).notNull().default('0'),
   totalWeeks: integer("total_weeks").notNull().default(0), // Number of weeks in the month
   
+  // Overtime totals
+  totalRegularHours: decimal("total_regular_hours", { precision: 6, scale: 2 }).notNull().default('0'),
+  totalOvertimeHours: decimal("total_overtime_hours", { precision: 6, scale: 2 }).notNull().default('0'),
+  totalRegularAmount: decimal("total_regular_amount", { precision: 10, scale: 2 }).notNull().default('0'),
+  totalOvertimeAmount: decimal("total_overtime_amount", { precision: 10, scale: 2 }).notNull().default('0'),
+  
   // Day-wise aggregated hours for entire month
   mondayHours: decimal("monday_hours", { precision: 4, scale: 2 }).notNull().default('0'),
   tuesdayHours: decimal("tuesday_hours", { precision: 4, scale: 2 }).notNull().default('0'),
@@ -834,6 +864,15 @@ export const monthlyTimesheets = pgTable("monthly_timesheets", {
   fridayHours: decimal("friday_hours", { precision: 4, scale: 2 }).notNull().default('0'),
   saturdayHours: decimal("saturday_hours", { precision: 4, scale: 2 }).notNull().default('0'),
   sundayHours: decimal("sunday_hours", { precision: 4, scale: 2 }).notNull().default('0'),
+  
+  // Day-wise overtime hours for entire month
+  mondayOvertime: decimal("monday_overtime", { precision: 4, scale: 2 }).notNull().default('0'),
+  tuesdayOvertime: decimal("tuesday_overtime", { precision: 4, scale: 2 }).notNull().default('0'),
+  wednesdayOvertime: decimal("wednesday_overtime", { precision: 4, scale: 2 }).notNull().default('0'),
+  thursdayOvertime: decimal("thursday_overtime", { precision: 4, scale: 2 }).notNull().default('0'),
+  fridayOvertime: decimal("friday_overtime", { precision: 4, scale: 2 }).notNull().default('0'),
+  saturdayOvertime: decimal("saturday_overtime", { precision: 4, scale: 2 }).notNull().default('0'),
+  sundayOvertime: decimal("sunday_overtime", { precision: 4, scale: 2 }).notNull().default('0'),
   
   status: text("status").notNull().default("calculated"), // calculated, approved, rejected
   createdAt: timestamp("created_at").defaultNow().notNull(),

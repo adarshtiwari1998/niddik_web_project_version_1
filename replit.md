@@ -176,22 +176,32 @@ The application follows a standard full-stack architecture with clear separation
   - **Enhanced Error Handling**: Added loading states and proper fallback messages for both create and edit dialogs
 - **Files Modified**: `client/src/components/BillingConfig.tsx`, `replit.md`
 
-## Overtime Calculation System Implementation (July 19, 2025)
-- **Overtime Calculation Logic**: Implemented comprehensive overtime calculation system for timesheets
+## Comprehensive Overtime Calculation System Implementation Complete (July 19, 2025)
+- **Complete Overtime Database Integration**: Implemented comprehensive overtime calculation system with full database persistence
   - **Daily Limit Calculation**: Calculates daily hour limits by dividing weekly working hours by working days
   - **Automatic Hour Splitting**: Daily hours exceeding limit are automatically split into regular and overtime portions
   - **Same Rate Application**: Overtime hours billed at same rate as regular hours (no separate overtime rate field)
-  - **Database Schema**: Added overtime columns to weekly_timesheets table to store calculated overtime hours
-- **Backend Implementation**: 
-  - **Calculation Helper**: Created `calculateOvertimeDetails` function in server storage
-  - **Enhanced Timesheet Creation**: Updated `createWeeklyTimesheetWithOvertimeCalculation` method
-  - **API Integration**: Modified timesheet submission API to use new overtime calculation logic
+  - **Database Schema Complete**: Added overtime columns to all timesheet tables (weekly, bi_weekly, monthly)
+- **Backend Implementation Complete**: 
+  - **Calculation Helper**: Created `calculateAdvancedOvertimeDetails` function in server storage
+  - **Enhanced Weekly Creation**: Updated `createWeeklyTimesheetWithAdvancedOvertimeCalculation` method to include `totalRegularHours`
+  - **Enhanced Bi-Weekly Aggregation**: Updated `generateBiWeeklyTimesheet` to calculate and save overtime data (total, week1/week2, daily breakdowns)
+  - **Enhanced Monthly Aggregation**: Updated `generateMonthlyTimesheet` to calculate and save overtime data (total and daily breakdowns)
+  - **Overtime Recalculation**: Enhanced `updateWeeklyTimesheetWithOvertimeRecalculation` to include totalRegularHours updates
+- **Database Schema Complete**: 
+  - **Weekly Timesheets**: Already had overtime columns, now includes totalRegularHours
+  - **Bi-Weekly Timesheets**: Added totalRegularHours, totalOvertimeHours, totalRegularAmount, totalOvertimeAmount, week1/week2 overtime breakdowns, daily overtime columns
+  - **Monthly Timesheets**: Added totalRegularHours, totalOvertimeHours, totalRegularAmount, totalOvertimeAmount, daily overtime columns
 - **Removed Overtime Rate Field**: Removed separate overtime rate field from billing configuration as requested by user
   - **Database Cleanup**: Dropped overtime_rate column from candidate_billing table
   - **UI Simplification**: Removed overtime rate input fields from billing configuration forms
   - **Logic Update**: Overtime rate now equals regular rate (same billing rate for all hours)
-- **User Experience**: Candidates submit hours normally, system automatically handles overtime calculation behind the scenes
-- **Files Modified**: `shared/schema.ts`, `server/storage.ts`, `server/routes.ts`, `client/src/components/BillingConfig.tsx`, `replit.md`
+- **Complete Database Persistence**: All overtime data now properly saved across all timeframe views
+  - **Weekly Level**: Regular/overtime hours and amounts saved in weekly_timesheets table
+  - **Bi-Weekly Level**: Aggregated overtime data saved in bi_weekly_timesheets table with week-by-week breakdown
+  - **Monthly Level**: Aggregated overtime data saved in monthly_timesheets table with daily breakdown
+- **User Experience**: Candidates submit hours normally, system automatically handles overtime calculation and database persistence behind the scenes
+- **Files Modified**: `shared/schema.ts`, `server/storage.ts`, `server/routes.ts`, `client/src/components/BillingConfig.tsx`, database tables, `replit.md`
 
 ## End User Data Extraction Logic Fix in Billing Configuration (July 19, 2025)
 - **Fixed End User Matching Algorithm**: Resolved incorrect end user data showing for selected companies in timesheets billing configuration
