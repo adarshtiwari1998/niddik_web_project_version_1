@@ -35,9 +35,11 @@ export default function MyApplications() {
   const [activeTab, setActiveTab] = useState<string>("all");
   const pageSize = 5;
 
-  // Reset page when activeTab changes
+  // Reset page when activeTab changes and invalidate query cache
   useEffect(() => {
     setPage(1);
+    // Force refetch when tab changes
+    queryClient.invalidateQueries({ queryKey: ['/api/my-applications'] });
   }, [activeTab]);
 
   // Fetch user's job applications
@@ -70,6 +72,8 @@ export default function MyApplications() {
       return result;
     },
     enabled: !!user,
+    refetchOnMount: true,
+    staleTime: 0, // Always consider data stale
   });
 
   // Format date to a readable string
