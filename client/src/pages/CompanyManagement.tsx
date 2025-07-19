@@ -11,7 +11,7 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { useToast } from "@/hooks/use-toast";
 import { Plus, Edit, Trash2, Building, Settings, Phone, Mail, MapPin, Search, Eye, EyeOff, ArrowLeft, Upload, X } from 'lucide-react';
-import { CountryStateSelect } from '@/components/CountryStateSelect';
+import { CountryStateSelect, detectCountryFromState } from '@/components/CountryStateSelect';
 import { Link } from 'wouter';
 import { apiRequest } from '@/lib/queryClient';
 import { z } from 'zod';
@@ -399,6 +399,10 @@ export default function CompanyManagement() {
   // Effects
   useEffect(() => {
     if (editingClient) {
+      // Auto-detect countries from states if not properly set
+      const billToCountry = editingClient.billToCountry || detectCountryFromState(editingClient.billToState);
+      const shipToCountry = editingClient.shipToCountry || detectCountryFromState(editingClient.shipToState || '');
+      
       clientForm.reset({
         name: editingClient.name,
         logoUrl: editingClient.logoUrl || '',
@@ -406,14 +410,14 @@ export default function CompanyManagement() {
         billToAddress: editingClient.billToAddress,
         billToCity: editingClient.billToCity,
         billToState: editingClient.billToState,
-        billToCountry: editingClient.billToCountry,
+        billToCountry: billToCountry,
         billToCustomCountry: editingClient.billToCustomCountry || '',
         billToZipCode: editingClient.billToZipCode,
         shipToSameAsBillTo: editingClient.shipToSameAsBillTo,
         shipToAddress: editingClient.shipToAddress || '',
         shipToCity: editingClient.shipToCity || '',
         shipToState: editingClient.shipToState || '',
-        shipToCountry: editingClient.shipToCountry || '',
+        shipToCountry: shipToCountry,
         shipToCustomCountry: editingClient.shipToCustomCountry || '',
         shipToZipCode: editingClient.shipToZipCode || '',
         phoneNumbers: editingClient.phoneNumbers,
@@ -425,6 +429,9 @@ export default function CompanyManagement() {
 
   useEffect(() => {
     if (editingSettings) {
+      // Auto-detect country from state if not properly set
+      const country = editingSettings.country || detectCountryFromState(editingSettings.state);
+      
       settingsForm.reset({
         name: editingSettings.name,
         logoUrl: editingSettings.logoUrl || '',
@@ -432,7 +439,7 @@ export default function CompanyManagement() {
         address: editingSettings.address,
         city: editingSettings.city,
         state: editingSettings.state,
-        country: editingSettings.country,
+        country: country,
         customCountry: editingSettings.customCountry || '',
         zipCode: editingSettings.zipCode,
         phoneNumbers: editingSettings.phoneNumbers,
@@ -449,6 +456,31 @@ export default function CompanyManagement() {
   }, [editingSettings, settingsForm]);
 
   const watchShipToSameAsBillTo = clientForm.watch('shipToSameAsBillTo');
+
+  // Handle dialog close and form reset
+  const handleClientDialogClose = () => {
+    setShowClientDialog(false);
+    setEditingClient(null);
+    clientForm.reset(); // Clear form data when dialog closes
+  };
+
+  const handleSettingsDialogClose = () => {
+    setShowSettingsDialog(false);
+    setEditingSettings(null);
+    settingsForm.reset(); // Clear form data when dialog closes
+  };
+
+  const handleAddClientCompany = () => {
+    setEditingClient(null); // Ensure no editing state
+    clientForm.reset(); // Clear any previous form data
+    setShowClientDialog(true);
+  };
+
+  const handleAddCompanySettings = () => {
+    setEditingSettings(null); // Ensure no editing state
+    settingsForm.reset(); // Clear any previous form data
+    setShowSettingsDialog(true);
+  };
 
   // Logo upload function
   const handleLogoUpload = async (file: File, isSettings: boolean = false) => {
@@ -541,7 +573,7 @@ export default function CompanyManagement() {
         <TabsContent value="clients" className="space-y-4">
           <div className="flex justify-between items-center">
             <h2 className="text-xl font-semibold">Client Companies</h2>
-            <Button onClick={() => setShowClientDialog(true)}>
+            <Button onClick={handleAddClientCompany}>
               <Plus className="w-4 h-4 mr-2" />
               Add Client Company
             </Button>
@@ -645,7 +677,7 @@ export default function CompanyManagement() {
         <TabsContent value="settings" className="space-y-4">
           <div className="flex justify-between items-center">
             <h2 className="text-xl font-semibold">Company Settings</h2>
-            <Button onClick={() => setShowSettingsDialog(true)}>
+            <Button onClick={handleAddCompanySettings}>
               <Plus className="w-4 h-4 mr-2" />
               Add Company Settings
             </Button>
@@ -748,7 +780,9 @@ export default function CompanyManagement() {
       </Tabs>
 
       {/* Client Company Dialog */}
-      <Dialog open={showClientDialog} onOpenChange={setShowClientDialog}>
+      <Dialog open={showClientDialog} onOpenChange={(open) => {
+        if (!open) handleClientDialogClose();
+      }}>
         <DialogContent className="max-w-4xl max-h-[90vh] overflow-y-auto">
           <DialogHeader>
             <DialogTitle>
@@ -1037,7 +1071,7 @@ export default function CompanyManagement() {
               />
 
               <div className="flex justify-end gap-2">
-                <Button type="button" variant="outline" onClick={() => setShowClientDialog(false)}>
+                <Button type="button" variant="outline" onClick={handleClientDialogClose}>
                   Cancel
                 </Button>
                 <Button type="submit" disabled={clientMutation.isPending}>
@@ -1050,7 +1084,9 @@ export default function CompanyManagement() {
       </Dialog>
 
       {/* Company Settings Dialog */}
-      <Dialog open={showSettingsDialog} onOpenChange={setShowSettingsDialog}>
+      <Dialog open={showSettingsDialog} onOpenChange={(open) => {
+        if (!open) handleSettingsDialogClose();
+      }}>
         <DialogContent className="max-w-4xl max-h-[90vh] overflow-y-auto">
           <DialogHeader>
             <DialogTitle>
@@ -1347,7 +1383,7 @@ export default function CompanyManagement() {
               />
 
               <div className="flex justify-end gap-2">
-                <Button type="button" variant="outline" onClick={() => setShowSettingsDialog(false)}>
+                <Button type="button" variant="outline" onClick={handleSettingsDialogClose}>
                   Cancel
                 </Button>
                 <Button type="submit" disabled={settingsMutation.isPending}>

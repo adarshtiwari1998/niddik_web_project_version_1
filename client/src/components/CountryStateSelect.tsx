@@ -5,6 +5,20 @@ import { Label } from "@/components/ui/label";
 import { FormField, FormItem, FormLabel, FormControl, FormMessage } from "@/components/ui/form";
 import { Control, useFormContext } from "react-hook-form";
 
+// Helper function to detect country from state
+export const detectCountryFromState = (state: string): string => {
+  if (!state) return '';
+  
+  // Check all countries for the state
+  for (const [countryCode, states] of Object.entries(STATES_BY_COUNTRY)) {
+    if (states.some(s => s.value === state || s.label === state)) {
+      return countryCode;
+    }
+  }
+  
+  return 'Others'; // Default to Others if state not found in predefined lists
+};
+
 // Country and state data
 export const COUNTRIES = [
   { value: "US", label: "United States" },
