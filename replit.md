@@ -123,6 +123,23 @@ The application follows a standard full-stack architecture with clear separation
 
 # Recent Changes
 
+## Billing Configuration Form Reset Issue Fix and UI Enhancement (July 19, 2025)
+- **Form Reset Bug Fixed**: Resolved issue where "Add Enhanced Config" dialog retained previous edit data
+  - **Root Cause**: Dialog opening handlers did not reset form state when creating new entries
+  - **Solution**: Added dedicated handlers for opening/closing create and edit dialogs with proper form reset
+  - **New Handlers**: `handleOpenCreateDialog()`, `handleCloseCreateDialog()`, `handleCloseEditDialog()` with complete form cleanup
+  - **Result**: New billing configuration dialogs now start with completely clean forms
+- **UI Label Updates**: Enhanced user experience with better labeling and messaging
+  - **Client Company → Customer**: Changed "Client Company" label to "Customer" throughout billing configuration
+  - **Placeholder Text**: Updated dropdown placeholder from "Select client company" to "Select customer"
+  - **No Candidates Message**: Added helpful message "No hired candidates available for billing configuration" when no candidates exist
+- **Migration Completed**: Successfully migrated project from Replit Agent to standard Replit environment
+  - **All Dependencies**: Node.js packages installed and verified working
+  - **Database Connectivity**: PostgreSQL connections established with all API endpoints responding
+  - **Security Maintained**: Client/server separation and role-based access control preserved
+  - **Performance**: Application running cleanly on port 5000 without errors
+- **Files Modified**: `client/src/components/BillingConfig.tsx`, `.local/state/replit/agent/progress_tracker.md`, `replit.md`
+
 ## Billing Configuration Dialog Layout Optimization (July 19, 2025)
 - **2-Column Grid Layout**: Optimized edit billing dialog layout for better space utilization
   - **Hourly Rate & Currency**: Organized in 2-column row for compact display

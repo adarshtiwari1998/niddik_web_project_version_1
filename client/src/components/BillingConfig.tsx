@@ -568,11 +568,17 @@ export default function BillingConfig() {
                     <SelectValue placeholder="Choose a candidate" />
                   </SelectTrigger>
                   <SelectContent>
-                    {getAvailableCandidates().map((user: User) => (
-                      <SelectItem key={user.id} value={user.id.toString()}>
-                        {user.fullName} ({user.email})
-                      </SelectItem>
-                    ))}
+                    {getAvailableCandidates().length > 0 ? (
+                      getAvailableCandidates().map((user: User) => (
+                        <SelectItem key={user.id} value={user.id.toString()}>
+                          {user.fullName} ({user.email})
+                        </SelectItem>
+                      ))
+                    ) : (
+                      <div className="p-2 text-sm text-muted-foreground text-center">
+                        No hired candidates available for billing configuration
+                      </div>
+                    )}
                   </SelectContent>
                 </Select>
               </div>
@@ -691,23 +697,23 @@ export default function BillingConfig() {
                 </CardContent>
               </Card>
 
-              {/* Client Company Selection */}
+              {/* Customer Selection */}
               <Card className="bg-blue-50">
                 <CardHeader className="pb-3">
                   <CardTitle className="text-lg flex items-center gap-2">
                     <Building2 className="h-5 w-5 text-blue-600" />
-                    Client Company
+                    Customer
                   </CardTitle>
                 </CardHeader>
                 <CardContent>
                   <div>
-                    <Label htmlFor="client-company">Client Company</Label>
+                    <Label htmlFor="client-company">Customer</Label>
                     <Select 
                       value={billingData.clientCompanyId?.toString() || ''} 
                       onValueChange={handleClientCompanyChange}
                     >
                       <SelectTrigger>
-                        <SelectValue placeholder="Select client company" />
+                        <SelectValue placeholder="Select customer" />
                       </SelectTrigger>
                       <SelectContent>
                         {isLoadingClientCompanies ? (
