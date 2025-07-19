@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useMemo } from "react";
 import { useQuery, useMutation } from "@tanstack/react-query";
 import { format } from "date-fns";
 import { FileText, ExternalLink, Clock, Calendar, Briefcase, MapPin, ChevronLeft, ChevronRight } from "lucide-react";
@@ -42,8 +42,8 @@ export default function MyApplications() {
     queryClient.invalidateQueries({ queryKey: ['/api/my-applications'] });
   }, [activeTab]);
 
-  // Fetch user's job applications
-  const { data, isLoading, error } = useQuery<{ 
+  // Fetch user's job applications (without status filter - get all)
+  const { data: allApplicationsData, isLoading, error } = useQuery<{ 
     success: boolean; 
     data: ApplicationWithJob[];
     meta: {
@@ -51,18 +51,17 @@ export default function MyApplications() {
       pages: number;
     }
   }>({
-    queryKey: ['/api/my-applications', { page, status: activeTab, userId: user?.id }],
+    queryKey: ['/api/my-applications', { userId: user?.id }],
     queryFn: async () => {
       if (!user) throw new Error("User not authenticated");
 
+      // Fetch all applications without status filter
       const params = new URLSearchParams();
-      params.append("page", page.toString());
-      params.append("limit", pageSize.toString());
-      if (activeTab !== "all") params.append("status", activeTab);
+      params.append("page", "1");
+      params.append("limit", "1000"); // Get all applications
 
       const url = `/api/my-applications?${params.toString()}`;
-      console.log('🔍 Fetching applications with URL:', url);
-      console.log('📋 Active tab:', activeTab);
+      console.log('🔍 Fetching all applications:', url);
       
       const res = await fetch(url, { 
         credentials: 'include',
@@ -75,14 +74,59 @@ export default function MyApplications() {
       if (!res.ok) throw new Error("Failed to fetch applications");
       const result = await res.json();
       
-      console.log('📊 Received', result.data?.length || 0, 'applications for tab:', activeTab);
+      console.log('📊 Received', result.data?.length || 0, 'total applications');
       return result;
     },
     enabled: !!user,
     refetchOnMount: true,
-    staleTime: 0, // Always consider data stale
-    gcTime: 0, // Don't cache results
+    staleTime: 0,
+    gcTime: 0,
   });
+
+  // Frontend filtering logic
+  const filteredData = useMemo(() => {
+    if (!allApplicationsData?.data) return { data: [], meta: { total: 0, pages: 0 } };
+
+    console.log('🔄 Frontend filtering - Active tab:', activeTab);
+    console.log('📋 All applications statuses:', allApplicationsData.data.map(app => ({ id: app.id, status: app.status })));
+
+    // Filter applications based on active tab
+    let filtered = allApplicationsData.data;
+    if (activeTab !== "all") {
+      filtered = allApplicationsData.data.filter(app => {
+        console.log(`🔍 Checking app ${app.id}: status="${app.status}" vs tab="${activeTab}"`);
+        return app.status?.toLowerCase() === activeTab.toLowerCase();
+      });
+    }
+
+    console.log('✅ Filtered result:', {
+      activeTab,
+      totalApps: allApplicationsData.data.length,
+      filteredCount: filtered.length,
+      filteredIds: filtered.map(app => app.id)
+    });
+
+    // Apply pagination to filtered results
+    const total = filtered.length;
+    const startIndex = (page - 1) * pageSize;
+    const endIndex = page * pageSize;
+    const paginatedData = filtered.slice(startIndex, endIndex);
+
+    return {
+      data: paginatedData,
+      meta: {
+        total,
+        pages: Math.ceil(total / pageSize)
+      }
+    };
+  }, [allApplicationsData, activeTab, page, pageSize]);
+
+  // Use filtered data instead of raw API data
+  const data = {
+    success: true,
+    data: filteredData.data,
+    meta: filteredData.meta
+  };
 
   // Format date to a readable string
   const formatDate = (dateString: string | Date) => {
