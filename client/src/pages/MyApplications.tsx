@@ -51,7 +51,7 @@ export default function MyApplications() {
       pages: number;
     }
   }>({
-    queryKey: ['/api/my-applications', page, activeTab, user?.id],
+    queryKey: ['/api/my-applications', { page, status: activeTab, userId: user?.id }],
     queryFn: async () => {
       if (!user) throw new Error("User not authenticated");
 
@@ -61,19 +61,27 @@ export default function MyApplications() {
       if (activeTab !== "all") params.append("status", activeTab);
 
       const url = `/api/my-applications?${params.toString()}`;
-      console.log('Fetching applications with URL:', url);
-      console.log('Active tab:', activeTab);
+      console.log('🔍 Fetching applications with URL:', url);
+      console.log('📋 Active tab:', activeTab);
       
-      const res = await fetch(url, { credentials: 'include' });
+      const res = await fetch(url, { 
+        credentials: 'include',
+        cache: 'no-cache',
+        headers: {
+          'Cache-Control': 'no-cache',
+          'Pragma': 'no-cache'
+        }
+      });
       if (!res.ok) throw new Error("Failed to fetch applications");
       const result = await res.json();
       
-      console.log('Fetched applications data:', result);
+      console.log('📊 Received', result.data?.length || 0, 'applications for tab:', activeTab);
       return result;
     },
     enabled: !!user,
     refetchOnMount: true,
     staleTime: 0, // Always consider data stale
+    gcTime: 0, // Don't cache results
   });
 
   // Format date to a readable string
