@@ -1019,7 +1019,7 @@ export default function BillingConfig() {
 
             <div className="grid grid-cols-2 gap-4">
               <div>
-                <Label htmlFor="edit-client-company">Client Company</Label>
+                <Label htmlFor="edit-client-company">Customer</Label>
                 <Select 
                   value={billingData.clientCompanyId?.toString() || ''} 
                   onValueChange={(value) => {
@@ -1029,7 +1029,7 @@ export default function BillingConfig() {
                   }}
                 >
                   <SelectTrigger>
-                    <SelectValue placeholder="Select client company" />
+                    <SelectValue placeholder="Select customer" />
                   </SelectTrigger>
                   <SelectContent>
                     {isLoadingClientCompanies ? (
