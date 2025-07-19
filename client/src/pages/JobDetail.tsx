@@ -336,14 +336,12 @@ export default function JobDetail() {
             skills: user.skills || job?.skills || '', // Use user skills if available, otherwise job skills or empty string
           };
 
-          const response = await apiRequest("POST", "/api/job-applications", applicationData);
+          const response = await apiRequest("/api/job-applications", {
+            method: "POST",
+            body: JSON.stringify(applicationData),
+          });
 
-          if (!response.ok) {
-            const errorData = await response.json();
-            throw new Error(errorData.message || "Failed to submit application");
-          }
-
-          return response.json();
+          return response;
         } else {
           // No new resume, use the existing resume URL and JSON request
           const applicationData = {
@@ -353,14 +351,12 @@ export default function JobDetail() {
             skills: user.skills || job?.skills || '', // Use user skills if available, otherwise job skills or empty string
           };
 
-          const response = await apiRequest("POST", "/api/job-applications", applicationData);
+          const response = await apiRequest("/api/job-applications", {
+            method: "POST",
+            body: JSON.stringify(applicationData),
+          });
 
-          if (!response.ok) {
-            const errorData = await response.json();
-            throw new Error(errorData.message || "Failed to submit application");
-          }
-
-          return response.json();
+          return response;
         }
       } catch (error) {
         console.error("Application error:", error);
