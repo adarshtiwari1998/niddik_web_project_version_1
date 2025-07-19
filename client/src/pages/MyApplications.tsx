@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useQuery, useMutation } from "@tanstack/react-query";
 import { format } from "date-fns";
 import { FileText, ExternalLink, Clock, Calendar, Briefcase, MapPin, ChevronLeft, ChevronRight } from "lucide-react";
@@ -35,6 +35,11 @@ export default function MyApplications() {
   const [activeTab, setActiveTab] = useState<string>("all");
   const pageSize = 5;
 
+  // Reset page when activeTab changes
+  useEffect(() => {
+    setPage(1);
+  }, [activeTab]);
+
   // Fetch user's job applications
   const { data, isLoading, error } = useQuery<{ 
     success: boolean; 
@@ -53,9 +58,16 @@ export default function MyApplications() {
       params.append("limit", pageSize.toString());
       if (activeTab !== "all") params.append("status", activeTab);
 
-      const res = await fetch(`/api/my-applications?${params.toString()}`);
+      const url = `/api/my-applications?${params.toString()}`;
+      console.log('Fetching applications with URL:', url);
+      console.log('Active tab:', activeTab);
+      
+      const res = await fetch(url, { credentials: 'include' });
       if (!res.ok) throw new Error("Failed to fetch applications");
-      return res.json();
+      const result = await res.json();
+      
+      console.log('Fetched applications data:', result);
+      return result;
     },
     enabled: !!user,
   });
