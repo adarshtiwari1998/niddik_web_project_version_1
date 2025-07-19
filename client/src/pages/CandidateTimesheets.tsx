@@ -175,15 +175,15 @@ export default function CandidateTimesheets() {
   // Populate form when existing timesheet data is loaded or when week changes
   useEffect(() => {
     if (weekTimesheet?.data) {
-      // Populate form with existing data
+      // Populate form with original total hours (regular + overtime) that user entered
       setNewTimesheet({
-        mondayHours: parseFloat(weekTimesheet.data.mondayHours) || 0,
-        tuesdayHours: parseFloat(weekTimesheet.data.tuesdayHours) || 0,
-        wednesdayHours: parseFloat(weekTimesheet.data.wednesdayHours) || 0,
-        thursdayHours: parseFloat(weekTimesheet.data.thursdayHours) || 0,
-        fridayHours: parseFloat(weekTimesheet.data.fridayHours) || 0,
-        saturdayHours: parseFloat(weekTimesheet.data.saturdayHours) || 0,
-        sundayHours: parseFloat(weekTimesheet.data.sundayHours) || 0
+        mondayHours: (parseFloat(weekTimesheet.data.mondayHours) || 0) + (parseFloat(weekTimesheet.data.mondayOvertime) || 0),
+        tuesdayHours: (parseFloat(weekTimesheet.data.tuesdayHours) || 0) + (parseFloat(weekTimesheet.data.tuesdayOvertime) || 0),
+        wednesdayHours: (parseFloat(weekTimesheet.data.wednesdayHours) || 0) + (parseFloat(weekTimesheet.data.wednesdayOvertime) || 0),
+        thursdayHours: (parseFloat(weekTimesheet.data.thursdayHours) || 0) + (parseFloat(weekTimesheet.data.thursdayOvertime) || 0),
+        fridayHours: (parseFloat(weekTimesheet.data.fridayHours) || 0) + (parseFloat(weekTimesheet.data.fridayOvertime) || 0),
+        saturdayHours: (parseFloat(weekTimesheet.data.saturdayHours) || 0) + (parseFloat(weekTimesheet.data.saturdayOvertime) || 0),
+        sundayHours: (parseFloat(weekTimesheet.data.sundayHours) || 0) + (parseFloat(weekTimesheet.data.sundayOvertime) || 0)
       });
     } else {
       // Reset form when no timesheet exists for the selected week
