@@ -3799,7 +3799,7 @@ ${allUrls.map(url => `  <url>
         submittedAt: new Date()
       };
 
-      const timesheet = await storage.createWeeklyTimesheetWithOvertimeCalculation(timesheetData, validatedData.candidateId);
+      const timesheet = await storage.createWeeklyTimesheetWithAdvancedOvertimeCalculation(timesheetData, validatedData.candidateId);
 
       res.status(201).json({ success: true, data: timesheet });
     } catch (error) {
@@ -3843,31 +3843,8 @@ ${allUrls.map(url => `  <url>
         }
       }
 
-      // Recalculate totals if hours are being updated
-      if (validatedData.mondayHours !== undefined || 
-          validatedData.tuesdayHours !== undefined || 
-          validatedData.wednesdayHours !== undefined || 
-          validatedData.thursdayHours !== undefined || 
-          validatedData.fridayHours !== undefined || 
-          validatedData.saturdayHours !== undefined || 
-          validatedData.sundayHours !== undefined) {
-        
-        const billing = await storage.getCandidateBilling(existingTimesheet.candidateId);
-        if (billing) {
-          const totalHours = (validatedData.mondayHours ?? (existingTimesheet.mondayHours || 0)) + 
-                            (validatedData.tuesdayHours ?? (existingTimesheet.tuesdayHours || 0)) + 
-                            (validatedData.wednesdayHours ?? (existingTimesheet.wednesdayHours || 0)) + 
-                            (validatedData.thursdayHours ?? (existingTimesheet.thursdayHours || 0)) + 
-                            (validatedData.fridayHours ?? (existingTimesheet.fridayHours || 0)) + 
-                            (validatedData.saturdayHours ?? (existingTimesheet.saturdayHours || 0)) + 
-                            (validatedData.sundayHours ?? (existingTimesheet.sundayHours || 0));
-
-          validatedData.totalWeeklyHours = totalHours;
-          validatedData.totalWeeklyAmount = totalHours * billing.hourlyRate;
-        }
-      }
-
-      const timesheet = await storage.updateWeeklyTimesheet(timesheetId, validatedData);
+      // Use advanced overtime recalculation if hours are being updated
+      const timesheet = await storage.updateWeeklyTimesheetWithOvertimeRecalculation(timesheetId, validatedData);
       
       if (!timesheet) {
         return res.status(404).json({ success: false, message: "Timesheet not found" });

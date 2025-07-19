@@ -2012,7 +2012,12 @@ function WeeklyTableView({ timesheets, onApprove, onReject, onEdit, onDelete, ge
                   {displayDays.map((row, index) => {
                     const isEditing = editingTimesheet === timesheet.id;
                     const fieldName = `${row.key}Hours`;
-                    const currentValue = isEditing ? (editData[fieldName] || 0) : (parseFloat(row.hours) || 0);
+                    const overtimeFieldName = `${row.key}Overtime`;
+                    
+                    // Get regular and overtime hours from timesheet data
+                    const regularHours = isEditing ? (editData[fieldName] || 0) : (parseFloat(row.hours) || 0);
+                    const overtimeHours = parseFloat(timesheet[overtimeFieldName] || '0');
+                    const totalDayHours = regularHours + overtimeHours;
                     
                     return (
                       <tr key={row.key} className={index % 2 === 0 ? 'bg-white' : 'bg-gray-50'}>
@@ -2024,7 +2029,7 @@ function WeeklyTableView({ timesheets, onApprove, onReject, onEdit, onDelete, ge
                               step="0.01"
                               min="0"
                               max="24"
-                              value={currentValue}
+                              value={regularHours}
                               onChange={(e) => {
                                 const value = Math.max(0, Math.min(24, parseFloat(e.target.value) || 0));
                                 setEditData(prev => ({ ...prev, [fieldName]: value }));
@@ -2032,10 +2037,12 @@ function WeeklyTableView({ timesheets, onApprove, onReject, onEdit, onDelete, ge
                               className="w-20 text-center"
                             />
                           ) : (
-                            (parseFloat(currentValue) || 0).toFixed(2)
+                            (parseFloat(regularHours) || 0).toFixed(2)
                           )}
                         </td>
-                        <td className="p-3 text-center border-r">0.00</td>
+                        <td className="p-3 text-center border-r bg-yellow-50">
+                          {(parseFloat(overtimeHours) || 0).toFixed(2)}
+                        </td>
                         {isFullTime && (
                           <>
                             <td className="p-3 text-center border-r bg-green-50">0.00</td>
@@ -2043,7 +2050,7 @@ function WeeklyTableView({ timesheets, onApprove, onReject, onEdit, onDelete, ge
                             <td className="p-3 text-center border-r bg-green-50">0.00</td>
                           </>
                         )}
-                        <td className="p-3 text-center font-medium bg-gray-100">{(parseFloat(currentValue) || 0).toFixed(2)}</td>
+                        <td className="p-3 text-center font-medium bg-gray-100">{totalDayHours.toFixed(2)}</td>
                       </tr>
                     );
                   })}
@@ -2054,10 +2061,12 @@ function WeeklyTableView({ timesheets, onApprove, onReject, onEdit, onDelete, ge
                     <td className="p-3 text-center border-r">
                       {editingTimesheet === timesheet.id 
                         ? Object.values(editData).reduce((sum: number, hours: any) => sum + (parseFloat(hours) || 0), 0).toFixed(2)
-                        : (parseFloat(timesheet.totalWeeklyHours) || 0).toFixed(2)
+                        : (parseFloat(timesheet.totalWeeklyHours) - parseFloat(timesheet.totalOvertimeHours || '0')).toFixed(2)
                       }
                     </td>
-                    <td className="p-3 text-center border-r">0.00</td>
+                    <td className="p-3 text-center border-r bg-yellow-100">
+                      {(parseFloat(timesheet.totalOvertimeHours || '0')).toFixed(2)}
+                    </td>
                     {isFullTime && (
                       <>
                         <td className="p-3 text-center border-r">0.00</td>
@@ -2066,18 +2075,19 @@ function WeeklyTableView({ timesheets, onApprove, onReject, onEdit, onDelete, ge
                       </>
                     )}
                     <td className="p-3 text-center bg-gray-200">
-                      {editingTimesheet === timesheet.id 
-                        ? Object.values(editData).reduce((sum: number, hours: any) => sum + (parseFloat(hours) || 0), 0).toFixed(2)
-                        : (parseFloat(timesheet.totalWeeklyHours) || 0).toFixed(2)
-                      }
+                      {(parseFloat(timesheet.totalWeeklyHours) || 0).toFixed(2)}
                     </td>
                   </tr>
 
                   {/* Rate Row */}
                   <tr className="bg-gray-50">
                     <td className="p-3 border-r font-medium">Rate/Hour:</td>
-                    <td className="p-3 text-center border-r">INR {((parseFloat(timesheet.totalWeeklyAmount || '0') / (parseFloat(timesheet.totalWeeklyHours) || 1)) || 0).toFixed(2)}</td>
-                    <td className="p-3 text-center border-r">INR 0.00</td>
+                    <td className="p-3 text-center border-r">
+                      INR {billingConfig?.hourlyRate ? parseFloat(billingConfig.hourlyRate).toFixed(2) : '0.00'}
+                    </td>
+                    <td className="p-3 text-center border-r bg-yellow-50">
+                      INR {billingConfig?.hourlyRate ? parseFloat(billingConfig.hourlyRate).toFixed(2) : '0.00'}
+                    </td>
                     {isFullTime && (
                       <>
                         <td className="p-3 text-center border-r">INR 0.00</td>
@@ -2091,8 +2101,12 @@ function WeeklyTableView({ timesheets, onApprove, onReject, onEdit, onDelete, ge
                   {/* Pay Row */}
                   <tr className="bg-white">
                     <td className="p-3 border-r font-medium">Total Pay:</td>
-                    <td className="p-3 text-center border-r">INR {parseFloat(timesheet.totalWeeklyAmount || '0').toFixed(2)}</td>
-                    <td className="p-3 text-center border-r">INR 0.00</td>
+                    <td className="p-3 text-center border-r">
+                      INR {(parseFloat(timesheet.totalRegularAmount || '0')).toFixed(2)}
+                    </td>
+                    <td className="p-3 text-center border-r bg-yellow-50">
+                      INR {(parseFloat(timesheet.totalOvertimeAmount || '0')).toFixed(2)}
+                    </td>
                     {isFullTime && (
                       <>
                         <td className="p-3 text-center border-r">INR 0.00</td>
