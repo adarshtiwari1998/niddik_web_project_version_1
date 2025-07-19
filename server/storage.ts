@@ -1409,6 +1409,85 @@ async updateSeoPage(id: number, data: Partial<InsertSeoPage>): Promise<SeoPage |
   },
 
   // Weekly Timesheets Methods
+  // Helper function to calculate overtime hours and amounts
+  calculateOvertimeDetails(
+    dailyHours: number, 
+    dailyLimit: number, 
+    regularRate: number, 
+    overtimeRate: number
+  ): { regularHours: number; overtimeHours: number; regularAmount: number; overtimeAmount: number } {
+    if (dailyHours <= dailyLimit) {
+      return {
+        regularHours: dailyHours,
+        overtimeHours: 0,
+        regularAmount: dailyHours * regularRate,
+        overtimeAmount: 0
+      };
+    }
+    
+    const regularHours = dailyLimit;
+    const overtimeHours = dailyHours - dailyLimit;
+    const regularAmount = regularHours * regularRate;
+    const overtimeAmount = overtimeHours * overtimeRate;
+    
+    return { regularHours, overtimeHours, regularAmount, overtimeAmount };
+  },
+
+  async createWeeklyTimesheetWithOvertimeCalculation(data: InsertWeeklyTimesheet, candidateId: number): Promise<WeeklyTimesheet> {
+    // Get candidate billing configuration
+    const billingConfig = await this.getCandidateBilling(candidateId);
+    if (!billingConfig) {
+      throw new Error('Billing configuration not found for candidate');
+    }
+
+    const regularRate = parseFloat(billingConfig.hourlyRate.toString());
+    const overtimeRate = parseFloat(billingConfig.overtimeRate.toString());
+    const workingHours = billingConfig.workingHoursPerWeek || 40;
+    const workingDays = billingConfig.workingDaysPerWeek || 5;
+    
+    // Calculate daily hour limit (weekly hours ÷ working days)
+    const dailyLimit = workingHours / workingDays;
+
+    // Calculate overtime for each day
+    const days = ['monday', 'tuesday', 'wednesday', 'thursday', 'friday', 'saturday', 'sunday'];
+    let totalRegularHours = 0;
+    let totalOvertimeHours = 0;
+    let totalRegularAmount = 0;
+    let totalOvertimeAmount = 0;
+
+    const processedData = { ...data };
+
+    days.forEach((day) => {
+      const hoursKey = `${day}Hours` as keyof typeof data;
+      const overtimeKey = `${day}Overtime` as keyof typeof processedData;
+      const dailyHours = parseFloat(data[hoursKey]?.toString() || '0');
+
+      // Calculate overtime for this day
+      const overtimeDetails = this.calculateOvertimeDetails(dailyHours, dailyLimit, regularRate, overtimeRate);
+
+      // Update the data object with regular and overtime hours
+      processedData[hoursKey] = overtimeDetails.regularHours.toString() as any;
+      processedData[overtimeKey] = overtimeDetails.overtimeHours.toString() as any;
+
+      // Add to totals
+      totalRegularHours += overtimeDetails.regularHours;
+      totalOvertimeHours += overtimeDetails.overtimeHours;
+      totalRegularAmount += overtimeDetails.regularAmount;
+      totalOvertimeAmount += overtimeDetails.overtimeAmount;
+    });
+
+    // Calculate totals
+    const totalWeeklyHours = totalRegularHours + totalOvertimeHours;
+    const totalWeeklyAmount = totalRegularAmount + totalOvertimeAmount;
+
+    // Add calculated totals to the data
+    processedData.totalWeeklyHours = totalWeeklyHours.toString() as any;
+    processedData.totalWeeklyAmount = totalWeeklyAmount.toString() as any;
+
+    const [timesheet] = await db.insert(weeklyTimesheets).values(processedData).returning();
+    return timesheet;
+  },
+
   async createWeeklyTimesheet(data: InsertWeeklyTimesheet): Promise<WeeklyTimesheet> {
     const [timesheet] = await db.insert(weeklyTimesheets).values(data).returning();
     return timesheet;

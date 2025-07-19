@@ -3791,17 +3791,15 @@ ${allUrls.map(url => `  <url>
                         (validatedData.saturdayHours || 0) + 
                         (validatedData.sundayHours || 0);
 
-      const totalAmount = totalHours * billing.hourlyRate;
-
+      // Use the new overtime calculation method
       const timesheetData = {
         ...validatedData,
-        totalWeeklyHours: totalHours,
-        totalWeeklyAmount: totalAmount,
+        candidateId: validatedData.candidateId,
         status: 'submitted',
         submittedAt: new Date()
       };
 
-      const timesheet = await storage.createWeeklyTimesheet(timesheetData);
+      const timesheet = await storage.createWeeklyTimesheetWithOvertimeCalculation(timesheetData, validatedData.candidateId);
 
       res.status(201).json({ success: true, data: timesheet });
     } catch (error) {
