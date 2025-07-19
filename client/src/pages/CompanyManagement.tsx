@@ -11,7 +11,7 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { useToast } from "@/hooks/use-toast";
 import { Plus, Edit, Trash2, Building, Settings, Phone, Mail, MapPin, Search, Eye, EyeOff, ArrowLeft, Upload, X } from 'lucide-react';
-import { CountryStateSelect, detectCountryFromState } from '@/components/CountryStateSelect';
+import { CountryStateSelect, detectCountryFromState, COUNTRIES } from '@/components/CountryStateSelect';
 import { Link } from 'wouter';
 import { apiRequest } from '@/lib/queryClient';
 import { z } from 'zod';
@@ -119,6 +119,12 @@ const companySettingsSchema = z.object({
 
 type ClientCompanyForm = z.infer<typeof clientCompanySchema>;
 type CompanySettingsForm = z.infer<typeof companySettingsSchema>;
+
+// Helper function to get country name from country code
+const getCountryName = (countryCode: string): string => {
+  const country = COUNTRIES.find(c => c.value === countryCode);
+  return country ? country.label : countryCode;
+};
 
 // Array input helper component
 const ArrayInput = ({ 
@@ -715,7 +721,7 @@ export default function CompanyManagement() {
                   <CardContent className="space-y-3">
                     <div className="flex items-center gap-2 text-sm text-muted-foreground">
                       <MapPin className="w-4 h-4" />
-                      <span>{company.billToCity}, {company.billToState}, {company.billToCountry}</span>
+                      <span>{company.billToCity}, {company.billToState}, {getCountryName(company.billToCountry)}</span>
                     </div>
                     {company.phoneNumbers.length > 0 && (
                       <div className="flex items-center gap-2 text-sm">
@@ -816,7 +822,7 @@ export default function CompanyManagement() {
                   <CardContent className="space-y-3">
                     <div className="flex items-center gap-2 text-sm text-muted-foreground">
                       <MapPin className="w-4 h-4" />
-                      <span>{settings.city}, {settings.state}, {settings.country}</span>
+                      <span>{settings.city}, {settings.state}, {getCountryName(settings.country)}</span>
                     </div>
                     {settings.phoneNumbers.length > 0 && (
                       <div className="flex items-center gap-2 text-sm">
