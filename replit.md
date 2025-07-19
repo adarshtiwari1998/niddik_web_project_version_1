@@ -152,6 +152,26 @@ The application follows a standard full-stack architecture with clear separation
   - **Visual Clarity**: Clear labeling helps international users understand field purpose
 - **Files Modified**: `client/src/components/CountryStateSelect.tsx`, `client/src/pages/CompanyManagement.tsx`, `replit.md`
 
+## Company Management Form Reset and Country Selection Fixes (July 19, 2025)
+- **Fixed Country Dropdown Selection**: Resolved issue where country dropdown wasn't showing selected value during edit mode
+  - **Root Cause**: Country field wasn't properly populated when editing existing companies
+  - **Solution**: Enhanced form population logic in useEffect to ensure country values are properly set
+  - **Country Detection**: Improved auto-detection of countries from state values using detectCountryFromState function
+- **Fixed Form Reset Issues**: Resolved problem where "Add New Company" form showed data from previous edit operations
+  - **Enhanced Reset Handlers**: Updated handleAddClientCompany and handleAddCompanySettings to explicitly reset all form fields
+  - **Dialog Close Handlers**: Improved handleClientDialogClose and handleSettingsDialogClose to properly clear form state
+  - **Default Values**: Ensured all form fields reset to proper default values including empty strings and default booleans
+- **Improved Edit Handlers**: Created dedicated handleEditClient and handleEditSettings functions for better form management
+  - **Separation of Concerns**: Edit and add operations now use distinct handlers for cleaner state management
+  - **Button Updates**: Updated all edit button click handlers to use new dedicated functions
+- **Form State Management**: Enhanced React Hook Form integration for proper form state handling
+  - **Explicit Reset**: Form reset now uses explicit default values instead of relying on schema defaults
+  - **State Isolation**: Edit and add operations maintain separate state to prevent data leakage
+- **Migration Successfully Completed**: Full migration from Replit Agent to standard Replit environment completed
+  - **All Features Working**: Company management, form handling, and database operations functioning properly
+  - **Security Maintained**: Client/server separation and authentication systems preserved
+- **Files Modified**: `client/src/pages/CompanyManagement.tsx`, `replit.md`
+
 ## Column Visibility Control and Enhanced Filter Functionality (July 15, 2025)
 - **Column Visibility Control**: Implemented customizable column visibility for submitted candidates table
   - **Admin Control**: Added "Columns" button with settings icon in Sort & Display section

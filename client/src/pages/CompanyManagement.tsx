@@ -461,24 +461,112 @@ export default function CompanyManagement() {
   const handleClientDialogClose = () => {
     setShowClientDialog(false);
     setEditingClient(null);
-    clientForm.reset(); // Clear form data when dialog closes
+    clientForm.reset({
+      name: '',
+      logoUrl: '',
+      contactPerson: '',
+      billToAddress: '',
+      billToCity: '',
+      billToState: '',
+      billToCountry: '',
+      billToCustomCountry: '',
+      billToZipCode: '',
+      shipToSameAsBillTo: true,
+      shipToAddress: '',
+      shipToCity: '',
+      shipToState: '',
+      shipToCountry: '',
+      shipToCustomCountry: '',
+      shipToZipCode: '',
+      phoneNumbers: [],
+      emailAddresses: [],
+      isActive: true,
+    }); // Clear form data when dialog closes
   };
 
   const handleSettingsDialogClose = () => {
     setShowSettingsDialog(false);
     setEditingSettings(null);
-    settingsForm.reset(); // Clear form data when dialog closes
+    settingsForm.reset({
+      name: '',
+      logoUrl: '',
+      tagline: '',
+      address: '',
+      city: '',
+      state: '',
+      country: '',
+      customCountry: '',
+      zipCode: '',
+      phoneNumbers: [],
+      emailAddresses: [],
+      website: '',
+      taxId: '',
+      gstNumber: '',
+      bankName: '',
+      accountNumber: '',
+      routingNumber: '',
+      isDefault: false,
+    }); // Clear form data when dialog closes
   };
 
   const handleAddClientCompany = () => {
     setEditingClient(null); // Ensure no editing state
-    clientForm.reset(); // Clear any previous form data
+    clientForm.reset({
+      name: '',
+      logoUrl: '',
+      contactPerson: '',
+      billToAddress: '',
+      billToCity: '',
+      billToState: '',
+      billToCountry: '',
+      billToCustomCountry: '',
+      billToZipCode: '',
+      shipToSameAsBillTo: true,
+      shipToAddress: '',
+      shipToCity: '',
+      shipToState: '',
+      shipToCountry: '',
+      shipToCustomCountry: '',
+      shipToZipCode: '',
+      phoneNumbers: [],
+      emailAddresses: [],
+      isActive: true,
+    }); // Clear any previous form data
     setShowClientDialog(true);
   };
 
   const handleAddCompanySettings = () => {
     setEditingSettings(null); // Ensure no editing state
-    settingsForm.reset(); // Clear any previous form data
+    settingsForm.reset({
+      name: '',
+      logoUrl: '',
+      tagline: '',
+      address: '',
+      city: '',
+      state: '',
+      country: '',
+      customCountry: '',
+      zipCode: '',
+      phoneNumbers: [],
+      emailAddresses: [],
+      website: '',
+      taxId: '',
+      gstNumber: '',
+      bankName: '',
+      accountNumber: '',
+      routingNumber: '',
+      isDefault: false,
+    }); // Clear any previous form data
+    setShowSettingsDialog(true);
+  };
+
+  const handleEditClient = (company: ClientCompany) => {
+    setEditingClient(company);
+    setShowClientDialog(true);
+  };
+
+  const handleEditSettings = (settings: CompanySettings) => {
+    setEditingSettings(settings);
     setShowSettingsDialog(true);
   };
 
@@ -645,10 +733,7 @@ export default function CompanyManagement() {
                       <Button
                         variant="outline"
                         size="sm"
-                        onClick={() => {
-                          setEditingClient(company);
-                          setShowClientDialog(true);
-                        }}
+                        onClick={() => handleEditClient(company)}
                       >
                         <Edit className="w-4 h-4 mr-2" />
                         Edit
@@ -749,10 +834,7 @@ export default function CompanyManagement() {
                       <Button
                         variant="outline"
                         size="sm"
-                        onClick={() => {
-                          setEditingSettings(settings);
-                          setShowSettingsDialog(true);
-                        }}
+                        onClick={() => handleEditSettings(settings)}
                       >
                         <Edit className="w-4 h-4 mr-2" />
                         Edit
