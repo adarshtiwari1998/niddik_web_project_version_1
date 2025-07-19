@@ -136,6 +136,23 @@ The application follows a standard full-stack architecture with clear separation
 - **Result**: SCADEA now correctly shows no end users, while Capwave AI correctly shows DataNova
 - **Files Modified**: `server/storage.ts`, `replit.md`
 
+## End User Dropdown Matching Algorithm Fixed in Billing Configuration (July 19, 2025)
+- **Fixed End User Data Extraction Bug**: Resolved incorrect end user population in timesheets billing configuration
+  - **Root Cause**: End user extraction algorithm was incorrectly matching company names and showing DataNova for SCADEA
+  - **Database Analysis**: Submitted candidates table contains entries like "Capwave AI/DataNova" (with end users) and "SCADEA" (without end users)
+  - **Algorithm Enhancement**: Improved matching logic in `getEndUsersFromSubmittedCandidates` function to be more precise
+  - **Exact Matching**: Now requires exact company name matches or specific predefined variations instead of loose substring matching
+  - **Cache Invalidation**: Added proper React Query cache invalidation when client company selection changes
+- **Frontend Improvements**: Enhanced BillingConfig component with better state management
+  - **Company Change Handler**: Added dedicated `handleClientCompanyChange` function with proper cache management
+  - **State Reset**: End user selection now properly resets when client company changes
+  - **Real-time Updates**: End user dropdown now immediately reflects correct data when company selection changes
+- **API Verification**: Confirmed API endpoints now return correct data
+  - **SCADEA SOFTWARE SOLUTIONS INC.**: Returns empty array `[]` as expected (no end users)
+  - **Capwave AI/DataNova**: Returns `["DataNova"]` correctly when selected
+  - **WIMMER SOLUTIONS**: Returns `["Weyerhaeuser", "LifeSpace", "Microsoft HQ", "Nordstrom"]` correctly
+- **Files Modified**: `server/storage.ts`, `client/src/components/BillingConfig.tsx`, `replit.md`
+
 ## Easy Apply Functionality Added to Candidate Dashboard (July 19, 2025)
 - **Dashboard Enhancement**: Extended Easy Apply functionality from JobDetail page to candidate dashboard Recent Job Listings section
   - **Easy Apply Buttons**: Added "Easy Apply" buttons to each job listing in Recent Job Listings section

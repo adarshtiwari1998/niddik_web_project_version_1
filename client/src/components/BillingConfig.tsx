@@ -174,6 +174,35 @@ export default function BillingConfig() {
     };
   }
 
+  // Handle client company selection change
+  function handleClientCompanyChange(value: string) {
+    const newClientCompanyId = parseInt(value);
+    const previousCompanyName = getSelectedClientCompanyName();
+    
+    setBillingData(prev => ({ 
+      ...prev, 
+      clientCompanyId: newClientCompanyId,
+      endUserId: undefined // Reset end user when company changes
+    }));
+    
+    // Invalidate the previous company's end users cache
+    if (previousCompanyName) {
+      queryClient.invalidateQueries({ 
+        queryKey: [`/api/admin/end-users/from-candidates/${previousCompanyName}`] 
+      });
+    }
+    
+    // Invalidate the new company's end users cache after a brief delay to ensure state has updated
+    setTimeout(() => {
+      const newCompanyName = clientCompanies?.data?.companies?.find(c => c.id === newClientCompanyId)?.name;
+      if (newCompanyName) {
+        queryClient.invalidateQueries({ 
+          queryKey: [`/api/admin/end-users/from-candidates/${newCompanyName}`] 
+        });
+      }
+    }, 100);
+  }
+
   // Handle end user selection
   function handleEndUserSelection(value: string) {
     if (value === 'create-new') {
@@ -642,7 +671,7 @@ export default function BillingConfig() {
                     <Label htmlFor="client-company">Client Company</Label>
                     <Select 
                       value={billingData.clientCompanyId?.toString() || ''} 
-                      onValueChange={(value) => setBillingData(prev => ({ ...prev, clientCompanyId: parseInt(value) }))}
+                      onValueChange={handleClientCompanyChange}
                     >
                       <SelectTrigger>
                         <SelectValue placeholder="Select client company" />
