@@ -123,6 +123,20 @@ The application follows a standard full-stack architecture with clear separation
 
 # Recent Changes
 
+## Easy Apply Functionality Added to Candidate Dashboard (July 19, 2025)
+- **Dashboard Enhancement**: Extended Easy Apply functionality from JobDetail page to candidate dashboard Recent Job Listings section
+  - **Easy Apply Buttons**: Added "Easy Apply" buttons to each job listing in Recent Job Listings section
+  - **Application Status Checking**: Implemented application status detection showing "Applied [date]" badge for jobs already applied to
+  - **Complete Integration**: Full Easy Apply dialog with PDF resume upload, cover letter form, and drag-and-drop functionality
+  - **Identical UX**: Same professional application experience as JobDetail page with form validation and error handling
+  - **Real-time Updates**: Automatic React Query cache invalidation after successful application submission
+- **User Experience Enhancement**: Candidates can now apply to jobs directly from dashboard without navigating to individual job pages
+  - **Visual Indicators**: Clear distinction between available jobs (Easy Apply button) and applied jobs (Applied badge with date)
+  - **Streamlined Workflow**: Reduced clicks and navigation for job applications from dashboard
+  - **Consistent Interface**: Maintained design consistency with existing Easy Apply implementation
+- **Technical Implementation**: Complete state management, mutation handling, file upload validation, and form submission logic
+- **Files Modified**: `client/src/pages/CandidateDashboard.tsx`, `replit.md`
+
 ## Easy Apply JSON Error Fix and Migration Completion (July 19, 2025)
 - **Migration Completed**: Successfully migrated job portal application from Replit Agent to standard Replit environment
   - **Package Verification**: All Node.js dependencies verified and working correctly
