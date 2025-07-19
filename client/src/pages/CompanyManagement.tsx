@@ -266,6 +266,7 @@ export default function CompanyManagement() {
       shipToCustomCountry: '',
       shipToZipCode: '',
       phoneNumbers: [],
+      mainOfficeNumbers: [],
       emailAddresses: [],
       isActive: true,
     },
@@ -279,7 +280,7 @@ export default function CompanyManagement() {
       logoUrl: '',
       signatureUrl: '',
       tagline: '',
-      mainOffice: '',
+      mainOfficeNumbers: [],
       address: '',
       city: '',
       state: '',
@@ -434,6 +435,7 @@ export default function CompanyManagement() {
         shipToCustomCountry: editingClient.shipToCustomCountry || '',
         shipToZipCode: editingClient.shipToZipCode || '',
         phoneNumbers: editingClient.phoneNumbers,
+        mainOfficeNumbers: editingClient.mainOfficeNumbers || [],
         emailAddresses: editingClient.emailAddresses,
         isActive: editingClient.isActive,
       });
@@ -450,7 +452,7 @@ export default function CompanyManagement() {
         logoUrl: editingSettings.logoUrl || '',
         signatureUrl: editingSettings.signatureUrl || '',
         tagline: editingSettings.tagline || '',
-        mainOffice: editingSettings.mainOffice || '',
+        mainOfficeNumbers: editingSettings.mainOfficeNumbers || [],
         address: editingSettings.address,
         city: editingSettings.city,
         state: editingSettings.state,
@@ -494,6 +496,7 @@ export default function CompanyManagement() {
       shipToCustomCountry: '',
       shipToZipCode: '',
       phoneNumbers: [],
+      mainOfficeNumbers: [],
       emailAddresses: [],
       isActive: true,
     }); // Clear form data when dialog closes
@@ -507,7 +510,7 @@ export default function CompanyManagement() {
       logoUrl: '',
       signatureUrl: '',
       tagline: '',
-      mainOffice: '',
+      mainOfficeNumbers: [],
       address: '',
       city: '',
       state: '',
@@ -546,6 +549,7 @@ export default function CompanyManagement() {
       shipToCustomCountry: '',
       shipToZipCode: '',
       phoneNumbers: [],
+      mainOfficeNumbers: [],
       emailAddresses: [],
       isActive: true,
     }); // Clear any previous form data
@@ -559,7 +563,7 @@ export default function CompanyManagement() {
       logoUrl: '',
       signatureUrl: '',
       tagline: '',
-      mainOffice: '',
+      mainOfficeNumbers: [],
       address: '',
       city: '',
       state: '',
@@ -1153,7 +1157,7 @@ export default function CompanyManagement() {
                 )}
               </div>
 
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
                 <FormField
                   control={clientForm.control}
                   name="phoneNumbers"
@@ -1164,6 +1168,22 @@ export default function CompanyManagement() {
                         value={field.value}
                         onChange={field.onChange}
                         placeholder="Enter phone number"
+                        type="tel"
+                      />
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+                <FormField
+                  control={clientForm.control}
+                  name="mainOfficeNumbers"
+                  render={({ field }) => (
+                    <FormItem>
+                      <ArrayInput
+                        label="Main/Office No"
+                        value={field.value}
+                        onChange={field.onChange}
+                        placeholder="Enter main/office number"
                         type="tel"
                       />
                       <FormMessage />
@@ -1457,13 +1477,16 @@ export default function CompanyManagement() {
                 />
                 <FormField
                   control={settingsForm.control}
-                  name="mainOffice"
+                  name="mainOfficeNumbers"
                   render={({ field }) => (
                     <FormItem>
-                      <FormLabel>Main/Office</FormLabel>
-                      <FormControl>
-                        <Input {...field} placeholder="Enter main office location" />
-                      </FormControl>
+                      <ArrayInput
+                        label="Main/Office No"
+                        value={field.value}
+                        onChange={field.onChange}
+                        placeholder="Enter main/office number"
+                        type="tel"
+                      />
                       <FormMessage />
                     </FormItem>
                   )}

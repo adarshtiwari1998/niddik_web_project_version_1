@@ -659,6 +659,7 @@ export const clientCompanies = pgTable("client_companies", {
   
   // Contact Information
   phoneNumbers: text("phone_numbers").array().default([]), // Array of phone numbers
+  mainOfficeNumbers: text("main_office_numbers").array().default([]), // Array of main/office phone numbers
   emailAddresses: text("email_addresses").array().default([]), // Array of email addresses
   
   isActive: boolean("is_active").default(true),
@@ -676,6 +677,7 @@ export const clientCompanySchema = createInsertSchema(clientCompanies, {
   billToCustomCountry: (schema) => schema.optional(),
   billToZipCode: (schema) => schema.min(1, "Bill to zip code is required"),
   phoneNumbers: z.array(z.string().min(1, "Phone number required")).min(1, "At least one phone number required"),
+  mainOfficeNumbers: z.array(z.string().min(1, "Main/Office number required")).optional(),
   emailAddresses: z.array(z.string().email("Valid email required")).min(1, "At least one email address required"),
 }).omit({ id: true, createdAt: true, updatedAt: true });
 
@@ -700,6 +702,7 @@ export const companySettings = pgTable("company_settings", {
   
   // Contact Information
   phoneNumbers: text("phone_numbers").array().default([]), // Array of phone numbers
+  mainOfficeNumbers: text("main_office_numbers").array().default([]), // Array of main/office phone numbers
   emailAddresses: text("email_addresses").array().default([]), // Array of email addresses
   website: text("website"),
   
@@ -727,6 +730,7 @@ export const companySettingsSchema = createInsertSchema(companySettings, {
   customCountry: (schema) => schema.optional(),
   zipCode: (schema) => schema.min(1, "Zip code is required"),
   phoneNumbers: z.array(z.string().min(1, "Phone number required")).min(1, "At least one phone number required"),
+  mainOfficeNumbers: z.array(z.string().min(1, "Main/Office number required")).optional(),
   emailAddresses: z.array(z.string().email("Valid email required")).min(1, "At least one email address required"),
 }).omit({ id: true, createdAt: true, updatedAt: true });
 
