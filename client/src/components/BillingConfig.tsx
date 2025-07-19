@@ -492,6 +492,31 @@ export default function BillingConfig() {
     setIsEditDialogOpen(true);
   };
 
+  // Handle opening create new dialog with form reset
+  const handleOpenCreateDialog = () => {
+    resetBillingForm();
+    setSelectedCandidate(null);
+    setIsDialogOpen(true);
+  };
+
+  // Handle closing create dialog with cleanup
+  const handleCloseCreateDialog = (open: boolean) => {
+    setIsDialogOpen(open);
+    if (!open) {
+      resetBillingForm();
+      setSelectedCandidate(null);
+    }
+  };
+
+  // Handle closing edit dialog with cleanup
+  const handleCloseEditDialog = (open: boolean) => {
+    setIsEditDialogOpen(open);
+    if (!open) {
+      setEditingBilling(null);
+      resetBillingForm();
+    }
+  };
+
   const handleDelete = (candidateId: number) => {
     deleteBillingMutation.mutate(candidateId);
   };
@@ -517,9 +542,9 @@ export default function BillingConfig() {
           </p>
         </div>
         
-        <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
+        <Dialog open={isDialogOpen} onOpenChange={handleCloseCreateDialog}>
           <DialogTrigger asChild>
-            <Button>
+            <Button onClick={handleOpenCreateDialog}>
               <Plus className="w-4 h-4 mr-2" />
               Add Enhanced Config
             </Button>
@@ -883,7 +908,7 @@ export default function BillingConfig() {
       </div>
 
       {/* Edit Dialog */}
-      <Dialog open={isEditDialogOpen} onOpenChange={setIsEditDialogOpen}>
+      <Dialog open={isEditDialogOpen} onOpenChange={handleCloseEditDialog}>
         <DialogContent className="sm:max-w-4xl max-h-[90vh] overflow-y-auto">
           <DialogHeader>
             <DialogTitle>Edit Billing Configuration</DialogTitle>
