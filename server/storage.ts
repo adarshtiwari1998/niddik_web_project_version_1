@@ -1441,7 +1441,7 @@ async updateSeoPage(id: number, data: Partial<InsertSeoPage>): Promise<SeoPage |
     }
 
     const regularRate = parseFloat(billingConfig.hourlyRate.toString());
-    const overtimeRate = parseFloat(billingConfig.overtimeRate.toString());
+    const overtimeRate = regularRate; // Overtime rate same as regular rate
     const workingHours = billingConfig.workingHoursPerWeek || 40;
     const workingDays = billingConfig.workingDaysPerWeek || 5;
     

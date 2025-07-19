@@ -123,6 +123,23 @@ The application follows a standard full-stack architecture with clear separation
 
 # Recent Changes
 
+## Overtime Calculation System Implementation (July 19, 2025)
+- **Overtime Calculation Logic**: Implemented comprehensive overtime calculation system for timesheets
+  - **Daily Limit Calculation**: Calculates daily hour limits by dividing weekly working hours by working days
+  - **Automatic Hour Splitting**: Daily hours exceeding limit are automatically split into regular and overtime portions
+  - **Same Rate Application**: Overtime hours billed at same rate as regular hours (no separate overtime rate field)
+  - **Database Schema**: Added overtime columns to weekly_timesheets table to store calculated overtime hours
+- **Backend Implementation**: 
+  - **Calculation Helper**: Created `calculateOvertimeDetails` function in server storage
+  - **Enhanced Timesheet Creation**: Updated `createWeeklyTimesheetWithOvertimeCalculation` method
+  - **API Integration**: Modified timesheet submission API to use new overtime calculation logic
+- **Removed Overtime Rate Field**: Removed separate overtime rate field from billing configuration as requested by user
+  - **Database Cleanup**: Dropped overtime_rate column from candidate_billing table
+  - **UI Simplification**: Removed overtime rate input fields from billing configuration forms
+  - **Logic Update**: Overtime rate now equals regular rate (same billing rate for all hours)
+- **User Experience**: Candidates submit hours normally, system automatically handles overtime calculation behind the scenes
+- **Files Modified**: `shared/schema.ts`, `server/storage.ts`, `server/routes.ts`, `client/src/components/BillingConfig.tsx`, `replit.md`
+
 ## End User Data Extraction Logic Fix in Billing Configuration (July 19, 2025)
 - **Fixed End User Matching Algorithm**: Resolved incorrect end user data showing for selected companies in timesheets billing configuration
   - **Root Cause**: Matching algorithm was not precise enough and was incorrectly associating end users from one company with another

@@ -76,7 +76,6 @@ export default function BillingConfig() {
   const [selectedCandidate, setSelectedCandidate] = useState<number | null>(null);
   const [billingData, setBillingData] = useState({
     hourlyRate: 0,
-    overtimeRate: 0, // Add overtime rate field
     workingHoursPerWeek: 40,
     workingDaysPerWeek: 5,
     currency: 'USD',
@@ -350,7 +349,6 @@ export default function BillingConfig() {
   const resetBillingForm = () => {
     setBillingData({
       hourlyRate: 0,
-      overtimeRate: 0, // Reset overtime rate
       workingHoursPerWeek: 40,
       workingDaysPerWeek: 5,
       currency: 'USD',
@@ -378,7 +376,6 @@ export default function BillingConfig() {
       
       setBillingData({
         hourlyRate: editingBilling.hourlyRate,
-        overtimeRate: editingBilling.overtimeRate || 0, // Populate overtime rate
         workingHoursPerWeek: editingBilling.workingHoursPerWeek,
         workingDaysPerWeek: editingBilling.workingDaysPerWeek || 5,
         currency: editingBilling.currency,
@@ -430,7 +427,6 @@ export default function BillingConfig() {
       candidateId: selectedCandidate,
       createdBy: user?.id || 5,
       hourlyRate: billingData.hourlyRate.toString(),
-      overtimeRate: billingData.overtimeRate.toString(), // Include overtime rate in submission
       workingHoursPerWeek: billingData.workingHoursPerWeek,
       workingDaysPerWeek: billingData.workingDaysPerWeek,
       currency: billingData.currency || 'USD',
@@ -464,7 +460,6 @@ export default function BillingConfig() {
     updateBillingMutation.mutate({
       candidateId: editingBilling.candidateId,
       hourlyRate: billingData.hourlyRate.toString(),
-      overtimeRate: billingData.overtimeRate.toString(), // Include overtime rate in update
       workingHoursPerWeek: billingData.workingHoursPerWeek,
       workingDaysPerWeek: billingData.workingDaysPerWeek,
       currency: billingData.currency,
@@ -606,9 +601,9 @@ export default function BillingConfig() {
                   </CardTitle>
                 </CardHeader>
                 <CardContent className="space-y-4">
-                  <div className="grid grid-cols-3 gap-4">
+                  <div className="grid grid-cols-2 gap-4">
                     <div>
-                      <Label htmlFor="hourly-rate">Regular Rate</Label>
+                      <Label htmlFor="hourly-rate">Hourly Rate</Label>
                       <Input
                         id="hourly-rate"
                         type="number"
@@ -617,19 +612,6 @@ export default function BillingConfig() {
                         value={billingData.hourlyRate}
                         onChange={(e) => setBillingData(prev => ({ ...prev, hourlyRate: parseFloat(e.target.value) || 0 }))}
                         placeholder="50.00"
-                      />
-                    </div>
-                    
-                    <div>
-                      <Label htmlFor="overtime-rate">Overtime Rate</Label>
-                      <Input
-                        id="overtime-rate"
-                        type="number"
-                        min="0"
-                        step="0.01"
-                        value={billingData.overtimeRate}
-                        onChange={(e) => setBillingData(prev => ({ ...prev, overtimeRate: parseFloat(e.target.value) || 0 }))}
-                        placeholder="75.00"
                       />
                     </div>
                     
@@ -912,9 +894,9 @@ export default function BillingConfig() {
           </DialogHeader>
           
           <div className="space-y-4">
-            <div className="grid grid-cols-2 gap-4">
+            <div className="grid grid-cols-1 gap-4">
               <div>
-                <Label htmlFor="edit-hourly-rate">Regular Rate</Label>
+                <Label htmlFor="edit-hourly-rate">Hourly Rate</Label>
                 <Input
                   id="edit-hourly-rate"
                   type="number"
@@ -923,19 +905,6 @@ export default function BillingConfig() {
                   value={billingData.hourlyRate}
                   onChange={(e) => setBillingData(prev => ({ ...prev, hourlyRate: parseFloat(e.target.value) || 0 }))}
                   placeholder="50.00"
-                />
-              </div>
-              
-              <div>
-                <Label htmlFor="edit-overtime-rate">Overtime Rate</Label>
-                <Input
-                  id="edit-overtime-rate"
-                  type="number"
-                  min="0"
-                  step="0.01"
-                  value={billingData.overtimeRate}
-                  onChange={(e) => setBillingData(prev => ({ ...prev, overtimeRate: parseFloat(e.target.value) || 0 }))}
-                  placeholder="75.00"
                 />
               </div>
               

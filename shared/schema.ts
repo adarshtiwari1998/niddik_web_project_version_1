@@ -411,7 +411,6 @@ export const candidateBilling = pgTable("candidate_billing", {
   id: serial("id").primaryKey(),
   candidateId: integer("candidate_id").notNull().references(() => users.id), // Reference to users table for hired candidates
   hourlyRate: decimal("hourly_rate", { precision: 10, scale: 2 }).notNull().default('0'),
-  overtimeRate: decimal("overtime_rate", { precision: 10, scale: 2 }).notNull().default('0'), // Overtime hourly rate (typically 1.5x regular rate)
   workingHoursPerWeek: integer("working_hours_per_week").notNull().default(40),
   workingDaysPerWeek: integer("working_days_per_week").notNull().default(5), // 5 or 6 days per week
   currency: text("currency").notNull().default("INR"),
@@ -442,13 +441,6 @@ export const candidateBillingSchema = createInsertSchema(candidateBilling, {
     const num = parseFloat(val);
     return num > 0;
   }, "Hourly rate must be greater than 0"),
-  overtimeRate: (schema) => schema.transform((val) => {
-    if (typeof val === 'string') return val;
-    return val?.toString() || '0';
-  }).refine((val) => {
-    const num = parseFloat(val);
-    return num > 0;
-  }, "Overtime rate must be greater than 0"),
   workingHoursPerWeek: (schema) => schema.min(1, "Working hours must be at least 1").max(168, "Cannot exceed 168 hours per week"),
   workingDaysPerWeek: (schema) => schema.min(5, "Must be at least 5 days").max(6, "Cannot exceed 6 days per week"),
   currency: (schema) => schema.optional(),
