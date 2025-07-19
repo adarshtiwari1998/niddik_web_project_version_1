@@ -247,7 +247,7 @@ export default function TimesheetManagement() {
 
   // Fetch all timesheets for admin
   const { data: adminTimesheets, isLoading: adminTimesheetsLoading } = useQuery({
-    queryKey: ['/api/admin/timesheets'],
+    queryKey: ['/api/admin/timesheets', { status: 'all', limit: 1000 }],
     enabled: isAdmin
   });
 
@@ -1904,6 +1904,51 @@ function WeeklyTableView({ timesheets, onApprove, onReject, onEdit, onDelete, ge
                           </div>
                         </DialogContent>
                       </Dialog>
+                    </div>
+                  )}
+                  {timesheet.status === 'rejected' && isAdmin && onApprove && onDelete && (
+                    <div className="flex gap-2">
+                      <Button 
+                        size="sm" 
+                        onClick={() => onApprove(timesheet.id)}
+                        disabled={changeTimesheetStatusMutation.isPending}
+                        className="bg-green-600 hover:bg-green-700"
+                      >
+                        <Check className="w-4 h-4 mr-1" />
+                        {changeTimesheetStatusMutation.isPending ? 'Approving...' : 'Approve'}
+                      </Button>
+                      <Dialog>
+                        <DialogTrigger asChild>
+                          <Button size="sm" variant="destructive">
+                            <Trash2 className="w-4 h-4 mr-1" />
+                            Delete
+                          </Button>
+                        </DialogTrigger>
+                        <DialogContent>
+                          <DialogHeader>
+                            <DialogTitle>Delete Rejected Timesheet</DialogTitle>
+                            <DialogDescription>
+                              Are you sure you want to permanently delete this rejected timesheet? This action cannot be undone.
+                            </DialogDescription>
+                          </DialogHeader>
+                          <div className="flex justify-end gap-2 mt-4">
+                            <Button variant="outline">Cancel</Button>
+                            <Button 
+                              variant="destructive" 
+                              onClick={() => onDelete(timesheet.id)}
+                            >
+                              Delete Timesheet
+                            </Button>
+                          </div>
+                        </DialogContent>
+                      </Dialog>
+                      {timesheet.rejectionReason && (
+                        <div className="ml-2">
+                          <p className="text-xs text-red-600 font-medium">
+                            Rejection Reason: {timesheet.rejectionReason}
+                          </p>
+                        </div>
+                      )}
                     </div>
                   )}
                   {editingTimesheet === timesheet.id && (
