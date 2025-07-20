@@ -1439,6 +1439,7 @@ function BiWeeklyTableView({ timesheets, onEdit, onDelete, getStatusBadge, isAdm
                             conversionRate={parseFloat(week1.conversionRate || '85')}
                             currency={billingConfig.currency}
                             conversionDate={week1.conversionDate || undefined}
+                            monthlyBreakdown={[]}
                           />
                         </div>
                       )}
@@ -1462,6 +1463,7 @@ function BiWeeklyTableView({ timesheets, onEdit, onDelete, getStatusBadge, isAdm
                             conversionRate={parseFloat(week2.conversionRate || '85')}
                             currency={billingConfig.currency}
                             conversionDate={week2.conversionDate || undefined}
+                            monthlyBreakdown={[]}
                           />
                         </div>
                       )}
@@ -2619,6 +2621,7 @@ function WeeklyTableView({ timesheets, onApprove, onReject, onEdit, onDelete, ge
                         conversionRate={parseFloat(timesheet.conversionRate || '85')}
                         currency={billingConfig.currency}
                         conversionDate={timesheet.conversionDate || undefined}
+                        monthlyBreakdown={[]}
                       />
                     </div>
                   )}

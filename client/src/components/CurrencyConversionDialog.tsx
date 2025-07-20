@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import {
   Dialog,
   DialogContent,
@@ -12,6 +12,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Separator } from "@/components/ui/separator";
 import { InfoIcon, TrendingUpIcon, CalendarIcon, DollarSignIcon } from "lucide-react";
+import { useQuery } from "@tanstack/react-query";
 
 interface CurrencyConversionDialogProps {
   trigger: React.ReactNode;
@@ -20,6 +21,7 @@ interface CurrencyConversionDialogProps {
   conversionRate: number;
   currency: string;
   conversionDate?: string;
+  monthlyBreakdown?: { month: string; rate: number }[];
   onOpenChange?: (open: boolean) => void;
 }
 
@@ -30,19 +32,42 @@ export function CurrencyConversionDialog({
   conversionRate,
   currency,
   conversionDate,
+  monthlyBreakdown = [],
   onOpenChange
 }: CurrencyConversionDialogProps) {
   const [isOpen, setIsOpen] = useState(false);
 
-  // Mock 6-month historical data (this would come from API in real implementation)
-  const monthlyRates = [
-    { month: 'January 2025', rate: 85.45, amount: originalAmount * 85.45 },
-    { month: 'December 2024', rate: 84.82, amount: originalAmount * 84.82 },
-    { month: 'November 2024', rate: 85.12, amount: originalAmount * 85.12 },
-    { month: 'October 2024', rate: 85.67, amount: originalAmount * 85.67 },
-    { month: 'September 2024', rate: 84.98, amount: originalAmount * 84.98 },
-    { month: 'August 2024', rate: 85.23, amount: originalAmount * 85.23 },
-  ];
+  // Fetch 6-month historical data when dialog is opened
+  const { data: currencyData, isLoading: isFetchingCurrency } = useQuery({
+    queryKey: ['/api/admin/currency-rates', currency],
+    enabled: isOpen && currency !== 'INR' && monthlyBreakdown.length === 0,
+    staleTime: 1000 * 60 * 10, // 10 minutes
+  });
+
+  // Use real monthly breakdown data or fetch from API
+  const monthlyRates = monthlyBreakdown.length > 0 
+    ? monthlyBreakdown.map(item => ({
+        month: item.month,
+        rate: item.rate,
+        amount: originalAmount * item.rate
+      }))
+    : currencyData?.data?.monthlyRates
+      ? currencyData.data.monthlyRates.map((item: any) => ({
+          month: item.month,
+          rate: item.rate,
+          amount: originalAmount * item.rate
+        }))
+      : // Fallback: Use current conversion rate for 6 months with proper dates
+        Array.from({ length: 6 }, (_, i) => {
+          const currentDate = new Date();
+          const targetDate = new Date(currentDate.getFullYear(), currentDate.getMonth() - (5 - i), 1);
+          const monthName = targetDate.toLocaleDateString('en-US', { month: 'long', year: 'numeric' });
+          return {
+            month: monthName,
+            rate: conversionRate,
+            amount: originalAmount * conversionRate
+          };
+        });
 
   const handleOpenChange = (open: boolean) => {
     setIsOpen(open);
