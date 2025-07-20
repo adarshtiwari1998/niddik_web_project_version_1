@@ -33,7 +33,7 @@ export default function InvoiceDialog({
 
   // Fetch existing invoice template data
   const { data: invoiceData, isLoading: isLoadingInvoice } = useQuery({
-    queryKey: ['/api/admin/invoices', invoiceId, 'template-data'],
+    queryKey: [`/api/admin/invoices/${invoiceId}/template-data`],
     enabled: !!invoiceId && mode === 'preview'
   });
 

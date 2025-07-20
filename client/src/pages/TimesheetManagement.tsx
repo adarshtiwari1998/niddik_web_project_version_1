@@ -2613,6 +2613,7 @@ function InvoiceManagement() {
   const queryClient = useQueryClient();
   const [invoiceDialogOpen, setInvoiceDialogOpen] = useState(false);
   const [selectedInvoiceId, setSelectedInvoiceId] = useState<number | null>(null);
+  const [selectedInvoiceForDownload, setSelectedInvoiceForDownload] = useState<number | null>(null);
   
   // Fetch invoices based on user role
   const { data: invoices, isLoading: invoicesLoading } = useQuery({
@@ -2737,7 +2738,12 @@ function InvoiceManagement() {
                           </div>
                         </div>
                         <div className="text-right">
-                          <div className="text-2xl font-bold">{invoice.currency} {parseFloat(invoice.totalAmount || '0').toFixed(2)}</div>
+                          <div className="text-2xl font-bold">
+                            {invoice.currency} {parseFloat(invoice.totalAmount || '0').toFixed(2)}
+                            <div className="text-sm font-normal text-muted-foreground">
+                              ≈ INR {(parseFloat(invoice.totalAmount || '0') * 83.5).toFixed(2)}
+                            </div>
+                          </div>
                           <div className="text-sm text-muted-foreground">
                             {parseFloat(invoice.totalHours || '0').toFixed(1)} hours @ {invoice.currency} {parseFloat(invoice.hourlyRate || '0').toFixed(2)}/hr
                           </div>
@@ -2773,14 +2779,17 @@ function InvoiceManagement() {
                             Preview
                           </Button>
                           
-                          {invoice.pdfUrl && (
-                            <Button variant="outline" size="sm" asChild>
-                              <a href={invoice.pdfUrl} target="_blank" rel="noopener noreferrer">
-                                <Download className="w-4 h-4 mr-2" />
-                                Download
-                              </a>
-                            </Button>
-                          )}
+                          <Button 
+                            variant="outline" 
+                            size="sm"
+                            onClick={() => {
+                              setSelectedInvoiceId(invoice.id);
+                              setInvoiceDialogOpen(true);
+                            }}
+                          >
+                            <Download className="w-4 h-4 mr-2" />
+                            Download
+                          </Button>
                           
                           <Dialog>
                             <DialogTrigger asChild>
