@@ -248,7 +248,7 @@ const InvoiceTemplateNew = forwardRef<HTMLDivElement, InvoiceTemplateProps>(
                 </td>
                 <td className="border border-gray-400 p-3 text-center">{invoice.totalHours.toFixed(2)}</td>
                 <td className="border border-gray-400 p-3 text-center">
-                  {formatCurrency(invoice.hourlyRate * invoice.currencyConversionRate, 'INR')}
+                  {formatCurrency(invoice.hourlyRate * (invoice.currencyConversionRate || 0), 'INR')}
                   <div className="text-xs text-gray-600 mt-1">≈ {formatCurrency(invoice.hourlyRate, 'USD')}</div>
                 </td>
                 <td className="border border-gray-400 p-3 text-center font-semibold">

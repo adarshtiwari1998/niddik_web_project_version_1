@@ -2263,6 +2263,12 @@ async updateSeoPage(id: number, data: Partial<InsertSeoPage>): Promise<SeoPage |
         hourlyRate: parseFloat(data.invoice.hourlyRate?.toString() || '0'),
         totalAmount: parseFloat(data.invoice.totalAmount?.toString() || '0'),
         currency: data.invoice.currency,
+        currencyConversionRate: parseFloat(data.invoice.currencyConversionRate?.toString() || '0'),
+        sixMonthAverageRate: parseFloat(data.invoice.sixMonthAverageRate?.toString() || '0'),
+        amountINR: parseFloat(data.invoice.amountINR?.toString() || '0'),
+        gstRate: parseFloat(data.invoice.gstRate?.toString() || '18'),
+        gstAmount: parseFloat(data.invoice.gstAmount?.toString() || '0'),
+        totalWithGst: parseFloat(data.invoice.totalWithGst?.toString() || '0'),
         issuedDate: data.invoice.issuedDate,
         dueDate: data.invoice.dueDate,
         notes: data.invoice.notes
@@ -2275,10 +2281,11 @@ async updateSeoPage(id: number, data: Partial<InsertSeoPage>): Promise<SeoPage |
         state: data.companySettings?.state || 'Delhi',
         country: data.companySettings?.country || 'India',
         zipCode: data.companySettings?.zipCode || '110025',
-        phone: data.companySettings?.phone || '',
-        email: data.companySettings?.email || 'finance@niddik.com',
+        phoneNumbers: data.companySettings?.phoneNumbers || [],
+        emailAddresses: data.companySettings?.emailAddresses || [],
         website: data.companySettings?.website || '',
-        taxId: data.companySettings?.taxId || '+917317361085 | +913556516289'
+        taxId: data.companySettings?.taxId || '+917317361085 | +913556516289',
+        gstNumber: data.companySettings?.gstNumber || ''
       },
       clientData: {
         name: data.clientCompany?.name || '',
@@ -2289,8 +2296,8 @@ async updateSeoPage(id: number, data: Partial<InsertSeoPage>): Promise<SeoPage |
         billToCountry: data.clientCompany?.billToCountry || '',
         billToZipCode: data.clientCompany?.billToZipCode || '',
         contactPerson: data.clientCompany?.contactPerson || '',
-        email: data.clientCompany?.email || '',
-        phone: data.clientCompany?.phone || ''
+        phoneNumbers: data.clientCompany?.phoneNumbers || [],
+        emailAddresses: data.clientCompany?.emailAddresses || []
       },
       timesheetDetails: {
         mondayHours: parseFloat(data.timesheet?.mondayHours?.toString() || '0'),
