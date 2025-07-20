@@ -80,6 +80,7 @@ interface TimesheetDetails {
 
 interface BillingData {
   hourlyRate: number;
+  originalBillingRate?: number;
   currency: string;
   workingDaysPerWeek: number;
   employmentType: string;
@@ -415,7 +416,7 @@ const InvoiceTemplateNew = forwardRef<HTMLDivElement, InvoiceTemplateProps>(
                     {invoice.totalHours.toFixed(2)}
                   </td>
                   <td className="border border-gray-400 p-2 text-center font-semibold">
-                    {formatCurrency(invoice.hourlyRate, 'USD')}
+                    {formatCurrency(billingData?.originalBillingRate || invoice.hourlyRate, billingData?.currency || 'USD')}
                   </td>
                   <td className="border border-gray-400 p-2 text-center font-semibold">
                     {formatCurrency(invoice.totalAmount, 'USD')}

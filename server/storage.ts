@@ -2144,13 +2144,21 @@ async updateSeoPage(id: number, data: Partial<InsertSeoPage>): Promise<SeoPage |
     const currencyData = await get6MonthAverageUSDToINR();
     const currentRate = await getCurrencyRates('USD', 'INR'); // Get current rate separately
     
-    // Original INR amount from timesheet
-    const amountINR = parseFloat(timesheet.totalWeeklyAmount.toString());
+    // Get the original billing hourly rate and currency from billing configuration
+    const billingHourlyRate = parseFloat(billing.hourlyRate.toString());
+    const billingCurrency = billing.currency || 'USD';
     
-    // Convert to USD using current rate
-    const totalAmountUSD = await convertINRToUSD(amountINR);
+    // Calculate total hours and amount based on billing configuration
+    const totalHours = parseFloat(timesheet.totalWeeklyHours?.toString() || '0');
+    let totalAmount = billingHourlyRate * totalHours;
     
-    // Calculate 18% GST
+    // Convert to USD if billing is in INR
+    let totalAmountUSD = totalAmount;
+    if (billingCurrency === 'INR') {
+      totalAmountUSD = await convertINRToUSD(totalAmount);
+    }
+    
+    // Calculate 18% GST on USD amount
     const gstAmount = calculateGST(totalAmountUSD, 18.0);
     const totalWithGst = totalAmountUSD + gstAmount;
 
@@ -2162,7 +2170,7 @@ async updateSeoPage(id: number, data: Partial<InsertSeoPage>): Promise<SeoPage |
     const dueDate = new Date();
     dueDate.setDate(dueDate.getDate() + 30);
 
-    // Create invoice data with USD conversion
+    // Create invoice data with proper hourly rate from billing configuration
     const invoiceData: InsertInvoice = {
       invoiceNumber,
       candidateId: timesheet.candidateId,
@@ -2170,13 +2178,13 @@ async updateSeoPage(id: number, data: Partial<InsertSeoPage>): Promise<SeoPage |
       biWeeklyTimesheetId: null,
       weekStartDate: timesheet.weekStartDate,
       weekEndDate: timesheet.weekEndDate,
-      totalHours: timesheet.totalWeeklyHours,
-      hourlyRate: billing.currency === 'USD' ? parseFloat(billing.hourlyRate.toString()) : await convertINRToUSD(parseFloat(billing.hourlyRate.toString())),
+      totalHours: totalHours,
+      hourlyRate: billingHourlyRate, // Use original billing hourly rate
       totalAmount: totalAmountUSD,
-      currency: 'USD',
+      currency: 'USD', // Always invoice in USD
       currencyConversionRate: currentRate,
       sixMonthAverageRate: currencyData.average,
-      amountINR: amountINR,
+      amountINR: billingCurrency === 'INR' ? totalAmount : totalAmountUSD * currentRate,
       gstRate: 18.0,
       gstAmount: gstAmount,
       totalWithGst: totalWithGst,
@@ -2184,7 +2192,7 @@ async updateSeoPage(id: number, data: Partial<InsertSeoPage>): Promise<SeoPage |
       issuedDate: issuedDate.toISOString().split('T')[0],
       dueDate: dueDate.toISOString().split('T')[0],
       generatedBy,
-      notes: `Invoice generated for week ${timesheet.weekStartDate} to ${timesheet.weekEndDate}. Converted from INR ${amountINR} at rate ${currentRate}`
+      notes: `Invoice generated for week ${timesheet.weekStartDate} to ${timesheet.weekEndDate}. Billing rate: ${billingCurrency} ${billingHourlyRate}/hour`
     };
 
     return await this.createInvoice(invoiceData);
@@ -2375,6 +2383,7 @@ async updateSeoPage(id: number, data: Partial<InsertSeoPage>): Promise<SeoPage |
       },
       billingData: {
         hourlyRate: parseFloat(data.billing?.hourlyRate?.toString() || '0'),
+        originalBillingRate: parseFloat(data.billing?.hourlyRate?.toString() || '0'), // Always show original billing rate
         currency: data.billing?.currency || 'INR',
         workingDaysPerWeek: data.billing?.workingDaysPerWeek || 5,
         employmentType: data.billing?.employmentType || 'Subcontract',
