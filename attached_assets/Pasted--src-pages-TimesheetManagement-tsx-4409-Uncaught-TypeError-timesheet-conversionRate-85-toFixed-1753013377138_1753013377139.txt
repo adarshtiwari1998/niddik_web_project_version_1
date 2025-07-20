@@ -1,0 +1,58 @@
+/src/pages/TimesheetManagement.tsx:4409 Uncaught TypeError: (timesheet.conversionRate || 85).toFixed is not a function
+    at /src/pages/TimesheetManagement.tsx:4409:48
+    at Array.map (<anonymous>)
+    at WeeklyTableView (/src/pages/TimesheetManagement.tsx:3413:78)
+    at renderWithHooks (chunk-RPCDYKBN.js?v=1f1ccb62:11548:26)
+    at updateFunctionComponent (chunk-RPCDYKBN.js?v=1f1ccb62:14582:28)
+    at beginWork (chunk-RPCDYKBN.js?v=1f1ccb62:15924:22)
+    at HTMLUnknownElement.callCallback2 (chunk-RPCDYKBN.js?v=1f1ccb62:3674:22)
+    at Object.invokeGuardedCallbackDev (chunk-RPCDYKBN.js?v=1f1ccb62:3699:24)
+    at invokeGuardedCallback (chunk-RPCDYKBN.js?v=1f1ccb62:3733:39)
+    at beginWork$1 (chunk-RPCDYKBN.js?v=1f1ccb62:19765:15)Understand this error
+chunk-RPCDYKBN.js?v=1f1ccb62:14032 The above error occurred in the <WeeklyTableView> component:
+
+    at WeeklyTableView (https://c08e4767-ee8a-4637-8aa2-7aff243891d8-00-34n3lk0qg1ayh.sisko.replit.dev/src/pages/TimesheetManagement.tsx:3265:28)
+    at div
+    at div
+    at _c9 (https://c08e4767-ee8a-4637-8aa2-7aff243891d8-00-34n3lk0qg1ayh.sisko.replit.dev/src/components/ui/card.tsx:106:12)
+    at div
+    at _c (https://c08e4767-ee8a-4637-8aa2-7aff243891d8-00-34n3lk0qg1ayh.sisko.replit.dev/src/components/ui/card.tsx:20:11)
+    at div
+    at https://c08e4767-ee8a-4637-8aa2-7aff243891d8-00-34n3lk0qg1ayh.sisko.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/chunk-AXMZZQ2X.js?v=1f1ccb62:42:13
+    at Presence (https://c08e4767-ee8a-4637-8aa2-7aff243891d8-00-34n3lk0qg1ayh.sisko.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/chunk-7ZIEIKXH.js?v=1f1ccb62:24:11)
+    at https://c08e4767-ee8a-4637-8aa2-7aff243891d8-00-34n3lk0qg1ayh.sisko.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/@radix-ui_react-tabs.js?v=1f1ccb62:173:13
+    at _c5 (https://c08e4767-ee8a-4637-8aa2-7aff243891d8-00-34n3lk0qg1ayh.sisko.replit.dev/src/components/ui/tabs.tsx:68:12)
+    at div
+    at https://c08e4767-ee8a-4637-8aa2-7aff243891d8-00-34n3lk0qg1ayh.sisko.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/chunk-AXMZZQ2X.js?v=1f1ccb62:42:13
+    at Provider (https://c08e4767-ee8a-4637-8aa2-7aff243891d8-00-34n3lk0qg1ayh.sisko.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/chunk-E7IAXTU4.js?v=1f1ccb62:38:15)
+    at https://c08e4767-ee8a-4637-8aa2-7aff243891d8-00-34n3lk0qg1ayh.sisko.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/@radix-ui_react-tabs.js?v=1f1ccb62:51:7
+    at div
+    at main
+    at div
+    at div
+    at div
+    at AdminLayout (https://c08e4767-ee8a-4637-8aa2-7aff243891d8-00-34n3lk0qg1ayh.sisko.replit.dev/src/components/layout/AdminLayout.tsx:24:39)
+    at TimesheetManagement (https://c08e4767-ee8a-4637-8aa2-7aff243891d8-00-34n3lk0qg1ayh.sisko.replit.dev/src/pages/TimesheetManagement.tsx:42:20)
+    at Suspense
+    at ProtectedRoute (https://c08e4767-ee8a-4637-8aa2-7aff243891d8-00-34n3lk0qg1ayh.sisko.replit.dev/src/lib/protected-route.tsx:22:45)
+    at Switch (https://c08e4767-ee8a-4637-8aa2-7aff243891d8-00-34n3lk0qg1ayh.sisko.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/wouter.js?v=1f1ccb62:336:17)
+    at Router
+    at AuthProvider (https://c08e4767-ee8a-4637-8aa2-7aff243891d8-00-34n3lk0qg1ayh.sisko.replit.dev/src/hooks/use-auth.tsx:32:32)
+    at QueryClientProvider (https://c08e4767-ee8a-4637-8aa2-7aff243891d8-00-34n3lk0qg1ayh.sisko.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/@tanstack_react-query.js?v=1f1ccb62:2875:3)
+    at _a (https://c08e4767-ee8a-4637-8aa2-7aff243891d8-00-34n3lk0qg1ayh.sisko.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/react-helmet-async.js?v=1f1ccb62:624:5)
+    at App
+
+Consider adding an error boundary to your tree to customize error handling behavior.
+Visit https://reactjs.org/link/error-boundaries to learn more about error boundaries.
+logCapturedError @ chunk-RPCDYKBN.js?v=1f1ccb62:14032Understand this error
+chunk-RPCDYKBN.js?v=1f1ccb62:9129 Uncaught TypeError: (timesheet.conversionRate || 85).toFixed is not a function
+    at /src/pages/TimesheetManagement.tsx:4409:48
+    at Array.map (<anonymous>)
+    at WeeklyTableView (/src/pages/TimesheetManagement.tsx:3413:78)
+    at renderWithHooks (chunk-RPCDYKBN.js?v=1f1ccb62:11548:26)
+    at updateFunctionComponent (chunk-RPCDYKBN.js?v=1f1ccb62:14582:28)
+    at beginWork (chunk-RPCDYKBN.js?v=1f1ccb62:15924:22)
+    at beginWork$1 (chunk-RPCDYKBN.js?v=1f1ccb62:19753:22)
+    at performUnitOfWork (chunk-RPCDYKBN.js?v=1f1ccb62:19198:20)
+    at workLoopSync (chunk-RPCDYKBN.js?v=1f1ccb62:19137:13)
+    at renderRootSync (chunk-RPCDYKBN.js?v=1f1ccb62:19116:15)Understand this error

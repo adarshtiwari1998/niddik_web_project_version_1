@@ -4942,6 +4942,61 @@ ${allUrls.map(url => `  <url>
     }
   });
 
+  // Currency conversion test endpoint
+  app.get('/api/admin/test-currency', async (req: AuthenticatedRequest, res: Response) => {
+    try {
+      if (!req.isAuthenticated() || !req.user || req.user.role !== 'admin') {
+        return res.status(403).json({ success: false, message: "Admin access required" });
+      }
+
+      const { amount = 100, currency = 'USD' } = req.query;
+      
+      const conversionResult = await convertCurrencyToINR(
+        parseFloat(amount as string), 
+        currency as string
+      );
+      
+      res.json({
+        success: true,
+        data: conversionResult
+      });
+    } catch (error) {
+      console.error('Currency test error:', error);
+      res.status(500).json({ 
+        success: false, 
+        message: 'Failed to test currency conversion',
+        error: error instanceof Error ? error.message : 'Unknown error'
+      });
+    }
+  });
+
+  // Get 6-month currency rates endpoint  
+  app.get('/api/admin/currency-rates', async (req: AuthenticatedRequest, res: Response) => {
+    try {
+      if (!req.isAuthenticated() || !req.user || req.user.role !== 'admin') {
+        return res.status(403).json({ success: false, message: "Admin access required" });
+      }
+
+      const { average, monthlyRates } = await get6MonthAverageUSDToINR();
+      
+      res.json({
+        success: true,
+        data: {
+          sixMonthAverage: average,
+          monthlyRates,
+          lastUpdated: new Date().toISOString()
+        }
+      });
+    } catch (error) {
+      console.error('Currency rates error:', error);
+      res.status(500).json({ 
+        success: false, 
+        message: 'Failed to get currency rates',
+        error: error instanceof Error ? error.message : 'Unknown error'
+      });
+    }
+  });
+
   const server = createServer(app);
   return server;
 }

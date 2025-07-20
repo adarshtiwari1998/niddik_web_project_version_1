@@ -1512,6 +1512,26 @@ async updateSeoPage(id: number, data: Partial<InsertSeoPage>): Promise<SeoPage |
     processedData.totalOvertimeAmount = totalOvertimeAmount.toString() as any;
     processedData.totalWeeklyAmount = totalWeeklyAmount.toString() as any;
 
+    // Calculate currency conversion if needed (non-INR currencies)
+    if (billingConfig && billingConfig.currency && billingConfig.currency !== 'INR') {
+      try {
+        const conversionResult = await convertCurrencyToINR(totalWeeklyAmount, billingConfig.currency);
+        
+        processedData.conversion_rate = conversionResult.sixMonthAverage.toString() as any;
+        processedData.total_weekly_amount_inr = conversionResult.convertedAmount.toString() as any;
+        processedData.conversion_date = new Date().toISOString().split('T')[0] as any;
+        
+        console.log(`Currency conversion applied: ${billingConfig.currency} ${totalWeeklyAmount} → INR ${conversionResult.convertedAmount} (6M Avg Rate: ${conversionResult.sixMonthAverage})`);
+      } catch (error) {
+        console.error('Currency conversion failed, using default rate:', error);
+        const fallbackRate = 85;
+        const convertedAmount = totalWeeklyAmount * fallbackRate;
+        processedData.conversion_rate = fallbackRate.toString() as any;
+        processedData.total_weekly_amount_inr = convertedAmount.toString() as any;
+        processedData.conversion_date = new Date().toISOString().split('T')[0] as any;
+      }
+    }
+
     const [timesheet] = await db.insert(weeklyTimesheets).values(processedData).returning();
     
     console.log('Advanced overtime timesheet created successfully with ID:', timesheet.id);
@@ -1526,23 +1546,27 @@ async updateSeoPage(id: number, data: Partial<InsertSeoPage>): Promise<SeoPage |
     let conversionData = {};
     if (billing && billing.currency && billing.currency !== 'INR') {
       try {
-        const rates = await getCurrencyRates();
-        const conversionRate = rates.sixMonthAverage;
-        const totalWeeklyAmountINR = parseFloat(data.totalWeeklyAmount?.toString() || '0') * conversionRate;
+        const conversionResult = await convertCurrencyToINR(
+          parseFloat(data.totalWeeklyAmount?.toString() || '0'), 
+          billing.currency
+        );
         
         conversionData = {
-          conversionRate: conversionRate.toString(),
-          totalWeeklyAmountINR: totalWeeklyAmountINR.toString(),
-          conversionDate: new Date().toISOString().split('T')[0]
+          conversion_rate: conversionResult.sixMonthAverage.toString(),
+          total_weekly_amount_inr: conversionResult.convertedAmount.toString(),
+          conversion_date: new Date().toISOString().split('T')[0]
         };
+        
+        console.log(`Currency conversion applied: ${billing.currency} ${conversionResult.originalAmount} → INR ${conversionResult.convertedAmount} (Rate: ${conversionResult.sixMonthAverage})`);
       } catch (error) {
         console.error('Currency conversion failed, using default rate:', error);
         // Use fallback rate of 85 if API fails
         const fallbackRate = 85;
+        const totalWeeklyAmountINR = parseFloat(data.totalWeeklyAmount?.toString() || '0') * fallbackRate;
         conversionData = {
-          conversionRate: fallbackRate.toString(),
-          totalWeeklyAmountINR: (parseFloat(data.totalWeeklyAmount?.toString() || '0') * fallbackRate).toString(),
-          conversionDate: new Date().toISOString().split('T')[0]
+          conversion_rate: fallbackRate.toString(),
+          total_weekly_amount_inr: totalWeeklyAmountINR.toString(),
+          conversion_date: new Date().toISOString().split('T')[0]
         };
       }
     }
