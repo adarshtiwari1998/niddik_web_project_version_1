@@ -520,7 +520,7 @@ export default function TimesheetManagement() {
         </TabsContent>
 
         <TabsContent value="invoices" className="space-y-6">
-          <InvoiceManagement />
+          <InvoiceManagement setActiveTab={setActiveTab} />
         </TabsContent>
 
         <TabsContent value="timesheets" className="space-y-6">
@@ -2658,6 +2658,7 @@ function WeeklyTableView({ timesheets, onApprove, onReject, onEdit, onDelete, ge
         }}
         timesheetId={selectedTimesheetForInvoice || undefined}
         mode="generate"
+        setActiveTab={setActiveTab}
       />
 
       {/* Bi-Weekly Invoice Dialog */}
@@ -2669,13 +2670,18 @@ function WeeklyTableView({ timesheets, onApprove, onReject, onEdit, onDelete, ge
         }}
         biWeeklyTimesheetId={selectedBiWeeklyTimesheetForInvoice || undefined}
         mode="generate"
+        setActiveTab={setActiveTab}
       />
     </div>
   );
 }
 
 // Invoice Management Component
-function InvoiceManagement() {
+interface InvoiceManagementProps {
+  setActiveTab: (tab: string) => void;
+}
+
+function InvoiceManagement({ setActiveTab }: InvoiceManagementProps) {
   const { user } = useUser();
   const isAdmin = user?.role === 'admin';
   const { toast } = useToast();
@@ -2716,6 +2722,8 @@ function InvoiceManagement() {
         queryKey: ['/api/admin/timesheets'],
         refetchType: 'active'
       });
+      // Navigate to invoice tab without page reload
+      setActiveTab("invoices");
     },
     onError: (error: Error) => {
       toast({ title: "Error", description: error.message, variant: "destructive" });

@@ -17,6 +17,7 @@ interface InvoiceDialogProps {
   timesheetId?: number;
   biWeeklyTimesheetId?: number;
   mode?: 'preview' | 'generate';
+  setActiveTab?: (tab: string) => void;
 }
 
 export default function InvoiceDialog({
@@ -25,7 +26,8 @@ export default function InvoiceDialog({
   invoiceId,
   timesheetId,
   biWeeklyTimesheetId,
-  mode = 'preview'
+  mode = 'preview',
+  setActiveTab
 }: InvoiceDialogProps) {
   const { toast } = useToast();
   const [isGeneratingPDF, setIsGeneratingPDF] = useState(false);
@@ -56,8 +58,11 @@ export default function InvoiceDialog({
       queryClient.invalidateQueries({ queryKey: ['/api/admin/invoices'] });
       queryClient.invalidateQueries({ queryKey: ['/api/admin/timesheets'] });
       queryClient.invalidateQueries({ queryKey: ['/api/admin/biweekly-timesheets'] });
-      // Close the dialog instead of reloading the page
+      // Close the dialog and navigate to invoice tab if setActiveTab is provided
       onClose();
+      if (setActiveTab) {
+        setActiveTab("invoices");
+      }
     },
     onError: (error: Error) => {
       toast({ 

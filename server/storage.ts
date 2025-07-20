@@ -2142,15 +2142,17 @@ async updateSeoPage(id: number, data: Partial<InsertSeoPage>): Promise<SeoPage |
 
     // Get real-time currency conversion rates
     const currencyData = await get6MonthAverageUSDToINR();
+    const currentRate = await getCurrencyRates('USD', 'INR'); // Get current rate separately
     
     // Original INR amount from timesheet
     const amountINR = parseFloat(timesheet.totalWeeklyAmount.toString());
     
     // Convert to USD using current rate
-    const totalAmountUSD = convertINRToUSD(amountINR, currencyData.currentRate);
+    const totalAmountUSD = convertINRToUSD(amountINR, currentRate);
     
     // Calculate 18% GST
-    const { gstAmount, totalWithGst } = calculateGST(totalAmountUSD, 18.0);
+    const gstAmount = calculateGST(totalAmountUSD, 18.0);
+    const totalWithGst = totalAmountUSD + gstAmount;
 
     // Generate invoice number
     const invoiceNumber = await this.generateInvoiceNumber();
@@ -2169,11 +2171,11 @@ async updateSeoPage(id: number, data: Partial<InsertSeoPage>): Promise<SeoPage |
       weekStartDate: timesheet.weekStartDate,
       weekEndDate: timesheet.weekEndDate,
       totalHours: timesheet.totalWeeklyHours,
-      hourlyRate: convertINRToUSD(parseFloat(billing.hourlyRate.toString()), currencyData.currentRate),
+      hourlyRate: convertINRToUSD(parseFloat(billing.hourlyRate.toString()), currentRate),
       totalAmount: totalAmountUSD,
       currency: 'USD',
-      currencyConversionRate: currencyData.currentRate,
-      sixMonthAverageRate: currencyData.sixMonthAverage,
+      currencyConversionRate: currentRate,
+      sixMonthAverageRate: currencyData.average,
       amountINR: amountINR,
       gstRate: 18.0,
       gstAmount: gstAmount,
@@ -2182,7 +2184,7 @@ async updateSeoPage(id: number, data: Partial<InsertSeoPage>): Promise<SeoPage |
       issuedDate: issuedDate.toISOString().split('T')[0],
       dueDate: dueDate.toISOString().split('T')[0],
       generatedBy,
-      notes: `Invoice generated for week ${timesheet.weekStartDate} to ${timesheet.weekEndDate}. Converted from INR ${amountINR} at rate ${currencyData.currentRate}`
+      notes: `Invoice generated for week ${timesheet.weekStartDate} to ${timesheet.weekEndDate}. Converted from INR ${amountINR} at rate ${currentRate}`
     };
 
     return await this.createInvoice(invoiceData);
