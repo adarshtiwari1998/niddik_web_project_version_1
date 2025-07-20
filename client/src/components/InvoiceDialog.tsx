@@ -104,8 +104,8 @@ export default function InvoiceDialog({
         heightLeft -= pageHeight;
       }
 
-      const invoice = invoiceData.data.invoice;
-      const fileName = `Invoice-${invoice.invoiceNumber}-${invoice.candidateName.replace(/\s+/g, '-')}.pdf`;
+      const invoice = invoiceData.data.invoice || invoiceData.data;
+      const fileName = `Invoice-${invoice.invoiceNumber}-${invoice.candidateName?.replace(/\s+/g, '-') || 'invoice'}.pdf`;
       pdf.save(fileName);
 
       toast({ title: "Success", description: "Invoice PDF downloaded successfully" });
@@ -132,7 +132,7 @@ export default function InvoiceDialog({
         <!DOCTYPE html>
         <html>
           <head>
-            <title>Invoice - ${invoiceData?.data?.invoice?.invoiceNumber || ''}</title>
+            <title>Invoice - ${invoiceData?.data?.invoiceNumber || invoiceData?.data?.invoice?.invoiceNumber || ''}</title>
             <style>
               body { margin: 0; padding: 20px; font-family: Arial, sans-serif; }
               @media print {
@@ -164,7 +164,7 @@ export default function InvoiceDialog({
           {invoiceData?.data && (
             <div className="flex items-center gap-2">
               <Badge variant="outline">
-                {invoiceData.data.invoice.invoiceNumber}
+                {invoiceData.data.invoiceNumber || invoiceData.data.invoice?.invoiceNumber || 'N/A'}
               </Badge>
               <Button
                 variant="outline"

@@ -1,0 +1,55 @@
+Uncaught TypeError: Cannot read properties of undefined (reading 'invoiceNumber')
+    at InvoiceDialog (/src/components/InvoiceDialog.tsx:160:96)
+    at renderWithHooks (chunk-RPCDYKBN.js:11548:26)
+    at updateFunctionComponent (chunk-RPCDYKBN.js:14582:28)
+    at beginWork (chunk-RPCDYKBN.js:15924:22)
+    at HTMLUnknownElement.callCallback2 (chunk-RPCDYKBN.js:3674:22)
+    at Object.invokeGuardedCallbackDev (chunk-RPCDYKBN.js:3699:24)
+    at invokeGuardedCallback (chunk-RPCDYKBN.js:3733:39)
+    at beginWork$1 (chunk-RPCDYKBN.js:19765:15)
+    at performUnitOfWork (chunk-RPCDYKBN.js:19198:20)
+    at workLoopSync (chunk-RPCDYKBN.js:19137:13)Understand this error
+ The above error occurred in the <InvoiceDialog> component:
+
+    at InvoiceDialog (https://caf3d8a8-7078-492e-ad44-5ebde0544197-00-354ryrzrs535x.kirk.replit.dev/src/components/InvoiceDialog.tsx:30:3)
+    at div
+    at InvoiceManagement (https://caf3d8a8-7078-492e-ad44-5ebde0544197-00-354ryrzrs535x.kirk.replit.dev/src/pages/TimesheetManagement.tsx:4333:20)
+    at div
+    at https://caf3d8a8-7078-492e-ad44-5ebde0544197-00-354ryrzrs535x.kirk.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/chunk-AXMZZQ2X.js?v=1f1ccb62:42:13
+    at Presence (https://caf3d8a8-7078-492e-ad44-5ebde0544197-00-354ryrzrs535x.kirk.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/chunk-7ZIEIKXH.js?v=1f1ccb62:24:11)
+    at https://caf3d8a8-7078-492e-ad44-5ebde0544197-00-354ryrzrs535x.kirk.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/@radix-ui_react-tabs.js?v=1f1ccb62:173:13
+    at _c5 (https://caf3d8a8-7078-492e-ad44-5ebde0544197-00-354ryrzrs535x.kirk.replit.dev/src/components/ui/tabs.tsx:68:12)
+    at div
+    at https://caf3d8a8-7078-492e-ad44-5ebde0544197-00-354ryrzrs535x.kirk.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/chunk-AXMZZQ2X.js?v=1f1ccb62:42:13
+    at Provider (https://caf3d8a8-7078-492e-ad44-5ebde0544197-00-354ryrzrs535x.kirk.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/chunk-E7IAXTU4.js?v=1f1ccb62:38:15)
+    at https://caf3d8a8-7078-492e-ad44-5ebde0544197-00-354ryrzrs535x.kirk.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/@radix-ui_react-tabs.js?v=1f1ccb62:51:7
+    at div
+    at main
+    at div
+    at div
+    at div
+    at AdminLayout (https://caf3d8a8-7078-492e-ad44-5ebde0544197-00-354ryrzrs535x.kirk.replit.dev/src/components/layout/AdminLayout.tsx:24:39)
+    at TimesheetManagement (https://caf3d8a8-7078-492e-ad44-5ebde0544197-00-354ryrzrs535x.kirk.replit.dev/src/pages/TimesheetManagement.tsx:41:20)
+    at Suspense
+    at ProtectedRoute (https://caf3d8a8-7078-492e-ad44-5ebde0544197-00-354ryrzrs535x.kirk.replit.dev/src/lib/protected-route.tsx:22:45)
+    at Switch (https://caf3d8a8-7078-492e-ad44-5ebde0544197-00-354ryrzrs535x.kirk.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/wouter.js?v=1f1ccb62:336:17)
+    at Router
+    at AuthProvider (https://caf3d8a8-7078-492e-ad44-5ebde0544197-00-354ryrzrs535x.kirk.replit.dev/src/hooks/use-auth.tsx:32:32)
+    at QueryClientProvider (https://caf3d8a8-7078-492e-ad44-5ebde0544197-00-354ryrzrs535x.kirk.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/@tanstack_react-query.js?v=1f1ccb62:2875:3)
+    at _a (https://caf3d8a8-7078-492e-ad44-5ebde0544197-00-354ryrzrs535x.kirk.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/react-helmet-async.js?v=1f1ccb62:624:5)
+    at App
+
+Consider adding an error boundary to your tree to customize error handling behavior.
+Visit https://reactjs.org/link/error-boundaries to learn more about error boundaries.
+logCapturedError @ chunk-RPCDYKBN.js:14032Understand this error
+chunk-RPCDYKBN.js:9129 Uncaught TypeError: Cannot read properties of undefined (reading 'invoiceNumber')
+    at InvoiceDialog (/src/components/InvoiceDialog.tsx:160:96)
+    at renderWithHooks (chunk-RPCDYKBN.js:11548:26)
+    at updateFunctionComponent (chunk-RPCDYKBN.js:14582:28)
+    at beginWork (chunk-RPCDYKBN.js:15924:22)
+    at beginWork$1 (chunk-RPCDYKBN.js:19753:22)
+    at performUnitOfWork (chunk-RPCDYKBN.js:19198:20)
+    at workLoopSync (chunk-RPCDYKBN.js:19137:13)
+    at renderRootSync (chunk-RPCDYKBN.js:19116:15)
+    at recoverFromConcurrentError (chunk-RPCDYKBN.js:18736:28)
+    at performSyncWorkOnRoot (chunk-RPCDYKBN.js:18879:28)
