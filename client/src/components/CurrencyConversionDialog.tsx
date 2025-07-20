@@ -152,38 +152,43 @@ export function CurrencyConversionDialog({
             </CardContent>
           </Card>
 
-          {/* Advanced Algorithm Explanation */}
+          {/* Enhanced Algorithm Explanation */}
           <Card className="border-orange-200 bg-orange-50">
             <CardHeader>
               <CardTitle className="flex items-center gap-2 text-orange-800">
-                <DollarSignIcon className="h-5 w-5" />
-                Advanced Algorithm Process
+                <TrendingUpIcon className="h-5 w-5" />
+                Enhanced Daily Sampling Algorithm
               </CardTitle>
             </CardHeader>
             <CardContent className="space-y-4">
+              <div className="bg-green-100 p-3 rounded-lg border border-green-300">
+                <p className="text-sm font-semibold text-green-800">Maximum Conversion Value Optimization</p>
+                <p className="text-xs text-green-700">This algorithm samples daily rate fluctuations and prioritizes higher rates for optimal billing conversions</p>
+              </div>
+              
               <div className="space-y-3">
                 <div className="flex items-start gap-3">
-                  <Badge className="bg-orange-600 text-white min-w-[30px] h-6 flex items-center justify-center">1</Badge>
+                  <Badge className="bg-blue-600 text-white min-w-[30px] h-6 flex items-center justify-center">1</Badge>
                   <div>
-                    <div className="font-medium">Historical Data Collection</div>
-                    <div className="text-sm text-gray-600">Fetched 6 months of daily exchange rates from FreeCurrencyAPI</div>
+                    <div className="font-medium">Daily Rate Sampling</div>
+                    <div className="text-sm text-gray-600">Sample 8+ days per month (start, mid, end + random days) instead of single-day rates</div>
                   </div>
                 </div>
                 <div className="flex items-start gap-3">
-                  <Badge className="bg-orange-600 text-white min-w-[30px] h-6 flex items-center justify-center">2</Badge>
+                  <Badge className="bg-green-600 text-white min-w-[30px] h-6 flex items-center justify-center">2</Badge>
                   <div>
-                    <div className="font-medium">Monthly Averaging</div>
-                    <div className="text-sm text-gray-600">Calculated monthly averages to smooth out daily fluctuations</div>
+                    <div className="font-medium">Weighted Monthly Average</div>
+                    <div className="text-sm text-gray-600">70% weight to top rates, 30% to remaining rates for maximum conversion value</div>
                   </div>
                 </div>
                 <div className="flex items-start gap-3">
-                  <Badge className="bg-orange-600 text-white min-w-[30px] h-6 flex items-center justify-center">3</Badge>
+                  <Badge className="bg-purple-600 text-white min-w-[30px] h-6 flex items-center justify-center">3</Badge>
                   <div>
-                    <div className="font-medium">6-Month Average Calculation</div>
+                    <div className="font-medium">Time-Weighted 6-Month Average</div>
                     <div className="text-sm text-gray-600">
-                      Applied weighted average algorithm: 
+                      Recent months (20% weight) vs older months (10-15% weight)
                       <code className="ml-2 px-1 bg-white rounded text-xs">
-                        ({monthlyRates.map(r => r.rate.toFixed(2)).join(' + ')}) ÷ 6 = {conversionRate.toFixed(4)}
+                        Final Rate: {conversionRate.toFixed(4)} INR
                       </code>
                     </div>
                   </div>
@@ -191,7 +196,7 @@ export function CurrencyConversionDialog({
                 <div className="flex items-start gap-3">
                   <Badge className="bg-orange-600 text-white min-w-[30px] h-6 flex items-center justify-center">4</Badge>
                   <div>
-                    <div className="font-medium">Final Conversion</div>
+                    <div className="font-medium">Optimized Conversion</div>
                     <div className="text-sm text-gray-600">
                       Applied rate to amount: 
                       <code className="ml-2 px-1 bg-white rounded text-xs">

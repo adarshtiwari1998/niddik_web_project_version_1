@@ -4970,23 +4970,45 @@ ${allUrls.map(url => `  <url>
     }
   });
 
-  // Get 6-month currency rates endpoint  
+  // Get 6-month currency rates endpoint with enhanced daily sampling
   app.get('/api/admin/currency-rates', async (req: AuthenticatedRequest, res: Response) => {
     try {
       if (!req.isAuthenticated() || !req.user || req.user.role !== 'admin') {
         return res.status(403).json({ success: false, message: "Admin access required" });
       }
 
-      const { average, monthlyRates } = await get6MonthAverageUSDToINR();
+      const { currency = 'USD' } = req.query;
       
-      res.json({
-        success: true,
-        data: {
-          sixMonthAverage: average,
-          monthlyRates,
-          lastUpdated: new Date().toISOString()
-        }
-      });
+      if (currency === 'USD') {
+        const { average, monthlyRates } = await get6MonthAverageUSDToINR();
+        
+        res.json({
+          success: true,
+          data: {
+            currency: 'USD',
+            targetCurrency: 'INR',
+            sixMonthAverage: average,
+            monthlyRates,
+            algorithm: 'Enhanced daily sampling with highest rate optimization',
+            lastUpdated: new Date().toISOString(),
+            note: 'Calculated from daily rate fluctuations, not single-day sampling'
+          }
+        });
+      } else {
+        // For other currencies, use enhanced conversion logic
+        const currentRate = await getCurrencyRates(currency as string, 'INR');
+        
+        res.json({
+          success: true,
+          data: {
+            currency: currency,
+            targetCurrency: 'INR',
+            currentRate: currentRate,
+            lastUpdated: new Date().toISOString(),
+            note: 'Current live rate - daily historical analysis available for USD only'
+          }
+        });
+      }
     } catch (error) {
       console.error('Currency rates error:', error);
       res.status(500).json({ 
