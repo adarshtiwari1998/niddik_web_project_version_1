@@ -55,8 +55,9 @@ export default function InvoiceDialog({
       toast({ title: "Success", description: "Invoice generated successfully" });
       queryClient.invalidateQueries({ queryKey: ['/api/admin/invoices'] });
       queryClient.invalidateQueries({ queryKey: ['/api/admin/timesheets'] });
-      // Switch to preview mode with the new invoice
-      window.location.reload(); // Simple reload to refresh the invoice list
+      queryClient.invalidateQueries({ queryKey: ['/api/admin/biweekly-timesheets'] });
+      // Close the dialog instead of reloading the page
+      onClose();
     },
     onError: (error: Error) => {
       toast({ 
