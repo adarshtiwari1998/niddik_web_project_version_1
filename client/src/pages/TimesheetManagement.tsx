@@ -1,5 +1,6 @@
 import React, { useState } from "react";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
+import { apiRequest } from "@/lib/queryClient";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
@@ -2642,13 +2643,10 @@ function InvoiceManagement() {
   // Generate invoice mutation
   const generateInvoiceMutation = useMutation({
     mutationFn: async (timesheetId: number) => {
-      const response = await fetch('/api/admin/generate-invoice', {
+      return apiRequest('/api/admin/generate-invoice', {
         method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ timesheetId })
       });
-      if (!response.ok) throw new Error('Failed to generate invoice');
-      return response.json();
     },
     onSuccess: () => {
       toast({ title: "Success", description: "Invoice generated successfully" });
