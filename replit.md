@@ -123,6 +123,20 @@ The application follows a standard full-stack architecture with clear separation
 
 # Recent Changes
 
+## End User Selection Persistence Fix in Billing Configuration Edit Dialog (July 20, 2025)
+- **Critical Bug Fix**: Resolved end user selection not persisting in edit billing configuration dialog
+  - **Root Cause**: useEffect hook was clearing endUserId whenever clientCompanyId changed, interfering with form population during edit mode
+  - **Solution**: Modified effect to only clear endUserId when not in edit mode (!editingBilling condition)
+  - **Backend Verification**: Confirmed getAllCandidatesWithBilling correctly returns endUserId and endUserName via LEFT JOIN with end_users table
+  - **User Experience**: End user selections now properly persist when reopening edit dialogs and display correctly in billing configuration cards
+  - **Database Integrity**: End user data correctly stored and displayed across create/edit/view operations
+- **Migration Completed**: Successfully migrated Niddik job portal from Replit Agent to standard Replit environment
+  - **All Dependencies**: Node.js packages installed and verified working correctly
+  - **Database Connectivity**: PostgreSQL connections established with all API endpoints responding
+  - **Security Maintained**: Client/server separation and role-based access control preserved
+  - **Performance**: Application running cleanly on port 5000 without errors
+- **Files Modified**: `client/src/components/BillingConfig.tsx`, `.local/state/replit/agent/progress_tracker.md`, `replit.md`
+
 ## End User Selection Persistence and Enhanced Company-End User Visualization (July 20, 2025)
 - **Complete End User Selection Bug Fix**: Resolved critical persistence issue where End User selections would reset when edit dialog reopened
   - **Automatic End User Creation**: Enhanced `handleEndUserSelection` to automatically create end user records when candidate end users are selected

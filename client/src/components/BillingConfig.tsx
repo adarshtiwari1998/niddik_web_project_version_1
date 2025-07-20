@@ -423,10 +423,12 @@ export default function BillingConfig() {
     setBillingData(prev => ({ ...prev, benefits: selectedBenefits }));
   }, [selectedBenefits]);
 
-  // Clear endUserId when client company changes
+  // Clear endUserId when client company changes (only for create mode, not edit mode)
   useEffect(() => {
-    setBillingData(prev => ({ ...prev, endUserId: undefined }));
-  }, [billingData.clientCompanyId]);
+    if (!editingBilling) {
+      setBillingData(prev => ({ ...prev, endUserId: undefined }));
+    }
+  }, [billingData.clientCompanyId, editingBilling]);
 
   const handleSubmit = () => {
     if (!selectedCandidate || billingData.hourlyRate <= 0) {
