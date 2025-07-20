@@ -123,19 +123,24 @@ The application follows a standard full-stack architecture with clear separation
 
 # Recent Changes
 
-## Bi-Weekly Timesheet Inline Editing Implementation and Migration Completed (July 20, 2025)
-- **Bi-Weekly Edit Enhancement**: Implemented full inline editing functionality for bi-weekly timesheets
-  - **Edit Week 1/Week 2 Buttons**: Added proper state management for editing individual weeks within bi-weekly view
-  - **Inline Input Fields**: Regular and Overtime hours now show editable input fields when edit mode is active
-  - **Save/Cancel Functionality**: Added Save and Cancel buttons with proper data persistence and state management
-  - **Real-time Total Calculation**: Total hours update automatically as you edit Regular and Overtime values
-  - **Consistent UX**: Bi-weekly editing now matches the same inline editing experience as weekly timesheets
+## Flexible Rejected Timesheet Editing and Status Synchronization Fix (July 20, 2025)
+- **Flexible Editing for Rejected Timesheets**: Implemented comprehensive solution allowing candidates to edit rejected timesheets regardless of week deadlines
+  - **Business Scenario Fixed**: When admin rejects timesheet on Monday after weekend deadline, candidate can now access and resubmit previous week's timesheet
+  - **Enhanced Editing Logic**: Added `canEditRejectedTimesheet` flag to bypass normal week-end restrictions for rejected timesheets
+  - **Updated Input Controls**: Input fields now enabled for rejected timesheets even when week deadline has passed
+  - **Smart Button Display**: "Resubmit Timesheet" button appears for rejected timesheets with clear messaging
+  - **User-Friendly Messaging**: Clear notification explaining rejected timesheets can be edited regardless of Sunday deadline
+- **Complete Status Synchronization Fix**: Resolved status display inconsistencies between admin and candidate views
+  - **Calendar Integration**: Added 'pending' status to calendar modifiers with proper yellow highlighting
+  - **Status Badge Enhancement**: Enhanced getStatusBadge function to handle both 'submitted' and 'pending' statuses consistently
+  - **Legend Update**: Added "Pending" status to calendar legend for clear visual reference
+  - **Notification Enhancement**: Added specific messaging when timesheet is reverted from approved to pending
 - **Migration Completed**: Successfully migrated Niddik job portal from Replit Agent to standard Replit environment
   - **All Dependencies**: Node.js packages installed and verified working correctly
   - **Database Connectivity**: PostgreSQL connections established with all API endpoints responding
   - **Security Maintained**: Client/server separation and role-based access control preserved
   - **Performance**: Application running cleanly on port 5000 without errors
-- **Files Modified**: `client/src/pages/TimesheetManagement.tsx`, `.local/state/replit/agent/progress_tracker.md`, `replit.md`
+- **Files Modified**: `client/src/pages/CandidateTimesheets.tsx`, `replit.md`
 
 ## Replit Agent Migration Completed and Timesheet Form Fix (July 19, 2025)
 - **Migration Completed**: Successfully migrated job portal application from Replit Agent to standard Replit environment

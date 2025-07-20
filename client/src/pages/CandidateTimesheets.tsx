@@ -283,7 +283,13 @@ export default function CandidateTimesheets() {
   );
   
   // User can update existing timesheet if it's not approved
-  const canUpdateTimesheet = currentWeekTimesheet && currentWeekTimesheet.status !== 'approved';
+  // Special case: Allow editing rejected timesheets regardless of week boundaries
+  const canUpdateTimesheet = currentWeekTimesheet && (
+    currentWeekTimesheet.status !== 'approved'
+  );
+  
+  // Enhanced logic: Allow editing rejected timesheets even if week has ended
+  const canEditRejectedTimesheet = currentWeekTimesheet?.status === 'rejected';
   
   // User can submit new timesheet for current week or future weeks (allow future week submissions)
   const canSubmitNewTimesheet = !hasSubmittedThisWeek;
@@ -637,10 +643,13 @@ export default function CandidateTimesheets() {
                   <div className="bg-red-50 border border-red-200 rounded-lg p-3 mt-2">
                     <p className="text-sm text-red-800">
                       <XCircle className="w-4 h-4 inline mr-1" />
-                      Timesheet rejected - You can edit and resubmit.
+                      Timesheet rejected - You can edit and resubmit regardless of week deadline.
                       {currentWeekTimesheet.rejectionReason && (
                         <span className="block mt-1 font-medium">Reason: {currentWeekTimesheet.rejectionReason}</span>
                       )}
+                      <span className="block mt-1 text-xs text-red-600">
+                        Note: Rejected timesheets can be edited even after the Sunday deadline has passed.
+                      </span>
                     </p>
                   </div>
                 )}
@@ -674,7 +683,7 @@ export default function CandidateTimesheets() {
                             ...prev,
                             [key]: parseFloat(e.target.value) || 0
                           }))}
-                          disabled={!canSubmitNewTimesheet && !canUpdateTimesheet}
+                          disabled={!canSubmitNewTimesheet && !canUpdateTimesheet && !canEditRejectedTimesheet}
                           placeholder="0.0"
                         />
                       </div>
@@ -711,14 +720,14 @@ export default function CandidateTimesheets() {
                         </div>
                       )
                     ) : weekTimesheet.data.status !== 'approved' ? (
-                      canUpdateTimesheet ? (
+                      canUpdateTimesheet || canEditRejectedTimesheet ? (
                         <Button 
                           onClick={handleUpdateTimesheet}
                           disabled={updateTimesheetMutation.isPending}
                           className="flex items-center gap-2"
                         >
                           <FileText className="h-4 w-4" />
-                          Update Timesheet
+                          {weekTimesheet.data.status === 'rejected' ? 'Resubmit Timesheet' : 'Update Timesheet'}
                         </Button>
                       ) : (
                         <div className="text-sm text-muted-foreground">
