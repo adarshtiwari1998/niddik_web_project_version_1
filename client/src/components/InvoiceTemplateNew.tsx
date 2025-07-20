@@ -293,24 +293,6 @@ const InvoiceTemplateNew = forwardRef<HTMLDivElement, InvoiceTemplateProps>(
                   {formatCurrency(invoice.totalAmount, 'USD')}
                 </td>
               </tr>
-
-              {/* Add another task row if needed */}
-              <tr>
-                <td className="border border-gray-400 p-3 pl-8">
-                  <p className="text-xs">
-                    Task performed during {formatDate(invoice.weekStartDate)} to {formatDate(invoice.weekEndDate)}
-                  </p>
-                </td>
-                <td className="border border-gray-400 p-2 text-center font-semibold">
-                  {invoice.totalHours.toFixed(0)}
-                </td>
-                <td className="border border-gray-400 p-2 text-center font-semibold">
-                  {formatCurrency(invoice.hourlyRate, 'USD')}
-                </td>
-                <td className="border border-gray-400 p-2 text-center font-semibold">
-                  {formatCurrency(invoice.totalAmount, 'USD')}
-                </td>
-              </tr>
             </tbody>
           </table>
         </div>
@@ -361,7 +343,7 @@ const InvoiceTemplateNew = forwardRef<HTMLDivElement, InvoiceTemplateProps>(
                 <tr>
                   <td className="border border-gray-400 p-2 text-right font-semibold">SUBTOTAL</td>
                   <td className="border border-gray-400 p-2 text-right font-semibold">
-                    {formatCurrency(invoice.totalAmount * 2, 'USD')}
+                    {formatCurrency(invoice.totalAmount, 'USD')}
                   </td>
                 </tr>
                 <tr>
@@ -371,7 +353,7 @@ const InvoiceTemplateNew = forwardRef<HTMLDivElement, InvoiceTemplateProps>(
                 <tr>
                   <td className="border border-gray-400 p-2 text-right">SUBTOTAL LESS DISCOUNT</td>
                   <td className="border border-gray-400 p-2 text-right font-semibold">
-                    {formatCurrency(invoice.totalAmount * 2, 'USD')}
+                    {formatCurrency(invoice.totalAmount, 'USD')}
                   </td>
                 </tr>
                 <tr>

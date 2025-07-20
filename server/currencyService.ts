@@ -110,3 +110,26 @@ export const convertINRToUSD = (amountINR: number, rate: number): number => {
 export const convertUSDToINR = (amountUSD: number, rate: number): number => {
   return amountUSD * rate;
 };
+
+// Helper function to calculate GST
+export const calculateGST = (baseAmount: number, gstRate: number): { gstAmount: number; totalWithGst: number } => {
+  const gstAmount = (baseAmount * gstRate) / 100;
+  const totalWithGst = baseAmount + gstAmount;
+  return { gstAmount, totalWithGst };
+};
+
+// Helper function to format currency
+export const formatCurrency = (amount: number, currency: string): string => {
+  if (currency === 'USD') {
+    return new Intl.NumberFormat('en-US', {
+      style: 'currency',
+      currency: 'USD'
+    }).format(amount);
+  } else if (currency === 'INR') {
+    return new Intl.NumberFormat('en-IN', {
+      style: 'currency',
+      currency: 'INR'
+    }).format(amount);
+  }
+  return amount.toString();
+};

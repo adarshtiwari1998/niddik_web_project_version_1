@@ -131,6 +131,11 @@ The application follows a standard full-stack architecture with clear separation
   - **Service Description Table**: Implemented green-header table with detailed candidate deployment descriptions
   - **Currency Conversion Display**: Added 6-month average USD/INR rate display with monthly breakdown
   - **Professional Calculations**: Enhanced subtotal, discount, GST, and total calculations with proper formatting
+- **Critical Calculation Bug Fixed**: Resolved major invoice calculation errors
+  - **Subtotal Error**: Fixed subtotal showing doubled amount (was `invoice.totalAmount * 2`, now correctly shows `invoice.totalAmount`)
+  - **Duplicate Service Line**: Removed duplicate service line that was causing incorrect subtotal calculation
+  - **GST Calculation**: Added proper calculateGST function to currencyService.ts with correct 18% GST calculation
+  - **Mathematical Accuracy**: Balance Due now correctly equals Subtotal + GST (e.g., $558.68 + $100.56 = $659.24)
 - **Dynamic Data Integration**: Enhanced backend to include billing configuration data in invoice template
   - **Billing Data Support**: Added billingData prop to InvoiceTemplateNew component with employment type and end user information
   - **Real Company Information**: Invoice now displays authentic company logos, addresses, and contact details
@@ -142,7 +147,7 @@ The application follows a standard full-stack architecture with clear separation
   - **Payment Terms**: Added professional footer with payment terms and currency conversion details
 - **Technical Implementation**: Fixed JSX syntax errors and proper React component integration
   - **colSpan Fix**: Corrected JSX attribute from lowercase to camelCase
-  - **Currency Service**: Created currency service foundation for real-time exchange rate integration
+  - **Currency Service**: Enhanced currency service with calculateGST and formatCurrency functions
   - **Server Integration**: Enhanced storage layer to provide billing data for dynamic descriptions
 - **Migration Completed**: Successfully migrated from Replit Agent to standard environment with all features working
 - **Files Modified**: `client/src/components/InvoiceTemplateNew.tsx`, `client/src/components/InvoiceDialog.tsx`, `server/storage.ts`, `server/currencyService.ts`
