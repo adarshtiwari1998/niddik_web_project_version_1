@@ -129,6 +129,12 @@ The application follows a standard full-stack architecture with clear separation
   - **Application Running**: Express server and frontend running cleanly on port 5000
   - **Database Connectivity**: PostgreSQL connections established and all API endpoints responding correctly
   - **Security Maintained**: Client/server separation and role-based access control preserved
+- **Invoice Template Null Checking Fix**: Resolved critical "Cannot read properties of undefined" errors in invoice preview/download
+  - **Root Cause**: phoneNumbers and emailAddresses arrays were undefined in company/client data, causing .length property access errors
+  - **Solution**: Added proper null checking with && conditions before accessing array properties in InvoiceTemplateNew.tsx
+  - **Sections Fixed**: Both "Bill To" and "Ship To" sections now safely handle missing contact information
+  - **Error Prevention**: Template now gracefully handles cases where phone/email data may be missing from database
+  - **Result**: Invoice preview and download now work without JavaScript errors
 - **TimesheetManagement JavaScript Errors Fixed**: Resolved critical JavaScript errors in timesheet management page
   - **Root Cause**: biWeeklyInvoiceDialogOpen state variables were not being passed to WeeklyTableView component
   - **Solution**: Added missing props (setBiWeeklyInvoiceDialogOpen, setSelectedBiWeeklyTimesheetForInvoice, biWeeklyInvoiceDialogOpen, selectedBiWeeklyTimesheetForInvoice) to WeeklyTableView component

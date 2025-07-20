@@ -128,10 +128,10 @@ const InvoiceTemplateNew = forwardRef<HTMLDivElement, InvoiceTemplateProps>(
                   <p>{companyData.address}</p>
                   <p>{companyData.city}, {companyData.state} {companyData.zipCode}</p>
                   <p>{companyData.country}</p>
-                  {companyData.phoneNumbers.length > 0 && (
+                  {companyData.phoneNumbers && companyData.phoneNumbers.length > 0 && (
                     <p>Phone: {companyData.phoneNumbers[0]}</p>
                   )}
-                  {companyData.emailAddresses.length > 0 && (
+                  {companyData.emailAddresses && companyData.emailAddresses.length > 0 && (
                     <p>Email: {companyData.emailAddresses[0]}</p>
                   )}
                   {companyData.gstNumber && (
@@ -179,10 +179,10 @@ const InvoiceTemplateNew = forwardRef<HTMLDivElement, InvoiceTemplateProps>(
                 <p>{clientData.billToAddress}</p>
                 <p>{clientData.billToCity}, {clientData.billToState} {clientData.billToZipCode}</p>
                 <p>{clientData.billToCountry}</p>
-                {clientData.phoneNumbers.length > 0 && (
+                {clientData.phoneNumbers && clientData.phoneNumbers.length > 0 && (
                   <p>Phone: {clientData.phoneNumbers[0]}</p>
                 )}
-                {clientData.emailAddresses.length > 0 && (
+                {clientData.emailAddresses && clientData.emailAddresses.length > 0 && (
                   <p>Email: {clientData.emailAddresses[0]}</p>
                 )}
               </div>
@@ -210,10 +210,10 @@ const InvoiceTemplateNew = forwardRef<HTMLDivElement, InvoiceTemplateProps>(
                 <p>{clientData.billToAddress}</p>
                 <p>{clientData.billToCity}, {clientData.billToState} {clientData.billToZipCode}</p>
                 <p>{clientData.billToCountry}</p>
-                {clientData.phoneNumbers.length > 0 && (
+                {clientData.phoneNumbers && clientData.phoneNumbers.length > 0 && (
                   <p>Phone: {clientData.phoneNumbers[0]}</p>
                 )}
-                {clientData.emailAddresses.length > 0 && (
+                {clientData.emailAddresses && clientData.emailAddresses.length > 0 && (
                   <p>Email: {clientData.emailAddresses[0]}</p>
                 )}
               </div>

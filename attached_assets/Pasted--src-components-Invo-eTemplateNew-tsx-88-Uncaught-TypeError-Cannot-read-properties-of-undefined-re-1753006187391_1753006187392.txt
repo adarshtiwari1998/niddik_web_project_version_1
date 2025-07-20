@@ -1,0 +1,79 @@
+/src/components/Invo…eTemplateNew.tsx:88 Uncaught TypeError: Cannot read properties of undefined (reading 'length')
+    at _c (/src/components/InvoiceTemplateNew.tsx:88:40)
+    at renderWithHooks (/@fs/home/runner/workspace/node_modules/.vite/deps/chunk-RPCDYKBN.js?v=1f1ccb62:11548:26)
+    at updateForwardRef (/@fs/home/runner/workspace/node_modules/.vite/deps/chunk-RPCDYKBN.js?v=1f1ccb62:14325:28)
+    at beginWork (/@fs/home/runner/workspace/node_modules/.vite/deps/chunk-RPCDYKBN.js?v=1f1ccb62:15946:22)
+    at HTMLUnknownElement.callCallback2 (/@fs/home/runner/workspace/node_modules/.vite/deps/chunk-RPCDYKBN.js?v=1f1ccb62:3674:22)
+    at Object.invokeGuardedCallbackDev (/@fs/home/runner/workspace/node_modules/.vite/deps/chunk-RPCDYKBN.js?v=1f1ccb62:3699:24)
+    at invokeGuardedCallback (/@fs/home/runner/workspace/node_modules/.vite/deps/chunk-RPCDYKBN.js?v=1f1ccb62:3733:39)
+    at beginWork$1 (/@fs/home/runner/workspace/node_modules/.vite/deps/chunk-RPCDYKBN.js?v=1f1ccb62:19765:15)
+    at performUnitOfWork (/@fs/home/runner/workspace/node_modules/.vite/deps/chunk-RPCDYKBN.js?v=1f1ccb62:19198:20)
+    at workLoopSync (/@fs/home/runner/workspace/node_modules/.vite/deps/chunk-RPCDYKBN.js?v=1f1ccb62:19137:13)Understand this error
+ The above error occurred in the <InvoiceTemplateNew> component:
+
+    at _c (https://ee6ac78d-83d5-4969-b829-c49703d6518b-00-2dgmgrshw2lj9.kirk.replit.dev/src/components/InvoiceTemplateNew.tsx:20:11)
+    at div
+    at div
+    at div
+    at https://ee6ac78d-83d5-4969-b829-c49703d6518b-00-2dgmgrshw2lj9.kirk.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/chunk-AXMZZQ2X.js?v=1f1ccb62:42:13
+    at https://ee6ac78d-83d5-4969-b829-c49703d6518b-00-2dgmgrshw2lj9.kirk.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/chunk-TPEMFX7K.js?v=1f1ccb62:61:7
+    at https://ee6ac78d-83d5-4969-b829-c49703d6518b-00-2dgmgrshw2lj9.kirk.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/chunk-2K77HOHX.js?v=1f1ccb62:79:13
+    at https://ee6ac78d-83d5-4969-b829-c49703d6518b-00-2dgmgrshw2lj9.kirk.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/chunk-2K77HOHX.js?v=1f1ccb62:56:13
+    at https://ee6ac78d-83d5-4969-b829-c49703d6518b-00-2dgmgrshw2lj9.kirk.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/chunk-AXMZZQ2X.js?v=1f1ccb62:42:13
+    at https://ee6ac78d-83d5-4969-b829-c49703d6518b-00-2dgmgrshw2lj9.kirk.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/chunk-TQT7K6GT.js?v=1f1ccb62:29:5
+    at https://ee6ac78d-83d5-4969-b829-c49703d6518b-00-2dgmgrshw2lj9.kirk.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/chunk-YNBPQZ5Q.js?v=1f1ccb62:233:13
+    at https://ee6ac78d-83d5-4969-b829-c49703d6518b-00-2dgmgrshw2lj9.kirk.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/chunk-YNBPQZ5Q.js?v=1f1ccb62:156:58
+    at Presence (https://ee6ac78d-83d5-4969-b829-c49703d6518b-00-2dgmgrshw2lj9.kirk.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/chunk-7ZIEIKXH.js?v=1f1ccb62:24:11)
+    at https://ee6ac78d-83d5-4969-b829-c49703d6518b-00-2dgmgrshw2lj9.kirk.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/chunk-YNBPQZ5Q.js?v=1f1ccb62:147:64
+    at https://ee6ac78d-83d5-4969-b829-c49703d6518b-00-2dgmgrshw2lj9.kirk.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/chunk-2K77HOHX.js?v=1f1ccb62:79:13
+    at https://ee6ac78d-83d5-4969-b829-c49703d6518b-00-2dgmgrshw2lj9.kirk.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/chunk-2K77HOHX.js?v=1f1ccb62:56:13
+    at https://ee6ac78d-83d5-4969-b829-c49703d6518b-00-2dgmgrshw2lj9.kirk.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/chunk-AXMZZQ2X.js?v=1f1ccb62:42:13
+    at https://ee6ac78d-83d5-4969-b829-c49703d6518b-00-2dgmgrshw2lj9.kirk.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/chunk-TPEMFX7K.js?v=1f1ccb62:260:22
+    at Presence (https://ee6ac78d-83d5-4969-b829-c49703d6518b-00-2dgmgrshw2lj9.kirk.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/chunk-7ZIEIKXH.js?v=1f1ccb62:24:11)
+    at Provider (https://ee6ac78d-83d5-4969-b829-c49703d6518b-00-2dgmgrshw2lj9.kirk.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/chunk-E7IAXTU4.js?v=1f1ccb62:38:15)
+    at DialogPortal (https://ee6ac78d-83d5-4969-b829-c49703d6518b-00-2dgmgrshw2lj9.kirk.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/chunk-YNBPQZ5Q.js?v=1f1ccb62:109:11)
+    at _c3 (https://ee6ac78d-83d5-4969-b829-c49703d6518b-00-2dgmgrshw2lj9.kirk.replit.dev/src/components/ui/dialog.tsx:49:12)
+    at Provider (https://ee6ac78d-83d5-4969-b829-c49703d6518b-00-2dgmgrshw2lj9.kirk.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/chunk-E7IAXTU4.js?v=1f1ccb62:38:15)
+    at Dialog (https://ee6ac78d-83d5-4969-b829-c49703d6518b-00-2dgmgrshw2lj9.kirk.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/chunk-YNBPQZ5Q.js?v=1f1ccb62:50:5)
+    at InvoiceDialog (https://ee6ac78d-83d5-4969-b829-c49703d6518b-00-2dgmgrshw2lj9.kirk.replit.dev/src/components/InvoiceDialog.tsx:30:3)
+    at div
+    at InvoiceManagement (https://ee6ac78d-83d5-4969-b829-c49703d6518b-00-2dgmgrshw2lj9.kirk.replit.dev/src/pages/TimesheetManagement.tsx:4418:20)
+    at div
+    at https://ee6ac78d-83d5-4969-b829-c49703d6518b-00-2dgmgrshw2lj9.kirk.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/chunk-AXMZZQ2X.js?v=1f1ccb62:42:13
+    at Presence (https://ee6ac78d-83d5-4969-b829-c49703d6518b-00-2dgmgrshw2lj9.kirk.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/chunk-7ZIEIKXH.js?v=1f1ccb62:24:11)
+    at https://ee6ac78d-83d5-4969-b829-c49703d6518b-00-2dgmgrshw2lj9.kirk.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/@radix-ui_react-tabs.js?v=1f1ccb62:173:13
+    at _c5 (https://ee6ac78d-83d5-4969-b829-c49703d6518b-00-2dgmgrshw2lj9.kirk.replit.dev/src/components/ui/tabs.tsx:68:12)
+    at div
+    at https://ee6ac78d-83d5-4969-b829-c49703d6518b-00-2dgmgrshw2lj9.kirk.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/chunk-AXMZZQ2X.js?v=1f1ccb62:42:13
+    at Provider (https://ee6ac78d-83d5-4969-b829-c49703d6518b-00-2dgmgrshw2lj9.kirk.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/chunk-E7IAXTU4.js?v=1f1ccb62:38:15)
+    at https://ee6ac78d-83d5-4969-b829-c49703d6518b-00-2dgmgrshw2lj9.kirk.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/@radix-ui_react-tabs.js?v=1f1ccb62:51:7
+    at div
+    at main
+    at div
+    at div
+    at div
+    at AdminLayout (https://ee6ac78d-83d5-4969-b829-c49703d6518b-00-2dgmgrshw2lj9.kirk.replit.dev/src/components/layout/AdminLayout.tsx:24:39)
+    at TimesheetManagement (https://ee6ac78d-83d5-4969-b829-c49703d6518b-00-2dgmgrshw2lj9.kirk.replit.dev/src/pages/TimesheetManagement.tsx:41:20)
+    at Suspense
+    at ProtectedRoute (https://ee6ac78d-83d5-4969-b829-c49703d6518b-00-2dgmgrshw2lj9.kirk.replit.dev/src/lib/protected-route.tsx:22:45)
+    at Switch (https://ee6ac78d-83d5-4969-b829-c49703d6518b-00-2dgmgrshw2lj9.kirk.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/wouter.js?v=1f1ccb62:336:17)
+    at Router
+    at AuthProvider (https://ee6ac78d-83d5-4969-b829-c49703d6518b-00-2dgmgrshw2lj9.kirk.replit.dev/src/hooks/use-auth.tsx:32:32)
+    at QueryClientProvider (https://ee6ac78d-83d5-4969-b829-c49703d6518b-00-2dgmgrshw2lj9.kirk.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/@tanstack_react-query.js?v=1f1ccb62:2875:3)
+    at _a (https://ee6ac78d-83d5-4969-b829-c49703d6518b-00-2dgmgrshw2lj9.kirk.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/react-helmet-async.js?v=1f1ccb62:624:5)
+    at App
+
+Consider adding an error boundary to your tree to customize error handling behavior.
+Visit https://reactjs.org/link/error-boundaries to learn more about error boundaries.
+logCapturedError @ /@fs/home/runner/wor…js?v=1f1ccb62:14032Understand this error
+/@fs/home/runner/wor….js?v=1f1ccb62:9129 Uncaught TypeError: Cannot read properties of undefined (reading 'length')
+    at _c (/src/components/InvoiceTemplateNew.tsx:88:40)
+    at renderWithHooks (/@fs/home/runner/workspace/node_modules/.vite/deps/chunk-RPCDYKBN.js?v=1f1ccb62:11548:26)
+    at updateForwardRef (/@fs/home/runner/workspace/node_modules/.vite/deps/chunk-RPCDYKBN.js?v=1f1ccb62:14325:28)
+    at beginWork (/@fs/home/runner/workspace/node_modules/.vite/deps/chunk-RPCDYKBN.js?v=1f1ccb62:15946:22)
+    at beginWork$1 (/@fs/home/runner/workspace/node_modules/.vite/deps/chunk-RPCDYKBN.js?v=1f1ccb62:19753:22)
+    at performUnitOfWork (/@fs/home/runner/workspace/node_modules/.vite/deps/chunk-RPCDYKBN.js?v=1f1ccb62:19198:20)
+    at workLoopSync (/@fs/home/runner/workspace/node_modules/.vite/deps/chunk-RPCDYKBN.js?v=1f1ccb62:19137:13)
+    at renderRootSync (/@fs/home/runner/workspace/node_modules/.vite/deps/chunk-RPCDYKBN.js?v=1f1ccb62:19116:15)
+    at recoverFromConcurrentError (/@fs/home/runner/workspace/node_modules/.vite/deps/chunk-RPCDYKBN.js?v=1f1ccb62:18736:28)
+    at performSyncWorkOnRoot (/@fs/home/runner/workspace/node_modules/.vite/deps/chunk-RPCDYKBN.js?v=1f1ccb62:18879:28)Understand this error
