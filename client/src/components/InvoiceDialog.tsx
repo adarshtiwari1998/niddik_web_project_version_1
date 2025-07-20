@@ -104,8 +104,8 @@ export default function InvoiceDialog({
         heightLeft -= pageHeight;
       }
 
-      const invoice = invoiceData.data.invoice || invoiceData.data;
-      const fileName = `Invoice-${invoice.invoiceNumber}-${invoice.candidateName?.replace(/\s+/g, '-') || 'invoice'}.pdf`;
+      const invoice = invoiceData.data.invoice;
+      const fileName = `Invoice-${invoice?.invoiceNumber || 'invoice'}-${invoice?.candidateName?.replace(/\s+/g, '-') || 'invoice'}.pdf`;
       pdf.save(fileName);
 
       toast({ title: "Success", description: "Invoice PDF downloaded successfully" });
@@ -132,7 +132,7 @@ export default function InvoiceDialog({
         <!DOCTYPE html>
         <html>
           <head>
-            <title>Invoice - ${invoiceData?.data?.invoiceNumber || invoiceData?.data?.invoice?.invoiceNumber || ''}</title>
+            <title>Invoice - ${invoiceData?.data?.invoice?.invoiceNumber || ''}</title>
             <style>
               body { margin: 0; padding: 20px; font-family: Arial, sans-serif; }
               @media print {
@@ -161,10 +161,10 @@ export default function InvoiceDialog({
             <FileText className="w-5 h-5" />
             {mode === 'generate' ? 'Generate Invoice' : 'Invoice Preview'}
           </DialogTitle>
-          {invoiceData?.data && (
+          {invoiceData?.data?.invoice && (
             <div className="flex items-center gap-2">
               <Badge variant="outline">
-                {invoiceData.data.invoiceNumber || invoiceData.data.invoice?.invoiceNumber || 'N/A'}
+                {invoiceData.data.invoice.invoiceNumber || 'N/A'}
               </Badge>
               <Button
                 variant="outline"
@@ -214,7 +214,7 @@ export default function InvoiceDialog({
                   <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary mx-auto"></div>
                   <p className="mt-2 text-muted-foreground">Loading invoice...</p>
                 </div>
-              ) : invoiceData?.data ? (
+              ) : invoiceData?.data?.invoice && invoiceData?.data?.companyData && invoiceData?.data?.clientData && invoiceData?.data?.timesheetDetails ? (
                 <div className="border rounded-lg overflow-hidden">
                   <InvoiceTemplate
                     ref={invoiceRef}

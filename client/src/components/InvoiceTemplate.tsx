@@ -44,17 +44,17 @@ interface ClientData {
 }
 
 interface TimesheetDetails {
-  mondayHours: number;
-  tuesdayHours: number;
-  wednesdayHours: number;
-  thursdayHours: number;
-  fridayHours: number;
-  saturdayHours: number;
-  sundayHours: number;
-  regularHours: number;
-  overtimeHours: number;
-  totalRegularAmount: number;
-  totalOvertimeAmount: number;
+  mondayHours?: number;
+  tuesdayHours?: number;
+  wednesdayHours?: number;
+  thursdayHours?: number;
+  fridayHours?: number;
+  saturdayHours?: number;
+  sundayHours?: number;
+  regularHours?: number;
+  overtimeHours?: number;
+  totalRegularAmount?: number;
+  totalOvertimeAmount?: number;
 }
 
 interface InvoiceTemplateProps {
@@ -75,13 +75,13 @@ const InvoiceTemplate = forwardRef<HTMLDivElement, InvoiceTemplateProps>(
     };
 
     const days = [
-      { name: 'Monday', hours: timesheetDetails.mondayHours },
-      { name: 'Tuesday', hours: timesheetDetails.tuesdayHours },
-      { name: 'Wednesday', hours: timesheetDetails.wednesdayHours },
-      { name: 'Thursday', hours: timesheetDetails.thursdayHours },
-      { name: 'Friday', hours: timesheetDetails.fridayHours },
-      { name: 'Saturday', hours: timesheetDetails.saturdayHours },
-      { name: 'Sunday', hours: timesheetDetails.sundayHours }
+      { name: 'Monday', hours: timesheetDetails?.mondayHours || 0 },
+      { name: 'Tuesday', hours: timesheetDetails?.tuesdayHours || 0 },
+      { name: 'Wednesday', hours: timesheetDetails?.wednesdayHours || 0 },
+      { name: 'Thursday', hours: timesheetDetails?.thursdayHours || 0 },
+      { name: 'Friday', hours: timesheetDetails?.fridayHours || 0 },
+      { name: 'Saturday', hours: timesheetDetails?.saturdayHours || 0 },
+      { name: 'Sunday', hours: timesheetDetails?.sundayHours || 0 }
     ];
 
     return (
@@ -201,14 +201,14 @@ const InvoiceTemplate = forwardRef<HTMLDivElement, InvoiceTemplateProps>(
                     <div className="text-sm text-gray-600">Standard working hours</div>
                   </div>
                 </td>
-                <td className="border border-gray-300 p-3 text-center">{timesheetDetails.regularHours.toFixed(2)}</td>
+                <td className="border border-gray-300 p-3 text-center">{(timesheetDetails?.regularHours || 0).toFixed(2)}</td>
                 <td className="border border-gray-300 p-3 text-center">{formatCurrency(invoice.hourlyRate, invoice.currency)}</td>
-                <td className="border border-gray-300 p-3 text-center">{formatCurrency(timesheetDetails.totalRegularAmount, invoice.currency)}</td>
+                <td className="border border-gray-300 p-3 text-center">{formatCurrency(timesheetDetails?.totalRegularAmount || 0, invoice.currency)}</td>
               </tr>
             )}
 
             {/* Overtime Hours */}
-            {timesheetDetails.overtimeHours > 0 && (
+            {(timesheetDetails?.overtimeHours || 0) > 0 && (
               <tr>
                 <td className="border border-gray-300 p-3">
                   <div>
@@ -216,9 +216,9 @@ const InvoiceTemplate = forwardRef<HTMLDivElement, InvoiceTemplateProps>(
                     <div className="text-sm text-gray-600">Hours exceeding standard work schedule</div>
                   </div>
                 </td>
-                <td className="border border-gray-300 p-3 text-center">{timesheetDetails.overtimeHours.toFixed(2)}</td>
+                <td className="border border-gray-300 p-3 text-center">{(timesheetDetails?.overtimeHours || 0).toFixed(2)}</td>
                 <td className="border border-gray-300 p-3 text-center">{formatCurrency(invoice.hourlyRate, invoice.currency)}</td>
-                <td className="border border-gray-300 p-3 text-center">{formatCurrency(timesheetDetails.totalOvertimeAmount, invoice.currency)}</td>
+                <td className="border border-gray-300 p-3 text-center">{formatCurrency(timesheetDetails?.totalOvertimeAmount || 0, invoice.currency)}</td>
               </tr>
             )}
 
