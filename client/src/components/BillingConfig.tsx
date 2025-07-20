@@ -30,6 +30,8 @@ interface CandidateBilling {
   endUserId?: number;
   tdsRate?: number;
   benefits?: string[];
+  sickLeaveDays?: number;
+  paidLeaveDays?: number;
   isActive: boolean;
 }
 
@@ -85,7 +87,9 @@ export default function BillingConfig() {
     endUserId: undefined as number | undefined,
     companySettingsId: undefined as number | undefined,
     tdsRate: 10,
-    benefits: [] as string[]
+    benefits: [] as string[],
+    sickLeaveDays: 0,
+    paidLeaveDays: 0
   });
   
   // Track selected benefits for full-time employees
@@ -358,7 +362,9 @@ export default function BillingConfig() {
       endUserId: undefined,
       companySettingsId: companySettings?.data?.[0]?.id || undefined,
       tdsRate: 0,
-      benefits: []
+      benefits: [],
+      sickLeaveDays: 0,
+      paidLeaveDays: 0
     });
     setSelectedBenefits([]);
   };
@@ -385,7 +391,9 @@ export default function BillingConfig() {
         endUserId: editingBilling.endUserId,
         companySettingsId: editingBilling.companySettingsId,
         tdsRate: editingBilling.tdsRate || 10,
-        benefits: validBenefits
+        benefits: validBenefits,
+        sickLeaveDays: editingBilling.sickLeaveDays || 0,
+        paidLeaveDays: editingBilling.paidLeaveDays || 0
       });
       setSelectedBenefits(validBenefits);
     }
@@ -435,7 +443,9 @@ export default function BillingConfig() {
       endUserId: billingData.endUserId || undefined,
       companySettingsId: billingData.companySettingsId || undefined,
       tdsRate: billingData.tdsRate?.toString() || '10',
-      benefits: finalBenefits
+      benefits: finalBenefits,
+      sickLeaveDays: billingData.sickLeaveDays || 0,
+      paidLeaveDays: billingData.paidLeaveDays || 0
     };
     
     console.log('Submitting billing configuration:', payload);
@@ -469,6 +479,8 @@ export default function BillingConfig() {
       companySettingsId: billingData.companySettingsId || null,
       tdsRate: billingData.tdsRate,
       benefits: finalBenefits,
+      sickLeaveDays: billingData.sickLeaveDays || 0,
+      paidLeaveDays: billingData.paidLeaveDays || 0,
       isActive: editingBilling.isActive
     });
   };
@@ -873,26 +885,70 @@ export default function BillingConfig() {
                     </CardTitle>
                   </CardHeader>
                   <CardContent>
-                    <div className="grid grid-cols-1 gap-2">
+                    <div className="grid grid-cols-1 gap-4">
                       {leaveTypes.map((leaveType) => (
-                        <div key={leaveType} className="flex items-center space-x-2">
-                          <Checkbox
-                            id={leaveType}
-                            checked={selectedBenefits.includes(leaveType)}
-                            onCheckedChange={(checked) => {
-                              if (checked) {
-                                setSelectedBenefits(prev => [...prev, leaveType]);
-                              } else {
-                                setSelectedBenefits(prev => prev.filter(b => b !== leaveType));
-                              }
-                            }}
-                          />
-                          <Label
-                            htmlFor={leaveType}
-                            className="text-sm font-normal cursor-pointer"
-                          >
-                            {leaveType}
-                          </Label>
+                        <div key={leaveType} className="space-y-2">
+                          <div className="flex items-center space-x-2">
+                            <Checkbox
+                              id={leaveType}
+                              checked={selectedBenefits.includes(leaveType)}
+                              onCheckedChange={(checked) => {
+                                if (checked) {
+                                  setSelectedBenefits(prev => [...prev, leaveType]);
+                                } else {
+                                  setSelectedBenefits(prev => prev.filter(b => b !== leaveType));
+                                }
+                              }}
+                            />
+                            <Label
+                              htmlFor={leaveType}
+                              className="text-sm font-normal cursor-pointer"
+                            >
+                              {leaveType}
+                            </Label>
+                          </div>
+                          
+                          {/* Dynamic input fields for leave days */}
+                          {selectedBenefits.includes(leaveType) && leaveType === 'Sick Leave' && (
+                            <div className="ml-6 flex items-center gap-2">
+                              <Label htmlFor="sick-leave-days" className="text-xs text-gray-600">Days assigned:</Label>
+                              <Input
+                                id="sick-leave-days"
+                                type="number"
+                                min="0"
+                                max="365"
+                                value={billingData.sickLeaveDays}
+                                onChange={(e) => setBillingData(prev => ({ ...prev, sickLeaveDays: parseInt(e.target.value) || 0 }))}
+                                placeholder="0"
+                                className="w-20 h-8 text-sm"
+                              />
+                              <span className="text-xs text-gray-500">days/year</span>
+                            </div>
+                          )}
+                          
+                          {selectedBenefits.includes(leaveType) && leaveType === 'Paid Leave' && (
+                            <div className="ml-6 flex items-center gap-2">
+                              <Label htmlFor="paid-leave-days" className="text-xs text-gray-600">Days assigned:</Label>
+                              <Input
+                                id="paid-leave-days"
+                                type="number"
+                                min="0"
+                                max="365"
+                                value={billingData.paidLeaveDays}
+                                onChange={(e) => setBillingData(prev => ({ ...prev, paidLeaveDays: parseInt(e.target.value) || 0 }))}
+                                placeholder="0"
+                                className="w-20 h-8 text-sm"
+                              />
+                              <span className="text-xs text-gray-500">days/year</span>
+                            </div>
+                          )}
+                          
+                          {/* Note for Unpaid Leave - no days field needed as it's unlimited */}
+                          {selectedBenefits.includes(leaveType) && leaveType === 'Unpaid Leave' && (
+                            <div className="ml-6 text-xs text-gray-500 italic">
+                              Unpaid leave has no limit - employee can take time off without pay as needed
+                            </div>
+                          )}
                         </div>
                       ))}
                     </div>
@@ -1159,26 +1215,70 @@ export default function BillingConfig() {
                 
                 <div>
                   <Label>Select Leave Types</Label>
-                  <div className="grid grid-cols-1 gap-3 mt-2">
+                  <div className="grid grid-cols-1 gap-4 mt-2">
                     {leaveTypes.map((leaveType) => (
-                      <div key={leaveType} className="flex items-center space-x-2">
-                        <Checkbox
-                          id={`edit-leave-${leaveType.replace(/\s+/g, '-').toLowerCase()}`}
-                          checked={selectedBenefits.includes(leaveType)}
-                          onCheckedChange={(checked) => {
-                            if (checked) {
-                              setSelectedBenefits(prev => [...prev, leaveType]);
-                            } else {
-                              setSelectedBenefits(prev => prev.filter(b => b !== leaveType));
-                            }
-                          }}
-                        />
-                        <Label
-                          htmlFor={`edit-leave-${leaveType.replace(/\s+/g, '-').toLowerCase()}`}
-                          className="text-sm font-normal cursor-pointer"
-                        >
-                          {leaveType}
-                        </Label>
+                      <div key={leaveType} className="space-y-2">
+                        <div className="flex items-center space-x-2">
+                          <Checkbox
+                            id={`edit-leave-${leaveType.replace(/\s+/g, '-').toLowerCase()}`}
+                            checked={selectedBenefits.includes(leaveType)}
+                            onCheckedChange={(checked) => {
+                              if (checked) {
+                                setSelectedBenefits(prev => [...prev, leaveType]);
+                              } else {
+                                setSelectedBenefits(prev => prev.filter(b => b !== leaveType));
+                              }
+                            }}
+                          />
+                          <Label
+                            htmlFor={`edit-leave-${leaveType.replace(/\s+/g, '-').toLowerCase()}`}
+                            className="text-sm font-normal cursor-pointer"
+                          >
+                            {leaveType}
+                          </Label>
+                        </div>
+                        
+                        {/* Dynamic input fields for leave days */}
+                        {selectedBenefits.includes(leaveType) && leaveType === 'Sick Leave' && (
+                          <div className="ml-6 flex items-center gap-2">
+                            <Label htmlFor="edit-sick-leave-days" className="text-xs text-gray-600">Days assigned:</Label>
+                            <Input
+                              id="edit-sick-leave-days"
+                              type="number"
+                              min="0"
+                              max="365"
+                              value={billingData.sickLeaveDays}
+                              onChange={(e) => setBillingData(prev => ({ ...prev, sickLeaveDays: parseInt(e.target.value) || 0 }))}
+                              placeholder="0"
+                              className="w-20 h-8 text-sm"
+                            />
+                            <span className="text-xs text-gray-500">days/year</span>
+                          </div>
+                        )}
+                        
+                        {selectedBenefits.includes(leaveType) && leaveType === 'Paid Leave' && (
+                          <div className="ml-6 flex items-center gap-2">
+                            <Label htmlFor="edit-paid-leave-days" className="text-xs text-gray-600">Days assigned:</Label>
+                            <Input
+                              id="edit-paid-leave-days"
+                              type="number"
+                              min="0"
+                              max="365"
+                              value={billingData.paidLeaveDays}
+                              onChange={(e) => setBillingData(prev => ({ ...prev, paidLeaveDays: parseInt(e.target.value) || 0 }))}
+                              placeholder="0"
+                              className="w-20 h-8 text-sm"
+                            />
+                            <span className="text-xs text-gray-500">days/year</span>
+                          </div>
+                        )}
+                        
+                        {/* Note for Unpaid Leave - no days field needed as it's unlimited */}
+                        {selectedBenefits.includes(leaveType) && leaveType === 'Unpaid Leave' && (
+                          <div className="ml-6 text-xs text-gray-500 italic">
+                            Unpaid leave has no limit - employee can take time off without pay as needed
+                          </div>
+                        )}
                       </div>
                     ))}
                   </div>
@@ -1284,9 +1384,24 @@ export default function BillingConfig() {
 
                     {/* Leave Types Information for Full-time */}
                     {billing.employmentType === 'fulltime' && billing.benefits && billing.benefits.length > 0 && (
-                      <div className="flex items-center gap-1 text-sm text-blue-600">
-                        <Gift className="w-4 h-4" />
-                        <span>Leave Types: {billing.benefits.slice(0, 3).join(', ')}{billing.benefits.length > 3 ? '...' : ''}</span>
+                      <div className="space-y-1">
+                        <div className="flex items-center gap-1 text-sm text-blue-600">
+                          <Gift className="w-4 h-4" />
+                          <span>Leave Types: {billing.benefits.slice(0, 3).join(', ')}{billing.benefits.length > 3 ? '...' : ''}</span>
+                        </div>
+                        
+                        {/* Display leave days assigned */}
+                        <div className="ml-5 flex gap-4 text-xs text-gray-600">
+                          {billing.benefits.includes('Sick Leave') && (
+                            <span>• Sick Leave: {billing.sickLeaveDays || 0} days/year</span>
+                          )}
+                          {billing.benefits.includes('Paid Leave') && (
+                            <span>• Paid Leave: {billing.paidLeaveDays || 0} days/year</span>
+                          )}
+                          {billing.benefits.includes('Unpaid Leave') && (
+                            <span>• Unpaid Leave: Unlimited</span>
+                          )}
+                        </div>
                       </div>
                     )}
                   </div>

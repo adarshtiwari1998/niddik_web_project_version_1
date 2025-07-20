@@ -426,6 +426,11 @@ export const candidateBilling = pgTable("candidate_billing", {
   tdsRate: decimal("tds_rate", { precision: 5, scale: 2 }).default('0'), // TDS rate percentage for subcontract
   benefits: text("benefits").array().default([]), // Array of benefits for full-time employees
   
+  // Leave management fields
+  sickLeaveDays: integer("sick_leave_days").default(0), // Number of sick leave days assigned
+  paidLeaveDays: integer("paid_leave_days").default(0), // Number of paid leave days assigned
+  // Note: Unpaid leave doesn't need a field as it's unlimited by nature
+  
   isActive: boolean("is_active").notNull().default(true),
   createdBy: integer("created_by").notNull().references(() => users.id), // Admin who set this
   createdAt: timestamp("created_at").defaultNow().notNull(),
@@ -457,6 +462,8 @@ export const candidateBillingSchema = createInsertSchema(candidateBilling, {
     return num >= 0 && num <= 100;
   }, "TDS rate must be between 0 and 100"),
   benefits: (schema) => schema.optional(),
+  sickLeaveDays: (schema) => schema.min(0, "Sick leave days cannot be negative").max(365, "Cannot exceed 365 days per year").optional(),
+  paidLeaveDays: (schema) => schema.min(0, "Paid leave days cannot be negative").max(365, "Cannot exceed 365 days per year").optional(),
   createdBy: (schema) => schema.min(1, "Created by is required"),
 }).omit({ 
   id: true, 
