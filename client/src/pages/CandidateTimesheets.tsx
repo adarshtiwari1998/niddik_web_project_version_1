@@ -40,7 +40,7 @@ interface WeeklyTimesheet {
   sundayHours: number;
   totalWeeklyHours: number;
   totalWeeklyAmount: number;
-  status: 'submitted' | 'approved' | 'rejected';
+  status: 'draft' | 'submitted' | 'pending' | 'approved' | 'rejected';
   submittedAt: string;
   approvedAt?: string;
   approvedBy?: number;
@@ -298,6 +298,7 @@ export default function CandidateTimesheets() {
       case 'rejected':
         return <Badge className="bg-red-100 text-red-800"><XCircle className="w-3 h-3 mr-1" />Rejected</Badge>;
       case 'submitted':
+      case 'pending':
         return <Badge className="bg-yellow-100 text-yellow-800"><AlertCircle className="w-3 h-3 mr-1" />Pending</Badge>;
       default:
         return <Badge variant="outline">Draft</Badge>;
