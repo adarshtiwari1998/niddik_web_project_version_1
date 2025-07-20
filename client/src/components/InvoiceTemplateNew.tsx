@@ -1,5 +1,6 @@
 import React, { forwardRef } from 'react';
 import { format } from 'date-fns';
+import { useQuery } from '@tanstack/react-query';
 
 interface InvoiceData {
   invoiceNumber: string;
@@ -94,6 +95,64 @@ interface InvoiceTemplateProps {
   timesheetDetails: TimesheetDetails;
   billingData?: BillingData;
 }
+
+// Currency Rates Display Component
+const CurrencyRatesDisplay: React.FC<{ sixMonthAverageRate: number; currentRate: number }> = ({ sixMonthAverageRate, currentRate }) => {
+  const { data: currencyRates } = useQuery({
+    queryKey: ['/api/admin/currency-rates'],
+    staleTime: 5 * 60 * 1000, // 5 minutes
+  });
+
+  const displayRates = currencyRates?.data?.monthlyRates || [];
+
+  return (
+    <div className="border border-gray-400 p-3">
+      <h4 className="font-bold text-sm mb-2">Last 6 Months Avg. Conversion $ to INR is {sixMonthAverageRate.toFixed(0)}</h4>
+      <div className="text-xs space-y-1">
+        {displayRates.length > 0 ? (
+          displayRates.slice(-7).map((rate: any, index: number) => (
+            <div key={index} className={`flex justify-between ${index === displayRates.length - 1 ? 'border-t pt-1' : ''}`}>
+              <span>{rate.month}</span>
+              <span>{rate.average.toFixed(6)}</span>
+            </div>
+          ))
+        ) : (
+          // Fallback display using calculated rates if API data is not available
+          <>
+            <div className="flex justify-between">
+              <span>Jan</span>
+              <span>{(sixMonthAverageRate * 0.995).toFixed(6)}</span>
+            </div>
+            <div className="flex justify-between">
+              <span>Feb</span>
+              <span>{(sixMonthAverageRate * 1.002).toFixed(6)}</span>
+            </div>
+            <div className="flex justify-between">
+              <span>Mar</span>
+              <span>{(sixMonthAverageRate * 0.998).toFixed(6)}</span>
+            </div>
+            <div className="flex justify-between">
+              <span>Apr</span>
+              <span>{(sixMonthAverageRate * 1.001).toFixed(6)}</span>
+            </div>
+            <div className="flex justify-between">
+              <span>May</span>
+              <span>{(sixMonthAverageRate * 0.994).toFixed(6)}</span>
+            </div>
+            <div className="flex justify-between">
+              <span>Jun</span>
+              <span>{(sixMonthAverageRate * 1.005).toFixed(6)}</span>
+            </div>
+            <div className="flex justify-between border-t pt-1">
+              <span>Jul</span>
+              <span>{currentRate.toFixed(6)}</span>
+            </div>
+          </>
+        )}
+      </div>
+    </div>
+  );
+};
 
 const InvoiceTemplateNew = forwardRef<HTMLDivElement, InvoiceTemplateProps>(
   ({ invoice, companyData, clientData, timesheetDetails, billingData }, ref) => {
@@ -246,94 +305,126 @@ const InvoiceTemplateNew = forwardRef<HTMLDivElement, InvoiceTemplateProps>(
 
         {/* Main Service Table */}
         <div className="mb-6">
-          <table className="w-full border-collapse border border-gray-400 text-xs">
-            <thead>
-              <tr className="bg-green-700 text-white">
-                <th className="border border-gray-400 p-2 text-left font-bold">DESCRIPTION</th>
-                <th className="border border-gray-400 p-2 text-center font-bold">HOURS</th>
-                <th className="border border-gray-400 p-2 text-center font-bold">HOURLY RATE</th>
-                <th className="border border-gray-400 p-2 text-center font-bold">TOTAL</th>
-              </tr>
-            </thead>
-            <tbody>
-              {/* Candidate Description */}
-              <tr>
-                <td className="border border-gray-400 p-3">
-                  <div>
-                    <p className="font-semibold text-sm">
-                      1. {invoice.candidateName}: {invoice.candidateName} has joined {clientData.name}, effective
-                    </p>
-                    <p className="text-xs mt-1">
-                      {formatDate(invoice.weekStartDate)}, and has been deployed at {billingData?.endUserName || clientData.name}, one of {clientData.name}'s
-                    </p>
-                    <p className="text-xs">
-                      key clients, in the role of {billingData?.employmentType || 'Developer/Analyst'}.
-                    </p>
-                  </div>
-                </td>
-                <td className="border border-gray-400 p-2 text-center"></td>
-                <td className="border border-gray-400 p-2 text-center"></td>
-                <td className="border border-gray-400 p-2 text-center"></td>
-              </tr>
+          {timesheetDetails.overtimeHours && timesheetDetails.overtimeHours > 0 ? (
+            // Show overtime breakdown table when overtime exists
+            <table className="w-full border-collapse border border-gray-400 text-xs">
+              <thead>
+                <tr className="bg-green-700 text-white">
+                  <th className="border border-gray-400 p-2 text-left font-bold">DESCRIPTION</th>
+                  <th className="border border-gray-400 p-2 text-center font-bold">REGULAR HOURS</th>
+                  <th className="border border-gray-400 p-2 text-center font-bold">OVERTIME HOURS</th>
+                  <th className="border border-gray-400 p-2 text-center font-bold">TOTAL HOURS</th>
+                  <th className="border border-gray-400 p-2 text-center font-bold">HOURLY RATE</th>
+                  <th className="border border-gray-400 p-2 text-center font-bold">TOTAL</th>
+                </tr>
+              </thead>
+              <tbody>
+                {/* Candidate Description */}
+                <tr>
+                  <td className="border border-gray-400 p-3">
+                    <div>
+                      <p className="font-semibold text-sm">
+                        1. {invoice.candidateName}: {invoice.candidateName} has joined {clientData.name}, effective
+                      </p>
+                      <p className="text-xs mt-1">
+                        {formatDate(invoice.weekStartDate)}, and has been deployed at {billingData?.endUserName || clientData.name}, one of {clientData.name}'s
+                      </p>
+                      <p className="text-xs">
+                        key clients, in the role of {billingData?.employmentType || 'Developer/Analyst'}.
+                      </p>
+                    </div>
+                  </td>
+                  <td className="border border-gray-400 p-2 text-center"></td>
+                  <td className="border border-gray-400 p-2 text-center"></td>
+                  <td className="border border-gray-400 p-2 text-center"></td>
+                  <td className="border border-gray-400 p-2 text-center"></td>
+                  <td className="border border-gray-400 p-2 text-center"></td>
+                </tr>
 
-              {/* Task Details */}
-              <tr>
-                <td className="border border-gray-400 p-3 pl-8">
-                  <p className="text-xs">
-                    Task performed during {formatDate(invoice.weekStartDate)} to {formatDate(invoice.weekEndDate)}
-                  </p>
-                </td>
-                <td className="border border-gray-400 p-2 text-center font-semibold">
-                  {invoice.totalHours.toFixed(0)}
-                </td>
-                <td className="border border-gray-400 p-2 text-center font-semibold">
-                  {formatCurrency(invoice.hourlyRate, 'USD')}
-                </td>
-                <td className="border border-gray-400 p-2 text-center font-semibold">
-                  {formatCurrency(invoice.totalAmount, 'USD')}
-                </td>
-              </tr>
-            </tbody>
-          </table>
+                {/* Task Details with Overtime Breakdown */}
+                <tr>
+                  <td className="border border-gray-400 p-3 pl-8">
+                    <p className="text-xs">
+                      Task performed during {formatDate(invoice.weekStartDate)} to {formatDate(invoice.weekEndDate)}
+                    </p>
+                  </td>
+                  <td className="border border-gray-400 p-2 text-center font-semibold">
+                    {(timesheetDetails.regularHours || 0).toFixed(2)}
+                  </td>
+                  <td className="border border-gray-400 p-2 text-center font-semibold">
+                    {(timesheetDetails.overtimeHours || 0).toFixed(2)}
+                  </td>
+                  <td className="border border-gray-400 p-2 text-center font-semibold">
+                    {invoice.totalHours.toFixed(2)}
+                  </td>
+                  <td className="border border-gray-400 p-2 text-center font-semibold">
+                    {formatCurrency(invoice.hourlyRate, 'USD')}
+                  </td>
+                  <td className="border border-gray-400 p-2 text-center font-semibold">
+                    {formatCurrency(invoice.totalAmount, 'USD')}
+                  </td>
+                </tr>
+              </tbody>
+            </table>
+          ) : (
+            // Show simple table when no overtime
+            <table className="w-full border-collapse border border-gray-400 text-xs">
+              <thead>
+                <tr className="bg-green-700 text-white">
+                  <th className="border border-gray-400 p-2 text-left font-bold">DESCRIPTION</th>
+                  <th className="border border-gray-400 p-2 text-center font-bold">HOURS</th>
+                  <th className="border border-gray-400 p-2 text-center font-bold">HOURLY RATE</th>
+                  <th className="border border-gray-400 p-2 text-center font-bold">TOTAL</th>
+                </tr>
+              </thead>
+              <tbody>
+                {/* Candidate Description */}
+                <tr>
+                  <td className="border border-gray-400 p-3">
+                    <div>
+                      <p className="font-semibold text-sm">
+                        1. {invoice.candidateName}: {invoice.candidateName} has joined {clientData.name}, effective
+                      </p>
+                      <p className="text-xs mt-1">
+                        {formatDate(invoice.weekStartDate)}, and has been deployed at {billingData?.endUserName || clientData.name}, one of {clientData.name}'s
+                      </p>
+                      <p className="text-xs">
+                        key clients, in the role of {billingData?.employmentType || 'Developer/Analyst'}.
+                      </p>
+                    </div>
+                  </td>
+                  <td className="border border-gray-400 p-2 text-center"></td>
+                  <td className="border border-gray-400 p-2 text-center"></td>
+                  <td className="border border-gray-400 p-2 text-center"></td>
+                </tr>
+
+                {/* Task Details */}
+                <tr>
+                  <td className="border border-gray-400 p-3 pl-8">
+                    <p className="text-xs">
+                      Task performed during {formatDate(invoice.weekStartDate)} to {formatDate(invoice.weekEndDate)}
+                    </p>
+                  </td>
+                  <td className="border border-gray-400 p-2 text-center font-semibold">
+                    {invoice.totalHours.toFixed(2)}
+                  </td>
+                  <td className="border border-gray-400 p-2 text-center font-semibold">
+                    {formatCurrency(invoice.hourlyRate, 'USD')}
+                  </td>
+                  <td className="border border-gray-400 p-2 text-center font-semibold">
+                    {formatCurrency(invoice.totalAmount, 'USD')}
+                  </td>
+                </tr>
+              </tbody>
+            </table>
+          )}
         </div>
 
         {/* Summary and Currency Conversion */}
         <div className="flex">
           {/* Left Side - Currency Conversion Details */}
           <div className="w-1/2 pr-4">
-            <div className="border border-gray-400 p-3">
-              <h4 className="font-bold text-sm mb-2">Last 2 Qtr Avg. Conversion $ to INR is {invoice.sixMonthAverageRate.toFixed(0)}</h4>
-              <div className="text-xs space-y-1">
-                <div className="flex justify-between">
-                  <span>Jan</span>
-                  <span>{(invoice.sixMonthAverageRate * 1.001).toFixed(6)}</span>
-                </div>
-                <div className="flex justify-between">
-                  <span>Feb</span>
-                  <span>{(invoice.sixMonthAverageRate * 1.003).toFixed(6)}</span>
-                </div>
-                <div className="flex justify-between">
-                  <span>Mar</span>
-                  <span>{(invoice.sixMonthAverageRate * 0.998).toFixed(6)}</span>
-                </div>
-                <div className="flex justify-between">
-                  <span>Apr</span>
-                  <span>{(invoice.sixMonthAverageRate * 0.995).toFixed(6)}</span>
-                </div>
-                <div className="flex justify-between">
-                  <span>May</span>
-                  <span>{(invoice.sixMonthAverageRate * 0.992).toFixed(6)}</span>
-                </div>
-                <div className="flex justify-between">
-                  <span>Jun</span>
-                  <span>{(invoice.sixMonthAverageRate * 1.007).toFixed(6)}</span>
-                </div>
-                <div className="flex justify-between border-t pt-1">
-                  <span>Jul</span>
-                  <span>{invoice.currencyConversionRate.toFixed(6)}</span>
-                </div>
-              </div>
-            </div>
+            <CurrencyRatesDisplay sixMonthAverageRate={invoice.sixMonthAverageRate} currentRate={invoice.currencyConversionRate} />
           </div>
 
           {/* Right Side - Calculation */}
