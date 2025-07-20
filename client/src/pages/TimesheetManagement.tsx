@@ -756,6 +756,9 @@ export default function TimesheetManagement() {
 
 // Bi-Weekly Table View Component with Working Days Support and Dynamic Generation
 function BiWeeklyTableView({ timesheets, onEdit, onDelete, getStatusBadge, isAdmin, setSelectedBiWeeklyTimesheetForInvoice, setBiWeeklyInvoiceDialogOpen, biWeeklyInvoiceDialogOpen, selectedBiWeeklyTimesheetForInvoice }: any) {
+  const queryClient = useQueryClient();
+  const { toast } = useToast();
+  
   // Fetch billing configuration to get working days
   const { data: billingData } = useQuery({
     queryKey: ['/api/admin/candidates-billing'],
@@ -1447,34 +1450,32 @@ function BiWeeklyTableView({ timesheets, onEdit, onDelete, getStatusBadge, isAdm
                         // Since this is a dynamic bi-weekly view, we need to create a bi-weekly timesheet first
                         // Then generate an invoice from it
                         try {
-                          // Step 1: Generate bi-weekly timesheet from the weekly data
-                          const generateBiWeeklyResponse = await fetch(`/api/admin/biweekly-timesheets/${biWeekly.candidateId}/generate`, {
+                          // Step 1: Generate bi-weekly timesheet from the weekly data using apiRequest
+                          const biWeeklyResult = await apiRequest(`/api/admin/biweekly-timesheets/${biWeekly.candidateId}/generate`, {
                             method: 'POST',
-                            headers: { 'Content-Type': 'application/json' },
                             body: JSON.stringify({
                               periodStartDate: biWeekly.periodStart
                             })
                           });
                           
-                          if (!generateBiWeeklyResponse.ok) {
-                            const errorText = await generateBiWeeklyResponse.text();
-                            console.error('Failed to generate bi-weekly timesheet:', errorText);
-                            toast({
-                              title: "Error",
-                              description: `Failed to generate bi-weekly timesheet: ${errorText}`,
-                              variant: "destructive",
-                            });
-                            return;
-                          }
-                          
-                          const biWeeklyResult = await generateBiWeeklyResponse.json();
                           console.log('Generated bi-weekly timesheet:', biWeeklyResult);
                           
                           // Step 2: Now generate invoice from the bi-weekly timesheet
                           setSelectedBiWeeklyTimesheetForInvoice(biWeeklyResult.data.id);
                           setBiWeeklyInvoiceDialogOpen(true);
+                          
+                          // Refresh bi-weekly timesheets data without page reload
+                          queryClient.invalidateQueries({ 
+                            queryKey: ['/api/admin/biweekly-timesheets'],
+                            refetchType: 'active'
+                          });
                         } catch (error) {
                           console.error('Error generating bi-weekly timesheet:', error);
+                          toast({
+                            title: "Error",
+                            description: "Failed to generate bi-weekly timesheet",
+                            variant: "destructive",
+                          });
                         }
                       }}
                     >
@@ -2648,9 +2649,18 @@ function InvoiceManagement() {
         body: JSON.stringify({ timesheetId })
       });
     },
-    onSuccess: () => {
+    onSuccess: (data) => {
       toast({ title: "Success", description: "Invoice generated successfully" });
-      queryClient.invalidateQueries({ queryKey: ['/api/admin/invoices'] });
+      // Only invalidate specific queries instead of causing full page reload
+      queryClient.invalidateQueries({ 
+        queryKey: ['/api/admin/invoices'],
+        refetchType: 'active' // Only refetch active queries
+      });
+      // Also refresh timesheets to show updated generate button state
+      queryClient.invalidateQueries({ 
+        queryKey: ['/api/admin/timesheets'],
+        refetchType: 'active'
+      });
     },
     onError: (error: Error) => {
       toast({ title: "Error", description: error.message, variant: "destructive" });
