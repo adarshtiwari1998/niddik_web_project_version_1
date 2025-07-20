@@ -1,4 +1,5 @@
 import { and, eq, desc, asc, ilike, inArray, count, gt, lt, sql, or, ne, isNotNull } from "drizzle-orm";
+import { getCurrencyRates, convertINRToUSD, type CurrencyRates } from './currencyService.js';
 import type { 
   User, 
   InsertUser, 
@@ -61,12 +62,7 @@ import {
   endUsers
 } from "@shared/schema";
 import { db } from "@db";
-import { 
-  get6MonthAverageUSDToINR, 
-  convertINRToUSD, 
-  calculateGST, 
-  formatCurrency 
-} from "./currencyService";
+// Currency service import will be added when needed
 
 // Retry utility function for database operations
 async function withRetry<T>(
@@ -2311,6 +2307,15 @@ async updateSeoPage(id: number, data: Partial<InsertSeoPage>): Promise<SeoPage |
         overtimeHours,
         totalRegularAmount: regularAmount,
         totalOvertimeAmount: overtimeAmount
+      },
+      billingData: {
+        hourlyRate: parseFloat(data.billing?.hourlyRate?.toString() || '0'),
+        currency: data.billing?.currency || 'INR',
+        workingDaysPerWeek: data.billing?.workingDaysPerWeek || 5,
+        employmentType: data.billing?.employmentType || 'Subcontract',
+        supervisorName: data.billing?.supervisorName || '',
+        clientCompanyName: data.clientCompany?.name || '',
+        endUserName: data.billing?.endUserId ? `End User ${data.billing.endUserId}` : undefined
       }
     };
   },

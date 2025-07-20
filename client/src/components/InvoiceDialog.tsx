@@ -226,6 +226,7 @@ export default function InvoiceDialog({
                     companyData={invoiceData.data.companyData}
                     clientData={invoiceData.data.clientData}
                     timesheetDetails={invoiceData.data.timesheetDetails}
+                    billingData={invoiceData.data.billingData}
                   />
                 </div>
               ) : (

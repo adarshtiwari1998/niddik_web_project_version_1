@@ -1,132 +1,112 @@
-/**
- * Currency conversion service for real-time USD to INR rates
- * Uses free Frankfurter API for historical data and current rates
- */
-
-interface CurrencyRateData {
+// Currency service for fetching USD/INR exchange rates
+export interface CurrencyRates {
   currentRate: number;
   sixMonthAverage: number;
-  ratesHistory: { date: string; rate: number }[];
+  monthlyRates: { [key: string]: number };
 }
 
-interface FrankfurterResponse {
-  base: string;
-  rates: Record<string, Record<string, number>>;
-}
+// Cache for exchange rates to avoid excessive API calls
+let rateCache: CurrencyRates | null = null;
+let lastFetch: number = 0;
+const CACHE_DURATION = 24 * 60 * 60 * 1000; // 24 hours in milliseconds
 
-interface FrankfurterLatestResponse {
-  base: string;
-  date: string;
-  rates: Record<string, number>;
-}
+export const getCurrencyRates = async (): Promise<CurrencyRates> => {
+  // Return cached data if it's still valid
+  if (rateCache && Date.now() - lastFetch < CACHE_DURATION) {
+    return rateCache;
+  }
 
-/**
- * Get 6-month historical average USD to INR exchange rate
- */
-export async function get6MonthAverageUSDToINR(): Promise<CurrencyRateData> {
   try {
-    const endDate = new Date();
-    const startDate = new Date();
-    startDate.setMonth(startDate.getMonth() - 6);
+    // Get current date
+    const now = new Date();
+    const currentDateStr = now.toISOString().split('T')[0];
     
-    const endDateStr = endDate.toISOString().split('T')[0];
-    const startDateStr = startDate.toISOString().split('T')[0];
-    
-    // Get historical data for last 6 months
-    const historicalUrl = `https://api.frankfurter.dev/v1/${startDateStr}..${endDateStr}?base=USD&symbols=INR`;
-    const currentUrl = `https://api.frankfurter.dev/v1/latest?base=USD&symbols=INR`;
-    
-    // Fetch both historical and current data in parallel
-    const [historicalResponse, currentResponse] = await Promise.all([
-      fetch(historicalUrl),
-      fetch(currentUrl)
-    ]);
-    
-    if (!historicalResponse.ok || !currentResponse.ok) {
-      throw new Error('Failed to fetch currency data');
+    // Calculate 6 months ago
+    const sixMonthsAgo = new Date();
+    sixMonthsAgo.setMonth(sixMonthsAgo.getMonth() - 6);
+    const sixMonthsAgoStr = sixMonthsAgo.toISOString().split('T')[0];
+
+    // Fetch historical rates for the past 6 months from Frankfurter API
+    const response = await fetch(
+      `https://api.frankfurter.app/${sixMonthsAgoStr}..${currentDateStr}?from=USD&to=INR`
+    );
+
+    if (!response.ok) {
+      throw new Error(`HTTP error! status: ${response.status}`);
     }
+
+    const data = await response.json();
     
-    const historicalData: FrankfurterResponse = await historicalResponse.json();
-    const currentData: FrankfurterLatestResponse = await currentResponse.json();
+    // Extract rates
+    const rates = data.rates || {};
+    const rateValues = Object.values(rates).map((rate: any) => rate.INR).filter(Boolean);
     
-    // Extract all rates and calculate average
-    const ratesHistory: { date: string; rate: number }[] = [];
-    let totalRate = 0;
-    let rateCount = 0;
+    if (rateValues.length === 0) {
+      throw new Error('No exchange rate data available');
+    }
+
+    // Calculate current rate (most recent)
+    const currentRate = rateValues[rateValues.length - 1];
     
-    for (const [date, rates] of Object.entries(historicalData.rates)) {
-      const inrRate = rates.INR;
-      if (inrRate) {
-        ratesHistory.push({ date, rate: inrRate });
-        totalRate += inrRate;
-        rateCount++;
+    // Calculate 6-month average
+    const sixMonthAverage = rateValues.reduce((sum: number, rate: number) => sum + rate, 0) / rateValues.length;
+
+    // Create monthly breakdown
+    const monthlyRates: { [key: string]: number } = {};
+    const months = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
+    
+    // Generate sample monthly rates based on historical data
+    Object.keys(rates).forEach((date, index) => {
+      const rateDate = new Date(date);
+      const monthKey = months[rateDate.getMonth()];
+      if (!monthlyRates[monthKey] || rateDate > new Date(Object.keys(rates).find(d => {
+        const existingDate = new Date(d);
+        return months[existingDate.getMonth()] === monthKey;
+      }) || '')) {
+        monthlyRates[monthKey] = rates[date].INR;
       }
-    }
-    
-    const sixMonthAverage = rateCount > 0 ? totalRate / rateCount : 85.0; // Fallback
-    const currentRate = currentData.rates.INR || 85.0; // Fallback
-    
-    return {
-      currentRate: Math.round(currentRate * 10000) / 10000, // Round to 4 decimal places
-      sixMonthAverage: Math.round(sixMonthAverage * 10000) / 10000,
-      ratesHistory: ratesHistory.sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime()).slice(0, 30) // Last 30 days
+    });
+
+    // Cache the results
+    rateCache = {
+      currentRate,
+      sixMonthAverage,
+      monthlyRates
     };
-    
+    lastFetch = Date.now();
+
+    return rateCache;
   } catch (error) {
-    console.error('Currency service error:', error);
+    console.error('Error fetching currency rates:', error);
     
-    // Return fallback rates based on current market data
-    return {
-      currentRate: 85.0,
-      sixMonthAverage: 84.5,
-      ratesHistory: [
-        { date: '2025-07-20', rate: 85.0 },
-        { date: '2025-07-19', rate: 84.8 },
-        { date: '2025-07-18', rate: 85.2 }
-      ]
+    // Return fallback rates if API fails
+    const fallbackRates: CurrencyRates = {
+      currentRate: 84.5,
+      sixMonthAverage: 83.8,
+      monthlyRates: {
+        'Jan': 83.12,
+        'Feb': 83.45,
+        'Mar': 83.78,
+        'Apr': 84.01,
+        'May': 84.23,
+        'Jun': 84.45,
+        'Jul': 84.50
+      }
     };
+
+    rateCache = fallbackRates;
+    lastFetch = Date.now();
+    
+    return fallbackRates;
   }
-}
+};
 
-/**
- * Convert INR amount to USD using current or specified rate
- */
-export function convertINRToUSD(inrAmount: number, exchangeRate: number): number {
-  return Math.round((inrAmount / exchangeRate) * 100) / 100; // Round to 2 decimal places
-}
+// Helper function to convert INR to USD
+export const convertINRToUSD = (amountINR: number, rate: number): number => {
+  return amountINR / rate;
+};
 
-/**
- * Convert USD amount to INR using current or specified rate  
- */
-export function convertUSDToINR(usdAmount: number, exchangeRate: number): number {
-  return Math.round((usdAmount * exchangeRate) * 100) / 100; // Round to 2 decimal places
-}
-
-/**
- * Calculate GST amount (18% fixed rate)
- */
-export function calculateGST(amount: number, gstRate: number = 18.0): { gstAmount: number; totalWithGst: number } {
-  const gstAmount = Math.round((amount * (gstRate / 100)) * 100) / 100;
-  const totalWithGst = Math.round((amount + gstAmount) * 100) / 100;
-  
-  return { gstAmount, totalWithGst };
-}
-
-/**
- * Get formatted currency display
- */
-export function formatCurrency(amount: number, currency: 'USD' | 'INR' = 'USD'): string {
-  if (currency === 'USD') {
-    return new Intl.NumberFormat('en-US', {
-      style: 'currency',
-      currency: 'USD',
-      minimumFractionDigits: 2
-    }).format(amount);
-  } else {
-    return new Intl.NumberFormat('en-IN', {
-      style: 'currency',
-      currency: 'INR',
-      minimumFractionDigits: 2
-    }).format(amount);
-  }
-}
+// Helper function to convert USD to INR
+export const convertUSDToINR = (amountUSD: number, rate: number): number => {
+  return amountUSD * rate;
+};
