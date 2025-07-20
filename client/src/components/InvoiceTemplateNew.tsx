@@ -107,48 +107,54 @@ const CurrencyRatesDisplay: React.FC<{ sixMonthAverageRate: number; currentRate:
 
   return (
     <div className="border border-gray-400 p-3">
-      <h4 className="font-bold text-sm mb-2">Last 6 Months Avg. Conversion $ to INR is {sixMonthAverageRate.toFixed(0)}</h4>
+      <h4 className="font-bold text-sm mb-2">Last 6 Months Avg. Conversion $ to INR is {sixMonthAverageRate?.toFixed(0) || 'N/A'}</h4>
       <div className="text-xs space-y-1">
         {displayRates.length > 0 ? (
           displayRates.slice(-7).map((rate: any, index: number) => (
             <div key={index} className={`flex justify-between ${index === displayRates.length - 1 ? 'border-t pt-1' : ''}`}>
-              <span>{rate.month}</span>
-              <span>{rate.average.toFixed(6)}</span>
+              <span>{rate.month || 'Unknown'}</span>
+              <span>{rate.average?.toFixed(6) || 'N/A'}</span>
             </div>
           ))
         ) : (
           // Fallback display using calculated rates if API data is not available
-          <>
-            <div className="flex justify-between">
-              <span>Jan</span>
-              <span>{(sixMonthAverageRate * 0.995).toFixed(6)}</span>
+          sixMonthAverageRate ? (
+            <>
+              <div className="flex justify-between">
+                <span>Jan</span>
+                <span>{(sixMonthAverageRate * 0.995).toFixed(6)}</span>
+              </div>
+              <div className="flex justify-between">
+                <span>Feb</span>
+                <span>{(sixMonthAverageRate * 1.002).toFixed(6)}</span>
+              </div>
+              <div className="flex justify-between">
+                <span>Mar</span>
+                <span>{(sixMonthAverageRate * 0.998).toFixed(6)}</span>
+              </div>
+              <div className="flex justify-between">
+                <span>Apr</span>
+                <span>{(sixMonthAverageRate * 1.001).toFixed(6)}</span>
+              </div>
+              <div className="flex justify-between">
+                <span>May</span>
+                <span>{(sixMonthAverageRate * 0.994).toFixed(6)}</span>
+              </div>
+              <div className="flex justify-between">
+                <span>Jun</span>
+                <span>{(sixMonthAverageRate * 1.005).toFixed(6)}</span>
+              </div>
+            </>
+          ) : (
+            <div className="text-center text-gray-500">
+              No currency rate data available
             </div>
-            <div className="flex justify-between">
-              <span>Feb</span>
-              <span>{(sixMonthAverageRate * 1.002).toFixed(6)}</span>
-            </div>
-            <div className="flex justify-between">
-              <span>Mar</span>
-              <span>{(sixMonthAverageRate * 0.998).toFixed(6)}</span>
-            </div>
-            <div className="flex justify-between">
-              <span>Apr</span>
-              <span>{(sixMonthAverageRate * 1.001).toFixed(6)}</span>
-            </div>
-            <div className="flex justify-between">
-              <span>May</span>
-              <span>{(sixMonthAverageRate * 0.994).toFixed(6)}</span>
-            </div>
-            <div className="flex justify-between">
-              <span>Jun</span>
-              <span>{(sixMonthAverageRate * 1.005).toFixed(6)}</span>
-            </div>
-            <div className="flex justify-between border-t pt-1">
-              <span>Jul</span>
-              <span>{currentRate.toFixed(6)}</span>
-            </div>
-          </>
+          )
         )}
+        <div className="flex justify-between border-t pt-1">
+          <span>Jul</span>
+          <span>{currentRate?.toFixed(6) || 'N/A'}</span>
+        </div>
       </div>
     </div>
   );
