@@ -2121,9 +2121,9 @@ function WeeklyTableView({ timesheets, onApprove, onReject, onEdit, onDelete, ge
                     const overtimeFieldName = `${row.key.toLowerCase()}Overtime`;
                     
                     // Get regular and overtime hours from timesheet data
-                    const regularHours = isEditing ? (editData[fieldName] || 0) : (parseFloat(row.hours) || 0);
+                    const regularHours = isEditing ? (parseFloat(editData[fieldName]) || 0) : (parseFloat(row.hours) || 0);
                     const overtimeHours = parseFloat(timesheet[overtimeFieldName] || '0');
-                    const totalDayHours = regularHours + overtimeHours;
+                    const totalDayHours = (parseFloat(regularHours) || 0) + (parseFloat(overtimeHours) || 0);
                     
                     console.log(`Day ${row.key}: Regular=${regularHours}, Overtime=${overtimeHours} (field: ${overtimeFieldName})`, timesheet);
                     
