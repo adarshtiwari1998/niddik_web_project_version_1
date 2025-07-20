@@ -1031,7 +1031,7 @@ function BiWeeklyTableView({ timesheets, onEdit, onDelete, getStatusBadge, isAdm
                       Bi-Weekly Period: {format(new Date(biWeekly.periodStart), 'M/d/yyyy')} - {format(new Date(biWeekly.periodEnd), 'M/d/yyyy')}
                     </p>
                     <p className="text-xs text-blue-600 mt-1">
-                      Working Days: {biWeekly.workingDays} days/week • Employment: {billingConfig?.employmentType || 'Unknown'}
+                      Working Days: {biWeekly.workingDays} days/week • Employment: {billingConfig?.employmentType || 'Unknown'} • Total Hours: {parseFloat(biWeekly.totalHours || '0').toFixed(2)}h
                     </p>
                   </div>
                   <div className="flex items-center gap-4">
@@ -1827,7 +1827,7 @@ function MonthlyTableView({ timesheets, getStatusBadge }: any) {
                       Monthly Period: {monthlyTimesheet.monthName} ({format(new Date(monthlyTimesheet.periodStartDate), 'M/d/yyyy')} - {format(new Date(monthlyTimesheet.periodEndDate), 'M/d/yyyy')})
                     </p>
                     <p className="text-xs text-blue-600 mt-1">
-                      Working Days: {workingDays} days/week • Employment: {billingConfig?.employmentType || 'Unknown'}
+                      Working Days: {workingDays} days/week • Employment: {billingConfig?.employmentType || 'Unknown'} • Total Hours: {parseFloat(monthlyTimesheet.totalHours || '0').toFixed(2)}h
                     </p>
                   </div>
                   <div className="flex items-center gap-4">
@@ -2219,7 +2219,7 @@ function WeeklyTableView({ timesheets, onApprove, onReject, onEdit, onDelete, ge
                     Week of: {format(new Date(timesheet.weekStartDate), 'M/d/yyyy')} - {format(new Date(timesheet.weekEndDate), 'M/d/yyyy')}
                   </p>
                   <p className="text-xs text-blue-600 mt-1">
-                    Working Days: {workingDays} days/week • Employment: {billingConfig?.employmentType || 'Unknown'}
+                    Working Days: {workingDays} days/week • Employment: {billingConfig?.employmentType || 'Unknown'} • Total Hours: {parseFloat(timesheet.totalWeeklyHours || '0').toFixed(2)}h
                   </p>
                 </div>
                 <div className="flex items-center gap-4">
