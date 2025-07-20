@@ -1020,31 +1020,126 @@ function BiWeeklyTableView({ timesheets, onEdit, onDelete, getStatusBadge, isAdm
                     {/* Edit and Delete Buttons for Admin */}
                     {isAdmin && onEdit && onDelete && (
                       <div className="flex gap-2">
-                        <Button
-                          size="sm"
-                          variant="outline"
-                          onClick={() => {
-                            // Edit the underlying weekly timesheets that make up this bi-weekly period
-                            if (biWeekly.week1Data?.id) {
-                              onEdit(biWeekly.week1Data.id, biWeekly.week1Data);
-                            }
-                          }}
-                        >
-                          <Edit2 className="h-4 w-4 mr-1" />
-                          Edit Week 1
-                        </Button>
-                        
-                        {biWeekly.week2Data?.id && (
+                        {editingWeeklyTimesheet !== biWeekly.week1Data?.id ? (
                           <Button
                             size="sm"
                             variant="outline"
                             onClick={() => {
-                              onEdit(biWeekly.week2Data.id, biWeekly.week2Data);
+                              // Set editing state for week 1
+                              if (biWeekly.week1Data?.id) {
+                                setEditingWeeklyTimesheet(biWeekly.week1Data.id);
+                                setEditWeeklyData({
+                                  mondayHours: biWeekly.week1Data.mondayHours,
+                                  tuesdayHours: biWeekly.week1Data.tuesdayHours,
+                                  wednesdayHours: biWeekly.week1Data.wednesdayHours,
+                                  thursdayHours: biWeekly.week1Data.thursdayHours,
+                                  fridayHours: biWeekly.week1Data.fridayHours,
+                                  saturdayHours: biWeekly.week1Data.saturdayHours,
+                                  sundayHours: biWeekly.week1Data.sundayHours,
+                                  mondayOvertime: biWeekly.week1Data.mondayOvertime,
+                                  tuesdayOvertime: biWeekly.week1Data.tuesdayOvertime,
+                                  wednesdayOvertime: biWeekly.week1Data.wednesdayOvertime,
+                                  thursdayOvertime: biWeekly.week1Data.thursdayOvertime,
+                                  fridayOvertime: biWeekly.week1Data.fridayOvertime,
+                                  saturdayOvertime: biWeekly.week1Data.saturdayOvertime,
+                                  sundayOvertime: biWeekly.week1Data.sundayOvertime
+                                });
+                              }
+                            }}
+                          >
+                            <Edit2 className="h-4 w-4 mr-1" />
+                            Edit Week 1
+                          </Button>
+                        ) : (
+                          <div className="flex gap-2">
+                            <Button
+                              size="sm"
+                              variant="outline"
+                              onClick={() => {
+                                // Save changes for week 1
+                                if (biWeekly.week1Data?.id) {
+                                  onEdit(biWeekly.week1Data.id, editWeeklyData);
+                                  setEditingWeeklyTimesheet(null);
+                                  setEditWeeklyData({});
+                                }
+                              }}
+                            >
+                              <Check className="h-4 w-4 mr-1" />
+                              Save
+                            </Button>
+                            <Button
+                              size="sm"
+                              variant="outline"
+                              onClick={() => {
+                                // Cancel editing week 1
+                                setEditingWeeklyTimesheet(null);
+                                setEditWeeklyData({});
+                              }}
+                            >
+                              <X className="h-4 w-4 mr-1" />
+                              Cancel
+                            </Button>
+                          </div>
+                        )}
+                        
+                        {biWeekly.week2Data?.id && editingWeeklyTimesheet !== biWeekly.week2Data?.id && (
+                          <Button
+                            size="sm"
+                            variant="outline"
+                            onClick={() => {
+                              // Set editing state for week 2
+                              setEditingWeeklyTimesheet(biWeekly.week2Data.id);
+                              setEditWeeklyData({
+                                mondayHours: biWeekly.week2Data.mondayHours,
+                                tuesdayHours: biWeekly.week2Data.tuesdayHours,
+                                wednesdayHours: biWeekly.week2Data.wednesdayHours,
+                                thursdayHours: biWeekly.week2Data.thursdayHours,
+                                fridayHours: biWeekly.week2Data.fridayHours,
+                                saturdayHours: biWeekly.week2Data.saturdayHours,
+                                sundayHours: biWeekly.week2Data.sundayHours,
+                                mondayOvertime: biWeekly.week2Data.mondayOvertime,
+                                tuesdayOvertime: biWeekly.week2Data.tuesdayOvertime,
+                                wednesdayOvertime: biWeekly.week2Data.wednesdayOvertime,
+                                thursdayOvertime: biWeekly.week2Data.thursdayOvertime,
+                                fridayOvertime: biWeekly.week2Data.fridayOvertime,
+                                saturdayOvertime: biWeekly.week2Data.saturdayOvertime,
+                                sundayOvertime: biWeekly.week2Data.sundayOvertime
+                              });
                             }}
                           >
                             <Edit2 className="h-4 w-4 mr-1" />
                             Edit Week 2
                           </Button>
+                        )}
+
+                        {biWeekly.week2Data?.id && editingWeeklyTimesheet === biWeekly.week2Data?.id && (
+                          <div className="flex gap-2">
+                            <Button
+                              size="sm"
+                              variant="outline"
+                              onClick={() => {
+                                // Save changes for week 2
+                                onEdit(biWeekly.week2Data.id, editWeeklyData);
+                                setEditingWeeklyTimesheet(null);
+                                setEditWeeklyData({});
+                              }}
+                            >
+                              <Check className="h-4 w-4 mr-1" />
+                              Save
+                            </Button>
+                            <Button
+                              size="sm"
+                              variant="outline"
+                              onClick={() => {
+                                // Cancel editing week 2
+                                setEditingWeeklyTimesheet(null);
+                                setEditWeeklyData({});
+                              }}
+                            >
+                              <X className="h-4 w-4 mr-1" />
+                              Cancel
+                            </Button>
+                          </div>
                         )}
                         
                         <Dialog>
@@ -1112,21 +1207,68 @@ function BiWeeklyTableView({ timesheets, onEdit, onDelete, getStatusBadge, isAdm
                       </td>
                     </tr>
                     {/* Week 1 Data */}
-                    {week1Data.map((dayData, index) => (
-                      <tr key={`week1-${index}`} className="bg-blue-50">
-                        <td className="border border-gray-300 p-3 font-medium">{dayData.day}</td>
-                        <td className="border border-gray-300 p-3 text-center">{parseFloat(dayData.regularHours || 0).toFixed(2)}</td>
-                        <td className="border border-gray-300 p-3 text-center">{parseFloat(dayData.overtimeHours || 0).toFixed(2)}</td>
-                        {isFullTime && (
-                          <>
-                            <td className="border border-gray-300 p-3 text-center">0.00</td>
-                            <td className="border border-gray-300 p-3 text-center">0.00</td>
-                            <td className="border border-gray-300 p-3 text-center">0.00</td>
-                          </>
-                        )}
-                        <td className="border border-gray-300 p-3 text-center font-medium bg-gray-100">{dayData.totalHours.toFixed(2)}</td>
-                      </tr>
-                    ))}
+                    {week1Data.map((dayData, index) => {
+                      const dayKey = ['monday', 'tuesday', 'wednesday', 'thursday', 'friday', 'saturday'][index];
+                      const isEditing = editingWeeklyTimesheet === biWeekly.week1Data?.id;
+                      const regularHoursKey = `${dayKey}Hours`;
+                      const overtimeHoursKey = `${dayKey}Overtime`;
+                      
+                      return (
+                        <tr key={`week1-${index}`} className="bg-blue-50">
+                          <td className="border border-gray-300 p-3 font-medium">{dayData.day}</td>
+                          <td className="border border-gray-300 p-3 text-center">
+                            {isEditing ? (
+                              <Input
+                                type="number"
+                                min="0"
+                                max="24"
+                                step="0.1"
+                                value={editWeeklyData[regularHoursKey] || 0}
+                                onChange={(e) => setEditWeeklyData(prev => ({
+                                  ...prev,
+                                  [regularHoursKey]: parseFloat(e.target.value) || 0
+                                }))}
+                                className="w-20 text-center text-sm"
+                              />
+                            ) : (
+                              parseFloat(dayData.regularHours || 0).toFixed(2)
+                            )}
+                          </td>
+                          <td className="border border-gray-300 p-3 text-center">
+                            {isEditing ? (
+                              <Input
+                                type="number"
+                                min="0"
+                                max="24"
+                                step="0.1"
+                                value={editWeeklyData[overtimeHoursKey] || 0}
+                                onChange={(e) => setEditWeeklyData(prev => ({
+                                  ...prev,
+                                  [overtimeHoursKey]: parseFloat(e.target.value) || 0
+                                }))}
+                                className="w-20 text-center text-sm"
+                              />
+                            ) : (
+                              parseFloat(dayData.overtimeHours || 0).toFixed(2)
+                            )}
+                          </td>
+                          {isFullTime && (
+                            <>
+                              <td className="border border-gray-300 p-3 text-center">0.00</td>
+                              <td className="border border-gray-300 p-3 text-center">0.00</td>
+                              <td className="border border-gray-300 p-3 text-center">0.00</td>
+                            </>
+                          )}
+                          <td className="border border-gray-300 p-3 text-center font-medium bg-gray-100">
+                            {isEditing ? (
+                              ((editWeeklyData[regularHoursKey] || 0) + (editWeeklyData[overtimeHoursKey] || 0)).toFixed(2)
+                            ) : (
+                              dayData.totalHours.toFixed(2)
+                            )}
+                          </td>
+                        </tr>
+                      );
+                    })}
                     
                     {/* Week 2 Header - Only show if week2 exists */}
                     {week2 && (
@@ -1137,21 +1279,68 @@ function BiWeeklyTableView({ timesheets, onEdit, onDelete, getStatusBadge, isAdm
                           </td>
                         </tr>
                         {/* Week 2 Data */}
-                        {week2Data.map((dayData, index) => (
-                          <tr key={`week2-${index}`} className="bg-green-50">
-                            <td className="border border-gray-300 p-3 font-medium">{dayData.day}</td>
-                            <td className="border border-gray-300 p-3 text-center">{parseFloat(dayData.regularHours || 0).toFixed(2)}</td>
-                            <td className="border border-gray-300 p-3 text-center">{parseFloat(dayData.overtimeHours || 0).toFixed(2)}</td>
-                            {isFullTime && (
-                              <>
-                                <td className="border border-gray-300 p-3 text-center">0.00</td>
-                                <td className="border border-gray-300 p-3 text-center">0.00</td>
-                                <td className="border border-gray-300 p-3 text-center">0.00</td>
-                              </>
-                            )}
-                            <td className="border border-gray-300 p-3 text-center font-medium bg-gray-100">{dayData.totalHours.toFixed(2)}</td>
-                          </tr>
-                        ))}
+                        {week2Data.map((dayData, index) => {
+                          const dayKey = ['monday', 'tuesday', 'wednesday', 'thursday', 'friday', 'saturday'][index];
+                          const isEditing = editingWeeklyTimesheet === biWeekly.week2Data?.id;
+                          const regularHoursKey = `${dayKey}Hours`;
+                          const overtimeHoursKey = `${dayKey}Overtime`;
+                          
+                          return (
+                            <tr key={`week2-${index}`} className="bg-green-50">
+                              <td className="border border-gray-300 p-3 font-medium">{dayData.day}</td>
+                              <td className="border border-gray-300 p-3 text-center">
+                                {isEditing ? (
+                                  <Input
+                                    type="number"
+                                    min="0"
+                                    max="24"
+                                    step="0.1"
+                                    value={editWeeklyData[regularHoursKey] || 0}
+                                    onChange={(e) => setEditWeeklyData(prev => ({
+                                      ...prev,
+                                      [regularHoursKey]: parseFloat(e.target.value) || 0
+                                    }))}
+                                    className="w-20 text-center text-sm"
+                                  />
+                                ) : (
+                                  parseFloat(dayData.regularHours || 0).toFixed(2)
+                                )}
+                              </td>
+                              <td className="border border-gray-300 p-3 text-center">
+                                {isEditing ? (
+                                  <Input
+                                    type="number"
+                                    min="0"
+                                    max="24"
+                                    step="0.1"
+                                    value={editWeeklyData[overtimeHoursKey] || 0}
+                                    onChange={(e) => setEditWeeklyData(prev => ({
+                                      ...prev,
+                                      [overtimeHoursKey]: parseFloat(e.target.value) || 0
+                                    }))}
+                                    className="w-20 text-center text-sm"
+                                  />
+                                ) : (
+                                  parseFloat(dayData.overtimeHours || 0).toFixed(2)
+                                )}
+                              </td>
+                              {isFullTime && (
+                                <>
+                                  <td className="border border-gray-300 p-3 text-center">0.00</td>
+                                  <td className="border border-gray-300 p-3 text-center">0.00</td>
+                                  <td className="border border-gray-300 p-3 text-center">0.00</td>
+                                </>
+                              )}
+                              <td className="border border-gray-300 p-3 text-center font-medium bg-gray-100">
+                                {isEditing ? (
+                                  ((editWeeklyData[regularHoursKey] || 0) + (editWeeklyData[overtimeHoursKey] || 0)).toFixed(2)
+                                ) : (
+                                  dayData.totalHours.toFixed(2)
+                                )}
+                              </td>
+                            </tr>
+                          );
+                        })}
                       </>
                     )}
                     
