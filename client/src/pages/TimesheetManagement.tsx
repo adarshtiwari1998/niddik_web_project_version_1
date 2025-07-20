@@ -1433,9 +1433,36 @@ function BiWeeklyTableView({ timesheets, onEdit, onDelete, getStatusBadge, isAdm
                       size="sm" 
                       variant="default"
                       className="bg-green-600 hover:bg-green-700"
-                      onClick={() => {
-                        setSelectedBiWeeklyTimesheetForInvoice(biWeekly.id);
-                        setBiWeeklyInvoiceDialogOpen(true);
+                      onClick={async () => {
+                        console.log('Generate Invoice clicked for bi-weekly timesheet:', biWeekly);
+                        console.log('BiWeekly ID:', biWeekly.id);
+                        
+                        // Since this is a dynamic bi-weekly view, we need to create a bi-weekly timesheet first
+                        // Then generate an invoice from it
+                        try {
+                          // Step 1: Generate bi-weekly timesheet from the weekly data
+                          const generateBiWeeklyResponse = await fetch(`/api/admin/biweekly-timesheets/${biWeekly.candidateId}/generate`, {
+                            method: 'POST',
+                            headers: { 'Content-Type': 'application/json' },
+                            body: JSON.stringify({
+                              periodStartDate: biWeekly.periodStart
+                            })
+                          });
+                          
+                          if (!generateBiWeeklyResponse.ok) {
+                            console.error('Failed to generate bi-weekly timesheet');
+                            return;
+                          }
+                          
+                          const biWeeklyResult = await generateBiWeeklyResponse.json();
+                          console.log('Generated bi-weekly timesheet:', biWeeklyResult);
+                          
+                          // Step 2: Now generate invoice from the bi-weekly timesheet
+                          setSelectedBiWeeklyTimesheetForInvoice(biWeeklyResult.data.id);
+                          setBiWeeklyInvoiceDialogOpen(true);
+                        } catch (error) {
+                          console.error('Error generating bi-weekly timesheet:', error);
+                        }
                       }}
                     >
                       <Receipt className="w-4 h-4 mr-1" />
