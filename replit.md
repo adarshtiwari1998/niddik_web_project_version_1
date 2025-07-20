@@ -123,6 +123,25 @@ The application follows a standard full-stack architecture with clear separation
 
 # Recent Changes
 
+## End User Selection Persistence and Enhanced Company-End User Visualization (July 20, 2025)
+- **Complete End User Selection Bug Fix**: Resolved critical persistence issue where End User selections would reset when edit dialog reopened
+  - **Automatic End User Creation**: Enhanced `handleEndUserSelection` to automatically create end user records when candidate end users are selected
+  - **Backend Integration**: Updated `getAllCandidatesWithBilling` to include `endUserName` via LEFT JOIN with end_users table
+  - **Database Verification**: Confirmed proper data flow - Microsoft HQ created as end user ID 2, correctly linked to candidate billing
+  - **Frontend Integration**: End user selections now properly persist across dialog open/close cycles
+- **Enhanced Company-End User Visualization**: Redesigned billing configuration cards with improved graphical display
+  - **Visual Enhancement**: Added green-bordered section highlighting company and end user relationship
+  - **Terminology Update**: Changed "Client" label to "Company" throughout the interface as requested
+  - **Hierarchical Display**: Shows company logo, company name, and associated end user with clear visual indicators
+  - **Relationship Context**: Added descriptive text showing "This candidate works for [End User] at [Company]"
+  - **Professional Layout**: Enhanced card layout with proper spacing, colors, and iconography for better admin experience
+- **Migration Completed**: Successfully migrated Niddik job portal from Replit Agent to standard Replit environment
+  - **All Dependencies**: Node.js packages installed and verified working correctly
+  - **Database Connectivity**: PostgreSQL connections established with all API endpoints responding
+  - **Security Maintained**: Client/server separation and role-based access control preserved
+  - **Performance**: Application running cleanly on port 5000 without errors
+- **Files Modified**: `client/src/components/BillingConfig.tsx`, `server/storage.ts`, `.local/state/replit/agent/progress_tracker.md`, `replit.md`
+
 ## Flexible Rejected Timesheet Editing and Status Synchronization Fix (July 20, 2025)
 - **Flexible Editing for Rejected Timesheets**: Implemented comprehensive solution allowing candidates to edit rejected timesheets regardless of week deadlines
   - **Business Scenario Fixed**: When admin rejects timesheet on Monday after weekend deadline, candidate can now access and resubmit previous week's timesheet

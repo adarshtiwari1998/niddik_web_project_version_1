@@ -1345,22 +1345,38 @@ export default function BillingConfig() {
                       </div>
                     )}
                     
-                    {/* Client Company Information */}
+                    {/* Company & End User Information */}
                     {(() => {
                       const clientCompany = getClientCompanyInfo(billing.clientCompanyId);
                       if (clientCompany) {
                         return (
-                          <div className="flex items-center gap-2 text-sm">
-                            {clientCompany.logoUrl ? (
-                              <img 
-                                src={clientCompany.logoUrl} 
-                                alt={`${clientCompany.name} logo`}
-                                className="w-6 h-6 rounded object-cover border"
-                              />
-                            ) : (
-                              <Building2 className="w-4 h-4 text-green-600" />
+                          <div className="p-3 bg-green-50 rounded-lg border border-green-200">
+                            <div className="flex items-center gap-2 mb-2">
+                              {clientCompany.logoUrl ? (
+                                <img 
+                                  src={clientCompany.logoUrl} 
+                                  alt={`${clientCompany.name} logo`}
+                                  className="w-8 h-8 rounded object-cover border"
+                                />
+                              ) : (
+                                <Building2 className="w-6 h-6 text-green-600" />
+                              )}
+                              <div>
+                                <span className="text-sm font-medium text-green-800">Company: {clientCompany.name}</span>
+                                {billing.endUserName && (
+                                  <div className="flex items-center gap-1 mt-1">
+                                    <User className="w-3 h-3 text-blue-600" />
+                                    <span className="text-xs text-blue-600">End User: {billing.endUserName}</span>
+                                  </div>
+                                )}
+                              </div>
+                            </div>
+                            {billing.endUserName && (
+                              <div className="flex items-center gap-2 text-xs text-gray-600">
+                                <div className="w-2 h-2 bg-blue-500 rounded-full"></div>
+                                <span>This candidate works for {billing.endUserName} at {clientCompany.name}</span>
+                              </div>
                             )}
-                            <span>Client: {clientCompany.name}</span>
                           </div>
                         );
                       }
