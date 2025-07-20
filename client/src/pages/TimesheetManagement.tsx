@@ -1425,7 +1425,7 @@ function BiWeeklyTableView({ timesheets, onEdit, onDelete, getStatusBadge, isAdm
                       <p className="text-sm">Hours: {parseFloat(week1.totalWeeklyHours).toFixed(2)}</p>
                       <p className="text-sm">Amount: {billingConfig?.currency || 'INR'} {parseFloat(week1.totalWeeklyAmount).toFixed(2)}</p>
                       {billingConfig?.currency && billingConfig.currency !== 'INR' && week1.conversionRate && (
-                        <p className="text-xs text-gray-600">INR {(parseFloat(week1.totalWeeklyAmount) * parseFloat(week1.conversionRate)).toFixed(2)} (@ {parseFloat(week1.conversionRate).toFixed(2)})</p>
+                        <p className="text-xs text-gray-600">INR {(parseFloat(week1.totalWeeklyAmount) * parseFloat(week1.conversionRate || '85')).toFixed(2)} (@ {parseFloat(week1.conversionRate || '85').toFixed(2)})</p>
                       )}
                     </div>
                     <div className="p-3 bg-green-50 rounded-lg border-l-4 border-green-400">
@@ -1434,7 +1434,7 @@ function BiWeeklyTableView({ timesheets, onEdit, onDelete, getStatusBadge, isAdm
                       <p className="text-sm">Hours: {parseFloat(week2.totalWeeklyHours).toFixed(2)}</p>
                       <p className="text-sm">Amount: {billingConfig?.currency || 'INR'} {parseFloat(week2.totalWeeklyAmount).toFixed(2)}</p>
                       {billingConfig?.currency && billingConfig.currency !== 'INR' && week2.conversionRate && (
-                        <p className="text-xs text-gray-600">INR {(parseFloat(week2.totalWeeklyAmount) * parseFloat(week2.conversionRate)).toFixed(2)} (@ {parseFloat(week2.conversionRate).toFixed(2)})</p>
+                        <p className="text-xs text-gray-600">INR {(parseFloat(week2.totalWeeklyAmount) * parseFloat(week2.conversionRate || '85')).toFixed(2)} (@ {parseFloat(week2.conversionRate || '85').toFixed(2)})</p>
                       )}
                     </div>
                   </div>
@@ -2578,7 +2578,7 @@ function WeeklyTableView({ timesheets, onApprove, onReject, onEdit, onDelete, ge
                   <div className="font-bold text-lg text-red-600">Total Pay: {billingConfig?.currency || 'INR'} {parseFloat(timesheet.totalWeeklyAmount || '0').toFixed(2)}</div>
                   {billingConfig?.currency && billingConfig.currency !== 'INR' && (
                     <div className="text-sm text-gray-600 mt-1">
-                      INR {(parseFloat(timesheet.totalWeeklyAmount || '0') * (timesheet.conversionRate || 85)).toFixed(2)} (@ {(timesheet.conversionRate || 85).toFixed(2)})
+                      INR {(parseFloat(timesheet.totalWeeklyAmount || '0') * parseFloat(timesheet.conversionRate || '85')).toFixed(2)} (@ {parseFloat(timesheet.conversionRate || '85').toFixed(2)})
                     </div>
                   )}
                 </div>
