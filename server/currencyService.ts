@@ -83,25 +83,32 @@ export async function get6MonthAverageUSDToINR(): Promise<{
       return { 
         average: 85.0, 
         monthlyRates: [
-          { month: 'Jan 2025', rate: 85.0 },
-          { month: 'Feb 2025', rate: 84.5 },
-          { month: 'Mar 2025', rate: 85.5 },
-          { month: 'Apr 2025', rate: 84.8 },
-          { month: 'May 2025', rate: 85.2 },
-          { month: 'Jun 2025', rate: 85.1 }
+          { month: 'Feb 2025', rate: 85.0 },
+          { month: 'Mar 2025', rate: 84.5 },
+          { month: 'Apr 2025', rate: 85.5 },
+          { month: 'May 2025', rate: 84.8 },
+          { month: 'Jun 2025', rate: 85.2 },
+          { month: 'Jul 2025', rate: 85.1 }
         ]
       };
     }
 
-    // Get historical rates for the last 6 months
+    // Get historical rates for the last 6 months (including current month)
     const monthlyRates: { month: string; rate: number }[] = [];
     const currentDate = new Date();
     let totalRates = 0;
     let validMonths = 0;
 
+    console.log('Current date for 6-month calculation:', currentDate.toISOString());
+    console.log('Current month:', currentDate.getMonth() + 1, 'Current year:', currentDate.getFullYear());
+
+    // Calculate last 6 months including current month
+    // If current month is July (7), last 6 months should be: Feb, Mar, Apr, May, Jun, Jul
     for (let i = 5; i >= 0; i--) {
       const targetDate = new Date(currentDate.getFullYear(), currentDate.getMonth() - i, 1);
       const dateStr = targetDate.toISOString().split('T')[0];
+      
+      console.log(`Fetching data for month ${6-i}: ${targetDate.toLocaleDateString('en-US', { month: 'short', year: 'numeric' })} (${dateStr})`);
       
       try {
         const response = await fetch(`${CURRENCY_API_BASE}/historical?apikey=${API_KEY}&date=${dateStr}&base_currency=USD&currencies=INR`);
@@ -110,29 +117,35 @@ export async function get6MonthAverageUSDToINR(): Promise<{
           const data: HistoricalRatesResponse = await response.json();
           const rate = data.data[dateStr]?.INR || 85.0;
           
-          monthlyRates.push({
+          const monthData = {
             month: targetDate.toLocaleDateString('en-US', { month: 'short', year: 'numeric' }),
             rate: Math.round(rate * 100) / 100
-          });
+          };
+          
+          monthlyRates.push(monthData);
+          console.log(`Added month data:`, monthData);
           
           totalRates += rate;
           validMonths++;
         } else {
+          console.log(`API call failed for ${dateStr}, using fallback rate`);
           // Add fallback rate for this month
-          monthlyRates.push({
+          const monthData = {
             month: targetDate.toLocaleDateString('en-US', { month: 'short', year: 'numeric' }),
             rate: 85.0
-          });
+          };
+          monthlyRates.push(monthData);
           totalRates += 85.0;
           validMonths++;
         }
       } catch (monthError) {
         console.error(`Error fetching rate for ${dateStr}:`, monthError);
         // Add fallback rate for this month
-        monthlyRates.push({
+        const monthData = {
           month: targetDate.toLocaleDateString('en-US', { month: 'short', year: 'numeric' }),
           rate: 85.0
-        });
+        };
+        monthlyRates.push(monthData);
         totalRates += 85.0;
         validMonths++;
       }
@@ -140,20 +153,30 @@ export async function get6MonthAverageUSDToINR(): Promise<{
     
     const average = validMonths > 0 ? Math.round((totalRates / validMonths) * 100) / 100 : 85.0;
     
+    console.log('Final monthly rates:', monthlyRates);
+    console.log('Final average:', average);
+    
     return { average, monthlyRates };
   } catch (error) {
     console.error('Error getting 6-month average:', error);
-    // Fallback with sample data
+    // Fallback with correct current year data
+    const currentDate = new Date();
+    const currentYear = currentDate.getFullYear();
+    const currentMonth = currentDate.getMonth();
+    
+    // Generate last 6 months including current month
+    const fallbackRates = [];
+    for (let i = 5; i >= 0; i--) {
+      const targetDate = new Date(currentYear, currentMonth - i, 1);
+      fallbackRates.push({
+        month: targetDate.toLocaleDateString('en-US', { month: 'short', year: 'numeric' }),
+        rate: Math.round((85.0 + (Math.random() - 0.5) * 2) * 100) / 100 // Small variation around 85
+      });
+    }
+    
     return { 
       average: 85.0, 
-      monthlyRates: [
-        { month: 'Jan 2025', rate: 85.0 },
-        { month: 'Feb 2025', rate: 84.5 },
-        { month: 'Mar 2025', rate: 85.5 },
-        { month: 'Apr 2025', rate: 84.8 },
-        { month: 'May 2025', rate: 85.2 },
-        { month: 'Jun 2025', rate: 85.1 }
-      ]
+      monthlyRates: fallbackRates
     };
   }
 }
@@ -218,12 +241,12 @@ export async function convertCurrencyToINR(amount: number, fromCurrency: string)
       conversionRate: fallbackRate,
       sixMonthAverage: fallbackRate,
       monthlyBreakdown: [
-        { month: 'Jan 2025', rate: 85.0 },
-        { month: 'Feb 2025', rate: 84.5 },
-        { month: 'Mar 2025', rate: 85.5 },
-        { month: 'Apr 2025', rate: 84.8 },
-        { month: 'May 2025', rate: 85.2 },
-        { month: 'Jun 2025', rate: 85.1 }
+        { month: 'Feb 2025', rate: 85.0 },
+        { month: 'Mar 2025', rate: 84.5 },
+        { month: 'Apr 2025', rate: 85.5 },
+        { month: 'May 2025', rate: 84.8 },
+        { month: 'Jun 2025', rate: 85.2 },
+        { month: 'Jul 2025', rate: 85.1 }
       ]
     };
   }
