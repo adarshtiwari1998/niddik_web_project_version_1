@@ -495,6 +495,15 @@ export default function CandidateTimesheets() {
                         }
                         return dates;
                       }, []) || [],
+                      pending: timesheets?.data?.reduce((dates: Date[], t: WeeklyTimesheet) => {
+                        if (t.status === 'pending') {
+                          const weekStart = parseISO(t.weekStartDate);
+                          for (let i = 0; i < workingDaysPerWeek; i++) {
+                            dates.push(addDays(weekStart, i));
+                          }
+                        }
+                        return dates;
+                      }, []) || [],
                       approved: timesheets?.data?.reduce((dates: Date[], t: WeeklyTimesheet) => {
                         if (t.status === 'approved') {
                           const weekStart = parseISO(t.weekStartDate);
@@ -516,7 +525,7 @@ export default function CandidateTimesheets() {
                       selected: (() => {
                         const dates: Date[] = [];
                         const selectedWeekStart = format(selectedWeek, 'yyyy-MM-dd');
-                        // Only show selected if it's not already submitted/approved/rejected
+                        // Only show selected if it's not already submitted/pending/approved/rejected
                         const hasTimesheet = timesheets?.data?.some((t: WeeklyTimesheet) => 
                           format(parseISO(t.weekStartDate), 'yyyy-MM-dd') === selectedWeekStart
                         );
@@ -531,6 +540,7 @@ export default function CandidateTimesheets() {
                     }}
                     modifiersStyles={{
                       submitted: { backgroundColor: '#fef3c7', color: '#92400e' },
+                      pending: { backgroundColor: '#fef3c7', color: '#92400e' },
                       approved: { backgroundColor: '#dcfce7', color: '#166534' },
                       rejected: { backgroundColor: '#fecaca', color: '#991b1b' },
                       selected: { backgroundColor: '#dbeafe', color: '#1e40af', fontWeight: 'bold' }
@@ -543,6 +553,10 @@ export default function CandidateTimesheets() {
                         <div className="flex items-center gap-1">
                           <div className="w-3 h-3 bg-yellow-200 rounded"></div>
                           <span>Submitted</span>
+                        </div>
+                        <div className="flex items-center gap-1">
+                          <div className="w-3 h-3 bg-yellow-200 rounded"></div>
+                          <span>Pending</span>
                         </div>
                         <div className="flex items-center gap-1">
                           <div className="w-3 h-3 bg-green-200 rounded"></div>
@@ -608,11 +622,14 @@ export default function CandidateTimesheets() {
                     </p>
                   </div>
                 )}
-                {hasSubmittedThisWeek && currentWeekTimesheet?.status === 'submitted' && (
+                {hasSubmittedThisWeek && (currentWeekTimesheet?.status === 'submitted' || currentWeekTimesheet?.status === 'pending') && (
                   <div className="bg-yellow-50 border border-yellow-200 rounded-lg p-3 mt-2">
                     <p className="text-sm text-yellow-800">
                       <AlertCircle className="w-4 h-4 inline mr-1" />
-                      Timesheet submitted - Waiting for admin approval. You can still edit until approved.
+                      {currentWeekTimesheet?.status === 'pending' 
+                        ? 'Timesheet pending review - Admin has reverted approval. You can still edit until approved.'
+                        : 'Timesheet submitted - Waiting for admin approval. You can still edit until approved.'
+                      }
                     </p>
                   </div>
                 )}
