@@ -1,5 +1,5 @@
 import { and, eq, desc, asc, ilike, inArray, count, gt, lt, sql, or, ne, isNotNull } from "drizzle-orm";
-import { getCurrencyRates, convertINRToUSD, get6MonthAverageUSDToINR, calculateGST, type CurrencyRates } from './currencyService.js';
+import { getCurrencyRates, convertINRToUSD, get6MonthAverageUSDToINR, calculateGST, convertCurrencyToINR, type CurrencyRates } from './currencyService.js';
 import type { 
   User, 
   InsertUser, 
@@ -2715,6 +2715,34 @@ async updateSeoPage(id: number, data: Partial<InsertSeoPage>): Promise<SeoPage |
       sundayOvertime += parseFloat(weeklyTimesheet.sundayOvertime?.toString() || '0');
     }
 
+    // Get billing configuration for currency conversion
+    const billingConfig = await this.getCandidateBilling(candidateId);
+    let conversionData = {};
+    
+    // Calculate currency conversion if needed (non-INR currencies)
+    if (billingConfig && billingConfig.currency && billingConfig.currency !== 'INR') {
+      try {
+        const conversionResult = await convertCurrencyToINR(totalAmount, billingConfig.currency);
+        
+        conversionData = {
+          conversionRate: conversionResult.sixMonthAverage.toString(),
+          totalAmountINR: conversionResult.convertedAmount.toString(),
+          conversionDate: new Date().toISOString().split('T')[0]
+        };
+        
+        console.log(`Bi-weekly currency conversion: ${billingConfig.currency} ${totalAmount} → INR ${conversionResult.convertedAmount} (6M Avg: ${conversionResult.sixMonthAverage})`);
+      } catch (error) {
+        console.error('Bi-weekly currency conversion failed, using default rate:', error);
+        const fallbackRate = 85;
+        const convertedAmount = totalAmount * fallbackRate;
+        conversionData = {
+          conversionRate: fallbackRate.toString(),
+          totalAmountINR: convertedAmount.toString(),
+          conversionDate: new Date().toISOString().split('T')[0]
+        };
+      }
+    }
+
     // Create bi-weekly timesheet record
     const biWeeklyData: InsertBiWeeklyTimesheet = {
       candidateId,
@@ -2756,7 +2784,8 @@ async updateSeoPage(id: number, data: Partial<InsertSeoPage>): Promise<SeoPage |
       fridayOvertime: fridayOvertime.toString(),
       saturdayOvertime: saturdayOvertime.toString(),
       sundayOvertime: sundayOvertime.toString(),
-      status: 'calculated'
+      status: 'calculated',
+      ...conversionData
     };
 
     return await this.createBiWeeklyTimesheet(biWeeklyData);

@@ -4,6 +4,7 @@ import { apiRequest } from "@/lib/queryClient";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { CurrencyConversionDialog } from "@/components/CurrencyConversionDialog";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
@@ -1425,7 +1426,21 @@ function BiWeeklyTableView({ timesheets, onEdit, onDelete, getStatusBadge, isAdm
                       <p className="text-sm">Hours: {parseFloat(week1.totalWeeklyHours).toFixed(2)}</p>
                       <p className="text-sm">Amount: {billingConfig?.currency || 'INR'} {parseFloat(week1.totalWeeklyAmount).toFixed(2)}</p>
                       {billingConfig?.currency && billingConfig.currency !== 'INR' && week1.conversionRate && (
-                        <p className="text-xs text-gray-600">INR {(parseFloat(week1.totalWeeklyAmount) * parseFloat(week1.conversionRate || '85')).toFixed(2)} (@ {parseFloat(week1.conversionRate || '85').toFixed(2)})</p>
+                        <div className="text-xs text-gray-600 flex items-center gap-2">
+                          INR {(parseFloat(week1.totalWeeklyAmount) * parseFloat(week1.conversionRate || '85')).toFixed(2)} (@ {parseFloat(week1.conversionRate || '85').toFixed(2)})
+                          <CurrencyConversionDialog
+                            trigger={
+                              <button className="text-xs text-blue-600 hover:text-blue-800 underline">
+                                Learn More
+                              </button>
+                            }
+                            originalAmount={parseFloat(week1.totalWeeklyAmount)}
+                            convertedAmount={parseFloat(week1.totalWeeklyAmount) * parseFloat(week1.conversionRate || '85')}
+                            conversionRate={parseFloat(week1.conversionRate || '85')}
+                            currency={billingConfig.currency}
+                            conversionDate={week1.conversionDate || undefined}
+                          />
+                        </div>
                       )}
                     </div>
                     <div className="p-3 bg-green-50 rounded-lg border-l-4 border-green-400">
@@ -1434,7 +1449,21 @@ function BiWeeklyTableView({ timesheets, onEdit, onDelete, getStatusBadge, isAdm
                       <p className="text-sm">Hours: {parseFloat(week2.totalWeeklyHours).toFixed(2)}</p>
                       <p className="text-sm">Amount: {billingConfig?.currency || 'INR'} {parseFloat(week2.totalWeeklyAmount).toFixed(2)}</p>
                       {billingConfig?.currency && billingConfig.currency !== 'INR' && week2.conversionRate && (
-                        <p className="text-xs text-gray-600">INR {(parseFloat(week2.totalWeeklyAmount) * parseFloat(week2.conversionRate || '85')).toFixed(2)} (@ {parseFloat(week2.conversionRate || '85').toFixed(2)})</p>
+                        <div className="text-xs text-gray-600 flex items-center gap-2">
+                          INR {(parseFloat(week2.totalWeeklyAmount) * parseFloat(week2.conversionRate || '85')).toFixed(2)} (@ {parseFloat(week2.conversionRate || '85').toFixed(2)})
+                          <CurrencyConversionDialog
+                            trigger={
+                              <button className="text-xs text-blue-600 hover:text-blue-800 underline">
+                                Learn More
+                              </button>
+                            }
+                            originalAmount={parseFloat(week2.totalWeeklyAmount)}
+                            convertedAmount={parseFloat(week2.totalWeeklyAmount) * parseFloat(week2.conversionRate || '85')}
+                            conversionRate={parseFloat(week2.conversionRate || '85')}
+                            currency={billingConfig.currency}
+                            conversionDate={week2.conversionDate || undefined}
+                          />
+                        </div>
                       )}
                     </div>
                   </div>
@@ -2577,8 +2606,20 @@ function WeeklyTableView({ timesheets, onApprove, onReject, onEdit, onDelete, ge
                 <div className="text-center">
                   <div className="font-bold text-lg text-red-600">Total Pay: {billingConfig?.currency || 'INR'} {parseFloat(timesheet.totalWeeklyAmount || '0').toFixed(2)}</div>
                   {billingConfig?.currency && billingConfig.currency !== 'INR' && (
-                    <div className="text-sm text-gray-600 mt-1">
+                    <div className="text-sm text-gray-600 mt-1 flex items-center gap-2">
                       INR {(parseFloat(timesheet.totalWeeklyAmount || '0') * parseFloat(timesheet.conversionRate || '85')).toFixed(2)} (@ {parseFloat(timesheet.conversionRate || '85').toFixed(2)})
+                      <CurrencyConversionDialog
+                        trigger={
+                          <button className="text-xs text-blue-600 hover:text-blue-800 underline">
+                            Learn More
+                          </button>
+                        }
+                        originalAmount={parseFloat(timesheet.totalWeeklyAmount || '0')}
+                        convertedAmount={parseFloat(timesheet.totalWeeklyAmount || '0') * parseFloat(timesheet.conversionRate || '85')}
+                        conversionRate={parseFloat(timesheet.conversionRate || '85')}
+                        currency={billingConfig.currency}
+                        conversionDate={timesheet.conversionDate || undefined}
+                      />
                     </div>
                   )}
                 </div>

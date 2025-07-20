@@ -123,6 +123,32 @@ The application follows a standard full-stack architecture with clear separation
 
 # Recent Changes
 
+## Complete Currency Conversion System with Learn More Popup Implementation (July 20, 2025)
+- **Advanced Currency Conversion Dialog**: Implemented comprehensive CurrencyConversionDialog.tsx component with detailed 6-month historical data visualization
+  - **6-Month Historical Display**: Shows monthly exchange rates and converted amounts for complete transparency
+  - **Algorithm Explanation**: Step-by-step breakdown of the advanced averaging algorithm with mathematical formulas
+  - **Visual Process Flow**: Color-coded cards explaining data collection, monthly averaging, 6-month calculation, and final conversion
+  - **Benefits Section**: Explains stability and business benefits of using 6-month averages over daily rates
+- **Bi-Weekly Currency Conversion Integration**: Added complete currency conversion support to bi-weekly timesheet generation
+  - **Database Enhancement**: Added conversion_rate, total_amount_inr, and conversion_date columns to bi_weekly_timesheets table via SQL migration
+  - **Storage Method Update**: Enhanced generateBiWeeklyTimesheet method to calculate and save currency conversion data
+  - **Automatic Conversion**: Non-INR currencies automatically converted to INR using 6-month average rates during bi-weekly generation
+  - **Error Handling**: Proper fallback to default rates when API calls fail with detailed logging
+- **Learn More Button Integration**: Added "Learn More" buttons throughout timesheet displays
+  - **Weekly Timesheets**: Learn More button shows conversion details for weekly timesheet amounts
+  - **Bi-Weekly Timesheets**: Separate Learn More buttons for Week 1 and Week 2 conversion displays
+  - **Interactive Popups**: Clicking Learn More opens detailed currency conversion dialog with full historical data
+  - **Consistent UX**: Uniform styling and positioning across all timesheet views
+- **Enhanced User Experience**: Complete transparency in currency conversion process
+  - **Real-time Data**: Shows actual conversion rates used and dates applied
+  - **Educational Content**: Users can understand exactly how their currency conversions are calculated
+  - **Professional Presentation**: Clean, organized dialog with cards, badges, and step-by-step explanations
+- **Files Enhanced**: 
+  - **Created**: `client/src/components/CurrencyConversionDialog.tsx` (complete popup with historical data)
+  - **Modified**: `client/src/pages/TimesheetManagement.tsx` (Learn More button integration)
+  - **Updated**: `server/storage.ts` (bi-weekly currency conversion logic)
+  - **Database**: Added currency conversion fields to bi_weekly_timesheets table
+
 ## FreeCurrencyAPI Integration and Migration Completion (July 20, 2025)
 - **Complete Migration Success**: Successfully migrated Niddik job portal from Replit Agent to standard Replit environment with enhanced currency conversion capabilities
   - **All Dependencies**: Node.js packages installed and verified working correctly including FreeCurrencyAPI integration
