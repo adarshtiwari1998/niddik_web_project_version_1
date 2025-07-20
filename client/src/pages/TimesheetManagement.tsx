@@ -2739,9 +2739,9 @@ function InvoiceManagement() {
                         </div>
                         <div className="text-right">
                           <div className="text-2xl font-bold">
-                            {invoice.currency} {parseFloat(invoice.totalAmount || '0').toFixed(2)}
+                            INR {parseFloat(invoice.amountINR || invoice.totalAmount || '0').toFixed(2)}
                             <div className="text-sm font-normal text-muted-foreground">
-                              ≈ INR {(parseFloat(invoice.totalAmount || '0') * 83.5).toFixed(2)}
+                              ≈ {invoice.currency} {parseFloat(invoice.totalAmount || '0').toFixed(2)}
                             </div>
                           </div>
                           <div className="text-sm text-muted-foreground">

@@ -247,8 +247,14 @@ const InvoiceTemplateNew = forwardRef<HTMLDivElement, InvoiceTemplateProps>(
                   </div>
                 </td>
                 <td className="border border-gray-400 p-3 text-center">{invoice.totalHours.toFixed(2)}</td>
-                <td className="border border-gray-400 p-3 text-center">{formatCurrency(invoice.hourlyRate, 'USD')}</td>
-                <td className="border border-gray-400 p-3 text-center font-semibold">{formatCurrency(invoice.totalAmount, 'USD')}</td>
+                <td className="border border-gray-400 p-3 text-center">
+                  {formatCurrency(invoice.hourlyRate * invoice.currencyConversionRate, 'INR')}
+                  <div className="text-xs text-gray-600 mt-1">≈ {formatCurrency(invoice.hourlyRate, 'USD')}</div>
+                </td>
+                <td className="border border-gray-400 p-3 text-center font-semibold">
+                  {formatCurrency(invoice.amountINR, 'INR')}
+                  <div className="text-xs text-gray-600 mt-1">≈ {formatCurrency(invoice.totalAmount, 'USD')}</div>
+                </td>
               </tr>
 
               {/* Bi-Weekly Breakdown if available */}
@@ -334,7 +340,8 @@ const InvoiceTemplateNew = forwardRef<HTMLDivElement, InvoiceTemplateProps>(
                   <div className="text-right font-semibold">SUBTOTAL</div>
                 </td>
                 <td className="border border-gray-400 p-3 text-center font-semibold">
-                  {formatCurrency(invoice.totalAmount, 'USD')}
+                  {formatCurrency(invoice.amountINR, 'INR')}
+                  <div className="text-xs text-gray-600 mt-1">≈ {formatCurrency(invoice.totalAmount, 'USD')}</div>
                 </td>
               </tr>
 
@@ -344,17 +351,19 @@ const InvoiceTemplateNew = forwardRef<HTMLDivElement, InvoiceTemplateProps>(
                   <div className="text-right">GST ({invoice.gstRate}%)</div>
                 </td>
                 <td className="border border-gray-400 p-3 text-center">
-                  {formatCurrency(invoice.gstAmount, 'USD')}
+                  {formatCurrency(invoice.amountINR * (invoice.gstRate / 100), 'INR')}
+                  <div className="text-xs text-gray-600 mt-1">≈ {formatCurrency(invoice.gstAmount, 'USD')}</div>
                 </td>
               </tr>
 
               {/* Total */}
               <tr className="bg-blue-100 font-bold text-lg">
                 <td className="border border-gray-400 p-3" colSpan={3}>
-                  <div className="text-right">TOTAL (USD)</div>
+                  <div className="text-right">TOTAL (INR)</div>
                 </td>
                 <td className="border border-gray-400 p-3 text-center">
-                  {formatCurrency(invoice.totalWithGst, 'USD')}
+                  {formatCurrency(invoice.amountINR * (1 + invoice.gstRate / 100), 'INR')}
+                  <div className="text-xs text-gray-600 mt-1">≈ {formatCurrency(invoice.totalWithGst, 'USD')}</div>
                 </td>
               </tr>
             </tbody>
@@ -389,7 +398,7 @@ const InvoiceTemplateNew = forwardRef<HTMLDivElement, InvoiceTemplateProps>(
             <h4 className="font-bold text-gray-800 mb-2">Payment Terms</h4>
             <ul className="text-sm text-gray-700 space-y-1">
               <li>• Payment due within 30 days</li>
-              <li>• All amounts in US Dollars (USD)</li>
+              <li>• All amounts in Indian Rupees (INR)</li>
               <li>• Wire transfer preferred</li>
               <li>• Late payments subject to 1.5% monthly charge</li>
             </ul>
