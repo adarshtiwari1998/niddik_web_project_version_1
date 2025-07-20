@@ -146,6 +146,17 @@ The application follows a standard full-stack architecture with clear separation
   - **Admin Interface**: Invoice management functionality operational in timesheet management
 - **Files Modified**: `client/src/components/InvoiceTemplateNew.tsx`, `server/storage.ts`, `.local/state/replit/agent/progress_tracker.md`, `replit.md`
 
+## Enhanced Timesheet Display with Total Hours Information (July 20, 2025)
+- **Total Hours Display Enhancement**: Added comprehensive total hours information to all timesheet view headers
+  - **Weekly Timesheets**: Enhanced header to show "Working Days: 5 days/week • Employment: subcontract • Total Hours: 50.00h"
+  - **Bi-Weekly Timesheets**: Added total hours to header information line for consistency with weekly view
+  - **Monthly Timesheets**: Enhanced header information to include total hours alongside working days and employment type
+  - **Consistent Format**: All timesheet views now display total hours in the same format as shown in user's reference image
+  - **Dynamic Calculation**: Hours are calculated from actual timesheet data and properly formatted with 2 decimal places
+- **User Experience**: Admins can now quickly see total hours assigned directly in the header sections without scrolling through tables
+- **Visual Consistency**: Maintains consistent blue text styling and bullet point format across all timesheet view types
+- **Files Modified**: `client/src/pages/TimesheetManagement.tsx`
+
 ## Enhanced Daily Sampling Currency Conversion Algorithm Implementation (July 20, 2025)
 - **Advanced Daily Rate Sampling**: Implemented comprehensive algorithm that samples 8+ daily rates per month instead of single-day rates
   - **Strategic Sampling Points**: Collects rates from beginning, middle, end, and random days of each month for comprehensive coverage
