@@ -1385,13 +1385,13 @@ function BiWeeklyTableView({ timesheets, onEdit, onDelete, getStatusBadge, isAdm
                     {/* Rate Row */}
                     <tr className="bg-gray-100">
                       <td className="border border-gray-300 p-3 font-medium">Rate/Hour:</td>
-                      <td className="border border-gray-300 p-3 text-center">INR {(parseFloat(biWeekly.totalRegularAmount) / parseFloat(biWeekly.totalRegularHours) || 0).toFixed(2)}</td>
-                      <td className="border border-gray-300 p-3 text-center">INR {(parseFloat(biWeekly.totalOvertimeAmount) / parseFloat(biWeekly.totalOvertimeHours) || 0).toFixed(2)}</td>
+                      <td className="border border-gray-300 p-3 text-center">{billingConfig?.currency || 'INR'} {(parseFloat(biWeekly.totalRegularAmount) / parseFloat(biWeekly.totalRegularHours) || 0).toFixed(2)}</td>
+                      <td className="border border-gray-300 p-3 text-center">{billingConfig?.currency || 'INR'} {(parseFloat(biWeekly.totalOvertimeAmount) / parseFloat(biWeekly.totalOvertimeHours) || 0).toFixed(2)}</td>
                       {isFullTime && (
                         <>
-                          <td className="border border-gray-300 p-3 text-center">INR 0.00</td>
-                          <td className="border border-gray-300 p-3 text-center">INR 0.00</td>
-                          <td className="border border-gray-300 p-3 text-center">INR 0.00</td>
+                          <td className="border border-gray-300 p-3 text-center">{billingConfig?.currency || 'INR'} 0.00</td>
+                          <td className="border border-gray-300 p-3 text-center">{billingConfig?.currency || 'INR'} 0.00</td>
+                          <td className="border border-gray-300 p-3 text-center">{billingConfig?.currency || 'INR'} 0.00</td>
                         </>
                       )}
                       <td className="border border-gray-300 p-3 text-center bg-gray-200"></td>
@@ -1400,16 +1400,16 @@ function BiWeeklyTableView({ timesheets, onEdit, onDelete, getStatusBadge, isAdm
                     {/* Total Pay Row */}
                     <tr className="bg-white">
                       <td className="border border-gray-300 p-3 font-medium">Total Pay:</td>
-                      <td className="border border-gray-300 p-3 text-center">INR {biWeekly.totalRegularAmount}</td>
-                      <td className="border border-gray-300 p-3 text-center">INR {biWeekly.totalOvertimeAmount}</td>
+                      <td className="border border-gray-300 p-3 text-center">{billingConfig?.currency || 'INR'} {biWeekly.totalRegularAmount}</td>
+                      <td className="border border-gray-300 p-3 text-center">{billingConfig?.currency || 'INR'} {biWeekly.totalOvertimeAmount}</td>
                       {isFullTime && (
                         <>
-                          <td className="border border-gray-300 p-3 text-center">INR 0.00</td>
-                          <td className="border border-gray-300 p-3 text-center">INR 0.00</td>
-                          <td className="border border-gray-300 p-3 text-center">INR 0.00</td>
+                          <td className="border border-gray-300 p-3 text-center">{billingConfig?.currency || 'INR'} 0.00</td>
+                          <td className="border border-gray-300 p-3 text-center">{billingConfig?.currency || 'INR'} 0.00</td>
+                          <td className="border border-gray-300 p-3 text-center">{billingConfig?.currency || 'INR'} 0.00</td>
                         </>
                       )}
-                      <td className="border border-gray-300 p-3 text-center bg-red-500 text-white font-bold">INR {biWeekly.totalAmount}</td>
+                      <td className="border border-gray-300 p-3 text-center bg-red-500 text-white font-bold">{billingConfig?.currency || 'INR'} {biWeekly.totalAmount}</td>
                     </tr>
                   </tbody>
                 </table>
@@ -1423,13 +1423,19 @@ function BiWeeklyTableView({ timesheets, onEdit, onDelete, getStatusBadge, isAdm
                       <h4 className="font-medium mb-2 text-blue-800">Week 1</h4>
                       <p className="text-sm">Period: {format(new Date(week1.weekStartDate), 'M/d')} - {format(new Date(week1.weekEndDate), 'M/d')}</p>
                       <p className="text-sm">Hours: {parseFloat(week1.totalWeeklyHours).toFixed(2)}</p>
-                      <p className="text-sm">Amount: INR {parseFloat(week1.totalWeeklyAmount).toFixed(2)}</p>
+                      <p className="text-sm">Amount: {billingConfig?.currency || 'INR'} {parseFloat(week1.totalWeeklyAmount).toFixed(2)}</p>
+                      {billingConfig?.currency && billingConfig.currency !== 'INR' && week1.conversionRate && (
+                        <p className="text-xs text-gray-600">INR {(parseFloat(week1.totalWeeklyAmount) * parseFloat(week1.conversionRate)).toFixed(2)} (@ {parseFloat(week1.conversionRate).toFixed(2)})</p>
+                      )}
                     </div>
                     <div className="p-3 bg-green-50 rounded-lg border-l-4 border-green-400">
                       <h4 className="font-medium mb-2 text-green-800">Week 2</h4>
                       <p className="text-sm">Period: {format(new Date(week2.weekStartDate), 'M/d')} - {format(new Date(week2.weekEndDate), 'M/d')}</p>
                       <p className="text-sm">Hours: {parseFloat(week2.totalWeeklyHours).toFixed(2)}</p>
-                      <p className="text-sm">Amount: INR {parseFloat(week2.totalWeeklyAmount).toFixed(2)}</p>
+                      <p className="text-sm">Amount: {billingConfig?.currency || 'INR'} {parseFloat(week2.totalWeeklyAmount).toFixed(2)}</p>
+                      {billingConfig?.currency && billingConfig.currency !== 'INR' && week2.conversionRate && (
+                        <p className="text-xs text-gray-600">INR {(parseFloat(week2.totalWeeklyAmount) * parseFloat(week2.conversionRate)).toFixed(2)} (@ {parseFloat(week2.conversionRate).toFixed(2)})</p>
+                      )}
                     </div>
                   </div>
                 </div>
@@ -2525,16 +2531,16 @@ function WeeklyTableView({ timesheets, onApprove, onReject, onEdit, onDelete, ge
                   <tr className="bg-gray-50">
                     <td className="p-3 border-r font-medium">Rate/Hour:</td>
                     <td className="p-3 text-center border-r">
-                      INR {billingConfig?.hourlyRate ? parseFloat(billingConfig.hourlyRate).toFixed(2) : '0.00'}
+                      {billingConfig?.currency || 'INR'} {billingConfig?.hourlyRate ? parseFloat(billingConfig.hourlyRate).toFixed(2) : '0.00'}
                     </td>
                     <td className="p-3 text-center border-r bg-yellow-50">
-                      INR {billingConfig?.hourlyRate ? parseFloat(billingConfig.hourlyRate).toFixed(2) : '0.00'}
+                      {billingConfig?.currency || 'INR'} {billingConfig?.hourlyRate ? parseFloat(billingConfig.hourlyRate).toFixed(2) : '0.00'}
                     </td>
                     {isFullTime && (
                       <>
-                        <td className="p-3 text-center border-r">INR 0.00</td>
-                        <td className="p-3 text-center border-r">INR 0.00</td>
-                        <td className="p-3 text-center border-r">INR 0.00</td>
+                        <td className="p-3 text-center border-r">{billingConfig?.currency || 'INR'} 0.00</td>
+                        <td className="p-3 text-center border-r">{billingConfig?.currency || 'INR'} 0.00</td>
+                        <td className="p-3 text-center border-r">{billingConfig?.currency || 'INR'} 0.00</td>
                       </>
                     )}
                     <td className="p-3 text-center bg-gray-200"></td>
@@ -2544,19 +2550,19 @@ function WeeklyTableView({ timesheets, onApprove, onReject, onEdit, onDelete, ge
                   <tr className="bg-white">
                     <td className="p-3 border-r font-medium">Total Pay:</td>
                     <td className="p-3 text-center border-r">
-                      INR {(parseFloat(timesheet.totalRegularAmount || '0')).toFixed(2)}
+                      {billingConfig?.currency || 'INR'} {(parseFloat(timesheet.totalRegularAmount || '0')).toFixed(2)}
                     </td>
                     <td className="p-3 text-center border-r bg-yellow-50">
-                      INR {(parseFloat(timesheet.totalOvertimeAmount || '0')).toFixed(2)}
+                      {billingConfig?.currency || 'INR'} {(parseFloat(timesheet.totalOvertimeAmount || '0')).toFixed(2)}
                     </td>
                     {isFullTime && (
                       <>
-                        <td className="p-3 text-center border-r">INR 0.00</td>
-                        <td className="p-3 text-center border-r">INR 0.00</td>
-                        <td className="p-3 text-center border-r">INR 0.00</td>
+                        <td className="p-3 text-center border-r">{billingConfig?.currency || 'INR'} 0.00</td>
+                        <td className="p-3 text-center border-r">{billingConfig?.currency || 'INR'} 0.00</td>
+                        <td className="p-3 text-center border-r">{billingConfig?.currency || 'INR'} 0.00</td>
                       </>
                     )}
-                    <td className="p-3 text-center bg-red-500 text-white font-bold">INR {parseFloat(timesheet.totalWeeklyAmount || '0').toFixed(2)}</td>
+                    <td className="p-3 text-center bg-red-500 text-white font-bold">{billingConfig?.currency || 'INR'} {parseFloat(timesheet.totalWeeklyAmount || '0').toFixed(2)}</td>
                   </tr>
                 </tbody>
               </table>
@@ -2569,7 +2575,12 @@ function WeeklyTableView({ timesheets, onApprove, onReject, onEdit, onDelete, ge
                   <div className="font-bold text-lg text-red-600">Total Hours Reported: {(parseFloat(timesheet.totalWeeklyHours) || 0).toFixed(2)}</div>
                 </div>
                 <div className="text-center">
-                  <div className="font-bold text-lg text-red-600">Total Pay: INR {parseFloat(timesheet.totalWeeklyAmount || '0').toFixed(2)}</div>
+                  <div className="font-bold text-lg text-red-600">Total Pay: {billingConfig?.currency || 'INR'} {parseFloat(timesheet.totalWeeklyAmount || '0').toFixed(2)}</div>
+                  {billingConfig?.currency && billingConfig.currency !== 'INR' && (
+                    <div className="text-sm text-gray-600 mt-1">
+                      INR {(parseFloat(timesheet.totalWeeklyAmount || '0') * (timesheet.conversionRate || 85)).toFixed(2)} (@ {(timesheet.conversionRate || 85).toFixed(2)})
+                    </div>
+                  )}
                 </div>
               </div>
             </div>

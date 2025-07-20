@@ -1519,7 +1519,38 @@ async updateSeoPage(id: number, data: Partial<InsertSeoPage>): Promise<SeoPage |
   },
 
   async createWeeklyTimesheet(data: InsertWeeklyTimesheet): Promise<WeeklyTimesheet> {
-    const [timesheet] = await db.insert(weeklyTimesheets).values(data).returning();
+    // Get billing configuration to determine if currency conversion is needed
+    const billing = await this.getCandidateBilling(data.candidateId);
+    
+    // Calculate currency conversion if needed (non-INR currencies)
+    let conversionData = {};
+    if (billing && billing.currency && billing.currency !== 'INR') {
+      try {
+        const rates = await getCurrencyRates();
+        const conversionRate = rates.sixMonthAverage;
+        const totalWeeklyAmountINR = parseFloat(data.totalWeeklyAmount?.toString() || '0') * conversionRate;
+        
+        conversionData = {
+          conversionRate: conversionRate.toString(),
+          totalWeeklyAmountINR: totalWeeklyAmountINR.toString(),
+          conversionDate: new Date().toISOString().split('T')[0]
+        };
+      } catch (error) {
+        console.error('Currency conversion failed, using default rate:', error);
+        // Use fallback rate of 85 if API fails
+        const fallbackRate = 85;
+        conversionData = {
+          conversionRate: fallbackRate.toString(),
+          totalWeeklyAmountINR: (parseFloat(data.totalWeeklyAmount?.toString() || '0') * fallbackRate).toString(),
+          conversionDate: new Date().toISOString().split('T')[0]
+        };
+      }
+    }
+    
+    const [timesheet] = await db.insert(weeklyTimesheets).values({
+      ...data,
+      ...conversionData
+    }).returning();
     return timesheet;
   },
 
@@ -1724,6 +1755,10 @@ async updateSeoPage(id: number, data: Partial<InsertSeoPage>): Promise<SeoPage |
         totalOvertimeHours: weeklyTimesheets.totalOvertimeHours,
         totalRegularAmount: weeklyTimesheets.totalRegularAmount,
         totalOvertimeAmount: weeklyTimesheets.totalOvertimeAmount,
+        // Currency conversion fields
+        conversionRate: weeklyTimesheets.conversionRate,
+        totalWeeklyAmountINR: weeklyTimesheets.totalWeeklyAmountINR,
+        conversionDate: weeklyTimesheets.conversionDate,
         status: weeklyTimesheets.status,
         submittedAt: weeklyTimesheets.submittedAt,
         approvedAt: weeklyTimesheets.approvedAt,

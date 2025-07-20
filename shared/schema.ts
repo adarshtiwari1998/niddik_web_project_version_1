@@ -536,6 +536,11 @@ export const weeklyTimesheets = pgTable("weekly_timesheets", {
   tdsAmount: decimal("tds_amount", { precision: 10, scale: 2 }).default('0'), // TDS deduction for subcontract
   netAmount: decimal("net_amount", { precision: 10, scale: 2 }).notNull().default('0'), // Amount after TDS
   
+  // Currency conversion fields
+  conversionRate: decimal("conversion_rate", { precision: 10, scale: 4 }).default('85'), // 6-month average USD to INR rate
+  totalWeeklyAmountINR: decimal("total_weekly_amount_inr", { precision: 10, scale: 2 }), // Converted amount in INR
+  conversionDate: date("conversion_date"), // Date when conversion rate was applied
+  
   status: text("status").notNull().default("draft"), // draft, submitted, approved, rejected
   submittedAt: timestamp("submitted_at"),
   approvedAt: timestamp("approved_at"),
@@ -837,6 +842,11 @@ export const biWeeklyTimesheets = pgTable("bi_weekly_timesheets", {
   fridayOvertime: decimal("friday_overtime", { precision: 4, scale: 2 }).notNull().default('0'),
   saturdayOvertime: decimal("saturday_overtime", { precision: 4, scale: 2 }).notNull().default('0'),
   sundayOvertime: decimal("sunday_overtime", { precision: 4, scale: 2 }).notNull().default('0'),
+  
+  // Currency conversion fields
+  conversionRate: decimal("conversion_rate", { precision: 10, scale: 4 }).default('85'), // 6-month average USD to INR rate
+  totalAmountINR: decimal("total_amount_inr", { precision: 10, scale: 2 }), // Converted amount in INR
+  conversionDate: date("conversion_date"), // Date when conversion rate was applied
   
   status: text("status").notNull().default("calculated"), // calculated, approved, rejected
   createdAt: timestamp("created_at").defaultNow().notNull(),
