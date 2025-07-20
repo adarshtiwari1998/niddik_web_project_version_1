@@ -2631,9 +2631,9 @@ function InvoiceManagement() {
                           </div>
                         </div>
                         <div className="text-right">
-                          <div className="text-2xl font-bold">{invoice.currency} {invoice.totalAmount?.toFixed(2)}</div>
+                          <div className="text-2xl font-bold">{invoice.currency} {parseFloat(invoice.totalAmount || '0').toFixed(2)}</div>
                           <div className="text-sm text-muted-foreground">
-                            {invoice.totalHours} hours @ {invoice.currency} {invoice.hourlyRate}/hr
+                            {parseFloat(invoice.totalHours || '0').toFixed(1)} hours @ {invoice.currency} {parseFloat(invoice.hourlyRate || '0').toFixed(2)}/hr
                           </div>
                         </div>
                       </div>

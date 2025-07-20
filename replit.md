@@ -123,6 +123,27 @@ The application follows a standard full-stack architecture with clear separation
 
 # Recent Changes
 
+## Complete Invoice Generation System with PDF Download Implementation (July 20, 2025)
+- **Comprehensive Invoice Generation System**: Successfully implemented complete invoice generation functionality for approved timesheets
+  - **Backend Enhancement**: Added `generateInvoiceFromTimesheet` and `getInvoiceTemplateData` methods to storage with automatic invoice numbering (INV-YYYYMM-0001 format)
+  - **API Endpoints**: Created `/api/admin/generate-invoice` and `/api/admin/invoices/:id/template-data` endpoints with proper admin authentication
+  - **Professional Invoice Template**: Designed InvoiceTemplate.tsx component with company logos, client billing addresses, daily hours breakdown, and comprehensive formatting
+  - **PDF Generation**: Integrated jsPDF and html2canvas for high-quality PDF download and print functionality with proper A4 formatting
+  - **Invoice Dialog**: Created InvoiceDialog.tsx with preview, download, and print capabilities including real-time PDF generation
+- **Timesheet Integration**: Added "Generate Invoice" button to approved timesheets in admin panel
+  - **User Interface**: Green "Generate Invoice" button appears next to Edit/Delete buttons for approved timesheets
+  - **Workflow Integration**: Invoice generation triggers from timesheet approval workflow with proper cache invalidation
+  - **Error Handling**: Fixed JavaScript errors with proper numeric value parsing for database decimal fields
+- **Professional Features**: 
+  - **Dynamic Data**: Invoice pulls real company data, client information, and timesheet details from database
+  - **Visual Design**: Professional invoice layout with company/client logos, payment terms, and structured formatting
+  - **Overtime Support**: Displays both regular and overtime hours with separate line items and calculations
+  - **File Naming**: Automatic PDF filename generation using invoice number and candidate name
+- **Technical Implementation**: Complete integration using React Query mutations, proper state management, and real-time updates
+- **Database Schema**: Enhanced invoices table with comprehensive tracking fields including PDF URLs and status management
+- **Files Created**: `client/src/components/InvoiceTemplate.tsx`, `client/src/components/InvoiceDialog.tsx`
+- **Files Modified**: `client/src/pages/TimesheetManagement.tsx`, `server/routes.ts`, `server/storage.ts`
+
 ## End User Selection Persistence Fix in Billing Configuration Edit Dialog (July 20, 2025)
 - **Critical Bug Fix**: Resolved end user selection not persisting in edit billing configuration dialog
   - **Root Cause**: useEffect hook was clearing endUserId whenever clientCompanyId changed, interfering with form population during edit mode
