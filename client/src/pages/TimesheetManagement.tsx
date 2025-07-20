@@ -1977,7 +1977,14 @@ function WeeklyTableView({ timesheets, onApprove, onReject, onEdit, onDelete, ge
                             thursdayHours: timesheet.thursdayHours,
                             fridayHours: timesheet.fridayHours,
                             saturdayHours: timesheet.saturdayHours,
-                            sundayHours: timesheet.sundayHours
+                            sundayHours: timesheet.sundayHours,
+                            mondayOvertime: timesheet.mondayOvertime,
+                            tuesdayOvertime: timesheet.tuesdayOvertime,
+                            wednesdayOvertime: timesheet.wednesdayOvertime,
+                            thursdayOvertime: timesheet.thursdayOvertime,
+                            fridayOvertime: timesheet.fridayOvertime,
+                            saturdayOvertime: timesheet.saturdayOvertime,
+                            sundayOvertime: timesheet.sundayOvertime
                           });
                         }}
                       >
@@ -2061,14 +2068,29 @@ function WeeklyTableView({ timesheets, onApprove, onReject, onEdit, onDelete, ge
                       <Button 
                         size="sm" 
                         onClick={() => {
-                          const totalHours = Object.values(editData).reduce((sum: number, hours: any) => sum + (parseFloat(hours) || 0), 0);
+                          // Calculate regular hours total
+                          const regularHoursFields = ['mondayHours', 'tuesdayHours', 'wednesdayHours', 'thursdayHours', 'fridayHours', 'saturdayHours', 'sundayHours'];
+                          const totalRegularHours = regularHoursFields.reduce((sum, field) => sum + (parseFloat(editData[field]) || 0), 0);
+                          
+                          // Calculate overtime hours total
+                          const overtimeFields = ['mondayOvertime', 'tuesdayOvertime', 'wednesdayOvertime', 'thursdayOvertime', 'fridayOvertime', 'saturdayOvertime', 'sundayOvertime'];
+                          const totalOvertimeHours = overtimeFields.reduce((sum, field) => sum + (parseFloat(editData[field]) || 0), 0);
+                          
+                          // Calculate total hours and amounts
+                          const totalHours = totalRegularHours + totalOvertimeHours;
                           const billingConfig = getBillingConfig(timesheet.candidateId);
                           const hourlyRate = parseFloat(billingConfig?.hourlyRate || '0');
-                          const totalAmount = totalHours * hourlyRate;
+                          const totalRegularAmount = totalRegularHours * hourlyRate;
+                          const totalOvertimeAmount = totalOvertimeHours * hourlyRate;
+                          const totalAmount = totalRegularAmount + totalOvertimeAmount;
                           
                           onEdit(timesheet.id, {
                             ...editData,
+                            totalRegularHours: totalRegularHours,
+                            totalOvertimeHours: totalOvertimeHours,
                             totalWeeklyHours: totalHours,
+                            totalRegularAmount: totalRegularAmount,
+                            totalOvertimeAmount: totalOvertimeAmount,
                             totalWeeklyAmount: totalAmount
                           });
                           setEditingTimesheet(null);
@@ -2122,7 +2144,7 @@ function WeeklyTableView({ timesheets, onApprove, onReject, onEdit, onDelete, ge
                     
                     // Get regular and overtime hours from timesheet data
                     const regularHours = isEditing ? (parseFloat(editData[fieldName]) || 0) : (parseFloat(row.hours) || 0);
-                    const overtimeHours = parseFloat(timesheet[overtimeFieldName] || '0');
+                    const overtimeHours = isEditing ? (parseFloat(editData[overtimeFieldName]) || parseFloat(timesheet[overtimeFieldName] || '0')) : parseFloat(timesheet[overtimeFieldName] || '0');
                     const totalDayHours = (parseFloat(regularHours) || 0) + (parseFloat(overtimeHours) || 0);
                     
                     console.log(`Day ${row.key}: Regular=${regularHours}, Overtime=${overtimeHours} (field: ${overtimeFieldName})`, timesheet);
@@ -2149,7 +2171,22 @@ function WeeklyTableView({ timesheets, onApprove, onReject, onEdit, onDelete, ge
                           )}
                         </td>
                         <td className="p-3 text-center border-r bg-yellow-50">
-                          {(parseFloat(overtimeHours) || 0).toFixed(2)}
+                          {isEditing ? (
+                            <Input
+                              type="number"
+                              step="0.01"
+                              min="0"
+                              max="24"
+                              value={overtimeHours}
+                              onChange={(e) => {
+                                const value = Math.max(0, Math.min(24, parseFloat(e.target.value) || 0));
+                                setEditData(prev => ({ ...prev, [overtimeFieldName]: value }));
+                              }}
+                              className="w-20 text-center"
+                            />
+                          ) : (
+                            (parseFloat(overtimeHours) || 0).toFixed(2)
+                          )}
                         </td>
                         {isFullTime && (
                           <>
@@ -2168,12 +2205,15 @@ function WeeklyTableView({ timesheets, onApprove, onReject, onEdit, onDelete, ge
                     <td className="p-3 border-r">Total Hrs:</td>
                     <td className="p-3 text-center border-r">
                       {editingTimesheet === timesheet.id 
-                        ? Object.values(editData).reduce((sum: number, hours: any) => sum + (parseFloat(hours) || 0), 0).toFixed(2)
+                        ? (['mondayHours', 'tuesdayHours', 'wednesdayHours', 'thursdayHours', 'fridayHours', 'saturdayHours', 'sundayHours'].reduce((sum, field) => sum + (parseFloat(editData[field]) || 0), 0)).toFixed(2)
                         : (parseFloat(timesheet.totalWeeklyHours) - parseFloat(timesheet.totalOvertimeHours || '0')).toFixed(2)
                       }
                     </td>
                     <td className="p-3 text-center border-r bg-yellow-100">
-                      {(parseFloat(timesheet.totalOvertimeHours || '0')).toFixed(2)}
+                      {editingTimesheet === timesheet.id 
+                        ? (['mondayOvertime', 'tuesdayOvertime', 'wednesdayOvertime', 'thursdayOvertime', 'fridayOvertime', 'saturdayOvertime', 'sundayOvertime'].reduce((sum, field) => sum + (parseFloat(editData[field]) || 0), 0)).toFixed(2)
+                        : (parseFloat(timesheet.totalOvertimeHours || '0')).toFixed(2)
+                      }
                     </td>
                     {isFullTime && (
                       <>
@@ -2183,7 +2223,10 @@ function WeeklyTableView({ timesheets, onApprove, onReject, onEdit, onDelete, ge
                       </>
                     )}
                     <td className="p-3 text-center bg-gray-200">
-                      {(parseFloat(timesheet.totalWeeklyHours) || 0).toFixed(2)}
+                      {editingTimesheet === timesheet.id 
+                        ? ((['mondayHours', 'tuesdayHours', 'wednesdayHours', 'thursdayHours', 'fridayHours', 'saturdayHours', 'sundayHours'].reduce((sum, field) => sum + (parseFloat(editData[field]) || 0), 0)) + (['mondayOvertime', 'tuesdayOvertime', 'wednesdayOvertime', 'thursdayOvertime', 'fridayOvertime', 'saturdayOvertime', 'sundayOvertime'].reduce((sum, field) => sum + (parseFloat(editData[field]) || 0), 0))).toFixed(2)
+                        : (parseFloat(timesheet.totalWeeklyHours) || 0).toFixed(2)
+                      }
                     </td>
                   </tr>
 
