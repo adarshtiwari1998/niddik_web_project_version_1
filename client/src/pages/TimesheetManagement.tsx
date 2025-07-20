@@ -1261,7 +1261,7 @@ function BiWeeklyTableView({ timesheets, onEdit, onDelete, getStatusBadge, isAdm
                           )}
                           <td className="border border-gray-300 p-3 text-center font-medium bg-gray-100">
                             {isEditing ? (
-                              ((editWeeklyData[regularHoursKey] || 0) + (editWeeklyData[overtimeHoursKey] || 0)).toFixed(2)
+                              (parseFloat(editWeeklyData[regularHoursKey] || 0) + parseFloat(editWeeklyData[overtimeHoursKey] || 0)).toFixed(2)
                             ) : (
                               dayData.totalHours.toFixed(2)
                             )}
@@ -1333,7 +1333,7 @@ function BiWeeklyTableView({ timesheets, onEdit, onDelete, getStatusBadge, isAdm
                               )}
                               <td className="border border-gray-300 p-3 text-center font-medium bg-gray-100">
                                 {isEditing ? (
-                                  ((editWeeklyData[regularHoursKey] || 0) + (editWeeklyData[overtimeHoursKey] || 0)).toFixed(2)
+                                  (parseFloat(editWeeklyData[regularHoursKey] || 0) + parseFloat(editWeeklyData[overtimeHoursKey] || 0)).toFixed(2)
                                 ) : (
                                   dayData.totalHours.toFixed(2)
                                 )}

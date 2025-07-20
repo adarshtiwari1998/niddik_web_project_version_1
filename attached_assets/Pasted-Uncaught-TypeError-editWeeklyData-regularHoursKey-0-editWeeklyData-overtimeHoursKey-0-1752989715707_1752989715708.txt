@@ -1,0 +1,58 @@
+Uncaught TypeError: ((editWeeklyData[regularHoursKey] || 0) + (editWeeklyData[overtimeHoursKey] || 0)).toFixed is not a function
+    at /src/pages/TimesheetManagement.tsx:1811:230
+    at Array.map (<anonymous>)
+    at /src/pages/TimesheetManagement.tsx:1725:23
+    at Array.map (<anonymous>)
+    at BiWeeklyTableView (/src/pages/TimesheetManagement.tsx:1187:44)
+    at renderWithHooks (chunk-RPCDYKBN.js:11548:26)
+    at updateFunctionComponent (chunk-RPCDYKBN.js:14582:28)
+    at beginWork (chunk-RPCDYKBN.js:15924:22)
+    at HTMLUnknownElement.callCallback2 (chunk-RPCDYKBN.js:3674:22)
+    at Object.invokeGuardedCallbackDev (chunk-RPCDYKBN.js:3699:24)Understand this error
+ The above error occurred in the <BiWeeklyTableView> component:
+
+    at BiWeeklyTableView (https://d613673b-9241-4f2d-b85c-f41333745c9b-00-1ghdzq64oy38c.worf.replit.dev/src/pages/TimesheetManagement.tsx:963:30)
+    at div
+    at div
+    at _c9 (https://d613673b-9241-4f2d-b85c-f41333745c9b-00-1ghdzq64oy38c.worf.replit.dev/src/components/ui/card.tsx:106:12)
+    at div
+    at _c (https://d613673b-9241-4f2d-b85c-f41333745c9b-00-1ghdzq64oy38c.worf.replit.dev/src/components/ui/card.tsx:20:11)
+    at div
+    at https://d613673b-9241-4f2d-b85c-f41333745c9b-00-1ghdzq64oy38c.worf.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/chunk-AXMZZQ2X.js?v=14d8a5f0:42:13
+    at Presence (https://d613673b-9241-4f2d-b85c-f41333745c9b-00-1ghdzq64oy38c.worf.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/chunk-7ZIEIKXH.js?v=14d8a5f0:24:11)
+    at https://d613673b-9241-4f2d-b85c-f41333745c9b-00-1ghdzq64oy38c.worf.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/@radix-ui_react-tabs.js?v=14d8a5f0:173:13
+    at _c5 (https://d613673b-9241-4f2d-b85c-f41333745c9b-00-1ghdzq64oy38c.worf.replit.dev/src/components/ui/tabs.tsx:68:12)
+    at div
+    at https://d613673b-9241-4f2d-b85c-f41333745c9b-00-1ghdzq64oy38c.worf.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/chunk-AXMZZQ2X.js?v=14d8a5f0:42:13
+    at Provider (https://d613673b-9241-4f2d-b85c-f41333745c9b-00-1ghdzq64oy38c.worf.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/chunk-E7IAXTU4.js?v=14d8a5f0:38:15)
+    at https://d613673b-9241-4f2d-b85c-f41333745c9b-00-1ghdzq64oy38c.worf.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/@radix-ui_react-tabs.js?v=14d8a5f0:51:7
+    at div
+    at main
+    at div
+    at div
+    at div
+    at AdminLayout (https://d613673b-9241-4f2d-b85c-f41333745c9b-00-1ghdzq64oy38c.worf.replit.dev/src/components/layout/AdminLayout.tsx:24:39)
+    at TimesheetManagement (https://d613673b-9241-4f2d-b85c-f41333745c9b-00-1ghdzq64oy38c.worf.replit.dev/src/pages/TimesheetManagement.tsx:40:20)
+    at Suspense
+    at ProtectedRoute (https://d613673b-9241-4f2d-b85c-f41333745c9b-00-1ghdzq64oy38c.worf.replit.dev/src/lib/protected-route.tsx:22:45)
+    at Switch (https://d613673b-9241-4f2d-b85c-f41333745c9b-00-1ghdzq64oy38c.worf.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/wouter.js?v=14d8a5f0:336:17)
+    at Router
+    at AuthProvider (https://d613673b-9241-4f2d-b85c-f41333745c9b-00-1ghdzq64oy38c.worf.replit.dev/src/hooks/use-auth.tsx:32:32)
+    at QueryClientProvider (https://d613673b-9241-4f2d-b85c-f41333745c9b-00-1ghdzq64oy38c.worf.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/@tanstack_react-query.js?v=14d8a5f0:2875:3)
+    at _a (https://d613673b-9241-4f2d-b85c-f41333745c9b-00-1ghdzq64oy38c.worf.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/react-helmet-async.js?v=14d8a5f0:624:5)
+    at App
+
+Consider adding an error boundary to your tree to customize error handling behavior.
+Visit https://reactjs.org/link/error-boundaries to learn more about error boundaries.
+logCapturedError @ chunk-RPCDYKBN.js:14032Understand this error
+chunk-RPCDYKBN.js:9129 Uncaught TypeError: ((editWeeklyData[regularHoursKey] || 0) + (editWeeklyData[overtimeHoursKey] || 0)).toFixed is not a function
+    at /src/pages/TimesheetManagement.tsx:1811:230
+    at Array.map (<anonymous>)
+    at /src/pages/TimesheetManagement.tsx:1725:23
+    at Array.map (<anonymous>)
+    at BiWeeklyTableView (/src/pages/TimesheetManagement.tsx:1187:44)
+    at renderWithHooks (chunk-RPCDYKBN.js:11548:26)
+    at updateFunctionComponent (chunk-RPCDYKBN.js:14582:28)
+    at beginWork (chunk-RPCDYKBN.js:15924:22)
+    at beginWork$1 (chunk-RPCDYKBN.js:19753:22)
+    at performUnitOfWork (chunk-RPCDYKBN.js:19198:20)Understand this error
