@@ -1,0 +1,59 @@
+Failed to load resource: the server responded with a status of 401 (Unauthorized)Understand this error
+2TimesheetManagement.tsx:2565 Uncaught ReferenceError: biWeeklyInvoiceDialogOpen is not defined
+    at WeeklyTableView (TimesheetManagement.tsx:2565:17)
+    at renderWithHooks (chunk-RPCDYKBN.js?v=c0712527:11548:26)
+    at mountIndeterminateComponent (chunk-RPCDYKBN.js?v=c0712527:14926:21)
+    at beginWork (chunk-RPCDYKBN.js?v=c0712527:15914:22)
+    at HTMLUnknownElement.callCallback2 (chunk-RPCDYKBN.js?v=c0712527:3674:22)
+    at Object.invokeGuardedCallbackDev (chunk-RPCDYKBN.js?v=c0712527:3699:24)
+    at invokeGuardedCallback (chunk-RPCDYKBN.js?v=c0712527:3733:39)
+    at beginWork$1 (chunk-RPCDYKBN.js?v=c0712527:19765:15)
+    at performUnitOfWork (chunk-RPCDYKBN.js?v=c0712527:19198:20)
+    at workLoopSync (chunk-RPCDYKBN.js?v=c0712527:19137:13)Understand this error
+chunk-RPCDYKBN.js?v=c0712527:14032 The above error occurred in the <WeeklyTableView> component:
+
+    at WeeklyTableView (https://ee6ac78d-83d5-4969-b829-c49703d6518b-00-2dgmgrshw2lj9.kirk.replit.dev/src/pages/TimesheetManagement.tsx:3179:28)
+    at div
+    at div
+    at _c9 (https://ee6ac78d-83d5-4969-b829-c49703d6518b-00-2dgmgrshw2lj9.kirk.replit.dev/src/components/ui/card.tsx:106:12)
+    at div
+    at _c (https://ee6ac78d-83d5-4969-b829-c49703d6518b-00-2dgmgrshw2lj9.kirk.replit.dev/src/components/ui/card.tsx:20:11)
+    at div
+    at https://ee6ac78d-83d5-4969-b829-c49703d6518b-00-2dgmgrshw2lj9.kirk.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/chunk-AXMZZQ2X.js?v=c0712527:42:13
+    at Presence (https://ee6ac78d-83d5-4969-b829-c49703d6518b-00-2dgmgrshw2lj9.kirk.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/chunk-7ZIEIKXH.js?v=c0712527:24:11)
+    at https://ee6ac78d-83d5-4969-b829-c49703d6518b-00-2dgmgrshw2lj9.kirk.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/@radix-ui_react-tabs.js?v=50caa5e4:173:13
+    at _c5 (https://ee6ac78d-83d5-4969-b829-c49703d6518b-00-2dgmgrshw2lj9.kirk.replit.dev/src/components/ui/tabs.tsx:68:12)
+    at div
+    at https://ee6ac78d-83d5-4969-b829-c49703d6518b-00-2dgmgrshw2lj9.kirk.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/chunk-AXMZZQ2X.js?v=c0712527:42:13
+    at Provider (https://ee6ac78d-83d5-4969-b829-c49703d6518b-00-2dgmgrshw2lj9.kirk.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/chunk-E7IAXTU4.js?v=c0712527:38:15)
+    at https://ee6ac78d-83d5-4969-b829-c49703d6518b-00-2dgmgrshw2lj9.kirk.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/@radix-ui_react-tabs.js?v=50caa5e4:51:7
+    at div
+    at main
+    at div
+    at div
+    at div
+    at AdminLayout (https://ee6ac78d-83d5-4969-b829-c49703d6518b-00-2dgmgrshw2lj9.kirk.replit.dev/src/components/layout/AdminLayout.tsx:24:39)
+    at TimesheetManagement (https://ee6ac78d-83d5-4969-b829-c49703d6518b-00-2dgmgrshw2lj9.kirk.replit.dev/src/pages/TimesheetManagement.tsx:41:20)
+    at Suspense
+    at ProtectedRoute (https://ee6ac78d-83d5-4969-b829-c49703d6518b-00-2dgmgrshw2lj9.kirk.replit.dev/src/lib/protected-route.tsx:22:45)
+    at Switch (https://ee6ac78d-83d5-4969-b829-c49703d6518b-00-2dgmgrshw2lj9.kirk.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/wouter.js?v=cc3c2954:336:17)
+    at Router
+    at AuthProvider (https://ee6ac78d-83d5-4969-b829-c49703d6518b-00-2dgmgrshw2lj9.kirk.replit.dev/src/hooks/use-auth.tsx:32:32)
+    at QueryClientProvider (https://ee6ac78d-83d5-4969-b829-c49703d6518b-00-2dgmgrshw2lj9.kirk.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/@tanstack_react-query.js?v=25227f96:2875:3)
+    at _a (https://ee6ac78d-83d5-4969-b829-c49703d6518b-00-2dgmgrshw2lj9.kirk.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/react-helmet-async.js?v=4839792c:624:5)
+    at App
+
+Consider adding an error boundary to your tree to customize error handling behavior.
+Visit https://reactjs.org/link/error-boundaries to learn more about error boundaries.
+logCapturedError @ chunk-RPCDYKBN.js?v=c0712527:14032Understand this error
+chunk-RPCDYKBN.js?v=c0712527:9129 Uncaught ReferenceError: biWeeklyInvoiceDialogOpen is not defined
+    at WeeklyTableView (TimesheetManagement.tsx:2565:17)
+    at renderWithHooks (chunk-RPCDYKBN.js?v=c0712527:11548:26)
+    at mountIndeterminateComponent (chunk-RPCDYKBN.js?v=c0712527:14926:21)
+    at beginWork (chunk-RPCDYKBN.js?v=c0712527:15914:22)
+    at beginWork$1 (chunk-RPCDYKBN.js?v=c0712527:19753:22)
+    at performUnitOfWork (chunk-RPCDYKBN.js?v=c0712527:19198:20)
+    at workLoopSync (chunk-RPCDYKBN.js?v=c0712527:19137:13)
+    at renderRootSync (chunk-RPCDYKBN.js?v=c0712527:19116:15)
+    at recoverFromConcurrentError (chunk-RPCDYKBN.js?v=c0712527:18736:28)
+    at performSyncWorkOnRoot (chunk-RPCDYKBN.js?v=c0712527:18879:28)Understand this error
