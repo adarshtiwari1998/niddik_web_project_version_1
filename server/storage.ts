@@ -1,5 +1,5 @@
 import { and, eq, desc, asc, ilike, inArray, count, gt, lt, sql, or, ne, isNotNull } from "drizzle-orm";
-import { getCurrencyRates, convertINRToUSD, type CurrencyRates } from './currencyService.js';
+import { getCurrencyRates, convertINRToUSD, get6MonthAverageUSDToINR, calculateGST, type CurrencyRates } from './currencyService.js';
 import type { 
   User, 
   InsertUser, 

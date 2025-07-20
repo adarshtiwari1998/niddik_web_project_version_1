@@ -118,6 +118,11 @@ export const calculateGST = (baseAmount: number, gstRate: number): { gstAmount: 
   return { gstAmount, totalWithGst };
 };
 
+// Helper function to get 6-month average USD to INR rates
+export const get6MonthAverageUSDToINR = async (): Promise<CurrencyRates> => {
+  return await getCurrencyRates();
+};
+
 // Helper function to format currency
 export const formatCurrency = (amount: number, currency: string): string => {
   if (currency === 'USD') {

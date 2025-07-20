@@ -713,6 +713,8 @@ export default function TimesheetManagement() {
                       isAdmin={true}
                       setSelectedBiWeeklyTimesheetForInvoice={setSelectedBiWeeklyTimesheetForInvoice}
                       setBiWeeklyInvoiceDialogOpen={setBiWeeklyInvoiceDialogOpen}
+                      biWeeklyInvoiceDialogOpen={biWeeklyInvoiceDialogOpen}
+                      selectedBiWeeklyTimesheetForInvoice={selectedBiWeeklyTimesheetForInvoice}
                     />
                   ) : adminViewMode === 'monthly' ? (
                     <MonthlyTableView
@@ -752,7 +754,7 @@ export default function TimesheetManagement() {
 }
 
 // Bi-Weekly Table View Component with Working Days Support and Dynamic Generation
-function BiWeeklyTableView({ timesheets, onEdit, onDelete, getStatusBadge, isAdmin, setSelectedBiWeeklyTimesheetForInvoice, setBiWeeklyInvoiceDialogOpen }: any) {
+function BiWeeklyTableView({ timesheets, onEdit, onDelete, getStatusBadge, isAdmin, setSelectedBiWeeklyTimesheetForInvoice, setBiWeeklyInvoiceDialogOpen, biWeeklyInvoiceDialogOpen, selectedBiWeeklyTimesheetForInvoice }: any) {
   // Fetch billing configuration to get working days
   const { data: billingData } = useQuery({
     queryKey: ['/api/admin/candidates-billing'],

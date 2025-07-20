@@ -123,6 +123,25 @@ The application follows a standard full-stack architecture with clear separation
 
 # Recent Changes
 
+## Replit Agent Migration Completed with Bi-Weekly Invoice Fix (July 20, 2025)
+- **Migration Completed Successfully**: Fully migrated Niddik job portal from Replit Agent to standard Replit environment
+  - **All Dependencies**: Node.js packages installed and verified working correctly
+  - **Application Running**: Express server and frontend running cleanly on port 5000
+  - **Database Connectivity**: PostgreSQL connections established with all API endpoints responding
+  - **Authentication System**: Admin and user authentication working properly with session management
+  - **Security Maintained**: Client/server separation and role-based access control preserved
+- **Bi-Weekly Invoice Generation Fixed**: Resolved critical issue where bi-weekly timesheets couldn't generate invoices
+  - **Root Cause**: Bi-weekly timesheets created with 'calculated' status but invoice generation expected 'approved' status
+  - **Solution**: Updated `generateInvoiceFromBiWeeklyTimesheet` method to accept both 'approved' and 'calculated' statuses
+  - **Missing Functions**: Added `get6MonthAverageUSDToINR` function to currency service for proper invoice generation
+  - **Component Props**: Fixed BiWeeklyTableView component to receive all necessary invoice dialog props
+  - **Error Handling**: Enhanced error messages and debugging for better troubleshooting
+- **Weekly Invoice Generation Fixed**: Resolved missing import issues for currency conversion functions
+  - **Import Fix**: Added missing imports for `get6MonthAverageUSDToINR` and `calculateGST` functions
+  - **Currency Service**: Enhanced currency service with proper function exports
+  - **Complete Functionality**: Both weekly and bi-weekly invoice generation now working properly
+- **Files Modified**: `server/storage.ts`, `server/currencyService.ts`, `client/src/pages/TimesheetManagement.tsx`, `.local/state/replit/agent/progress_tracker.md`
+
 ## Professional Invoice Template Implementation Complete (July 20, 2025)
 - **Complete Invoice Template Redesign**: Implemented comprehensive professional invoice template matching user's reference images
   - **Header Enhancement**: Added NIDDIK company logo with professional tagline "(An IT Division of NIDDIKKARE" and "Connecting People, Changing Lives"
