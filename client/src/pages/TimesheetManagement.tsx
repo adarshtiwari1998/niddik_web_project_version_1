@@ -2583,6 +2583,7 @@ function InvoiceManagement() {
   const { user } = useUser();
   const isAdmin = user?.role === 'admin';
   const { toast } = useToast();
+  const queryClient = useQueryClient();
   const [invoiceDialogOpen, setInvoiceDialogOpen] = useState(false);
   const [selectedInvoiceId, setSelectedInvoiceId] = useState<number | null>(null);
   
