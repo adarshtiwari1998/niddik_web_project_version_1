@@ -725,6 +725,10 @@ export default function TimesheetManagement() {
                     timesheets={candidateTimesheets?.data || []}
                     getStatusBadge={getStatusBadge}
                     isCandidate={true}
+                    setBiWeeklyInvoiceDialogOpen={() => {}}
+                    setSelectedBiWeeklyTimesheetForInvoice={() => {}}
+                    biWeeklyInvoiceDialogOpen={false}
+                    selectedBiWeeklyTimesheetForInvoice={null}
                   />
                 )}
 

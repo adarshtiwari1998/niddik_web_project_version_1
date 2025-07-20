@@ -381,11 +381,11 @@ const InvoiceTemplateNew = forwardRef<HTMLDivElement, InvoiceTemplateProps>(
               </div>
               <div className="flex justify-between">
                 <span>Current USD/INR Rate:</span>
-                <span className="font-medium">{invoice.currencyConversionRate.toFixed(4)}</span>
+                <span className="font-medium">{invoice.currencyConversionRate ? invoice.currencyConversionRate.toFixed(4) : 'N/A'}</span>
               </div>
               <div className="flex justify-between">
                 <span>6-Month Average Rate:</span>
-                <span className="font-medium">{invoice.sixMonthAverageRate.toFixed(4)}</span>
+                <span className="font-medium">{invoice.sixMonthAverageRate ? invoice.sixMonthAverageRate.toFixed(4) : 'N/A'}</span>
               </div>
               <div className="flex justify-between border-t pt-2 font-bold">
                 <span>Converted Amount (USD):</span>
