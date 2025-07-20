@@ -7,7 +7,8 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Badge } from "@/components/ui/badge";
-import { Calendar, Clock, DollarSign, FileText, Plus, Save, Check, X, Edit, Trash2, Building, Filter, User, ChevronDown, CalendarIcon, RotateCcw, Edit2 } from "lucide-react";
+import { Calendar, Clock, DollarSign, FileText, Plus, Save, Check, X, Edit, Trash2, Building, Filter, User, ChevronDown, CalendarIcon, RotateCcw, Edit2, Receipt } from "lucide-react";
+import InvoiceDialog from "@/components/InvoiceDialog";
 import { Link } from "wouter";
 import { useToast } from "@/hooks/use-toast";
 import { useUser } from "@/hooks/use-user";
@@ -1975,6 +1976,8 @@ function WeeklyTableView({ timesheets, onApprove, onReject, onEdit, onDelete, ge
 
   const [editingTimesheet, setEditingTimesheet] = useState<number | null>(null);
   const [editData, setEditData] = useState<any>({});
+  const [invoiceDialogOpen, setInvoiceDialogOpen] = useState(false);
+  const [selectedTimesheetForInvoice, setSelectedTimesheetForInvoice] = useState<number | null>(null);
 
   return (
     <div className="space-y-6">
@@ -2179,6 +2182,18 @@ function WeeklyTableView({ timesheets, onApprove, onReject, onEdit, onDelete, ge
                       >
                         <Edit className="w-4 h-4 mr-1" />
                         Edit
+                      </Button>
+                      <Button 
+                        size="sm" 
+                        variant="default"
+                        className="bg-green-600 hover:bg-green-700"
+                        onClick={() => {
+                          setSelectedTimesheetForInvoice(timesheet.id);
+                          setInvoiceDialogOpen(true);
+                        }}
+                      >
+                        <Receipt className="w-4 h-4 mr-1" />
+                        Generate Invoice
                       </Button>
                       <Dialog>
                         <DialogTrigger asChild>
@@ -2491,6 +2506,17 @@ function WeeklyTableView({ timesheets, onApprove, onReject, onEdit, onDelete, ge
           </p>
         </div>
       )}
+
+      {/* Invoice Dialog */}
+      <InvoiceDialog
+        isOpen={invoiceDialogOpen}
+        onClose={() => {
+          setInvoiceDialogOpen(false);
+          setSelectedTimesheetForInvoice(null);
+        }}
+        timesheetId={selectedTimesheetForInvoice || undefined}
+        mode="generate"
+      />
     </div>
   );
 }

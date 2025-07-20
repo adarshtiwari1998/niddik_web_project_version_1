@@ -2040,6 +2040,162 @@ async updateSeoPage(id: number, data: Partial<InsertSeoPage>): Promise<SeoPage |
     return `INV-${year}${month}-${String(nextNumber).padStart(4, '0')}`;
   },
 
+  // Generate invoice from approved timesheet
+  async generateInvoiceFromTimesheet(timesheetId: number, generatedBy: number): Promise<Invoice> {
+    // Get timesheet details with candidate and billing information
+    const timesheetData = await db
+      .select({
+        timesheet: weeklyTimesheets,
+        candidate: users,
+        billing: candidateBilling
+      })
+      .from(weeklyTimesheets)
+      .leftJoin(users, eq(weeklyTimesheets.candidateId, users.id))
+      .leftJoin(candidateBilling, eq(weeklyTimesheets.candidateId, candidateBilling.candidateId))
+      .where(and(
+        eq(weeklyTimesheets.id, timesheetId),
+        eq(weeklyTimesheets.status, 'approved')
+      ))
+      .limit(1);
+
+    if (!timesheetData.length) {
+      throw new Error('Timesheet not found or not approved');
+    }
+
+    const { timesheet, candidate, billing } = timesheetData[0];
+
+    if (!billing) {
+      throw new Error('Billing configuration not found for candidate');
+    }
+
+    // Check if invoice already exists for this timesheet
+    const existingInvoice = await db
+      .select()
+      .from(invoices)
+      .where(eq(invoices.timesheetId, timesheetId))
+      .limit(1);
+
+    if (existingInvoice.length > 0) {
+      throw new Error('Invoice already exists for this timesheet');
+    }
+
+    // Generate invoice number
+    const invoiceNumber = await this.generateInvoiceNumber();
+
+    // Calculate due date (30 days from today)
+    const issuedDate = new Date();
+    const dueDate = new Date();
+    dueDate.setDate(dueDate.getDate() + 30);
+
+    // Create invoice data
+    const invoiceData: InsertInvoice = {
+      invoiceNumber,
+      candidateId: timesheet.candidateId,
+      timesheetId: timesheet.id,
+      weekStartDate: timesheet.weekStartDate,
+      weekEndDate: timesheet.weekEndDate,
+      totalHours: timesheet.totalWeeklyHours,
+      hourlyRate: billing.hourlyRate,
+      totalAmount: timesheet.totalWeeklyAmount,
+      currency: billing.currency,
+      status: 'generated',
+      issuedDate: issuedDate.toISOString().split('T')[0],
+      dueDate: dueDate.toISOString().split('T')[0],
+      generatedBy,
+      notes: `Invoice generated for week ${timesheet.weekStartDate} to ${timesheet.weekEndDate}`
+    };
+
+    return await this.createInvoice(invoiceData);
+  },
+
+  // Get invoice data for template with all related information
+  async getInvoiceTemplateData(invoiceId: number): Promise<any> {
+    const invoiceData = await db
+      .select({
+        invoice: invoices,
+        candidate: users,
+        billing: candidateBilling,
+        timesheet: weeklyTimesheets,
+        companySettings: companySettings,
+        clientCompany: clientCompanies
+      })
+      .from(invoices)
+      .leftJoin(users, eq(invoices.candidateId, users.id))
+      .leftJoin(candidateBilling, eq(invoices.candidateId, candidateBilling.candidateId))
+      .leftJoin(weeklyTimesheets, eq(invoices.timesheetId, weeklyTimesheets.id))
+      .leftJoin(companySettings, eq(candidateBilling.companySettingsId, companySettings.id))
+      .leftJoin(clientCompanies, eq(candidateBilling.clientCompanyId, clientCompanies.id))
+      .where(eq(invoices.id, invoiceId))
+      .limit(1);
+
+    if (!invoiceData.length) {
+      throw new Error('Invoice not found');
+    }
+
+    const data = invoiceData[0];
+
+    // Calculate overtime details from timesheet
+    const regularHours = parseFloat(data.timesheet?.totalRegularHours?.toString() || '0');
+    const overtimeHours = parseFloat(data.timesheet?.totalOvertimeHours?.toString() || '0');
+    const regularAmount = parseFloat(data.timesheet?.totalRegularAmount?.toString() || '0');
+    const overtimeAmount = parseFloat(data.timesheet?.totalOvertimeAmount?.toString() || '0');
+
+    return {
+      invoice: {
+        invoiceNumber: data.invoice.invoiceNumber,
+        candidateName: data.candidate?.fullName || '',
+        candidateEmail: data.candidate?.email || '',
+        weekStartDate: data.invoice.weekStartDate,
+        weekEndDate: data.invoice.weekEndDate,
+        totalHours: parseFloat(data.invoice.totalHours?.toString() || '0'),
+        hourlyRate: parseFloat(data.invoice.hourlyRate?.toString() || '0'),
+        totalAmount: parseFloat(data.invoice.totalAmount?.toString() || '0'),
+        currency: data.invoice.currency,
+        issuedDate: data.invoice.issuedDate,
+        dueDate: data.invoice.dueDate,
+        notes: data.invoice.notes
+      },
+      companyData: {
+        name: data.companySettings?.name || 'NIDDIK',
+        logoUrl: data.companySettings?.logoUrl || '',
+        address: data.companySettings?.address || '3rd Floor, Flat No. C-11 Multistorey Apt.',
+        city: data.companySettings?.city || 'New Delhi',
+        state: data.companySettings?.state || 'Delhi',
+        country: data.companySettings?.country || 'India',
+        zipCode: data.companySettings?.zipCode || '110025',
+        phone: data.companySettings?.phone || '',
+        email: data.companySettings?.email || 'finance@niddik.com',
+        website: data.companySettings?.website || '',
+        taxId: data.companySettings?.taxId || '+917317361085 | +913556516289'
+      },
+      clientData: {
+        name: data.clientCompany?.name || '',
+        logoUrl: data.clientCompany?.logoUrl || '',
+        billToAddress: data.clientCompany?.billToAddress || '',
+        billToCity: data.clientCompany?.billToCity || '',
+        billToState: data.clientCompany?.billToState || '',
+        billToCountry: data.clientCompany?.billToCountry || '',
+        billToZipCode: data.clientCompany?.billToZipCode || '',
+        contactPerson: data.clientCompany?.contactPerson || '',
+        email: data.clientCompany?.email || '',
+        phone: data.clientCompany?.phone || ''
+      },
+      timesheetDetails: {
+        mondayHours: parseFloat(data.timesheet?.mondayHours?.toString() || '0'),
+        tuesdayHours: parseFloat(data.timesheet?.tuesdayHours?.toString() || '0'),
+        wednesdayHours: parseFloat(data.timesheet?.wednesdayHours?.toString() || '0'),
+        thursdayHours: parseFloat(data.timesheet?.thursdayHours?.toString() || '0'),
+        fridayHours: parseFloat(data.timesheet?.fridayHours?.toString() || '0'),
+        saturdayHours: parseFloat(data.timesheet?.saturdayHours?.toString() || '0'),
+        sundayHours: parseFloat(data.timesheet?.sundayHours?.toString() || '0'),
+        regularHours,
+        overtimeHours,
+        totalRegularAmount: regularAmount,
+        totalOvertimeAmount: overtimeAmount
+      }
+    };
+  },
+
   // Client Company Management
   async createClientCompany(data: InsertClientCompany): Promise<ClientCompany> {
     const [company] = await db.insert(clientCompanies).values(data).returning();

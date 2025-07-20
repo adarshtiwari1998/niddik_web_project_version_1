@@ -4384,6 +4384,59 @@ ${allUrls.map(url => `  <url>
     }
   });
 
+  // Generate invoice from approved timesheet
+  app.post('/api/admin/generate-invoice', async (req: AuthenticatedRequest, res: Response) => {
+    try {
+      if (!req.isAuthenticated() || !req.user || req.user.role !== 'admin') {
+        return res.status(403).json({ success: false, message: "Admin access required" });
+      }
+
+      const { timesheetId } = req.body;
+
+      if (!timesheetId || isNaN(parseInt(timesheetId))) {
+        return res.status(400).json({ success: false, message: "Valid timesheet ID is required" });
+      }
+
+      const invoice = await storage.generateInvoiceFromTimesheet(parseInt(timesheetId), req.user.id);
+
+      res.status(201).json({ success: true, data: invoice });
+    } catch (error) {
+      console.error('Error generating invoice:', error);
+      if (error.message.includes('not found') || error.message.includes('not approved')) {
+        return res.status(404).json({ success: false, message: error.message });
+      }
+      if (error.message.includes('already exists')) {
+        return res.status(409).json({ success: false, message: error.message });
+      }
+      res.status(500).json({ success: false, message: "Internal server error" });
+    }
+  });
+
+  // Get invoice template data for preview
+  app.get('/api/admin/invoices/:id/template-data', async (req: AuthenticatedRequest, res: Response) => {
+    try {
+      if (!req.isAuthenticated() || !req.user || req.user.role !== 'admin') {
+        return res.status(403).json({ success: false, message: "Admin access required" });
+      }
+
+      const invoiceId = parseInt(req.params.id);
+
+      if (isNaN(invoiceId)) {
+        return res.status(400).json({ success: false, message: "Invalid invoice ID" });
+      }
+
+      const templateData = await storage.getInvoiceTemplateData(invoiceId);
+
+      res.json({ success: true, data: templateData });
+    } catch (error) {
+      console.error('Error fetching invoice template data:', error);
+      if (error.message.includes('not found')) {
+        return res.status(404).json({ success: false, message: error.message });
+      }
+      res.status(500).json({ success: false, message: "Internal server error" });
+    }
+  });
+
   // Client Company Management API Endpoints
   
   // Get all client companies
