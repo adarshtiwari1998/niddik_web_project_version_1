@@ -4437,6 +4437,30 @@ ${allUrls.map(url => `  <url>
     }
   });
 
+  // Delete invoice (admin only)
+  app.delete('/api/admin/invoices/:id', async (req: AuthenticatedRequest, res: Response) => {
+    try {
+      if (!req.isAuthenticated() || !req.user || req.user.role !== 'admin') {
+        return res.status(403).json({ success: false, message: "Admin access required" });
+      }
+
+      const invoiceId = parseInt(req.params.id);
+      if (isNaN(invoiceId)) {
+        return res.status(400).json({ success: false, message: "Invalid invoice ID" });
+      }
+
+      await storage.deleteInvoice(invoiceId);
+      
+      res.json({ success: true, message: "Invoice deleted successfully" });
+    } catch (error) {
+      console.error('Error deleting invoice:', error);
+      if (error.message.includes('not found')) {
+        return res.status(404).json({ success: false, message: error.message });
+      }
+      res.status(500).json({ success: false, message: "Internal server error" });
+    }
+  });
+
   // Client Company Management API Endpoints
   
   // Get all client companies

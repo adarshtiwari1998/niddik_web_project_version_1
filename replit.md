@@ -123,6 +123,37 @@ The application follows a standard full-stack architecture with clear separation
 
 # Recent Changes
 
+## Invoice Management Enhancement and Migration Completion (July 20, 2025)
+- **Migration Completed**: Successfully migrated timesheet and invoice management system from Replit Agent to standard Replit environment
+  - **All Dependencies**: Node.js packages installed and verified working correctly
+  - **Database Connectivity**: PostgreSQL connections established with all API endpoints responding
+  - **Security Maintained**: Client/server separation and role-based access control preserved
+  - **Performance**: Application running cleanly on port 5000 without errors
+- **Generate Invoice Button Fix**: Resolved duplicate button issue by implementing invoice existence checking
+  - **Smart Display Logic**: "Generate Invoice" button now only appears when no invoice exists for that timesheet
+  - **Database Integration**: Added invoice query to WeeklyTableView to check existing invoices by timesheetId
+  - **User Experience**: Prevents duplicate invoice generation and provides cleaner admin interface
+- **InvoiceDialog Double Close Icon Fix**: Removed redundant close button from dialog header
+  - **Clean Header Layout**: Simplified dialog header to show only title and action buttons (print/download)
+  - **Built-in Close**: Utilized shadcn/ui Dialog component's built-in close functionality
+  - **Better UX**: Eliminated confusion from multiple close options in invoice preview dialog
+- **Enhanced Invoice Management Tab**: Added comprehensive admin controls for invoice operations
+  - **Preview Button**: View invoices in popup dialog with InvoiceDialog component
+  - **Download Button**: Direct PDF download when invoice URLs are available
+  - **Delete Button**: Remove invoices with confirmation dialog and proper cleanup
+  - **Regenerate Button**: Delete existing invoice and create new one from original timesheet data
+  - **Status Management**: Existing dropdown for changing invoice status (draft/sent/paid/overdue)
+- **Backend API Enhancement**: Added delete invoice endpoint with proper authentication
+  - **DELETE /api/admin/invoices/:id**: Secure admin-only endpoint for invoice deletion
+  - **Storage Method**: Added deleteInvoice method to storage layer with error handling
+  - **Cache Invalidation**: Proper React Query cache updates after delete operations
+  - **Related Queries**: Invalidates both invoice and timesheet queries for consistency
+- **One-to-One Relationship Maintained**: Invoice-timesheet relationship preserved throughout enhancements
+  - **Database Integrity**: timesheetId field ensures proper invoice-timesheet linking
+  - **Generate Button Logic**: Uses timesheetId to check for existing invoices
+  - **Regenerate Flow**: Maintains timesheet association when creating replacement invoices
+- **Files Modified**: `client/src/pages/TimesheetManagement.tsx`, `client/src/components/InvoiceDialog.tsx`, `server/routes.ts`, `server/storage.ts`
+
 ## Complete Invoice Generation System with PDF Download Implementation (July 20, 2025)
 - **Comprehensive Invoice Generation System**: Successfully implemented complete invoice generation functionality for approved timesheets
   - **Backend Enhancement**: Added `generateInvoiceFromTimesheet` and `getInvoiceTemplateData` methods to storage with automatic invoice numbering (INV-YYYYMM-0001 format)

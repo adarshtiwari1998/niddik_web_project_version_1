@@ -157,42 +157,35 @@ export default function InvoiceDialog({
     <Dialog open={isOpen} onOpenChange={onClose}>
       <DialogContent className="max-w-6xl max-h-[90vh] overflow-y-auto">
         <DialogHeader>
-          <div className="flex items-center justify-between">
-            <DialogTitle className="flex items-center gap-2">
-              <FileText className="w-5 h-5" />
-              {mode === 'generate' ? 'Generate Invoice' : 'Invoice Preview'}
-            </DialogTitle>
+          <DialogTitle className="flex items-center gap-2">
+            <FileText className="w-5 h-5" />
+            {mode === 'generate' ? 'Generate Invoice' : 'Invoice Preview'}
+          </DialogTitle>
+          {invoiceData?.data && (
             <div className="flex items-center gap-2">
-              {invoiceData?.data && (
-                <>
-                  <Badge variant="outline">
-                    {invoiceData.data.invoice.invoiceNumber}
-                  </Badge>
-                  <Button
-                    variant="outline"
-                    size="sm"
-                    onClick={handlePrint}
-                    disabled={isGeneratingPDF}
-                  >
-                    <Printer className="w-4 h-4 mr-2" />
-                    Print
-                  </Button>
-                  <Button
-                    variant="outline"
-                    size="sm"
-                    onClick={handleDownloadPDF}
-                    disabled={isGeneratingPDF}
-                  >
-                    <Download className="w-4 h-4 mr-2" />
-                    {isGeneratingPDF ? 'Generating...' : 'Download PDF'}
-                  </Button>
-                </>
-              )}
-              <Button variant="ghost" size="sm" onClick={onClose}>
-                <X className="w-4 h-4" />
+              <Badge variant="outline">
+                {invoiceData.data.invoice.invoiceNumber}
+              </Badge>
+              <Button
+                variant="outline"
+                size="sm"
+                onClick={handlePrint}
+                disabled={isGeneratingPDF}
+              >
+                <Printer className="w-4 h-4 mr-2" />
+                Print
+              </Button>
+              <Button
+                variant="outline"
+                size="sm"
+                onClick={handleDownloadPDF}
+                disabled={isGeneratingPDF}
+              >
+                <Download className="w-4 h-4 mr-2" />
+                {isGeneratingPDF ? 'Generating...' : 'Download PDF'}
               </Button>
             </div>
-          </div>
+          )}
         </DialogHeader>
 
         <div className="space-y-4">

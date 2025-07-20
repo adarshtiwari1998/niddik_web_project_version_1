@@ -7,7 +7,7 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Badge } from "@/components/ui/badge";
-import { Calendar, Clock, DollarSign, FileText, Plus, Save, Check, X, Edit, Trash2, Building, Filter, User, ChevronDown, CalendarIcon, RotateCcw, Edit2, Receipt } from "lucide-react";
+import { Calendar, Clock, DollarSign, FileText, Plus, Save, Check, X, Edit, Trash2, Building, Filter, User, ChevronDown, CalendarIcon, RotateCcw, Edit2, Receipt, Download, Printer } from "lucide-react";
 import InvoiceDialog from "@/components/InvoiceDialog";
 import { Link } from "wouter";
 import { useToast } from "@/hooks/use-toast";
@@ -1979,6 +1979,18 @@ function WeeklyTableView({ timesheets, onApprove, onReject, onEdit, onDelete, ge
   const [invoiceDialogOpen, setInvoiceDialogOpen] = useState(false);
   const [selectedTimesheetForInvoice, setSelectedTimesheetForInvoice] = useState<number | null>(null);
 
+  // Fetch invoices to check which timesheets already have invoices
+  const { data: invoicesData } = useQuery({
+    queryKey: ['/api/admin/invoices'],
+    enabled: isAdmin
+  });
+
+  // Helper function to check if a timesheet already has an invoice
+  const hasExistingInvoice = (timesheetId: number) => {
+    if (!invoicesData?.data || !isAdmin) return false;
+    return invoicesData.data.some((invoice: any) => invoice.timesheetId === timesheetId);
+  };
+
   return (
     <div className="space-y-6">
       {/* Timeframe Filtering Controls */}
@@ -2183,18 +2195,20 @@ function WeeklyTableView({ timesheets, onApprove, onReject, onEdit, onDelete, ge
                         <Edit className="w-4 h-4 mr-1" />
                         Edit
                       </Button>
-                      <Button 
-                        size="sm" 
-                        variant="default"
-                        className="bg-green-600 hover:bg-green-700"
-                        onClick={() => {
-                          setSelectedTimesheetForInvoice(timesheet.id);
-                          setInvoiceDialogOpen(true);
-                        }}
-                      >
-                        <Receipt className="w-4 h-4 mr-1" />
-                        Generate Invoice
-                      </Button>
+                      {!hasExistingInvoice(timesheet.id) && (
+                        <Button 
+                          size="sm" 
+                          variant="default"
+                          className="bg-green-600 hover:bg-green-700"
+                          onClick={() => {
+                            setSelectedTimesheetForInvoice(timesheet.id);
+                            setInvoiceDialogOpen(true);
+                          }}
+                        >
+                          <Receipt className="w-4 h-4 mr-1" />
+                          Generate Invoice
+                        </Button>
+                      )}
                       <Dialog>
                         <DialogTrigger asChild>
                           <Button size="sm" variant="destructive">
@@ -2526,6 +2540,8 @@ function InvoiceManagement() {
   const { user } = useUser();
   const isAdmin = user?.role === 'admin';
   const { toast } = useToast();
+  const [invoiceDialogOpen, setInvoiceDialogOpen] = useState(false);
+  const [selectedInvoiceId, setSelectedInvoiceId] = useState<number | null>(null);
   
   // Fetch invoices based on user role
   const { data: invoices, isLoading: invoicesLoading } = useQuery({
@@ -2573,6 +2589,25 @@ function InvoiceManagement() {
     onSuccess: () => {
       toast({ title: "Success", description: "Invoice status updated successfully" });
       queryClient.invalidateQueries({ queryKey: ['/api/admin/invoices'] });
+    },
+    onError: (error: Error) => {
+      toast({ title: "Error", description: error.message, variant: "destructive" });
+    }
+  });
+
+  // Delete invoice mutation
+  const deleteInvoiceMutation = useMutation({
+    mutationFn: async (invoiceId: number) => {
+      const response = await fetch(`/api/admin/invoices/${invoiceId}`, {
+        method: 'DELETE'
+      });
+      if (!response.ok) throw new Error('Failed to delete invoice');
+      return response.json();
+    },
+    onSuccess: () => {
+      toast({ title: "Success", description: "Invoice deleted successfully" });
+      queryClient.invalidateQueries({ queryKey: ['/api/admin/invoices'] });
+      queryClient.invalidateQueries({ queryKey: ['/api/admin/timesheets'] });
     },
     onError: (error: Error) => {
       toast({ title: "Error", description: error.message, variant: "destructive" });
@@ -2639,7 +2674,7 @@ function InvoiceManagement() {
                       </div>
                       
                       {isAdmin && (
-                        <div className="flex gap-2 mt-4">
+                        <div className="flex gap-2 mt-4 flex-wrap">
                           <Select 
                             value={invoice.status} 
                             onValueChange={(status) => updateInvoiceStatusMutation.mutate({ invoiceId: invoice.id, status })}
@@ -2655,13 +2690,93 @@ function InvoiceManagement() {
                             </SelectContent>
                           </Select>
                           
+                          <Button 
+                            variant="outline" 
+                            size="sm" 
+                            onClick={() => {
+                              setSelectedInvoiceId(invoice.id);
+                              setInvoiceDialogOpen(true);
+                            }}
+                          >
+                            <FileText className="w-4 h-4 mr-2" />
+                            Preview
+                          </Button>
+                          
                           {invoice.pdfUrl && (
                             <Button variant="outline" size="sm" asChild>
                               <a href={invoice.pdfUrl} target="_blank" rel="noopener noreferrer">
-                                <FileText className="w-4 h-4 mr-2" />
-                                View PDF
+                                <Download className="w-4 h-4 mr-2" />
+                                Download
                               </a>
                             </Button>
+                          )}
+                          
+                          <Dialog>
+                            <DialogTrigger asChild>
+                              <Button variant="destructive" size="sm">
+                                <Trash2 className="w-4 h-4 mr-2" />
+                                Delete
+                              </Button>
+                            </DialogTrigger>
+                            <DialogContent>
+                              <DialogHeader>
+                                <DialogTitle>Delete Invoice</DialogTitle>
+                                <DialogDescription>
+                                  Are you sure you want to delete invoice #{invoice.invoiceNumber}? This action cannot be undone and will allow the timesheet to generate a new invoice.
+                                </DialogDescription>
+                              </DialogHeader>
+                              <div className="flex justify-end gap-2 mt-4">
+                                <Button variant="outline">Cancel</Button>
+                                <Button 
+                                  variant="destructive" 
+                                  onClick={() => deleteInvoiceMutation.mutate(invoice.id)}
+                                  disabled={deleteInvoiceMutation.isPending}
+                                >
+                                  {deleteInvoiceMutation.isPending ? 'Deleting...' : 'Delete Invoice'}
+                                </Button>
+                              </div>
+                            </DialogContent>
+                          </Dialog>
+                          
+                          {invoice.timesheetId && (
+                            <Dialog>
+                              <DialogTrigger asChild>
+                                <Button variant="outline" size="sm" className="bg-orange-50 hover:bg-orange-100 border-orange-300">
+                                  <RotateCcw className="w-4 h-4 mr-2" />
+                                  Regenerate
+                                </Button>
+                              </DialogTrigger>
+                              <DialogContent>
+                                <DialogHeader>
+                                  <DialogTitle>Regenerate Invoice</DialogTitle>
+                                  <DialogDescription>
+                                    This will delete the current invoice #{invoice.invoiceNumber} and generate a new one from the original timesheet data. The new invoice will have a new invoice number.
+                                  </DialogDescription>
+                                </DialogHeader>
+                                <div className="flex justify-end gap-2 mt-4">
+                                  <Button variant="outline">Cancel</Button>
+                                  <Button 
+                                    onClick={() => {
+                                      // Delete current invoice and regenerate
+                                      deleteInvoiceMutation.mutate(invoice.id, {
+                                        onSuccess: () => {
+                                          // After deletion, generate new invoice
+                                          setTimeout(() => {
+                                            generateInvoiceMutation.mutate(invoice.timesheetId!);
+                                          }, 500);
+                                        }
+                                      });
+                                    }}
+                                    disabled={deleteInvoiceMutation.isPending || generateInvoiceMutation.isPending}
+                                    className="bg-orange-600 hover:bg-orange-700"
+                                  >
+                                    {deleteInvoiceMutation.isPending || generateInvoiceMutation.isPending 
+                                      ? 'Regenerating...' 
+                                      : 'Regenerate Invoice'}
+                                  </Button>
+                                </div>
+                              </DialogContent>
+                            </Dialog>
                           )}
                         </div>
                       )}
@@ -2673,6 +2788,17 @@ function InvoiceManagement() {
           )}
         </CardContent>
       </Card>
+      
+      {/* Invoice Preview Dialog */}
+      <InvoiceDialog
+        isOpen={invoiceDialogOpen}
+        onClose={() => {
+          setInvoiceDialogOpen(false);
+          setSelectedInvoiceId(null);
+        }}
+        invoiceId={selectedInvoiceId || undefined}
+        mode="preview"
+      />
     </div>
   );
 }

@@ -2196,6 +2196,13 @@ async updateSeoPage(id: number, data: Partial<InsertSeoPage>): Promise<SeoPage |
     };
   },
 
+  async deleteInvoice(id: number): Promise<void> {
+    const result = await db.delete(invoices).where(eq(invoices.id, id));
+    if (result.rowCount === 0) {
+      throw new Error('Invoice not found');
+    }
+  },
+
   // Client Company Management
   async createClientCompany(data: InsertClientCompany): Promise<ClientCompany> {
     const [company] = await db.insert(clientCompanies).values(data).returning();
