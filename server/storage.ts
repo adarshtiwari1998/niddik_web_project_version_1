@@ -1377,15 +1377,20 @@ async updateSeoPage(id: number, data: Partial<InsertSeoPage>): Promise<SeoPage |
         employmentType: candidateBilling.employmentType,
         supervisorName: candidateBilling.supervisorName,
         clientCompanyId: candidateBilling.clientCompanyId,
+        endUserId: candidateBilling.endUserId,
+        endUserName: endUsers.name,
         companySettingsId: candidateBilling.companySettingsId,
         tdsRate: candidateBilling.tdsRate,
         benefits: candidateBilling.benefits,
+        sickLeaveDays: candidateBilling.sickLeaveDays,
+        paidLeaveDays: candidateBilling.paidLeaveDays,
         isActive: candidateBilling.isActive,
         createdAt: candidateBilling.createdAt,
         updatedAt: candidateBilling.updatedAt
       })
       .from(candidateBilling)
       .innerJoin(users, eq(candidateBilling.candidateId, users.id))
+      .leftJoin(endUsers, eq(candidateBilling.endUserId, endUsers.id))
       .where(inArray(users.id, candidateIds))
       .orderBy(desc(candidateBilling.createdAt));
   },

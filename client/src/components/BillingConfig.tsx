@@ -222,9 +222,18 @@ export default function BillingConfig() {
       setShowCreateEndUserInput(true);
       setBillingData(prev => ({ ...prev, endUserId: undefined }));
     } else if (value.startsWith('candidate-')) {
-      // Handle selection from candidates - for now just clear the selection
-      // In a full implementation, you might want to create the end user automatically
-      setBillingData(prev => ({ ...prev, endUserId: undefined }));
+      // Handle selection from candidates - automatically create the end user
+      const endUserName = value.replace('candidate-', '');
+      
+      if (billingData.clientCompanyId && endUserName) {
+        // Automatically create the end user
+        createEndUserMutation.mutate({
+          name: endUserName,
+          clientCompanyId: billingData.clientCompanyId
+        });
+      } else {
+        setBillingData(prev => ({ ...prev, endUserId: undefined }));
+      }
     } else {
       setShowCreateEndUserInput(false);
       setBillingData(prev => ({ ...prev, endUserId: parseInt(value) }));
