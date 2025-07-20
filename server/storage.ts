@@ -61,6 +61,12 @@ import {
   endUsers
 } from "@shared/schema";
 import { db } from "@db";
+import { 
+  get6MonthAverageUSDToINR, 
+  convertINRToUSD, 
+  calculateGST, 
+  formatCurrency 
+} from "./currencyService";
 
 // Retry utility function for database operations
 async function withRetry<T>(
@@ -2079,6 +2085,18 @@ async updateSeoPage(id: number, data: Partial<InsertSeoPage>): Promise<SeoPage |
       throw new Error('Invoice already exists for this timesheet');
     }
 
+    // Get real-time currency conversion rates
+    const currencyData = await get6MonthAverageUSDToINR();
+    
+    // Original INR amount from timesheet
+    const amountINR = parseFloat(timesheet.totalWeeklyAmount.toString());
+    
+    // Convert to USD using current rate
+    const totalAmountUSD = convertINRToUSD(amountINR, currencyData.currentRate);
+    
+    // Calculate 18% GST
+    const { gstAmount, totalWithGst } = calculateGST(totalAmountUSD, 18.0);
+
     // Generate invoice number
     const invoiceNumber = await this.generateInvoiceNumber();
 
@@ -2087,22 +2105,116 @@ async updateSeoPage(id: number, data: Partial<InsertSeoPage>): Promise<SeoPage |
     const dueDate = new Date();
     dueDate.setDate(dueDate.getDate() + 30);
 
-    // Create invoice data
+    // Create invoice data with USD conversion
     const invoiceData: InsertInvoice = {
       invoiceNumber,
       candidateId: timesheet.candidateId,
       timesheetId: timesheet.id,
+      biWeeklyTimesheetId: null,
       weekStartDate: timesheet.weekStartDate,
       weekEndDate: timesheet.weekEndDate,
       totalHours: timesheet.totalWeeklyHours,
-      hourlyRate: billing.hourlyRate,
-      totalAmount: timesheet.totalWeeklyAmount,
-      currency: billing.currency,
+      hourlyRate: convertINRToUSD(parseFloat(billing.hourlyRate.toString()), currencyData.currentRate),
+      totalAmount: totalAmountUSD,
+      currency: 'USD',
+      currencyConversionRate: currencyData.currentRate,
+      sixMonthAverageRate: currencyData.sixMonthAverage,
+      amountINR: amountINR,
+      gstRate: 18.0,
+      gstAmount: gstAmount,
+      totalWithGst: totalWithGst,
       status: 'generated',
       issuedDate: issuedDate.toISOString().split('T')[0],
       dueDate: dueDate.toISOString().split('T')[0],
       generatedBy,
-      notes: `Invoice generated for week ${timesheet.weekStartDate} to ${timesheet.weekEndDate}`
+      notes: `Invoice generated for week ${timesheet.weekStartDate} to ${timesheet.weekEndDate}. Converted from INR ${amountINR} at rate ${currencyData.currentRate}`
+    };
+
+    return await this.createInvoice(invoiceData);
+  },
+
+  // Generate invoice from approved bi-weekly timesheet
+  async generateInvoiceFromBiWeeklyTimesheet(biWeeklyTimesheetId: number, generatedBy: number): Promise<Invoice> {
+    // Get bi-weekly timesheet details with candidate and billing information
+    const timesheetData = await db
+      .select({
+        timesheet: biWeeklyTimesheets,
+        candidate: users,
+        billing: candidateBilling
+      })
+      .from(biWeeklyTimesheets)
+      .leftJoin(users, eq(biWeeklyTimesheets.candidateId, users.id))
+      .leftJoin(candidateBilling, eq(biWeeklyTimesheets.candidateId, candidateBilling.candidateId))
+      .where(and(
+        eq(biWeeklyTimesheets.id, biWeeklyTimesheetId),
+        eq(biWeeklyTimesheets.status, 'approved')
+      ))
+      .limit(1);
+
+    if (!timesheetData.length) {
+      throw new Error('Bi-weekly timesheet not found or not approved');
+    }
+
+    const { timesheet, candidate, billing } = timesheetData[0];
+
+    if (!billing) {
+      throw new Error('Billing configuration not found for candidate');
+    }
+
+    // Check if invoice already exists for this bi-weekly timesheet
+    const existingInvoice = await db
+      .select()
+      .from(invoices)
+      .where(eq(invoices.biWeeklyTimesheetId, biWeeklyTimesheetId))
+      .limit(1);
+
+    if (existingInvoice.length > 0) {
+      throw new Error('Invoice already exists for this bi-weekly timesheet');
+    }
+
+    // Get real-time currency conversion rates
+    const currencyData = await get6MonthAverageUSDToINR();
+    
+    // Original INR amount from bi-weekly timesheet
+    const amountINR = parseFloat(timesheet.totalBiWeeklyAmount.toString());
+    
+    // Convert to USD using current rate
+    const totalAmountUSD = convertINRToUSD(amountINR, currencyData.currentRate);
+    
+    // Calculate 18% GST
+    const { gstAmount, totalWithGst } = calculateGST(totalAmountUSD, 18.0);
+
+    // Generate invoice number
+    const invoiceNumber = await this.generateInvoiceNumber();
+
+    // Calculate due date (30 days from today)
+    const issuedDate = new Date();
+    const dueDate = new Date();
+    dueDate.setDate(dueDate.getDate() + 30);
+
+    // Create invoice data with USD conversion
+    const invoiceData: InsertInvoice = {
+      invoiceNumber,
+      candidateId: timesheet.candidateId,
+      timesheetId: null,
+      biWeeklyTimesheetId: timesheet.id,
+      weekStartDate: timesheet.periodStartDate,
+      weekEndDate: timesheet.periodEndDate,
+      totalHours: timesheet.totalBiWeeklyHours,
+      hourlyRate: convertINRToUSD(parseFloat(billing.hourlyRate.toString()), currencyData.currentRate),
+      totalAmount: totalAmountUSD,
+      currency: 'USD',
+      currencyConversionRate: currencyData.currentRate,
+      sixMonthAverageRate: currencyData.sixMonthAverage,
+      amountINR: amountINR,
+      gstRate: 18.0,
+      gstAmount: gstAmount,
+      totalWithGst: totalWithGst,
+      status: 'generated',
+      issuedDate: issuedDate.toISOString().split('T')[0],
+      dueDate: dueDate.toISOString().split('T')[0],
+      generatedBy,
+      notes: `Invoice generated for bi-weekly period ${timesheet.periodStartDate} to ${timesheet.periodEndDate}. Converted from INR ${amountINR} at rate ${currencyData.currentRate}`
     };
 
     return await this.createInvoice(invoiceData);

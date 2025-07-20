@@ -10,6 +10,12 @@ import {
   getEndUsersFromSubmittedCandidates 
 } from "./storage";
 import { 
+  get6MonthAverageUSDToINR, 
+  convertINRToUSD, 
+  calculateGST, 
+  formatCurrency 
+} from "./currencyService";
+import { 
   contactSubmissionSchema, 
   jobListingSchema, 
   jobApplicationSchema,
@@ -4391,13 +4397,22 @@ ${allUrls.map(url => `  <url>
         return res.status(403).json({ success: false, message: "Admin access required" });
       }
 
-      const { timesheetId } = req.body;
+      const { timesheetId, biWeeklyTimesheetId } = req.body;
 
-      if (!timesheetId || isNaN(parseInt(timesheetId))) {
-        return res.status(400).json({ success: false, message: "Valid timesheet ID is required" });
+      if (!timesheetId && !biWeeklyTimesheetId) {
+        return res.status(400).json({ success: false, message: "Either timesheet ID or bi-weekly timesheet ID is required" });
       }
 
-      const invoice = await storage.generateInvoiceFromTimesheet(parseInt(timesheetId), req.user.id);
+      if (timesheetId && biWeeklyTimesheetId) {
+        return res.status(400).json({ success: false, message: "Cannot specify both timesheet ID and bi-weekly timesheet ID" });
+      }
+
+      let invoice;
+      if (biWeeklyTimesheetId) {
+        invoice = await storage.generateInvoiceFromBiWeeklyTimesheet(parseInt(biWeeklyTimesheetId), req.user.id);
+      } else {
+        invoice = await storage.generateInvoiceFromTimesheet(parseInt(timesheetId), req.user.id);
+      }
 
       res.status(201).json({ success: true, data: invoice });
     } catch (error) {

@@ -566,13 +566,20 @@ export const invoices = pgTable("invoices", {
   id: serial("id").primaryKey(),
   invoiceNumber: text("invoice_number").notNull().unique(),
   candidateId: integer("candidate_id").notNull().references(() => users.id),
-  timesheetId: integer("timesheet_id").notNull().references(() => weeklyTimesheets.id),
+  timesheetId: integer("timesheet_id").references(() => weeklyTimesheets.id), // Made optional for bi-weekly invoices
+  biWeeklyTimesheetId: integer("bi_weekly_timesheet_id").references(() => biWeeklyTimesheets.id), // New field
   weekStartDate: date("week_start_date").notNull(),
   weekEndDate: date("week_end_date").notNull(),
   totalHours: decimal("total_hours", { precision: 4, scale: 2 }).notNull(),
   hourlyRate: decimal("hourly_rate", { precision: 10, scale: 2 }).notNull(),
   totalAmount: decimal("total_amount", { precision: 10, scale: 2 }).notNull(),
-  currency: text("currency").notNull().default("INR"),
+  currency: text("currency").notNull().default("USD"), // Changed to USD
+  currencyConversionRate: decimal("currency_conversion_rate", { precision: 10, scale: 4 }).notNull(), // INR to USD rate
+  sixMonthAverageRate: decimal("six_month_average_rate", { precision: 10, scale: 4 }).notNull(), // 6-month average
+  amountINR: decimal("amount_inr", { precision: 10, scale: 2 }).notNull(), // Original INR amount
+  gstRate: decimal("gst_rate", { precision: 5, scale: 2 }).notNull().default('18.00'), // Fixed 18% GST
+  gstAmount: decimal("gst_amount", { precision: 10, scale: 2 }).notNull(), // GST amount
+  totalWithGst: decimal("total_with_gst", { precision: 10, scale: 2 }).notNull(), // Total including GST
   status: text("status").notNull().default("generated"), // generated, sent, paid, overdue
   pdfUrl: text("pdf_url"), // URL to generated PDF invoice
   issuedDate: date("issued_date").notNull(),
@@ -589,6 +596,12 @@ export const invoiceSchema = createInsertSchema(invoices, {
   totalHours: (schema) => schema.transform((val) => parseFloat(val.toString())),
   hourlyRate: (schema) => schema.transform((val) => parseFloat(val.toString())),
   totalAmount: (schema) => schema.transform((val) => parseFloat(val.toString())),
+  currencyConversionRate: (schema) => schema.transform((val) => parseFloat(val.toString())),
+  sixMonthAverageRate: (schema) => schema.transform((val) => parseFloat(val.toString())),
+  amountINR: (schema) => schema.transform((val) => parseFloat(val.toString())),
+  gstRate: (schema) => schema.transform((val) => parseFloat(val.toString())),
+  gstAmount: (schema) => schema.transform((val) => parseFloat(val.toString())),
+  totalWithGst: (schema) => schema.transform((val) => parseFloat(val.toString())),
   issuedDate: (schema) => schema.transform((val) => new Date(val)),
   dueDate: (schema) => schema.transform((val) => new Date(val)),
 });

@@ -159,6 +159,12 @@ export default function TimesheetManagement() {
     return format(startOfWeek(today, { weekStartsOn: 1 }), 'yyyy-MM-dd');
   });
 
+  // Invoice generation states
+  const [selectedTimesheetForInvoice, setSelectedTimesheetForInvoice] = useState<number | null>(null);
+  const [invoiceDialogOpen, setInvoiceDialogOpen] = useState(false);
+  const [selectedBiWeeklyTimesheetForInvoice, setSelectedBiWeeklyTimesheetForInvoice] = useState<number | null>(null);
+  const [biWeeklyInvoiceDialogOpen, setBiWeeklyInvoiceDialogOpen] = useState(false);
+
   const isAdmin = user?.role === 'admin';
 
   // Helper functions for admin timesheet filtering and grouping
@@ -701,6 +707,8 @@ export default function TimesheetManagement() {
                       onDelete={(id) => deleteTimesheetMutation.mutate(id)}
                       getStatusBadge={getStatusBadge}
                       isAdmin={true}
+                      setSelectedBiWeeklyTimesheetForInvoice={setSelectedBiWeeklyTimesheetForInvoice}
+                      setBiWeeklyInvoiceDialogOpen={setBiWeeklyInvoiceDialogOpen}
                     />
                   ) : adminViewMode === 'monthly' ? (
                     <MonthlyTableView
@@ -736,7 +744,7 @@ export default function TimesheetManagement() {
 }
 
 // Bi-Weekly Table View Component with Working Days Support and Dynamic Generation
-function BiWeeklyTableView({ timesheets, onEdit, onDelete, getStatusBadge, isAdmin }: any) {
+function BiWeeklyTableView({ timesheets, onEdit, onDelete, getStatusBadge, isAdmin, setSelectedBiWeeklyTimesheetForInvoice, setBiWeeklyInvoiceDialogOpen }: any) {
   // Fetch billing configuration to get working days
   const { data: billingData } = useQuery({
     queryKey: ['/api/admin/candidates-billing'],
@@ -1409,6 +1417,26 @@ function BiWeeklyTableView({ timesheets, onEdit, onDelete, getStatusBadge, isAdm
                       <p className="text-sm">Hours: {parseFloat(week2.totalWeeklyHours).toFixed(2)}</p>
                       <p className="text-sm">Amount: INR {parseFloat(week2.totalWeeklyAmount).toFixed(2)}</p>
                     </div>
+                  </div>
+                </div>
+              )}
+
+              {/* Admin Actions for Bi-Weekly Timesheet */}
+              {isAdmin && (
+                <div className="bg-gray-50 p-4 border-t">
+                  <div className="flex justify-end gap-2">
+                    <Button 
+                      size="sm" 
+                      variant="default"
+                      className="bg-green-600 hover:bg-green-700"
+                      onClick={() => {
+                        setSelectedBiWeeklyTimesheetForInvoice(biWeekly.id);
+                        setBiWeeklyInvoiceDialogOpen(true);
+                      }}
+                    >
+                      <Receipt className="w-4 h-4 mr-1" />
+                      Generate Invoice
+                    </Button>
                   </div>
                 </div>
               )}
@@ -2529,6 +2557,17 @@ function WeeklyTableView({ timesheets, onApprove, onReject, onEdit, onDelete, ge
           setSelectedTimesheetForInvoice(null);
         }}
         timesheetId={selectedTimesheetForInvoice || undefined}
+        mode="generate"
+      />
+
+      {/* Bi-Weekly Invoice Dialog */}
+      <InvoiceDialog
+        isOpen={biWeeklyInvoiceDialogOpen}
+        onClose={() => {
+          setBiWeeklyInvoiceDialogOpen(false);
+          setSelectedBiWeeklyTimesheetForInvoice(null);
+        }}
+        biWeeklyTimesheetId={selectedBiWeeklyTimesheetForInvoice || undefined}
         mode="generate"
       />
     </div>

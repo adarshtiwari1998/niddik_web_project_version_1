@@ -123,6 +123,30 @@ The application follows a standard full-stack architecture with clear separation
 
 # Recent Changes
 
+## Complete Bi-Weekly Invoice Generation System Implementation (July 20, 2025)
+- **Comprehensive New Invoice Template**: Implemented InvoiceTemplateNew.tsx component based on user-provided layout images with modern design
+  - **Professional Layout**: Company logos, billing addresses, itemized breakdowns, currency conversion displays, and GST calculations
+  - **Real Data Integration**: Fetches authentic company data from company_settings and billing configuration tables
+  - **Currency Support**: USD conversion with 6-month average INR rates displayed prominently
+  - **GST Integration**: Fixed 18% GST calculation automatically applied to all invoices
+- **Bi-Weekly Timesheet Invoice Generation**: Extended invoice generation to support bi-weekly timesheets for comprehensive billing periods
+  - **Enhanced API**: Updated /api/admin/generate-invoice endpoint to accept both timesheetId and biWeeklyTimesheetId parameters
+  - **Dual Template Support**: InvoiceDialog component now handles both weekly and bi-weekly invoice generation modes
+  - **Admin Interface**: Added "Generate Invoice" buttons to bi-weekly timesheets in admin timesheet management
+  - **State Management**: Complete state handling for bi-weekly invoice dialog with proper prop passing
+- **Currency Service Integration**: Implemented real-time USD/INR conversion using Frankfurter API
+  - **6-Month Averages**: Currency service calculates and displays 6-month historical average rates
+  - **Live Conversion**: Real-time currency conversion for accurate international billing
+  - **Rate Display**: Invoice template shows both current and 6-month average conversion rates
+- **Complete Backend Support**: Enhanced storage layer with generateInvoiceFromBiWeeklyTimesheet method
+  - **Database Schema**: Updated invoice tables to support bi-weekly timesheet references
+  - **Calculation Logic**: Automated currency conversion and GST calculations in backend
+  - **Data Validation**: Proper validation for bi-weekly timesheet invoice generation
+- **User Experience**: Seamless integration with existing invoice management workflow
+  - **Unified Interface**: Same dialog component handles both weekly and bi-weekly invoice generation
+  - **Clear Labeling**: Dynamic text shows whether generating from weekly or bi-weekly timesheet
+  - **Professional Output**: High-quality PDF generation with proper formatting and company branding
+
 ## Invoice Management Enhancement and Migration Completion (July 20, 2025)
 - **Migration Completed**: Successfully migrated timesheet and invoice management system from Replit Agent to standard Replit environment
   - **All Dependencies**: Node.js packages installed and verified working correctly

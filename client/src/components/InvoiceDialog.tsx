@@ -6,7 +6,7 @@ import { Badge } from '@/components/ui/badge';
 import { useToast } from '@/hooks/use-toast';
 import { queryClient } from '@/lib/queryClient';
 import { FileText, Download, Printer, X } from 'lucide-react';
-import InvoiceTemplate from './InvoiceTemplate';
+import InvoiceTemplateNew from './InvoiceTemplateNew';
 import html2canvas from 'html2canvas';
 import jsPDF from 'jspdf';
 
@@ -15,6 +15,7 @@ interface InvoiceDialogProps {
   onClose: () => void;
   invoiceId?: number;
   timesheetId?: number;
+  biWeeklyTimesheetId?: number;
   mode?: 'preview' | 'generate';
 }
 
@@ -23,6 +24,7 @@ export default function InvoiceDialog({
   onClose,
   invoiceId,
   timesheetId,
+  biWeeklyTimesheetId,
   mode = 'preview'
 }: InvoiceDialogProps) {
   const { toast } = useToast();
@@ -37,11 +39,11 @@ export default function InvoiceDialog({
 
   // Generate new invoice mutation
   const generateInvoiceMutation = useMutation({
-    mutationFn: async (timesheetId: number) => {
+    mutationFn: async (data: { timesheetId?: number; biWeeklyTimesheetId?: number }) => {
       const response = await fetch('/api/admin/generate-invoice', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ timesheetId })
+        body: JSON.stringify(data)
       });
       if (!response.ok) {
         const error = await response.json();
@@ -67,7 +69,9 @@ export default function InvoiceDialog({
 
   const handleGenerateInvoice = () => {
     if (timesheetId) {
-      generateInvoiceMutation.mutate(timesheetId);
+      generateInvoiceMutation.mutate({ timesheetId });
+    } else if (biWeeklyTimesheetId) {
+      generateInvoiceMutation.mutate({ biWeeklyTimesheetId });
     }
   };
 
@@ -195,7 +199,7 @@ export default function InvoiceDialog({
                 <div>
                   <h3 className="text-lg font-semibold">Generate Invoice</h3>
                   <p className="text-muted-foreground">
-                    This will create an invoice for the approved timesheet.
+                    This will create an invoice for the approved {biWeeklyTimesheetId ? 'bi-weekly' : 'weekly'} timesheet.
                   </p>
                 </div>
                 <Button 
@@ -216,7 +220,7 @@ export default function InvoiceDialog({
                 </div>
               ) : invoiceData?.data?.invoice && invoiceData?.data?.companyData && invoiceData?.data?.clientData && invoiceData?.data?.timesheetDetails ? (
                 <div className="border rounded-lg overflow-hidden">
-                  <InvoiceTemplate
+                  <InvoiceTemplateNew
                     ref={invoiceRef}
                     invoice={invoiceData.data.invoice}
                     companyData={invoiceData.data.companyData}
