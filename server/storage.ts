@@ -2143,12 +2143,15 @@ async updateSeoPage(id: number, data: Partial<InsertSeoPage>): Promise<SeoPage |
       .leftJoin(candidateBilling, eq(biWeeklyTimesheets.candidateId, candidateBilling.candidateId))
       .where(and(
         eq(biWeeklyTimesheets.id, biWeeklyTimesheetId),
-        eq(biWeeklyTimesheets.status, 'approved')
+        or(
+          eq(biWeeklyTimesheets.status, 'approved'),
+          eq(biWeeklyTimesheets.status, 'calculated')
+        )
       ))
       .limit(1);
 
     if (!timesheetData.length) {
-      throw new Error('Bi-weekly timesheet not found or not approved');
+      throw new Error(`Bi-weekly timesheet with ID ${biWeeklyTimesheetId} not found or not approved/calculated`);
     }
 
     const { timesheet, candidate, billing } = timesheetData[0];

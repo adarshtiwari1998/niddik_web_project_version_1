@@ -1454,7 +1454,13 @@ function BiWeeklyTableView({ timesheets, onEdit, onDelete, getStatusBadge, isAdm
                           });
                           
                           if (!generateBiWeeklyResponse.ok) {
-                            console.error('Failed to generate bi-weekly timesheet');
+                            const errorText = await generateBiWeeklyResponse.text();
+                            console.error('Failed to generate bi-weekly timesheet:', errorText);
+                            toast({
+                              title: "Error",
+                              description: `Failed to generate bi-weekly timesheet: ${errorText}`,
+                              variant: "destructive",
+                            });
                             return;
                           }
                           
