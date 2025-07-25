@@ -1,10 +1,11 @@
 
 import { useState, useEffect, useRef } from "react";
 import { Link, useLocation } from "wouter";
-import { Search, Menu, X, ChevronDown, ChevronRight, User, Briefcase, Users, Clock, TrendingUp, FileText, Activity, Globe } from "lucide-react";
+import { Search, Menu, X, ChevronDown, ChevronRight, User, Briefcase, Users, Clock, TrendingUp, FileText, Activity, Globe, Linkedin, Youtube } from "lucide-react";
 import Container from "@/components/ui/container";
 import Logo from "@/components/ui/logo";
 import { Button } from "@/components/ui/button";
+import AnnouncementBar from "@/components/ui/AnnouncementBar";
 import { useQuery } from "@tanstack/react-query";
 import { getQueryFn } from "@/lib/queryClient";
 import { JobListing } from "@shared/schema";
@@ -247,6 +248,11 @@ const Navbar: React.FC<NavbarProps> = ({ hasAnnouncementAbove = true }) => {
   const isDarkPage = false;
 
   return (
+    <>
+      {/* Announcement Bar */}
+      <AnnouncementBar />
+      
+      {/* Main Header */}
     <header className={cn(
       "fixed w-full z-40",
       hasAnnouncementAbove ? "top-[40px]" : "top-0",
@@ -827,6 +833,7 @@ const Navbar: React.FC<NavbarProps> = ({ hasAnnouncementAbove = true }) => {
         </nav>
       </div>
     </header>
+    </>
   );
 };
 
