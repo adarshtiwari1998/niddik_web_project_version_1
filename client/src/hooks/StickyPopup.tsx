@@ -77,10 +77,31 @@ const StickyPopup: React.FC<StickyPopupProps> = () => {
         return () => window.removeEventListener('resize', handleResize);
     }, [isOpen]);
 
+    // Add observer to detect popup content changes
+    useEffect(() => {
+        if (isOpen && popupRef.current) {
+            const observer = new MutationObserver(() => {
+                setTimeout(() => {
+                    updatePopupPosition();
+                    updateArrowPosition();
+                }, 50);
+            });
+            
+            observer.observe(popupRef.current, {
+                childList: true,
+                subtree: true,
+                characterData: true
+            });
+            
+            return () => observer.disconnect();
+        }
+    }, [isOpen]);
+
     useEffect(() => {
         if (isOpen) {
             // Small delay to ensure popup is rendered and positioned
             setTimeout(() => {
+                updatePopupPosition();
                 updateArrowPosition();
                 setShowArrow(true);
             }, 100);
@@ -161,8 +182,9 @@ const StickyPopup: React.FC<StickyPopupProps> = () => {
         setConfirmationContent(getConfirmationContent(selectedChoice));
         setIsOpen(true);
         
-        // Update arrow position after content changes
+        // Update both popup and arrow position after content changes
         setTimeout(() => {
+            updatePopupPosition();
             updateArrowPosition();
         }, 100);
     };
@@ -293,7 +315,7 @@ const StickyPopup: React.FC<StickyPopupProps> = () => {
 
             {isOpen && (
                 <div
-                    className="fixed bg-white rounded-lg border border-gray-200 z-50 w-72 md:w-80 max-w-[calc(100vw-2rem)]"
+                    className="fixed bg-white rounded-lg shadow-lg z-50 w-72 md:w-80 max-w-[calc(100vw-2rem)]"
                     style={{
                         top: popupPosition.top,
                         left: popupPosition.left,
