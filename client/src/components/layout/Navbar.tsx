@@ -1,7 +1,7 @@
 
 import { useState, useEffect, useRef } from "react";
 import { Link, useLocation } from "wouter";
-import { Search, Menu, X, ChevronDown, ChevronRight, User, Briefcase, Users, Clock, TrendingUp, FileText, Activity } from "lucide-react";
+import { Search, Menu, X, ChevronDown, ChevronRight, User, Briefcase, Users, Clock, TrendingUp, FileText, Activity, Globe } from "lucide-react";
 import Container from "@/components/ui/container";
 import Logo from "@/components/ui/logo";
 import { Button } from "@/components/ui/button";
@@ -317,6 +317,75 @@ const Navbar: React.FC<NavbarProps> = ({ hasAnnouncementAbove = true }) => {
               )
             ))}
           </nav>
+
+          {/* Launch Dropdown - Custom styled */}
+          <div className="hidden lg:flex items-center">
+            <div className="relative group">
+              <div className="flex items-center cursor-pointer">
+                <span className={cn(
+                  "group-hover:text-andela-green font-medium transition-colors",
+                  isTransparent 
+                    ? (isHomePage ? "text-white" : isDarkPage ? "text-white" : "text-andela-dark")
+                    : (isDarkPage ? "text-black" : "text-andela-dark")
+                )}>
+                  Launch
+                </span>
+                <ChevronDown className={cn(
+                  "ml-1 w-4 h-4 group-hover:text-andela-green transition-colors",
+                  isTransparent 
+                    ? (isHomePage ? "text-white" : isDarkPage ? "text-white" : "text-andela-dark")
+                    : (isDarkPage ? "text-white" : "text-andela-dark")
+                )} />
+              </div>
+              
+              {/* Custom styled dropdown - unique design */}
+              <div className="absolute left-0 mt-2 w-80 rounded-xl shadow-2xl bg-white border border-gray-100 opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-300 transform origin-top-left z-50 overflow-hidden">
+                <div className="p-4">
+                  <div className="flex items-center gap-2 mb-4 pb-3 border-b border-gray-100">
+                    <Globe className="w-5 h-5 text-andela-green" />
+                    <span className="font-semibold text-gray-800">Choose Website</span>
+                  </div>
+                  
+                  {/* Niddikkare - First */}
+                  <a 
+                    href="https://niddikkare.com" 
+                    target="_blank" 
+                    rel="noopener noreferrer"
+                    className="flex items-start gap-3 p-3 rounded-lg hover:bg-gray-50 transition-colors group/item mb-3 border border-transparent hover:border-gray-200"
+                  >
+                    <div className="w-10 h-10 rounded-full bg-green-100 flex items-center justify-center flex-shrink-0">
+                      <div className="w-6 h-6 rounded-full bg-green-500"></div>
+                    </div>
+                    <div className="flex-1">
+                      <div className="flex items-center gap-2">
+                        <span className="font-semibold text-gray-900">Niddikkare</span>
+                        <span className="px-2 py-0.5 bg-green-100 text-green-700 text-xs font-medium rounded-full">
+                          Current
+                        </span>
+                      </div>
+                      <p className="text-sm text-gray-600 mt-1">Healthcare and Life Sciences Solutions</p>
+                    </div>
+                  </a>
+
+                  {/* Niddik IT - Second */}
+                  <div className="flex items-start gap-3 p-3 rounded-lg bg-blue-50 border border-blue-200">
+                    <div className="w-10 h-10 rounded-full bg-blue-100 flex items-center justify-center flex-shrink-0">
+                      <div className="w-6 h-6 rounded-full bg-blue-500"></div>
+                    </div>
+                    <div className="flex-1">
+                      <div className="flex items-center gap-2">
+                        <span className="font-semibold text-gray-900">Niddik IT</span>
+                        <span className="px-2 py-0.5 bg-blue-100 text-blue-700 text-xs font-medium rounded-full">
+                          Explore
+                        </span>
+                      </div>
+                      <p className="text-sm text-gray-600 mt-1">IT services and job opportunities</p>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
 
           {/* CTA Buttons */}
           <div className="hidden lg:flex items-center space-x-4 text-nowrap">
