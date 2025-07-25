@@ -73,6 +73,14 @@ const StickyPopup: React.FC<StickyPopupProps> = () => {
 
     useEffect(() => {
         updatePopupPosition();
+        
+        // Update position on window resize
+        const handleResize = () => {
+            updatePopupPosition();
+        };
+        
+        window.addEventListener('resize', handleResize);
+        return () => window.removeEventListener('resize', handleResize);
     }, [isOpen]);
 
     useEffect(() => {
@@ -89,12 +97,29 @@ const StickyPopup: React.FC<StickyPopupProps> = () => {
         if (!iconRef.current) return;
 
         const iconRect = iconRef.current.getBoundingClientRect();
-        const spaceAbove = iconRect.top;
-        const popupHeight = 300;
-        const topPosition = spaceAbove > popupHeight ? iconRect.top - popupHeight - 10 : iconRect.bottom + 10;
-        const leftOffset = iconRect.right + 10;
+        const viewportWidth = window.innerWidth;
+        const viewportHeight = window.innerHeight;
+        const isMobile = viewportWidth < 768; // Mobile breakpoint
+        
+        if (isMobile) {
+            // On mobile, center the popup horizontally and position it above the icon
+            const popupWidth = Math.min(280, viewportWidth - 32); // Max width with 16px margin on each side
+            const leftPosition = (viewportWidth - popupWidth) / 2;
+            const topPosition = Math.max(16, iconRect.top - 320); // Position above icon with minimum top margin
+            
+            setPopupPosition({ 
+                top: topPosition, 
+                left: leftPosition 
+            });
+        } else {
+            // Desktop positioning (original logic)
+            const spaceAbove = iconRect.top;
+            const popupHeight = 300;
+            const topPosition = spaceAbove > popupHeight ? iconRect.top - popupHeight - 10 : iconRect.bottom + 10;
+            const leftOffset = iconRect.right + 10;
 
-        setPopupPosition({ top: topPosition, left: leftOffset });
+            setPopupPosition({ top: topPosition, left: leftOffset });
+        }
     };
 
     const updateArrowPosition = () => {
@@ -135,30 +160,54 @@ const StickyPopup: React.FC<StickyPopupProps> = () => {
         switch (choice) {
             case 'hire':
                 return (
-                    <div className="p-4">
-                        <p className="text-lg font-semibold">Let's get in touch!</p>
-                        <p>Get ready to hire talent 66% faster with NiDDik.</p>
-                        <Link href="/request-demo" onClick={handleNavigation} className="inline-block mt-4 bg-green-500 text-white py-2 px-4 rounded hover:bg-green-700">
+                    <div className="p-4 md:p-6">
+                        <div className="flex justify-between items-start mb-3">
+                            <p className="text-lg md:text-xl font-semibold pr-2">Let's get in touch!</p>
+                            <button 
+                                onClick={() => setIsOpen(false)}
+                                className="text-gray-500 hover:text-gray-700 flex-shrink-0"
+                            >
+                                <X size={20} />
+                            </button>
+                        </div>
+                        <p className="mb-4 text-sm md:text-base text-gray-600">Get ready to hire talent 66% faster with NiDDik.</p>
+                        <Link href="/request-demo" onClick={handleNavigation} className="inline-block w-full text-center bg-green-500 text-white py-2.5 px-4 rounded-lg hover:bg-green-600 transition-colors text-sm md:text-base">
                             Request A Demo
                         </Link>
                     </div>
                 );
             case 'role':
                 return (
-                    <div className="p-4">
-                        <p className="text-lg font-semibold">You're in the right place!</p>
-                        <p>Learn more about how to join NiDDik as a certified technologist.</p>
-                        <Link href="/careers" onClick={handleNavigation} className="inline-block mt-4 bg-green-500 text-white py-2 px-4 rounded hover:bg-green-700">
+                    <div className="p-4 md:p-6">
+                        <div className="flex justify-between items-start mb-3">
+                            <p className="text-lg md:text-xl font-semibold pr-2">You're in the right place!</p>
+                            <button 
+                                onClick={() => setIsOpen(false)}
+                                className="text-gray-500 hover:text-gray-700 flex-shrink-0"
+                            >
+                                <X size={20} />
+                            </button>
+                        </div>
+                        <p className="mb-4 text-sm md:text-base text-gray-600">Learn more about how to join NiDDik as a certified technologist.</p>
+                        <Link href="/careers" onClick={handleNavigation} className="inline-block w-full text-center bg-green-500 text-white py-2.5 px-4 rounded-lg hover:bg-green-600 transition-colors text-sm md:text-base">
                             Learn More
                         </Link>
                     </div>
                 );
             case 'looking':
                 return (
-                    <div className="p-4">
-                        <p className="text-lg font-semibold">Great, thanks for being here.</p>
-                        <p>We recommend you start with Why NiDDik. You'll find everything you need to know.</p>
-                        <Link href="/why-us" onClick={handleNavigation} className="inline-block mt-4 bg-green-500 text-white py-2 px-4 rounded hover:bg-green-700">
+                    <div className="p-4 md:p-6">
+                        <div className="flex justify-between items-start mb-3">
+                            <p className="text-lg md:text-xl font-semibold pr-2">Great, thanks for being here.</p>
+                            <button 
+                                onClick={() => setIsOpen(false)}
+                                className="text-gray-500 hover:text-gray-700 flex-shrink-0"
+                            >
+                                <X size={20} />
+                            </button>
+                        </div>
+                        <p className="mb-4 text-sm md:text-base text-gray-600">We recommend you start with Why NiDDik. You'll find everything you need to know.</p>
+                        <Link href="/why-us" onClick={handleNavigation} className="inline-block w-full text-center bg-green-500 text-white py-2.5 px-4 rounded-lg hover:bg-green-600 transition-colors text-sm md:text-base">
                             Learn More
                         </Link>
                     </div>
@@ -172,18 +221,28 @@ const StickyPopup: React.FC<StickyPopupProps> = () => {
         if (confirmationContent) return confirmationContent;
 
         return (
-            <div className="p-4">
-                <h3 className="text-xl font-semibold mb-2">What brings you to NiDDik?</h3>
-                <p className="mb-4">We'd like to personalize your experience so you find what you're looking for!</p>
-                <button onClick={() => handleChoice('hire')} className="block w-full bg-blue-500 text-white py-2 px-4 rounded hover:bg-blue-700 mb-2">
-                    I want to hire talent
-                </button>
-                <button onClick={() => handleChoice('role')} className="block w-full bg-blue-500 text-white py-2 px-4 rounded hover:bg-blue-700 mb-2">
-                    I am looking for my next role
-                </button>
-                <button onClick={() => handleChoice('looking')} className="block w-full bg-blue-500 text-white py-2 px-4 rounded hover:bg-blue-700">
-                    I am looking around
-                </button>
+            <div className="p-4 md:p-6">
+                <div className="flex justify-between items-start mb-3">
+                    <h3 className="text-lg md:text-xl font-semibold pr-2">What brings you to NiDDik?</h3>
+                    <button 
+                        onClick={() => setIsOpen(false)}
+                        className="text-gray-500 hover:text-gray-700 flex-shrink-0"
+                    >
+                        <X size={20} />
+                    </button>
+                </div>
+                <p className="mb-4 text-sm md:text-base text-gray-600">We'd like to personalize your experience so you find what you're looking for!</p>
+                <div className="space-y-2">
+                    <button onClick={() => handleChoice('hire')} className="block w-full bg-blue-500 text-white py-2.5 px-4 rounded-lg hover:bg-blue-600 transition-colors text-sm md:text-base">
+                        I want to hire talent
+                    </button>
+                    <button onClick={() => handleChoice('role')} className="block w-full bg-blue-500 text-white py-2.5 px-4 rounded-lg hover:bg-blue-600 transition-colors text-sm md:text-base">
+                        I am looking for my next role
+                    </button>
+                    <button onClick={() => handleChoice('looking')} className="block w-full bg-blue-500 text-white py-2.5 px-4 rounded-lg hover:bg-blue-600 transition-colors text-sm md:text-base">
+                        I am looking around
+                    </button>
+                </div>
             </div>
         );
     };
@@ -218,10 +277,12 @@ const StickyPopup: React.FC<StickyPopupProps> = () => {
 
             {isOpen && (
                 <div
-                    className="fixed bg-white rounded-lg shadow-xl z-50 w-80"
+                    className="fixed bg-white rounded-lg shadow-xl z-50 w-72 md:w-80 max-w-[calc(100vw-2rem)]"
                     style={{
                         top: popupPosition.top,
                         left: popupPosition.left,
+                        maxHeight: 'calc(100vh - 120px)',
+                        overflow: 'auto'
                     }}
                     ref={popupRef}
                 >
