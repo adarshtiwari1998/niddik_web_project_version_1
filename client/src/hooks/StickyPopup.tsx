@@ -6,24 +6,24 @@ import { X } from 'lucide-react';
 
 const styles = `
 .arrow-container {
-    position: absolute;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    z-index: 51; /* Ensure it's above the icon and popup */
+    position: fixed;
+    z-index: 49; /* Below popup but above other content */
     pointer-events: none; /* Avoid interfering with clicks */
 }
-.arrow {
-    width: 20px;
-    height: 20px;
-    background-image: url('data:image/svg+xml,%3Csvg width="20" height="20" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg"%3E%3Cpath d="M19.7998 0.200226C19.3198 -0.280774 18.5398 -0.0607744 18.0598 0.719226L0.719768 18.0593C0.239768 18.5393 0.459768 19.3193 1.23977 19.7993C2.01977 20.2793 2.79977 20.0593 3.27977 19.2793L19.7998 2.75923C20.2798 2.27923 20.0598 1.49923 19.7998 0.200226Z" fill="%234DD0E1"/%3E%3C/svg%3E');
-    background-size: cover;
-    transform: rotate(180deg);
+.arrow-line {
+    background: linear-gradient(90deg, #4DD0E1 0%, #4DD0E1 70%, transparent 70%, transparent 80%, #4DD0E1 80%);
+    background-size: 10px 2px;
+    background-repeat: repeat-x;
+    width: 100%;
+    height: 2px;
 }
 @keyframes flash {
     0% { opacity: 1; }
-    50% { opacity: 0; }
+    50% { opacity: 0.4; }
     100% { opacity: 1; }
+}
+.arrow-flash {
+    animation: flash 2s ease-in-out infinite;
 }
 `;
 
@@ -85,9 +85,12 @@ const StickyPopup: React.FC<StickyPopupProps> = () => {
 
     useEffect(() => {
         if (isOpen) {
-            updateArrowPosition();
-            setShowArrow(true);
-            const timer = setTimeout(() => setShowArrow(false), 3000);
+            // Small delay to ensure popup is rendered and positioned
+            setTimeout(() => {
+                updateArrowPosition();
+                setShowArrow(true);
+            }, 100);
+            const timer = setTimeout(() => setShowArrow(false), 5000);
             return () => clearTimeout(timer);
         }
         setShowArrow(false);
@@ -126,17 +129,36 @@ const StickyPopup: React.FC<StickyPopupProps> = () => {
         if (iconRef.current && popupRef.current) {
             const iconRect = iconRef.current.getBoundingClientRect();
             const popupRect = popupRef.current.getBoundingClientRect();
-            const iconCenterX = iconRect.left + iconRect.width / 2;
-            const iconCenterY = iconRect.top + iconRect.height / 2;
-            const popupCenterX = popupRect.left + popupRect.width / 2;
-            const popupCenterY = popupRect.top + popupRect.height / 2;
+            const viewportWidth = window.innerWidth;
+            const isMobile = viewportWidth < 768;
+            
+            if (isMobile) {
+                // Mobile: arrow points from popup bottom to icon center
+                const iconCenterX = iconRect.left + iconRect.width / 2;
+                const iconCenterY = iconRect.top + iconRect.height / 2;
+                const popupBottomCenterX = popupRect.left + popupRect.width / 2;
+                const popupBottom = popupRect.bottom;
+                
+                setArrowPosition({
+                    top: popupBottom,
+                    left: popupBottomCenterX,
+                    endTop: iconCenterY,
+                    endLeft: iconCenterX,
+                });
+            } else {
+                // Desktop: arrow points from popup left edge to icon center
+                const iconCenterX = iconRect.left + iconRect.width / 2;
+                const iconCenterY = iconRect.top + iconRect.height / 2;
+                const popupLeftX = popupRect.left;
+                const popupCenterY = popupRect.top + popupRect.height / 2;
 
-            setArrowPosition({
-                top: iconCenterY,
-                left: iconCenterX,
-                endTop: popupCenterY,
-                endLeft: popupCenterX,
-            });
+                setArrowPosition({
+                    top: popupCenterY,
+                    left: popupLeftX,
+                    endTop: iconCenterY,
+                    endLeft: iconCenterX,
+                });
+            }
         }
     };
 
@@ -249,15 +271,16 @@ const StickyPopup: React.FC<StickyPopupProps> = () => {
 
     const calculateArrowStyle = () => {
         const { top, left, endTop, endLeft } = arrowPosition;
-        const angle = (Math.atan2(endTop - top, endLeft - left) * 180) / Math.PI;
         const distance = Math.sqrt(Math.pow(endLeft - left, 2) + Math.pow(endTop - top, 2));
+        const angle = (Math.atan2(endTop - top, endLeft - left) * 180) / Math.PI;
 
         return {
-            top,
-            left,
+            top: top,
+            left: left,
             width: distance,
-            transformOrigin: '0 0',
+            height: '2px',
             transform: `rotate(${angle}deg)`,
+            transformOrigin: 'left center',
         };
     };
 
@@ -268,11 +291,6 @@ const StickyPopup: React.FC<StickyPopupProps> = () => {
                 ref={iconRef}
             >
                 <StickyIcon isOpen={isOpen} onClick={() => setIsOpen(!isOpen)} />
-                {showArrow && (
-                    <div className="arrow-container" style={calculateArrowStyle()}>
-                        <div className="arrow"></div>
-                    </div>
-                )}
             </div>
 
             {isOpen && (
@@ -287,6 +305,12 @@ const StickyPopup: React.FC<StickyPopupProps> = () => {
                     ref={popupRef}
                 >
                     {renderContent()}
+                </div>
+            )}
+
+            {showArrow && isOpen && (
+                <div className="arrow-container arrow-flash" style={calculateArrowStyle()}>
+                    <div className="arrow-line"></div>
                 </div>
             )}
 
