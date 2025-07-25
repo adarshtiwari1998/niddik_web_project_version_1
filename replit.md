@@ -123,7 +123,7 @@ The application follows a standard full-stack architecture with clear separation
 
 # Recent Changes
 
-## Mobile Popup Responsiveness Fix and Migration Completed (July 25, 2025)
+## Mobile Popup Responsiveness Fix and Arrow Connection Enhancement Completed (July 25, 2025)
 - **Mobile Responsiveness Issue Fixed**: Resolved critical mobile UX issue with "What brings you to NiDDik?" popup dialog
   - **Mobile Positioning**: Updated popup positioning logic to center dialog on mobile screens instead of fixed desktop positioning
   - **Width Optimization**: Changed from fixed 320px width to responsive 288px mobile (w-72) and 320px desktop (w-80) widths
@@ -132,11 +132,23 @@ The application follows a standard full-stack architecture with clear separation
   - **Close Button Added**: Added dedicated close buttons (X icon) to all popup states for better mobile UX
   - **Content Optimization**: Improved text sizing (text-sm on mobile, text-base on desktop) and button spacing
   - **Real-time Resize**: Added window resize listener to update popup position dynamically
-- **Enhanced User Experience**: 
+- **Arrow Connection System Implemented**: Created permanent solid line connection between floating icon and popup
+  - **Solid Cyan Line**: Replaced dashed line with solid cyan (#4DD0E1) line using proper CSS background styling
+  - **Permanent Visibility**: Arrow remains visible continuously while popup is open (no timer-based hiding)
+  - **Dynamic Positioning**: Arrow automatically repositions when popup content changes (e.g., when user selects options)
+  - **Proper Connection Points**: Desktop connects icon right edge to popup left edge, mobile connects popup bottom-left to icon center
+  - **Real-time Updates**: Arrow position updates during window resize and content changes for accurate connection
+- **Visual Enhancements**: 
+  - **Shadow Removal**: Removed bottom shadow (shadow-xl) and replaced with subtle border (border-gray-200) for cleaner appearance
   - **Better Touch Targets**: Increased button padding (py-2.5) and improved tap areas for mobile interaction
-  - **Visual Improvements**: Enhanced button styling with rounded-lg corners and smooth hover transitions
-  - **Content Layout**: Proper header/close button layout with flex positioning to prevent text wrapping
+  - **Enhanced Button Styling**: Added rounded-lg corners and smooth hover transitions
+  - **Proper Layout Structure**: Fixed header/close button layout with flex positioning to prevent text wrapping
   - **Viewport Constraints**: Added maxHeight and overflow controls to prevent popup from exceeding screen bounds
+- **Technical Implementation**: 
+  - **Arrow Calculation**: Implemented mathematical distance and angle calculations for precise line positioning
+  - **Connection Logic**: Enhanced updateArrowPosition() function with proper edge-to-edge connection points
+  - **Content Change Detection**: Added arrow repositioning in handleChoice() function when popup content changes
+  - **Cross-device Compatibility**: Separate logic for mobile and desktop arrow positioning for optimal display
 - **Migration Completed Successfully**: All packages installed, application running on port 5000, database connected
 - **Files Modified**: `client/src/hooks/StickyPopup.tsx`, `replit.md`
 

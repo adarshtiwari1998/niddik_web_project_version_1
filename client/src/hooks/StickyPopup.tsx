@@ -11,7 +11,8 @@ const styles = `
     pointer-events: none; /* Avoid interfering with clicks */
 }
 .arrow-line {
-    background: #4DD0E1;
+    background-color: #4DD0E1 !important;
+    border: none !important;
     width: 100%;
     height: 2px;
 }
@@ -125,7 +126,7 @@ const StickyPopup: React.FC<StickyPopupProps> = () => {
             const isMobile = viewportWidth < 768;
             
             if (isMobile) {
-                // Mobile: connect from popup bottom-left to icon center
+                // Mobile: connect from popup bottom-left corner to icon center
                 const iconCenterX = iconRect.left + iconRect.width / 2;
                 const iconCenterY = iconRect.top + iconRect.height / 2;
                 const popupBottomLeftX = popupRect.left;
@@ -138,17 +139,17 @@ const StickyPopup: React.FC<StickyPopupProps> = () => {
                     endLeft: iconCenterX,
                 });
             } else {
-                // Desktop: connect from popup left edge to icon right edge
+                // Desktop: connect from icon right edge to popup left edge
                 const iconRightX = iconRect.right;
                 const iconCenterY = iconRect.top + iconRect.height / 2;
                 const popupLeftX = popupRect.left;
                 const popupCenterY = popupRect.top + popupRect.height / 2;
 
                 setArrowPosition({
-                    top: popupCenterY,
-                    left: popupLeftX,
-                    endTop: iconCenterY,
-                    endLeft: iconRightX,
+                    top: iconCenterY,
+                    left: iconRightX,
+                    endTop: popupCenterY,
+                    endLeft: popupLeftX,
                 });
             }
         }
@@ -292,7 +293,7 @@ const StickyPopup: React.FC<StickyPopupProps> = () => {
 
             {isOpen && (
                 <div
-                    className="fixed bg-white rounded-lg shadow-xl z-50 w-72 md:w-80 max-w-[calc(100vw-2rem)]"
+                    className="fixed bg-white rounded-lg border border-gray-200 z-50 w-72 md:w-80 max-w-[calc(100vw-2rem)]"
                     style={{
                         top: popupPosition.top,
                         left: popupPosition.left,
