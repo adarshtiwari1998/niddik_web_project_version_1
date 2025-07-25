@@ -143,7 +143,7 @@ The application follows a standard full-stack architecture with clear separation
   - **Logo Storage**: Saved logo file as `public/images/startupindia-badge.png` for web accessibility
   - **Positioning**: Logo positioned on right side of announcement bar before Sign In and Close buttons
   - **Responsive Design**: Logo only shows on desktop (hidden on mobile) for clean mobile experience
-  - **Visual Integration**: Logo styled with opacity transitions and proper sizing (h-6) for professional appearance
+  - **Visual Integration**: Logo styled with light grey background and clean border for professional appearance
 - **Files Modified**: `client/src/components/layout/Navbar.tsx`, `client/src/components/layout/AnnouncementBar.tsx`, `.local/state/replit/agent/progress_tracker.md`, `replit.md`
 
 ## Mobile Popup Responsiveness Fix and Arrow Connection Enhancement Completed (July 25, 2025)

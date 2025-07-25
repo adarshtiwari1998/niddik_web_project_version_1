@@ -123,11 +123,11 @@ export default function AnnouncementBar({
                    <div className="hidden md:flex items-center space-x-2">
                        {/* Startup India Logo */}
                        <div className="flex items-center mr-2">
-                           <div className="bg-gray-100/80 backdrop-blur-sm rounded-md p-2 border border-gray-200/50 hover:border-andela-green/50 transition-all duration-300 hover:shadow-md animate-pulse hover:animate-none">
+                           <div className="bg-gray-100 rounded-md p-1.5 border border-gray-200">
                                <img 
                                    src="/images/startupindia-badge.png" 
                                    alt="Startup India" 
-                                   className="h-4 w-auto opacity-90 hover:opacity-100 transition-opacity"
+                                   className="h-4 w-auto block"
                                />
                            </div>
                        </div>
