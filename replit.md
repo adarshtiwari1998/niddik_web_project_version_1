@@ -144,6 +144,7 @@ The application follows a standard full-stack architecture with clear separation
   - **Positioning**: Logo positioned on right side of announcement bar before Sign In and Close buttons
   - **Responsive Design**: Logo only shows on desktop (hidden on mobile) for clean mobile experience
   - **Visual Integration**: Logo styled with light grey background and clean border for professional appearance
+  - **Contact Info Updated**: Updated phone numbers to +91 9717312058 (INDIA) | +1 (646) 889-9517 (USA)
 - **Files Modified**: `client/src/components/layout/Navbar.tsx`, `client/src/components/layout/AnnouncementBar.tsx`, `.local/state/replit/agent/progress_tracker.md`, `replit.md`
 
 ## Mobile Popup Responsiveness Fix and Arrow Connection Enhancement Completed (July 25, 2025)

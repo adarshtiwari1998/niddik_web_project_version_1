@@ -172,7 +172,7 @@ export default function AnnouncementBar({
                                     <a href="mailto:info@niddik.com" className="text-blue-200 hover:underline">info@niddik.com</a>
                                 </p>
                                 <p className="text-white text-sm mr-4 hidden md:block">
-                                    +1 (555) 123-4567
+                                    +91 9717312058 (INDIA) | +1 (646) 889-9517 (USA)
                                 </p>
                                 {/* Sign In Button (Mobile) */}
                                 <div className="relative group z-50 md:hidden">
