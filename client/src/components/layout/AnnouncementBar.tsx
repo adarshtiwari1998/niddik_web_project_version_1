@@ -106,9 +106,9 @@ export default function AnnouncementBar({
                animate={{ height: 'auto', opacity: 1 }}
                exit={{ height: 0, opacity: 0 }}
                transition={{ duration: 0.3 }}
-               className={`${bgColor} ${textColor} w-full text-center py-2 h-auto fixed top-0 left-0 right-0 z-40 overflow-hidden`}
+               className={`${bgColor} ${textColor} w-full text-center ${isSticky ? 'py-3' : 'py-2'} h-auto fixed top-0 left-0 right-0 z-40 overflow-hidden`}
            >
-               <div className="container mx-auto px-4 flex flex-col md:flex-row justify-center md:justify-between items-center">
+               <div className="container mx-auto px-4 flex flex-col md:flex-row justify-center md:justify-between items-center min-h-[32px]">
                    {/* Announcement Text (Centered) */}
                    <div className="flex-grow text-center mb-2 md:mb-0">
                        <p className="text-[12px] leading-[1.2] md:text-base">
@@ -162,9 +162,9 @@ export default function AnnouncementBar({
                         animate={{ height: 'auto', opacity: 1 }}
                         exit={{ height: 0, opacity: 0 }}
                         transition={{ duration: 0.3 }}
-                        className={`${bgColor} ${textColor} w-full py-2 fixed top-0 left-0 right-0 z-50 overflow-hidden`}
+                        className={`${bgColor} ${textColor} w-full ${isSticky ? 'py-3' : 'py-2'} fixed top-0 left-0 right-0 z-50 overflow-hidden`}
                     >
-                   <div className="container mx-auto px-4 flex flex-col md:flex-row justify-center md:justify-between items-center md:items-center"> {/* Center items on mobile and justify on desktop */}
+                   <div className="container mx-auto px-4 flex flex-col md:flex-row justify-center md:justify-between items-center md:items-center min-h-[32px]"> {/* Center items on mobile and justify on desktop */}
                             {/* Contact Info (Left) */}
                             <div className="px-4 flex items-center text-left mb-2 md:mb-0">
                                 <h3 className="hidden md:block text-lg font-semibold text-white mr-4">Need Assistance?</h3>
