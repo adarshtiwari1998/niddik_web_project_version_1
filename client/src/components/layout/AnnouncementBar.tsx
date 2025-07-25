@@ -33,14 +33,14 @@ export default function AnnouncementBar({
     // Admin stats queries
     const { data: jobsData } = useQuery<{ data: any[] }>({
         queryKey: ['/api/job-listings', { page: 1, limit: 1000 }],
-        queryFn: getQueryFn({ on401: "ignore" }),
+        queryFn: getQueryFn({ on401: "returnNull" }),
         enabled: !!user && user.role === 'admin' && isDrawerOpen,
         staleTime: 5 * 60 * 1000,
     });
 
     const { data: applicationsData } = useQuery<{ data: any[] }>({
         queryKey: ['/api/admin/applications'],
-        queryFn: getQueryFn({ on401: "ignore" }),
+        queryFn: getQueryFn({ on401: "returnNull" }),
         enabled: !!user && user.role === 'admin' && isDrawerOpen,
         staleTime: 5 * 60 * 1000,
     });
@@ -48,14 +48,14 @@ export default function AnnouncementBar({
     // Candidate stats queries
     const { data: candidateApplicationsData } = useQuery<{ data: any[] }>({
         queryKey: ['/api/my-applications'],
-        queryFn: getQueryFn({ on401: "ignore" }),
+        queryFn: getQueryFn({ on401: "returnNull" }),
         enabled: !!user && user.role !== 'admin' && isDrawerOpen,
         staleTime: 5 * 60 * 1000,
     });
 
     const { data: recentJobsData } = useQuery<{ data: any[] }>({
         queryKey: ['/api/job-listings/recent', 5],
-        queryFn: getQueryFn({ on401: "ignore" }),
+        queryFn: getQueryFn({ on401: "returnNull" }),
         enabled: !!user && user.role !== 'admin' && isDrawerOpen,
         staleTime: 5 * 60 * 1000,
     });
