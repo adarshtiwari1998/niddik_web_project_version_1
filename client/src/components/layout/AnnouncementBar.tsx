@@ -121,6 +121,15 @@ export default function AnnouncementBar({
 
                    {/* Buttons Container */}
                    <div className="hidden md:flex items-center space-x-2">
+                       {/* Startup India Logo */}
+                       <div className="flex items-center mr-2">
+                           <img 
+                               src="/images/startupindia-badge.png" 
+                               alt="Startup India" 
+                               className="h-6 w-auto opacity-90 hover:opacity-100 transition-opacity"
+                           />
+                       </div>
+
                        {/* Sign In Button (Opens Drawer) */}
                        <div className="relative group z-50">
                            <div 
