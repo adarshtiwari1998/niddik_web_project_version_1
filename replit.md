@@ -123,13 +123,13 @@ The application follows a standard full-stack architecture with clear separation
 
 # Recent Changes
 
-## Launch Dropdown Menu and Migration Completion (July 25, 2025)
+## Launch Dropdown Menu Implementation and Migration Completion (July 25, 2025)
 - **Launch Dropdown Menu Implementation**: Added custom "Launch" dropdown menu in header navigation as requested
   - **Positioning**: Positioned between main navigation menu and CTA buttons for optimal visibility
   - **Custom Design**: Unique dropdown styling different from standard navigation dropdowns with rounded corners, shadow, and custom layout
   - **Website Options**: Two website options with proper ordering as requested:
-    1. **Niddikkare** (First): Healthcare and Life Sciences Solutions with "Current" badge and link to niddikkare.com
-    2. **Niddik IT** (Second): IT services and job opportunities with "Explore" badge (current website)
+    1. **Niddikkare** (First): Healthcare and Life Sciences Solutions with "Explore" badge and link to niddikkare.com
+    2. **Niddik IT** (Second): A Premium IT Consulting and Services Company with "Current" badge (current website)
   - **Visual Design**: Globe icon header, color-coded circular indicators (green for Niddikkare, blue for Niddik IT), and professional card-style layout
   - **External Link**: Niddikkare opens in new tab with proper security attributes (target="_blank", rel="noopener noreferrer")
   - **Responsive**: Hidden on mobile (lg:flex) to maintain clean mobile navigation

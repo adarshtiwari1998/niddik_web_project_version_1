@@ -360,14 +360,14 @@ const Navbar: React.FC<NavbarProps> = ({ hasAnnouncementAbove = true }) => {
                       <div className="flex items-center gap-2">
                         <span className="font-semibold text-gray-900">Niddikkare</span>
                         <span className="px-2 py-0.5 bg-green-100 text-green-700 text-xs font-medium rounded-full">
-                          Current
+                          Explore
                         </span>
                       </div>
                       <p className="text-sm text-gray-600 mt-1">Healthcare and Life Sciences Solutions</p>
                     </div>
                   </a>
 
-                  {/* Niddik IT - Second */}
+                  {/* Niddik IT - Second (Current) */}
                   <div className="flex items-start gap-3 p-3 rounded-lg bg-blue-50 border border-blue-200">
                     <div className="w-10 h-10 rounded-full bg-blue-100 flex items-center justify-center flex-shrink-0">
                       <div className="w-6 h-6 rounded-full bg-blue-500"></div>
@@ -376,10 +376,10 @@ const Navbar: React.FC<NavbarProps> = ({ hasAnnouncementAbove = true }) => {
                       <div className="flex items-center gap-2">
                         <span className="font-semibold text-gray-900">Niddik IT</span>
                         <span className="px-2 py-0.5 bg-blue-100 text-blue-700 text-xs font-medium rounded-full">
-                          Explore
+                          Current
                         </span>
                       </div>
-                      <p className="text-sm text-gray-600 mt-1">IT services and job opportunities</p>
+                      <p className="text-sm text-gray-600 mt-1">A Premium IT Consulting and Services Company</p>
                     </div>
                   </div>
                 </div>
